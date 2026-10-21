@@ -50,6 +50,7 @@ public class PulsarProducerInitialSequenceIdTest extends CamelTestSupport {
 
     private static final String NAMED_TOPIC = "persistent://public/default/camel-sequence-test";
     private static final String CONFIGURED_TOPIC = "persistent://public/default/camel-sequence-test-2";
+    private static final String ZERO_TOPIC = "persistent://public/default/camel-sequence-test-3";
 
     private final List<ProducerBuilderImpl<byte[]>> builders = new ArrayList<>();
 
@@ -89,6 +90,15 @@ public class PulsarProducerInitialSequenceIdTest extends CamelTestSupport {
         assertEquals(41L, configured.get(0).getConf().getInitialSequenceId());
     }
 
+    @Test
+    public void testAConfiguredInitialSequenceIdOfZeroIsUsed() {
+        template.sendBody("direct:zero", "Hello");
+
+        List<ProducerBuilderImpl<byte[]>> zero = builders(ZERO_TOPIC);
+        assertEquals(1, zero.size());
+        assertEquals(0L, zero.get(0).getConf().getInitialSequenceId());
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
@@ -126,6 +136,9 @@ public class PulsarProducerInitialSequenceIdTest extends CamelTestSupport {
                 from("direct:configured").routeId("configured")
                         .to("pulsar:" + CONFIGURED_TOPIC + "?producerName=camel-producer-2"
                             + "&initialSequenceId=41");
+
+                from("direct:zero").routeId("zero")
+                        .to("pulsar:" + ZERO_TOPIC + "?producerName=camel-producer-3&initialSequenceId=0");
             }
         };
     }
