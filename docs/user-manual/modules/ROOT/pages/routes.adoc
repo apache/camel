@@ -281,7 +281,9 @@ when the application restarts: to compare two runs, compare the checksums.
 The checksum and revision are on the `Route` (`getChecksum()` and `getRevision()`), on the route in JMX (the
 `Checksum` and `Revision` attributes), in the `route` developer console, and in the Camel CLI
 (`camel get route --checksum`). The `route-structure` and `route-dump` developer consoles have the checksum of each
-route, so the facts a tool keeps per line of a route know which version of the route they belong to.
+route, so the facts a tool keeps per line of a route know which version of the route they belong to. The Camel CLI
+gives the checksum of the routes of a source file without running it (`camel cmd route-structure orders.camel.yaml`):
+it is the one the route has when it runs.
 
 The checksum needs `camel-xml-io` on the classpath, which comes with `camel-core`, `camel-management` and the Camel
 CLI connector. Without it the routes have no checksum, and no revision.
