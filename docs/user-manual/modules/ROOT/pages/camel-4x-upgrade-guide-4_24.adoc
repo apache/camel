@@ -1449,6 +1449,14 @@ it stayed started without receiving any event. The events of the time without a 
 `docker:events` or `docker:stats` consumer now closes its stream: before, the stream stayed open, and a route that was
 stopped and started again received every event once more for each restart.
 
+=== camel-keycloak - the consumer reads every event since the previous poll
+
+The `keycloak` consumer (`eventType=events` and `eventType=admin-events`) reads, after its first poll, all the events
+since the previous poll, page by page, with `maxResults` as the page size. Before, it read only the latest `maxResults`
+events and moved past the older ones, so when more than `maxResults` events happened between two polls the older ones
+were never consumed. A poll can now route more than `maxResults` events. The first poll still reads the latest
+`maxResults` events.
+
 === camel-influxdb2 - a write is synchronous and a rejected write fails the exchange
 
 The producer wrote with the batching write API of the InfluxDB client: the point was put into a buffer of the client
