@@ -18,13 +18,11 @@ package org.apache.camel.tooling.maven;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -114,6 +112,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     // Maven Resolver components
     private RepositorySystem repositorySystem;
     private RepositorySystemSession repositorySystemSession;
+    private RepositorySystemSession preferLocalSession;
     private Settings settings;
 
     // Embedded mode flag
@@ -338,7 +337,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // Get RepositorySystem and RepositorySystemSession from MIMA
         repositorySystem = mimaContext.repositorySystem();
-        repositorySystemSession = mimaContext.repositorySystemSession();
+        repositorySystemSession = withTrackingKeyCompat(mimaContext.repositorySystemSession());
 
         // Configure repositories (same as embedded mode)
         List<RemoteRepository> originalRepositories = new ArrayList<>();
@@ -559,25 +558,20 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             boolean transitively, boolean useApacheSnapshots)
             throws MavenResolutionException {
 
-        // When preferLocal is enabled and not already offline, try offline resolution first
-        // if the requested artifacts exist in the local Maven repository. This avoids expensive
-        // remote SNAPSHOT metadata checks for artifacts that are already cached locally.
-        if (preferLocal && !offline && existsInLocalRepo(dependencyGAVs)) {
-            try {
-                DefaultRepositorySystemSession offlineSession
-                        = new DefaultRepositorySystemSession(repositorySystemSession);
-                offlineSession.setOffline(true);
-                return doResolveArtifacts(rootGav, dependencyGAVs, extraRepositories,
-                        transitively, useApacheSnapshots, offlineSession);
-            } catch (MavenResolutionException e) {
-                LOG.debug("Offline resolution failed for locally cached artifacts, "
-                          + "falling back to online: {}",
-                        e.getMessage());
-            }
-        }
-
+        // When preferLocal is enabled, what is already in the local repository is used as is: SNAPSHOT
+        // metadata is not checked again remotely, while anything missing is still downloaded
+        RepositorySystemSession session = preferLocal && !fresh ? getPreferLocalSession() : repositorySystemSession;
         return doResolveArtifacts(rootGav, dependencyGAVs, extraRepositories,
-                transitively, useApacheSnapshots, repositorySystemSession);
+                transitively, useApacheSnapshots, session);
+    }
+
+    private RepositorySystemSession getPreferLocalSession() {
+        if (preferLocalSession == null) {
+            DefaultRepositorySystemSession session = new DefaultRepositorySystemSession(repositorySystemSession);
+            session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_NEVER);
+            preferLocalSession = session;
+        }
+        return preferLocalSession;
     }
 
     private List<MavenArtifact> doResolveArtifacts(
@@ -682,33 +676,6 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             repositories.forEach(r -> mre.getRepositories().add(r.getUrl()));
             throw mre;
         }
-    }
-
-    /**
-     * Checks if all the given dependency artifacts exist in the local Maven repository. For each artifact, verifies
-     * that the version directory exists and contains at least one JAR file. This handles both locally-installed
-     * SNAPSHOTs (artifact-version.jar) and remotely-downloaded SNAPSHOTs (artifact-timestamp-buildnumber.jar).
-     */
-    private boolean existsInLocalRepo(List<String> dependencyGAVs) {
-        File basedir = repositorySystemSession.getLocalRepository().getBasedir();
-        for (String gav : dependencyGAVs) {
-            MavenGav mg = MavenGav.parseGav(gav);
-            Path versionDir = basedir.toPath()
-                    .resolve(mg.getGroupId().replace('.', File.separatorChar))
-                    .resolve(mg.getArtifactId())
-                    .resolve(mg.getVersion());
-            if (!Files.isDirectory(versionDir)) {
-                return false;
-            }
-            try (var stream = Files.list(versionDir)) {
-                if (stream.noneMatch(p -> p.getFileName().toString().endsWith(".jar"))) {
-                    return false;
-                }
-            } catch (IOException e) {
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override
@@ -853,7 +820,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         try {
             LocalRepositoryManager lrm = repositorySystem.newLocalRepositoryManager(rssCopy,
                     new LocalRepository(localRepository));
-            rssCopy.setLocalRepositoryManager(lrm);
+            rssCopy.setLocalRepositoryManager(embeddedMode
+                    ? lrm : TrackingKeyCompatLocalRepositoryManager.wrap(rssCopy, lrm));
         } catch (Exception e) {
             LOG.warn("Failed to set custom local repository: {}", e.getMessage(), e);
         }
@@ -873,6 +841,17 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     public void setRemoteArtifactDownloadListener(RemoteArtifactDownloadListener remoteArtifactDownloadListener) {
         this.remoteArtifactDownloadListener = remoteArtifactDownloadListener;
+    }
+
+    /**
+     * Lets the local repository manager accept the artifacts tracked by Maven 3.10+ as downloaded from the requested
+     * repositories. See {@link TrackingKeyCompatLocalRepositoryManager}.
+     */
+    private static RepositorySystemSession withTrackingKeyCompat(RepositorySystemSession session) {
+        DefaultRepositorySystemSession compat = new DefaultRepositorySystemSession(session);
+        compat.setLocalRepositoryManager(
+                TrackingKeyCompatLocalRepositoryManager.wrap(compat, session.getLocalRepositoryManager()));
+        return compat;
     }
 
     private static MavenArtifact toMavenArtifact(ArtifactResult ar) {
