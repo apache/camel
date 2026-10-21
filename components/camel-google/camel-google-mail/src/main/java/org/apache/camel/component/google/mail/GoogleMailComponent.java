@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.mail;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.google.api.services.gmail.Gmail;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -33,6 +36,8 @@ public class GoogleMailComponent
     GoogleMailConfiguration configuration;
     @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Gmail client;
 
     public GoogleMailComponent() {
         super(GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
@@ -45,6 +50,27 @@ public class GoogleMailComponent
     @Override
     protected GoogleMailApiName getApiName(String apiNameStr) {
         return getCamelContext().getTypeConverter().convertTo(GoogleMailApiName.class, apiNameStr);
+    }
+
+    /**
+     * Gets the client for the configuration of the component, created on first use and kept until the component stops.
+     * It serves callers that have no endpoint, such as the {@code google-mail:update-message-labels} data type
+     * transformer. Endpoints do not use it: each endpoint creates its own client from its own options.
+     */
+    public Gmail getClient() {
+        Gmail answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = getClient(getConfiguration());
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     /**
@@ -103,5 +129,11 @@ public class GoogleMailComponent
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleMailEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        client = null;
+        super.doStop();
     }
 }

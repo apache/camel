@@ -76,6 +76,29 @@ class GoogleMailClientPerEndpointOptionsTest {
         }
     }
 
+    @Test
+    void shouldKeepOneClientForTheComponentConfiguration() throws Exception {
+        RecordingClientFactory factory = new RecordingClientFactory();
+        try (CamelContext context = new DefaultCamelContext()) {
+            GoogleMailComponent component = context.getComponent("google-mail", GoogleMailComponent.class);
+            component.setClientFactory(factory);
+            GoogleMailConfiguration configuration = new GoogleMailConfiguration();
+            configuration.setClientId("id");
+            configuration.setClientSecret("secret");
+            configuration.setRefreshToken("token-component");
+            component.setConfiguration(configuration);
+            context.start();
+
+            Gmail componentClient = component.getClient();
+            GoogleMailEndpoint endpoint
+                    = context.getEndpoint("google-mail://messages/list" + OAUTH + "token-a", GoogleMailEndpoint.class);
+
+            assertSame(componentClient, component.getClient());
+            assertNotSame(componentClient, endpoint.getClient());
+            assertEquals(List.of("token-component", "token-a"), factory.created);
+        }
+    }
+
     private static final class RecordingClientFactory implements GoogleMailClientFactory {
 
         private final List<String> created = new ArrayList<>();
