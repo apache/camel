@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GoogleMailStreamClientPerEndpointOptionsTest {
 
@@ -75,6 +77,21 @@ class GoogleMailStreamClientPerEndpointOptionsTest {
 
             assertNotSame(first.getClient(), second.getClient());
             assertEquals(Arrays.asList("user-a", "user-b"), factory.created);
+        }
+    }
+
+    @Test
+    void shouldFailWithoutCredentials() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getComponent("google-mail-stream", GoogleMailStreamComponent.class)
+                    .setClientFactory(new RecordingClientFactory());
+            context.start();
+
+            GoogleMailStreamEndpoint endpoint
+                    = context.getEndpoint("google-mail-stream://box-a", GoogleMailStreamEndpoint.class);
+
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, endpoint::getClient);
+            assertTrue(e.getMessage().contains("serviceAccountKey"), e.getMessage());
         }
     }
 
