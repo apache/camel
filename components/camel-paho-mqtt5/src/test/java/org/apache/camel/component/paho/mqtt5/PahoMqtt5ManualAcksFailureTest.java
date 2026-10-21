@@ -215,8 +215,9 @@ class PahoMqtt5ManualAcksFailureTest {
                 other.close();
             }
             await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getClient().isConnected());
-            // the automatic reconnect of Paho subscribes again, which may send the retained message again
-            await().pollDelay(1500, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS).until(() -> true);
+            // the automatic reconnect of Paho subscribes again (Retain Handling 0), so the broker sends the retained
+            // message again
+            await().atMost(10, TimeUnit.SECONDS).until(() -> attempts.get("retained-0").get() == 2);
             int retainedBefore = attempts.get("retained-0").get();
 
             publish(topic, "fail-1");
