@@ -11,6 +11,29 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.18.5 to 4.18.6
+
+=== camel-azure-eventhubs - per-partition checkpoint counters and timer; checkpoint window boundary fix
+
+Several fixes from 4.22.x have been brought forward to 4.18.6 to give this change a sound base.
+
+`checkpointBatchSize` and `checkpointBatchTimeout` now count events per partition, not across all
+partitions. Each partition has its own `AtomicInteger` counter and its own `ScheduledFuture` timer.
+A checkpoint on one partition no longer resets the count of another. Before this change, the shared
+counter mixed events across partitions, so the batch size was reached across all partitions combined
+and a checkpoint on a busy partition could reset the count for a quiet one.
+
+The `CamelAzureEventHubsCheckpointUpdatedBy` header can now be `timeout`. With `checkpointBatchTimeout`,
+the consumer now starts a new checkpoint window when the timer of the current window has run, and no
+longer when the wall clock passes the time the timer was scheduled for. Before, an event that completed
+in the millisecond in which the timer ran (or while the timer was taking the count) was counted in the
+window whose count had already been taken: it was checkpointed only with the next event, and when the
+partition stayed quiet it was delivered again after a restart. Routes that read this header may now see
+`timeout` more often.
+
+Checkpoint failures from the timer and from the batch-size trigger are now logged at `WARN` level with the full stack trace instead of
+at `DEBUG` level with the message only.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-docling - output path handling
