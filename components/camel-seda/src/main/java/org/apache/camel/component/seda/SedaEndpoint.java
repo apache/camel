@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
            producerIn = @BodyType(Carrier.ANY),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    byOption = @BodyType.When(option = "waitForTaskToComplete", value = "Never",
-                                                             carrier = Carrier.UNCHANGED),
+                                                             carriers = Carrier.UNCHANGED),
                                    description = "Unchanged for a message that expects no reply (InOnly). A message that"
                                                  + " expects one (InOut), or waitForTaskToComplete=Always, waits for the"
                                                  + " body the seda route ends with"))
