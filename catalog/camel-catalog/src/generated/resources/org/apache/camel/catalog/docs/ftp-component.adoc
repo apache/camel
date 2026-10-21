@@ -82,10 +82,16 @@ include::partial$component-endpoint-headers.adoc[]
 
 === FTPS host name verification
 
-The FTPS client that Camel creates checks that the certificate of the server matches the host of the endpoint, with
-the same rules as an HTTPS client. A connection to an IP address needs a certificate that lists that address as a
-subject alternative name. Set `hostnameVerification=false` to turn this check off; the certificate is still checked by
-the trust manager. The option does not apply to a custom `ftpClient`.
+The FTPS client that Camel creates checks, on the control connection, that the certificate of the server matches the
+host of the endpoint, with the same rules as an HTTPS client. The check happens during the TLS handshake, before login.
+Data connections (`PROT P`) use the same trust manager, but Apache Commons Net does not check their host name. A
+connection to an IP address needs a certificate that lists that address as a subject alternative name. Set
+`hostnameVerification=false` to turn this check off; the certificate is still checked by the trust manager. The option
+does not apply to a custom `ftpClient`.
+
+Use the `hostnameVerification` option to control the check. Setting `ftpClient.endpointCheckingEnabled` on the endpoint
+also turns it on or off, and takes precedence over `hostnameVerification`, but the security policy (for example
+`camel.main.profile=prod`) only checks the `hostnameVerification` option.
 
 === FTPS component default trust store
 
