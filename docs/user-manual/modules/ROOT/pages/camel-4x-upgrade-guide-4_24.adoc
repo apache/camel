@@ -2115,10 +2115,16 @@ of a producer, and its label is now `common,advanced` instead of `producer,advan
 consumer sends a noop before each poll as before.
 
 A consumer endpoint that already sets `sendNoop=false`, which was ignored before (for example a URI shared by `from`
-and `to`), now skips that noop and only checks whether the client still regards itself as connected. For ftp and ftps
-the client does not notice a connection that the server has closed, so such a consumer finds it only when the next
-operation fails, during the poll or while processing a file. After a failure caused by an I/O error, the consumer
-sends a noop before the next poll, and connects again if the noop fails. For sftp and mina-sftp the client notices a
-closed connection, but not one that dropped silently. For sftp the noop is a keep-alive message that does not wait for
-a reply, so it does not find such a connection either. Remove `sendNoop=false` from the consumer endpoint to keep the
-noop before each poll.
+and `to`), now skips that noop and only checks whether the client still regards itself as connected. Remove
+`sendNoop=false` from the consumer endpoint to keep the noop before each poll.
+
+For ftp and ftps the client does not notice a connection that the server has closed, so such a consumer finds it only
+when the next operation fails, during the poll or while processing a file. After a failure caused by an I/O error, the
+consumer sends a noop before the next poll, and connects again if the noop fails. If the FTP server closes idle
+connections and the `delay` between polls is longer than its idle timeout, every other poll fails and is logged before
+the consumer connects again. Keep `sendNoop=true` for such a consumer. Whatever `sendNoop` is, the ftp and ftps
+consumer still sends a noop before it renames or deletes a file on the server, as it does for each processed file
+unless `noop=true`.
+
+For sftp and mina-sftp the client notices a closed connection, but not one that dropped silently. For sftp the noop is
+a keep-alive message that does not wait for a reply, so it does not find such a connection either.

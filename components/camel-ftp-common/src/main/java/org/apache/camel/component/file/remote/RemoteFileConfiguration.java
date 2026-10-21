@@ -112,12 +112,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
                                                                               + "check that the connection is still valid, as a pre-write check before uploading files (producer) "
                                                                               + "and before each poll (consumer). <p/> This is enabled by default, which allows to silently "
                                                                               + "re-connect if the connection was lost. However if this causes problems, you can turn this option "
-                                                                              + "off, and the consumer then only checks whether the client still regards itself as connected. For "
-                                                                              + "ftp and ftps the client does not notice a connection that the server has closed, so it is found "
-                                                                              + "only when the next operation fails. After a failure caused by an I/O error, the consumer sends "
-                                                                              + "a noop before the next poll, and connects again if the noop fails. For sftp and mina-sftp the "
-                                                                              + "client notices a closed connection, but not one that "
-                                                                              + "dropped silently. For sftp the noop is a keep-alive message that does not wait for a reply.")
+                                                                              + "off, and then a lost connection may only be found when the next operation fails.")
     private boolean sendNoop = true;
 
     protected RemoteFileConfiguration() {
@@ -420,9 +415,10 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * causes problems, you can turn this option off, and the consumer then only checks whether the client still regards
      * itself as connected. For ftp and ftps the client does not notice a connection that the server has closed, so it
      * is found only when the next operation fails. After a failure caused by an I/O error, the consumer sends a noop
-     * before the next poll, and connects again if the noop fails. For sftp and mina-sftp the client notices a closed
-     * connection, but not one that dropped silently. For sftp the noop is a keep-alive message that does not wait for a
-     * reply.
+     * before the next poll, and connects again if the noop fails. If the server closes idle connections and the delay
+     * between polls is longer than its idle timeout, every other poll then fails, so keep this option on for such a
+     * consumer. For sftp and mina-sftp the client notices a closed connection, but not one that dropped silently. For
+     * sftp the noop is a keep-alive message that does not wait for a reply.
      */
     public void setSendNoop(boolean sendNoop) {
         this.sendNoop = sendNoop;

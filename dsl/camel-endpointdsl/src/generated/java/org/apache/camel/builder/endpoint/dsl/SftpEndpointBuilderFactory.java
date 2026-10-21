@@ -2699,15 +2699,8 @@ public interface SftpEndpointBuilderFactory {
          * valid, as a pre-write check before uploading files (producer) and
          * before each poll (consumer). This is enabled by default, which allows
          * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and the consumer then
-         * only checks whether the client still regards itself as connected. For
-         * ftp and ftps the client does not notice a connection that the server
-         * has closed, so it is found only when the next operation fails. After
-         * a failure caused by an I/O error, the consumer sends a noop before
-         * the next poll, and connects again if the noop fails. For sftp and
-         * mina-sftp the client notices a closed connection, but not one that
-         * dropped silently. For sftp the noop is a keep-alive message that does
-         * not wait for a reply.
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2726,15 +2719,8 @@ public interface SftpEndpointBuilderFactory {
          * valid, as a pre-write check before uploading files (producer) and
          * before each poll (consumer). This is enabled by default, which allows
          * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and the consumer then
-         * only checks whether the client still regards itself as connected. For
-         * ftp and ftps the client does not notice a connection that the server
-         * has closed, so it is found only when the next operation fails. After
-         * a failure caused by an I/O error, the consumer sends a noop before
-         * the next poll, and connects again if the noop fails. For sftp and
-         * mina-sftp the client notices a closed connection, but not one that
-         * dropped silently. For sftp the noop is a keep-alive message that does
-         * not wait for a reply.
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4729,15 +4715,8 @@ public interface SftpEndpointBuilderFactory {
          * valid, as a pre-write check before uploading files (producer) and
          * before each poll (consumer). This is enabled by default, which allows
          * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and the consumer then
-         * only checks whether the client still regards itself as connected. For
-         * ftp and ftps the client does not notice a connection that the server
-         * has closed, so it is found only when the next operation fails. After
-         * a failure caused by an I/O error, the consumer sends a noop before
-         * the next poll, and connects again if the noop fails. For sftp and
-         * mina-sftp the client notices a closed connection, but not one that
-         * dropped silently. For sftp the noop is a keep-alive message that does
-         * not wait for a reply.
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4756,15 +4735,8 @@ public interface SftpEndpointBuilderFactory {
          * valid, as a pre-write check before uploading files (producer) and
          * before each poll (consumer). This is enabled by default, which allows
          * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and the consumer then
-         * only checks whether the client still regards itself as connected. For
-         * ftp and ftps the client does not notice a connection that the server
-         * has closed, so it is found only when the next operation fails. After
-         * a failure caused by an I/O error, the consumer sends a noop before
-         * the next poll, and connects again if the noop fails. For sftp and
-         * mina-sftp the client notices a closed connection, but not one that
-         * dropped silently. For sftp the noop is a keep-alive message that does
-         * not wait for a reply.
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -6394,15 +6366,8 @@ public interface SftpEndpointBuilderFactory {
          * valid, as a pre-write check before uploading files (producer) and
          * before each poll (consumer). This is enabled by default, which allows
          * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and the consumer then
-         * only checks whether the client still regards itself as connected. For
-         * ftp and ftps the client does not notice a connection that the server
-         * has closed, so it is found only when the next operation fails. After
-         * a failure caused by an I/O error, the consumer sends a noop before
-         * the next poll, and connects again if the noop fails. For sftp and
-         * mina-sftp the client notices a closed connection, but not one that
-         * dropped silently. For sftp the noop is a keep-alive message that does
-         * not wait for a reply.
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -6421,15 +6386,8 @@ public interface SftpEndpointBuilderFactory {
          * valid, as a pre-write check before uploading files (producer) and
          * before each poll (consumer). This is enabled by default, which allows
          * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and the consumer then
-         * only checks whether the client still regards itself as connected. For
-         * ftp and ftps the client does not notice a connection that the server
-         * has closed, so it is found only when the next operation fails. After
-         * a failure caused by an I/O error, the consumer sends a noop before
-         * the next poll, and connects again if the noop fails. For sftp and
-         * mina-sftp the client notices a closed connection, but not one that
-         * dropped silently. For sftp the noop is a keep-alive message that does
-         * not wait for a reply.
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

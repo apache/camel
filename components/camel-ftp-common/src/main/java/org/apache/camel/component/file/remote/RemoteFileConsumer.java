@@ -220,6 +220,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected void disconnect() {
         // eager indicate we are no longer logged in
         loggedIn = false;
+        // the next poll connects again, so it does not need a noop to check the connection
+        sendNoopOnNextPoll = false;
 
         // disconnect
         try {
@@ -240,6 +242,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected void forceDisconnect() {
         // eager indicate we are no longer logged in
         loggedIn = false;
+        // the next poll connects again, so it does not need a noop to check the connection
+        sendNoopOnNextPoll = false;
 
         // disconnect
         try {
@@ -257,6 +261,9 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     /**
      * Whether to send a noop before each poll to check that the connection is still valid (the sendNoop option).
+     * <p/>
+     * Even when this returns false, the consumer sends a noop before the next poll after an operation failed with an
+     * I/O error, see {@link #sendNoopOnNextPollIfIOFailure(Throwable)}.
      */
     protected boolean isSendNoop() {
         return getEndpoint().getConfiguration().isSendNoop();

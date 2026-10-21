@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for the connection check that {@link RemoteFileConsumer#connectIfNecessary()} does before each poll: by
  * default it sends a noop, and with sendNoop=false it only checks the connection state of the client. With
  * sendNoop=false the consumer sends a noop before the next poll after an I/O failure, also when the ftp consumer
- * ignores the failure as a file that does not exist.
+ * ignores the failure as a file that does not exist, unless it disconnects before that poll.
  */
 class RemoteFileConsumerSendNoopTest extends CamelTestSupport {
 
@@ -170,6 +170,41 @@ class RemoteFileConsumerSendNoopTest extends CamelTestSupport {
         verify(operations, never()).sendNoop();
         verify(operations, never()).forceDisconnect();
         verify(operations, never()).connect(any(), any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ftp", "ftps", "sftp" })
+    void testSendNoopFalseSendsNoNoopAfterIOFailureAndForceDisconnect(String scheme) {
+        RemoteFileConsumer<?> consumer = createLoggedInConsumer(scheme + "://localhost/inbox?sendNoop=false");
+
+        // the poll fails with an I/O error, and the poll strategy disconnects
+        consumer.handleException("Error processing file", null,
+                new GenericFileOperationFailedException("Cannot retrieve file", new SocketException("Connection reset")));
+        consumer.forceDisconnect();
+
+        // the next poll connects again without a noop on the closed client
+        consumer.connectIfNecessary();
+
+        verify(operations, times(1)).forceDisconnect();
+        verify(operations, never()).sendNoop();
+        verify(operations, times(1)).connect(any(), any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ftp", "ftps", "sftp" })
+    void testSendNoopFalseSendsNoNoopAfterIOFailureAndDisconnect(String scheme) {
+        RemoteFileConsumer<?> consumer = createLoggedInConsumer(scheme + "://localhost/inbox?sendNoop=false&disconnect=true");
+
+        consumer.handleException("Error processing file", null,
+                new GenericFileOperationFailedException("Cannot retrieve file", new SocketException("Connection reset")));
+        // the consumer disconnects after the poll (disconnect=true)
+        consumer.disconnect();
+
+        // the next poll connects again without a noop on the closed client
+        consumer.connectIfNecessary();
+
+        verify(operations, never()).sendNoop();
+        verify(operations, times(1)).connect(any(), any());
     }
 
     @ParameterizedTest
