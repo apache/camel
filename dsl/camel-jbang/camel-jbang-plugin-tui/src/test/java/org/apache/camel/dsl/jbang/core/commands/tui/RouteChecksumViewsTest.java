@@ -74,8 +74,8 @@ class RouteChecksumViewsTest {
 
         String rendered = TuiTestHelper.renderToString(new RoutesTab(ctx), 160, 30);
 
-        assertThat(rendered).contains("orders rev 3");
-        assertThat(rendered).doesNotContain("stock rev");
+        assertThat(rendered).contains("orders (rev 3)");
+        assertThat(rendered).doesNotContain("stock (rev");
         // not a column of hex
         assertThat(rendered).doesNotContain("aa4535cb1725");
     }
@@ -84,7 +84,7 @@ class RouteChecksumViewsTest {
     void aLongIdIsCutToLeaveRoomForTheRevision() {
         RouteInfo route = route("a-route-with-a-rather-long-id", "aa4535cb1725", 12);
 
-        assertThat(text(RoutesTab.routeIdLine(route, 24))).isEqualTo("a-route-with-a... rev 12");
+        assertThat(text(RoutesTab.routeIdLine(route, 24))).isEqualTo("a-route-with... (rev 12)");
         assertThat(text(RoutesTab.routeIdLine(route("orders", null, 0), 24))).isEqualTo("orders");
     }
 

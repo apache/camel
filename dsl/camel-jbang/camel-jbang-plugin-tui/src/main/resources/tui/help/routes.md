@@ -6,7 +6,7 @@ they are sent to. A typical integration has multiple routes working together.
 
 ## Route Table Columns
 
-- **ROUTE** — Unique route identifier (e.g., `timer-to-log`, `seda-consumer`). A route added again changed in this run, such as by a reload of its file, has its revision after the id, muted: `orders rev 3` runs the third version of its route since the integration started
+- **ROUTE** — Unique route identifier (e.g., `timer-to-log`, `seda-consumer`). A route added again changed in this run, such as by a reload of its file, has its revision after the id, dimmed: `orders (rev 3)` runs the third version of its route since the integration started
 - **FROM** — The endpoint that triggers this route (e.g., `timer`, `kafka`, `file`). This is the source of messages
 - **STATUS** — Route state: `Started` (running), `Stopped` (not running), or `Suspended` (paused, can be resumed)
 - **MSG/S** or **MSG/M** — Current message throughput (per second or per minute) for this route. Configure in Settings (F2)

@@ -223,7 +223,7 @@ The Info panel of a route in the topology has its checksum: a short hash of the 
 run (see xref:routes.adoc#_route_checksum_and_revision[Route Checksum and Revision]). `camel cmd route-structure` gives
 the checksum of the routes of a source file without running them, so you can tell whether a file has the route that
 runs. A route added again changed in this run, such as by a reload of its file, has its revision under it
-(`Revision: 3 · 2 changes`), and the Routes tab has the revision after the id of the route (`orders rev 3`).
+(`Revision: 3 · 2 changes`), and the Routes tab has it after the id of the route, dimmed: `orders (rev 3)`.
 
 image::jbang/camel-tui-diagram-route-revision.png[The Info panel of the orders route in the topology: its checksum, and revision 3 after two reloads changed it]
 

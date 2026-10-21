@@ -682,9 +682,9 @@ class RoutesTab extends AbstractDiagramTab {
     }
 
     /**
-     * The route id, and the revision muted after it when the route was added again changed in this run, such as by a
-     * reload (CAMEL-25771): "orders rev 3" runs the third version of its route since the start. The id is cut to leave
-     * room for the revision.
+     * The route id, and the revision dimmed after it when the route was added again changed in this run, such as by a
+     * reload (CAMEL-25771): "orders (rev 3)" runs the third version of its route since the start. The id is cut to
+     * leave room for the revision.
      */
     static Line routeIdLine(RouteInfo route, int width) {
         String id = route.routeId != null ? route.routeId : "";
@@ -692,10 +692,10 @@ class RoutesTab extends AbstractDiagramTab {
         if (route.revision <= 1) {
             return Line.from(Span.styled(TuiHelper.truncate(id, width), idStyle));
         }
-        String rev = " rev " + route.revision;
+        String rev = " (rev " + route.revision + ")";
         return Line.from(
                 Span.styled(TuiHelper.truncate(id, Math.max(4, width - CharWidth.of(rev))), idStyle),
-                Span.styled(rev, Theme.muted()));
+                Span.styled(rev, Style.EMPTY.dim()));
     }
 
     /**
