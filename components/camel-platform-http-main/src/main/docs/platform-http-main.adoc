@@ -42,6 +42,28 @@ These features are as follows:
 
 You configure these features in the `application.properties` file using the `camel.server.xxx` and `camel.management.xxx` options.
 
+== Sharing the port with the management server
+
+The management features (`/observe/...` and `/q/...`) are served by the HTTP management server (`camel.management.enabled=true`).
+When the HTTP server is enabled as well and both have the same port (`camel.server.port` and `camel.management.port` both default to 8080),
+the management server does not start a server of its own. The HTTP server serves the management endpoints instead, with its own host, path,
+SSL and authentication. For example, authentication configured on the HTTP server for `/*` applies to the management endpoints too.
+
+The HTTP server cannot apply the host, path, SSL (`useGlobalSslContextParameters`) or authentication options of the management server.
+Camel therefore fails to start when the management server shares the port and one of them is configured
+(a host or path equal to the one of the HTTP server is accepted). Give the management server a port of its own to apply them:
+
+[source,properties]
+----
+camel.server.enabled=true
+camel.server.port=8080
+
+camel.management.enabled=true
+camel.management.port=8081
+camel.management.host=127.0.0.1
+camel.management.healthCheckEnabled=true
+----
+
 == JWT authentication
 
 The embedded HTTP server can validate JWT bearer tokens on incoming requests.
