@@ -215,6 +215,20 @@ class KeycloakConsumerMoreThanMaxResultsTest extends CamelTestSupport {
 
         assertEquals(0, poll("events"));
         assertEquals(0, poll("admin-events"));
+
+        // that was no answer, not a realm without events: the next poll is still a first poll, which routes the
+        // latest maxResults events and not the whole history of the realm
+        doPreSetup();
+        events.add(0, event(2000, "user-2"));
+        events.add(0, event(3000, "user-3"));
+        events.add(0, event(4000, "user-4"));
+        adminEvents.add(0, adminEvent(2000, "users/2"));
+        adminEvents.add(0, adminEvent(3000, "users/3"));
+        adminEvents.add(0, adminEvent(4000, "users/4"));
+        assertEquals(2, poll("events"));
+        assertEquals(2, poll("admin-events"));
+        assertEquals(0, poll("events"));
+        assertEquals(0, poll("admin-events"));
     }
 
     private int poll(String routeId) throws Exception {

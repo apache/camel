@@ -17,7 +17,6 @@
 package org.apache.camel.component.keycloak;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -132,6 +131,10 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
                 first, // first
                 max // max
         ), EventRepresentation::getTime);
+        if (events == null) {
+            // no answer: the next poll is still a first poll, and the checkpoint does not move
+            return new LinkedList<>();
+        }
 
         Queue<Exchange> queue = new LinkedList<>();
         long highestEventTime = lastEventTime != null ? lastEventTime : 0;
@@ -191,6 +194,10 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
      * following pages are read as well, until a page reaches an event older than the checkpoint or is the last one.
      * When new events arrive while the pages are read, the next page repeats events of the previous one; the
      * fingerprints skip them.
+     *
+     * @return the events, or {@code null} when the first page is a response without content (the client returns
+     *         {@code null} for it): that is no answer, and not a realm without events, so the caller must neither route
+     *         anything nor move the checkpoint
      */
     private <T> List<T> fetchNewEvents(BiFunction<Integer, Integer, List<T>> fetch, ToLongFunction<T> eventTime) {
         KeycloakConfiguration config = getEndpoint().getConfiguration();
@@ -199,7 +206,7 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
         List<T> page = fetch.apply(first, max);
         if (page == null) {
             // the client returns null for a response without content
-            return Collections.emptyList();
+            return null;
         }
         if (lastEventTime == null || max <= 0 || page.size() < max) {
             return page;
@@ -273,6 +280,10 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
                         first, // first
                         max // max
                 ), AdminEventRepresentation::getTime);
+        if (adminEvents == null) {
+            // no answer: the next poll is still a first poll, and the checkpoint does not move
+            return new LinkedList<>();
+        }
 
         Queue<Exchange> queue = new LinkedList<>();
         long highestEventTime = lastEventTime != null ? lastEventTime : 0;
