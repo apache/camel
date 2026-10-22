@@ -1262,10 +1262,11 @@ the CA (an empty one is enough) to `trusted/crl` or `issuer/crl`. A custom valid
 
 With neither option, the client does not connect to such an endpoint. It logs a `WARN` message
 `Failed to connect: The certificate of the OPC UA server cannot be validated`, followed by the endpoint and its
-security policy, and tries again every 10 seconds. A producer fails with `IllegalStateException: No connected`, caused
-by the same message. A server certificate refused by the trust list or by a `certificateValidator` is logged at `WARN`
-as `Failed to connect, because a certificate or security check failed`. To restore the previous behaviour, set the new
-`trustAllCertificates` option to `true`. This is insecure: the client then does not authenticate the server.
+security policy, and tries again after `reconnectTimeout` (10 seconds by default). A producer fails with
+`IllegalStateException: No connected`, caused by the same message. A server certificate refused by the trust list or by
+a `certificateValidator` is logged at `WARN` as `Failed to connect, because a certificate or security check failed`. To
+restore the previous behaviour, set the new `trustAllCertificates` option to `true`. This is insecure: the client then
+does not authenticate the server.
 
 The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
 use the security policy `None` are not affected.
@@ -2237,9 +2238,9 @@ Bad status of a failed sensor.
 
 Since 4.16, a `milo-client` consumer whose monitored item could not be created, for example because the node does not
 exist, received nothing. Now it receives one `DataValue` with the bad status code. The
-monitored item is then created again every 10 seconds on the same connection, without delivering anything for a failed
-attempt, until the server accepts it; its first value is the current value of the node. A route restart or a
-connection that Camel rebuilds creates it again too.
+monitored item is then created again every `reconnectTimeout` (10 seconds by default) on the same connection, without
+delivering anything for a failed attempt, until the server accepts it; its first value is the current value of the node.
+A route restart or a connection that Camel rebuilds creates it again too.
 
 A node ID with a namespace URI (`nsu=`) that is not in the namespace table of the server no longer takes the whole
 client connection down, including the consumers of other nodes. Its consumer receives one `DataValue` with
@@ -2292,7 +2293,9 @@ node, and the current values delivered after an outage still arrive.
 `setReconnectTimeout` on the `milo-client` and `milo-browse` components set the request timeout of every service call,
 and the delay between two connection attempts stayed 10 seconds. It now sets that delay, which the new
 `reconnectTimeout` option of both endpoints and components sets too; its default of 10000 milliseconds is the previous
-delay, and a value of 0 or less is rejected. To set the request timeout, use the `requestTimeout` option instead
+delay, and a value of 0 or less is rejected. The option also sets how often the monitored items that the server
+refused are created again: a lower value repeats the `CreateMonitoredItems` request for them, for example for a node ID
+with a typo, more often while the connection lasts. To set the request timeout, use the `requestTimeout` option instead
 (for example `camel.component.milo-client.requestTimeout`, or `getConfiguration().setRequestTimeout(...)` in Java).
 
 === camel-milo - the sessionTimeout of the components reaches their endpoints
