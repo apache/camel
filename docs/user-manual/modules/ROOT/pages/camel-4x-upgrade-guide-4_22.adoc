@@ -236,6 +236,13 @@ earlier in the route.
 Signatures created by earlier versions over a `File`, `Path`, `GenericFile` or other non-`byte[]`/`InputStream` body
 may not verify and need to be created again.
 
+=== camel-support - the error of a failed API component call names its arguments only
+
+When the call of an API component fails, such as one of fhir, box, google-drive or twilio, the error message now names
+the arguments of the call, as in `Error invoking resourceById with [password, resourceClass, serverUrl, stringId,
+username]: ...`, and no longer shows their values. The arguments hold the options of the endpoint, such as a password or
+a token, and the message data. The debug log of the call masks the values of the sensitive options.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
