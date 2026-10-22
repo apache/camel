@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.aws2.kinesis.consumer;
 
+import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.ResumeAction;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
@@ -61,11 +62,26 @@ public class KinesisResumeAction implements ResumeAction {
         this.shardId = shardId;
     }
 
+    /**
+     * Starts the shard of this action after the sequence number stored for it in the resume cache. The adapter calls
+     * this for every entry of the cache, so the entries of the other shards are left alone. The value is the sequence
+     * number as a String, or the {@link KinesisOffset} that {@link KinesisResumeStrategy} stores.
+     *
+     * @return false, the entry is not invalidated: it is the position of the shard when it needs a new shard iterator
+     *         again
+     */
     @Override
     public boolean evalEntry(Object shardId, Object sequenceNumber) {
-        builder.shardId((String) shardId);
+        if (this.shardId != null && !this.shardId.equals(shardId)) {
+            return false;
+        }
+        Object value = sequenceNumber instanceof Offset<?> offset ? offset.getValue() : sequenceNumber;
+        if (value == null) {
+            return false;
+        }
+        builder.shardId(shardId.toString());
         builder.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
-        builder.startingSequenceNumber((String) sequenceNumber);
+        builder.startingSequenceNumber(value.toString());
         return false;
     }
 }
