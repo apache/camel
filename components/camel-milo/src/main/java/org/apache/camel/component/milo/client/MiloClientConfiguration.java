@@ -144,6 +144,7 @@ public class MiloClientConfiguration implements Cloneable {
         this.applicationUri = other.applicationUri;
         this.productUri = other.productUri;
         this.requestTimeout = other.requestTimeout;
+        this.sessionTimeout = other.sessionTimeout;
         this.reconnectTimeout = other.reconnectTimeout;
         this.channelLifetime = other.channelLifetime;
         this.sessionName = other.sessionName;
