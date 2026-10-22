@@ -83,6 +83,11 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
                                                 + " text first. Bytes, a stream or no body fail. CCB_GET and CCB_DEL do not use"
                                                 + " the body: the id is the CamelCouchbaseId header"),
            producerOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Boolean", dependsOn = "operation",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "CCB_GET", carriers = Carrier.POJO,
+                                                          javaType = "com.couchbase.client.java.kv.GetResult"),
+                                           @BodyType.When(option = "operation", value = "CCB_DEL", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String") },
                                    description = "true for CCB_PUT, the default; the GetResult of the Couchbase SDK for"
                                                  + " CCB_GET, and the MutationResult as text for CCB_DEL. The producer removes"
                                                  + " the CamelCouchbaseId header"))

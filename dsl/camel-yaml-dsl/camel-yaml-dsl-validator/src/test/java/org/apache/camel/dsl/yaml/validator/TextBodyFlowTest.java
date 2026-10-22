@@ -1495,7 +1495,8 @@ public class TextBodyFlowTest {
     public void testTheBodyOfMoreComponents() {
         // ssh runs the body as a command and gives its output as a stream, and so does its consumer; spring-redis keeps
         // the body for SET, its default command, gives text for PING and is not known for GET; a couchbase row read with
-        // fullDocument=false is JSON text; the response of solr is a Map, and slack also sends an object as its text
+        // fullDocument=false is JSON text, and so is the result of CCB_DEL, while CCB_GET gives the GetResult of the SDK;
+        // the response of solr is a Map, and slack also sends an object as its text
         String yaml = """
                 - route:
                     id: shell
@@ -1555,6 +1556,24 @@ public class TextBodyFlowTest {
                             name: id
                             simple: ${body[id]}
                 - route:
+                    id: remove
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: couchbase:http://localhost?bucket=orders&operation=CCB_DEL
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: fetch
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: couchbase:http://localhost?bucket=orders&operation=CCB_GET
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
                     id: search
                     from:
                       uri: timer:tick
@@ -1576,9 +1595,10 @@ public class TextBodyFlowTest {
                             json: {}
                         - to: slack:#orders
                 """;
-        assertThat(lines(yaml)).hasSize(4)
+        assertThat(lines(yaml)).hasSize(5)
                 .anySatisfy(
                         m -> assertThat(m).contains("route shell: to: ssh needs the body as text, bytes, a stream or a file"))
+                .anySatisfy(m -> assertThat(m).contains("route remove: simple reads a field of the body (${body[id]})"))
                 .anySatisfy(m -> assertThat(m).contains("route output: simple reads a field of the body (${body[id]})"))
                 .anySatisfy(m -> assertThat(m).contains("route ping: simple reads a field of the body (${body[id]})"))
                 .anySatisfy(m -> assertThat(m).contains("route rows: simple reads a field of the body (${body[id]})"));

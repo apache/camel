@@ -112,9 +112,10 @@ import org.springframework.data.redis.core.RedisTemplate;
                                                  + " instead of the command option: SET, the default, PUBLISH and the other"
                                                  + " commands without a result keep the body; a Boolean or a number for those"
                                                  + " that test, count or increment, a Set or a List for those that read several"
-                                                 + " members, a Map for HGETALL, and the stored object for GET and the commands"
-                                                 + " that read or pop one value. A null result, such as GET of a missing key,"
-                                                 + " keeps the body as well"))
+                                                 + " members, a Map for HGETALL, and the stored object, which can be anything,"
+                                                 + " for GET, HGET, LINDEX, LPOP, RPOP, SPOP and the other commands that read"
+                                                 + " or pop one value: these are not known. A null result, such as GET of a"
+                                                 + " missing key, keeps the body as well"))
 public class RedisEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
