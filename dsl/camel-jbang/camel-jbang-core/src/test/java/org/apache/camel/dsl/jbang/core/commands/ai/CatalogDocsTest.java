@@ -147,6 +147,11 @@ class CatalogDocsTest {
                                                              + " With output=bytes: bytes (byte[]); output=DOM: pojo"));
         assertTrue(xslt.getString("bodyTypesHint").contains("a side not listed is not known"));
 
+        // the options that make a side not known read as a list
+        JsonObject jms = catalogDoc(Map.of("name", "jms", "kind", "component", "includeOptions", false));
+        assertTrue(((JsonObject) jms.get("bodyTypes")).getString("producerIn")
+                .endsWith(". Not known when jmsMessageType, messageConverter or transferExchange is set"));
+
         JsonObject json = catalogDoc(Map.of("name", "json", "kind", "dataformat", "includeOptions", false));
         assertTrue(((JsonObject) json.get("bodyTypes")).getString("unmarshalOut").startsWith("map or list. "));
 
