@@ -194,8 +194,9 @@ public final class SimpleSyntaxHints {
      * {@code body != null && body.size() > 0} becomes {@code ${body} != null && ${body.size()} > 0}.
      * <p/>
      * Each comparison is wrapped, not only the first, so that a compound condition reads the way it looks (CAMEL-24920,
-     * CAMEL-24921). An operator counts only when whitespace surrounds it outside quotes, which is what keeps
-     * {@code ${header.Content-Length}} and {@code ${date:now:yyyy-MM-dd}} a plain function.
+     * CAMEL-24921). An operator counts only when whitespace surrounds it outside quotes, brackets and parentheses,
+     * which is what keeps {@code ${header.Content-Length}} and {@code ${date:now:yyyy-MM-dd}} a plain function, and an
+     * operator in an index or an argument, as in {@code ${iif(header.a > 0, 'x', 'y')}}, where it is.
      */
     public static String wrapFunctions(String text) {
         StringBuilder answer = new StringBuilder();
@@ -218,13 +219,18 @@ public final class SimpleSyntaxHints {
     private static int logicalOperator(String text, int from) {
         boolean single = false;
         boolean dubble = false;
+        int depth = 0;
         for (int i = from; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '\'' && !dubble) {
                 single = !single;
             } else if (c == '"' && !single) {
                 dubble = !dubble;
-            } else if (!single && !dubble && c == ' ') {
+            } else if (!single && !dubble && (c == '(' || c == '[')) {
+                depth++;
+            } else if (!single && !dubble && (c == ')' || c == ']')) {
+                depth--;
+            } else if (!single && !dubble && depth == 0 && c == ' ') {
                 for (String op : new String[] { "&& ", "|| " }) {
                     if (text.startsWith(op, i + 1)) {
                         return i + 1;
@@ -278,17 +284,26 @@ public final class SimpleSyntaxHints {
         return left + op + right;
     }
 
-    /** The index of the text outside single and double quotes, or -1. */
+    /**
+     * The index of the text outside single and double quotes, brackets and parentheses, or -1: an operator inside them
+     * belongs to an index or an argument, as in {@code body.?[qty < 1].size() > 0}, which was split at the {@code <}
+     * and reported as {@code ${body.?[qty} < 1].size() > 0}, text that was never written.
+     */
     private static int indexOutsideQuotes(String text, String find) {
         boolean single = false;
         boolean dubble = false;
+        int depth = 0;
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '\'' && !dubble) {
                 single = !single;
             } else if (c == '"' && !single) {
                 dubble = !dubble;
-            } else if (!single && !dubble && text.startsWith(find, i)) {
+            } else if (!single && !dubble && (c == '(' || c == '[')) {
+                depth++;
+            } else if (!single && !dubble && (c == ')' || c == ']')) {
+                depth--;
+            } else if (!single && !dubble && depth == 0 && text.startsWith(find, i)) {
                 return i;
             }
         }
