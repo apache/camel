@@ -309,6 +309,52 @@ public class MiloClientDevConsoleTest extends AbstractMiloServerTest {
     }
 
     @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void clientIdTellsTheConnectionsOfAServerApart() throws Exception {
+        template.sendBody("milo-server:otherItem", "Bar");
+        otherEndpoint.expectedMessageCount(1);
+        context.getRouteController().startRoute("other");
+        otherEndpoint.assertIsSatisfied();
+        template.sendBody("milo-server:monitoredItem", "Foo");
+        timeoutMonitoredEndpoint.expectedMessageCount(1);
+        context.getRouteController().startRoute("timeoutMonitored");
+        timeoutMonitoredEndpoint.assertIsSatisfied();
+
+        // both connections have the endpoint of the server, the second one has a client id
+        final DevConsole console = resolveConsole();
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            final JsonArray connections = connections(console);
+            assertEquals(2, connections.size());
+            final JsonObject other = (JsonObject) connections.get(0);
+            assertEquals("opc.tcp://foo:xxxxxx@localhost:" + getServerPort(), other.getString("endpointUri"));
+            // omitted when none is set
+            assertFalse(other.containsKey("clientId"));
+            assertEquals(List.of("other"), other.getCollection("routeIds"));
+            assertEquals(1, other.getInteger("monitoredNodes"));
+            final JsonObject timeout = (JsonObject) connections.get(1);
+            assertEquals(other.getString("endpointUri"), timeout.getString("endpointUri"));
+            assertEquals("timeout", timeout.getString("clientId"));
+            assertEquals(List.of("timeoutMonitored"), timeout.getCollection("routeIds"));
+            assertEquals(1, timeout.getInteger("monitoredNodes"));
+        });
+
+        assertEquals(String.format("%n    Endpoint: opc.tcp://foo:xxxxxx@localhost:%d", getServerPort())
+                     + String.format("%n    Routes: other")
+                     + String.format("%n    Session Active: true")
+                     + String.format("%n    Monitored Nodes: 1")
+                     + String.format("%n    Refused Nodes: 0")
+                     + "\n"
+                     + String.format("%n    Endpoint: opc.tcp://foo:xxxxxx@localhost:%d", getServerPort())
+                     + String.format("%n    Client Id: timeout")
+                     + String.format("%n    Routes: timeoutMonitored")
+                     + String.format("%n    Session Active: true")
+                     + String.format("%n    Monitored Nodes: 1")
+                     + String.format("%n    Refused Nodes: 0")
+                     + "\n",
+                console.call(DevConsole.MediaType.TEXT));
+    }
+
+    @Test
     @Timeout(value = 90, unit = TimeUnit.SECONDS)
     void lostSessionKeepsTheNodesOfItsConnection() throws Exception {
         startNodes();

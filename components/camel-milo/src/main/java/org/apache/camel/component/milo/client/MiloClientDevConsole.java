@@ -48,6 +48,7 @@ public class MiloClientDevConsole extends AbstractDevConsole {
 
     public record ConnectionEntry(
             @Metadata(description = "The OPC UA server endpoint, with its password masked") String endpointUri,
+            @Metadata(description = "The client id of the connection (only present when one is set)") String clientId,
             @Metadata(description = "The ids of the routes whose consumers use the connection") List<String> routeIds,
             @Metadata(description = "Whether the session with the server is active") boolean sessionActive,
             @Metadata(description = "The number of nodes that have a monitored item on the server") int monitoredNodes,
@@ -67,6 +68,9 @@ public class MiloClientDevConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
         for (ConnectionEntry connection : connections()) {
             sb.append(String.format("%n    Endpoint: %s", connection.endpointUri()));
+            if (connection.clientId() != null) {
+                sb.append(String.format("%n    Client Id: %s", connection.clientId()));
+            }
             sb.append(String.format("%n    Routes: %s", String.join(", ", connection.routeIds())));
             sb.append(String.format("%n    Session Active: %b", connection.sessionActive()));
             sb.append(String.format("%n    Monitored Nodes: %d", connection.monitoredNodes()));
@@ -111,8 +115,9 @@ public class MiloClientDevConsole extends AbstractDevConsole {
             for (RefusedNode node : state.refusedNodes()) {
                 refusedNodes.add(new RefusedNodeEntry(node.nodeId(), statusName(node.status()), node.reason()));
             }
+            MiloClientConfiguration configuration = entry.getKey().getConfiguration();
             connections.add(new ConnectionEntry(
-                    URISupport.sanitizeUri(entry.getKey().getConfiguration().getEndpointUri()), entry.getValue(),
+                    URISupport.sanitizeUri(configuration.getEndpointUri()), configuration.getClientId(), entry.getValue(),
                     state.sessionActive(), state.monitoredNodes(), refusedNodes));
         }
         return connections;

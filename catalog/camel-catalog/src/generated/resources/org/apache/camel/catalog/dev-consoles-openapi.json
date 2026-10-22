@@ -4508,6 +4508,10 @@
 														"type": "string",
 														"description": "The OPC UA server endpoint, with its password masked"
 													},
+													"clientId": {
+														"type": "string",
+														"description": "The client id of the connection (only present when one is set)"
+													},
 													"routeIds": {
 														"type": "array",
 														"items": {
