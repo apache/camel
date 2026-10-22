@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
@@ -77,12 +79,17 @@ public class KameletComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(KameletComponent.class);
 
+    // how long the removal of a route waits before it checks again whether the thread pools of the route are idle
+    private static final long ROUTE_REMOVAL_RETRY_MILLIS = 100;
+
     private final ReentrantLock lock = new ReentrantLock();
 
     private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
 
     // stops and removes the routes of Kamelet endpoints that are shut down, off the threads that route the messages
-    private volatile ExecutorService routeRemover;
+    private volatile ScheduledExecutorService routeRemover;
+    // the thread pools that the processors of each route created (such as threads()), by route id
+    private final Map<String, List<ThreadPoolExecutor>> routeThreadPools = new ConcurrentHashMap<>();
 
     // active consumers
     private final Map<String, KameletConsumer> consumers = new HashMap<>();
@@ -539,10 +546,11 @@ public class KameletComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ExecutorService executor = routeRemover;
+        ScheduledExecutorService executor = routeRemover;
         if (executor == null || executor.isShutdown()) {
-            // the threads are created on first use
-            routeRemover = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "KameletRouteRemover");
+            // the thread is created on first use
+            routeRemover = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "KameletRouteRemover");
         }
     }
 
@@ -551,10 +559,23 @@ public class KameletComponent extends DefaultComponent {
      * down (it is not shut down while the context runs unless it was used once and discarded, or its route consumed
      * from the Kamelet and was removed).
      * <p/>
-     * The route is stopped and removed on a thread of this component, after the exchange whose call is completing is
-     * done: the calling route can continue on a thread that the Kamelet's route owns (threads(), an asynchronous
-     * producer), and stopping the route shuts that thread pool down. Stopping a route also holds the lock of the
-     * CamelContext while the route shuts down gracefully.
+     * The route is stopped and removed on a thread of this component: stopping a route holds the lock of the
+     * CamelContext while the route shuts down gracefully. The calling route can continue on a thread that the Kamelet's
+     * route owns (threads(), an asynchronous producer), and stopping the route shuts that thread pool down, which
+     * interrupts that thread. So the removal waits:
+     * <ul>
+     * <li>until the exchange whose call is completing on this thread is done, when the endpoint is shut down inside the
+     * producer callback (toD);</li>
+     * <li>and until no thread of the thread pools that the route's processors created (threads(), and the other EIPs
+     * with an executor service) runs a task. This covers an endpoint that is shut down where the exchange of the
+     * calling route is not known: recipientList with cacheSize=-1 (the endpoint is shut down when the producer is
+     * released, after the call), routingSlip with cacheSize=-1 (its copy of the exchange has no unit of work) and
+     * pollEnrich. The route is used only by the endpoint that created it, so its thread pools stay idle once the
+     * calling route has left them.</li>
+     * </ul>
+     * Not covered: a thread pool that a component of the route creates for itself (such as the worker pool of an
+     * asynchronous Kafka producer, which waits for its running tasks when it stops, up to its shutdown timeout), and an
+     * executor service that is not a {@link ThreadPoolExecutor} (virtual threads), which the removal cannot tell idle.
      *
      * @param route    the route the endpoint created
      * @param exchange the exchange whose call of the endpoint is completing on this thread, or {@code null}
@@ -564,22 +585,22 @@ public class KameletComponent extends DefaultComponent {
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange done) {
-                    submitRemoveRoute(route);
+                    submitRemoveRoute(route, 0);
                 }
             });
         } else {
-            submitRemoveRoute(route);
+            submitRemoveRoute(route, 0);
         }
     }
 
-    private void submitRemoveRoute(Route route) {
-        ExecutorService executor = routeRemover;
+    private void submitRemoveRoute(Route route, long delayMillis) {
+        ScheduledExecutorService executor = routeRemover;
         if (executor == null) {
             // the context removes all the routes when it stops
             return;
         }
         try {
-            executor.execute(() -> doRemoveRoute(route));
+            executor.schedule(() -> doRemoveRoute(route), delayMillis, TimeUnit.MILLISECONDS);
         } catch (RejectedExecutionException e) {
             // the component is shut down, and the context removes all the routes when it stops
             LOG.debug("Cannot remove route with id={} as the component is shut down", route.getRouteId());
@@ -593,6 +614,13 @@ public class KameletComponent extends DefaultComponent {
             // the context removes all the routes when it stops, and a route that is gone or was replaced is not ours
             return;
         }
+        if (isThreadPoolActive(routeId)) {
+            // the calling route may still run on a thread of the route's thread pools: stopping the route now would
+            // shut the pool down under it
+            LOG.trace("Route with id={} still has an active thread: removing it later", routeId);
+            submitRemoveRoute(route, ROUTE_REMOVAL_RETRY_MILLIS);
+            return;
+        }
         try {
             LOG.debug("Removing route with id={} created by a Kamelet endpoint that is shut down", routeId);
             context.getRouteController().stopRoute(routeId);
@@ -603,6 +631,18 @@ public class KameletComponent extends DefaultComponent {
         }
     }
 
+    private boolean isThreadPoolActive(String routeId) {
+        List<ThreadPoolExecutor> pools = routeThreadPools.get(routeId);
+        if (pools != null) {
+            for (ThreadPoolExecutor pool : pools) {
+                if (pool.getActiveCount() > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void doShutdown() throws Exception {
         getCamelContext().getLifecycleStrategies().remove(lifecycleHandler);
@@ -610,12 +650,13 @@ public class KameletComponent extends DefaultComponent {
         ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
         kameletEips.clear();
-        ExecutorService executor = routeRemover;
+        ScheduledExecutorService executor = routeRemover;
         routeRemover = null;
         if (executor != null) {
             // the context removes all the routes when it stops, so a removal that has not started is not needed
             getCamelContext().getExecutorServiceManager().shutdown(executor);
         }
+        routeThreadPools.clear();
         super.doShutdown();
     }
 
@@ -729,6 +770,20 @@ public class KameletComponent extends DefaultComponent {
 
                 endpoints.clear();
             }
+        }
+
+        @Override
+        public void onThreadPoolAdd(
+                CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId,
+                String threadPoolProfileId) {
+            if (routeId != null) {
+                routeThreadPools.computeIfAbsent(routeId, k -> new CopyOnWriteArrayList<>()).add(threadPool);
+            }
+        }
+
+        @Override
+        public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+            routeThreadPools.values().removeIf(pools -> pools.remove(threadPool) && pools.isEmpty());
         }
 
         public void setInitialized(boolean initialized) {

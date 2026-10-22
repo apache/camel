@@ -58,10 +58,12 @@ class KameletToDRoutesNotKeptTest extends CamelTestSupport {
             assertThat(mock.getReceivedExchanges().get(i).getMessage().getBody()).isEqualTo("id" + i + "-body");
         }
 
-        // the routes are removed on a thread of the component, once the exchange is done
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(kameletRoutes()).isZero());
-        // and their endpoints (kamelet:source) with them
-        assertThat(context.getEndpointRegistry().values()).hasSize(endpoints);
+        // the routes are removed on a thread of the component, once the exchange is done, and their endpoints
+        // (kamelet:source) with them: removeRoute takes the route out of getRoutes() before it removes its endpoints
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(kameletRoutes()).isZero();
+            assertThat(context.getEndpointRegistry().values()).hasSize(endpoints);
+        });
     }
 
     @Test
@@ -123,6 +125,35 @@ class KameletToDRoutesNotKeptTest extends CamelTestSupport {
         mock.expectedBodiesReceived("x-body");
 
         template.sendBodyAndHeader("direct:slow", "body", "id", "x");
+        mock.assertIsSatisfied();
+
+        Exchange exchange = mock.getReceivedExchanges().get(0);
+        assertThat(exchange.getMessage().getHeader("thread", String.class)).contains("Threads");
+        assertThat(exchange.getMessage().getHeader("kameletRouteKept", Boolean.class)).isTrue();
+        assertThat(exchange.getMessage().getHeader("interrupted", Boolean.class)).isFalse();
+
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(kameletRoutes()).isZero());
+    }
+
+    @Test
+    void kameletRouteIsKeptWhileTheCallingRouteRunsOnItsThreadAfterARecipientList() throws Exception {
+        // recipientList with cacheSize=-1 shuts the endpoint down when it releases the producer, after the call has
+        // completed: the exchange of the calling route is not known there
+        assertKameletRouteIsKeptWhileTheCallingRouteRunsOnItsThread("direct:recipientList");
+    }
+
+    @Test
+    void kameletRouteIsKeptWhileTheCallingRouteRunsOnItsThreadAfterARoutingSlip() throws Exception {
+        // routingSlip with cacheSize=-1 shuts the endpoint down in its callback, with a copy of the exchange that has
+        // no unit of work
+        assertKameletRouteIsKeptWhileTheCallingRouteRunsOnItsThread("direct:routingSlip");
+    }
+
+    private void assertKameletRouteIsKeptWhileTheCallingRouteRunsOnItsThread(String caller) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:slow");
+        mock.expectedBodiesReceived("x-body");
+
+        template.sendBodyAndHeader(caller, "body", "id", "x");
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
@@ -259,24 +290,36 @@ class KameletToDRoutesNotKeptTest extends CamelTestSupport {
 
                 from("direct:slow").routeId("slowCaller")
                         .toD("kamelet:pooled?value=${header.id}", -1)
-                        .process(e -> {
-                            e.getMessage().setHeader("thread", Thread.currentThread().getName());
-                            String id = e.getMessage().getHeader("kameletRouteId", String.class);
-                            boolean kept;
-                            try {
-                                // the rest of the calling route runs on a thread of the Kamelet's route, which must
-                                // not be stopped (shutting down its thread pool) before the exchange is done
-                                await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS)
-                                        .until(() -> context.getRoute(id) != null);
-                                kept = true;
-                            } catch (ConditionTimeoutException ex) {
-                                kept = false;
-                            }
-                            e.getMessage().setHeader("kameletRouteKept", kept);
-                            e.getMessage().setHeader("interrupted", Thread.currentThread().isInterrupted());
-                        })
+                        .process(e -> recordWhetherTheKameletRouteIsKept(e))
+                        .to("mock:slow");
+
+                from("direct:recipientList").routeId("recipientListCaller")
+                        .recipientList(simple("kamelet:pooled?value=${header.id}")).cacheSize(-1)
+                        .process(e -> recordWhetherTheKameletRouteIsKept(e))
+                        .to("mock:slow");
+
+                from("direct:routingSlip").routeId("routingSlipCaller")
+                        .routingSlip(simple("kamelet:pooled?value=${header.id}")).cacheSize(-1)
+                        .process(e -> recordWhetherTheKameletRouteIsKept(e))
                         .to("mock:slow");
             }
         };
+    }
+
+    private void recordWhetherTheKameletRouteIsKept(Exchange e) {
+        e.getMessage().setHeader("thread", Thread.currentThread().getName());
+        String id = e.getMessage().getHeader("kameletRouteId", String.class);
+        boolean kept;
+        try {
+            // the rest of the calling route runs on a thread of the Kamelet's route, which must not be stopped
+            // (shutting down its thread pool) before the calling route has left that thread
+            await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS)
+                    .until(() -> context.getRoute(id) != null);
+            kept = true;
+        } catch (ConditionTimeoutException ex) {
+            kept = false;
+        }
+        e.getMessage().setHeader("kameletRouteKept", kept);
+        e.getMessage().setHeader("interrupted", Thread.currentThread().isInterrupted());
     }
 }
