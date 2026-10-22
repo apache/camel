@@ -28,6 +28,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.TException;
+import org.apache.thrift.async.TAsyncClientManager;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TNonblockingTransport;
 import org.apache.thrift.transport.TSSLTransportFactory;
@@ -48,6 +49,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     protected final ThriftEndpoint endpoint;
     private TTransport syncTransport;
     private TNonblockingTransport asyncTransport;
+    private TAsyncClientManager asyncClientManager;
     private Object thriftClient;
 
     public ThriftProducer(ThriftEndpoint endpoint, ThriftConfiguration configuration) {
@@ -124,9 +126,10 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             if (asyncTransport == null) {
                 initializeAsyncTransport();
                 LOG.info("Getting asynchronous client implementation");
+                asyncClientManager = new TAsyncClientManager();
                 thriftClient = ThriftUtils.constructAsyncClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(),
                         asyncTransport,
-                        configuration.getExchangeProtocol(), endpoint.getCamelContext());
+                        configuration.getExchangeProtocol(), endpoint.getCamelContext(), asyncClientManager);
             }
         }
     }
@@ -141,6 +144,11 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             LOG.debug("Terminating asynchronous transport the remote Thrift server");
             asyncTransport.close();
             asyncTransport = null;
+        }
+        if (asyncClientManager != null) {
+            // stops the selector thread and closes the selector of the async client
+            asyncClientManager.stop();
+            asyncClientManager = null;
         }
         super.doStop();
     }

@@ -91,6 +91,21 @@ public final class ThriftUtils {
     public static Object constructAsyncClientInstance(
             String packageName, String serviceName, TNonblockingTransport transport, ThriftExchangeProtocol exchangeProtocol,
             final CamelContext context) {
+        try {
+            return constructAsyncClientInstance(packageName, serviceName, transport, exchangeProtocol, context,
+                    new TAsyncClientManager());
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Thrift async client manager cannot be created", e);
+        }
+    }
+
+    /**
+     * Constructs an async client that uses the given client manager; the caller owns the manager and must stop it.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Object constructAsyncClientInstance(
+            String packageName, String serviceName, TNonblockingTransport transport, ThriftExchangeProtocol exchangeProtocol,
+            final CamelContext context, TAsyncClientManager clientManager) {
         Object asynClientInstance = null;
         Class[] getterParamTypes = { TNonblockingTransport.class };
         Class[] constructorParamTypes = { TAsyncClientManager.class, TProtocolFactory.class };
@@ -101,7 +116,7 @@ public final class ThriftUtils {
             Class clientClass = context.getClassResolver().resolveMandatoryClass(clientClassName);
             Constructor factoryConstructor = clientClass.getConstructor(constructorParamTypes);
             Object factoryInstance
-                    = factoryConstructor.newInstance(new TAsyncClientManager(), constructAsyncProtocol(exchangeProtocol));
+                    = factoryConstructor.newInstance(clientManager, constructAsyncProtocol(exchangeProtocol));
             Method asyncClientGetter = ReflectionHelper.findMethod(clientClass, ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME,
                     getterParamTypes);
             if (asyncClientGetter == null) {
@@ -116,7 +131,7 @@ public final class ThriftUtils {
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("Thrift sync client factory class not found: " + clientClassName);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                 | IOException | SecurityException e) {
+                 | SecurityException e) {
             throw new IllegalArgumentException(e);
         }
         return asynClientInstance;
