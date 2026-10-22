@@ -35,6 +35,7 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.RabbitMessageFuture;
 import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -222,7 +223,10 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
         final String rk = routingKey;
         boolean confirm;
         if ("auto".equalsIgnoreCase(getEndpoint().getConfirm())) {
-            confirm = getEndpoint().getConnectionFactory().isPublisherConfirms();
+            // a connection factory with publisher confirms of type CORRELATED answers isPublisherConfirms, one of type
+            // SIMPLE (the type that waitForConfirms is made for) answers isSimplePublisherConfirms instead
+            ConnectionFactory cf = getEndpoint().getConnectionFactory();
+            confirm = cf.isPublisherConfirms() || cf.isSimplePublisherConfirms();
         } else if ("enabled".equalsIgnoreCase(getEndpoint().getConfirm())) {
             confirm = true;
         } else {
@@ -242,7 +246,9 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
             }
 
             if (!sent) {
-                exchange.setException(new TimeoutException("Message not sent within " + timeout + " millis"));
+                // waitForConfirms returns false only when RabbitMQ negatively acknowledged the message; when no confirm
+                // arrives within the timeout it throws AmqpTimeoutException, which the catch below sets on the exchange
+                exchange.setException(new TimeoutException("Message negatively acknowledged by RabbitMQ"));
             }
         } catch (Exception e) {
             exchange.setException(e);

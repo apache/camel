@@ -273,6 +273,16 @@ configuration (the `camel.component.google-mail.*` options), kept until the comp
 client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
 credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
 
+=== camel-spring-rabbitmq - confirm=auto waits for simple publisher confirms
+
+With the default `confirm=auto`, an InOnly producer now also waits for the publisher confirm when the connection
+factory has publisher confirms of type `SIMPLE` (for example `spring.rabbitmq.publisher-confirm-type=simple`), as it
+did for type `CORRELATED`. Before, it sent such messages without waiting, so a message that RabbitMQ negatively
+acknowledged, or did not confirm, was lost without an error. Each send now waits up to `confirmTimeout` (5 seconds by
+default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ negatively acknowledges the message,
+and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
+Set `confirm=disabled` to send without waiting, as before.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint
