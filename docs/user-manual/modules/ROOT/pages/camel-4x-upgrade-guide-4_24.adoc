@@ -2411,7 +2411,7 @@ the client close such a connection itself, so that the consumer connects again b
 === camel-cometd - the CORS filter allows credentials only for listed origins
 
 With `crossOriginFilterOn=true`, the CORS responses now include `Access-Control-Allow-Credentials: true` only when
-`allowedOrigins` lists the origins explicitly, without any `*`. When `allowedOrigins` is not set, is `*`, or has an
-entry with a wildcard such as `https://*`, the origin is still allowed, but without credentials. Previously credentials
+`allowedOrigins` lists the origins explicitly, without any `*` or `null`. When `allowedOrigins` is not set, is `*`, or
+has an entry with a wildcard such as `https://*` or an entry `null`, the origin is still allowed, but without credentials. Previously credentials
 were allowed for every origin. A cross-origin client that sends cookies or other credentials must have its origin
 listed in `allowedOrigins`.

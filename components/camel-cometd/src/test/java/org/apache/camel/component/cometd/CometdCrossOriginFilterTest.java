@@ -42,6 +42,10 @@ public class CometdCrossOriginFilterTest extends CamelTestSupport {
     AvailablePortFinder.Port wildcardPatternPort = AvailablePortFinder.find();
     @RegisterExtension
     AvailablePortFinder.Port namedOriginPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port nullOriginPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port namedAndNullOriginPort = AvailablePortFinder.find();
 
     @Test
     void testDefaultOriginsDoNotAllowCredentials() throws Exception {
@@ -59,25 +63,40 @@ public class CometdCrossOriginFilterTest extends CamelTestSupport {
     }
 
     @Test
+    void testNullOriginDoesNotAllowCredentials() throws Exception {
+        assertNoCredentials(nullOriginPort.getPort(), "null");
+    }
+
+    @Test
+    void testNamedAndNullOriginDoNotAllowCredentials() throws Exception {
+        assertNoCredentials(namedAndNullOriginPort.getPort(), "null");
+        assertNoCredentials(namedAndNullOriginPort.getPort(), ORIGIN);
+    }
+
+    @Test
     void testNamedOriginAllowsCredentials() throws Exception {
-        HttpResponse<String> response = post(namedOriginPort.getPort());
+        HttpResponse<String> response = post(namedOriginPort.getPort(), ORIGIN);
         assertEquals(ORIGIN, response.headers().firstValue("Access-Control-Allow-Origin").orElse(null));
         assertEquals("true", response.headers().firstValue("Access-Control-Allow-Credentials").orElse(null));
     }
 
     private void assertNoCredentials(int port) throws Exception {
-        HttpResponse<String> response = post(port);
+        assertNoCredentials(port, ORIGIN);
+    }
+
+    private void assertNoCredentials(int port, String origin) throws Exception {
+        HttpResponse<String> response = post(port, origin);
         // the origin is still allowed, but without credentials
-        assertEquals(ORIGIN, response.headers().firstValue("Access-Control-Allow-Origin").orElse(null));
+        assertEquals(origin, response.headers().firstValue("Access-Control-Allow-Origin").orElse(null));
         assertFalse(response.headers().firstValue("Access-Control-Allow-Credentials").isPresent());
     }
 
-    private HttpResponse<String> post(int port) throws Exception {
+    private HttpResponse<String> post(int port, String origin) throws Exception {
         HttpRequest request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/cometd"))
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "[{\"channel\":\"/meta/handshake\",\"version\":\"1.0\",\"supportedConnectionTypes\":[\"long-polling\"]}]"))
                 .header("Content-Type", "application/json")
-                .header("Origin", ORIGIN)
+                .header("Origin", origin)
                 .build();
         try (HttpClient client = HttpClient.newHttpClient()) {
             return client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -100,6 +119,12 @@ public class CometdCrossOriginFilterTest extends CamelTestSupport {
                 from("cometd://127.0.0.1:" + namedOriginPort.getPort() + "/service/test" + options
                      + "&allowedOrigins=" + ORIGIN)
                         .to("mock:named");
+                from("cometd://127.0.0.1:" + nullOriginPort.getPort() + "/service/test" + options
+                     + "&allowedOrigins=null")
+                        .to("mock:null");
+                from("cometd://127.0.0.1:" + namedAndNullOriginPort.getPort() + "/service/test" + options
+                     + "&allowedOrigins=" + ORIGIN + ",null")
+                        .to("mock:namedAndNull");
             }
         };
     }

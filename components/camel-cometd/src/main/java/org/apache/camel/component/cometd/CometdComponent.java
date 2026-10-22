@@ -394,9 +394,10 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         if (ObjectHelper.isEmpty(allowedOrigins)) {
             return false;
         }
-        // parse the same way as the filter, and treat any wildcard (such as https://*) as not naming the origin
+        // parse the same way as the filter, and treat any wildcard (such as https://*) or null (the origin sent by
+        // sandboxed pages) as not naming the origin
         for (String origin : StringUtil.csvSplit(allowedOrigins)) {
-            if (origin.contains("*")) {
+            if (origin.contains("*") || "null".equalsIgnoreCase(origin)) {
                 return false;
             }
         }
