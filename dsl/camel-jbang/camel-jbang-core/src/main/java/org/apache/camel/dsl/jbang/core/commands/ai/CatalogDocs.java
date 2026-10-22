@@ -1089,6 +1089,12 @@ public final class CatalogDocs {
         } else {
             result.put("message", "Best match first; camel_catalog_doc gives the options of one");
         }
+        // a header name models write for one that has another name, such as CamelHttpStatusCode
+        String wrong = HeaderChecks.WRONG_NAMES.get(term.trim());
+        if (wrong != null) {
+            result.put("header", "Camel has no header " + term.trim() + ": " + wrong);
+            result.put("message", result.getString("message") + "; " + result.getString("header"));
+        }
         return result;
     }
 
@@ -1678,6 +1684,15 @@ public final class CatalogDocs {
         }
         return answer;
     }
+
+    /**
+     * How to pick the one element of a JSON list by a field: the answer of camel_catalog_doc jsonpath says it first.
+     */
+    static final String JSONPATH_ONE_ELEMENT = "to pick the one element of a list by a field, write a filter with"
+                                               + " resultType: java.util.Map, such as expression: \"$[?(@.orderId =="
+                                               + " '${header.id}')]\" and resultType: java.util.Map: the element when one"
+                                               + " matches, null when none does (an index after the filter gives an empty"
+                                               + " list); camel_catalog_sample jsonpath shows it in a route";
 
     /** How many options of a component are listed in full when no filter is given (CAMEL-25541). */
     static final int DEFAULT_OPTIONS_LIMIT = 20;
@@ -2321,6 +2336,10 @@ public final class CatalogDocs {
         }
         if ("simple".equals(model.getName()) || "csimple".equals(model.getName())) {
             result.put("syntax", SIMPLE_SYNTAX);
+        }
+        if ("jsonpath".equals(model.getName())) {
+            // the one element of a list by a field, which models wrote as $[?(...)][0], an empty list
+            result.put("usage", JSONPATH_ONE_ELEMENT);
         }
         JsonObject script = scriptVariables(model.getName());
         if (script != null) {

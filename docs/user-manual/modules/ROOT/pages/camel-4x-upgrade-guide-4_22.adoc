@@ -13,6 +13,19 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
+
+With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
+has run, and no longer when the wall clock passes the time the timer was scheduled for. Before, an event that
+completed in the millisecond in which the timer ran (or while the timer was taking the count) was counted in the
+window whose count had already been taken: it was checkpointed only with the next event, and when the partition stayed
+quiet it was delivered again after a restart.
+
+The `CamelAzureEventHubsCheckpointUpdatedBy` header can now be `timeout`. An event that completes after the
+scheduled time of its window, but before the (late) timer has run, joins that window and gets `timeout`; its offset is
+checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
+set. Routes that read this header can now see `timeout` as well as `size`.
+
 === camel-milo - the OPC UA client validates the server certificate
 
 When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components
@@ -77,6 +90,16 @@ the password of the key store.
 `INTERNAL_ERROR` ("Internal error processing <method>") to the client instead of an exception that the Thrift method
 does not declare. Before, the asynchronous consumer sent the message of the exception. An exception declared in the
 IDL is still sent as it is. Set `muteException=false` to send the exception as before.
+
+=== camel-netty - errors sent to the client
+
+A new `muteException` consumer option, enabled by default, makes a consumer with `sync=true` write a generic exception
+(`java.lang.Exception` with the message `Exchange processing failed` and no stack trace) back to the client when the
+exchange failed, instead of the exception of the route. With `textline=true` the client now receives the line
+`java.lang.Exception: Exchange processing failed`, where it used to receive the class name and the message of the
+exception of the route. With an encoder that accepts any object, the serialised exception no longer carries the class,
+message, cause or stack trace of the exception of the route. Set `muteException=false` to write the exception as before.
+`transferExchange=true` is not affected.
 
 === camel-elasticsearch-rest-client - the credentials are only sent to the nodes of the cluster
 

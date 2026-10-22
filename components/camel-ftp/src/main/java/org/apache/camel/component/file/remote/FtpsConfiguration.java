@@ -37,6 +37,8 @@ public class FtpsConfiguration extends FtpConfiguration {
     private String execProt;
     @UriParam(label = "security")
     private Long execPbsz;
+    @UriParam(label = "security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
+    private boolean hostnameVerification = true;
 
     public FtpsConfiguration() {
         setProtocol("ftps");
@@ -118,5 +120,18 @@ public class FtpsConfiguration extends FtpConfiguration {
      */
     public void setExecPbsz(Long execPbsz) {
         this.execPbsz = execPbsz;
+    }
+
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * Whether to check that the certificate of the server matches the host Camel connects to, with the same rules as an
+     * HTTPS client. When disabled, any certificate accepted by the trust manager is accepted, whatever host it was
+     * issued for. This option does not apply to a custom ftpClient.
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
     }
 }

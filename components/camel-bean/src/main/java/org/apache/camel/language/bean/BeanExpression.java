@@ -568,10 +568,11 @@ public class BeanExpression implements Expression, Predicate {
         String type = bean instanceof List ? "a List" : bean instanceof Object[] ? "an array" : "a Collection";
         boolean field = methodName != null && FIELD_NAME.matcher(methodName).matches();
         String name = field ? methodName : "field";
+        // the lookup by a field first: given [0] first, models wrote ${body[0].orderId} and took the first element
         return " (" + type + " has no " + (field ? "method or key " + methodName : "such method")
-               + ": pick an element first, such as [0]." + name + ", or the element whose " + name
-               + " has a given value with jsonpath, such as jsonpath: \"$[?(@." + name + " == '${header." + name
-               + "}')]\" with resultType java.util.Map, or split it)";
+               + ": to pick the element whose " + name + " has a given value, use jsonpath: \"$[?(@." + name
+               + " == '${header." + name + "}')]\" with resultType java.util.Map (the element, or null when none"
+               + " matches); [0]." + name + " reads the first element; or split it)";
     }
 
     private static final Pattern FIELD_NAME = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");

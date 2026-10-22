@@ -267,6 +267,36 @@ as the body, so `+${body}+` was the file found. A `fileName` that uses the file 
 before. A `fileName` that read the file found through its headers, such as `${header.CamelFileName}`, must use the file
 functions instead (`${file:name}`).
 
+=== camel-openstack - potential breaking change
+
+The four remaining Exchange header constants of `SwiftConstants` have been renamed to follow the Camel naming
+convention used by the rest of the component, completing the rename done in 4.21. The Java field names are unchanged;
+only the header string values have changed.
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SwiftConstants.CONTAINER_METADATA_PREFIX` | `X-Container-Meta-` | `CamelOpenstackSwiftContainerMetadata`
+| `SwiftConstants.VERSIONS_LOCATION` | `X-Versions-Location` | `CamelOpenstackSwiftVersionsLocation`
+| `SwiftConstants.CONTAINER_READ` | `X-Container-Read` | `CamelOpenstackSwiftContainerRead`
+| `SwiftConstants.CONTAINER_WRITE` | `X-Container-Write` | `CamelOpenstackSwiftContainerWrite`
+|===
+
+The previous values were kept in 4.21 on the understanding that they were part of the Swift HTTP contract. They are
+not: the container producer passes the values to the openstack4j `CreateUpdateContainerOptions`, which builds the
+`X-Container-Meta-`, `X-Versions-Location`, `X-Container-Read` and `X-Container-Write` names of the Swift request
+itself. The request Camel sends to Swift is therefore unchanged by this rename.
+
+Routes that reference the constants symbolically (for example `setHeader(SwiftConstants.CONTAINER_READ, ...)`)
+continue to work without changes. Routes that set one of these headers by its literal string value (for example
+`setHeader("X-Container-Read", ...)` in an XML or YAML route) must be updated to the new value
+(`setHeader("CamelOpenstackSwiftContainerRead", ...)`); the previous names are no longer read.
+
+The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are renamed accordingly
+(`xContainerMeta()` -> `openstackSwiftContainerMetadata()`, `xVersionsLocation()` ->
+`openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
+`openstackSwiftContainerWrite()`).
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
@@ -338,6 +368,50 @@ validate what they write, instead of the `read_file`, `list_files` and `write_fi
 local model gets a core set of tools (`--tools=auto`, the default), a hosted model the full set. The default
 of `--max-iterations` is now 25 instead of 10, and `--model llama3.2` now selects that model also when a
 model better at tool calling, such as `qwen3.6`, is installed.
+
+=== camel-pqc - the usage-count and PENDING_ROTATION key rotation signals now fire
+
+Two of the three documented rotation signals of `KeyRotationScheduler` previously never triggered. Both now work, so a
+deployment that already configured them will start rotating keys where before nothing happened.
+
+* `maxKeyUsage` (and `camel.component.pqc.key-rotation-max-usage`) read `usageCount`, which was only advanced for the
+  stateful signature algorithms (XMSS, XMSSMT, LMS, HSS). For ML-DSA, SLH-DSA, Falcon and the KEM keys the counter
+  stayed at zero forever. A signing operation now advances it for every key, provided a `keyLifecycleManager` is
+  configured and the exchange carries a `CamelPQCKeyId` header.
+* The scheduler's default key filter accepted only `ACTIVE` keys, so a key an operator had marked
+  `PENDING_ROTATION` was skipped before `needsRotation()` was consulted. The default filter now accepts `ACTIVE` and
+  `PENDING_ROTATION`. A custom filter set with `setKeyFilter` is unaffected.
+
+Review any configured `maxKeyUsage` threshold before upgrading: a long-running deployment may rotate on the first
+check once the counter starts advancing.
+
+Recording the usage also costs a write. A signing endpoint with a `keyLifecycleManager` and a `CamelPQCKeyId` header
+now updates the key metadata in the backing store on every signature, where a non-stateful key previously wrote
+nothing. Against AWS Secrets Manager, Azure Key Vault or HashiCorp Vault that is a remote call per message. A failure
+to read or write that metadata does not fail the exchange for a non-stateful key - it is logged once per producer and
+the signature is returned - because losing a usage count only delays a rotation. Leave the `CamelPQCKeyId` header off
+the signing exchanges, or use `maxKeyAge` or `nextRotationAt`, if the write is not wanted.
+
+The key encapsulation operations do not record usage, so `maxKeyUsage` still never triggers for a KEM key.
+
+=== camel-pqc - a failed stateful signature no longer carries the signature headers
+
+Signing with one of the stateful hash-based algorithms (LMS, HSS, XMSS, XMSSMT) consumes a one-time index inside the
+private key. That advanced key is now persisted through the `keyLifecycleManager` *before* the signature is placed on
+the message, instead of after.
+
+Such an exchange already failed when the key state could not be stored, so what changes is the content of the failed
+message: it no longer carries `CamelPQCSignature`, nor the hybrid `CamelPQCHybridSignature`,
+`CamelPQCClassicalSignature` and `CamelPQCPqcSignature` headers. A route that caught the failure with
+`onException(...).handled(true)`, or routed it to a dead letter channel, could previously read the signature off the
+failed message and pass it on; it can no longer do so. That is the point of the change - a signature whose index
+advance was never recorded must not escape, because after a restart the key resumes at the previous index and can
+sign a second time with an index already used.
+
+Signing a stateful key without a `keyLifecycleManager`, and signing any key without a `CamelPQCKeyId` header or
+with no stored metadata for the key, now logs a warning once per producer rather than being silently ignored. A
+non-stateful key without a `keyLifecycleManager` stays silent, as there is no `maxKeyUsage` threshold to miss. For a
+stateful key the warning names the index-reuse risk; for any other key it names the `usageCount` that will not advance.
 
 === camel-jbang - camel get endpoint shows the scope of an endpoint
 
@@ -920,6 +994,20 @@ kept apart. A valid token that has none of these claims is now rejected with HTT
 * The `CamelOAuthTokenValidationResult` exchange property is now set on the exchange that the route processes, as
 documented. Before, it was only set on the incoming HTTP exchange.
 
+=== camel-hazelcast - the transacted SEDA consumer waits for an exchange that continues on another thread
+
+A Hazelcast transaction can only be committed or rolled back by the thread that began it. When the route of a
+transacted (`transacted=true`) Hazelcast SEDA consumer continued on another thread (an asynchronous producer, or
+`threads()`), the consumer tried to commit or roll back the transaction on that thread, which failed with
+`Transaction cannot span multiple threads!` (logged as a WARN and ignored). The message was neither removed nor
+put back: a failed message was not taken again, and the messages, also the processed ones, were put back into the
+queue when the application left the Hazelcast cluster, so they were consumed again. Now the consumer thread waits for
+the exchange to complete and ends the transaction itself, so it takes the next message only then; use
+`concurrentConsumers` to process several messages at the same time. The exchange must complete within the Hazelcast
+transaction timeout (2 minutes by default, `TransactionOptions`): when it takes longer, the commit fails with
+`TransactionTimedOutException`, which is logged at ERROR, the transaction is rolled back and the message is consumed
+again, also when the route succeeded.
+
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 
 The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
@@ -962,6 +1050,16 @@ does not declare. Before, the asynchronous consumer sent the message of the exce
 sent a `TApplicationException` as it was, such as one returned by another Thrift service that the route called. An
 exception declared in the IDL is still sent as it is. Set `muteException=false` to send the exception as before.
 
+=== camel-netty - errors sent to the client
+
+A new `muteException` consumer option, enabled by default, makes a consumer with `sync=true` write a generic exception
+(`java.lang.Exception` with the message `Exchange processing failed` and no stack trace) back to the client when the
+exchange failed, instead of the exception of the route. With `textline=true` the client now receives the line
+`java.lang.Exception: Exchange processing failed`, where it used to receive the class name and the message of the
+exception of the route. With an encoder that accepts any object, the serialised exception no longer carries the class,
+message, cause or stack trace of the exception of the route. Set `muteException=false` to write the exception as before.
+`transferExchange=true` is not affected.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
@@ -987,6 +1085,22 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-paho-mqtt5 - a failed message with manualAcksEnabled is delivered again or acknowledged
+
+With `manualAcksEnabled=true`, a message whose exchange failed was left unacknowledged. For a QoS 1 message the
+broker never sent it again during the connection, and after `receiveMaximum` such messages it sent the consumer
+nothing more (the client completes the QoS 2 flow on its own, so QoS 2 messages did not stop the consumer). Now, for a
+QoS 1 message on a session that the broker keeps after the disconnect (`cleanStart=false` and `sessionExpiryInterval`
+greater than 0), the consumer connects again after a failed exchange (after one second, doubled for each failed
+exchange in a row up to `maxReconnectDelay`, and back to one second after any exchange that succeeds; logged at WARN),
+and the broker sends the message again. In all other
+cases (a clean session, which is the default, a QoS 2 message, or `cleanStart=false` without `sessionExpiryInterval`,
+where the session ends with the connection) the broker never sends the message again, so the failed message is
+acknowledged and the failure is left to the Camel error handler. A consumer that uses a client set with the `client`
+option leaves a failed QoS 1 message on a session that the broker keeps unacknowledged, as before; as the consumer does
+not connect that client, set the `cleanStart` and `sessionExpiryInterval` of the endpoint to match its connection
+options.
+
 === camel-iggy - messageExpiry is sent to Iggy in microseconds
 
 The `messageExpiry` option is in seconds, but its value was passed unchanged to Iggy, which reads the message expiry
@@ -994,6 +1108,17 @@ of a topic in microseconds, so a topic created by Camel (`autoCreateTopic=true`)
 too early (`messageExpiry=3600` gave 3.6 ms instead of one hour). The value is now converted to microseconds. Topics
 created before keep their expiry: change it on the Iggy server. If you set `messageExpiry` in microseconds to work
 around this, set it in seconds now, or newly created topics keep their messages a million times longer than intended.
+
+=== camel-jira - the newIssues consumer reads every new issue
+
+A poll of the `newIssues` consumer read only the newest `maxResults` (default 50) of the issues created since the
+previous poll, and the older ones were never consumed. A poll now reads every page of the search and can route more
+than `maxResults` issues; `maxResults` is the page size of that search (at most 50). There is no upper bound, so the
+first poll after a long outage or a large import can send many search requests and route many issues in one batch.
+
+On Jira Cloud the Jira consumers now read the pages of a search with the next page token, as Jira Cloud cannot page by
+start index: with `maxResults` above 50, a search with more than 50 results failed on the second page with
+`UnsupportedOperationException`.
 
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
@@ -1083,6 +1208,20 @@ first data row was missing from the output, for delimited and fixed-length files
 file is written from the column names, not from the first map). Every map of the list is now written, and
 `ignoreFirstRecord` only applies to unmarshal. A route that set `ignoreFirstRecord=false` to work around this is not
 affected; a route that added a dummy first map now gets it in the output too.
+
+=== camel-github2 - the commit consumer routes the commits beyond the newest 100
+
+The `commit` consumer read only the 100 newest commits of the branch at each poll, so when more than 100 commits were
+pushed between two polls, the older ones were never routed. A poll now reads the commits up to the last routed one
+(at most 1000, the number of commits the consumer remembers), and can route more than 100 commits. When the last
+routed commit is no longer on the branch, only the 100 newest commits are considered, as before. GitHub lists the
+commits by committer date, newest first, so this covers a linear history: the commits that a merge brings in keep
+their older dates and can be listed after the last routed commit, and they are not routed, as before.
+
+Each routed commit costs one GitHub API request for its author, plus one for each author or committer not looked up
+before, so a poll that catches up on many commits can send about 1000 requests instead of about 100. When the rate
+limit is reached, the GitHub client waits inside the poll until the limit resets (its default rate limit handler),
+and stopping the route waits for that poll.
 
 === camel-milo - the OPC UA client validates the server certificate
 
@@ -1400,6 +1539,14 @@ it stayed started without receiving any event. The events of the time without a 
 `docker:events` or `docker:stats` consumer now closes its stream: before, the stream stayed open, and a route that was
 stopped and started again received every event once more for each restart.
 
+=== camel-keycloak - the consumer reads every event since the previous poll
+
+The `keycloak` consumer (`eventType=events` and `eventType=admin-events`) reads, after its first poll, all the events
+since the previous poll, page by page, with `maxResults` as the page size. Before, it read only the latest `maxResults`
+events and moved past the older ones, so when more than `maxResults` events happened between two polls the older ones
+were never consumed. A poll can now route more than `maxResults` events. The first poll still reads the latest
+`maxResults` events.
+
 === camel-influxdb2 - a write is synchronous and a rejected write fails the exchange
 
 The producer wrote with the batching write API of the InfluxDB client: the point was put into a buffer of the client
@@ -1440,6 +1587,14 @@ With `preserveMessageQos=true`, a message without a `JMSExpiration` (header miss
 live, so it never expired, even when the endpoint has a `timeToLive` and, for request/reply, although Camel sets the
 `requestTimeout` as time to live otherwise. Such a message now gets the time to live of the endpoint, as the option
 documents. Set `disableTimeToLive=true` to send it without time to live.
+
+=== camel-pulsar - the producer continues the sequence ids of the broker
+
+The `pulsar` producer no longer passes the default `initialSequenceId=-1` to the Pulsar client, so the client
+continues after the last sequence id the broker has for the `producerName`. Before, every start began again at
+sequence id 0, and with deduplication enabled on the broker the messages sent after a restart were dropped as
+duplicates (the send succeeded) until the sequence ids passed the ones of the previous run. A configured
+`initialSequenceId` of 0 or more is still used as before.
 
 === camel-twitter - twitter-search applies its query options again
 
@@ -1559,6 +1714,18 @@ MINA does not pass a failed handshake on as an error: the producer fails with a 
 `timeout` while waiting for a reply), and the handshake error is logged at `ERROR` level by
 `org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
 certificate that does not list the host.
+
+=== camel-ftp - the host name of the FTPS server is verified
+
+The `ftps` endpoint now checks, on the control connection, that the certificate of the server matches the host of the
+endpoint, with the same rules as an HTTPS client, with `sslContextParameters` as well as with the
+`ftpClient.trustStore.*` options. Before, any certificate accepted by the trust manager was accepted, whatever host the
+certificate was issued for. Data connections are not checked by host name.
+
+A connection to a host name or an IP address that the certificate does not list now fails the TLS handshake, before
+login; an IP address must be listed as a subject alternative name of the certificate. Use a certificate that matches the
+host of the endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour. A custom
+`ftpClient` set on the endpoint is not changed.
 
 === camel-aws-secrets-manager - the CloudTrail refresh task reads every event since the last check
 
@@ -2035,8 +2202,9 @@ Bad status of a failed sensor.
 
 Since 4.16, a `milo-client` consumer whose monitored item could not be created, for example because the node does not
 exist, received nothing. Now it receives one `DataValue` with the bad status code. The
-monitored item is created again when the route is restarted or when Camel rebuilds the connection to the server; unlike
-Camel 3.x, it is not retried every 10 seconds.
+monitored item is then created again every 10 seconds on the same connection, without delivering anything for a failed
+attempt, until the server accepts it; its first value is the current value of the node. A route restart or a
+connection that Camel rebuilds creates it again too.
 
 A node ID with a namespace URI (`nsu=`) that is not in the namespace table of the server no longer takes the whole
 client connection down, including the consumers of other nodes. Its consumer receives one `DataValue` with
@@ -2083,6 +2251,28 @@ is restored, and a request that fails rebuilds the connection.
 To keep the previous behaviour, filter the exchanges with a bad status out right after the consumer, for example with
 `filter(simple("${body.statusCode.bad} == false"))`. This also drops the other bad statuses, such as the refusal of a
 node, and the current values delivered after an outage still arrive.
+
+=== camel-milo - the reconnectTimeout of the components sets the delay between connection attempts
+
+`setReconnectTimeout` on the `milo-client` and `milo-browse` components set the request timeout of every service call,
+and the delay between two connection attempts stayed 10 seconds. It now sets that delay, which the new
+`reconnectTimeout` option of both endpoints and components sets too; its default of 10000 milliseconds is the previous
+delay, and a value of 0 or less is rejected. To set the request timeout, use the `requestTimeout` option instead
+(for example `camel.component.milo-client.requestTimeout`, or `getConfiguration().setRequestTimeout(...)` in Java).
+
+=== camel-infinispan - the key option of the producer takes precedence over the key header
+
+The `infinispan` and `infinispan-embedded` producers now use the `key` option of the endpoint when it is set, and use the
+`CamelInfinispanKey` header only when the endpoint does not set `key`. Previously the header took precedence over the
+option, so a route that sent the events of an Infinispan consumer, which set `CamelInfinispanKey` to the key of the event,
+to a producer with a fixed `key` worked on the key of the event.
+
+Routes that set `key` on the endpoint and override it per message with the `CamelInfinispanKey` header must remove `key`
+from the endpoint.
+
+The `CamelInfinispanCacheName` header still takes precedence over the cache of the endpoint, so a route that sends the
+events of an Infinispan consumer to a producer must still remove the `CamelInfinispan*` headers first, see _Key and cache
+name headers_ in the component docs.
 
 === camel-protobuf - a bytes field in a Map
 
@@ -2213,4 +2403,7 @@ consumer still sends a noop before it renames or deletes a file on the server, a
 unless `noop=true`.
 
 For sftp and mina-sftp the client notices a closed connection, but not one that dropped silently. For sftp the noop is
-a keep-alive message that does not wait for a reply, so it does not find such a connection either.
+a keep-alive message that does not wait for a reply, so it does not find such a connection either. For mina-sftp the
+noop is a request that waits for the reply, so with `sendNoop=false` such a connection is found by the next poll,
+which fails and is logged before the consumer connects again. For sftp and mina-sftp, set `serverAliveInterval` to let
+the client close such a connection itself, so that the consumer connects again before the poll.

@@ -329,16 +329,17 @@ public interface SwiftEndpointBuilderFactory {
             return "CamelOpenstackSwiftObjectName";
         }
         /**
-         * Container metadata prefix.
+         * The container metadata.
          * 
          * The option is a: {@code Map<String, String>} type.
          * 
          * Group: container
          * 
-         * @return the name of the header {@code X-Container-Meta-}.
+         * @return the name of the header {@code
+         * OpenstackSwiftContainerMetadata}.
          */
-        public String xContainerMeta() {
-            return "X-Container-Meta-";
+        public String openstackSwiftContainerMetadata() {
+            return "CamelOpenstackSwiftContainerMetadata";
         }
         /**
          * Versions location.
@@ -347,10 +348,11 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: container
          * 
-         * @return the name of the header {@code X-Versions-Location}.
+         * @return the name of the header {@code
+         * OpenstackSwiftVersionsLocation}.
          */
-        public String xVersionsLocation() {
-            return "X-Versions-Location";
+        public String openstackSwiftVersionsLocation() {
+            return "CamelOpenstackSwiftVersionsLocation";
         }
         /**
          * ACL - container read.
@@ -359,10 +361,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: container
          * 
-         * @return the name of the header {@code X-Container-Read}.
+         * @return the name of the header {@code OpenstackSwiftContainerRead}.
          */
-        public String xContainerRead() {
-            return "X-Container-Read";
+        public String openstackSwiftContainerRead() {
+            return "CamelOpenstackSwiftContainerRead";
         }
         /**
          * ACL - container write.
@@ -371,10 +373,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: container
          * 
-         * @return the name of the header {@code X-Container-Write}.
+         * @return the name of the header {@code OpenstackSwiftContainerWrite}.
          */
-        public String xContainerWrite() {
-            return "X-Container-Write";
+        public String openstackSwiftContainerWrite() {
+            return "CamelOpenstackSwiftContainerWrite";
         }
         /**
          * List options - limit.

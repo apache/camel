@@ -267,7 +267,8 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
     }
 
     /**
-     * Max number of issues to search for
+     * Max number of issues to search for. The newIssues consumer reads every issue created since its previous poll,
+     * page by page, with this as the page size (at most 50).
      */
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
