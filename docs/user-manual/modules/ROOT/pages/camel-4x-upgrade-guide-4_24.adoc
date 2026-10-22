@@ -1561,6 +1561,18 @@ sequence id 0, and with deduplication enabled on the broker the messages sent af
 duplicates (the send succeeded) until the sequence ids passed the ones of the previous run. A configured
 `initialSequenceId` of 0 or more is still used as before.
 
+=== camel-pulsar - the deadLetterTopic option applies in retry mode
+
+With `enableRetry=true`, the consumer did not pass `deadLetterTopic` to the Pulsar client, so a message that failed
+`maxRedeliverCount` times was sent to the client's default dead letter topic (`<topic>-<subscription>-DLQ`, or
+`<subscription>-DLQ` when that topic already exists) instead of the configured one. It is now sent to
+`deadLetterTopic`. Messages already in the default topic stay there.
+
+With `enableRetry=true` and no `maxRedeliverCount`, the consumer failed to start with a `NullPointerException`. It now
+starts without a dead letter policy, as the `maxRedeliverCount` option documents, and the Pulsar client applies its own
+in retry mode: 16 redeliveries and its default retry letter and dead letter topics. As without retry mode,
+`retryLetterTopic` and `deadLetterTopic` only apply when `maxRedeliverCount` is set.
+
 === camel-twitter - twitter-search applies its query options again
 
 Since Camel 4.0 (the upgrade to Twitter4J 4.1, whose `Query` is immutable) the `twitter-search` endpoint sent only the

@@ -74,12 +74,20 @@ public final class CommonCreationStrategyImpl {
         if (endpointConfiguration.isEnableRetry()) {
             // retry mode
             builder.enableRetry(true);
-            DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
-                    .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
-            if (endpointConfiguration.getRetryLetterTopic() != null) {
-                policy.retryLetterTopic(endpointConfiguration.getRetryLetterTopic());
+            // without a dead letter policy the Pulsar client uses its own (16 redeliveries and the default retry
+            // letter and dead letter topics)
+            if (endpointConfiguration.getMaxRedeliverCount() != null) {
+                DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
+                        .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
+                if (endpointConfiguration.getRetryLetterTopic() != null) {
+                    policy.retryLetterTopic(endpointConfiguration.getRetryLetterTopic());
+                }
+                // without it the Pulsar client sends the messages to its default dead letter topic
+                if (endpointConfiguration.getDeadLetterTopic() != null) {
+                    policy.deadLetterTopic(endpointConfiguration.getDeadLetterTopic());
+                }
+                builder.deadLetterPolicy(policy.build());
             }
-            builder.deadLetterPolicy(policy.build());
         } else if (endpointConfiguration.getMaxRedeliverCount() != null) {
             // or potentially dead-letter-topic mode
             DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
