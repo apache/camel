@@ -2287,6 +2287,14 @@ that ended empty well before `pullFetchTimeout`, at most every 5 seconds. A dura
 it is gone (deleted by an administrator, or after its `inactiveThreshold`), the consumer logs a WARN and keeps fetching,
 and the fetches work again when the durable is created again with the same name.
 
+=== camel-azure-cosmosdb - a client set on the component or autowired is not closed by Camel
+
+A `CosmosAsyncClient` set with the `cosmosAsyncClient` option, or autowired from the registry, is shared by all the
+azure-cosmosdb endpoints. An endpoint that stopped (for example because its route was removed or reloaded) closed it,
+and from then on the other endpoints, and the application, failed every request until the application was restarted.
+Camel now closes only the clients that its endpoints create. Close a client you set yourself when the application no
+longer needs it (a client that is a Spring bean is closed by Spring).
+
 === camel-telegram - a failed send fails the exchange once
 
 When Telegram answers a message with an error status (for example `400` for an unknown chat), or with a body that
