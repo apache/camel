@@ -45,9 +45,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Message Operations
 
-The following Solr operations are currently supported. Set an
-exchange header with a key of "operation" and a value set to one of
-the following. Some operations also require the message body to be set.
+The following Solr operations are currently supported. Set the operation with the `CamelSolrOperation` header, or
+with the `operation` option of the endpoint (the header wins). Some operations also require the message body to be set.
+When neither is set, the body decides: a Map, a file or a collection inserts, a collection of Strings deletes by id, and
+the `CamelSolrQueryString` header searches. A body that is a request of SolrJ, such as a `SolrQuery` or an
+`UpdateRequest`, runs its own operation.
 
 * `INSERT`
 * `DELETE`
