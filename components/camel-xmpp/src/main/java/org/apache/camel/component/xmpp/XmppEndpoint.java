@@ -231,35 +231,11 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
 
             if (!newConnection.isAuthenticated()) {
-                if (user != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging in to XMPP as user: {} on connection: {}", user,
-                                getConnectionMessage(newConnection));
-                    }
-                    if (password == null) {
-                        LOG.warn("No password configured for user: {} on connection: {}", user,
-                                getConnectionMessage(newConnection));
-                    }
-
-                    if (createAccount) {
-                        AccountManager accountManager = AccountManager.getInstance(newConnection);
-                        accountManager.createAccount(Localpart.from(user), password);
-                    }
-                    if (login) {
-                        if (resource != null) {
-                            newConnection.login(user, password, Resourcepart.from(resource));
-                        } else {
-                            newConnection.login(user, password);
-                        }
-                    }
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
-                    }
-                    newConnection.login();
+                if (user != null && createAccount) {
+                    AccountManager accountManager = AccountManager.getInstance(newConnection);
+                    accountManager.createAccount(Localpart.from(user), password);
                 }
-
-                // presence is not needed to be sent after login
+                login(newConnection);
             }
 
             // okay new connection was created successfully
@@ -268,6 +244,35 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * Logs the connection in: as the configured user, or anonymously. A connection that was lost and is connected again
+     * must log in again before the server delivers anything to it.
+     */
+    public void login(XMPPTCPConnection connection)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        if (user != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(connection));
+            }
+            if (password == null) {
+                LOG.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(connection));
+            }
+            if (login) {
+                if (resource != null) {
+                    connection.login(user, password, Resourcepart.from(resource));
+                } else {
+                    connection.login(user, password);
+                }
+            }
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(connection));
+            }
+            connection.login();
+        }
+        // presence is not needed to be sent after login
     }
 
     private XMPPTCPConnection createConnectionInternal() throws UnknownHostException, XmppStringprepException {
