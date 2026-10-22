@@ -86,40 +86,39 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
                 if (variableReceive != null) {
                     ExchangeHelper.setVariable(exchange, variableReceive, null);
                 }
-                callback.done(true);
-                return true;
-            }
-            // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
-            final Message out = exchange.getOut();
-            out.copyFrom(in);
-            if (body instanceof InputStream is) {
-                stream = is;
-                result = dataFormat.unmarshal(exchange, stream);
             } else {
-                result = dataFormat.unmarshal(exchange, body);
-            }
-            if (result instanceof Exchange) {
-                if (result != exchange) {
-                    // it's not allowed to return another exchange other than the one provided to dataFormat
-                    throw new RuntimeCamelException(
-                            "The returned exchange " + result + " is not the same as " + exchange
-                                                    + " provided to the DataFormat");
-                }
-            } else if (result instanceof Message msg) {
-                // result should be stored in variable instead of message body
-                if (variableReceive != null) {
-                    Object value = msg.getBody();
-                    ExchangeHelper.setVariable(exchange, variableReceive, value);
+                // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
+                final Message out = exchange.getOut();
+                out.copyFrom(in);
+                if (body instanceof InputStream is) {
+                    stream = is;
+                    result = dataFormat.unmarshal(exchange, stream);
                 } else {
-                    // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
-                    exchange.setOut(msg);
+                    result = dataFormat.unmarshal(exchange, body);
                 }
-            } else {
-                // result should be stored in variable instead of message body
-                if (variableReceive != null) {
-                    ExchangeHelper.setVariable(exchange, variableReceive, result);
+                if (result instanceof Exchange) {
+                    if (result != exchange) {
+                        // it's not allowed to return another exchange other than the one provided to dataFormat
+                        throw new RuntimeCamelException(
+                                "The returned exchange " + result + " is not the same as " + exchange
+                                                        + " provided to the DataFormat");
+                    }
+                } else if (result instanceof Message msg) {
+                    // result should be stored in variable instead of message body
+                    if (variableReceive != null) {
+                        Object value = msg.getBody();
+                        ExchangeHelper.setVariable(exchange, variableReceive, value);
+                    } else {
+                        // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
+                        exchange.setOut(msg);
+                    }
                 } else {
-                    out.setBody(result);
+                    // result should be stored in variable instead of message body
+                    if (variableReceive != null) {
+                        ExchangeHelper.setVariable(exchange, variableReceive, result);
+                    } else {
+                        out.setBody(result);
+                    }
                 }
             }
         } catch (Exception e) {

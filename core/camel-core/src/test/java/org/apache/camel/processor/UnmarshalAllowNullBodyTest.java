@@ -53,10 +53,12 @@ public class UnmarshalAllowNullBodyTest extends ContextTestSupport {
 
     @Test
     public void testAllowNullBodySetsTheReceiveVariableToNull() throws Exception {
-        getMockEndpoint("mock:receive").expectedVariableReceived("out", null);
+        getMockEndpoint("mock:receive").expectedMessageCount(1);
         getMockEndpoint("mock:receive").expectedHeaderReceived("foo", "bar");
         template.sendBodyAndHeader("direct:receive", null, "foo", "bar");
         assertMockEndpointsSatisfied();
+        // expectedVariableReceived with a null value also accepts any value, so check the variable itself
+        assertNull(getMockEndpoint("mock:receive").getReceivedExchanges().get(0).getVariable("out"));
     }
 
     @Test
