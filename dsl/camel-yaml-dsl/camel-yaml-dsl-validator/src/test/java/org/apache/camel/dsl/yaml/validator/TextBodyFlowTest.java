@@ -1407,6 +1407,91 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfMessaging() {
+        // the paho consumer gives bytes, so a field read needs an unmarshal; pulsar and smtp send what converts to
+        // bytes or text, so parsed data must be marshalled first, and so must the reply of a nats consumer that answers
+        // (InOut); the converter of spring-rabbitmq may be set on the component, and an imap mail may be text, a stream
+        // or a multipart, which say nothing
+        String yaml = """
+                - route:
+                    id: mqtt
+                    from:
+                      uri: paho:orders
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: publish
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: pulsar:persistent://public/default/orders
+                - route:
+                    id: service
+                    from:
+                      uri: nats:orders
+                      parameters:
+                        exchangePattern: InOut
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                - route:
+                    id: listener
+                    from:
+                      uri: nats:events
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                - route:
+                    id: rabbit
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: spring-rabbitmq:orders
+                - route:
+                    id: mail
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: smtp://localhost?to=info@acme.com
+                - route:
+                    id: inbox
+                    from:
+                      uri: imap://localhost
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                """;
+        assertThat(lines(yaml)).hasSize(4).anySatisfy(m -> assertThat(m)
+                .contains("route mqtt: simple reads a field of the body (${body[id]})")
+                .contains("the paho consumer gives it as bytes"))
+                .anySatisfy(m -> assertThat(m).contains("to: pulsar needs the body as text, bytes, a stream or a file"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route service:")
+                        .contains("the body at the end of the route is the reply to the nats request"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route mail: to: smtp needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
     public void testTheBodyOfCoreComponents() {
         // the stream consumer gives each line as text, so a field read needs an unmarshal, and stream:out writes text,
         // bytes, a stream or a file, so parsed data must be marshalled first; the knative consumer gives bytes, or the
