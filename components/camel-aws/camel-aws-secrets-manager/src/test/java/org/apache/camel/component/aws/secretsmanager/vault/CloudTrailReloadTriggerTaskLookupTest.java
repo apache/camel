@@ -246,7 +246,7 @@ class CloudTrailReloadTriggerTaskLookupTest {
             addEvent("PutSecretValue", "other-secret", t0.plusSeconds(1 + i % 20));
         }
         addEvent("UpdateSecret", "tracked-secret", t0.plusSeconds(5));
-        // the task is shut down while the first page is read: doShutdown clears lastTime
+        // lastTime changes while the first page is read: the other pages and the other lookup keep the start time
         onLookup = () -> {
             if (requests.size() == 1) {
                 try {

@@ -317,8 +317,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 // read every page of the update events since the last check. LookupEvents takes a single lookup
                 // attribute, so there is one lookup per event name: filtering on the event source instead would also
                 // return every read (GetSecretValue, DescribeSecret), and the pages would grow with the read traffic
-                // read lastTime once: every page of both lookups uses the same start time, even if the task is shut
-                // down (which clears lastTime) while the lookups run
+                // read lastTime once: every page of both lookups of this check uses the same start time
                 Instant since = lastTime;
                 List<Event> events = new ArrayList<>();
                 for (String eventName : UPDATE_EVENT_NAMES) {
