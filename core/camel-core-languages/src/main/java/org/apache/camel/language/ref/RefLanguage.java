@@ -20,6 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
@@ -32,6 +35,10 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * A language for referred expressions or predicates.
  */
 @Language("ref")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.UNKNOWN,
+                                    description = "As the expression or the predicate in the registry reads it"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "What the expression in the registry returns; a Boolean for a predicate"))
 public class RefLanguage extends TypedLanguageSupport {
 
     @Override

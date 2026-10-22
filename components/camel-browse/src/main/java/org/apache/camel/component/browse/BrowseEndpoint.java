@@ -28,6 +28,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -45,6 +48,13 @@ import org.apache.camel.support.DefaultProducer;
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name",
              remote = false, internal = true, category = { Category.CORE, Category.MONITORING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body the producer sent: the route runs on the same exchange, in the"
+                                                 + " thread of the producer"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, unless a route consumes from the same browse endpoint: it runs on"
+                                                 + " the same exchange, so the body is the one that route ends with"))
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint")

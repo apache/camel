@@ -85,7 +85,7 @@ public void inspectReceivedOrders() {
 
     // then we can inspect the list of received exchanges from Java
     for (Exchange exchange : exchanges) {
-        String payload = exchange.getIn().getBody();
+        String payload = exchange.getIn().getBody(String.class);
         // do something with payload
     }
 }

@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -40,6 +43,12 @@ import org.apache.camel.support.service.ServiceHelper;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation",
              remote = false, producerOnly = true,
              category = { Category.CORE, Category.TRANSFORMATION }, lenientProperties = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.UNKNOWN,
+                                  description = "The body the data format named in the path takes, as for the marshal and"
+                                                + " unmarshal EIPs"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the data format named in the path gives, as for the marshal and"
+                                                 + " unmarshal EIPs"))
 public class DataFormatEndpoint extends DefaultEndpoint {
 
     private AsyncProcessor processor;

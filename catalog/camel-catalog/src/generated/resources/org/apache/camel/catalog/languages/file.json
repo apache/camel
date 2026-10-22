@@ -15,6 +15,10 @@
     "modelName": "simple",
     "modelJavaType": "org.apache.camel.model.language.SimpleExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, for ${body}: the file functions read the headers the file consumers set" },
+    "expressionOut": { "carriers": [ "unknown" ], "description": "A text with functions gives text, such as a file name. A single function gives its value as it is: ${file:size}, ${file:length} and ${file:modified} a Long, ${file:absolute} a Boolean, the other file functions text, and null without the headers of a file" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

@@ -23,6 +23,9 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -34,6 +37,12 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "ref", title = "Ref", syntax = "ref:name",
              remote = false, category = { Category.CORE })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the consumer of the endpoint in the registry gives"),
+           producerIn = @BodyType(value = Carrier.UNKNOWN,
+                                  description = "The bodies the producer of the endpoint in the registry takes"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the producer of the endpoint in the registry leaves"))
 public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;

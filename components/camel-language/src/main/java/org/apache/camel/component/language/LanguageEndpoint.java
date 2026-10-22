@@ -29,6 +29,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -49,6 +52,17 @@ import org.apache.camel.util.IOHelper;
 @UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri",
              remote = false, producerOnly = true, category = { Category.CORE, Category.SCRIPT },
              headersClass = LanguageConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.UNKNOWN,
+                                  description = "The body as the language of the script reads it. The script is in the uri,"
+                                                + " the script option or a resource, or in the CamelLanguageScript header with"
+                                                + " allowTemplateFromHeader=true, and never in the body"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "transform", value = "false", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "binary", value = "true", carriers = Carrier.STREAM) },
+                                   description = "The result of the script, as the language gives it. Unchanged with"
+                                                 + " transform=false. With binary=true the content of the resource as a"
+                                                 + " stream, which is not evaluated"))
 public class LanguageEndpoint extends ResourceEndpoint {
 
     private Language language;
