@@ -1157,6 +1157,49 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfBinaryDataFormats() {
+        // avro with its default library, Jackson, gives a Map, which the file producer cannot write; zipFile gives the
+        // content of the entry as a stream, cbor an object of a class, and fory what the data holds, which say nothing
+        String yaml = """
+                - route:
+                    id: avro
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            avro: {}
+                        - to: file:out
+                - route:
+                    id: zip
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            zipFile: {}
+                        - to: file:out
+                - route:
+                    id: cbor
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            cbor:
+                              unmarshalType: com.acme.Order
+                        - to: file:out
+                - route:
+                    id: fory
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            fory: {}
+                        - to: file:out
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .contains("route avro: to: file needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
     public void testAnOptionTheBodyDependsOnOutweighsAnotherOption() {
         // xslt with output bytes gives bytes, so a field read needs an unmarshal; with a resultHandlerFactory too the
         // factory decides the body, and output=bytes no longer says it
