@@ -114,6 +114,10 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
         return getIssues(jql, SEARCH_START_AT, SEARCH_MAX_PER_QUERY, maxResults);
     }
 
+    /**
+     * Runs the search of every Jira consumer (newIssues, newComments, watchUpdates): on Jira Cloud the pages are read
+     * with the next page token (see getCloudIssues), on Jira Server / Data Center by start index.
+     */
     // Ignore maxResults if it's <= 0.
     protected Queue<Issue> getIssues(String jql, int start, int maxPerQuery, int maxResults) {
         LOG.debug("Start indexing current JIRA issues...");
@@ -122,8 +126,13 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
             maxPerQuery = maxResults;
         }
 
+        if (endpoint.getClient().getSearchClient() instanceof AsynchronousCloudSearchRestClient cloudSearchRestClient) {
+            return getCloudIssues(cloudSearchRestClient, jql, maxPerQuery, maxResults);
+        }
+
         // Avoid duplicates
         Set<Issue> issues = new LinkedHashSet<>();
+        int previousTotal = -1;
         while (true) {
             SearchRestClient searchRestClient = endpoint.getClient().getSearchClient();
             // *navigable should be the default value, but it does not seem to be true with 6.0.2 client
@@ -136,21 +145,44 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
             // Note: the total # the query would return *without* pagination, effectively telling us
             // we've reached the end. Also exit early if we're limiting the # of results or
             // if total # of returned issues is lower than the actual page size.
-            int total;
-            if (searchRestClient instanceof AsynchronousCloudSearchRestClient) {
-                // calling searchResult.getTotal() on AsynchronousCloudSearchRestClient throws an exception:
-                // Total is not available in the Cloud version of the new Search API response.
-                // Please use `SearchRestClient.totalCount` instead to fetch the estimated count of the issues for a given JQL
-                total = searchRestClient.totalCount(jql).claim().getCount();
-            } else {
-                total = searchResult.getTotal();
+            int total = searchResult.getTotal();
+            if (previousTotal >= 0 && total < previousTotal && start < previousTotal) {
+                // issues left the result set while paging (deleted, moved, or edited out of the JQL), so the later
+                // ones moved back and the first ones of this page may have been on the previous page: read again from
+                // that many issues before, the set drops the repeats. Not needed when the previous page was the last
+                // one. An issue created at the same time as one leaves keeps the total and is not seen here.
+                start = Math.max(0, start - (previousTotal - total));
+                previousTotal = total;
+                continue;
             }
+            previousTotal = total;
             if (maxPerQuery >= total || start >= total || maxResults > 0 && issues.size() >= maxResults) {
                 break;
             }
 
             start += maxPerQuery;
         }
+        LOG.debug("End indexing current JIRA issues. {} issues indexed.", issues.size());
+        return new LinkedList<>(issues);
+    }
+
+    /**
+     * Jira Cloud cannot page by startAt: its search client throws UnsupportedOperationException for a startAt other
+     * than 0. The pages are read with the next page token of the previous page instead, from the first issue, until the
+     * last page (no next page token) or maxResults (ignored if it's <= 0).
+     */
+    private Queue<Issue> getCloudIssues(
+            AsynchronousCloudSearchRestClient searchRestClient, String jql, int maxPerQuery, int maxResults) {
+        Set<Issue> issues = new LinkedHashSet<>();
+        String nextPageToken = null;
+        do {
+            SearchResult searchResult
+                    = searchRestClient.enhancedSearchJql(jql, maxPerQuery, nextPageToken, Set.of("*navigable"), null).claim();
+            for (Issue issue : searchResult.getIssues()) {
+                issues.add(issue);
+            }
+            nextPageToken = searchResult.getNextPageToken();
+        } while (nextPageToken != null && !(maxResults > 0 && issues.size() >= maxResults));
         LOG.debug("End indexing current JIRA issues. {} issues indexed.", issues.size());
         return new LinkedList<>(issues);
     }

@@ -55,6 +55,60 @@ class JsonPathChecksTest {
                 .contains("read as $[?(@.status == 'paid')]");
     }
 
+    /** The one order of a list by its id (the REST example of the r20 runs): an index after the filter gives []. */
+    @Test
+    void anIndexAfterAFilterGivesAnEmptyList() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.id}')][0]"
+                """;
+        List<String> errors = JsonPathChecks.validateYamlJsonPath(yaml, catalog);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e)
+                .startsWith("Line 8: an index after a filter gives an empty list in JsonPath")
+                .contains("leave the index out and set resultType: java.util.Map"));
+    }
+
+    @Test
+    void andOutsideAFilterIsNoJsonPath() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - choice:
+                            when:
+                              - expression:
+                                  jsonpath:
+                                    expression: "$[?(@.orderId == '${header.id}')] && size() > 0"
+                """;
+        List<String> errors = JsonPathChecks.validateYamlJsonPath(yaml, catalog);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e)
+                .startsWith("Line 9: && and || work inside a filter only")
+                .contains("set resultType: java.util.Map").contains("check ${body} == null"));
+    }
+
+    @Test
+    void theOneElementRecipeIsFine() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.id}' && @.status == 'paid')]"
+                                resultType: java.util.Map
+                """;
+        assertThat(JsonPathChecks.validateYamlJsonPath(yaml, catalog)).isEmpty();
+    }
+
     @Test
     void nestedPathHasNoSimpleForm() {
         String yaml = """

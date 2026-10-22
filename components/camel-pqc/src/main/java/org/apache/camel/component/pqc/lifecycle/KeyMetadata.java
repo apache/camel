@@ -78,6 +78,13 @@ public class KeyMetadata implements Serializable {
         this.lastUsedAt = lastUsedAt;
     }
 
+    /**
+     * Records one use of the key.
+     * <p/>
+     * The increment is not atomic and the managers hand out the cached instance, so concurrent exchanges can lose
+     * counts. That is accepted: the count only feeds a rotation threshold, where undercounting delays a rotation rather
+     * than breaking anything. Do not rely on it as an exact number of operations.
+     */
     public void updateLastUsed() {
         this.lastUsedAt = Instant.now();
         this.usageCount++;

@@ -23,6 +23,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -40,6 +42,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -65,6 +68,8 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
 
     private static final String MOCK_LATE = "mock:late";
 
+    private static final String MOCK_RECONNECT_TIMEOUT = "mock:reconnectTimeout";
+
     private static final String MOCK_UNKNOWN = "mock:unknown";
 
     private static final String MILO_CLIENT_UNKNOWN
@@ -75,6 +80,9 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
 
     @EndpointInject(MOCK_LATE)
     protected MockEndpoint lateEndpoint;
+
+    @EndpointInject(MOCK_RECONNECT_TIMEOUT)
+    protected MockEndpoint reconnectTimeoutEndpoint;
 
     @EndpointInject(MOCK_UNKNOWN)
     protected MockEndpoint unknownEndpoint;
@@ -88,9 +96,14 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
     @RegisterExtension
     AvailablePortFinder.Port lateRelayPort = AvailablePortFinder.find();
 
+    @RegisterExtension
+    AvailablePortFinder.Port reconnectTimeoutRelayPort = AvailablePortFinder.find();
+
     private final Relay relay = new Relay();
 
     private final Relay lateRelay = new Relay();
+
+    private final Relay reconnectTimeoutRelay = new Relay();
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -110,6 +123,11 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
                 // its own relay, so its own connection, which the test starts while the relay is down
                 from(resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(lateRelayPort.getPort())))
                         .routeId("late").autoStartup(false).to(MOCK_LATE);
+
+                // the same, with a delay between two connection attempts shorter than the default
+                from(resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(reconnectTimeoutRelayPort.getPort()))
+                     + "&reconnectTimeout=1000")
+                        .routeId("reconnectTimeout").autoStartup(false).to(MOCK_RECONNECT_TIMEOUT);
             }
         };
     }
@@ -124,6 +142,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         // after the context, so that its clients disconnect through the relays
         relay.stop();
         lateRelay.stop();
+        reconnectTimeoutRelay.stop();
     }
 
     @Test
@@ -196,6 +215,63 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
     }
 
     @Test
+    void refusedNodeIsCreatedOnceTheSessionIsActiveAgain() throws Exception {
+        producer1.sendBody("Foo");
+
+        item1Endpoint.expectedMessageCount(1);
+        testBody(item1Endpoint.message(0), assertGoodValue("Foo"));
+        context.getRouteController().startRoute("item1");
+        item1Endpoint.assertIsSatisfied();
+
+        unknownEndpoint.expectedMessageCount(1);
+        testBody(unknownEndpoint.message(0),
+                value -> assertEquals(StatusCodes.Bad_NodeIdUnknown, value.getStatusCode().getValue()));
+        context.getRouteController().startRoute("unknown");
+        unknownEndpoint.assertIsSatisfied();
+
+        final MiloClientEndpoint endpoint = context.getEndpoint(
+                resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(relayPort.getPort())),
+                MiloClientEndpoint.class);
+        final MiloClientConnection connection = endpoint.createConnection();
+        try {
+            final OpcUaClient client = connection.getOpcUaClient();
+            final NodeId sessionId = client.getSession().getSessionId();
+
+            // the refused node is not reported, and delivers its value once it is created after the session is back
+            unknownEndpoint.reset();
+            unknownEndpoint.expectedMessageCount(1);
+            unknownEndpoint.setResultWaitTime(60_000);
+            unknownEndpoint.setAssertPeriod(2_000);
+            testBody(unknownEndpoint.message(0), assertGoodValue("Baz"));
+            item1Endpoint.reset();
+            item1Endpoint.expectedMessageCount(2);
+            item1Endpoint.setResultWaitTime(60_000);
+            item1Endpoint.setAssertPeriod(2_000);
+            testBody(item1Endpoint.message(0), assertNoCommunication());
+            testBody(item1Endpoint.message(1), assertGoodValue("Foo"));
+
+            // the server stays unreachable for longer than the retry interval of the refused node
+            relay.stop();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> item1Endpoint.getReceivedCounter() >= 1);
+            await().during(12, TimeUnit.SECONDS).atMost(15, TimeUnit.SECONDS)
+                    .until(() -> unknownEndpoint.getReceivedCounter() == 0);
+            // an attempt while the session is lost is skipped: it does not hold the connection until the session is back
+            assertSame(client, CompletableFuture.supplyAsync(connection::getOpcUaClient).get(2, TimeUnit.SECONDS));
+            template.sendBody("milo-server:unknownItem", "Baz");
+            relay.start(relayPort.getPort(), getServerPort());
+
+            unknownEndpoint.assertIsSatisfied();
+            item1Endpoint.assertIsSatisfied();
+
+            // the attempts while the session was lost did not rebuild the connection
+            assertSame(client, connection.getOpcUaClient());
+            assertEquals(sessionId, client.getSession().getSessionId());
+        } finally {
+            endpoint.releaseConnection(connection);
+        }
+    }
+
+    @Test
     void consumerStartedWithoutTheServerReportsTheNodeThenReceivesItsValue() throws Exception {
         producer1.sendBody("Foo");
 
@@ -214,6 +290,27 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         testBody(lateEndpoint.message(0), assertGoodValue("Foo"));
         lateRelay.start(lateRelayPort.getPort(), getServerPort());
         lateEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    void consumerStartedWithoutTheServerConnectsAfterTheConfiguredReconnectTimeout() throws Exception {
+        producer1.sendBody("Foo");
+
+        // the relay is down: the consumer reports its node once, while it keeps trying to connect every second
+        reconnectTimeoutEndpoint.expectedMessageCount(1);
+        reconnectTimeoutEndpoint.setAssertPeriod(3_000);
+        testBody(reconnectTimeoutEndpoint.message(0), assertNoCommunication());
+        context.getRouteController().startRoute("reconnectTimeout");
+        reconnectTimeoutEndpoint.assertIsSatisfied();
+
+        // the server becomes reachable: the next attempt, at most a second later, delivers the current value, long
+        // before the default delay of 10 seconds after the first attempt would have passed
+        reconnectTimeoutEndpoint.reset();
+        reconnectTimeoutEndpoint.expectedMessageCount(1);
+        reconnectTimeoutEndpoint.setResultWaitTime(5_000);
+        testBody(reconnectTimeoutEndpoint.message(0), assertGoodValue("Foo"));
+        reconnectTimeoutRelay.start(reconnectTimeoutRelayPort.getPort(), getServerPort());
+        reconnectTimeoutEndpoint.assertIsSatisfied();
     }
 
     /**

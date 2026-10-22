@@ -586,6 +586,40 @@ public interface MiloBrowseEndpointBuilderFactory {
             return this;
         }
         /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed. It is not used while the OPC UA
+         * client recovers a lost session on its own.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder reconnectTimeout(long reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+        /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed. It is not used while the OPC UA
+         * client recovers a lost session on its own.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder reconnectTimeout(String reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+        /**
          * The requested publishing interval in milliseconds.
          * 
          * The option is a: <code>java.lang.Double</code> type.

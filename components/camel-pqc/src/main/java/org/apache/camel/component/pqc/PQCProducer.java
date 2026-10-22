@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
@@ -121,6 +122,10 @@ public class PQCProducer extends DefaultProducer {
     private Signature signer;
     private KeyGenerator keyGenerator;
     private KeyPair keyPair;
+
+    // Each keeps its warning to one line per producer instead of one per exchange
+    private final AtomicBoolean usageRecordFailureWarned = new AtomicBoolean();
+    private final AtomicBoolean keyUsageNotRecordedWarned = new AtomicBoolean();
 
     // Set only when this producer created the Signature itself, so it knows how to create another one.
     // Left null when the user configured an instance, which then has to be shared and locked instead.
@@ -578,9 +583,13 @@ public class PQCProducer extends DefaultProducer {
             updateSignatureFromBody(signerForExchange, exchange.getMessage());
             signature = signerForExchange.sign();
         }
-        exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
 
-        persistStatefulKeyStateAfterSign(exchange);
+        // sign() has already advanced the one-time index inside a stateful private key. Record that before the
+        // signature leaves this processor, so a persistence failure fails the exchange instead of emitting a
+        // signature whose index advance was never stored - on restart that index would be handed out a second time.
+        recordKeyUsageAfterSign(exchange);
+
+        exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
     }
 
     private void verification(Exchange exchange)
@@ -826,15 +835,16 @@ public class PQCProducer extends DefaultProducer {
         // Parse to get individual signatures for headers
         HybridSignature.HybridSignatureComponents components = HybridSignature.parse(hybridSig);
 
+        // Recorded before the signatures are published, for the reason given in signature()
+        try {
+            recordKeyUsageAfterSign(exchange);
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Failed to record key usage after hybrid signing", e);
+        }
+
         exchange.getMessage().setHeader(PQCConstants.HYBRID_SIGNATURE, hybridSig);
         exchange.getMessage().setHeader(PQCConstants.CLASSICAL_SIGNATURE, components.classicalSignature());
         exchange.getMessage().setHeader(PQCConstants.PQC_SIGNATURE, components.pqcSignature());
-
-        try {
-            persistStatefulKeyStateAfterSign(exchange);
-        } catch (Exception e) {
-            throw new RuntimeCamelException("Failed to persist stateful key state after hybrid signing", e);
-        }
     }
 
     private void hybridVerification(Exchange exchange)
@@ -1201,47 +1211,120 @@ public class PQCProducer extends DefaultProducer {
     }
 
     /**
-     * Persists stateful key state after a signing operation through the KeyLifecycleManager, if configured. This
-     * ensures the key index is tracked across restarts.
+     * Records the use of the signing key through the KeyLifecycleManager, if one is configured and the exchange names a
+     * key.
+     * <p/>
+     * This advances {@code usageCount}, which is what the {@code maxKeyUsage} rotation signal of
+     * {@link org.apache.camel.component.pqc.lifecycle.KeyRotationScheduler} reads. It therefore runs for every signing
+     * key, not only the stateful ones: ML-DSA, SLH-DSA and Falcon keys would otherwise sit at a usage count of zero
+     * forever and never be rotated.
+     * <p/>
+     * The key encapsulation operations do not call this method, so a KEM key still does not advance its usage count and
+     * {@code maxKeyUsage} does not apply to it.
+     * <p/>
+     * For a stateful signature key the advanced private key is stored as well, so the one-time index survives a
+     * restart.
      */
-    private void persistStatefulKeyStateAfterSign(Exchange exchange) throws Exception {
+    private void recordKeyUsageAfterSign(Exchange exchange) throws Exception {
         if (keyPair == null || keyPair.getPrivate() == null) {
             return;
         }
 
         PrivateKey privateKey = keyPair.getPrivate();
-        long remaining = getStatefulKeyRemaining(privateKey);
-        if (remaining < 0) {
-            // Not a stateful key
-            return;
-        }
+        boolean stateful = getStatefulKeyRemaining(privateKey) >= 0;
 
         KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
         if (klm == null) {
+            // Only the stateful risk is worth reporting here. A plain signing endpoint with no lifecycle management
+            // is an ordinary setup, and with no manager there is no maxKeyUsage threshold to miss.
+            if (stateful) {
+                warnKeyUsageNotRecorded(true, "no keyLifecycleManager is configured on the endpoint");
+            }
             return;
         }
 
         String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
         if (ObjectHelper.isEmpty(keyId)) {
+            warnKeyUsageNotRecorded(stateful,
+                    "the exchange carries no " + PQCConstants.KEY_ID + " header identifying the key");
             return;
         }
 
-        // Update metadata with current usage
-        KeyMetadata metadata = klm.getKeyMetadata(keyId);
+        KeyMetadata metadata;
+        try {
+            metadata = klm.getKeyMetadata(keyId);
+        } catch (Exception e) {
+            if (stateful) {
+                throw e;
+            }
+            // the read fails for the same reasons as the write below, and costs the same: only the usage count
+            warnUsageRecordFailure(keyId, e);
+            return;
+        }
         if (metadata == null) {
-            LOG.warn(
-                    "No metadata found for stateful key '{}'. The key index has been advanced by the signing operation "
-                     + "but cannot be persisted — on restart this index advance will be lost, which may lead to key reuse. "
-                     + "Ensure a KeyLifecycleManager is properly configured and the key is stored with metadata.",
-                    keyId);
+            warnKeyUsageNotRecorded(stateful, "the keyLifecycleManager holds no metadata for key '" + keyId + "'");
             return;
         }
 
         metadata.updateLastUsed();
-        klm.updateKeyMetadata(keyId, metadata);
 
-        // Persist the updated key (with new index) so state survives restarts
-        klm.storeKey(keyId, keyPair, metadata);
+        if (stateful) {
+            // storeKey writes the metadata entry as well in every manager, so calling updateKeyMetadata first would
+            // simply double the number of remote writes per signature
+            klm.storeKey(keyId, keyPair, metadata);
+        } else {
+            // Only the usage count is at stake here. Failing the exchange over it would throw away a perfectly good
+            // signature to protect a counter whose loss merely delays a rotation - unlike a stateful index, which
+            // cannot be recovered once it has been handed out twice.
+            try {
+                klm.updateKeyMetadata(keyId, metadata);
+            } catch (Exception e) {
+                warnUsageRecordFailure(keyId, e);
+            }
+        }
+    }
+
+    /**
+     * Warns, once per producer, that the usage of a non-stateful key was not recorded because its metadata could not be
+     * read from or written to the keyLifecycleManager. The signature is kept: only the usage count is lost.
+     */
+    private void warnUsageRecordFailure(String keyId, Exception e) {
+        if (usageRecordFailureWarned.compareAndSet(false, true)) {
+            LOG.warn("Could not record the usage of key '{}' through the keyLifecycleManager, so its"
+                     + " usageCount does not advance and a configured maxKeyUsage threshold may not be"
+                     + " reached. The signature itself is unaffected. Reported once per producer.",
+                    keyId, e);
+        }
+    }
+
+    /**
+     * Warns, once per producer, that a signing operation could not have its key usage recorded.
+     * <p/>
+     * For a stateful key this is the serious case: the operation has already consumed the one-time index inside the
+     * private key, so after a restart the key resumes at the old index and signs again with an index already in use,
+     * which is what the one-time property of LMS, HSS, XMSS and XMSSMT forbids.
+     * <p/>
+     * For any other key the consequence is milder: {@code usageCount} does not advance, so a configured
+     * {@code maxKeyUsage} rotation threshold is never reached. That is only worth saying when a
+     * {@code keyLifecycleManager} is configured at all - the caller suppresses it otherwise.
+     */
+    private void warnKeyUsageNotRecorded(boolean stateful, String reason) {
+        if (!keyUsageNotRecordedWarned.compareAndSet(false, true)) {
+            return;
+        }
+        if (stateful) {
+            LOG.warn("Signed with the stateful key of signature algorithm {} but its advanced index was not persisted,"
+                     + " because {}. On restart the key resumes at the previous index and may sign twice with the same"
+                     + " one-time index. Configure a keyLifecycleManager, store the key with metadata, and send the"
+                     + " {} header on every exchange. This is reported once per producer.",
+                    getConfiguration().getSignatureAlgorithm(), reason, PQCConstants.KEY_ID);
+        } else {
+            LOG.warn("Signed with the key of signature algorithm {} but its usage was not recorded, because {}."
+                     + " The usageCount of the key does not advance, so a configured maxKeyUsage rotation threshold"
+                     + " will never be reached. Send the {} header on every exchange and store the key with metadata."
+                     + " This is reported once per producer.",
+                    getConfiguration().getSignatureAlgorithm(), reason, PQCConstants.KEY_ID);
+        }
     }
 
     /**

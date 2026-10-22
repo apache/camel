@@ -430,6 +430,25 @@ public interface MiloClientComponentBuilderFactory {
     
         
         /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed. It is not used while the OPC UA
+         * client recovers a lost session on its own.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloClientComponentBuilder reconnectTimeout(long reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+    
+        
+        /**
          * The requested publishing interval in milliseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -631,6 +650,7 @@ public interface MiloClientComponentBuilderFactory {
             case "overrideHost": getOrCreateConfiguration((MiloClientComponent) component).setOverrideHost((boolean) value); return true;
             case "overridePort": getOrCreateConfiguration((MiloClientComponent) component).setOverridePort((boolean) value); return true;
             case "productUri": getOrCreateConfiguration((MiloClientComponent) component).setProductUri((java.lang.String) value); return true;
+            case "reconnectTimeout": getOrCreateConfiguration((MiloClientComponent) component).setReconnectTimeout((long) value); return true;
             case "requestedPublishingInterval": getOrCreateConfiguration((MiloClientComponent) component).setRequestedPublishingInterval((java.lang.Double) value); return true;
             case "requestTimeout": getOrCreateConfiguration((MiloClientComponent) component).setRequestTimeout((java.lang.Long) value); return true;
             case "sessionName": getOrCreateConfiguration((MiloClientComponent) component).setSessionName((java.lang.String) value); return true;
