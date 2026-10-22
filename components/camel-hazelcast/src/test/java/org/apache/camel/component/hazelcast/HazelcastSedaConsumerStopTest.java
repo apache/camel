@@ -108,6 +108,30 @@ class HazelcastSedaConsumerStopTest extends CamelTestSupport {
     }
 
     @Test
+    void longPollTimeoutStillStopsPromptlyAndLeavesTheItemInTheQueue() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:long");
+        mock.expectedBodiesReceived("a");
+        member.getQueue("long").offer("a");
+        mock.assertIsSatisfied();
+
+        // with a pollTimeout of a minute the stop does not wait for the poll (nor for the graceful shutdown timeout, which
+        // would interrupt it; an interrupt does not end a poll on the member, so the poll would take the next item)
+        await().atMost(10, TimeUnit.SECONDS).until(() -> Thread.getAllStackTraces().entrySet().stream()
+                .anyMatch(e -> e.getKey().getName().contains("hazelcast-seda://long")
+                        && Arrays.stream(e.getValue()).anyMatch(f -> "poll".equals(f.getMethodName()))));
+        long start = System.nanoTime();
+        context.getRouteController().stopRoute("long");
+        long stopMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+        assertTrue(stopMillis < 5000, "Stopping the route took " + stopMillis + " ms");
+
+        member.getQueue("long").offer("b");
+        await().during(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, member.getQueue("long").size(),
+                        "The item offered after the route stopped was taken from the queue"));
+        assertEquals(1, mock.getReceivedCounter());
+    }
+
+    @Test
     void threadInTheDelayAfterAFailedPollEndsWhenTheRouteStops() throws Exception {
         // the consumer thread waits in the delay after a failed poll, which runs on the error-delay scheduler
         await().atMost(10, TimeUnit.SECONDS).until(() -> !failingConsumerThreads(true).isEmpty());
@@ -144,6 +168,9 @@ class HazelcastSedaConsumerStopTest extends CamelTestSupport {
             public void configure() {
                 from("hazelcast-seda:idle?hazelcastInstance=#hazelcastInstance").routeId("idle")
                         .to("mock:idle");
+
+                from("hazelcast-seda:long?hazelcastInstance=#hazelcastInstance&pollTimeout=60000").routeId("long")
+                        .to("mock:long");
 
                 from("hazelcast-seda:failing?hazelcastInstance=#failingInstance&onErrorDelay=3000").routeId("failing")
                         .to("mock:failing");
