@@ -1052,6 +1052,62 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfTransformations() {
+        // jslt and json-validator read JSON text, so parsed data must be marshalled first; a template writes text, so a
+        // field read needs an unmarshal; and jolt gives parsed JSON, which the file producer cannot write
+        String yaml = """
+                - route:
+                    id: jslt
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: jslt:order.json
+                - route:
+                    id: check
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: json-validator:order-schema.json
+                - route:
+                    id: template
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: velocity:order.vm
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: jolt
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: jolt:spec.json
+                        - to: file:out
+                """;
+        assertThat(lines(yaml)).hasSize(4)
+                .anySatisfy(
+                        m -> assertThat(m).contains("route jslt: to: jslt needs the body as text, bytes, a stream or a file"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route check: to: json-validator needs the body as text, bytes, a stream or a file"))
+                .anySatisfy(m -> assertThat(m).contains("route template: simple reads a field of the body (${body[id]})"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route jolt: to: file needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
     public void testAnOptionTheBodyDependsOnOutweighsAnotherOption() {
         // xslt with output bytes gives bytes, so a field read needs an unmarshal; with a resultHandlerFactory too the
         // factory decides the body, and output=bytes no longer says it

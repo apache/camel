@@ -81,8 +81,8 @@ message header with the key "*CamelJteDataModel*" just like this
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set, then Camel uses this over the endpoint configured
-resource. This allows you to provide a dynamic template at runtime.
+headers is set, and the endpoint has `allowTemplateFromHeader=true`, then Camel uses this
+over the endpoint configured resource. This allows you to provide a dynamic template at runtime.
 
 == Examples
 

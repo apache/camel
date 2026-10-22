@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -35,6 +38,14 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "4.4.0", scheme = "jte", title = "JTE", syntax = "jte:resourceUri",
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = JteConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The template takes an org.apache.camel.component.jte.Model: the body as it is"
+                                                + " in model.body, and converted to text by model.strBody(). With"
+                                                + " allowTemplateFromHeader=true the CamelJteDataModel header replaces the"
+                                                + " model"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The text the template writes, with leading and trailing whitespace trimmed."
+                                                 + " The headers are kept"))
 public class JteEndpoint extends ResourceEndpoint {
 
     @UriParam
