@@ -83,6 +83,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
             if (allowNullBody && body == null) {
                 // The body is null, and it is an allowed value so let's skip the unmarshalling
                 out = exchange.getOut();
+                out.copyFrom(in);
             } else {
                 // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
                 out = exchange.getOut();
