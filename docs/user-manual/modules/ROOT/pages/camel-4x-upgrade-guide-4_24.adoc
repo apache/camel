@@ -1528,6 +1528,20 @@ first ran is no longer served: its messages no longer reach the route and it no 
 sends, and the connection is closed. Clients that open a connection in this window must reconnect after the consumer
 has started.
 
+=== camel-undertow, camel-vertx-http - CamelHttpPath with a query in the endpoint uri
+
+When the endpoint uri of an undertow or vertx-http producer has a query, the `CamelHttpPath` header now goes before
+that query, as in camel-http. Before, camel-undertow dropped the header path, and camel-vertx-http put it into the
+query (or dropped it when `CamelHttpQuery` was set). The query is chosen as before: a `CamelHttpQuery` header wins over
+the query of the endpoint.
+
+This changes the target of routes that bridge an HTTP consumer to such a producer, as the HTTP consumers (undertow,
+platform-http-vertx, servlet) set `CamelHttpPath` from the path of the request. For example the route
+`from("undertow:http://0.0.0.0:8080/api?matchOnUriPrefix=true").to("undertow:http://backend/svc?key=1")`, or the same
+with a `vertx-http:` producer and `bridgeEndpoint=true`, now sends a request for `/api/orders/123` to
+`/svc/orders/123` instead of `/svc`. To keep the old target, remove the header before the producer, for example with
+`removeHeader(Exchange.HTTP_PATH)`.
+
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 
 The `saveBulk` and `executeTransaction` operations of `dapr:state` built their request but never sent it to Dapr, so

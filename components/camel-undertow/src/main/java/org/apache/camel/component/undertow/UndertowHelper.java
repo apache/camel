@@ -64,12 +64,16 @@ public final class UndertowHelper {
                 path = path.substring(1);
             }
             if (!path.isEmpty()) {
+                // insert the path before the query of the uri, if it has one (as camel-http does)
+                int idx = uri.indexOf('?');
+                String base = idx == -1 ? uri : uri.substring(0, idx);
+                String query = idx == -1 ? "" : uri.substring(idx);
                 // make sure that there is exactly one "/" between HTTP_URI and
                 // HTTP_PATH
-                if (!uri.endsWith("/")) {
-                    uri = uri + "/";
+                if (!base.endsWith("/")) {
+                    base = base + "/";
                 }
-                uri = uri.concat(path);
+                uri = base + path + query;
             }
         }
 
