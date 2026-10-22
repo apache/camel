@@ -1476,6 +1476,20 @@ subscription are not routed. `REPLAY_BLOCKS_OBSERVABLE`, `REPLAY_TRANSACTIONS_OB
 `ETH_LOG_OBSERVABLE` with `fromBlock` set to a block number are not subscribed again, as that would route the same
 blocks or logs again.
 
+=== camel-xmpp - one endpoint per participant and user, and one connection per account
+
+XMPP URIs that differ only in the participant or the user are now separate endpoints. Before, the component could
+return an endpoint that was created for another participant or user, and messages went to the wrong participant.
+
+All the consumers and producers of one account (the same host, port, service name, user, password, resource and login
+settings) now share one XMPP connection, also across endpoints. So an account has one session on the server instead
+of one per endpoint, and the server no longer closes one of them with a `conflict` error. The connection is closed when
+the last route that uses the account stops. With the `connectionConfig` option, endpoints share a connection only when
+they refer to the same `ConnectionConfiguration` instance (for example the same bean in the registry).
+
+`XmppEndpoint.createConnection()` now creates a new connection on every call, instead of returning the connection of
+the endpoint, and an endpoint no longer disconnects a connection when it stops.
+
 === camel-vertx-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the HTTP consumers map a request

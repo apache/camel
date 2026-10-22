@@ -19,6 +19,7 @@ package org.apache.camel.component.xmpp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +66,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
-    private volatile XMPPTCPConnection connection;
     private XmppBinding binding;
 
     @UriPath
@@ -177,18 +177,51 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return "xmpp://" + host + ":" + port + "/" + getParticipant() + "?serviceName=" + serviceName;
     }
 
+    /**
+     * Gets the connection of this endpoint's account for the given consumer or producer. The endpoints of one account
+     * share its connection (a server keeps one session per account and resource); each endpoint keeps its own
+     * participant, room and other settings. Release it with {@link #releaseConnection(Object)} when the consumer or
+     * producer stops: the connection is closed when no consumer or producer of the account uses it any more.
+     */
+    public XMPPTCPConnection acquireConnection(Object user)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        return getComponent().acquireConnection(this, user);
+    }
+
+    /**
+     * Connects and logs in the given connection, acquired with {@link #acquireConnection(Object)}, again when it is not
+     * connected or not logged in; safe when other consumers or producers of the account do the same at the same time.
+     */
+    public void reconnect(XMPPTCPConnection connection)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        getComponent().reconnect(this, connection);
+    }
+
+    /**
+     * Releases the connection that the given consumer or producer acquired with {@link #acquireConnection(Object)}.
+     */
+    public void releaseConnection(Object user) {
+        getComponent().releaseConnection(this, user);
+    }
+
+    /**
+     * The settings that make up the connection of an account: the endpoints with the same settings share a connection.
+     * Smack's {@code ConnectionConfiguration} does not implement {@code equals()}, so endpoints that set the
+     * {@code connectionConfig} option share a connection only when they refer to the same instance (for example the
+     * same bean in the registry).
+     */
+    List<Object> getConnectionKey() {
+        return Arrays.asList(host, port == 0 ? 5222 : port, serviceName, user, password, resource, login, connectionConfig);
+    }
+
+    /**
+     * Creates a new connection, connected and logged in. The consumers and producers use the connection of the account
+     * instead, see {@link #acquireConnection(Object)}.
+     */
     public XMPPTCPConnection createConnection()
             throws InterruptedException, IOException, SmackException, XMPPException {
         lock.lock();
         try {
-            if (connection != null && connection.isConnected()) {
-                // use existing working connection
-                return connection;
-            }
-
-            // prepare for creating new connection
-            connection = null;
-
             LOG.trace("Creating new connection ...");
             XMPPTCPConnection newConnection = createConnectionInternal();
 
@@ -229,10 +262,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                 // presence is not needed to be sent after login
             }
 
-            // okay new connection was created successfully so assign it as the connection
+            // okay new connection was created successfully
             LOG.debug("Created new connection successfully: {}", newConnection);
-            connection = newConnection;
-            return connection;
+            return newConnection;
         } finally {
             lock.unlock();
         }
@@ -541,11 +573,12 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     // -------------------------------------------------------------------------
 
     @Override
+    public XmppComponent getComponent() {
+        return (XmppComponent) super.getComponent();
+    }
+
+    @Override
     protected void doStop() throws Exception {
-        if (connection != null) {
-            connection.disconnect();
-        }
-        connection = null;
         binding = null;
     }
 

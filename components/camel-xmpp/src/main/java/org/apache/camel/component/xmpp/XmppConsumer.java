@@ -69,7 +69,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     @Override
     protected void doStart() throws Exception {
         try {
-            connection = endpoint.createConnection();
+            connection = endpoint.acquireConnection(this);
         } catch (SmackException e) {
             if (endpoint.isTestConnectionOnStartup()) {
                 throw new RuntimeCamelException("Could not connect to XMPP server.", e);
@@ -184,11 +184,28 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         if (muc != null) {
             LOG.info("Leaving room: {}", muc.getRoom());
             muc.removeMessageListener(this);
-            muc.leave();
-            muc = null;
+            try {
+                muc.leave();
+            } finally {
+                muc = null;
+                // also when leaving failed: the connection is down, or Smack no longer has us in the room
+                releaseConnection();
+            }
         }
-        if (connection != null && connection.isConnected()) {
-            connection.disconnect();
+        releaseConnection();
+    }
+
+    private void releaseConnection() {
+        if (connection != null) {
+            // the connection is shared with the other consumers and producers of the account: stop listening on it,
+            // and release it (it is closed when nobody uses it any more)
+            if (chatManager != null) {
+                chatManager.removeIncomingListener(this);
+                chatManager = null;
+            }
+            connection.removeSyncStanzaListener(this);
+            endpoint.releaseConnection(this);
+            connection = null;
         }
     }
 
