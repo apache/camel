@@ -99,6 +99,8 @@ The Dapr PubSub Consumer in Apache Camel allows your route to consume events fro
 
 To configure a consumer, the pubSubName and topic must be provided. Alternatively, a preconfigured DaprPreviewClient can be registered in the Camel registry to allow the consumer to reuse it instead of creating a new one internally.
 
+When the stream of the subscription to the Dapr sidecar fails, for example because the sidecar restarts, the consumer subscribes again, first after one second and then with a delay that doubles up to 30 seconds while the sidecar cannot be reached. The delay starts again at one second once an event is received.
+
 === 2. *configuration*:
 
 The Dapr Configuration Consumer in Apache Camel allows your route to receive real-time updates from a Dapr-supported configuration store. It listens for changes to specified keys in the configuration store and processes the updates as Camel Exchange objects.

@@ -17,12 +17,17 @@
 package org.apache.camel.component.dapr.consumer;
 
 import java.io.Closeable;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.dapr.client.DaprClientBuilder;
 import io.dapr.client.DaprPreviewClient;
 import io.dapr.client.SubscriptionListener;
 import io.dapr.client.domain.CloudEvent;
 import io.dapr.utils.TypeRef;
+import io.grpc.StatusRuntimeException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,16 +39,26 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
 public class DaprPubSubConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DaprPubSubConsumer.class);
+    private static final Duration RESUBSCRIBE_DELAY = Duration.ofSeconds(1);
+    private static final Duration MAX_RESUBSCRIBE_DELAY = Duration.ofSeconds(30);
     private final String pubSubName;
     private final String topic;
+    // guards the subscription, its listener and the pending resubscribe against doStop
+    private final Lock lock = new ReentrantLock();
     private DaprPreviewClient client;
     private boolean closeClient;
     private Closeable subscription;
+    private DaprSubscriptionListener currentListener;
+    private Disposable pendingResubscribe;
+    private volatile long resubscribeDelay = RESUBSCRIBE_DELAY.toMillis();
+    // set when the consumer subscribed again after a failure, until the first event of the new stream is received
+    private final AtomicBoolean recovering = new AtomicBoolean();
 
     public DaprPubSubConsumer(final DaprEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -72,14 +87,28 @@ public class DaprPubSubConsumer extends DefaultConsumer {
             // created by this consumer: closed when it stops
             closeClient = true;
         }
-        subscription = client.subscribeToEvents(pubSubName, topic, new DaprSubscriptionListener(), TypeRef.get(byte[].class));
+        lock.lock();
+        try {
+            resubscribeDelay = RESUBSCRIBE_DELAY.toMillis();
+            recovering.set(false);
+            subscribe();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (subscription != null) {
-            subscription.close();
-            subscription = null;
+        lock.lock();
+        try {
+            currentListener = null;
+            if (pendingResubscribe != null) {
+                pendingResubscribe.dispose();
+                pendingResubscribe = null;
+            }
+            closeSubscription();
+        } finally {
+            lock.unlock();
         }
         // only close a client that this consumer created: a configured or autowired client can be shared with other
         // endpoints, and is used again when the route is started again
@@ -91,6 +120,88 @@ public class DaprPubSubConsumer extends DefaultConsumer {
 
         // shutdown camel consumer
         super.doStop();
+    }
+
+    // called with the lock held
+    private void subscribe() {
+        DaprSubscriptionListener listener = new DaprSubscriptionListener();
+        currentListener = listener;
+        subscription = client.subscribeToEvents(pubSubName, topic, listener, TypeRef.get(byte[].class));
+    }
+
+    // called with the lock held
+    private void closeSubscription() {
+        if (subscription != null) {
+            try {
+                subscription.close();
+            } catch (Exception e) {
+                LOG.debug("Error closing the subscription to topic {} of pub/sub {}: {}", topic, pubSubName, e, e);
+            }
+            subscription = null;
+        }
+    }
+
+    // called with the lock held
+    private void scheduleResubscribe() {
+        long delay = resubscribeDelay;
+        resubscribeDelay = Math.min(delay * 2, MAX_RESUBSCRIBE_DELAY.toMillis());
+        pendingResubscribe = Mono.delay(Duration.ofMillis(delay)).subscribe(tick -> resubscribe());
+        LOG.debug("Subscribing again to topic {} of pub/sub {} in {} ms", topic, pubSubName, delay);
+    }
+
+    /**
+     * The stream of the subscription failed: the Dapr client does not open it again (it only does so when the stream
+     * completes), so close the subscription and subscribe again after a delay, else the consumer stays started and
+     * receives no further events.
+     */
+    private void onStreamFailed(DaprSubscriptionListener listener, RuntimeException cause) {
+        lock.lock();
+        try {
+            if (listener != currentListener || !isRunAllowed()) {
+                LOG.debug("The subscription to topic {} of pub/sub {} ended while the consumer is stopping: {}",
+                        topic, pubSubName, cause.toString());
+                return;
+            }
+            currentListener = null;
+            closeSubscription();
+            LOG.warn("The subscription to topic {} of pub/sub {} failed: {}. Subscribing again in {} ms",
+                    topic, pubSubName, cause, resubscribeDelay);
+            LOG.debug("The subscription to topic {} of pub/sub {} failed", topic, pubSubName, cause);
+            scheduleResubscribe();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void resubscribe() {
+        lock.lock();
+        try {
+            pendingResubscribe = null;
+            if (!isRunAllowed()) {
+                return;
+            }
+            try {
+                // this only sends the request: the stream is opened by the Dapr client afterwards, and a sidecar that
+                // still cannot be reached fails it again through onError
+                subscribe();
+                recovering.set(true);
+                LOG.debug("Sent a new subscription request to topic {} of pub/sub {}", topic, pubSubName);
+            } catch (Exception e) {
+                currentListener = null;
+                getExceptionHandler().handleException(
+                        "Error subscribing again to topic " + topic + " of pub/sub " + pubSubName, e);
+                scheduleResubscribe();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * The delay before the next attempt to subscribe again (for tests).
+     */
+    long getResubscribeDelay() {
+        return resubscribeDelay;
     }
 
     public DaprConfiguration getConfiguration() {
@@ -127,6 +238,12 @@ public class DaprPubSubConsumer extends DefaultConsumer {
 
         @Override
         public Mono<Status> onEvent(CloudEvent<byte[]> cloudEvent) {
+            // events are delivered again: the next failure of the stream starts with the shortest delay
+            resubscribeDelay = RESUBSCRIBE_DELAY.toMillis();
+            if (recovering.compareAndSet(true, false)) {
+                LOG.info("Receiving events again from topic {} of pub/sub {} after the subscription failed", topic,
+                        pubSubName);
+            }
             // the status is the acknowledgement of the event: answer it when the exchange is done, and
             // ask Dapr to redeliver the event when the exchange failed (or was marked rollback only) instead of
             // dropping it
@@ -149,7 +266,13 @@ public class DaprPubSubConsumer extends DefaultConsumer {
 
         @Override
         public void onError(RuntimeException ex) {
-            LOG.error("Error from Dapr client: {}", ex.getMessage(), ex);
+            // the Dapr client also calls onError for an event it could not convert or whose processing failed, while
+            // the stream stays open; a failed stream (sidecar restarted or not reachable) comes as a gRPC status
+            if (ObjectHelper.getException(StatusRuntimeException.class, ex) != null) {
+                onStreamFailed(this, ex);
+            } else {
+                LOG.error("Error from Dapr client: {}", ex.getMessage(), ex);
+            }
         }
     }
 }
