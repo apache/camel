@@ -1492,6 +1492,99 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfMoreComponents() {
+        // ssh runs the body as a command and gives its output as a stream, and so does its consumer; spring-redis keeps
+        // the body for SET, its default command, gives text for PING and is not known for GET; a couchbase row read with
+        // fullDocument=false is JSON text; the response of solr is a Map, and slack also sends an object as its text
+        String yaml = """
+                - route:
+                    id: shell
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: ssh:localhost:22
+                - route:
+                    id: output
+                    from:
+                      uri: ssh:localhost:22?pollCommand=date
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: ping
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: spring-redis:localhost:6379?command=PING
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: cache
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: spring-redis:localhost:6379
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: lookup
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: spring-redis:localhost:6379?command=GET
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: rows
+                    from:
+                      uri: couchbase:http://localhost?bucket=orders&fullDocument=false
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: search
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: "id:1"
+                        - to: solr:localhost:8983/solr?collection=orders&operation=SEARCH
+                        - setHeader:
+                            name: hits
+                            simple: ${body[response]}
+                - route:
+                    id: chat
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: slack:#orders
+                """;
+        assertThat(lines(yaml)).hasSize(4)
+                .anySatisfy(
+                        m -> assertThat(m).contains("route shell: to: ssh needs the body as text, bytes, a stream or a file"))
+                .anySatisfy(m -> assertThat(m).contains("route output: simple reads a field of the body (${body[id]})"))
+                .anySatisfy(m -> assertThat(m).contains("route ping: simple reads a field of the body (${body[id]})"))
+                .anySatisfy(m -> assertThat(m).contains("route rows: simple reads a field of the body (${body[id]})"));
+    }
+
+    @Test
     public void testTheBodyOfCoreComponents() {
         // the stream consumer gives each line as text, so a field read needs an unmarshal, and stream:out writes text,
         // bytes, a stream or a file, so parsed data must be marshalled first; the knative consumer gives bytes, or the

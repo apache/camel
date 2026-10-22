@@ -116,8 +116,10 @@ from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
 
 The query must include `META().id AS \__id` in the SELECT clause so the consumer can identify each document.
 
-When `fullDocument` is `true` (the default), the consumer fetches the complete document from the KV store using
-the document ID. When `false`, the query result row is used directly as the message body.
+When `fullDocument` is `true` (the default), the consumer fetches the document from the KV store by its id, and the
+message body is the `GetResult` of the Couchbase SDK, with the id in the `CamelCouchbaseId` header: `contentAsObject()`
+gives the JSON document. When `false`, the message body is the query result row as JSON text, or with views the value the
+view emits.
 
 NOTE: SQL++ queries require a primary index or appropriate secondary index on the bucket/collection.
 Create one with: `CREATE PRIMARY INDEX ON \`myBucket\`` or via the Couchbase SDK.
@@ -191,6 +193,16 @@ Or with an explicit SQL++ statement for more control:
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
     + "&statement=SELECT META().id AS __id, * FROM `myBucket` ORDER BY META().id DESC LIMIT 10")
 ----
+
+== Producing documents
+
+The producer runs the operation of the `operation` option: `CCB_PUT` (the default) stores the message body as the
+document with the id of the `CamelCouchbaseId` header, `CCB_GET` reads the document of that id, and `CCB_DEL` deletes
+it. The producer removes the `CamelCouchbaseId` header after each call, so set it again before the next one.
+
+`CCB_PUT` stores the body as JSON: a Map, a List or a POJO becomes a JSON document, and text is stored as a JSON string,
+so unmarshal JSON text to a Map first. A byte array, a stream or no body fail. After the call the message body is `true`
+for `CCB_PUT`, the `GetResult` of the Couchbase SDK for `CCB_GET`, and the `MutationResult` as text for `CCB_DEL`.
 
 == Couchbase SDK compatibility
 

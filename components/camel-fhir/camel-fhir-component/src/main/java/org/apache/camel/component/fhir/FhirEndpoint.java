@@ -42,6 +42,9 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirApiName;
 import org.apache.camel.component.fhir.internal.FhirConstants;
 import org.apache.camel.component.fhir.internal.FhirPropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -55,6 +58,30 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "fhir", title = "FHIR", syntax = "fhir:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.API })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = @BodyType.When(option = "apiName", value = "TRANSACTION",
+                                                             carriers = { Carrier.POJO, Carrier.TEXT }),
+                                   description = "One message per poll with the return value of the method: a MethodOutcome"
+                                                 + " for create, update, patch, delete and validate, and a HAPI FHIR model"
+                                                 + " object of the fhirVersion for the others, such as the Bundle of a search."
+                                                 + " A List is split into one message per resource, and transaction withBundle"
+                                                 + " with stringBundle gives the response as text"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names the argument of the method it is,"
+                                                + " and then passed as it is, without type conversion: resourceAsString,"
+                                                + " stringBundle and url take text (convertBodyTo String first), and resource,"
+                                                + " bundle and resources a HAPI FHIR object or a List of them (unmarshal with"
+                                                + " fhirJson or fhirXml first). Without inBody the arguments come from the"
+                                                + " options and the CamelFhir. headers"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = @BodyType.When(option = "apiName", value = "TRANSACTION",
+                                                             carriers = { Carrier.POJO, Carrier.TEXT, Carrier.LIST }),
+                                   description = "The return value of the method: a MethodOutcome for create, update, patch,"
+                                                 + " delete and validate, and a HAPI FHIR model object of the fhirVersion for"
+                                                 + " the others, such as the Bundle of a search or the resource of a read;"
+                                                 + " marshal a resource or a Bundle with fhirJson or fhirXml to get text."
+                                                 + " transaction gives a Bundle for withBundle with bundle, the response as"
+                                                 + " text with stringBundle, and a List of the resources for withResources"))
 public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> implements EndpointServiceLocation {
 
     private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";
