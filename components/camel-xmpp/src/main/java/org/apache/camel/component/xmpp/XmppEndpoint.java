@@ -189,8 +189,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     /**
-     * Connects the given connection, acquired with {@link #acquireConnection(Object)}, again when it is not connected;
-     * safe when other consumers or producers of the account do the same at the same time.
+     * Connects and logs in the given connection, acquired with {@link #acquireConnection(Object)}, again when it is not
+     * connected or not logged in; safe when other consumers or producers of the account do the same at the same time.
      */
     public void reconnect(XMPPTCPConnection connection)
             throws InterruptedException, IOException, SmackException, XMPPException {

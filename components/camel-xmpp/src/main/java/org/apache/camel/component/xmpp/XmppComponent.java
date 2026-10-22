@@ -140,8 +140,9 @@ public class XmppComponent extends DefaultComponent {
     }
 
     /**
-     * Connects and logs in the shared connection of the endpoint's account again when it is not connected. The
-     * consumers and producers of an account share one connection, so the reconnect is done under the account's lock.
+     * Connects and logs in the shared connection of the endpoint's account again when it is not connected or not logged
+     * in. The consumers and producers of an account share one connection, so the reconnect is done under the account's
+     * lock.
      */
     void reconnect(XmppEndpoint endpoint, XMPPTCPConnection connection)
             throws InterruptedException, IOException, SmackException, XMPPException {
