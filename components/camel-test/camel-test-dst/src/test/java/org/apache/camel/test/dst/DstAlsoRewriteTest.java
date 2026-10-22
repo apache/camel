@@ -16,49 +16,45 @@
  */
 package org.apache.camel.test.dst;
 
-import org.apache.camel.support.MonotonicClock;
-import org.apache.camel.util.StopWatch;
+import org.apache.camel.support.ResetableClock;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The stop-gap for time read outside the code under test: core classes listed in {@link DstInstrument#alsoRewrite()}
- * read virtual time too.
+ * Time read outside the code under test and outside {@code TimeSource}: core classes listed in
+ * {@link DstInstrument#alsoRewrite()} read virtual time too. {@code ResetableClock} (the clock of an exchange) reads
+ * {@code System} directly, as event timestamps do.
  */
-@DstInstrument(value = "org.apache.camel.test.dst.sample",
-               alsoRewrite = { "org.apache.camel.util.StopWatch", "org.apache.camel.support.MonotonicClock" })
+@DstInstrument(value = "org.apache.camel.test.dst.sample", alsoRewrite = "org.apache.camel.support.ResetableClock")
 class DstAlsoRewriteTest {
 
     @Test
     void listedCoreClocksReadVirtualTime() {
-        assertTrue(DstInstrumentation.alsoRewritten().contains("org.apache.camel.util.StopWatch"),
+        assertTrue(DstInstrumentation.alsoRewritten().contains("org.apache.camel.support.ResetableClock"),
                 DstInstrumentation.alsoRewritten().toString());
         Dst dst = new Dst(1);
         try {
-            StopWatch[] watch = new StopWatch[1];
-            MonotonicClock[] clock = new MonotonicClock[1];
+            ResetableClock[] clock = new ResetableClock[1];
             long[] taken = new long[2];
             DstExecutor ex = dst.executor("ex", 1);
-            ex.schedule("start", 1_000, () -> {
-                watch[0] = new StopWatch();
-                clock[0] = new MonotonicClock();
-            });
+            ex.schedule("start", 1_000, () -> clock[0] = new ResetableClock());
             ex.schedule("read", 3_601_000, () -> {
-                taken[0] = watch[0].taken();
-                taken[1] = clock[0].elapsed();
+                taken[0] = clock[0].elapsed();
+                clock[0].reset();
             });
+            ex.schedule("read again", 3_601_500, () -> taken[1] = clock[0].elapsed());
             long start = System.nanoTime();
             dst.runUntilQuiet();
             assertEquals(3_600_000L, taken[0]);
-            assertEquals(3_600_000L, taken[1]);
-            assertEquals(Dst.EPOCH_MILLIS + 1_000, clock[0].getCreated());
+            assertEquals(500L, taken[1]);
+            assertEquals(Dst.EPOCH_MILLIS + 3_601_000, clock[0].getCreated());
             assertTrue(System.nanoTime() - start < 5_000_000_000L, "an hour of virtual time takes no real time");
         } finally {
             dst.close();
         }
-        // outside a run the rewritten classes read the real clock
-        assertTrue(new StopWatch().taken() < 60_000);
+        // outside a run the rewritten class reads the real clock
+        assertTrue(new ResetableClock().elapsed() < 60_000);
     }
 }

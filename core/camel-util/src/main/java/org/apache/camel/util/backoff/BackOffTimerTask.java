@@ -26,6 +26,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 
+import org.apache.camel.util.TimeSource;
 import org.apache.camel.util.function.ThrowingFunction;
 
 public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
@@ -171,7 +172,7 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     public void run() {
         if (status == Status.Active) {
             try {
-                lastAttemptTime = System.currentTimeMillis();
+                lastAttemptTime = TimeSource.currentTimeMillis();
                 if (firstAttemptTime < 0) {
                     firstAttemptTime = lastAttemptTime;
                 }

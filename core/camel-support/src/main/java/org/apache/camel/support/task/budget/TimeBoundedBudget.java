@@ -19,6 +19,8 @@ package org.apache.camel.support.task.budget;
 import java.time.Duration;
 import java.time.Instant;
 
+import org.apache.camel.util.TimeSource;
+
 /**
  * This task budget limits the execution by both a maximum amount of time for the execution.
  */
@@ -36,7 +38,7 @@ public class TimeBoundedBudget implements TimeBudget {
         this.initialDelay = initialDelay;
         this.interval = interval;
         this.maxDuration = maxDuration;
-        this.startTime = Instant.now();
+        this.startTime = TimeSource.instant();
     }
 
     @Override
@@ -82,6 +84,6 @@ public class TimeBoundedBudget implements TimeBudget {
 
     @Override
     public Duration elapsed() {
-        return Duration.between(startTime, Instant.now());
+        return Duration.between(startTime, TimeSource.instant());
     }
 }

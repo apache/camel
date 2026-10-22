@@ -16,13 +16,16 @@ with the same step trace.
 * Every thread pool created through the `ExecutorServiceManager` is backed by one event loop on the test thread
   (`DstThreadPoolFactory`). Tasks run one at a time; when several can run, the seed picks one.
 * Time is virtual: it jumps to the next due task. The time reads, sleeps and blocking waits of the code under test are
-  rewritten at test time (`@DstInstrument`), so "wait 30 seconds" costs nothing.
+  rewritten at test time (`@DstInstrument`), and the Camel core code that waits, times tasks or throttles reads the
+  virtual clock through its internal time source, so "wait 30 seconds" costs nothing.
 * A fake of the external system (a queue, a checkpoint store, a web API) injects faults chosen by the same seed.
 * Invariants are checked at the end of each run.
 * `@DstTest(seeds = 1000)` runs a test method once per seed. A failing seed is printed with its trace and is replayed
   exactly with `-Ddst.seed=4711` or `@DstSeed(4711)`.
 
-This is a test tool. Nothing of it runs in production, and it changes nothing in Camel.
+This is a test tool. Nothing of it runs in production. Camel core has one internal hook for it, `TimeSource` in
+camel-util: with its default provider it reads `System` and sleeps with `Thread.sleep`, and only an open run replaces
+the provider.
 
 == A test
 
@@ -48,12 +51,14 @@ A `Dst` is one run. The extension creates one per seed and closes it after the s
 `new Dst` while another run is open throws `IllegalStateException` ("another run (seed N) is still active"), and a DST
 test refuses to start when JUnit runs tests in parallel (`junit.jupiter.execution.parallel.enabled=true`).
 
-Three worlds are in the Camel code base and are the examples to copy:
+These worlds are in the Camel code base and are the examples to copy:
 
 |===
 |Component |Test |Regression test for
 
 |camel-aws2-sqs |`SqsVisibilityDstTest` (the visibility timeout extender) |CAMEL-25700
+|camel-aws2-sqs |`SqsRedeliveryDstTest` (the extender while Camel's error handler waits to redeliver, in virtual
+time) |-
 |camel-azure-eventhubs |`EventHubsCheckpointDstTest` (checkpointing by batch size and timeout) |CAMEL-25683
 |camel-slack |`SlackSuspendDstTest` (route suspend in the middle of a poll) |CAMEL-25684
 |===
@@ -76,13 +81,23 @@ virtual time. A wait that no task of the run can end fails the seed at once and 
 |Timed waits on tasks |`Future.get(timeout)` on a task of the run and `awaitTermination` time out in virtual time.
 |Parallel streams |`parallelStream()` of a `java.util` collection is rewritten to `stream()`: the elements are handled
 in order by the calling task, not on the common fork-join pool.
+|Camel core |The code of Camel core that waits, times tasks or throttles reads the clock and sleeps through
+`org.apache.camel.util.TimeSource`, an internal class of camel-util. A run installs its virtual clock there (`Dst`
+does it when the run is created) and puts the previous provider back when the run is closed, so no rewriting is needed:
+the synchronous redelivery (`RedeliveryPolicy`, `RedeliveryErrorHandler`), `ForegroundTask`, `BackgroundTask.schedule`,
+the budgets of both tasks, the wait loop of `DefaultShutdownStrategy`, the synchronous delayer, `MulticastProcessor`,
+`OptimisticLockRetryPolicy`, `DefaultStartupConditionStrategy`, `StopWatch`, `MonotonicClock`, `BackOffTimerTask`,
+`DefaultTimeoutMap`, the clocks of the throttlers and the counters of `ThrottlingExceptionRoutePolicy`. A sleep there is
+a virtual wait on the loop thread, traced with its call site. Two waits of these classes are not virtual (see below):
+the permit queue of `TotalRequestsThrottler` and the half-open timer of `ThrottlingExceptionRoutePolicy`.
 |===
 
-`@DstInstrument(alsoRewrite = ...)` applies the same rewriting to classes outside the code under test, for example
-`org.apache.camel.util.StopWatch`, `org.apache.camel.support.MonotonicClock`, `org.apache.camel.support.task`
-(`ForegroundTask`), `org.apache.camel.processor.errorhandler` (synchronous redelivery) or
-`org.apache.camel.impl.engine.DefaultShutdownStrategy` (its wait for in-flight exchanges). This is a stop-gap: Camel
-core reads `System` directly, and a time source in core that the harness can replace needs a dev@ discussion first.
+Event timestamps, the clock of an exchange and the direct clock reads of the debugger, the tracer, management and the
+developer consoles stay on `System`. The durations they measure with `StopWatch` or `MonotonicClock` follow `TimeSource`
+(with the default provider this is the same `System.nanoTime()`). `@DstInstrument(alsoRewrite = ...)` applies the
+rewriting of the code under test to classes outside it, for example `org.apache.camel.support.ResetableClock` (the
+clock of an exchange) or a library the component calls. It is not needed for the core classes listed above, except for
+the permit queue of `TotalRequestsThrottler` (see below).
 
 === Escapes and strict mode
 
@@ -91,15 +106,27 @@ Before the first seed, the harness scans the packages under test and writes ever
 cannot run the loop for (`Object.wait`, `LockSupport.park`, `Mono.block`), wall clock reads it does not rewrite.
 
 Strict mode is the default: when a seed reaches one of these at runtime, or a thread outside the harness submits a task
-to the loop, reads the virtual clock or sleeps, the seed fails with the escape as its cause. A clock read from such a
+to the loop, reads the virtual clock or sleeps, the seed fails with the escape as its cause. This includes Camel core:
+a `StopWatch` started on such a thread reads the virtual clock through `TimeSource`. A clock read from such a
 thread (a Reactor or Netty thread, for example) still gets the virtual time and its sleep still takes real time, so
 that thread mixes the two; this is what strict mode is there to make visible. `@DstInstrument(allowEscapes = "Foo.bar")` allows an escape
 that cannot change the result (say why in a comment); `@DstInstrument(strict = false)` or `-Ddst.strict=false` only
 records escapes in `target/dst/<Test>.summary.txt`.
 
-A wait in code that is not rewritten (a latch in Camel core, for example) blocks the loop thread for real. A watchdog
-interrupts the loop thread after 10 s of real time without progress (`-Ddst.watchdogMillis`) and the seed fails with the
-stack where it was blocked.
+A wait in code that is not rewritten blocks the loop thread for real. A watchdog interrupts the loop thread after 10 s
+of real time without progress (`-Ddst.watchdogMillis`) and the seed fails with the stack where it was blocked. In Camel
+core:
+
+* `BackgroundTask.run` waits on a latch until its scheduled attempts are done, so it blocks the loop thread.
+  `BackgroundTask.schedule` does not wait, and its attempts run in virtual time.
+* `TotalRequestsThrottler` waits for a permit on its `DelayQueue`. The delay of a permit follows the virtual clock,
+  which does not move while the loop thread waits, so a seed that has to wait for a permit always ends on the watchdog.
+  `asyncDelayed()` does not avoid it: a delayed exchange that finds its permit taken by another one waits on the same
+  queue. Add `org.apache.camel.processor.TotalRequestsThrottler` to `@DstInstrument(alsoRewrite)`: the permit wait is
+  then a virtual wait.
+* The half-open check of `ThrottlingExceptionRoutePolicy` runs on a `java.util.Timer` thread, outside the harness. The
+  timer fires after `halfOpenAfter` of real time (30 s by default, longer than the watchdog) and its clock read is an
+  escape, so a world does not see the circuit half-open in virtual time.
 
 === The one-stack model
 
@@ -402,12 +429,13 @@ seed of the in-JVM replay test of the Event Hubs world, default 1).
 * Code on its own threads or on a third-party scheduler is outside the harness; strict mode makes reaching it fail the
   seed.
 * One run per JVM at a time: the active run, and so the virtual clock, is a static field, and every rewritten clock read
-  in the JVM sees it. A world must therefore not go into a module that runs its tests in parallel
-  (`camel.surefire.parallel=true`, as camel-jms and camel-sql do): the other tests in that surefire fork would read the
-  virtual clock while a run is active. The harness enforces this: a second run while one is open fails, and a DST test
-  refuses to start when JUnit runs tests in parallel. A local world in such a module (camel-sjms, for example) can
-  still be run alone, with `-Dtest=<the world> -Dcamel.surefire.parallel=false`, but it cannot be committed there:
-  the module's own build would fail it.
+  in the JVM sees it, as does Camel core through `TimeSource` while the run is open. A world must therefore not go into
+  a module that runs its tests in parallel (`camel.surefire.parallel=true`, as camel-jms and camel-sql do): the other
+  tests in that surefire fork would read the virtual clock while a run is active. The harness enforces this: a second
+  run while one is open fails, and a DST test refuses to start when JUnit runs tests in parallel. A local world in
+  such a module (camel-sjms, for example) can still be run alone, with
+  `-Dtest=<the world> -Dcamel.surefire.parallel=false`, but it cannot be committed there: the module's own build would
+  fail it.
 * Locks do not exclude: every task runs on the test thread, so a `ReentrantLock` or `synchronized` block held by a
   blocked task is entered again by the tasks nested above it. A critical section is atomic only because the fake does
   not block inside it, and races between two code paths that each hold a lock cannot be explored.
@@ -425,7 +453,7 @@ seed of the in-JVM replay test of the Event Hubs world, default 1).
 strict mode
 |`DstThreadPoolFactory`, `DstExecutor`, `DstTask` |Camel's pools and schedulers backed by the loop
 |`DstInstrumentation`, `DstClock`, `DstWaits` |the byte code rewrite of the code under test: time reads, sleeps and
-blocking waits go to the loop
+blocking waits go to the loop; `DstClock` is also the `TimeSource` provider of Camel core during a run
 |`DstEscapes`, `DstWatchdog` |the escape scan, runtime escapes (strict mode), and the watchdog for waits in code that is
 not rewritten
 |`DstLedger`, `Invariant`, `Invariants` |what happened to each message, and reusable invariants
@@ -444,7 +472,7 @@ not rewritten
 |`dst.seed` |comma separated seeds to replay; their full traces are written |-
 |`dst.traceDir` |where the reports and traces go |`target/dst`
 |`dst.strict` |strict mode |`@DstInstrument(strict)`, true
-|`dst.alsoRewrite` |comma separated classes or packages to rewrite too (stop-gap) |-
+|`dst.alsoRewrite` |comma separated classes or packages outside the code under test to rewrite too |-
 |`dst.watchdogMillis` |real time without progress after which a waiting loop thread fails the seed |10000
 |===
 

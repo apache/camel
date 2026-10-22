@@ -59,6 +59,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeSource;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2075,7 +2076,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 long max = Math.min(1000, delta);
                 if (max > 0) {
                     LOG.trace("Sleeping for: {} millis until waking up for re-check", max);
-                    Thread.sleep(max);
+                    TimeSource.sleep(max);
                 }
 
                 // are we preparing for shutdown then only do redelivery if allowed

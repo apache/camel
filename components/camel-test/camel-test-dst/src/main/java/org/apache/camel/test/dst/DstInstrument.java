@@ -37,14 +37,19 @@ public @interface DstInstrument {
     String[] value();
 
     /**
-     * Classes or packages outside the code under test whose time reads are rewritten too, without an escape report, for
-     * example {@code org.apache.camel.support.MonotonicClock} or {@code org.apache.camel.util.StopWatch} of Camel core.
-     * An entry whose last segment starts with an upper case letter is a class (with its nested classes), else a
-     * package.
+     * Classes or packages outside the code under test whose time reads, sleeps and blocking waits are rewritten too,
+     * without an escape report, for example {@code org.apache.camel.support.ResetableClock} of Camel core or a library
+     * the component calls. An entry whose last segment starts with an upper case letter is a class (with its nested
+     * classes), else a package.
      * <p>
-     * This is a stop-gap: Camel core reads {@code System} directly, and the rewriting of core classes stays for the
-     * rest of the test JVM (outside a run the rewritten calls read the real clock). The system property
-     * {@code dst.alsoRewrite} (comma separated) adds entries without changing the test.
+     * Not needed for the Camel core code that waits, times tasks or throttles ({@code StopWatch},
+     * {@code MonotonicClock}, the synchronous redelivery, {@code ForegroundTask}, the wait loop of the graceful
+     * shutdown, the clocks of the throttlers): it reads the clock and sleeps through
+     * {@code org.apache.camel.util.TimeSource}, whose provider is the virtual clock while a run is open. The permit
+     * wait of {@code org.apache.camel.processor.TotalRequestsThrottler} is a {@code DelayQueue.take()}, which is not a
+     * clock read: list that class when a world uses it. The rewriting stays for the rest of the test JVM (outside a run
+     * the rewritten calls read the real clock). The system property {@code dst.alsoRewrite} (comma separated) adds
+     * entries without changing the test.
      */
     String[] alsoRewrite() default {};
 

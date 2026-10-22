@@ -31,7 +31,7 @@ public final class StopWatch {
      * Starts the stop watch
      */
     public StopWatch() {
-        this.start = System.nanoTime();
+        this.start = TimeSource.nanoTime();
     }
 
     /**
@@ -41,7 +41,7 @@ public final class StopWatch {
      */
     public StopWatch(boolean start) {
         if (start) {
-            this.start = System.nanoTime();
+            this.start = TimeSource.nanoTime();
         }
     }
 
@@ -49,7 +49,7 @@ public final class StopWatch {
      * Starts or restarts the stop watch
      */
     public void restart() {
-        start = System.nanoTime();
+        start = TimeSource.nanoTime();
     }
 
     /**
@@ -66,7 +66,7 @@ public final class StopWatch {
      */
     public long taken() {
         if (start > 0) {
-            long delta = System.nanoTime() - start;
+            long delta = TimeSource.nanoTime() - start;
             return Duration.ofNanos(delta).toMillis();
         }
         return 0;
@@ -79,7 +79,7 @@ public final class StopWatch {
      */
     public long takenAndRestart() {
         long answer = taken();
-        start = System.nanoTime();
+        start = TimeSource.nanoTime();
         return answer;
     }
 

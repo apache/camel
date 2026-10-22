@@ -76,6 +76,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeSource;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
 import org.apache.camel.util.concurrent.Rejectable;
 import org.slf4j.Logger;
@@ -880,7 +881,7 @@ public class MulticastProcessor extends BaseProcessorSupport
         } else {
             executor.execute(() -> {
                 try {
-                    Thread.sleep(delay);
+                    TimeSource.sleep(delay);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }

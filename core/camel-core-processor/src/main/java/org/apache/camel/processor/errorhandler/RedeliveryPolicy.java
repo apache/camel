@@ -28,6 +28,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,7 +206,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void sleep(long redeliveryDelay) throws InterruptedException {
         LOG.debug("Sleeping for: {} millis until attempting redelivery", redeliveryDelay);
-        Thread.sleep(redeliveryDelay);
+        TimeSource.sleep(redeliveryDelay);
     }
 
     /**

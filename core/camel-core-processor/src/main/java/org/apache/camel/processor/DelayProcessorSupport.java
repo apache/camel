@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteStoppingException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -251,7 +252,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
     }
 
     protected long currentSystemTime() {
-        return System.currentTimeMillis();
+        return TimeSource.currentTimeMillis();
     }
 
     private void sleep(long delay) throws InterruptedException {
@@ -259,7 +260,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
             return;
         }
         LOG.trace("Sleeping for: {} millis", delay);
-        Thread.sleep(delay);
+        TimeSource.sleep(delay);
     }
 
     @Override

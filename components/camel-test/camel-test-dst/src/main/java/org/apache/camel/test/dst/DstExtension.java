@@ -113,7 +113,7 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         DstInstrumentation.alsoRewrite(System.getProperty("dst.alsoRewrite", "").split(","));
         StringBuilder sb = new StringBuilder();
         if (!DstInstrumentation.alsoRewritten().isEmpty()) {
-            sb.append("DST time reads also rewritten outside the code under test (stop-gap): ")
+            sb.append("DST time reads also rewritten outside the code under test: ")
                     .append(DstInstrumentation.alsoRewritten()).append('\n');
         }
         for (String p : instrument.value()) {
@@ -151,6 +151,14 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         DstEscapes.loaded().forEach(e -> sb.append("  ").append(e).append('\n'));
         System.out.print(sb);
         write(traceDir().resolve(context.getRequiredTestClass().getSimpleName() + ".summary.txt"), sb.toString());
+        Dst left = Dst.active();
+        if (left != null) {
+            // a run that was not closed keeps the virtual clock installed in TimeSource for the later tests of the JVM
+            left.close();
+            throw new IllegalStateException(
+                    "DST: the run of seed " + left.seed() + " was still open after "
+                                            + context.getRequiredTestClass().getSimpleName() + "; it is closed now");
+        }
     }
 
     @Override
@@ -313,16 +321,21 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
             stats.runs++;
             stats.nanos += System.nanoTime() - start;
             if (dst != null) {
-                if (replay) {
-                    if (written == null) {
-                        written = writeTrace(failed ? "FAILED" : "PASSED");
+                try {
+                    if (replay) {
+                        if (written == null) {
+                            written = writeTrace(failed ? "FAILED" : "PASSED");
+                        }
+                        String line = String.format("seed %d %s trace %s (%d lines) -> %s", seed,
+                                failed ? "FAILED" : "PASSED", dst.traceHash(), dst.traceLines().size(), written);
+                        stats.replayHashes.add(line);
+                        System.out.println("DST replay " + line);
                     }
-                    String line = String.format("seed %d %s trace %s (%d lines) -> %s", seed, failed ? "FAILED" : "PASSED",
-                            dst.traceHash(), dst.traceLines().size(), written);
-                    stats.replayHashes.add(line);
-                    System.out.println("DST replay " + line);
+                } finally {
+                    // also when the trace cannot be written: an open run keeps the virtual clock installed in
+                    // TimeSource for the rest of the JVM
+                    dst.close();
                 }
-                dst.close();
             }
         }
 

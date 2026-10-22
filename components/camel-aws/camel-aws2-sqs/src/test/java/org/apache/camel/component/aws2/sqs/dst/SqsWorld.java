@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -42,10 +43,15 @@ import org.apache.camel.test.dst.Invariants;
  * The property under test: while the consumer holds a message (from the receive until the route has finished with it),
  * SQS must not deliver it again, because the extender keeps it invisible. The only exception is a message whose
  * visibility change was lost by a fault of the fake.
+ * <p>
+ * With synchronous redelivery ({@link #SqsWorld(Dst, boolean)}) a failed message is retried by Camel's error handler
+ * after a redelivery delay longer than the visibility timeout, on the consumer's thread: the consumer holds the message
+ * during the wait, and the wait of the error handler (a sleep in Camel core) runs in virtual time.
  */
 final class SqsWorld {
 
     static final String ROUTE = "sqs";
+    static final int MAX_REDELIVERIES = 2;
 
     private final Dst dst;
     private final DstLedger ledger;
@@ -54,6 +60,10 @@ final class SqsWorld {
     private final int maxMessagesPerPoll;
     private final int concurrentConsumers;
     private final long delay;
+    private final boolean redelivery;
+    private final long redeliveryDelay;
+    private final Map<String, Long> failedAt = new HashMap<>();
+    private final List<String> redeliveredTooEarly = new ArrayList<>();
     private final Map<String, Integer> held = new HashMap<>();
     private final Set<String> extensionFaulted = new HashSet<>();
     private final List<String> redeliveredWhileHeld = new ArrayList<>();
@@ -61,7 +71,16 @@ final class SqsWorld {
     private boolean faults = true;
 
     SqsWorld(Dst dst) {
+        this(dst, false);
+    }
+
+    /**
+     * @param redelivery whether the route retries a failed message twice with the default error handler (synchronous
+     *                   redelivery), after a delay longer than the visibility timeout
+     */
+    SqsWorld(Dst dst, boolean redelivery) {
         this.dst = dst;
+        this.redelivery = redelivery;
         this.ledger = new DstLedger(dst);
         this.sqs = new FakeSqs(dst, ledger, this::received, extensionFaulted::addAll);
         // 1 s is left out by default: the extender is always late with 1 s (CAMEL-25737, open);
@@ -71,8 +90,11 @@ final class SqsWorld {
         this.maxMessagesPerPoll = dst.pick(List.of(1, 2, 5, 10));
         this.concurrentConsumers = dst.pick(List.of(1, 2, 3));
         this.delay = dst.pick(List.of(100L, 500L, 1000L));
+        // only drawn with redelivery, so the seeds of the world without it keep their configuration
+        this.redeliveryDelay = redelivery ? dst.between(visibilityTimeout * 1000L, 3L * visibilityTimeout * 1000) : 0;
         dst.trace("world: visibilityTimeout=" + visibilityTimeout + " maxMessagesPerPoll=" + maxMessagesPerPoll
-                  + " concurrentConsumers=" + concurrentConsumers + " delay=" + delay);
+                  + " concurrentConsumers=" + concurrentConsumers + " delay=" + delay
+                  + (redelivery ? " redeliveryDelay=" + redeliveryDelay : ""));
     }
 
     void run() throws Exception {
@@ -81,6 +103,11 @@ final class SqsWorld {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
+                if (redelivery) {
+                    // synchronous redelivery: the error handler sleeps on the consumer's thread between the attempts
+                    errorHandler(defaultErrorHandler().maximumRedeliveries(MAX_REDELIVERIES)
+                            .redeliveryDelay(redeliveryDelay));
+                }
                 from("aws2-sqs://dst?amazonSQSClient=#sqs&queueUrl=RAW(" + FakeSqs.QUEUE_URL + ")"
                      + "&extendMessageVisibility=true&visibilityTimeout=" + visibilityTimeout
                      + "&maxMessagesPerPoll=" + maxMessagesPerPoll + "&concurrentConsumers=" + concurrentConsumers
@@ -88,6 +115,10 @@ final class SqsWorld {
                         .routeId(ROUTE)
                         .process(exchange -> {
                             String id = exchange.getMessage().getHeader(Sqs2Constants.MESSAGE_ID, String.class);
+                            int attempt = exchange.getMessage().getHeader(Exchange.REDELIVERY_COUNTER, 0, Integer.class);
+                            if (attempt > 0) {
+                                redelivered(exchange.getExchangeId(), id, attempt);
+                            }
                             ledger.record("routed", "q", id);
                             // usually quick; sometimes longer than the visibility timeout, which the extender covers
                             long work = faults && dst.chance(0.15)
@@ -95,11 +126,17 @@ final class SqsWorld {
                                     : dst.between(1, 200);
                             // a blocking downstream call: the other consumers and the extender run meanwhile
                             dst.block(work, "process " + id);
-                            release(id);
                             if (faults && dst.chance(0.05)) {
+                                if (redelivery && attempt < MAX_REDELIVERIES) {
+                                    // the error handler retries it: the consumer still holds the message
+                                    failedAt.put(exchange.getExchangeId(), dst.now());
+                                } else {
+                                    release(id);
+                                }
                                 ledger.record("failed", "q", id);
                                 throw Dst.injected(new IllegalStateException("dst: processing failed for " + id));
                             }
+                            release(id);
                             ledger.record("completed", "q", id);
                         });
             }
@@ -133,6 +170,10 @@ final class SqsWorld {
                     Invariants.everyOfferedRoutedAtLeastOnce(ledger, "sent", "completed"),
                     Invariants.of("the queue is drained once the faults cleared",
                             () -> sqs.allDeleted() ? null : "not deleted: " + sqs.notDeleted()));
+            if (redelivery) {
+                dst.check(Invariants.of("a redelivery waits at least the redelivery delay",
+                        () -> redeliveredTooEarly.isEmpty() ? null : redeliveredTooEarly.toString()));
+            }
         } finally {
             dst.dropPending();
             context.stop();
@@ -169,6 +210,19 @@ final class SqsWorld {
             dst.trace("VIOLATION " + m.id + " delivered again while the consumer holds it");
         }
         held.put(m.id, holders + 1);
+    }
+
+    /**
+     * Camel's error handler tries a failed exchange again: the redelivery delay must have passed in virtual time. By
+     * exchange, as a message whose visibility change was lost can be in flight twice.
+     */
+    private void redelivered(String exchangeId, String id, int attempt) {
+        Long failed = failedAt.remove(exchangeId);
+        long waited = failed == null ? -1 : dst.now() - failed;
+        if (waited < redeliveryDelay) {
+            redeliveredTooEarly.add(id + " (attempt " + attempt + " after " + waited + " ms, redeliveryDelay="
+                                    + redeliveryDelay + ")");
+        }
     }
 
     /** The route has finished with one delivery of the message. */

@@ -29,9 +29,16 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.util.TimeSource;
+
 /**
  * The target of the rewritten time reads of the code under test (see {@link DstInstrumentation}): the virtual clock of
  * the active run, else the real clock.
+ * <p>
+ * The same clock is the {@link TimeSource} provider of Camel core while a run is open ({@code TIME_SOURCE}, installed
+ * by {@link Dst}): the core code that waits, times tasks or throttles (the redelivery delay, the wait loop of the
+ * graceful shutdown, {@code ForegroundTask}, {@code StopWatch}, the clocks of the throttlers) reads the virtual time
+ * and sleeps virtual sleeps without any rewriting.
  * <p>
  * Rewritten: {@code System.currentTimeMillis()}, {@code System.nanoTime()}, {@code new Date()}, {@code Instant.now()},
  * {@code Clock.systemUTC()}, {@code Clock.systemDefaultZone()}, {@code Clock.system(ZoneId)} and {@code now()} /
@@ -49,6 +56,37 @@ import java.util.concurrent.TimeUnit;
 public final class DstClock {
 
     private static final long NANO_OFFSET = 1_000_000_000_000L;
+
+    /**
+     * The {@link TimeSource} provider of Camel core while a run is open: the same as the rewritten calls, with the
+     * caller of {@link TimeSource#sleep(long)} as the call site of a sleep in the trace.
+     */
+    static final TimeSource.Provider TIME_SOURCE = new TimeSource.Provider() {
+        @Override
+        public long currentTimeMillis() {
+            return DstClock.currentTimeMillis();
+        }
+
+        @Override
+        public long nanoTime() {
+            return DstClock.nanoTime();
+        }
+
+        @Override
+        public Instant instant() {
+            return instantNow();
+        }
+
+        @Override
+        public void sleep(long millis) throws InterruptedException {
+            DstClock.sleep(millis, caller());
+        }
+
+        @Override
+        public String toString() {
+            return "DstClock";
+        }
+    };
 
     private DstClock() {
     }
@@ -76,6 +114,21 @@ public final class DstClock {
     public static Instant instantNow() {
         Dst dst = read();
         return dst == null ? Instant.now() : Instant.ofEpochMilli(dst.currentTimeMillis());
+    }
+
+    /** The call site of a sleep through {@link TimeSource}, as the rewriting writes it: {@code Class.method:line}. */
+    private static String caller() {
+        return StackWalker.getInstance().walk(frames -> frames
+                .filter(f -> !isTimeSourceFrame(f.getClassName()))
+                .findFirst()
+                .map(f -> f.getClassName().substring(f.getClassName().lastIndexOf('.') + 1) + "." + f.getMethodName()
+                          + ":" + f.getLineNumber())
+                .orElse("TimeSource.sleep"));
+    }
+
+    private static boolean isTimeSourceFrame(String className) {
+        return className.equals(TimeSource.class.getName()) || className.startsWith(TimeSource.class.getName() + "$")
+                || className.equals(DstClock.class.getName()) || className.startsWith(DstClock.class.getName() + "$");
     }
 
     // ------------------------------------------------------------------------------------------------------------
