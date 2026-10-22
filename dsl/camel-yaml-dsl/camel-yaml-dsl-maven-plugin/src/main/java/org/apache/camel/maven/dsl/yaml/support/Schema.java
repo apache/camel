@@ -30,6 +30,8 @@ public class Schema {
     public ObjectNode properties;
     @JsonIgnore
     public ObjectNode exchangeProperties;
+    @JsonIgnore
+    public ObjectNode bodyTypes;
     @JsonProperty
     public ObjectNode functions;
     @JsonProperty

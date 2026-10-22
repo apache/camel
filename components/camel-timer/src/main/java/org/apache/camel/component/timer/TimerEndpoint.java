@@ -29,6 +29,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,6 +47,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true,
              remote = false, internal = true, category = { Category.CORE, Category.SCHEDULING },
              headersClass = TimerConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL, description = "No body: the message only starts the route"))
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath
     @Metadata(required = true)

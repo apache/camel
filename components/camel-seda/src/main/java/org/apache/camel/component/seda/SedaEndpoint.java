@@ -40,6 +40,9 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -59,6 +62,14 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed SedaEndpoint")
 @UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name",
              remote = false, internal = true, category = { Category.CORE, Category.MESSAGING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNCHANGED, description = "The body the producer sent"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = @BodyType.When(option = "waitForTaskToComplete", value = "Never",
+                                                             carriers = Carrier.UNCHANGED),
+                                   description = "Unchanged for a message that expects no reply (InOnly). A message that"
+                                                 + " expects one (InOut), or waitForTaskToComplete=Always, waits for the"
+                                                 + " body the seda route ends with"))
 public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);

@@ -26,6 +26,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.UriEndpoint;
@@ -37,6 +40,12 @@ import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(firstVersion = "3.8.0", scheme = "kamelet", syntax = "kamelet:templateId/routeId", title = "Kamelet",
              lenientProperties = true, category = Category.CORE)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the Kamelet sends, as its data types or its template say. In"
+                                                 + " the template of a Kamelet, kamelet:source gives the body the caller"
+                                                 + " sent"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNKNOWN, description = "The body the template of the Kamelet ends with"))
 public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesConfigured {
     private final String key;
     private final Map<String, Object> kameletProperties;

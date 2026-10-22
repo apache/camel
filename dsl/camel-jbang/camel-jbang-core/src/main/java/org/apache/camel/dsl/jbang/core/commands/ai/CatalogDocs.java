@@ -66,6 +66,14 @@ public final class CatalogDocs {
     /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
     private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
 
+    static final String BODY_TYPES_HINT = "the message body with the default options. consumerOut: the body a from:"
+                                          + " gives the route; consumerReply: the bodies it can reply with; producerIn:"
+                                          + " the bodies a to: can send; producerOut: the body after the to:; marshal,"
+                                          + " unmarshal and expression In/Out: the same for a data format and a"
+                                          + " language. Carriers: text, bytes, stream, file, value, map, list,"
+                                          + " iterator (no size, no index), pojo, null, unchanged, any, unknown. A side"
+                                          + " not listed is not known";
+
     /**
      * The rules a small model gets wrong most: functions live inside the placeholder, operators between placeholders.
      * Sent with the simple language result so an answer's examples follow the same shape as the catalog's.
@@ -1631,6 +1639,11 @@ public final class CatalogDocs {
             if (model.getDeprecationNote() != null) {
                 result.put("deprecationNote", model.getDeprecationNote());
             }
+        }
+        if (!model.getBodyTypes().isEmpty()) {
+            // what the body is after the step and what it needs, which the options do not say (CAMEL-24961)
+            result.put("bodyTypes", JsonMapper.asJsonObjectBodyTypes(model.getBodyTypes()));
+            result.put("bodyTypesHint", BODY_TYPES_HINT);
         }
     }
 
