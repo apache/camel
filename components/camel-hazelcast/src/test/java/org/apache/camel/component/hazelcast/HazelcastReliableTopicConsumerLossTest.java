@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -26,12 +28,16 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.topic.ITopic;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -45,6 +51,8 @@ class HazelcastReliableTopicConsumerLossTest extends CamelTestSupport {
     private final CountDownLatch slowMessageStarted = new CountDownLatch(1);
     private final CountDownLatch releaseSlowMessage = new CountDownLatch(1);
     private HazelcastInstance member;
+    // what the consumer reported to its exception handler
+    private final List<String> reported = new CopyOnWriteArrayList<>();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -60,6 +68,22 @@ class HazelcastReliableTopicConsumerLossTest extends CamelTestSupport {
 
         CamelContext context = super.createCamelContext();
         context.getRegistry().bind("hazelcastInstance", member);
+        context.getRegistry().bind("exceptionHandler", new ExceptionHandler() {
+            @Override
+            public void handleException(Throwable exception) {
+                handleException(null, null, exception);
+            }
+
+            @Override
+            public void handleException(String message, Throwable exception) {
+                handleException(message, null, exception);
+            }
+
+            @Override
+            public void handleException(String message, Exchange exchange, Throwable exception) {
+                reported.add(message + ": " + exception.getMessage());
+            }
+        });
         return context;
     }
 
@@ -94,12 +118,32 @@ class HazelcastReliableTopicConsumerLossTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    void listenerCancelledByHazelcastIsReported() throws Exception {
+        // Hazelcast cancels the listener when the topic is destroyed: the consumer receives nothing more
+        member.getReliableTopic("news").destroy();
+
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !reported.isEmpty());
+        assertEquals(1, reported.size(), "Reported: " + reported);
+        assertTrue(reported.get(0).contains("Hazelcast cancelled the listener of the reliable topic news"),
+                "Reported: " + reported);
+    }
+
+    @Test
+    void listenerRemovedWhenTheConsumerStopsIsNotReported() throws Exception {
+        // removing the listener when the route stops cancels it too
+        context.getRouteController().stopRoute("news");
+
+        assertEquals(List.of(), reported);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("hazelcast-topic:news?reliable=true&hazelcastInstance=#hazelcastInstance")
+                from("hazelcast-topic:news?reliable=true&hazelcastInstance=#hazelcastInstance"
+                     + "&exceptionHandler=#exceptionHandler").routeId("news")
                         .choice()
                         // the body is the Hazelcast message
                         .when(simple("${body.messageObject} == 'slow'"))

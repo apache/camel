@@ -23,9 +23,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The listener of a reliable topic consumer. A reliable topic keeps its messages in a ringbuffer: a listener that falls
- * behind by more than its capacity (or its time to live) loses the messages that were overwritten. Hazelcast removes a
- * listener that is not loss tolerant at that point, for good, which would leave the consumer started without receiving
- * anything again. This listener reports the loss and goes on with the oldest message still in the ringbuffer.
+ * behind by more than its capacity (or its time to live) loses the messages that were overwritten (or expired).
+ * Hazelcast removes a listener that is not loss tolerant at that point, for good, which would leave the consumer
+ * started without receiving anything again. This listener reports the loss and goes on with the oldest message still in
+ * the ringbuffer.
  */
 public class CamelReliableMessageListener extends CamelMessageListener implements ReliableMessageListener<Object> {
 
@@ -50,8 +51,8 @@ public class CamelReliableMessageListener extends CamelMessageListener implement
     public void storeSequence(long sequence) {
         // called by one thread at a time, for each message in order
         if (lastSequence >= 0 && sequence > lastSequence + 1) {
-            LOG.warn("The consumer of the reliable topic {} lost {} messages: they were overwritten in the ringbuffer"
-                     + " before they were received",
+            LOG.warn("The consumer of the reliable topic {} lost {} messages: they were overwritten or expired in the"
+                     + " ringbuffer before they were received",
                     cacheName, sequence - lastSequence - 1);
         }
         lastSequence = sequence;
@@ -66,5 +67,19 @@ public class CamelReliableMessageListener extends CamelMessageListener implement
     public boolean isTerminal(Throwable failure) {
         // the route's failures are handled by the consumer's exception handler and do not reach Hazelcast
         return false;
+    }
+
+    @Override
+    public void onCancel() {
+        // Hazelcast cancels the listener when the consumer removes it as it stops, and when it gives up on it: an error
+        // reading the ringbuffer, such as a destroyed topic or a Hazelcast instance that is no longer active. Then the
+        // consumer receives nothing more, so report it unless the consumer is stopping
+        if (getConsumer().isStarted()) {
+            getConsumer().getExceptionHandler().handleException(
+                    "The consumer of the reliable topic " + cacheName + " no longer receives messages",
+                    new IllegalStateException(
+                            "Hazelcast cancelled the listener of the reliable topic " + cacheName
+                                              + ". Restart the route to receive messages again."));
+        }
     }
 }

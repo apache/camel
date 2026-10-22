@@ -1008,6 +1008,15 @@ transaction timeout (2 minutes by default, `TransactionOptions`): when it takes 
 `TransactionTimedOutException`, which is logged at ERROR, the transaction is rolled back and the message is consumed
 again, also when the route succeeded.
 
+=== camel-hazelcast - the reliable topic consumer goes on after it lost messages
+
+A `hazelcast-topic` consumer with `reliable=true` that fell behind the ringbuffer of the reliable topic (messages
+overwritten, or expired by its time to live, before the consumer read them) stopped receiving messages for good,
+while the route stayed started: Hazelcast removed its listener. The consumer now skips the lost messages, logs a WARN
+with their number, and goes on with the oldest message still in the ringbuffer. When Hazelcast cancels the listener
+for another reason (a destroyed topic, a Hazelcast instance that is no longer active), the consumer reports it to its
+exception handler (logged at WARN by default); restart the route to receive messages again.
+
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 
 The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
