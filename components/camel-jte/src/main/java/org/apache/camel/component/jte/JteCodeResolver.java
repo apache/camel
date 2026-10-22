@@ -41,6 +41,8 @@ public class JteCodeResolver implements CodeResolver {
 
     public void addTemplateFromHeader(String name, String template) {
         if (name != null && template != null) {
+            // resolve removes the entry, but the engine resolves a name only when it compiles it: after the first
+            // exchange with a template, its text stays here (one copy per distinct template, as in the engine)
             headerTemplates.put(name, template);
         }
     }
