@@ -189,6 +189,15 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     /**
+     * Connects the given connection, acquired with {@link #acquireConnection(Object)}, again when it is not connected;
+     * safe when other consumers or producers of the account do the same at the same time.
+     */
+    public void reconnect(XMPPTCPConnection connection)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        getComponent().reconnect(this, connection);
+    }
+
+    /**
      * Releases the connection that the given consumer or producer acquired with {@link #acquireConnection(Object)}.
      */
     public void releaseConnection(Object user) {
@@ -197,6 +206,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     /**
      * The settings that make up the connection of an account: the endpoints with the same settings share a connection.
+     * Smack's {@code ConnectionConfiguration} does not implement {@code equals()}, so endpoints that set the
+     * {@code connectionConfig} option share a connection only when they refer to the same instance (for example the
+     * same bean in the registry).
      */
     List<Object> getConnectionKey() {
         return Arrays.asList(host, port == 0 ? 5222 : port, serviceName, user, password, resource, login, connectionConfig);

@@ -17,19 +17,28 @@
 package org.apache.camel.component.xmpp;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -118,6 +127,55 @@ class XmppSharedConnectionTest extends CamelTestSupport {
         mock.setAssertPeriod(500);
         mock.assertIsSatisfied();
         assertEquals(1, server.binds(), "The account logged in more than once");
+    }
+
+    @Test
+    void producersOfTheAccountReconnectTheSharedConnectionConcurrently() throws Exception {
+        template.sendBody("direct:alice", "before alice");
+        template.sendBody("direct:carol", "before carol");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.messagesTo(CAROL).size() == 1);
+
+        // the server closes the session: every producer of the account finds the shared connection disconnected
+        server.dropConnections();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.boundSessions() == 0);
+
+        int sends = 40;
+        ExecutorService pool = Executors.newFixedThreadPool(8);
+        try {
+            CountDownLatch start = new CountDownLatch(1);
+            List<Future<?>> results = new ArrayList<>();
+            for (int i = 0; i < sends; i++) {
+                String route = i % 2 == 0 ? "direct:alice" : "direct:carol";
+                String body = "after " + i;
+                results.add(pool.submit(() -> {
+                    start.await();
+                    template.sendBody(route, body);
+                    return null;
+                }));
+            }
+            start.countDown();
+            for (Future<?> result : results) {
+                // a producer that lost the race to connect() must not fail its exchange
+                result.get(20, TimeUnit.SECONDS);
+            }
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    @Test
+    void reconnectAcceptsAConnectionThatAnotherUserOfTheAccountConnected() throws Exception {
+        XmppEndpoint endpoint = context.getEndpoint(uri(ALICE), XmppEndpoint.class);
+        XMPPTCPConnectionConfiguration config
+                = context.getRegistry().lookupByNameAndType("connectionConfig", XMPPTCPConnectionConfiguration.class);
+        XMPPTCPConnection connection = new XMPPTCPConnection(config) {
+            @Override
+            public synchronized AbstractXMPPConnection connect() throws SmackException {
+                // what Smack 4.4.8 connect() throws to a caller when another thread connected the connection first
+                throw new SmackException.AlreadyConnectedException();
+            }
+        };
+        assertDoesNotThrow(() -> endpoint.reconnect(connection));
     }
 
     private String uri(String participant) {

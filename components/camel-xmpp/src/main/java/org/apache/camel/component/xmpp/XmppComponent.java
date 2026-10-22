@@ -136,6 +136,39 @@ public class XmppComponent extends DefaultComponent {
     }
 
     /**
+     * Connects the shared connection of the endpoint's account again when it is not connected. The consumers and
+     * producers of an account share one connection, so the reconnect is done under the account's lock; Smack's
+     * {@code connect()} throws {@link SmackException.AlreadyConnectedException} to a second caller, which here only
+     * means that another consumer or producer of the account connected it first.
+     */
+    void reconnect(XmppEndpoint endpoint, XMPPTCPConnection connection)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        SharedConnection shared;
+        synchronized (connections) {
+            shared = connections.get(endpoint.getConnectionKey());
+        }
+        Lock lock = shared != null ? shared.lock : null;
+        if (lock != null) {
+            lock.lock();
+        }
+        try {
+            if (!connection.isConnected()) {
+                LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
+                try {
+                    connection.connect();
+                } catch (SmackException.AlreadyConnectedException e) {
+                    LOG.debug("Already connected by another consumer or producer of the account: {}",
+                            XmppEndpoint.getConnectionMessage(connection));
+                }
+            }
+        } finally {
+            if (lock != null) {
+                lock.unlock();
+            }
+        }
+    }
+
+    /**
      * Releases the connection that the given consumer or producer acquired, and disconnects it when no consumer or
      * producer of the account uses it any more.
      */

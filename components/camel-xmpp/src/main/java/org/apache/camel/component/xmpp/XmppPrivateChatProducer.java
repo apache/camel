@@ -113,12 +113,8 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     private void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
         lock.lock();
         try {
-            if (!connection.isConnected()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
-                }
-                connection.connect();
-            }
+            // the connection is shared by the consumers and producers of the account
+            endpoint.reconnect(connection);
         } finally {
             lock.unlock();
         }
