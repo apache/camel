@@ -117,16 +117,20 @@ client only: asynchronous MDNs are delivered directly.
 
 [source,yaml]
 ----
-- to:
-    uri: as2://client/send
-    parameters:
-      inBody: ediMessage
-      targetHostname: partner.example.com
-      targetPortNumber: 443
-      sslContext: "#partnerSslContext"
-      proxyHost: proxy.internal
-      proxyPort: 3128
-      proxyAuthUsername: "{{proxy.user}}"
-      proxyAuthPassword: "{{proxy.password}}"
-      # ... the AS2 message options
+- route:
+    from:
+      uri: direct:sendToPartner
+      steps:
+        - to:
+            uri: as2://client/send
+            parameters:
+              inBody: ediMessage
+              targetHostname: partner.example.com
+              targetPortNumber: 443
+              sslContext: "#partnerSslContext"
+              proxyHost: proxy.internal
+              proxyPort: 3128
+              proxyAuthUsername: "{{proxy.user}}"
+              proxyAuthPassword: "{{proxy.password}}"
+              # ... the AS2 message options
 ----
