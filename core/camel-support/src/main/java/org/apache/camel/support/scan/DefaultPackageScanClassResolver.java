@@ -347,9 +347,9 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
         // only entries inside the parent package (or its sub packages) qualify, not entries of a sibling
         // package whose name merely starts with the same characters (com/acme/routes vs com/acme/routesupport),
         // which is also what the directory based scanning does
-        String prefix = parent == null || parent.isEmpty() || parent.endsWith("/") ? parent : parent + "/";
+        String prefix = parent.isEmpty() || parent.endsWith("/") ? parent : parent + "/";
         for (String entry : entries) {
-            if (prefix == null || entry.startsWith(prefix)) {
+            if (entry.startsWith(prefix)) {
                 addIfMatching(test, entry, classes);
             }
         }
