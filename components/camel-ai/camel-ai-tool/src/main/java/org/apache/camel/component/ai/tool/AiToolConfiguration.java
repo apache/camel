@@ -64,7 +64,7 @@ public class AiToolConfiguration implements Cloneable {
 
     @Metadata(label = "consumer")
     @UriParam(defaultValue = "false", description = "Whether to populate the message body with the tool arguments "
-                                                    + "as a JSON string, including undeclared arguments but excluding reserved names. "
+                                                    + "as a JSON string, excluding undeclared arguments and reserved names. "
                                                     + "Declared argument headers remain available. "
                                                     + "When disabled, the message body is left unchanged.")
     private boolean argumentsAsBody;

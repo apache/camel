@@ -63,7 +63,7 @@ class AiToolArgumentsBodyTest extends CamelTestSupport {
         Map<String, Object> customer = new HashMap<>(Map.of("id", "Alice \"A\"", "active", true, "balance", 12.5));
         customer.put("note", null);
         List<Map<String, Object>> items = List.of(Map.of("sku", "TSHIRT", "qty", 2), Map.of("sku", "MUG", "qty", 1));
-        Map<String, Object> arguments = Map.of("customer", customer, "items", items);
+        Map<String, Object> arguments = Map.of("customer", customer, "items", items, "price", 999);
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("previous body");
 
@@ -77,6 +77,8 @@ class AiToolArgumentsBodyTest extends CamelTestSupport {
                 """));
         assertThat(exchange.getMessage().getHeader("customer")).isSameAs(customer);
         assertThat(exchange.getMessage().getHeader("items")).isSameAs(items);
+        assertThat(exchange.getMessage().getHeaders()).doesNotContainKey("price");
+        assertThat(arguments).containsEntry("price", 999);
         assertThat(exchange.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID)).isEqualTo("call-1");
         assertThat(exchange.getMessage().getHeader(AiToolConstants.CONVERSATION_ID)).isEqualTo("conversation-1");
     }
@@ -117,7 +119,7 @@ class AiToolArgumentsBodyTest extends CamelTestSupport {
     }
 
     @Test
-    void preservesUndeclaredArgumentsOnlyInTheBody() throws Exception {
+    void filtersUndeclaredArgumentsFromBodyAndHeaders() throws Exception {
         Map<String, Object> arguments = Map.of("extra", List.of("one", "two"), "CamelFileName", "forged");
         Exchange exchange = new DefaultExchange(context);
 
@@ -125,7 +127,7 @@ class AiToolArgumentsBodyTest extends CamelTestSupport {
 
         assertThat(result).isInstanceOf(AiToolResult.Success.class);
         assertThat(Jsoner.deserialize(exchange.getMessage().getBody(String.class)))
-                .isEqualTo(Jsoner.deserialize("{\"extra\":[\"one\",\"two\"]}"));
+                .isEqualTo(Jsoner.deserialize("{}"));
         assertThat(exchange.getMessage().getHeaders()).doesNotContainKeys("extra", "CamelFileName");
         assertThat(arguments).hasSize(2);
     }

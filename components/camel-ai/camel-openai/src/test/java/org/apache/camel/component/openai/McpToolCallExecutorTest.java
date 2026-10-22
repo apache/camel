@@ -352,6 +352,30 @@ class McpToolCallExecutorTest {
                 .satisfies(r -> assertThat(r.content()).isEqualTo("No result"));
     }
 
+    @Test
+    void parallelRouteToolsShareTheSuppliedConversationId() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("ai-tool:conversation?tags=conversation-test")
+                        .process(e -> {
+                            assertThat(e.getMessage().getHeader(AiToolConstants.CONVERSATION_ID)).isEqualTo("conv_parallel");
+                            e.getMessage().setBody(e.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID));
+                        });
+            }
+        });
+        AiToolSpec spec = AiToolRegistry.getOrCreate(context).getToolsByTag("conversation-test").iterator().next();
+        OpenAIEndpoint endpoint = newEndpoint(true, 0, Map.of(), Set.of());
+        endpoint.setMcpToolState(new McpToolState(List.of(), Map.of(), Map.of(), Set.of(), Map.of("conversation", spec)));
+        executor = startExecutor(endpoint);
+
+        List<McpToolCallExecutor.ToolResult> results = executor.execute(
+                List.of(toolCall("call-a", "conversation"), toolCall("call-b", "conversation")),
+                new DefaultExchange(context), "conv_parallel");
+
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::content).containsExactly("call-a", "call-b");
+    }
+
     // ------------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------------

@@ -323,7 +323,7 @@ For a tool call with a customer name and two items, `direct:mapOrder` receives t
 ----
 
 Nested objects, arrays and JSON value types are preserved. A call with no arguments produces `{}`.
-The body includes undeclared arguments supplied by the model; individual headers still include only declared arguments.
+The body and individual argument headers include only declared arguments, after the same allowlist filtering.
 Camel logs a warning for each undeclared argument. Reserved names starting with `camel` or `org.apache.camel.`
 (case-insensitive) are excluded from both the body and argument headers. Missing required arguments still reject
 an invocation before the tool route runs. Required arguments are checked after reserved names are removed,
@@ -335,8 +335,10 @@ Rename such arguments to use names outside the reserved namespace. This option d
 Tool routes receive `CamelAiToolCallId` and `CamelAiToolConversationId` when the calling adapter can supply them.
 These headers are populated independently of `argumentsAsBody`. An unavailable identifier is omitted rather than generated.
 
-* LangChain4j Agent supplies the tool execution request ID and the memory ID (converted to a string) as the conversation ID.
-* OpenAI supplies the tool-call ID. Its chat-completion tool callback does not supply a conversation ID.
+* LangChain4j Agent supplies the tool execution request ID and the memory ID (converted to a string) as the conversation ID when the agent uses memory.
+  Agents without memory omit the conversation header, including the framework's default memory ID.
+* OpenAI supplies the tool-call ID. The Responses API also supplies its resolved conversation ID
+  (`CamelOpenAIConversationId` or the `conversationId` option); chat-completion callbacks omit it.
 * Spring AI Chat supplies the `CamelSpringAiChatConversationId` from the calling exchange. Its tool callback does not supply a call ID.
 * MCP server tool callbacks currently do not propagate these identifiers.
 

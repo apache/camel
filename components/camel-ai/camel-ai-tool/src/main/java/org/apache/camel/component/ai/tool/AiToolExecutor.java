@@ -116,7 +116,6 @@ public final class AiToolExecutor {
 
         // Defensive copy so callers cannot mutate arguments during route execution
         Map<String, Object> argsCopy = arguments != null ? new HashMap<>(arguments) : new HashMap<>();
-        Map<String, Object> bodyArguments = new HashMap<>(argsCopy);
 
         // Filter out undeclared arguments -- LLMs frequently hallucinate extra parameters
         // and the generated schema advertises additionalProperties: false.
@@ -128,7 +127,7 @@ public final class AiToolExecutor {
             argsCopy.keySet().removeIf(name -> {
                 if (!declaredParams.contains(name)) {
                     LOG.warn("Undeclared tool argument '{}' for tool '{}' -- the LLM sent a parameter "
-                             + "that is not declared in the tool specification; excluding it from argument headers",
+                             + "that is not declared in the tool specification; filtering it out",
                             name, toolName);
                     return true;
                 }
@@ -138,7 +137,7 @@ public final class AiToolExecutor {
 
         // Filter out Camel-internal names before required-argument validation so a discarded
         // argument cannot satisfy a required parameter.
-        bodyArguments.keySet().removeIf(name -> {
+        argsCopy.keySet().removeIf(name -> {
             String lower = name.toLowerCase(Locale.ROOT);
             if (lower.startsWith("camel") || lower.startsWith("org.apache.camel.")) {
                 LOG.warn("Rejecting tool argument '{}' for tool '{}' -- argument names starting with "
@@ -148,7 +147,6 @@ public final class AiToolExecutor {
             }
             return false;
         });
-        argsCopy.keySet().retainAll(bodyArguments.keySet());
 
         for (String requiredName : spec.getRequiredArgumentNames()) {
             if (!argsCopy.containsKey(requiredName)) {
@@ -167,7 +165,7 @@ public final class AiToolExecutor {
         // Execute the route
         try {
             if (consumer.getEndpoint() instanceof AiToolEndpoint endpoint && endpoint.getConfiguration().isArgumentsAsBody()) {
-                exchange.getMessage().setBody(Jsoner.serialize(bodyArguments));
+                exchange.getMessage().setBody(Jsoner.serialize(argsCopy));
             }
             routeProcessor.process(exchange);
 

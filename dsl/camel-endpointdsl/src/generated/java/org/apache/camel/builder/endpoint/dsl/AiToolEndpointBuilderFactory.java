@@ -67,8 +67,8 @@ public interface AiToolEndpointBuilderFactory {
         }
         /**
          * Whether to populate the message body with the tool arguments as a
-         * JSON string, including undeclared arguments but excluding reserved
-         * names. Declared argument headers remain available. When disabled, the
+         * JSON string, excluding undeclared arguments and reserved names.
+         * Declared argument headers remain available. When disabled, the
          * message body is left unchanged.
          * 
          * The option is a: <code>boolean</code> type.
@@ -85,8 +85,8 @@ public interface AiToolEndpointBuilderFactory {
         }
         /**
          * Whether to populate the message body with the tool arguments as a
-         * JSON string, including undeclared arguments but excluding reserved
-         * names. Declared argument headers remain available. When disabled, the
+         * JSON string, excluding undeclared arguments and reserved names.
+         * Declared argument headers remain available. When disabled, the
          * message body is left unchanged.
          * 
          * The option will be converted to a <code>boolean</code> type.

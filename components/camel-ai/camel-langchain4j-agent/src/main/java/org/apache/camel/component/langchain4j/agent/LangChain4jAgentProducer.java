@@ -179,7 +179,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         AiAgentBody<?> aiAgentBody = exchange.getMessage().getMandatoryBody(AiAgentBody.class);
 
-        ToolProvider toolProvider = createComposedToolProvider(tags, exchange);
+        ToolProvider toolProvider = createComposedToolProvider(tags, exchange, agent instanceof AgentWithMemory);
         Object chatModel = resolveChatModel(agent);
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.GENERATE_CONTENT)
@@ -301,15 +301,15 @@ public class LangChain4jAgentProducer extends DefaultProducer {
      * Supports dynamic filtering via exchange headers:
      * <ul>
      * <li>{@link Headers#EXCLUDE_TAGS} — exclude Camel tools by tag (handled in
-     * {@link #createCamelToolProvider(String, Exchange)})</li>
+     * {@link #createCamelToolProvider(String, Exchange, boolean)})</li>
      * <li>{@link Headers#EXCLUDE_MCP_SERVERS} — exclude MCP servers by key/name</li>
      * </ul>
      */
-    private ToolProvider createComposedToolProvider(String tags, Exchange exchange) {
+    private ToolProvider createComposedToolProvider(String tags, Exchange exchange, boolean hasMemory) {
         List<ToolProvider> providers = new ArrayList<>();
 
         // 1. Camel route tools from tags (handles EXCLUDE_TAGS header internally)
-        ToolProvider camelToolProvider = createCamelToolProvider(tags, exchange);
+        ToolProvider camelToolProvider = createCamelToolProvider(tags, exchange, hasMemory);
         if (camelToolProvider != null) {
             providers.add(camelToolProvider);
         }
@@ -379,7 +379,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
      * Creates a tool provider for Camel route tools discovered by tags. If the {@link Headers#EXCLUDE_TAGS} header is
      * set on the exchange, the specified tags (comma-separated) are excluded from discovery.
      */
-    private ToolProvider createCamelToolProvider(String tags, Exchange exchange) {
+    private ToolProvider createCamelToolProvider(String tags, Exchange exchange, boolean hasMemory) {
         if (tags == null || tags.trim().isEmpty()) {
             return null;
         }
@@ -403,21 +403,21 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         if (!aiTools.isEmpty()) {
             LOG.debug("Creating AI Service with {} ai-tool tools for tags: {}", aiTools.size(), tags);
-            return buildToolProvider(aiTools, exchange);
+            return buildToolProvider(aiTools, exchange, hasMemory);
         } else {
             LOG.debug("No tools found for tags: {}, using simple AI Service", tags);
             return null;
         }
     }
 
-    private ToolProvider buildToolProvider(Map<String, AiToolSpec> aiTools, Exchange exchange) {
+    private ToolProvider buildToolProvider(Map<String, AiToolSpec> aiTools, Exchange exchange, boolean hasMemory) {
         return (ToolProviderRequest toolProviderRequest) -> {
             ToolProviderResult.Builder resultBuilder = ToolProviderResult.builder();
 
             for (Map.Entry<String, AiToolSpec> entry : aiTools.entrySet()) {
                 AiToolSpec spec = entry.getValue();
                 ToolSpecification toolSpec = AiToolSpecToLangChain4j.toToolSpecification(spec);
-                addToolToResult(resultBuilder, spec, toolSpec, exchange);
+                addToolToResult(resultBuilder, spec, toolSpec, exchange, hasMemory);
             }
 
             return resultBuilder.build();
@@ -439,7 +439,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             ToolProviderResult.Builder resultBuilder,
             AiToolSpec spec,
             ToolSpecification toolSpec,
-            Exchange exchange) {
+            Exchange exchange, boolean hasMemory) {
 
         ToolExecutor toolExecutor = (toolExecutionRequest, memoryId) -> {
             Map<String, Object> arguments = parseArguments(toolExecutionRequest);
@@ -451,7 +451,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             // the tool route. Shared across the route-tool runtimes so they cannot drift (CAMEL-24832, CAMEL-23944).
             Exchange toolExchange = AiToolExecutor.createToolExchange(exchange);
             AiToolResult result = AiToolExecutor.execute(spec, arguments, toolExchange,
-                    toolExecutionRequest.id(), memoryId != null ? memoryId.toString() : null);
+                    toolExecutionRequest.id(), hasMemory && memoryId != null ? memoryId.toString() : null);
             return toToolResponse(spec.getName(), result);
         };
 
