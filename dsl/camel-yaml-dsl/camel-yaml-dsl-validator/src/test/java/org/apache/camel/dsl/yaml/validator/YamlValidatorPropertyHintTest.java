@@ -167,6 +167,43 @@ public class YamlValidatorPropertyHintTest {
         }
     }
 
+    /**
+     * An option of a language written next to its short form (a local model in the benchmark of Oct 21-22 2026 wrote
+     * resultType there, was told only that the property is not defined, and wrote the same file 23 times).
+     */
+    @Test
+    public void testAnOptionNextToTheShortFormOfALanguageSaysWhereItGoes() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: direct:get-order
+                          steps:
+                            - setBody:
+                                expression:
+                                  jsonpath: "$[?(@.orderId == '${header.id}')]"
+                                  resultType: java.util.Map
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("resultType is an option of the jsonpath language: write the language as a"
+                                              + " map, with the text under expression: and resultType next to it"
+                                              + " (jsonpath: {expression: \"$[?(@.orderId == '${header.id}')]\","
+                                              + " resultType: java.util.Map})"));
+        }
+        // the full form is valid
+        assertThat(validator.validate("""
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.id}')]"
+                                resultType: java.util.Map
+                """)).isEmpty();
+    }
+
     /** CAMEL-24888: a double-quoted value that is never closed is named, instead of the parser's block-end message. */
     @Test
     public void testAnUnclosedQuoteIsNamed() throws Exception {

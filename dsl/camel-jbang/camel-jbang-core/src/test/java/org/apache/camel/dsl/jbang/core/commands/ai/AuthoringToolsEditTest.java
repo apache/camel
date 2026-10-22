@@ -336,6 +336,32 @@ class AuthoringToolsEditTest {
         assertThat(whole.getString("message")).doesNotContain("Note:");
     }
 
+    /** A JMS reply header set by hand, with nothing sent InOut: the write goes through, with a note in the answer. */
+    @Test
+    void aJmsReplyHeaderSetByHandIsANoteOfTheWrite(@TempDir Path dir) {
+        String content = """
+                - route:
+                    from:
+                      uri: jms:queue:stock
+                      steps:
+                        - setHeader:
+                            name: JMSReplyTo
+                            constant: orders
+                        - setBody:
+                            constant: reserved
+                """;
+
+        JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, "stock.camel.yaml", content, true);
+
+        assertThat(result.getString("status")).as(result.toJson()).isNotEqualTo("invalid");
+        JsonArray notes = (JsonArray) result.get("notes");
+        assertThat(notes).hasSize(1);
+        assertThat(notes.get(0).toString()).startsWith("Line 6: JMSReplyTo is set by hand")
+                .contains("send with pattern: InOut on the to:");
+        assertThat(result.getString("message"))
+                .endsWith("Note: a JMS reply header is set by hand, and nothing is sent with pattern: InOut (see notes).");
+    }
+
     private static JsonObject change(String find, String replace) {
         JsonObject jo = new JsonObject();
         jo.put("find", find);

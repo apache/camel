@@ -1412,8 +1412,9 @@ public final class AuthoringTools {
     }
 
     /**
-     * What a Kamelet file does that works but is not right, which does not refuse a write: a camel: dependency its
-     * template does not use (CAMEL-25403).
+     * What a file does that works but is not right, which does not refuse a write: a camel: dependency a Kamelet's
+     * template does not use (CAMEL-25403), a {expression} in the text of an XSLT element, a JMS reply header set by
+     * hand in a route that sends nothing InOut.
      */
     private static void putFileNotes(JsonObject result, String file, String content) {
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
@@ -1425,6 +1426,12 @@ public final class AuthoringTools {
         } else if (name.endsWith(".xsl") || name.endsWith(".xslt")) {
             // a {expression} in element content is written out as text (CAMEL-25514)
             List<String> notes = SourceValidator.xsltNotes(content);
+            if (!notes.isEmpty()) {
+                result.put("notes", new JsonArray(notes));
+            }
+        } else if (name.endsWith(".yaml") || name.endsWith(".yml")) {
+            // a JMS reply header set by hand, with nothing sent InOut
+            List<String> notes = HeaderChecks.replyHeaderNotes(content);
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
@@ -1678,8 +1685,12 @@ public final class AuthoringTools {
             result.put("existingProblems", new JsonArray(problemsBefore));
         }
         UnconsumedDirect waiting = null;
+        boolean replyByHand = false;
         if (validate) {
             putFileNotes(result, file, content);
+            String lower = file.toLowerCase(Locale.ROOT);
+            replyByHand = (lower.endsWith(".yaml") || lower.endsWith(".yml"))
+                    && !HeaderChecks.replyHeaderNotes(content).isEmpty();
             waiting = unconsumedDirect(dir, file, content, ctx.catalog());
             if (waiting != null) {
                 JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
@@ -1728,6 +1739,10 @@ public final class AuthoringTools {
         }
         if (waiting != null) {
             result.put("message", result.getString("message") + " Note: " + waiting.summary() + " (see notes).");
+        }
+        if (replyByHand) {
+            result.put("message", result.getString("message") + " Note: a JMS reply header is set by hand, and nothing"
+                                  + " is sent with pattern: InOut (see notes).");
         }
         if (!repaired.isEmpty()) {
             result.put("repaired", new JsonArray(repaired));
