@@ -34,8 +34,7 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-lambda", title = "AWS Lambda", syntax = "aws2-lambda:function",
              producerOnly = true, category = { Category.CLOUD, Category.SERVERLESS },
              headersClass = Lambda2Constants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
-                                  dependsOn = "operation",
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "invokeFunction",
                                                          carriers = {
@@ -53,14 +52,14 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
                                                 + " CamelAwsLambdaZipFile header or the S3 headers. The other operations take"
                                                 + " their input from headers, or with pojoRequest=true from the request of the"
                                                 + " AWS SDK in the body"),
-           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "operation",
+           producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = @BodyType.When(option = "operation", value = "invokeFunction",
                                                              carriers = Carrier.TEXT, javaType = "java.lang.String"),
-                                   description = "The payload of the response of invokeFunction, the default, as text: the JSON"
-                                                 + " the function returns, or the JSON of its error with the"
-                                                 + " CamelAwsLambdaFunctionError header set, as an error of the function does"
-                                                 + " not fail the exchange. The response of the AWS SDK for the other"
-                                                 + " operations, such as a ListFunctionsResponse"))
+                                   description = "The response of the AWS SDK for the operation, such as a"
+                                                 + " ListFunctionsResponse. For invokeFunction, the default, the payload of the"
+                                                 + " response as text: the JSON the function returns, or the JSON of its error"
+                                                 + " with the CamelAwsLambdaFunctionError header set, as an error of the"
+                                                 + " function does not fail the exchange"))
 public class Lambda2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private LambdaClient awsLambdaClient;
