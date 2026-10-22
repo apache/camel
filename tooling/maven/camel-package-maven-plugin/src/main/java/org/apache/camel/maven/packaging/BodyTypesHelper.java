@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.util.Strings;
 
 /**
  * Carries the {@link BodyTypes} of a component, data format or language into its model, which the catalog JSON is
@@ -140,17 +142,30 @@ final class BodyTypesHelper {
 
     /**
      * A body for a value the option cannot have would never hold: the value is one of an enum, or true or false for a
-     * boolean, in any case, as tooling compares it with what the endpoint sets.
+     * boolean, in any case and in any style of an enum constant, as tooling compares it with what the endpoint sets.
      */
     private static void checkValue(Class<?> owner, String side, BodyType.When when, BaseOptionModel option) {
         List<String> values = option.getEnums() != null && !option.getEnums().isEmpty()
                 ? option.getEnums()
                 : "boolean".equals(option.getType()) ? List.of("true", "false") : List.of();
-        if (!values.isEmpty() && values.stream().noneMatch(v -> v.equalsIgnoreCase(when.value()))) {
+        if (!values.isEmpty() && values.stream().noneMatch(v -> isSameValue(v, when.value()))) {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " has " + when.option() + "=" + when.value()
                                                + ", which is not a value of the option: " + String.join(", ", values));
         }
+    }
+
+    /**
+     * Whether two values of an option are one value as Camel takes it: in any case, and in any style of an enum
+     * constant, so convert-to-json and convertToJson are CONVERT_TO_JSON, as for the catalog and the enum type
+     * converter (StringHelper.asEnumConstantValue in camel-util, which this plugin does not depend on).
+     */
+    private static boolean isSameValue(String value, String other) {
+        return value.equalsIgnoreCase(other) || asEnumConstant(value).equals(asEnumConstant(other));
+    }
+
+    private static String asEnumConstant(String value) {
+        return Strings.camelCaseToDash(value).replaceAll("-+", "-").replace('-', '_').toUpperCase(Locale.ENGLISH);
     }
 
     /**

@@ -1585,6 +1585,43 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testAnOptionValueInAnotherStyleOfTheEnum() {
+        // the catalog and the enum type converter take convert-to-json and convertToJson as CONVERT_TO_JSON, so after
+        // docling the body is the document of that operation, and not the text of the default operation
+        String yaml = """
+                - route:
+                    id: dashes
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: docling:convert?operation=convert-to-json
+                        - setHeader:
+                            name: title
+                            simple: ${body[title]}
+                - route:
+                    id: camelCase
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: docling:convert?operation=convertToJson
+                        - setHeader:
+                            name: title
+                            simple: ${body[title]}
+                - route:
+                    id: markdown
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: docling:convert?operation=convert-to-markdown
+                        - setHeader:
+                            name: title
+                            simple: ${body[title]}
+                """;
+        assertThat(lines(yaml)).singleElement().asString()
+                .contains("route markdown: simple reads a field of the body (${body[title]})");
+    }
+
+    @Test
     public void testTheBodyOfCoreComponents() {
         // the stream consumer gives each line as text, so a field read needs an unmarshal, and stream:out writes text,
         // bytes, a stream or a file, so parsed data must be marshalled first; the knative consumer gives bytes, or the
