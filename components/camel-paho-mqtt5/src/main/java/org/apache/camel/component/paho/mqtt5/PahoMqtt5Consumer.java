@@ -72,11 +72,9 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     clientId = PahoMqtt5Endpoint.generateClientId();
                 }
                 client = createClient();
-                LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
                 if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
                     client.setManualAcks(true);
                 }
-                client.connect(connectionOptions);
             }
 
             client.setCallback(new MqttCallback() {
@@ -131,6 +129,14 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     LOG.debug("Delivery complete. Token: {}", token);
                 }
             });
+
+            if (stopClient) {
+                // connect once the callback is set: on a session that the broker kept, it sends the messages of the
+                // session right after CONNACK, and Paho drops a message that arrives while the client has no callback
+                // (and completes the QoS 2 flow of it all the same)
+                LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+                client.connect(connectionOptions);
+            }
 
             LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
             client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
