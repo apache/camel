@@ -44,6 +44,9 @@
     "CamelFileParent": { "index": 8, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The parent path.", "constantName": "org.apache.camel.component.file.watch.FileWatchConstants#FILE_PARENT" },
     "CamelFileLastModified": { "index": 9, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A Long value containing the last modified timestamp of the file.", "constantName": "org.apache.camel.component.file.watch.FileWatchConstants#FILE_LAST_MODIFIED" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "file" ], "javaType": "java.io.File", "description": "The java.io.File of the file or directory of the event, also for DELETE, with the event in the CamelFileEventType header. The consumer does not read it: it converts to text, bytes or a stream by reading the file, which fails after a DELETE" }
+  },
   "properties": {
     "path": { "index": 0, "kind": "path", "displayName": "Path", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Path of directory to consume events from." },
     "antInclude": { "index": 1, "kind": "parameter", "displayName": "Ant Include", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "**", "description": "ANT style pattern to match files. The file is matched against path relative to endpoint path. Pattern must be also relative (not starting with slash)" },

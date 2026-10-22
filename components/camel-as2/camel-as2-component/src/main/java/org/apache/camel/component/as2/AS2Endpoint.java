@@ -44,6 +44,9 @@ import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2ConnectionHelper;
 import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.component.as2.internal.AS2PropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -60,6 +63,31 @@ import org.apache.camel.support.jsse.SSLContextParameters;
              category = { Category.FILE })
 @Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
                               + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.STREAM },
+                                   byOption = @BodyType.When(option = "apiName", value = "RECEIPT", carriers = Carrier.POJO),
+                                   description = "The EDI message that server/listen receives, decrypted, decompressed and"
+                                                 + " without its signature: text in the charset of its Content-Type, or a"
+                                                 + " stream when the sender used the base64 or binary transfer encoding. The"
+                                                 + " component answers with its own receipt (MDN), never the body of the route."
+                                                 + " receipt/receive gives the receipt: a"
+                                                 + " DispositionNotificationMultipartReportEntity, or a MultipartSignedEntity"
+                                                 + " when it is signed. The CamelAs2.interchange exchange property holds the"
+                                                 + " HttpCoreContext"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "inBody", value = "ediMessage",
+                                                            carriers = { Carrier.TEXT, Carrier.STREAM }),
+                                  description = "The EDI message of client/send with inBody=ediMessage, as it is: text, encoded"
+                                                + " in ediMessageCharset (us-ascii when not set), or a stream. Bytes, a file or"
+                                                + " a Map fail: convertBodyTo String first. Without inBody, the message comes"
+                                                + " from the CamelAs2.ediMessage header"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                   description = "The receipt (MDN) in the response when dispositionNotificationTo asks for"
+                                                 + " one: a DispositionNotificationMultipartReportEntity, or a"
+                                                 + " MultipartSignedEntity when it is signed. null without a receipt, when"
+                                                 + " receiptDeliveryOption sends it to a receipt/receive consumer, or when the"
+                                                 + " response has none, such as an HTTP error, which does not fail the"
+                                                 + " exchange: the CamelAs2.interchange exchange property holds the"
+                                                 + " HttpCoreContext with the response"))
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriParam

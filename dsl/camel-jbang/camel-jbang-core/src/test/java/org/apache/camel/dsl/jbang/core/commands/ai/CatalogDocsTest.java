@@ -161,9 +161,9 @@ class CatalogDocsTest {
                 .startsWith("pojo (org.w3c.dom.NodeList). The nodes the expression selects. With resultQName=STRING: text"));
 
         // a component that does not declare them has none, rather than a guess
-        JsonObject jdbc = catalogDoc(Map.of("name", "jdbc", "kind", "component", "includeOptions", false));
-        assertNull(jdbc.get("bodyTypes"));
-        assertNull(jdbc.get("bodyTypesHint"));
+        JsonObject ldif = catalogDoc(Map.of("name", "ldif", "kind", "component", "includeOptions", false));
+        assertNull(ldif.get("bodyTypes"));
+        assertNull(ldif.get("bodyTypesHint"));
     }
 
     @Test

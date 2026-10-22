@@ -1732,6 +1732,174 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfQueriesDocumentsAndFiles() {
+        // jdbc, scp, vertx-http, tika, pdf create and graphql without a query option need the body as text, bytes, a
+        // stream or a file, so parsed data must be marshalled first (graphql with a query does not send the body);
+        // graphql, tika detect, pdf extractText, as2 and the snmp consumer give text, and jdbc rows, micrometer (which
+        // keeps the body) and smooks (whatever its config exports) say nothing
+        String yaml = """
+                - route:
+                    id: query
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: jdbc:myDataSource
+                - route:
+                    id: upload
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: scp:localhost:22/upload
+                - route:
+                    id: post
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: vertx-http:http://localhost:8080/orders
+                - route:
+                    id: parse
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: tika:parse
+                - route:
+                    id: print
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: pdf:create
+                - route:
+                    id: ask
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: graphql://http://localhost:8080/graphql
+                - route:
+                    id: variables
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: graphql://http://localhost:8080/graphql?query={books{id}}
+                - route:
+                    id: graph
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: graphql://http://localhost:8080/graphql?query={books{id}}
+                        - setHeader:
+                            name: books
+                            simple: ${body[data]}
+                - route:
+                    id: detect
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - to: tika:detect
+                        - setHeader:
+                            name: type
+                            simple: ${body[type]}
+                - route:
+                    id: extract
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - to: pdf:extractText
+                        - setHeader:
+                            name: title
+                            simple: ${body[title]}
+                - route:
+                    id: partner
+                    from:
+                      uri: as2:server/listen?requestUriPattern=/orders
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: trap
+                    from:
+                      uri: snmp:0.0.0.0:162?type=TRAP
+                      steps:
+                        - setHeader:
+                            name: oid
+                            simple: ${body[oid]}
+                - route:
+                    id: rows
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: select * from orders
+                        - to: jdbc:myDataSource
+                        - setHeader:
+                            name: id
+                            simple: ${body[0][ID]}
+                - route:
+                    id: count
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: micrometer:counter:orders
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: transform
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - to: smooks:smooks-config.xml
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                """;
+        assertThat(lines(yaml)).hasSize(11)
+                .anySatisfy(m -> assertThat(m).contains("route query: to: jdbc needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route ask: to: graphql needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route upload: to: scp needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route post: to: vertx-http needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route parse: to: tika needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route print: to: pdf needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route graph: simple reads a field of the body (${body[data]})"))
+                .anySatisfy(m -> assertThat(m).contains("route detect: simple reads a field of the body (${body[type]})"))
+                .anySatisfy(m -> assertThat(m).contains("route extract: simple reads a field of the body (${body[title]})"))
+                .anySatisfy(m -> assertThat(m).contains("route partner: simple reads a field of the body (${body[id]})"))
+                .anySatisfy(m -> assertThat(m).contains("route trap: simple reads a field of the body (${body[oid]})"));
+    }
+
+    @Test
     public void testAnOptionValueInAnotherStyleOfTheEnum() {
         // the catalog and the enum type converter take convert-to-json and convertToJson as CONVERT_TO_JSON, so after
         // docling the body is the document of that operation, and not the text of the default operation
