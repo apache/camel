@@ -66,9 +66,9 @@ class XmppConsumerSmackReconnectTest extends CamelTestSupport {
     void closeServer() throws Exception {
         // stop the routes before the server, so the consumers do not try to connect to a server that is closed
         context.stop();
-        // the defaults of Smack
-        ReconnectionManager.setDefaultReconnectionPolicy(ReconnectionPolicy.RANDOM_INCREASING_DELAY);
+        // the defaults of Smack (setDefaultFixedDelay also sets the policy to FIXED_DELAY, so it comes first)
         ReconnectionManager.setDefaultFixedDelay(15);
+        ReconnectionManager.setDefaultReconnectionPolicy(ReconnectionPolicy.RANDOM_INCREASING_DELAY);
         if (server != null) {
             server.close();
         }
