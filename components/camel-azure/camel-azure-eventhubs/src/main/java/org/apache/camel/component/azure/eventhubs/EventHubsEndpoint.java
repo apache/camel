@@ -46,7 +46,8 @@ import org.apache.camel.util.ObjectHelper;
                                                 + " event; a Map, a number or a POJO fails: marshal it first. A List is sent"
                                                 + " as one event per element, in one batch, and an element that is an Exchange"
                                                 + " or a Message is sent with its headers"),
-           producerOut = @BodyType(Carrier.UNCHANGED))
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: a send gives no result, and no header is set"))
 public class EventHubsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
