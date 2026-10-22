@@ -394,6 +394,25 @@ the signing exchanges, or use `maxKeyAge` or `nextRotationAt`, if the write is n
 
 The key encapsulation operations do not record usage, so `maxKeyUsage` still never triggers for a KEM key.
 
+=== camel-pqc - a failed stateful signature no longer carries the signature headers
+
+Signing with one of the stateful hash-based algorithms (LMS, HSS, XMSS, XMSSMT) consumes a one-time index inside the
+private key. That advanced key is now persisted through the `keyLifecycleManager` *before* the signature is placed on
+the message, instead of after.
+
+Such an exchange already failed when the key state could not be stored, so what changes is the content of the failed
+message: it no longer carries `CamelPQCSignature`, nor the hybrid `CamelPQCHybridSignature`,
+`CamelPQCClassicalSignature` and `CamelPQCPqcSignature` headers. A route that caught the failure with
+`onException(...).handled(true)`, or routed it to a dead letter channel, could previously read the signature off the
+failed message and pass it on; it can no longer do so. That is the point of the change - a signature whose index
+advance was never recorded must not escape, because after a restart the key resumes at the previous index and can
+sign a second time with an index already used.
+
+Signing a stateful key without a `keyLifecycleManager`, and signing any key without a `CamelPQCKeyId` header or
+with no stored metadata for the key, now logs a warning once per producer rather than being silently ignored. A
+non-stateful key without a `keyLifecycleManager` stays silent, as there is no `maxKeyUsage` threshold to miss. For a
+stateful key the warning names the index-reuse risk; for any other key it names the `usageCount` that will not advance.
+
 === camel-jbang - camel get endpoint shows the scope of an endpoint
 
 `camel get endpoint` replaces the `REMOTE` column with `SCOPE`, which tells three kinds of endpoint apart:
