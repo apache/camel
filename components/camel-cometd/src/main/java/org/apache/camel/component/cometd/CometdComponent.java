@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.server.BayeuxServerImpl;
@@ -46,6 +47,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.util.resource.MountedPathResourceFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
@@ -379,9 +381,26 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
             FilterHolder filterHolder = new FilterHolder();
             CrossOriginFilter filter = new CrossOriginFilter();
             filterHolder.setFilter(filter);
-            filterHolder.setInitParameter("allowedOrigins", endpoint.getAllowedOrigins());
+            String allowedOrigins = endpoint.getAllowedOrigins();
+            filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, allowedOrigins);
+            // Jetty's filter allows credentials unless told otherwise: only allow them for origins that were named
+            filterHolder.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM,
+                    Boolean.toString(isNamedOrigins(allowedOrigins)));
             context.addFilter(filterHolder, endpoint.getFilterPath(), EnumSet.allOf(DispatcherType.class));
         }
+    }
+
+    private static boolean isNamedOrigins(String allowedOrigins) {
+        if (ObjectHelper.isEmpty(allowedOrigins)) {
+            return false;
+        }
+        // parse the same way as the filter, and treat any wildcard (such as https://*) as not naming the origin
+        for (String origin : StringUtil.csvSplit(allowedOrigins)) {
+            if (origin.contains("*")) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
