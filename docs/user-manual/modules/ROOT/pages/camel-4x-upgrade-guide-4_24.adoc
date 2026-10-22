@@ -234,18 +234,18 @@ a JSON object when none is configured). A route that sets the header must enable
 
 === camel-google-mail, camel-google-drive, camel-google-calendar, camel-google-sheets - one API client per endpoint
 
-The `google-mail`, `google-mail-stream`, `google-drive`, `google-calendar`, `google-calendar-stream`, `google-sheets` and
-`google-sheets-stream` components now create one API client per endpoint, from the options of that endpoint (`clientId`,
-`clientSecret`, `refreshToken`, `accessToken`, `serviceAccountKey`, `delegate`, `scopes` and `applicationName`, plus
-`emailAddress`, `p12FileName` and `user` on the two calendar components), instead of a single client per component that
-every endpoint of the component shared. Each endpoint keeps its client for its lifetime. The `clientFactory` option of a
-`google-drive` endpoint is now used to create the client of that endpoint. In addition, a `google-mail-stream` endpoint
-configured with neither `clientSecret` nor `serviceAccountKey` now fails with an `IllegalArgumentException` when its
-client is created, instead of getting a `null` client and failing at the first API call. The `google-mail:update-message-labels` data type
-transformer now uses a client created from the component-level configuration (the `camel.component.google-mail.*`
-options), kept until the component stops. Before, it used whichever client the component had already created, for
-example the one of a `google-mail:messages/modify` endpoint, so credentials set only on an endpoint URI no longer reach
-the transformer: set them on the component as well.
+The `google-mail`, `google-mail-stream`, `google-drive`, `google-calendar`, `google-calendar-stream`, `google-sheets`
+and `google-sheets-stream` components now create one API client per endpoint, from the options of that endpoint
+(`clientId`, `clientSecret`, `refreshToken`, `accessToken`, `serviceAccountKey`, `delegate`, `scopes` and
+`applicationName`, plus `emailAddress`, `p12FileName` and `user` on the two calendar components), instead of a single
+client per component that every endpoint of the component shared. Each endpoint keeps its client for its lifetime. The
+`clientFactory` option of a `google-drive` endpoint is now used to create the client of that endpoint. In addition, a
+`google-mail-stream` endpoint configured with neither `clientSecret` nor `serviceAccountKey` now fails with an
+`IllegalArgumentException` when its client is created, instead of getting a `null` client and failing at the first API
+call. The `google-mail:update-message-labels` data type transformer now uses a client created from the component-level
+configuration (the `camel.component.google-mail.*` options), kept until the component stops. Before, it used whichever
+client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
+credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
 
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
