@@ -607,6 +607,24 @@ class SourceValidatorEndpointTest {
                 .doesNotContain("did you mean"));
     }
 
+    /** CAMEL-26018: the smtp producer reads the alternative body of an HTML mail from CamelMailAlternativeBody. */
+    @Test
+    void aHeaderTheProducerReadsIsKnown() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setHeader:
+                          name: CamelMailAlternativeBody
+                          constant: Hello plain text
+                      - setBody:
+                          constant: <p>Hello HTML</p>
+                      - to:
+                          uri: smtp://localhost?to=info@acme.com&contentType=text/html
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
     /** The JMS request-reply hint is for JMS only: the reply headers of other components keep their "did you mean". */
     @Test
     void aReplyHeaderOfAnotherComponentGetsDidYouMean() {
