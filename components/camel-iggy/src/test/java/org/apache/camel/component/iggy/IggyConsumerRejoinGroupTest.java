@@ -41,8 +41,8 @@ import org.apache.iggy.message.PolledMessages;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -97,7 +97,7 @@ class IggyConsumerRejoinGroupTest {
 
             // the first client loses its connection at its first poll; the next client must consume
             await().atMost(20, TimeUnit.SECONDS)
-                    .untilAsserted(() -> assertEquals(List.of("after the failed poll"), received));
+                    .untilAsserted(() -> assertThat(received).containsExactly("after the failed poll"));
 
             consumer.stop();
         }
