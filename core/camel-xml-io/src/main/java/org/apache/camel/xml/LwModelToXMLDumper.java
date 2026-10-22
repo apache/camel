@@ -73,6 +73,10 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
 @JdkService(ModelToXMLDumper.FACTORY)
 public class LwModelToXMLDumper implements ModelToXMLDumper {
 
+    // the separator before a query parameter, and its value; the & after it is not part of the match
+    private static final Pattern HASH_PARAMETER = Pattern.compile("([?&])hash=([0-9a-f]+)(?=&|$)");
+    private static final Pattern ROUTE_ID_PARAMETER = Pattern.compile("([?&])routeId=([^&]*)(?=&|$)");
+
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
         return dumpModelAsXml(context, definition, false, true, false);
@@ -217,7 +221,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                     String uri = value.toString();
                     for (String id : counterRouteIds) {
                         // kamelet:source and kamelet:sink have the id of their route
-                        uri = withoutParameter(uri, "routeId", Pattern.quote(id));
+                        uri = withoutRouteId(uri, id);
                     }
                     // a literal password is no part of the checksum, which is printed beside the masked URIs
                     value = URISupport.sanitizeUri(uri);
@@ -364,18 +368,30 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
      * identity hash, another one in every run. The objects are beans, which the checksum leaves out.
      */
     static String rawUri(String uri, boolean checksum) {
-        return checksum && uri != null ? withoutParameter(uri, "hash", "[0-9a-f]+") : uri;
+        return checksum && uri != null ? withoutParameter(uri, HASH_PARAMETER, null) : uri;
     }
 
-    /** The URI without the query parameter of that name whose value matches the regular expression. */
-    static String withoutParameter(String uri, String name, String valueRegex) {
-        Matcher matcher = Pattern.compile("([?&])" + Pattern.quote(name) + "=" + valueRegex + "(&|$)").matcher(uri);
-        if (!matcher.find()) {
-            return uri;
+    /** The URI without its routeId parameter of that id, which kamelet:source and kamelet:sink have. */
+    static String withoutRouteId(String uri, String id) {
+        return withoutParameter(uri, ROUTE_ID_PARAMETER, id);
+    }
+
+    /**
+     * The URI without the first query parameter the pattern matches, whose value is the given value, or any value when
+     * it is null.
+     */
+    static String withoutParameter(String uri, Pattern parameter, String value) {
+        Matcher matcher = parameter.matcher(uri);
+        while (matcher.find()) {
+            if (value == null || value.equals(matcher.group(2))) {
+                if (matcher.end() < uri.length()) {
+                    // more options follow: keep the separator before it, and drop the & after it
+                    return uri.substring(0, matcher.start() + 1) + uri.substring(matcher.end() + 1);
+                }
+                return uri.substring(0, matcher.start());
+            }
         }
-        // keep the separator when more options follow
-        String separator = matcher.group(2).isEmpty() ? "" : matcher.group(1);
-        return uri.substring(0, matcher.start()) + separator + uri.substring(matcher.end());
+        return uri;
     }
 
     /**

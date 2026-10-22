@@ -36,6 +36,16 @@ class LwModelToXMLDumperRawUriTest {
     }
 
     @Test
+    void theRouteIdOfTheRouteIsLeftOut() {
+        assertEquals("kamelet:source?routeId=other",
+                LwModelToXMLDumper.withoutRouteId("kamelet:source?routeId=other&routeId=my-route", "my-route"));
+        assertEquals("kamelet:source?a=1",
+                LwModelToXMLDumper.withoutRouteId("kamelet:source?routeId=my-route&a=1", "my-route"));
+        assertEquals("kamelet:source?routeId=my-route2",
+                LwModelToXMLDumper.withoutRouteId("kamelet:source?routeId=my-route2", "my-route"));
+    }
+
+    @Test
     void theDumpKeepsTheHash() {
         assertEquals("sql:select?a=1&hash=1f2e3d", LwModelToXMLDumper.rawUri("sql:select?a=1&hash=1f2e3d", false));
     }
