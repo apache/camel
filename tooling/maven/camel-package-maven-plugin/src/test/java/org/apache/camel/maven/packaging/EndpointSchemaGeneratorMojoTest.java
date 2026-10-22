@@ -278,6 +278,7 @@ class EndpointSchemaGeneratorMojoTest {
     @ValueSource(classes = {
             SomeEndpointWithBadBodyTypes.DataFormatSide.class, SomeEndpointWithBadBodyTypes.ProducerSideOfConsumer.class,
             SomeEndpointWithBadBodyTypes.UnchangedInput.class, SomeEndpointWithBadBodyTypes.AnyOutput.class,
+            SomeEndpointWithBadBodyTypes.UnknownInput.class,
             SomeEndpointWithBadBodyTypes.UnknownWithOthers.class, SomeEndpointWithBadBodyTypes.NoCarriers.class,
             SomeEndpointWithBadBodyTypes.UnknownOption.class, SomeEndpointWithBadBodyTypes.OptionValueWithoutCarriers.class,
             SomeEndpointWithBadBodyTypes.ValueTheOptionDoesNotHave.class })

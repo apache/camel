@@ -16,7 +16,7 @@
     "modelJavaType": "org.apache.camel.model.language.RefExpression"
   },
   "bodyTypes": {
-    "expressionIn": { "carriers": [ "unknown" ], "description": "As the expression or the predicate in the registry reads it" },
+    "expressionIn": { "carriers": [ "any" ], "description": "As the expression or the predicate in the registry reads it" },
     "expressionOut": { "carriers": [ "unknown" ], "description": "What the expression in the registry returns; a Boolean for a predicate" }
   },
   "properties": {

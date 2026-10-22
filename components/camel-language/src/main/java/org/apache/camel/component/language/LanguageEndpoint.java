@@ -52,7 +52,7 @@ import org.apache.camel.util.IOHelper;
 @UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri",
              remote = false, producerOnly = true, category = { Category.CORE, Category.SCRIPT },
              headersClass = LanguageConstants.class)
-@BodyTypes(producerIn = @BodyType(value = Carrier.UNKNOWN,
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The body as the language of the script reads it. The script is in the uri,"
                                                 + " the script option or a resource, or in the CamelLanguageScript header with"
                                                 + " allowTemplateFromHeader=true, and never in the body"),

@@ -50,6 +50,11 @@ public final class SomeEndpointWithBadBodyTypes {
     }
 
     @UriEndpoint(scheme = "some", syntax = "some", title = "some")
+    @BodyTypes(producerIn = @BodyType(Carrier.UNKNOWN))
+    public static class UnknownInput {
+    }
+
+    @UriEndpoint(scheme = "some", syntax = "some", title = "some")
     @BodyTypes(producerOut = @BodyType({ Carrier.UNKNOWN, Carrier.TEXT }))
     public static class UnknownWithOthers {
     }

@@ -39,7 +39,7 @@ import org.apache.camel.support.DefaultEndpoint;
              remote = false, category = { Category.CORE })
 @BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
                                    description = "The body the consumer of the endpoint in the registry gives"),
-           producerIn = @BodyType(value = Carrier.UNKNOWN,
+           producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The bodies the producer of the endpoint in the registry takes"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    description = "The body the producer of the endpoint in the registry leaves"))

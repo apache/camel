@@ -28,7 +28,7 @@
     "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "unknown" ], "description": "The body the data format named in the path takes, as for the marshal and unmarshal EIPs" },
+    "producerIn": { "carriers": [ "any" ], "description": "The body the data format named in the path takes, as for the marshal and unmarshal EIPs" },
     "producerOut": { "carriers": [ "unknown" ], "description": "The body the data format named in the path gives, as for the marshal and unmarshal EIPs" }
   },
   "properties": {

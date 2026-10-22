@@ -30,7 +30,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "unknown" ], "description": "The body the consumer of the endpoint in the registry gives" },
-    "producerIn": { "carriers": [ "unknown" ], "description": "The bodies the producer of the endpoint in the registry takes" },
+    "producerIn": { "carriers": [ "any" ], "description": "The bodies the producer of the endpoint in the registry takes" },
     "producerOut": { "carriers": [ "unknown" ], "description": "The body the producer of the endpoint in the registry leaves" }
   },
   "properties": {
