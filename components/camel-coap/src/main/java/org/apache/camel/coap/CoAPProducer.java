@@ -26,6 +26,7 @@ import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.network.Endpoint;
 
 /**
  * The CoAP producer.
@@ -114,7 +115,13 @@ public class CoAPProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (shutdownClient && client != null) {
+            // the client was created by this producer with its own endpoint (createCoapClient), which
+            // CoapClient.shutdown() does not release (bound socket and connector threads)
+            Endpoint clientEndpoint = client.getEndpoint();
             client.shutdown();
+            if (clientEndpoint != null) {
+                clientEndpoint.destroy();
+            }
             client = null;
         }
     }
