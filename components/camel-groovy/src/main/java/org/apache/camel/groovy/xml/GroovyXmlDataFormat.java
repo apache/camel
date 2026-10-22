@@ -50,6 +50,9 @@ import groovy.xml.slurpersupport.GPathResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -57,6 +60,16 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 
 @Dataformat("groovyXml")
+@BodyTypes(marshalIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP,
+        Carrier.POJO },
+                                 description = "A Groovy Node or GPathResult, a Map or a Jackson JsonNode to write as XML."
+                                               + " Text, bytes, a stream or a file is written as it is"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "xml",
+                                  description = "The XML in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "xml"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "groovy.util.Node",
+                                    description = "The XML parsed into a Groovy Node"))
 public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final int START_TAG = 1;
