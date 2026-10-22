@@ -77,6 +77,12 @@ public final class BatchTestHelper {
         }
     }
 
+    static int receivedMessages(MockEndpoint mock) {
+        return mock.getReceivedExchanges().stream()
+                .mapToInt(e -> getBatchExchanges(e).size())
+                .sum();
+    }
+
     static List<String> getBatchBodiesAsString(Exchange batchExchange) {
         return BatchTestHelper.getBatchExchanges(batchExchange).stream()
                 .map(e -> e.getIn().getBody(String.class))

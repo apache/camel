@@ -39,6 +39,7 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.countWorkerThreads;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.receivedMessages;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.triggerConnectionFailure;
 import static org.awaitility.Awaitility.await;
@@ -46,10 +47,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The connection recovery of the consumer creates a new connection and then the sessions and consumers on it. When one
- * of them cannot be created (the connection fails again, the destination is not available yet), the next attempt has to
- * create all of them again. The connections, sessions and consumers of the route are tracked through a connection
- * factory that can make one call fail.
+ * Tests the connection recovery of the batch consumer. The recovery creates a new connection and then the sessions and
+ * consumers on it. This test covers the case where the new connection fails when it is started, that is before the
+ * sessions and consumers are created, and the recovery has to try again with another connection. The connections,
+ * sessions and consumers of the route are tracked through a connection factory that can make the next connection fail
+ * when it is started.
  */
 class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
 
@@ -59,7 +61,8 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
     private static final int CONSUMERS = 3;
 
     private final List<TrackedConnection> connections = new CopyOnWriteArrayList<>();
-    // whether the next connection of the tracking connection factory fails when it is started (taken by it)
+    // whether the next connection created by the tracking connection factory fails when it is started;
+    // the connection resets the flag when it takes it
     private volatile boolean nextFailsOnStart;
 
     @BindToRegistry("trackingConnectionFactory")
@@ -96,25 +99,30 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
     };
 
     /**
-     * The new connection reports its failure to the container (its exception listener) when the recovery starts it,
-     * that is before the consumers are created, and it delivers no message; the JMS provider still creates the sessions
-     * and consumers on it. The recovery has to notice the failure and try again with another connection, although
-     * onException found no consumers to drop and none of the create calls failed.
+     * The new connection reports its failure to its exception listener when the recovery starts it, before the
+     * consumers are created, and it delivers no message. The JMS provider still creates the sessions and consumers on
+     * it. The recovery has to notice the failure and try again with another connection, although onException found no
+     * consumers to drop and none of the create calls failed. Afterwards the failed connection is closed, the connection
+     * in use has one session and one consumer per concurrent consumer, and the route processes messages again.
      */
     @Test
     void testRecoveryTriesAgainWhenConnectionFailsBeforeConsumersAreCreated() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:beforeconsumers");
-        mock.setExpectedMessageCount(3);
+        mock.setMinimumExpectedMessageCount(4);
 
-        sendMessagesWithText(template, "sjms:queue:" + QUEUE_NAME, 15, "Before!");
+        sendMessagesWithText(template, "sjms:queue:" + QUEUE_NAME, 20, "Before!");
 
         mock.assertIsSatisfied();
+        assertEquals(20, receivedMessages(mock));
+        assertEquals(CONSUMERS, countWorkerThreads(QUEUE_NAME));
+        assertEquals(CONSUMERS, last().openSessions());
+        assertEquals(CONSUMERS, last().openConsumers());
 
         nextFailsOnStart = true;
         triggerConnectionFailure(context, "beforeconsumers");
         await().atMost(20, TimeUnit.SECONDS).until(() -> connections.size() >= 2 && connections.get(1).failed.get());
 
-        // the first, the one that failed when it was started, the one in use
+        // connections: the first, the one that failed when it was started, and the one in use
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, connections.size(),
                 "connections: the recovery must try again, the connection failed before the consumers were created"));
         await().atMost(20, TimeUnit.SECONDS)
@@ -122,13 +130,15 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
         assertTrue(connections.get(1).closed.get(), "the connection that failed when it was started is closed");
 
         mock.reset();
-        mock.setExpectedMessageCount(3);
+        mock.setMinimumExpectedMessageCount(4);
 
-        sendMessagesWithText(template, "sjms:queue:" + QUEUE_NAME, 15, "After!");
+        sendMessagesWithText(template, "sjms:queue:" + QUEUE_NAME, 20, "After!");
 
         mock.assertIsSatisfied();
+        assertEquals(20, receivedMessages(mock));
         assertEquals(CONSUMERS, countWorkerThreads(QUEUE_NAME));
-        assertEquals(CONSUMERS, connections.size());
+        assertEquals(CONSUMERS, last().openSessions());
+        assertEquals(CONSUMERS, last().openConsumers());
     }
 
     private TrackedConnection last() {
@@ -148,7 +158,7 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
 
     private Connection track(Connection delegate) {
         TrackedConnection tracked = new TrackedConnection();
-        tracked.failsOnStart = nextFailsOnStart;
+        boolean failsOnStart = nextFailsOnStart;
         nextFailsOnStart = false;
         connections.add(tracked);
         return (Connection) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { Connection.class },
@@ -156,26 +166,15 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
                     if ("setExceptionListener".equals(method.getName())) {
                         tracked.exceptionListener = (ExceptionListener) args[0];
                     }
-                    if ("start".equals(method.getName()) && tracked.failsOnStart) {
-                        // the connection is not started, so its consumers get no message, and the failure is reported
-                        // on the thread that starts it
+                    if ("start".equals(method.getName()) && failsOnStart) {
+                        // the connection is not started, so its consumers get no message; the failure is reported to the
+                        // exception listener on the thread that starts it
                         tracked.failed.set(true);
                         tracked.exceptionListener.onException(new JMSException("Simulated: the connection failed"));
                         return null;
                     }
                     if ("createSession".equals(method.getName())) {
-                        Fault fault = tracked.fault;
-                        int number = tracked.sessionCalls.incrementAndGet();
-                        if (fault != null && fault.failingSession == number) {
-                            fault.happened.set(true);
-                            throw new JMSException("Simulated: session " + number + " cannot be created");
-                        }
-                        Session session = track(tracked, (Session) invoke(delegate, method, args));
-                        if (fault != null && fault.actionAtSession == number) {
-                            fault.action.run();
-                            fault.happened.set(true);
-                        }
-                        return session;
+                        return track(tracked, (Session) invoke(delegate, method, args));
                     }
                     if ("close".equals(method.getName())) {
                         tracked.closed.set(true);
@@ -187,15 +186,9 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
     private Session track(TrackedConnection connection, Session delegate) {
         TrackedSession tracked = new TrackedSession();
         connection.sessions.add(tracked);
-        int number = connection.sessions.size();
         return (Session) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { Session.class },
                 (proxy, method, args) -> {
                     if ("createConsumer".equals(method.getName())) {
-                        Fault fault = connection.fault;
-                        if (fault != null && fault.failingConsumer == number) {
-                            fault.happened.set(true);
-                            throw new JMSException("Simulated: consumer " + number + " cannot be created");
-                        }
                         Object consumer = invoke(delegate, method, args);
                         tracked.consumers.incrementAndGet();
                         return consumer;
@@ -215,24 +208,12 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
         }
     }
 
-    /**
-     * What one connection does wrong: the number (from 1) of the session that cannot be created, of the session whose
-     * consumer cannot be created, and of the session after whose creation the action runs; 0 for none.
-     */
-    private record Fault(int failingSession, int failingConsumer, int actionAtSession, Runnable action,
-            AtomicBoolean happened) {
-    }
-
     private static final class TrackedConnection {
-        final AtomicInteger sessionCalls = new AtomicInteger();
         final List<TrackedSession> sessions = new CopyOnWriteArrayList<>();
         final AtomicBoolean closed = new AtomicBoolean();
         final AtomicBoolean failed = new AtomicBoolean();
-        volatile Fault fault;
-        volatile boolean failsOnStart;
         volatile ExceptionListener exceptionListener;
 
-        // a closed connection has closed its sessions, and a closed session its consumer
         int openSessions() {
             return closed.get() ? 0 : (int) sessions.stream().filter(s -> !s.closed.get()).count();
         }
