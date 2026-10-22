@@ -26,6 +26,8 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +49,11 @@ class AiToolArgumentsBodyTest extends CamelTestSupport {
                 from("ai-tool:reserved?tags=test&argumentsAsBody=true&parameter.safe=string"
                      + "&parameter.CamelAiToolCallId=string&parameter.camelAiToolConversationId=string")
                         .setProperty("invoked", constant(true));
+                for (boolean argumentsAsBody : List.of(false, true)) {
+                    from("ai-tool:requiredReserved" + argumentsAsBody + "?tags=test&argumentsAsBody=" + argumentsAsBody
+                         + "&parameter.camelCase=string&parameter.camelCase.required=true")
+                            .setProperty("invoked", constant(true));
+                }
             }
         };
     }
@@ -159,6 +166,23 @@ class AiToolArgumentsBodyTest extends CamelTestSupport {
 
         assertThat(result).isInstanceOf(AiToolResult.ArgumentError.class);
         assertThat(exchange.getProperty("invoked")).isNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void rejectsRequiredReservedArgumentsBeforeInvokingTheRoute(boolean argumentsAsBody) {
+        String toolName = "requiredReserved" + argumentsAsBody;
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setBody("original body");
+
+        AiToolResult result = AiToolExecutor.execute(spec(toolName), Map.of("camelCase", "value"), exchange);
+
+        assertThat(result).isInstanceOfSatisfying(AiToolResult.ArgumentError.class,
+                error -> assertThat(error.message())
+                        .isEqualTo("Missing required argument 'camelCase' for tool '" + toolName + "'"));
+        assertThat(exchange.getProperty("invoked")).isNull();
+        assertThat(exchange.getMessage().getHeader("camelCase")).isNull();
+        assertThat(exchange.getMessage().getBody()).isEqualTo("original body");
     }
 
     private AiToolSpec spec(String name) {

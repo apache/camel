@@ -136,19 +136,8 @@ public final class AiToolExecutor {
             });
         }
 
-        for (String requiredName : spec.getRequiredArgumentNames()) {
-            if (!argsCopy.containsKey(requiredName)) {
-                LOG.warn("Missing required argument '{}' for tool '{}' -- the LLM did not send "
-                         + "a parameter that is declared as required in the tool specification",
-                        requiredName, toolName);
-                IllegalArgumentException cause = new IllegalArgumentException(
-                        String.format("Missing required argument '%s' for tool '%s'", requiredName, toolName));
-                return new AiToolResult.ArgumentError(cause.getMessage(), cause);
-            }
-        }
-        // Set each argument as an exchange header so route expressions (${header.city})
-        // and SQL bindings work naturally. Filter out Camel-internal names to prevent
-        // header-namespace injection (CVE-2025-27636 family).
+        // Filter out Camel-internal names before required-argument validation so a discarded
+        // argument cannot satisfy a required parameter.
         bodyArguments.keySet().removeIf(name -> {
             String lower = name.toLowerCase(Locale.ROOT);
             if (lower.startsWith("camel") || lower.startsWith("org.apache.camel.")) {
@@ -160,6 +149,17 @@ public final class AiToolExecutor {
             return false;
         });
         argsCopy.keySet().retainAll(bodyArguments.keySet());
+
+        for (String requiredName : spec.getRequiredArgumentNames()) {
+            if (!argsCopy.containsKey(requiredName)) {
+                LOG.warn("Missing required argument '{}' for tool '{}' after argument filtering",
+                        requiredName, toolName);
+                IllegalArgumentException cause = new IllegalArgumentException(
+                        String.format("Missing required argument '%s' for tool '%s'", requiredName, toolName));
+                return new AiToolResult.ArgumentError(cause.getMessage(), cause);
+            }
+        }
+        // Set declared arguments as headers for route expressions and SQL bindings.
         argsCopy.forEach(exchange.getMessage()::setHeader);
         setInvocationHeader(exchange, AiToolConstants.TOOL_CALL_ID, toolCallId);
         setInvocationHeader(exchange, AiToolConstants.CONVERSATION_ID, conversationId);

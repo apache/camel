@@ -326,7 +326,9 @@ Nested objects, arrays and JSON value types are preserved. A call with no argume
 The body includes undeclared arguments supplied by the model; individual headers still include only declared arguments.
 Camel logs a warning for each undeclared argument. Reserved names starting with `camel` or `org.apache.camel.`
 (case-insensitive) are excluded from both the body and argument headers. Missing required arguments still reject
-an invocation before the tool route runs. This option does not add full JSON Schema validation.
+an invocation before the tool route runs. Required arguments are checked after reserved names are removed,
+so a required argument with a reserved name rejects the call even if the model supplied it.
+Rename such arguments to use names outside the reserved namespace. This option does not add full JSON Schema validation.
 
 === Invocation Identifiers
 
