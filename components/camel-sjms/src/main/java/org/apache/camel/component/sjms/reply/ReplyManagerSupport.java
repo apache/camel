@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.reply;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
@@ -39,6 +41,7 @@ import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,6 +193,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         Message message = holder.getMessage();
         Session session = holder.getSession();
         SjmsMessage response = new SjmsMessage(exchange, message, session, endpoint.getBinding());
+        // keep the attachments of the exchange, as an OUT message created by exchange.getOut() does
+        @SuppressWarnings("unchecked")
+        Map<String, Object> attachments
+                = (Map<String, Object>) exchange.getIn().getPayloadForTrait(MessageTrait.ATTACHMENTS);
+        if (attachments != null) {
+            response.setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
+        }
         exchange.setOut(response);
         Object body = response.getBody();
 

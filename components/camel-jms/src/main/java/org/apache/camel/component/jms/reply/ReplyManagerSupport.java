@@ -17,6 +17,8 @@
 package org.apache.camel.component.jms.reply;
 
 import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
@@ -42,6 +44,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.task.ForegroundTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,6 +219,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         Message message = holder.getMessage();
         Session session = holder.getSession();
         JmsMessage response = new JmsMessage(exchange, message, session, endpoint.getBinding());
+        // keep the attachments of the exchange, as an OUT message created by exchange.getOut() does
+        @SuppressWarnings("unchecked")
+        Map<String, Object> attachments
+                = (Map<String, Object>) exchange.getIn().getPayloadForTrait(MessageTrait.ATTACHMENTS);
+        if (attachments != null) {
+            response.setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
+        }
         exchange.setOut(response);
 
         Object to = exchange.getIn().getHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED);
