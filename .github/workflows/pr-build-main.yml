@@ -61,7 +61,7 @@ on:
         default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}${{ inputs.extra_modules && '-component-test' || '' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}${{ inputs.extra_modules && '-component-test' || '' }}${{ inputs.include_jdk25 && '-jdk25' || '' }}
   cancel-in-progress: true
 
 permissions:
