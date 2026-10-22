@@ -1008,6 +1008,78 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfCachesAndSigning() {
+        // pqc signs text, bytes or a stream, so parsed data must be marshalled first; a caffeine PUT keeps the body,
+        // so the parsed data is still there for the file producer, while an infinispan GET gives what the cache holds
+        String yaml = """
+                - route:
+                    id: sign
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: pqc:sign?operation=sign
+                - route:
+                    id: put
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: caffeine-cache:orders?action=PUT&key=1
+                        - to: file:out
+                - route:
+                    id: get
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: infinispan:orders?operation=GET&key=1
+                        - to: file:out
+                """;
+        assertThat(lines(yaml)).hasSize(2)
+                .anySatisfy(m -> assertThat(m).contains("route sign: to: pqc needs the body as text, bytes or a stream"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route put: to: file needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
+    public void testAnOptionTheBodyDependsOnOutweighsAnotherOption() {
+        // xslt with output bytes gives bytes, so a field read needs an unmarshal; with a resultHandlerFactory too the
+        // factory decides the body, and output=bytes no longer says it
+        String yaml = """
+                - route:
+                    id: bytes
+                    from:
+                      uri: file:in
+                      steps:
+                        - to: xslt:order.xsl?output=bytes
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: factory
+                    from:
+                      uri: file:in
+                      steps:
+                        - to: xslt:order.xsl?output=bytes&resultHandlerFactory=#myFactory
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .contains("route bytes: simple reads a field of the body (${body[id]})"));
+    }
+
+    @Test
     public void testWhatTheComponentMayConfigureSaysNothing() {
         // the valueDeserializer of kafka and the operation of aws2-sqs can be set on the component, which the route
         // does not show; a placeholder is only known when the route runs

@@ -238,7 +238,7 @@ Optional:
 Required:
 
 * `CamelJiraIssueKey`: The issue key identifier.
-* the body of the exchange is the description.
+* the body of the exchange is the text of the comment.
 
 === Attach
 
@@ -247,7 +247,8 @@ Only one file should attach per invocation.
 Required:
 
 * `CamelJiraIssueKey`: The issue key identifier.
-* body of the exchange should be of type `File`
+* the body of the exchange is the file to attach: a `File`, the file of the file consumer, or text, bytes or a stream,
+named by the `CamelFileName` header
 
 === DeleteIssue
 
@@ -261,7 +262,10 @@ Required:
 
 * `CamelJiraIssueKey`: The issue key identifier.
 * `CamelJiraIssueTransitionId`: The issue transition `id`.
-* the body of the exchange is the description.
+
+Optional:
+
+* the body of the exchange is a comment to add to the issue after the transition.
 
 === UpdateIssue
 

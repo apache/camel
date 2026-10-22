@@ -66,8 +66,8 @@ This section lists all available operations, along with their header information
 ** `CamelInfinispanLifespanTimeUnit`
 ** `CamelInfinispanMaxIdleTime`
 ** `CamelInfinispanMaxIdleTimeUnit`
-* *Result Header*: 
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Put All Operations
 [cols="40%,60%a", options="header"]
@@ -106,8 +106,8 @@ The resulting value is returned in the exchange *body*.
 
 * *Required Headers*
 ** `CamelInfinispanKey`
-* *Result Header*
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Contains Value Operation
 [cols="40%,60%a", options="header"]
@@ -118,8 +118,8 @@ The resulting value is returned in the exchange *body*.
 
 * *Required Headers*: 
 ** `CamelInfinispanValue`
-* *Result Header*
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Remove Operations
 [cols="40%,60%a", options="header"]
@@ -133,8 +133,8 @@ The resulting value is returned in the exchange *body*.
 ** `CamelInfinispanValue`
 * *Optional Headers*: 
 ** `CamelInfinispanValue`
-* *Result Header*: 
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Replace Operations
 [cols="40%,60%a", options="header"]
@@ -153,8 +153,8 @@ The resulting value is returned in the exchange *body*.
 ** `CamelInfinispanLifespanTimeUnit`
 ** `CamelInfinispanMaxIdleTime`
 ** `CamelInfinispanMaxIdleTimeUnit`
-* *Result Header*: 
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Clear Operations
 [cols="40%,60%a", options="header"]
@@ -171,8 +171,8 @@ The resulting value is returned in the exchange *body*.
 | `InfinispanOperation.SIZE` | Returns the number of entries in the cache
 |===
 
-* *Result Header*
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Stats Operation
 [cols="40%,60%a", options="header"]
@@ -181,8 +181,8 @@ The resulting value is returned in the exchange *body*.
 | `InfinispanOperation.STATS` | Returns statistics about the cache
 |===
 
-* *Result Header*:
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Query Operation
 [cols="40%,60%a", options="header"]
@@ -213,11 +213,13 @@ Java::
 from("direct:start")
     .setHeader("CamelInfinispanOperation").constant("PUT") // <1>
     .setHeader("CamelInfinispanKey").constant("123") // <2>
-    .to("infinispan:myCacheName?cacheContainer=#cacheContainer"); // <3>
+    .setHeader("CamelInfinispanValue").constant("Hello") // <3>
+    .to("infinispan:myCacheName?cacheContainer=#cacheContainer"); // <4>
 ----
 <1> Set the operation to perform
 <2> Set the key used to identify the element in the cache
-<3> Use the configured cache manager `cacheContainer` from the registry to put an element to the cache named `myCacheName`
+<3> Set the value to store: the message body is not used
+<4> Use the configured cache manager `cacheContainer` from the registry to put an element to the cache named `myCacheName`
 
 XML::
 +
@@ -230,6 +232,9 @@ XML::
   </setHeader>
   <setHeader name="CamelInfinispanKey">
     <constant>123</constant>
+  </setHeader>
+  <setHeader name="CamelInfinispanValue">
+    <constant>Hello</constant>
   </setHeader>
   <to uri="infinispan:myCacheName?cacheContainer=#cacheContainer"/>
 </route>
@@ -249,6 +254,9 @@ YAML::
         - setHeader:
             name: CamelInfinispanKey
             constant: "123"
+        - setHeader:
+            name: CamelInfinispanValue
+            constant: Hello
         - to:
             uri: infinispan:myCacheName
             parameters:
