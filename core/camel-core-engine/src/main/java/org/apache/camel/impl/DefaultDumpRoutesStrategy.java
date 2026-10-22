@@ -783,6 +783,11 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 if (loc != null) {
                     jo.put("source", loc);
                 }
+                // the checksum of the route as written: a tool that read the routes from their source compares it with
+                // the running routes to tell which changed
+                if (def.getChecksum() != null) {
+                    jo.put("checksum", def.getChecksum());
+                }
                 List<JsonObject> code = dumpAsJSon(lines);
                 jo.put("code", code);
                 list.add(jo);
