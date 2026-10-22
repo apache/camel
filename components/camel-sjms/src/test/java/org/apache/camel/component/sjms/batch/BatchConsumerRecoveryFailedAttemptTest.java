@@ -59,8 +59,6 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
     private static final int CONSUMERS = 3;
 
     private final List<TrackedConnection> connections = new CopyOnWriteArrayList<>();
-    // what the next connection of the tracking connection factory does wrong (taken by that connection)
-    private volatile Fault nextFault;
     // whether the next connection of the tracking connection factory fails when it is started (taken by it)
     private volatile boolean nextFailsOnStart;
 
@@ -150,8 +148,6 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
 
     private Connection track(Connection delegate) {
         TrackedConnection tracked = new TrackedConnection();
-        tracked.fault = nextFault;
-        nextFault = null;
         tracked.failsOnStart = nextFailsOnStart;
         nextFailsOnStart = false;
         connections.add(tracked);
@@ -225,9 +221,6 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
      */
     private record Fault(int failingSession, int failingConsumer, int actionAtSession, Runnable action,
             AtomicBoolean happened) {
-        Fault(int failingSession, int failingConsumer, int actionAtSession, Runnable action) {
-            this(failingSession, failingConsumer, actionAtSession, action, new AtomicBoolean());
-        }
     }
 
     private static final class TrackedConnection {

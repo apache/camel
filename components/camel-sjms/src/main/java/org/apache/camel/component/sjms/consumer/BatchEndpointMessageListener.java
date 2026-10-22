@@ -29,6 +29,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.SjmsConsumer;
 import org.apache.camel.component.sjms.SjmsEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,8 @@ public class BatchEndpointMessageListener {
     private final SjmsConsumer consumer;
     private final SjmsEndpoint endpoint;
     private final Processor processor;
-    private String poisonBody;
+    private boolean eagerLoadingOfProperties;
+    private String eagerPoisonBody;
 
     public BatchEndpointMessageListener(SjmsConsumer consumer, SjmsEndpoint endpoint, Processor processor) {
         this.consumer = consumer;
@@ -49,31 +51,29 @@ public class BatchEndpointMessageListener {
         this.processor = processor;
     }
 
-    public void setPoisonBody(String poisonBody) {
-        this.poisonBody = poisonBody;
-    }
-
     private Exchange aggregate(List<Message> rawMessages, Session session) {
         List<Exchange> exchanges = new ArrayList<>(rawMessages.size());
         for (Message m : rawMessages) {
             Exchange exchange = endpoint.createExchange(m, session);
-            try {
-                // Force eager materialization of JMS message headers and body into the
-                // Camel Exchange, before the session is committed/closed after dispatch.
-                exchange.getIn().getHeaders();
-                exchange.getIn().getBody();
-            } catch (Exception e) {
-                exchange.setException(e);
-                String text = poisonBody;
+            if (ObjectHelper.isNotEmpty(eagerPoisonBody) && eagerLoadingOfProperties) {
                 try {
-                    text = poisonBody != null
-                            ? endpoint.getCamelContext().resolveLanguage("simple")
-                                    .createExpression(poisonBody).evaluate(exchange, String.class)
-                            : null;
-                } catch (Exception t) {
-                    // ignore
+                    exchange.getIn().getBody();
+                    exchange.getIn().getHeaders();
+                } catch (Exception e) {
+                    // any problems with eager loading then set an exception so Camel error handler can react
+                    exchange.setException(e);
+                    String text = eagerPoisonBody;
+                    try {
+                        text = endpoint.getCamelContext().resolveLanguage("simple")
+                                .createExpression(eagerPoisonBody).evaluate(exchange, String.class);
+                    } catch (Exception t) {
+                        // ignore
+                    }
+                    exchange.getIn().setBody(text);
                 }
-                exchange.getIn().setBody(text);
+            } else if (eagerLoadingOfProperties) {
+                exchange.getIn().getBody();
+                exchange.getIn().getHeaders();
             }
 
             exchanges.add(exchange);
@@ -125,5 +125,21 @@ public class BatchEndpointMessageListener {
 
     void handleException(String message, Throwable cause) {
         consumer.getExceptionHandler().handleException(message, cause);
+    }
+
+    public boolean isEagerLoadingOfProperties() {
+        return eagerLoadingOfProperties;
+    }
+
+    public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
+        this.eagerLoadingOfProperties = eagerLoadingOfProperties;
+    }
+
+    public String getEagerPoisonBody() {
+        return eagerPoisonBody;
+    }
+
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        this.eagerPoisonBody = eagerPoisonBody;
     }
 }

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -57,7 +57,8 @@ public class BatchConsumerExceptionHandlerTest extends JmsTestSupport {
         sendMessagesWithText(template, SJMS_QUEUE_NAME, 5, "Message %d!");
 
         await()
-                .atMost(Duration.ofSeconds(10))
+                .during(2, TimeUnit.SECONDS)
+                .atMost(10, TimeUnit.SECONDS)
                 .until(() -> exceptionHandler.counter.get() == 1);
 
         MockEndpoint.assertIsSatisfied(context);

@@ -108,7 +108,7 @@ public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
 
         MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_SESSION_TX));
 
-        // An incomplete batch os SESSION_TRANSACTED messages should not be processed on route stop
+        // An incomplete batch of SESSION_TRANSACTED messages should not be processed on route stop
         mock.expectedMessageCount(0);
 
         sendMessagesWithText(template, endpointUri, 4, "Before!");

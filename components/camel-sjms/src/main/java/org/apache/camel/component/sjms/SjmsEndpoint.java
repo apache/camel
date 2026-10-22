@@ -425,8 +425,9 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     public void configureBatchMessageListener(BatchEndpointMessageListener listener) {
         if (!"false".equals(eagerPoisonBody)) {
-            listener.setPoisonBody(eagerPoisonBody);
+            listener.setEagerPoisonBody(eagerPoisonBody);
         }
+        listener.setEagerLoadingOfProperties(eagerLoadingOfProperties);
     }
 
     @Override

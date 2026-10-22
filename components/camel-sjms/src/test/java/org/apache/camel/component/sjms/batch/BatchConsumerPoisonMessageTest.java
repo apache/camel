@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
@@ -36,16 +37,13 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchExchanges;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BatchConsumerPoisonMessageTest extends JmsTestSupport {
 
-    private static final String SJMS_FROMF_URI = "sjms:queue:%s?batching=true&batchSize=5&objectMessageEnabled=true";
+    private static final String SJMS_FROMF_URI
+            = "sjms:queue:%s?batching=true&batchSize=5&eagerLoadingOfProperties=true&objectMessageEnabled=true";
     private static final String QUEUE_NAME
             = "batch.consumer.queue.BatchConsumerPoisonMessageTest";
     private static final String MOCK_RESULT = "mock:result";
@@ -55,27 +53,41 @@ public class BatchConsumerPoisonMessageTest extends JmsTestSupport {
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
         mock.expectedMessageCount(1);
 
+        List<Object> messages = List.of("Hello 1!", "Hello 2!", new Poison(), "Hello 3!", "Hello 4!");
         MyMessageProducer producer = new MyMessageProducer(getSession(), QUEUE_NAME);
-        for (int i = 1; i <= 4; i++) {
-            producer.sendTextMessage("Hello!");
+        for (Object m : messages) {
+            if (m instanceof String s) {
+                producer.sendTextMessage(s);
+            } else {
+                producer.sendObjectMessage((Serializable) m);
+            }
         }
-        producer.sendObjectMessage(new Poison());
 
         mock.assertIsSatisfied();
         assertBatchSizesInOrder(mock, 5);
 
-        List<Exchange> exchanges = getBatchExchanges(mock.getExchanges().get(0));
+        Pattern hello = Pattern.compile("Hello [1-4]!");
+        Pattern poison = Pattern.compile("Poison JMS message payload: Failed.*", Pattern.DOTALL);
 
-        Exchange exchange = exchanges.get(0);
-        assertEquals("Hello!", exchange.getIn().getBody(String.class));
-        assertNull(exchange.getException());
-        assertInstanceOf(Message.class, exchange.getIn(SjmsMessage.class).getJmsMessage());
+        List<Exchange> exchanges = BatchTestHelper.getBatchExchanges(mock.getReceivedExchanges().get(0));
+        assertEquals(messages.size(), exchanges.size(), "batch size");
 
-        Exchange poisonExchange = exchanges.get(4);
-        assertTrue(poisonExchange.getIn().getBody(String.class)
-                .startsWith("Poison JMS message payload: Failed"));
-        assertNotNull(poisonExchange.getException());
-        assertInstanceOf(Message.class, poisonExchange.getIn(SjmsMessage.class).getJmsMessage());
+        // 1. every exchange with an exception has the poison body
+        assertTrue(exchanges.stream()
+                .filter(x -> x.getException() != null)
+                .allMatch(x -> poison.matcher(x.getIn().getBody(String.class)).matches()),
+                "exchanges with an exception must have the poison body");
+
+        // 2. every exchange without an exception has a hello body
+        assertTrue(exchanges.stream()
+                .filter(x -> x.getException() == null)
+                .allMatch(x -> hello.matcher(x.getIn().getBody(String.class)).matches()),
+                "exchanges without an exception must have a hello body");
+
+        // 3. every exchange carries the JMS message
+        assertTrue(exchanges.stream()
+                .allMatch(x -> x.getIn(SjmsMessage.class).getJmsMessage() instanceof Message),
+                "every exchange must carry a JMS message");
     }
 
     @Override

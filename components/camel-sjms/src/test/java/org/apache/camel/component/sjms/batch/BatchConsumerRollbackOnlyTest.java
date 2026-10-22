@@ -51,7 +51,7 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
         mockStart.expectedMessageCount(1);
 
         MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK));
-        // With AUTO_ACKNOWLEDGE the messages in the batch will not be redelivered and reach end of the route
+        // With AUTO_ACKNOWLEDGE the messages in the batch will not be redelivered and reach the end of the route
         mockFinish.expectedMessageCount(0);
 
         sendMessages(template, format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK),
@@ -67,7 +67,7 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
         mockStart.expectedMessageCount(2);
 
         MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_SESSION_TX));
-        // With session transacted the messages in the batch will be redelivered and
+        // With session transacted the messages in the batch will be redelivered and reach the end of the route
         mockFinish.expectedMessageCount(1);
 
         sendMessagesWithText(template, format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX),
@@ -89,7 +89,7 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
         mockStart.expectedMessageCount(2);
 
         MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK));
-        // With CLIENT_ACKNOWLEDGE the messages in the batch will be redelivered and reach end of the route
+        // With CLIENT_ACKNOWLEDGE the messages in the batch will be redelivered and reach the end of the route
         mockFinish.expectedMessageCount(1);
 
         sendMessagesWithText(template, format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK),

@@ -50,7 +50,7 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
         mockStart.expectedMessageCount(2);
 
         MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK));
-        // With CLIENT_ACKNOWLEDGE the messages in the batch will be redelivered and reach end of the route
+        // With CLIENT_ACKNOWLEDGE the messages in the batch will be redelivered and reach the end of the route
         mockFinish.expectedMessageCount(1);
 
         sendMessagesWithText(template,
@@ -73,7 +73,7 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
         mockStart.expectedMessageCount(2);
 
         MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_SESSION_TX));
-        // With session transacted the messages in the batch will be redelivered and
+        // With session transacted the messages in the batch will be redelivered and reach the end of the route
         mockFinish.expectedMessageCount(1);
 
         sendMessagesWithText(template, format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX),
