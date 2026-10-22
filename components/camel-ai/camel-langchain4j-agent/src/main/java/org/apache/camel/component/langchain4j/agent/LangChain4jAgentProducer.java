@@ -450,7 +450,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             // not leak into the calling producer exchange, while the caller's context (properties/variables) reaches
             // the tool route. Shared across the route-tool runtimes so they cannot drift (CAMEL-24832, CAMEL-23944).
             Exchange toolExchange = AiToolExecutor.createToolExchange(exchange);
-            AiToolResult result = AiToolExecutor.execute(spec, arguments, toolExchange);
+            AiToolResult result = AiToolExecutor.execute(spec, arguments, toolExchange,
+                    toolExecutionRequest.id(), memoryId != null ? memoryId.toString() : null);
             return toToolResponse(spec.getName(), result);
         };
 

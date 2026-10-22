@@ -17,17 +17,21 @@
 package org.apache.camel.component.langchain4j.agent;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ai.tool.AiToolConstants;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -50,6 +54,7 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
     private CountDownLatch bothToolsEntered = new CountDownLatch(2);
     private final AtomicInteger inFlight = new AtomicInteger();
     private final AtomicInteger maxConcurrent = new AtomicInteger();
+    private final Map<String, String> toolConversations = new ConcurrentHashMap<>();
 
     @BeforeEach
     void resetConcurrencyState() {
@@ -57,6 +62,7 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
         bothToolsEntered = new CountDownLatch(2);
         maxConcurrent.set(0);
         inFlight.set(0);
+        toolConversations.clear();
     }
 
     @Override
@@ -80,13 +86,15 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
     protected void bindToRegistry(Registry registry) {
         registry.bind("agentConfig", new AgentConfiguration()
                 .withChatModel(chatModel)
+                .withChatMemoryProvider(id -> MessageWindowChatMemory.withMaxMessages(20))
                 .withExecuteToolsConcurrently()
                 .withMaxToolCallingRoundTrips(5));
     }
 
     @Test
     void concurrentToolExecutionRunsBothToolsInParallel() throws Exception {
-        String response = template.requestBody("direct:agent", new AiAgentBody<>("run tools"), String.class);
+        String response = template.requestBody("direct:agent",
+                new AiAgentBody<>("run tools").withMemoryId("parallel-conversation"), String.class);
 
         assertThat(response).isEqualTo("done");
         assertThat(bothToolsEntered.await(10, TimeUnit.SECONDS))
@@ -95,6 +103,16 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
         assertThat(maxConcurrent.get())
                 .as("tools should overlap when executeToolsConcurrently is enabled")
                 .isGreaterThanOrEqualTo(2);
+    }
+
+    @Test
+    void concurrentCallsHaveDistinctCallIdsAndShareTheConversationId() {
+        String response = template.requestBody("direct:agent",
+                new AiAgentBody<>("run tools").withMemoryId("conversation-123"), String.class);
+
+        assertThat(response).isEqualTo("done");
+        assertThat(toolConversations).containsExactlyInAnyOrderEntriesOf(
+                Map.of("a", "conversation-123", "b", "conversation-123"));
     }
 
     @Test
@@ -141,6 +159,12 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
     }
 
     private void recordConcurrentEntry(String label, Exchange exchange) throws InterruptedException {
+        String callId = exchange.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID, String.class);
+        assertThat(callId).isEqualTo(label.toLowerCase());
+        String conversationId = exchange.getMessage().getHeader(AiToolConstants.CONVERSATION_ID, String.class);
+        if (conversationId != null) {
+            toolConversations.put(callId, conversationId);
+        }
         int concurrent = inFlight.incrementAndGet();
         maxConcurrent.updateAndGet(current -> Math.max(current, concurrent));
         bothToolsEntered.countDown();

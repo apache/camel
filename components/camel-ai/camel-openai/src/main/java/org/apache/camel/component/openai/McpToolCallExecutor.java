@@ -288,7 +288,7 @@ class McpToolCallExecutor extends ServiceSupport {
             // exchange property) reaches the tool route; this is not a pooled consumer exchange, so it is not released
             // here (CAMEL-24832)
             Exchange toolExchange = AiToolExecutor.createToolExchange(callingExchange);
-            AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
+            AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange, toolCall.asFunction().id(), null);
             if (result instanceof AiToolResult.Success success) {
                 LOG.debug("Route tool '{}' result: {}", toolName, success.value());
                 return new ToolResult(
