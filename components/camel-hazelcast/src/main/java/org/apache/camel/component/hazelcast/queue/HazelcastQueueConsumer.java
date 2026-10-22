@@ -33,8 +33,8 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
 
     // the minimum delay before polling again after a poll error, so a pollingTimeout of 0 does not spin
     private static final long MIN_POLL_ERROR_DELAY = 1000L;
-    // the longest a single IQueue.poll waits: the consumer stops by letting its poll end, not by interrupting it, so it
-    // waits for pollingTimeout in polls of at most this time and sees a stop within it
+    // the longest a single IQueue.poll waits (or pollingTimeout when it is shorter): the consumer stops by letting its
+    // poll end, not by interrupting it, so the thread sees a stop within this time
     private static final long MAX_POLL_WAIT = 1000L;
 
     private final Processor processor;
@@ -139,22 +139,13 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
         }
 
         /**
-         * Waits up to pollingTimeout for an item, in polls of at most MAX_POLL_WAIT, and ends early when the consumer
-         * stops.
+         * Polls for an item, waiting at most pollingTimeout and at most MAX_POLL_WAIT, so the thread sees a stop within
+         * that time. When no item was offered, the loop in {@link #run()} polls again.
          *
-         * @return the item, or null if none was offered in that time or the consumer stops
+         * @return the item, or null if none was offered in that time
          */
         private Object pollItem() throws InterruptedException {
-            final long timeout = config.getPollingTimeout();
-            final long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeout);
-            long remaining = timeout;
-            while (true) {
-                Object body = queue.poll(Math.min(remaining, MAX_POLL_WAIT), TimeUnit.MILLISECONDS);
-                remaining = TimeUnit.NANOSECONDS.toMillis(deadline - System.nanoTime());
-                if (body != null || remaining <= 0 || !isRunAllowed()) {
-                    return body;
-                }
-            }
+            return queue.poll(Math.min(config.getPollingTimeout(), MAX_POLL_WAIT), TimeUnit.MILLISECONDS);
         }
 
         /**

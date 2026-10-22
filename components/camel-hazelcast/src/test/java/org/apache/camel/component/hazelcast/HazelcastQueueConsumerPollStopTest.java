@@ -91,7 +91,7 @@ class HazelcastQueueConsumerPollStopTest extends CamelTestSupport {
     @Test
     void itemOfferedAfterTheRouteStoppedStaysInTheQueue() throws Exception {
         // stop the route while the consumer waits in its poll (the usual state of an idle consumer)
-        await().atMost(10, TimeUnit.SECONDS).until(HazelcastQueueConsumerPollStopTest::consumersWaitInPoll);
+        await().atMost(10, TimeUnit.SECONDS).until(this::consumersWaitInPoll);
         context.getRouteController().stopRoute("idle");
 
         member.getQueue("idle").offer("b");
@@ -111,7 +111,7 @@ class HazelcastQueueConsumerPollStopTest extends CamelTestSupport {
 
     @Test
     void longPollingTimeoutWaitsForAnItemAndStillStopsPromptly() throws Exception {
-        await().atMost(10, TimeUnit.SECONDS).until(HazelcastQueueConsumerPollStopTest::consumersWaitInPoll);
+        await().atMost(10, TimeUnit.SECONDS).until(this::consumersWaitInPoll);
 
         // an item offered after several seconds of waiting, within the pollingTimeout of a minute, is routed
         MockEndpoint mock = getMockEndpoint("mock:long");
@@ -123,7 +123,7 @@ class HazelcastQueueConsumerPollStopTest extends CamelTestSupport {
 
         // the consumer waits for its pollingTimeout of a minute, but a stop does not wait for it (nor for the graceful
         // shutdown timeout), and leaves the item offered afterwards in the queue
-        await().atMost(10, TimeUnit.SECONDS).until(HazelcastQueueConsumerPollStopTest::consumersWaitInPoll);
+        await().atMost(10, TimeUnit.SECONDS).until(this::consumersWaitInPoll);
         long start = System.nanoTime();
         context.getRouteController().stopRoute("long");
         long stopMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
@@ -136,10 +136,13 @@ class HazelcastQueueConsumerPollStopTest extends CamelTestSupport {
         assertEquals(1, mock.getReceivedCounter());
     }
 
-    private static boolean consumersWaitInPoll() {
-        // the consumer threads of the routes that are started, each waiting in IQueue.poll
+    private boolean consumersWaitInPoll() {
+        // the consumer threads of the routes of this context that are started, each waiting in IQueue.poll (Camel
+        // thread names are "Camel (<context>) thread #N - QueueConsumer")
+        String contextName = "(" + context.getName() + ")";
         return Thread.getAllStackTraces().entrySet().stream()
-                .filter(e -> e.getKey().getName().contains("QueueConsumer"))
+                .filter(e -> e.getKey().getName().contains(contextName)
+                        && e.getKey().getName().contains("QueueConsumer"))
                 .filter(e -> e.getKey().getState() != Thread.State.RUNNABLE
                         && Arrays.stream(e.getValue()).anyMatch(f -> "poll".equals(f.getMethodName())))
                 .count()
