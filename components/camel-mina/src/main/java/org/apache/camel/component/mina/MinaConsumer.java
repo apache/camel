@@ -71,6 +71,8 @@ public class MinaConsumer extends DefaultConsumer {
     private IoAcceptor acceptor;
     private final MinaConfiguration configuration;
     private ExecutorService workerPool;
+    // the acceptor or connector and the worker pool were released by doStop, and are created again on start
+    private boolean released;
 
     public MinaConsumer(final MinaEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
@@ -81,6 +83,10 @@ public class MinaConsumer extends DefaultConsumer {
         //
         this.getEndpoint().setExchangePattern(ExchangePattern.InOut);
 
+        setupProtocol();
+    }
+
+    private void setupProtocol() throws Exception {
         String protocol = configuration.getProtocol();
         if (protocol.equals("tcp")) {
             if (configuration.isClientMode()) {
@@ -104,6 +110,10 @@ public class MinaConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (released) {
+            setupProtocol();
+            released = false;
+        }
         if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {
             connector.setHandler(new ReceiveHandler());
             ConnectFuture future = connector.connect(address);
@@ -141,6 +151,18 @@ public class MinaConsumer extends DefaultConsumer {
                 acceptor.unbind(address);
             }
         }
+        // a route restart creates a new consumer and never shuts this one down (doShutdown), so release the acceptor
+        // (selectors, I/O threads) and the worker pool now; doStart creates them again if this consumer is started
+        // again. The address is already unbound, so only wait for the I/O threads to end when the CamelContext stops,
+        // as doShutdown did before (a datagram acceptor takes about two seconds to end); once disposed, the dispose in
+        // doShutdown does nothing
+        if (acceptor != null) {
+            acceptor.dispose(getEndpoint().getCamelContext().isStopping());
+        }
+        if (workerPool != null) {
+            workerPool.shutdown();
+        }
+        released = true;
         super.doStop();
     }
 
@@ -383,6 +405,13 @@ public class MinaConsumer extends DefaultConsumer {
 
     public IoAcceptor getAcceptor() {
         return acceptor;
+    }
+
+    /**
+     * The connector of a consumer in client mode (for tests).
+     */
+    IoConnector getConnector() {
+        return connector;
     }
 
     public void setAcceptor(IoAcceptor acceptor) {
