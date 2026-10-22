@@ -184,9 +184,18 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         if (muc != null) {
             LOG.info("Leaving room: {}", muc.getRoom());
             muc.removeMessageListener(this);
-            muc.leave();
-            muc = null;
+            try {
+                muc.leave();
+            } finally {
+                muc = null;
+                // also when leaving failed: the connection is down, or Smack no longer has us in the room
+                releaseConnection();
+            }
         }
+        releaseConnection();
+    }
+
+    private void releaseConnection() {
         if (connection != null) {
             // the connection is shared with the other consumers and producers of the account: stop listening on it,
             // and release it (it is closed when nobody uses it any more)

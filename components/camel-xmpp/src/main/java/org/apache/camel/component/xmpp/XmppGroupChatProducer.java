@@ -156,17 +156,20 @@ public class XmppGroupChatProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (chat != null) {
-            LOG.info("Leaving room: {}", room);
-            chat.leave();
+        try {
+            if (chat != null) {
+                LOG.info("Leaving room: {}", room);
+                chat.leave();
+            }
+        } finally {
+            chat = null;
+            // also when leaving failed: the connection is down, or Smack no longer has us in the room
+            if (connection != null) {
+                // the connection is shared with the other consumers and producers of the account
+                endpoint.releaseConnection(this);
+            }
+            connection = null;
         }
-        chat = null;
-
-        if (connection != null) {
-            // the connection is shared with the other consumers and producers of the account
-            endpoint.releaseConnection(this);
-        }
-        connection = null;
 
         super.doStop();
     }

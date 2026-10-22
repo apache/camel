@@ -107,9 +107,11 @@ public class XmppComponent extends DefaultComponent {
 
     /**
      * Gets the connection of the endpoint's account for the given consumer or producer, and creates it when the account
-     * has no connection yet or its connection is no longer connected. The connection is shared with the other consumers
-     * and producers of the account, also of other endpoints; release it with
-     * {@link #releaseConnection(XmppEndpoint, Object)}.
+     * has no connection yet. A connection that is no longer connected is connected and logged in again, not replaced:
+     * the consumers and producers that got it before keep using that object (and Smack's ReconnectionManager keeps
+     * reconnecting it), so a second connection of the account would log in the same JID and resource again and the
+     * server would close one of the two (conflict). The connection is shared with the other consumers and producers of
+     * the account, also of other endpoints; release it with {@link #releaseConnection(XmppEndpoint, Object)}.
      */
     XMPPTCPConnection acquireConnection(XmppEndpoint endpoint, Object user)
             throws InterruptedException, IOException, SmackException, XMPPException {
@@ -122,8 +124,10 @@ public class XmppComponent extends DefaultComponent {
         boolean acquired = false;
         shared.lock.lock();
         try {
-            if (shared.connection == null || !shared.connection.isConnected()) {
+            if (shared.connection == null) {
                 shared.connection = endpoint.createConnection();
+            } else {
+                connectAndLogin(endpoint, shared.connection);
             }
             acquired = true;
             return shared.connection;
@@ -136,10 +140,8 @@ public class XmppComponent extends DefaultComponent {
     }
 
     /**
-     * Connects the shared connection of the endpoint's account again when it is not connected. The consumers and
-     * producers of an account share one connection, so the reconnect is done under the account's lock; Smack's
-     * {@code connect()} throws {@link SmackException.AlreadyConnectedException} to a second caller, which here only
-     * means that another consumer or producer of the account connected it first.
+     * Connects and logs in the shared connection of the endpoint's account again when it is not connected. The
+     * consumers and producers of an account share one connection, so the reconnect is done under the account's lock.
      */
     void reconnect(XmppEndpoint endpoint, XMPPTCPConnection connection)
             throws InterruptedException, IOException, SmackException, XMPPException {
@@ -152,18 +154,38 @@ public class XmppComponent extends DefaultComponent {
             lock.lock();
         }
         try {
-            if (!connection.isConnected()) {
-                LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
-                try {
-                    connection.connect();
-                } catch (SmackException.AlreadyConnectedException e) {
-                    LOG.debug("Already connected by another consumer or producer of the account: {}",
-                            XmppEndpoint.getConnectionMessage(connection));
-                }
-            }
+            connectAndLogin(endpoint, connection);
         } finally {
             if (lock != null) {
                 lock.unlock();
+            }
+        }
+    }
+
+    /**
+     * Connects the connection when it is not connected, and logs it in again when it is not logged in (a connection
+     * that is connected again is not logged in, and the server delivers nothing to it until it is). Smack's
+     * {@code connect()} and {@code login()} throw {@link SmackException.AlreadyConnectedException} and
+     * {@link SmackException.AlreadyLoggedInException} to a second caller (such as Smack's ReconnectionManager), which
+     * only means that it was done already. {@code login()} logs in with the user, password and resource the connection
+     * logged in with before.
+     */
+    private static void connectAndLogin(XmppEndpoint endpoint, XMPPTCPConnection connection)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        if (!connection.isConnected()) {
+            LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
+            try {
+                connection.connect();
+            } catch (SmackException.AlreadyConnectedException e) {
+                LOG.debug("Already connected again: {}", XmppEndpoint.getConnectionMessage(connection));
+            }
+        }
+        if (!connection.isAuthenticated() && (endpoint.getUser() == null || endpoint.isLogin())) {
+            LOG.debug("Logging in again to: {}", XmppEndpoint.getConnectionMessage(connection));
+            try {
+                connection.login();
+            } catch (SmackException.AlreadyLoggedInException e) {
+                LOG.debug("Already logged in again: {}", XmppEndpoint.getConnectionMessage(connection));
             }
         }
     }
@@ -187,6 +209,16 @@ public class XmppComponent extends DefaultComponent {
         }
     }
 
+    /**
+     * The number of consumers and producers that use the connection of the endpoint's account. For tests.
+     */
+    int connectionUsers(XmppEndpoint endpoint) {
+        synchronized (connections) {
+            SharedConnection shared = connections.get(endpoint.getConnectionKey());
+            return shared != null ? shared.users.size() : 0;
+        }
+    }
+
     private static final class SharedConnection {
         private final Lock lock = new ReentrantLock();
         private final Set<Object> users = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -194,7 +226,8 @@ public class XmppComponent extends DefaultComponent {
 
         void disconnect() {
             XMPPTCPConnection current = connection;
-            if (current != null && current.isConnected()) {
+            if (current != null) {
+                // also when it is not connected: that stops Smack's ReconnectionManager from connecting it again
                 current.disconnect();
             }
         }

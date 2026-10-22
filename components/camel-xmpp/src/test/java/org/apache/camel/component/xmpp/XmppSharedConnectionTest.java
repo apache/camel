@@ -40,6 +40,8 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Endpoints of one account that differ in the participant share the account's connection: a server keeps one session
@@ -50,6 +52,7 @@ class XmppSharedConnectionTest extends CamelTestSupport {
 
     private static final String ALICE = "alice@" + FakeXmppServer.DOMAIN;
     private static final String CAROL = "carol@" + FakeXmppServer.DOMAIN;
+    private static final String ROOM = "dev@conference." + FakeXmppServer.DOMAIN;
 
     private FakeXmppServer server;
 
@@ -161,6 +164,89 @@ class XmppSharedConnectionTest extends CamelTestSupport {
         } finally {
             pool.shutdownNow();
         }
+
+        // the reconnect also logged the connection in again, so the server delivers what the producers send now
+        template.sendBody("direct:alice", "later alice");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.messagesTo(ALICE).contains("later alice"));
+        assertEquals(0, server.conflicts(), "A session of the account was closed by another one");
+    }
+
+    @Test
+    void connectionAcquiredDuringAnOutageIsTheConnectionOfTheAccount() throws Exception {
+        template.sendBody("direct:alice", "before");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.messagesTo(ALICE).size() == 1);
+
+        XmppEndpoint endpoint = context.getEndpoint(uri(ALICE), XmppEndpoint.class);
+        XmppComponent component = endpoint.getComponent();
+        Object first = new Object();
+        Object second = new Object();
+        XMPPTCPConnection connection = component.acquireConnection(endpoint, first);
+        try {
+            server.dropConnections();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !connection.isConnected());
+
+            // a consumer or producer of the account starts during the outage (a route that starts, the first message
+            // of a toD producer): it gets the connection the others hold, connected and logged in again
+            XMPPTCPConnection acquired = component.acquireConnection(endpoint, second);
+            assertSame(connection, acquired, "A second connection of the account was created");
+            assertTrue(acquired.isAuthenticated(), "The connection was not logged in again");
+        } finally {
+            component.releaseConnection(endpoint, second);
+            component.releaseConnection(endpoint, first);
+        }
+
+        // the producer that got the connection before the outage sends on it again
+        template.sendBody("direct:alice", "after");
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(List.of("before", "after"), server.messagesTo(ALICE)));
+        assertEquals(0, server.conflicts(), "A session of the account was closed by another one");
+        assertEquals(1, server.boundSessions());
+    }
+
+    @Test
+    void consumerThatCannotLeaveItsRoomReleasesTheConnection() throws Exception {
+        assertReleasedWhenLeavingFails("roomConsumer", roomUri("listener"));
+    }
+
+    @Test
+    void groupChatProducerThatCannotLeaveItsRoomReleasesTheConnection() throws Exception {
+        assertReleasedWhenLeavingFails("roomProducer", roomUri("speaker"));
+    }
+
+    private void assertReleasedWhenLeavingFails(String routeId, String uri) throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                if ("roomConsumer".equals(routeId)) {
+                    from(uri).routeId(routeId).to("mock:room");
+                } else {
+                    // the group chat producer enters the room when it starts
+                    from("direct:room").routeId(routeId).to(uri);
+                }
+            }
+        });
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.occupants(ROOM) == 1);
+        XmppEndpoint endpoint = context.getEndpoint(uri, XmppEndpoint.class);
+        XmppComponent component = endpoint.getComponent();
+        assertEquals(1, component.connectionUsers(endpoint));
+
+        // the connection is lost: leaving the room fails with NotConnectedException when the route stops
+        Object probe = new Object();
+        XMPPTCPConnection connection = component.acquireConnection(endpoint, probe);
+        component.releaseConnection(endpoint, probe);
+        server.dropConnections();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !connection.isConnected());
+
+        context.getRouteController().stopRoute(routeId);
+
+        // the connection is released all the same (it is closed, as nothing else of the account uses it)
+        assertEquals(0, component.connectionUsers(endpoint));
+        context.removeRoute(routeId);
+    }
+
+    private String roomUri(String user) {
+        return "xmpp://" + user + "@127.0.0.1:" + server.getPort() + "?room=" + ROOM + "&nickname=" + user
+               + "&password=secret&connectionConfig=#connectionConfig";
     }
 
     @Test
@@ -173,6 +259,12 @@ class XmppSharedConnectionTest extends CamelTestSupport {
             public synchronized AbstractXMPPConnection connect() throws SmackException {
                 // what Smack 4.4.8 connect() throws to a caller when another thread connected the connection first
                 throw new SmackException.AlreadyConnectedException();
+            }
+
+            @Override
+            public synchronized void login() throws SmackException {
+                // what Smack 4.4.8 login() throws to a caller when another thread logged the connection in first
+                throw new SmackException.AlreadyLoggedInException();
             }
         };
         assertDoesNotThrow(() -> endpoint.reconnect(connection));
