@@ -54,14 +54,14 @@ on:
         required: false
         type: boolean
         default: false
-      include_jdk25:
-        description: 'Also run the build on JDK 25 (experimental)'
+      jdk25_only:
+        description: 'Run on JDK 25 only (skips JDK 21 build, experimental)'
         required: false
         type: boolean
         default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}${{ inputs.extra_modules && '-component-test' || '' }}${{ inputs.include_jdk25 && '-jdk25' || '' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}${{ inputs.extra_modules && '-component-test' || '' }}
   cancel-in-progress: true
 
 permissions:
@@ -69,7 +69,7 @@ permissions:
 
 jobs:
   build:
-    if: github.repository == 'apache/camel'
+    if: github.repository == 'apache/camel' && !inputs.jdk25_only
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -253,7 +253,7 @@ jobs:
           overwrite: true
 
   build-jdk25:
-    if: github.repository == 'apache/camel' && inputs.include_jdk25 == true
+    if: github.repository == 'apache/camel' && inputs.jdk25_only == true
     permissions:
       contents: read
     runs-on: ubuntu-latest
