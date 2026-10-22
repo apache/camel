@@ -1663,7 +1663,7 @@ public final class CatalogDocs {
                 line.append(". With ").append(String.join("; ", values));
             }
             if (!side.getDependsOn().isEmpty()) {
-                line.append(". Not known when ").append(String.join(" or ", side.getDependsOn())).append(" is set");
+                line.append(". Not known when ").append(orList(side.getDependsOn())).append(" is set");
             }
             answer.put(entry.getKey(), line.toString());
         }
@@ -1675,10 +1675,14 @@ public final class CatalogDocs {
             // the build rejects a side without carriers, but a catalog read from elsewhere may have one
             return "unknown";
         }
-        String answer = carriers.size() == 1
-                ? carriers.get(0)
-                : String.join(", ", carriers.subList(0, carriers.size() - 1)) + " or " + carriers.get(carriers.size() - 1);
+        String answer = orList(carriers);
         return javaType != null ? answer + " (" + javaType + ")" : answer;
+    }
+
+    private static String orList(List<String> values) {
+        return values.size() == 1
+                ? values.get(0)
+                : String.join(", ", values.subList(0, values.size() - 1)) + " or " + values.get(values.size() - 1);
     }
 
     /**
