@@ -23,6 +23,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,14 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "azure-eventhubs:namespace/eventHubName", category = {
                      Category.CLOUD, Category.MESSAGING },
              headersClass = EventHubsConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The body of the event, one message per event"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.LIST },
+                                  description = "What converts to a byte array: text, bytes, a stream or a file, sent as one"
+                                                + " event; a Map, a number or a POJO fails: marshal it first. A List is sent"
+                                                + " as one event per element, in one batch, and an element that is an Exchange"
+                                                + " or a Message is sent with its headers"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class EventHubsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
