@@ -43,7 +43,7 @@ import org.apache.camel.support.service.ServiceHelper;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation",
              remote = false, producerOnly = true,
              category = { Category.CORE, Category.TRANSFORMATION }, lenientProperties = true)
-@BodyTypes(producerIn = @BodyType(value = Carrier.UNKNOWN,
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The body the data format named in the path takes, as for the marshal and"
                                                 + " unmarshal EIPs"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,

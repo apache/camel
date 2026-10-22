@@ -33,7 +33,7 @@
     "CamelLanguageScript": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String or Expression", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The script to execute provided in the header. Takes precedence over script configured on the endpoint.", "constantName": "org.apache.camel.component.language.LanguageConstants#LANGUAGE_SCRIPT" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "unknown" ], "description": "The body as the language of the script reads it. The script is in the uri, the script option or a resource, or in the CamelLanguageScript header with allowTemplateFromHeader=true, and never in the body" },
+    "producerIn": { "carriers": [ "any" ], "description": "The body as the language of the script reads it. The script is in the uri, the script option or a resource, or in the CamelLanguageScript header with allowTemplateFromHeader=true, and never in the body" },
     "producerOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "transform", "value": "false", "carriers": [ "unchanged" ] }, { "option": "binary", "value": "true", "carriers": [ "stream" ] } ], "description": "The result of the script, as the language gives it. Unchanged with transform=false. With binary=true the content of the resource as a stream, which is not evaluated" }
   },
   "properties": {

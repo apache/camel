@@ -35,7 +35,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * A language for referred expressions or predicates.
  */
 @Language("ref")
-@BodyTypes(expressionIn = @BodyType(value = Carrier.UNKNOWN,
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
                                     description = "As the expression or the predicate in the registry reads it"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
                                      description = "What the expression in the registry returns; a Boolean for a predicate"))
