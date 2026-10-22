@@ -34,8 +34,6 @@ public class GoogleSheetsStreamComponent extends HealthCheckComponent {
     @Metadata
     private GoogleSheetsStreamConfiguration configuration;
     @Metadata(label = "advanced")
-    private Sheets client;
-    @Metadata(label = "advanced")
     private GoogleSheetsClientFactory clientFactory;
 
     public GoogleSheetsStreamComponent() {
@@ -47,21 +45,22 @@ public class GoogleSheetsStreamComponent extends HealthCheckComponent {
         this.configuration = new GoogleSheetsStreamConfiguration();
     }
 
+    /**
+     * Creates a client for the given configuration with the client factory of the component. Each endpoint creates its
+     * own client from its own options and keeps it for its lifetime.
+     */
     public Sheets getClient(GoogleSheetsStreamConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && config.getClientSecret() != null) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
-            }
+        if (config.getClientId() != null && config.getClientSecret() != null) {
+            return getClientFactory().makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+        } else if (config.getServiceAccountKey() != null) {
+            return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Google Sheets client");
         }
-        return client;
     }
 
     public GoogleSheetsClientFactory getClientFactory() {
