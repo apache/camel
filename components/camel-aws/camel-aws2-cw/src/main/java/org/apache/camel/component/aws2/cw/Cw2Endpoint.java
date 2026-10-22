@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.cw.client.Cw2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,23 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS CloudWatch", syntax = "aws2-cw:namespace",
              producerOnly = true, category = { Category.CLOUD, Category.MONITORING }, headersClass = Cw2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "putMetricData sends a body that is a MetricDatum of the AWS SDK or a List of"
+                                                + " them, and a List of anything else fails; with another body the metric comes"
+                                                + " from the CamelAwsCwMetric* headers or the name, value and unit options. The"
+                                                + " other operations do not use the body"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listMetrics", carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.cloudwatch.model.ListMetricsResponse"),
+                                           @BodyType.When(option = "operation", value = "describeAlarms",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsResponse"),
+                                           @BodyType.When(option = "operation", value = "describeAlarmsForMetric",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsForMetricResponse") },
+                                   description = "Unchanged after putMetricData, the default. The response of the AWS SDK for"
+                                                 + " listMetrics, describeAlarms and describeAlarmsForMetric"))
 public class Cw2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
