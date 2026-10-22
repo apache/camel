@@ -1515,6 +1515,19 @@ framing, are still allowed. Routes that put a percent-encoded control character 
 `CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
 likely to be affected.
 
+=== camel-undertow - a WebSocket connection opened before a consumer with custom handlers started is no longer served
+
+On a WebSocket path whose producer applies a security provider or allowed roles, a connection could be accepted while
+only the producer served the path, before its consumer was started for the first time. Such a connection ran the
+producer checks but not the custom `handlers` the consumer configures, as those handlers run only for consumers. Once
+the consumer was started, the connection was still treated as having passed the consumer checks, so its messages
+reached the route and it kept receiving what the producer sent.
+
+Once a consumer that configures `handlers` is started on a path, a connection opened on that path before the consumer
+first ran is no longer served: its messages no longer reach the route and it no longer receives what the producer
+sends, and the connection is closed. Clients that open a connection in this window must reconnect after the consumer
+has started.
+
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 
 The `saveBulk` and `executeTransaction` operations of `dapr:state` built their request but never sent it to Dapr, so
