@@ -26,15 +26,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.VetoCamelContextStartException;
@@ -46,6 +51,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.RouteTemplateHelper;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
@@ -74,6 +80,9 @@ public class KameletComponent extends DefaultComponent {
     private final ReentrantLock lock = new ReentrantLock();
 
     private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
+
+    // stops and removes the routes of Kamelet endpoints that are shut down, off the threads that route the messages
+    private volatile ExecutorService routeRemover;
 
     // active consumers
     private final Map<String, KameletConsumer> consumers = new HashMap<>();
@@ -137,6 +146,8 @@ public class KameletComponent extends DefaultComponent {
         final String uuid = Kamelet.extractUuid();
         final String routeId = Kamelet.extractRouteId(getCamelContext(), remaining, parameters, uuid);
         final String loc = Kamelet.extractLocation(getCamelContext(), parameters);
+        // a route id that is not given in the uri is unique to this endpoint
+        final boolean ownRouteId = routeId.equals(templateId + "-" + uuid);
 
         parameters.remove(PARAM_TEMPLATE_ID);
         parameters.remove(PARAM_ROUTE_ID);
@@ -188,8 +199,11 @@ public class KameletComponent extends DefaultComponent {
             setProperties(endpoint, parameters);
         } else {
             endpoint = new KameletEndpoint(uri, this, templateId, routeId) {
-                // the route this endpoint created from the template while the context runs (such as from toD)
-                private volatile String createdRouteId;
+                // the route this endpoint created from the template while the context runs (such as from toD), with
+                // a route id of its own, which is removed when this endpoint is shut down
+                private volatile Route createdRoute;
+                // the exchange whose call of this endpoint is completing on the thread that runs the callback
+                private volatile Exchange completing;
 
                 @Override
                 protected void doInit() throws Exception {
@@ -200,17 +214,40 @@ public class KameletComponent extends DefaultComponent {
                     //
                     String routeId = getCamelContext().getCamelContextExtension().getCreateRoute();
                     String processorId = getCamelContext().getCamelContextExtension().getCreateProcessor();
-                    createdRouteId = lifecycleHandler.track(this, routeId, processorId);
+                    String id = lifecycleHandler.track(this, routeId, processorId);
+                    if (id != null && ownRouteId) {
+                        // a route id given in the uri is shared by all the endpoints that use it, and each of them
+                        // replaces the route of the previous one: such a route is left alone
+                        createdRoute = getCamelContext().getRoute(id);
+                    }
+                }
+
+                @Override
+                AsyncCallback completingCallback(Exchange exchange, AsyncCallback callback) {
+                    if (createdRoute == null) {
+                        return callback;
+                    }
+                    return doneSync -> {
+                        completing = exchange;
+                        try {
+                            callback.done(doneSync);
+                        } finally {
+                            completing = null;
+                        }
+                    };
                 }
 
                 @Override
                 protected void doShutdown() throws Exception {
-                    // an endpoint used once and discarded (toD or recipientList with cacheSize=-1) is shut down after
-                    // use: remove the route it created, otherwise every call keeps one more route for ever
-                    String id = createdRouteId;
-                    createdRouteId = null;
-                    if (id != null) {
-                        removeCreatedRoute(id);
+                    // An endpoint used once and discarded (toD or recipientList with cacheSize=-1) is shut down after
+                    // use: remove the route it created, otherwise every call keeps one more route for ever.
+                    // The endpoint of a route that consumes from a Kamelet (from("kamelet:my-source")) is shut down
+                    // as well when that route is removed: when that route was added while the context runs, the
+                    // Kamelet's route is removed with it.
+                    Route route = createdRoute;
+                    createdRoute = null;
+                    if (route != null) {
+                        removeCreatedRoute(route, completing);
                     }
                     super.doShutdown();
                 }
@@ -499,14 +536,61 @@ public class KameletComponent extends DefaultComponent {
         super.doInit();
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ExecutorService executor = routeRemover;
+        if (executor == null || executor.isShutdown()) {
+            // the threads are created on first use
+            routeRemover = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "KameletRouteRemover");
+        }
+    }
+
     /**
-     * Stops and removes the route a Kamelet endpoint created from its template while the context runs, when that
-     * endpoint is shut down (it is not shut down while the context runs unless it was used once and discarded).
+     * Removes the route a Kamelet endpoint created from its template while the context runs, when that endpoint is shut
+     * down (it is not shut down while the context runs unless it was used once and discarded, or its route consumed
+     * from the Kamelet and was removed).
+     * <p/>
+     * The route is stopped and removed on a thread of this component, after the exchange whose call is completing is
+     * done: the calling route can continue on a thread that the Kamelet's route owns (threads(), an asynchronous
+     * producer), and stopping the route shuts that thread pool down. Stopping a route also holds the lock of the
+     * CamelContext while the route shuts down gracefully.
+     *
+     * @param route    the route the endpoint created
+     * @param exchange the exchange whose call of the endpoint is completing on this thread, or {@code null}
      */
-    private void removeCreatedRoute(String routeId) {
-        CamelContext context = getCamelContext();
-        if (context == null || !context.isStarted() || context.isStopping() || context.getRoute(routeId) == null) {
+    private void removeCreatedRoute(Route route, Exchange exchange) {
+        if (exchange != null && exchange.getUnitOfWork() != null) {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange done) {
+                    submitRemoveRoute(route);
+                }
+            });
+        } else {
+            submitRemoveRoute(route);
+        }
+    }
+
+    private void submitRemoveRoute(Route route) {
+        ExecutorService executor = routeRemover;
+        if (executor == null) {
             // the context removes all the routes when it stops
+            return;
+        }
+        try {
+            executor.execute(() -> doRemoveRoute(route));
+        } catch (RejectedExecutionException e) {
+            // the component is shut down, and the context removes all the routes when it stops
+            LOG.debug("Cannot remove route with id={} as the component is shut down", route.getRouteId());
+        }
+    }
+
+    private void doRemoveRoute(Route route) {
+        CamelContext context = getCamelContext();
+        String routeId = route.getRouteId();
+        if (!context.isStarted() || context.isStopping() || context.getRoute(routeId) != route) {
+            // the context removes all the routes when it stops, and a route that is gone or was replaced is not ours
             return;
         }
         try {
@@ -526,6 +610,12 @@ public class KameletComponent extends DefaultComponent {
         ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
         kameletEips.clear();
+        ExecutorService executor = routeRemover;
+        routeRemover = null;
+        if (executor != null) {
+            // the context removes all the routes when it stops, so a removal that has not started is not needed
+            getCamelContext().getExecutorServiceManager().shutdown(executor);
+        }
         super.doShutdown();
     }
 
