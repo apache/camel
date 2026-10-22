@@ -413,6 +413,15 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-pubnub - the producer uses its configured channel
+
+The pubnub producer no longer reads the `CamelPubNubChannel` header. This header is set by the pubnub consumer to the
+channel a message was received on, and the producer used it instead of the channel configured on its endpoint, so a
+route from one pubnub endpoint to another sent each message back to the channel it came from. The producer now uses the
+channel of its endpoint, for every operation. To choose a different channel for a message, set the new
+`CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
+the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
