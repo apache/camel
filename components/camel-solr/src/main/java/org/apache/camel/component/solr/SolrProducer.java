@@ -199,6 +199,7 @@ public class SolrProducer extends DefaultAsyncProducer {
         if (body instanceof UpdateRequest) {
             return SolrOperation.INSERT;
         }
+        // SolrPing, QueryRequest and UpdateRequest are SolrRequests too: any other SolrRequest is sent as it is
         if (body instanceof SolrRequest) {
             return null;
         }
