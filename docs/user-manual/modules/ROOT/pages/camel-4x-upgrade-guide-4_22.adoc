@@ -2070,3 +2070,19 @@ now refuses to send a request path, query or header value that contains a contro
 framing, are still allowed. Routes that put a percent-encoded control character (such as `%0D%0A`) into the
 `CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
 likely to be affected.
+
+=== camel-paho-mqtt5 - a failed message with manualAcksEnabled is delivered again or acknowledged
+
+With `manualAcksEnabled=true`, a message whose exchange failed was left unacknowledged. For a QoS 1 message the
+broker never sent it again during the connection, and after `receiveMaximum` such messages it sent the consumer
+nothing more (the client completes the QoS 2 flow on its own, so QoS 2 messages did not stop the consumer). Now, for a
+QoS 1 message on a session that the broker keeps after the disconnect (`cleanStart=false` and `sessionExpiryInterval`
+greater than 0), the consumer connects again after a failed exchange (after one second, doubled for each failed
+exchange in a row up to `maxReconnectDelay`, and back to one second after any exchange that succeeds; logged at WARN),
+and the broker sends the message again. In all other
+cases (a clean session, which is the default, a QoS 2 message, or `cleanStart=false` without `sessionExpiryInterval`,
+where the session ends with the connection) the broker never sends the message again, so the failed message is
+acknowledged and the failure is left to the Camel error handler. A consumer that uses a client set with the `client`
+option leaves a failed QoS 1 message on a session that the broker keeps unacknowledged, as before; as the consumer does
+not connect that client, set the `cleanStart` and `sessionExpiryInterval` of the endpoint to match its connection
+options.
