@@ -841,6 +841,18 @@ public interface PubNubEndpointBuilderFactory {
             return "CamelPubNubChannel";
         }
         /**
+         * The channel to use instead of the channel configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PubNubOverrideChannel}.
+         */
+        public String pubNubOverrideChannel() {
+            return "CamelPubNubOverrideChannel";
+        }
+        /**
          * UUID to be used as a device identifier.
          * 
          * The option is a: {@code String} type.
