@@ -1265,6 +1265,10 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
             // create parent folders
             temp.getParentFile().mkdirs();
 
+            // the consumer deletes the local work file named by this header when the exchange is done, and the file
+            // producer moves it to the target instead of copying it
+            exchange.getIn().setHeader(FtpConstants.FILE_LOCAL_WORK_PATH, local.getPath());
+
             try (InputStream is = sftpClient.read(name);
                  OutputStream os = new FileOutputStream(temp)) {
                 IOHelper.copy(is, os);

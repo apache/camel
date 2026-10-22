@@ -267,6 +267,17 @@ as the body, so `+${body}+` was the file found. A `fileName` that uses the file 
 before. A `fileName` that read the file found through its headers, such as `${header.CamelFileName}`, must use the file
 functions instead (`${file:name}`).
 
+=== camel-mina-sftp - the local work file is deleted when the exchange is done
+
+With `localWorkDirectory`, camel-mina-sftp now deletes the local work file of a consumed file when the exchange is done,
+also when it failed, as camel-sftp and camel-ftp do. Before, every consumed file stayed in the local work directory. A
+file producer in the route now moves the local work file to its target instead of copying it, while the message body
+still names the local work file. So a later step that reads the body again, such as a second file producer or a
+`convertBodyTo`, fails because the file is gone, and another exchange that keeps the `java.io.File` body (for example
+`wireTap`, `seda` without waiting, or `aggregate`) finds it deleted. Convert the body before the first file producer
+or before handing it on, for example with `convertBodyTo(byte[].class)` (which reads the file into memory). Routes that
+cleaned the local work directory themselves can stop doing so.
+
 === camel-openstack - potential breaking change
 
 The four remaining Exchange header constants of `SwiftConstants` have been renamed to follow the Camel naming
