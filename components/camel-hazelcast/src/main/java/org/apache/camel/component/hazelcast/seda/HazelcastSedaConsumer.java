@@ -43,6 +43,9 @@ import org.slf4j.LoggerFactory;
 public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastSedaConsumer.class);
+    // the longest a single poll waits (or pollTimeout when it is shorter): the consumer stops by letting its poll end,
+    // so the thread sees a stop within this time. A poll that returns nothing just goes round the loop again
+    private static final long MAX_POLL_WAIT = 1000L;
 
     private final HazelcastSedaEndpoint endpoint;
     private final AsyncProcessor processor;
@@ -71,13 +74,16 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     protected void doStop() throws Exception {
+        if (executor != null) {
+            // wait for the consumer threads to end their current poll (at most MAX_POLL_WAIT) and route what it returned:
+            // a poll takes the item from the queue, so an item polled after the processor is stopped is lost
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
+            executor = null;
+        }
+        // after the consumer threads, which use it for the delay after an error
         if (taskExecutor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
             taskExecutor = null;
-        }
-        if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
-            executor = null;
         }
         super.doStop();
     }
@@ -105,7 +111,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     }
                 }
 
-                final Object body = queue.poll(endpoint.getConfiguration().getPollTimeout(), TimeUnit.MILLISECONDS);
+                final Object body = queue.poll(Math.min(endpoint.getConfiguration().getPollTimeout(), MAX_POLL_WAIT),
+                        TimeUnit.MILLISECONDS);
 
                 if (body != null) {
                     if (body instanceof DefaultExchangeHolder defaultExchangeHolder) {
