@@ -2322,8 +2322,18 @@ Content with more than one reading is refused as before.
 
 `camel_edit_file` now matches lines to find that are not in the file as given, as when a model writes them from memory,
 to the closest lines of the file when exactly one place matches well. It changes there the lines the model changed and
-keeps the file's version of the other lines. The edit stands only when its result is valid; otherwise the answer is
-the one of a miss, with the lines the file has there. `matchedLines` in the answer names the lines it matched.
+keeps the file's version of the other lines, and the lines of the file the model did not have. The edit stands only
+when its result is valid; otherwise the answer is the one of a miss, with the lines the file has there. `matchedLines`
+in the answer names the lines it matched.
+
+A write of the content the file already has, and an edit whose replacement gives the text the file has, answer with
+the status `unchanged` instead of `overwritten` or `edited`. Nothing is written, so a running integration does not
+reload. When one of several edits misses, the answer shows the file as it is in `fileWindow` and says that none of the
+edits was written, also not the ones before it that matched.
+
+`camel_get_log` marks the records from before the last reload of the routes with `beforeLastReload`, with a
+`reloadNote` first in the answer. The note of `camel_get_errors` on errors from before the last reload is now the first
+key of its answer, and says how many exchanges failed since.
 
 === camel-jbang - the console output of an integration that the AI tools start
 
