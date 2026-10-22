@@ -137,6 +137,16 @@ class HazelcastReliableTopicConsumerLossTest extends CamelTestSupport {
         assertEquals(List.of(), reported);
     }
 
+    @Test
+    void listenerCancelledWhenTheMemberShutsDownIsNotReported() throws Exception {
+        // an ordinary shutdown where the member stops before the route (Hazelcast's shutdown hook runs at the same time
+        // as Camel's): the runner fails with HazelcastInstanceNotActiveException and Hazelcast cancels the listener
+        member.shutdown();
+
+        await().during(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(List.of(), reported));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

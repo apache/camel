@@ -50,7 +50,7 @@ public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
 
         // a reliable topic removes a listener that lost messages, unless it is loss tolerant
         listener = topic.addMessageListener(reliable
-                ? new CamelReliableMessageListener(this, cacheName)
+                ? new CamelReliableMessageListener(this, cacheName, hazelcastInstance)
                 : new CamelMessageListener(this, cacheName));
     }
 
