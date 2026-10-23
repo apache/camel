@@ -85,6 +85,11 @@ class SourceTab extends AbstractTab {
     private Rect rightArea;
 
     private final SourceEditAssist assist = new SourceEditAssist(ctx);
+    private final ConsumedEndpoints consumedEndpoints = new ConsumedEndpoints(ctx.backgroundExecutor, r -> {
+        if (ctx.runner != null) {
+            ctx.runner.runOnRenderThread(r);
+        }
+    });
 
     SourceEditAssist editAssist() {
         return assist;
@@ -958,7 +963,11 @@ class SourceTab extends AbstractTab {
                         name.toLowerCase(Locale.ROOT), content, assist.validateYamlSimple(content)));
                 // the shape of a Kamelet file and the kamelet: endpoints of a route (CAMEL-25411)
                 sourceViewer.setKameletValidator(content -> SourceEditAssist.validateKamelets(filePath, content));
-                sourceViewer.setKameletNotes(content -> SourceEditAssist.kameletNotes(filePath, content));
+                // the notes: a Kamelet's unused dependency, a direct: or seda: endpoint no route consumes (CAMEL-24955)
+                sourceViewer.setYamlNotes(content -> SourceEditAssist.isKameletFile(filePath)
+                        ? SourceEditAssist.kameletNotes(filePath, content)
+                        : consumedEndpoints.notes(filePath, rootDir, content, assist.validationCatalog(),
+                                () -> sourceViewer.reloadIfShowing(filePath)));
                 completion.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {
