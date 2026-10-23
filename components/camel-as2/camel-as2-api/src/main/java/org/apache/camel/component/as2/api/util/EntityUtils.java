@@ -315,8 +315,11 @@ public final class EntityUtils {
         public void close() throws IOException {
             if (!closed) {
                 closed = true;
-                out.write(QuotedPrintableCodec.encodeQuotedPrintable(null, buffer.toByteArray(), true));
-                super.close();
+                try {
+                    out.write(QuotedPrintableCodec.encodeQuotedPrintable(null, buffer.toByteArray(), true));
+                } finally {
+                    super.close();
+                }
             }
         }
     }

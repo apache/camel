@@ -200,8 +200,13 @@ public class GraphqlProducer extends DefaultAsyncProducer {
         return variables;
     }
 
-    @SuppressWarnings("unchecked")
     private static JsonObject toJsonObject(Map<?, ?> map) {
-        return map instanceof JsonObject json ? json : new JsonObject((Map<String, ?>) map);
+        if (map instanceof JsonObject json) {
+            return json;
+        }
+        // the variable names of GraphQL are text, so a key that is not a String is turned into one
+        JsonObject json = new JsonObject();
+        map.forEach((key, value) -> json.put(String.valueOf(key), value));
+        return json;
     }
 }
