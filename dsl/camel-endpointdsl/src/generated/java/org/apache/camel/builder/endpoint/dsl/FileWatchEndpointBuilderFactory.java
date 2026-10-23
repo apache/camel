@@ -628,7 +628,8 @@ public interface FileWatchEndpointBuilderFactory {
             return "CamelFileParent";
         }
         /**
-         * A Long value containing the last modified timestamp of the file.
+         * A Long value containing the last modified timestamp of the file. Not
+         * set when the file no longer exists, such as for a DELETE event.
          * 
          * The option is a: {@code long} type.
          * 
