@@ -2539,3 +2539,11 @@ a keep-alive message that does not wait for a reply, so it does not find such a 
 noop is a request that waits for the reply, so with `sendNoop=false` such a connection is found by the next poll,
 which fails and is logged before the consumer connects again. For sftp and mina-sftp, set `serverAliveInterval` to let
 the client close such a connection itself, so that the consumer connects again before the poll.
+
+=== camel-cometd - the CORS filter allows credentials only for listed origins
+
+With `crossOriginFilterOn=true`, the CORS responses now include `Access-Control-Allow-Credentials: true` only when
+`allowedOrigins` lists the origins explicitly, without any `*` or `null`. When `allowedOrigins` is not set, is `*`, or
+has an entry with a wildcard such as `https://*` or an entry `null`, the origin is still allowed, but without credentials. Previously credentials
+were allowed for every origin. A cross-origin client that sends cookies or other credentials must have its origin
+listed in `allowedOrigins`.
