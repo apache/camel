@@ -221,6 +221,21 @@ channel of its endpoint, for every operation. To choose a different channel for 
 `CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
 the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
 
+=== camel-pqc - message bodies are signed and verified over their bytes
+
+The `sign`, `verify`, `hybridSign` and `hybridVerify` operations now read a `java.io.File` or `java.nio.file.Path`
+body, and a file from a file consumer (a `GenericFile` body), as bytes from the file, the same way as a `byte[]` or
+`InputStream` body. A `String` (or any `CharSequence`) body is encoded as UTF-8, and any other body that has a binary
+type converter (for example a `java.nio.ByteBuffer`, a `java.io.ByteArrayOutputStream`, a Netty `ByteBuf` or a Vert.x
+`Buffer`) is signed over those bytes.
+
+A body with no binary representation (for example a `Map` or a POJO) is no longer signed over its `toString()`: it is
+now rejected with an `InvalidPayloadException`. Convert such a body to a `String`, `byte[]` or other binary type
+earlier in the route.
+
+Signatures created by earlier versions over a `File`, `Path`, `GenericFile` or other non-`byte[]`/`InputStream` body
+may not verify and need to be created again.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
@@ -2092,21 +2107,6 @@ on the bytes of a non-ASCII payload and make verification fail.
 already UTF-8 (JEP 400), so this is a no-op there; on Java 17 with a non-UTF-8 default, the
 signature of a non-ASCII `String` payload changes. Binary bodies (`byte[]`, `InputStream`) are
 unaffected, as they are signed byte-for-byte.
-
-=== camel-pqc - message bodies are signed and verified over their bytes
-
-The `sign`, `verify`, `hybridSign` and `hybridVerify` operations now read a `java.io.File` or `java.nio.file.Path`
-body, and a file from a file consumer (a `GenericFile` body), as bytes from the file, the same way as a `byte[]` or
-`InputStream` body. A `String` (or any `CharSequence`) body is encoded as UTF-8, and any other body that has a binary
-type converter (for example a `java.nio.ByteBuffer`, a `java.io.ByteArrayOutputStream`, a Netty `ByteBuf` or a Vert.x
-`Buffer`) is signed over those bytes.
-
-A body with no binary representation (for example a `Map` or a POJO) is no longer signed over its `toString()`: it is
-now rejected with an `InvalidPayloadException`. Convert such a body to a `String`, `byte[]` or other binary type
-earlier in the route.
-
-Signatures created by earlier versions over a `File`, `Path`, `GenericFile` or other non-`byte[]`/`InputStream` body
-may not verify and need to be created again.
 
 === camel-sql - Schema-qualified aggregation repository names
 
