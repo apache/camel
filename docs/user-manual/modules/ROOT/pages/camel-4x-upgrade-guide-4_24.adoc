@@ -2661,6 +2661,7 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
 === camel-aws - producers without an operation, and headers of the wrong type
 
 The producers of `aws2-ec2`, `aws2-ecs`, `aws2-eks`, `aws2-mq`, `aws2-msk`, `aws2-rekognition`, `aws2-step-functions`,
@@ -2687,3 +2688,14 @@ The `CamelAwsEKSDescription` header of `aws2-eks` is removed, together with the 
 its method in the header builder of the endpoint DSL. No operation of the component read it.
 
 The `aws2-mq` component, which manages Amazon MQ brokers, is now in the `management` category instead of `messaging`.
+
+In `aws2-step-functions`, the `CamelAwsStepFunctionsExecutionInput` header of startExecution and startSyncExecution
+must be JSON text (a String, a byte array or a stream). A value of another type, such as a `Map`, was sent as its
+`toString()`, which is not JSON; now the exchange fails. startSyncExecution now sets the
+`CamelAwsStepFunctionsExecutionStatus` header to the status of the execution (`SUCCEEDED`, `FAILED` or `TIMED_OUT`),
+and the `CamelAwsStepFunctionsExecutionError` and `CamelAwsStepFunctionsExecutionCause` headers when it failed. The
+exchange still does not fail when the execution did not succeed.
+
+In `aws-bedrock-agent`, the `CamelAwsBedrockAgentKnowledgeBaseId`, `CamelAwsBedrockAgentDataSourceId` and
+`CamelAwsBedrockAgentIngestionJobId` headers now override the `knowledgeBaseId`, `dataSourceId` and `ingestionJobId`
+options, as the headers of the other AWS components do. Before, a header was used only when the option was not set.

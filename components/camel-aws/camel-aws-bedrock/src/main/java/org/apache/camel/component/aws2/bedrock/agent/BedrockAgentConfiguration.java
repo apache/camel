@@ -272,8 +272,8 @@ public class BedrockAgentConfiguration implements Cloneable, AwsCommonConfigurat
     }
 
     /**
-     * Define the Knowledge Base Id we are going to use. The consumer and all the operations need it; when set, it is
-     * used instead of the CamelAwsBedrockAgentKnowledgeBaseId header
+     * Define the Knowledge Base Id we are going to use. The consumer and all the operations need it; the
+     * CamelAwsBedrockAgentKnowledgeBaseId header overrides it for the producer
      */
     public void setKnowledgeBaseId(String knowledgeBaseId) {
         this.knowledgeBaseId = knowledgeBaseId;
@@ -284,8 +284,8 @@ public class BedrockAgentConfiguration implements Cloneable, AwsCommonConfigurat
     }
 
     /**
-     * Define the Data source Id we are going to use. The consumer and all the operations need it; when set, it is used
-     * instead of the CamelAwsBedrockAgentDataSourceId header
+     * Define the Data source Id we are going to use. The consumer and all the operations need it; the
+     * CamelAwsBedrockAgentDataSourceId header overrides it for the producer
      */
     public void setDataSourceId(String dataSourceId) {
         this.dataSourceId = dataSourceId;
@@ -296,8 +296,8 @@ public class BedrockAgentConfiguration implements Cloneable, AwsCommonConfigurat
     }
 
     /**
-     * Define the Ingestion Job Id we want to track. The consumer and the getIngestionJob operation need it; when set,
-     * it is used instead of the CamelAwsBedrockAgentIngestionJobId header
+     * Define the Ingestion Job Id we want to track. The consumer and the getIngestionJob operation need it; the
+     * CamelAwsBedrockAgentIngestionJobId header overrides it for the producer
      */
     public void setIngestionJobId(String ingestionJobId) {
         this.ingestionJobId = ingestionJobId;

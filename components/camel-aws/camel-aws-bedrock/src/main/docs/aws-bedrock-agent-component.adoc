@@ -82,9 +82,10 @@ The body is set to the list of `IngestionJobSummary` of the AWS SDK.
 The body is set to the `IngestionJob` of the AWS SDK, the `CamelAwsBedrockAgentIngestionJobStatus` header to its status,
 and the `CamelAwsBedrockAgentIngestionJobFailureReasons` header to its failure reasons, if it has any.
 
-The knowledge base, data source and ingestion job ids are taken from the `knowledgeBaseId`, `dataSourceId` and
-`ingestionJobId` options. The `CamelAwsBedrockAgentKnowledgeBaseId`, `CamelAwsBedrockAgentDataSourceId` and
-`CamelAwsBedrockAgentIngestionJobId` headers are used only when the option is not set.
+The knowledge base, data source and ingestion job ids are taken from the `CamelAwsBedrockAgentKnowledgeBaseId`,
+`CamelAwsBedrockAgentDataSourceId` and `CamelAwsBedrockAgentIngestionJobId` headers, and else from the
+`knowledgeBaseId`, `dataSourceId` and `ingestionJobId` options. So the options are the defaults of the endpoint, and
+a header overrides them for one message, for example to get the ingestion job that startIngestionJob returned in the body.
 
 With `pojoRequest=true`, the body is the request of the AWS SDK instead (`StartIngestionJobRequest`,
 `ListIngestionJobsRequest` or `GetIngestionJobRequest`), and the ids are taken from it.

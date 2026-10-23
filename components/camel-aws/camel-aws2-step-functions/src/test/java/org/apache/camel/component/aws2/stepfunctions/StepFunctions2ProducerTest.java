@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aws2.stepfunctions;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -32,7 +34,9 @@ import software.amazon.awssdk.services.sfn.model.*;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StepFunctions2ProducerTest extends CamelTestSupport {
 
@@ -267,6 +271,52 @@ public class StepFunctions2ProducerTest extends CamelTestSupport {
 
         StartSyncExecutionResponse resultGet = (StartSyncExecutionResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-execution::test:arn", resultGet.executionArn());
+    }
+
+    @Test
+    public void sfnStartSyncExecutionSetsStatusHeaderTest() {
+        Exchange exchange = template.request("direct:startSyncExecution", e -> {
+            e.getIn().setHeader(StepFunctions2Constants.EXECUTION_INPUT, "{\"a\":1}");
+        });
+
+        assertNull(exchange.getException());
+        assertEquals("{\"a\":1}", clientMock.getLastStartSyncExecutionRequest().input());
+        assertEquals("SUCCEEDED", exchange.getMessage().getHeader(StepFunctions2Constants.EXECUTION_STATUS));
+        assertNull(exchange.getMessage().getHeader(StepFunctions2Constants.EXECUTION_ERROR));
+    }
+
+    @Test
+    public void sfnStartSyncExecutionFailedSetsErrorHeadersTest() {
+        Exchange exchange = template.request("direct:startSyncExecution", e -> {
+            e.getIn().setHeader(StepFunctions2Constants.EXECUTION_NAME, "failing");
+        });
+
+        assertNull(exchange.getException());
+        assertEquals("FAILED", exchange.getMessage().getHeader(StepFunctions2Constants.EXECUTION_STATUS));
+        assertEquals("States.TaskFailed", exchange.getMessage().getHeader(StepFunctions2Constants.EXECUTION_ERROR));
+        assertEquals("The task failed", exchange.getMessage().getHeader(StepFunctions2Constants.EXECUTION_CAUSE));
+    }
+
+    @Test
+    public void sfnStartSyncExecutionInputAsBytesTest() {
+        Exchange exchange = template.request("direct:startSyncExecution", e -> {
+            e.getIn().setHeader(StepFunctions2Constants.EXECUTION_INPUT, "{\"b\":2}".getBytes(StandardCharsets.UTF_8));
+        });
+
+        assertNull(exchange.getException());
+        assertEquals("{\"b\":2}", clientMock.getLastStartSyncExecutionRequest().input());
+    }
+
+    @Test
+    public void sfnStartExecutionInputAsMapFailsTest() {
+        Exchange exchange = template.request("direct:startExecution", e -> {
+            e.getIn().setHeader(StepFunctions2Constants.EXECUTION_INPUT, Map.of("a", 1));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("The CamelAwsStepFunctionsExecutionInput header must be JSON text, but was "
+                     + Map.of("a", 1).getClass().getName(),
+                exchange.getException().getMessage());
     }
 
     @Test

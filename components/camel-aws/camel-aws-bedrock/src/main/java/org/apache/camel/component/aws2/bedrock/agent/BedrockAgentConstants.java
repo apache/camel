@@ -25,15 +25,15 @@ public interface BedrockAgentConstants {
     @Metadata(description = "The operation we want to perform", javaType = "String", label = "producer")
     String OPERATION = "CamelAwsBedrockAgentOperation";
 
-    @Metadata(description = "The data source Id of the operation, used when the dataSourceId option is not set",
+    @Metadata(description = "The data source Id of the operation; it overrides the dataSourceId option",
               javaType = "String", label = "producer")
     String DATASOURCE_ID = "CamelAwsBedrockAgentDataSourceId";
 
-    @Metadata(description = "The knowledge base Id of the operation, used when the knowledgeBaseId option is not set",
+    @Metadata(description = "The knowledge base Id of the operation; it overrides the knowledgeBaseId option",
               javaType = "String", label = "producer")
     String KNOWLEDGE_BASE_ID = "CamelAwsBedrockAgentKnowledgeBaseId";
 
-    @Metadata(description = "The id of the ingestion job of the getIngestionJob operation, used when the ingestionJobId option is not set",
+    @Metadata(description = "The id of the ingestion job of the getIngestionJob operation; it overrides the ingestionJobId option",
               javaType = "String", label = "producer")
     String INGESTION_JOB_ID = "CamelAwsBedrockAgentIngestionJobId";
 

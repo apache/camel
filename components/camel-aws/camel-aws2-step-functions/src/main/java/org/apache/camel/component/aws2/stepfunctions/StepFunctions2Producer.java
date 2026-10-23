@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.stepfunctions;
 
+import java.io.InputStream;
+import java.io.Reader;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -522,8 +525,8 @@ public class StepFunctions2Producer extends DefaultProducer {
                 String executionName = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_NAME, String.class);
                 builder.name(executionName);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT))) {
-                String executionInput = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT, String.class);
+            String executionInput = getExecutionInput(exchange);
+            if (ObjectHelper.isNotEmpty(executionInput)) {
                 builder.input(executionInput);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_TRACE_HEADER))) {
@@ -557,6 +560,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                setSyncExecutionHeaders(message, result);
             } else {
                 throw new IllegalArgumentException(
                         "startSyncExecution operation requires StartSyncExecutionRequest in POJO mode");
@@ -571,8 +575,8 @@ public class StepFunctions2Producer extends DefaultProducer {
                 String executionName = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_NAME, String.class);
                 builder.name(executionName);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT))) {
-                String executionInput = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT, String.class);
+            String executionInput = getExecutionInput(exchange);
+            if (ObjectHelper.isNotEmpty(executionInput)) {
                 builder.input(executionInput);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_TRACE_HEADER))) {
@@ -590,6 +594,34 @@ public class StepFunctions2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            setSyncExecutionHeaders(message, result);
+        }
+    }
+
+    /**
+     * The execution input of the header, which must be JSON text. A value that is not text, such as a Map, is not
+     * turned into JSON, so it fails instead of being sent as its toString().
+     */
+    private static String getExecutionInput(Exchange exchange) {
+        Object value = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT);
+        if (value == null || value instanceof String) {
+            return (String) value;
+        }
+        if (value instanceof byte[] || value instanceof InputStream || value instanceof Reader) {
+            return exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT, String.class);
+        }
+        throw new IllegalArgumentException(
+                "The " + StepFunctions2Constants.EXECUTION_INPUT + " header must be JSON text, but was "
+                                           + value.getClass().getName());
+    }
+
+    private static void setSyncExecutionHeaders(Message message, StartSyncExecutionResponse result) {
+        message.setHeader(StepFunctions2Constants.EXECUTION_STATUS, result.statusAsString());
+        if (result.error() != null) {
+            message.setHeader(StepFunctions2Constants.EXECUTION_ERROR, result.error());
+        }
+        if (result.cause() != null) {
+            message.setHeader(StepFunctions2Constants.EXECUTION_CAUSE, result.cause());
         }
     }
 

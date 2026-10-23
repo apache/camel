@@ -68,8 +68,8 @@ public interface AwsBedrockAgentComponentBuilderFactory {
     
         /**
          * Define the Data source Id we are going to use. The consumer and all
-         * the operations need it; when set, it is used instead of the
-         * CamelAwsBedrockAgentDataSourceId header.
+         * the operations need it; the CamelAwsBedrockAgentDataSourceId header
+         * overrides it for the producer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -85,8 +85,9 @@ public interface AwsBedrockAgentComponentBuilderFactory {
     
         /**
          * Define the Ingestion Job Id we want to track. The consumer and the
-         * getIngestionJob operation need it; when set, it is used instead of
-         * the CamelAwsBedrockAgentIngestionJobId header.
+         * getIngestionJob operation need it; the
+         * CamelAwsBedrockAgentIngestionJobId header overrides it for the
+         * producer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -102,8 +103,8 @@ public interface AwsBedrockAgentComponentBuilderFactory {
     
         /**
          * Define the Knowledge Base Id we are going to use. The consumer and
-         * all the operations need it; when set, it is used instead of the
-         * CamelAwsBedrockAgentKnowledgeBaseId header.
+         * all the operations need it; the CamelAwsBedrockAgentKnowledgeBaseId
+         * header overrides it for the producer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

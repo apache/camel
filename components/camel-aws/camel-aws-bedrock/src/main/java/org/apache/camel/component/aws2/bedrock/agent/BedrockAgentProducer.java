@@ -74,6 +74,20 @@ public class BedrockAgentProducer extends DefaultProducer {
         return operation;
     }
 
+    /**
+     * The id of the header, or else of the option: the header overrides the option for this message.
+     */
+    private static String getId(Exchange exchange, String header, String option, String name) {
+        String id = exchange.getMessage().getHeader(header, String.class);
+        if (ObjectHelper.isEmpty(id)) {
+            id = option;
+        }
+        if (ObjectHelper.isEmpty(id)) {
+            throw new IllegalArgumentException(name + " must be specified");
+        }
+        return id;
+    }
+
     protected BedrockAgentConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
@@ -111,29 +125,11 @@ public class BedrockAgentProducer extends DefaultProducer {
                         "startIngestionJob operation requires a StartIngestionJobRequest body when pojoRequest=true");
             }
         } else {
-            String knowledgeBaseId;
-            String dataSourceId;
             StartIngestionJobRequest.Builder builder = StartIngestionJobRequest.builder();
-            if (ObjectHelper.isEmpty(getConfiguration().getKnowledgeBaseId())) {
-                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID))) {
-                    knowledgeBaseId = exchange.getIn().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID, String.class);
-                } else {
-                    throw new IllegalArgumentException("KnowledgeBaseId must be specified");
-                }
-            } else {
-                knowledgeBaseId = getConfiguration().getKnowledgeBaseId();
-            }
-            if (ObjectHelper.isEmpty(getConfiguration().getDataSourceId())) {
-                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.DATASOURCE_ID))) {
-                    dataSourceId = exchange.getIn().getHeader(BedrockAgentConstants.DATASOURCE_ID, String.class);
-                } else {
-                    throw new IllegalArgumentException("DataSourceId must be specified");
-                }
-            } else {
-                dataSourceId = getConfiguration().getDataSourceId();
-            }
-            builder.knowledgeBaseId(knowledgeBaseId);
-            builder.dataSourceId(dataSourceId);
+            builder.knowledgeBaseId(getId(exchange, BedrockAgentConstants.KNOWLEDGE_BASE_ID,
+                    getConfiguration().getKnowledgeBaseId(), "KnowledgeBaseId"));
+            builder.dataSourceId(
+                    getId(exchange, BedrockAgentConstants.DATASOURCE_ID, getConfiguration().getDataSourceId(), "DataSourceId"));
             StartIngestionJobResponse output = bedrockAgentClient.startIngestionJob(builder.build());
             Message message = getMessageForResponse(exchange);
             prepareIngestionJobResponse(output, message);
@@ -159,29 +155,11 @@ public class BedrockAgentProducer extends DefaultProducer {
                         "listIngestionJobs operation requires a ListIngestionJobsRequest body when pojoRequest=true");
             }
         } else {
-            String knowledgeBaseId;
-            String dataSourceId;
             ListIngestionJobsRequest.Builder builder = ListIngestionJobsRequest.builder();
-            if (ObjectHelper.isEmpty(getConfiguration().getKnowledgeBaseId())) {
-                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID))) {
-                    knowledgeBaseId = exchange.getIn().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID, String.class);
-                } else {
-                    throw new IllegalArgumentException("KnowledgeBaseId must be specified");
-                }
-            } else {
-                knowledgeBaseId = getConfiguration().getKnowledgeBaseId();
-            }
-            if (ObjectHelper.isEmpty(getConfiguration().getDataSourceId())) {
-                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.DATASOURCE_ID))) {
-                    dataSourceId = exchange.getIn().getHeader(BedrockAgentConstants.DATASOURCE_ID, String.class);
-                } else {
-                    throw new IllegalArgumentException("DataSourceId must be specified");
-                }
-            } else {
-                dataSourceId = getConfiguration().getDataSourceId();
-            }
-            builder.knowledgeBaseId(knowledgeBaseId);
-            builder.dataSourceId(dataSourceId);
+            builder.knowledgeBaseId(getId(exchange, BedrockAgentConstants.KNOWLEDGE_BASE_ID,
+                    getConfiguration().getKnowledgeBaseId(), "KnowledgeBaseId"));
+            builder.dataSourceId(
+                    getId(exchange, BedrockAgentConstants.DATASOURCE_ID, getConfiguration().getDataSourceId(), "DataSourceId"));
             ListIngestionJobsResponse output = bedrockAgentClient.listIngestionJobs(builder.build());
             Message message = getMessageForResponse(exchange);
             prepareListIngestionJobsResponse(output, message);
@@ -207,40 +185,13 @@ public class BedrockAgentProducer extends DefaultProducer {
                         "getIngestionJob operation requires a GetIngestionJobRequest body when pojoRequest=true");
             }
         } else {
-            String knowledgeBaseId;
-            String dataSourceId;
-            String ingestionJobId;
             GetIngestionJobRequest.Builder builder = GetIngestionJobRequest.builder();
-            if (ObjectHelper.isEmpty(getConfiguration().getKnowledgeBaseId())) {
-                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID))) {
-                    knowledgeBaseId = exchange.getMessage().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID, String.class);
-                } else {
-                    throw new IllegalArgumentException("KnowledgeBaseId must be specified");
-                }
-            } else {
-                knowledgeBaseId = getConfiguration().getKnowledgeBaseId();
-            }
-            if (ObjectHelper.isEmpty(getConfiguration().getDataSourceId())) {
-                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.DATASOURCE_ID))) {
-                    dataSourceId = exchange.getMessage().getHeader(BedrockAgentConstants.DATASOURCE_ID, String.class);
-                } else {
-                    throw new IllegalArgumentException("DataSourceId must be specified");
-                }
-            } else {
-                dataSourceId = getConfiguration().getDataSourceId();
-            }
-            if (ObjectHelper.isEmpty(getConfiguration().getIngestionJobId())) {
-                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.INGESTION_JOB_ID))) {
-                    ingestionJobId = exchange.getMessage().getHeader(BedrockAgentConstants.INGESTION_JOB_ID, String.class);
-                } else {
-                    throw new IllegalArgumentException("IngestionJobId must be specified");
-                }
-            } else {
-                ingestionJobId = getConfiguration().getIngestionJobId();
-            }
-            builder.knowledgeBaseId(knowledgeBaseId);
-            builder.dataSourceId(dataSourceId);
-            builder.ingestionJobId(ingestionJobId);
+            builder.knowledgeBaseId(getId(exchange, BedrockAgentConstants.KNOWLEDGE_BASE_ID,
+                    getConfiguration().getKnowledgeBaseId(), "KnowledgeBaseId"));
+            builder.dataSourceId(
+                    getId(exchange, BedrockAgentConstants.DATASOURCE_ID, getConfiguration().getDataSourceId(), "DataSourceId"));
+            builder.ingestionJobId(getId(exchange, BedrockAgentConstants.INGESTION_JOB_ID,
+                    getConfiguration().getIngestionJobId(), "IngestionJobId"));
             GetIngestionJobResponse output = bedrockAgentClient.getIngestionJob(builder.build());
             Message message = getMessageForResponse(exchange);
             prepareGetIngestionJobResponse(output, message);
