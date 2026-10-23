@@ -183,8 +183,8 @@ public class FileWatchConsumer extends DefaultConsumer {
     private static Long lastModified(Path path) {
         try {
             return Files.getLastModifiedTime(path).toMillis();
-        } catch (IOException e) {
-            // the file no longer exists, such as for a DELETE event
+        } catch (IOException | SecurityException e) {
+            // the file no longer exists (IOException) or access is denied (SecurityException)
             return null;
         }
     }
