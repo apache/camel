@@ -220,7 +220,6 @@ public class PahoConsumer extends DefaultConsumer {
     }
 
     void onMessageArrived(String topic, MqttMessage message) {
-        LOG.debug("Message arrived on topic: {} -> {}", topic, message);
         Exchange exchange = createExchange(message, topic);
 
         // use default consumer callback

@@ -124,6 +124,23 @@ class PahoMqtt5SharedClientConsumersTest {
     }
 
     @Test
+    void eachConsumerReceivesTheTopicsOfItsWildcardFilter() throws Exception {
+        // + also matches an empty level (MQTT 4.7.1.3), so the broker sends /finance for +/+
+        startRoutes("paho-mqtt5:+/+?client=#sharedClient", "paho-mqtt5:news/#?client=#sharedClient");
+        MockEndpoint a = context.getEndpoint("mock:a", MockEndpoint.class);
+        MockEndpoint b = context.getEndpoint("mock:b", MockEndpoint.class);
+        a.expectedBodiesReceived("finance for A");
+        b.expectedBodiesReceivedInAnyOrder("news/eu/today for B", "news for B");
+
+        publisher.publish("/finance", new MqttMessage("finance for A".getBytes(StandardCharsets.UTF_8)));
+        publisher.publish("news/eu/today", new MqttMessage("news/eu/today for B".getBytes(StandardCharsets.UTF_8)));
+        // # also matches the parent level
+        publisher.publish("news", new MqttMessage("news for B".getBytes(StandardCharsets.UTF_8)));
+
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+    }
+
+    @Test
     void stoppedConsumerNoLongerReceivesAndOtherConsumerKeepsItsTopic() throws Exception {
         startRoutesOfTopicsAAndB();
         context.getRouteController().stopRoute("b");

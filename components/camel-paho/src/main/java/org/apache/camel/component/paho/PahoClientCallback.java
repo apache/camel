@@ -29,7 +29,6 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,6 +169,10 @@ final class PahoClientCallback implements MqttCallbackExtended {
         }
     }
 
+    /**
+     * Whether the topic filter of a subscription matches the topic name of a message, following the topic matching
+     * rules of MQTT 5 section 4.7 (which MQTT 3.1.1 shares). Package-private for tests.
+     */
     static boolean matches(String topicFilter, String topic) {
         String filter = topicFilter;
         // a shared subscription ($share/<group>/<filter>) delivers the messages of <filter>
@@ -179,11 +182,24 @@ final class PahoClientCallback implements MqttCallbackExtended {
                 filter = filter.substring(index + 1);
             }
         }
-        try {
-            return MqttTopic.isMatched(filter, topic);
-        } catch (IllegalArgumentException e) {
+        // MQTT 4.7.2: a filter that starts with a wildcard does not match a topic that starts with $
+        if (topic.startsWith("$") && (filter.startsWith("+") || filter.startsWith("#"))) {
             return false;
         }
+        // split with -1 keeps the empty levels, which + matches (MQTT 4.7.1.3)
+        String[] filterLevels = filter.split("/", -1);
+        String[] topicLevels = topic.split("/", -1);
+        for (int i = 0; i < filterLevels.length; i++) {
+            String level = filterLevels[i];
+            if ("#".equals(level)) {
+                // # matches the parent level and any number of child levels
+                return i == filterLevels.length - 1;
+            }
+            if (i >= topicLevels.length || !("+".equals(level) || level.equals(topicLevels[i]))) {
+                return false;
+            }
+        }
+        return filterLevels.length == topicLevels.length;
     }
 
     @Override

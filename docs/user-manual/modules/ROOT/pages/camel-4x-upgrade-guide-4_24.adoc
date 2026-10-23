@@ -2172,7 +2172,10 @@ Apache ActiveMQ Artemis does it) makes each of them get every copy. With `manual
 acknowledges the message, so a message that failed in one of these routes is still acknowledged when another of them
 processes it. Each subscribe of a filter makes the broker send the retained message of a matching topic again, so
 consumers of the same filter get it again when another of them starts and each time they subscribe again after a
-reconnect. Give such consumers a client of their own.
+reconnect. Only the running consumers count when a consumer stops: with consumers of the same filter on one client,
+one with `cleanStart=true` and one with `cleanStart=false` (`cleanSession` for `camel-paho`), stopping the durable one
+and then the other unsubscribes the filter, which also removes the subscription that the durable consumer kept. Give
+such consumers a client of their own.
 
 === Semantic image input and audit output
 
