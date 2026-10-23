@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -54,6 +55,7 @@ public class MockDriver implements PlcDriver {
     private static volatile CompletableFuture<Void> heldReads = CompletableFuture.completedFuture(null);
     private static volatile CompletableFuture<Void> heldRead = new CompletableFuture<>();
     private static final AtomicInteger REFUSED_CONNECTIONS = new AtomicInteger();
+    private static final List<String> CONNECTION_STRINGS = new CopyOnWriteArrayList<>();
     private static final Object FAILED_READ = new Object();
     private static volatile boolean refuseConnections;
 
@@ -127,6 +129,13 @@ public class MockDriver implements PlcDriver {
     }
 
     /**
+     * @return the connection strings the driver was asked to connect with since the last {@link #reset()}
+     */
+    public static List<String> connectionStrings() {
+        return CONNECTION_STRINGS;
+    }
+
+    /**
      * Forgets all programmed tag values and accepts connections again.
      */
     public static void reset() {
@@ -134,6 +143,7 @@ public class MockDriver implements PlcDriver {
         PROGRAMMED_TAGS.clear();
         refuseConnections = false;
         REFUSED_CONNECTIONS.set(0);
+        CONNECTION_STRINGS.clear();
     }
 
     @Override
@@ -148,6 +158,7 @@ public class MockDriver implements PlcDriver {
 
     @Override
     public PlcConnection getConnection(String url) throws PlcConnectionException {
+        CONNECTION_STRINGS.add(url);
         if (refuseConnections) {
             REFUSED_CONNECTIONS.incrementAndGet();
             throw new PlcConnectionException("Connection refused by the mock driver");
@@ -167,7 +178,7 @@ public class MockDriver implements PlcDriver {
 
     @Override
     public PlcConnection getConnection(String url, PlcAuthentication authentication) throws PlcConnectionException {
-        return getConnection(null);
+        return getConnection(url);
     }
 
     private static PlcReadRequest.Builder readRequestBuilder() {

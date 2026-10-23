@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.plc4x;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -29,12 +31,14 @@ import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.plc4x.java.DefaultPlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
@@ -84,6 +88,8 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     private boolean autoReconnect;
 
     private String uri;
+    // the connection string handed to the driver: the uri without the options of this endpoint
+    private String connectionString;
 
     public Plc4XEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -135,7 +141,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      */
     public void setupConnection() throws PlcConnectionException {
         try {
-            connection = plcDriverManager.getConnection(this.uri);
+            connection = plcDriverManager.getConnection(connectionString);
             if (!isConnected()) {
                 reconnectIfNeeded();
             }
@@ -163,7 +169,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
         if (isConnected()) {
             LOGGER.trace("No reconnect needed, already connected");
         } else if (autoReconnect && connection == null) {
-            connection = plcDriverManager.getConnection(uri);
+            connection = plcDriverManager.getConnection(connectionString);
             LOGGER.debug("Successfully reconnected");
         } else if (autoReconnect && !isConnected()) {
             if (connection != null) {
@@ -172,7 +178,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
             // If reconnection fails without Exception, reset connection
             if (!isConnected()) {
                 LOGGER.debug("No connection established after connect, resetting connection");
-                connection = plcDriverManager.getConnection(uri);
+                connection = plcDriverManager.getConnection(connectionString);
             }
             LOGGER.debug("Successfully reconnected");
         } else {
@@ -296,8 +302,27 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        connectionString = withoutEndpointOptions(uri);
         ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
         this.plcDriverManager = new DefaultPlcDriverManager(cl);
+    }
+
+    /**
+     * Removes the options of this endpoint from a connection string, so the PLC4X driver only gets the parameters it
+     * knows.
+     */
+    private String withoutEndpointOptions(String endpointUri) throws URISyntaxException {
+        EndpointUriFactory factory = getCamelContext().getCamelContextExtension().getEndpointUriFactory("plc4x");
+        if (factory == null) {
+            throw new IllegalStateException("Cannot find the EndpointUriFactory of the plc4x component");
+        }
+        Map<String, Object> parameters
+                = new LinkedHashMap<>(URISupport.parseQuery(URISupport.extractQuery(endpointUri), true));
+        parameters.keySet().removeIf(name -> factory.propertyNames().contains(name)
+                || factory.multiValuePrefixes().values().stream().anyMatch(name::startsWith));
+        String query = URISupport.createQueryString(parameters, false);
+        String path = URISupport.stripQuery(endpointUri);
+        return query.isEmpty() ? path : path + "?" + query;
     }
 
     @Override
