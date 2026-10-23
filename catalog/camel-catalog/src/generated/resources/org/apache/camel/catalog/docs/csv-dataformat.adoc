@@ -182,6 +182,13 @@ format, you can now store the message payload as a
 `List<Map<String, Object>>` object where the list contains a Map for
 each row.
 
+When `header` is set (and `headerDisabled` is false), its names are the
+columns, in that order. Otherwise, the columns are the keys of the first Map,
+followed by the keys of later Maps that the first one does not have, in the
+order they first appear (the rows written before such a key appears have
+fewer fields). A Map without one of these keys gets a null value in that
+column, and no header line is written.
+
 === File Poller of CSV, then unmarshaling
 
 Given a bean which can handle the incoming data...

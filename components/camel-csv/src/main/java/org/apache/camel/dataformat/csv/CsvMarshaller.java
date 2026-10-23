@@ -22,8 +22,11 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -80,13 +83,14 @@ public abstract class CsvMarshaller {
             throws NoTypeConversionAvailableException, IOException {
         CSVPrinter printer = createPrinter(exchange, outputStream);
         try {
+            Function<Map<?, ?>, Iterable<?>> mapRecordValues = createMapRecordValues();
             if (object instanceof Map map) {
-                printer.printRecord(getMapRecordValues(map));
+                printer.printRecord(mapRecordValues.apply(map));
             } else {
                 Iterator it = ObjectHelper.createIterator(object);
                 while (it.hasNext()) {
                     Object child = it.next();
-                    printer.printRecord(getRecordValues(exchange, child));
+                    printer.printRecord(getRecordValues(exchange, child, mapRecordValues));
                 }
             }
         } finally {
@@ -107,11 +111,12 @@ public abstract class CsvMarshaller {
         return new CSVPrinter(new OutputStreamWriter(outputStream, ExchangeHelper.getCharsetName(exchange)), format);
     }
 
-    private Iterable<?> getRecordValues(Exchange exchange, Object data) throws NoTypeConversionAvailableException {
+    private Iterable<?> getRecordValues(Exchange exchange, Object data, Function<Map<?, ?>, Iterable<?>> mapRecordValues)
+            throws NoTypeConversionAvailableException {
         // each row must be a map or list based
         Map<?, ?> map = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, data);
         if (map != null) {
-            return getMapRecordValues(map);
+            return mapRecordValues.apply(map);
         }
         return ExchangeHelper.convertToMandatoryType(exchange, List.class, data);
     }
@@ -123,6 +128,16 @@ public abstract class CsvMarshaller {
      * @return     CSV record values of the given map
      */
     protected abstract Iterable<?> getMapRecordValues(Map<?, ?> map);
+
+    /**
+     * Creates the function that gives the CSV record values of the map rows of one marshalled body. It is created for
+     * each body, so it can keep the columns of the rows already written.
+     *
+     * @return the function that gives the CSV record values of a map row
+     */
+    protected Function<Map<?, ?>, Iterable<?>> createMapRecordValues() {
+        return this::getMapRecordValues;
+    }
 
     //region Implementations
 
@@ -148,7 +163,9 @@ public abstract class CsvMarshaller {
     }
 
     /**
-     * This marshaller adapts the columns but always keep them in the same order
+     * This marshaller takes the columns from the keys of the map rows. Within one body each key keeps its column: the
+     * keys of the first row, then the keys of later rows in the order they are first seen. A row without one of these
+     * keys gets a null value in its column.
      */
     private static final class DynamicColumnsMarshaller extends CsvMarshaller {
         private DynamicColumnsMarshaller(CSVFormat format) {
@@ -156,11 +173,24 @@ public abstract class CsvMarshaller {
         }
 
         @Override
-        protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            List<Object> result = new ArrayList<>(map.size());
-            result.addAll(map.values());
+        protected Function<Map<?, ?>, Iterable<?>> createMapRecordValues() {
+            // the columns of one body, so each key keeps its column in every row, whatever the iteration order of the
+            // row map; a new body starts with no columns, as the rows of another message may have other keys
+            Set<Object> columns = new LinkedHashSet<>();
+            return map -> {
+                columns.addAll(map.keySet());
+                List<Object> result = new ArrayList<>(columns.size());
+                for (Object column : columns) {
+                    result.add(map.get(column));
+                }
+                return result;
+            };
+        }
 
-            return result;
+        @Override
+        protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
+            // a map on its own: its keys are the columns
+            return createMapRecordValues().apply(map);
         }
     }
     //endregion

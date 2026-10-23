@@ -1241,6 +1241,17 @@ file is written from the column names, not from the first map). Every map of the
 `ignoreFirstRecord` only applies to unmarshal. A route that set `ignoreFirstRecord=false` to work around this is not
 affected; a route that added a dummy first map now gets it in the output too.
 
+=== camel-csv - the maps of a list are written in the columns of their keys
+
+When no `header` is set (or `headerDisabled=true`), marshalling a `List<Map<String, Object>>` wrote the values of
+each map in the iteration order of that map, so a row whose map had its keys in another order, or had no entry for
+one of the keys, put its values in the wrong columns. Within one message body, each key now keeps its column: the
+columns are the keys of the first map, followed by the keys of later maps that the first one does not have, in the
+order they first appear (the rows written before such a key appears have fewer fields). A map without one of these
+keys gets a null value in its column (an empty field, or the `nullString` when it is set), where before the following
+values moved one column to the left. Each message body starts again with no columns, as before. Set `header` (with
+`headerDisabled=false`) to get a fixed set and order of columns.
+
 === camel-github2 - the commit consumer routes the commits beyond the newest 100
 
 The `commit` consumer read only the 100 newest commits of the branch at each poll, so when more than 100 commits were
