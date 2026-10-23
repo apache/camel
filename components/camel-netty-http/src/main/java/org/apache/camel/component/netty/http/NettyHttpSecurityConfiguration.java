@@ -114,6 +114,11 @@ public class NettyHttpSecurityConfiguration implements Cloneable {
         this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
     }
 
+    /**
+     * Creates a shallow copy of this configuration, so an endpoint can change its own options without affecting the
+     * component or other endpoints. The {@link SecurityConstraint} and {@link SecurityAuthenticator} instances are
+     * shared with the original.
+     */
     public NettyHttpSecurityConfiguration copy() {
         try {
             return (NettyHttpSecurityConfiguration) clone();
