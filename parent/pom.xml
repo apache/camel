@@ -265,7 +265,7 @@
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
-        <jackson2-version>2.22.3</jackson2-version>
+        <jackson2-version>2.22.4</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.4</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
