@@ -188,6 +188,37 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
     }
 
     @Test
+    public void pollsOnTheOneConnectionOfTheEndpoint() throws Exception {
+        MockDriver.programRead("TRIG", false, false, false, false, false, true);
+        MockDriver.programRead("TEMP", 21);
+        MockDriver.programRead("PRES", 1013);
+        MockEndpoint result = getMockEndpoint("mock:reported");
+        result.expectedMessageCount(1);
+
+        context.getRouteController().startRoute("reported");
+
+        result.assertIsSatisfied(10000);
+        assertEquals(1, MockDriver.connectionStrings().size(), "six polls use the connection set up on start");
+    }
+
+    @Test
+    public void resumesOnANewConnectionWhenTheDroppedOneCannotConnectAgain() throws Exception {
+        MockDriver.programRead("TRIG", false, true);
+        MockDriver.programRead("TEMP", 21);
+        MockDriver.programRead("PRES", 1013);
+        MockEndpoint result = getMockEndpoint("mock:reported");
+        result.expectedMessageCount(2);
+        result.setAssertPeriod(1000);
+
+        context.getRouteController().startRoute("reported");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> result.getReceivedCounter() == 1);
+        MockDriver.dropConnections();
+        MockDriver.programRead("TRIG", false, true);
+
+        result.assertIsSatisfied(10000);
+    }
+
+    @Test
     public void aFailedPollForgetsTheTriggerSoAStillTrueTriggerEmitsAgain() throws Exception {
         MockDriver.programRead("TRIG", true, true, MockDriver.failedRead(), true, true);
         MockDriver.programRead("TEMP", 21);
