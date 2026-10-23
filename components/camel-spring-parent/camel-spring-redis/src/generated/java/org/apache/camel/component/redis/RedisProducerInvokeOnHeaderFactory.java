@@ -122,7 +122,7 @@ public class RedisProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrateg
         case "mset":
         case "MSET": target.invokeMset(exchange); return null;
         case "msetnx":
-        case "MSETNX": target.invokeMsetnx(exchange); return null;
+        case "MSETNX": return target.invokeMsetnx(exchange);
         case "multi":
         case "MULTI": target.invokeMulti(exchange); return null;
         case "persist":
@@ -229,6 +229,8 @@ public class RedisProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrateg
         case "ZREVRANGEBYSCORE": return target.invokeZrevrangebyscore(exchange);
         case "zrevrank":
         case "ZREVRANK": return target.invokeZrevrank(exchange);
+        case "zscore":
+        case "ZSCORE": return target.invokeZscore(exchange);
         case "zunionstore":
         case "ZUNIONSTORE": target.invokeZunionstore(exchange); return null;
         default: return null;

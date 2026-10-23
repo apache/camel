@@ -182,6 +182,19 @@ public class RedisSortedSetTest extends RedisTestSupport {
     }
 
     @Test
+    public void shouldExecuteZSCORE() {
+        when(zSetOperations.score("key", "value")).thenReturn(2.5);
+
+        Object result = sendHeaders(
+                RedisConstants.COMMAND, "ZSCORE",
+                RedisConstants.KEY, "key",
+                RedisConstants.VALUE, "value");
+
+        verify(zSetOperations).score("key", "value");
+        assertEquals(2.5, result);
+    }
+
+    @Test
     public void shouldExecuteZREM() {
         when(zSetOperations.remove(anyString(), anyString())).thenReturn(Long.valueOf(1));
 

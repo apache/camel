@@ -2661,3 +2661,60 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== camel-spring-redis - commands the producer does not run fail, and a read that finds nothing gives no body
+
+The `spring-redis` producer now fails the exchange for a `CamelRedis.Command` it does not run. Previously these did
+nothing, and the body stayed as it was:
+
+* An unknown command, such as a misspelled one, fails with an `IllegalArgumentException`.
+* AUTH, BGREWRITEAOF, BGSAVE, CONFIG, DBSIZE, DEBUG, FLUSHALL, FLUSHDB, INFO, LASTSAVE, MONITOR, PUNSUBSCRIBE, RENAMEX,
+  SAVE, SELECT, SHUTDOWN, SLAVEOF, SUBSTR, SYNC and UNSUBSCRIBE fail with an `UnsupportedOperationException`.
+* SUBSCRIBE and PSUBSCRIBE fail too, as they are for the consumer.
+
+A command in mixed case, such as `Get`, now runs the command. ZSCORE is now implemented and returns a `Double`.
+
+The commands that read one value set the body to `null` when they find none, so a route can tell a miss from a value.
+Previously the body stayed as it was. These are GET, GETSET, HGET, LINDEX, LPOP, RPOP, BLPOP, BRPOP, RPOPLPUSH,
+BRPOPLPUSH, SPOP, SRANDMEMBER, RANDOMKEY, ZSCORE, ZRANK, ZREVRANK and GEODIST. For BLPOP and BRPOP, this includes when
+the timeout passes.
+
+Other changes:
+
+* MSETNX sets its `Boolean` result as the body.
+* ECHO without the `CamelRedis.Value` header fails with a `NoSuchHeaderException`, instead of a `NullPointerException`.
+* SETBIT and GETBIT serialize the key with the key serializer of the template, as the other commands do. With the
+  default JDK serializer they now work on the same Redis key as SET and GET. Bits stored by older versions under the
+  raw key are not found.
+* The `CamelRedis.Keys` header may be a `String`: one key, or keys separated by commas.
+
+The consumer now gives a message that its serializer cannot deserialize, such as one published by `redis-cli`, to the
+route as a `byte[]`. Previously the message was dropped with a WARN. A failed exchange of the consumer is now handed to
+its exception handler.
+
+=== camel-couchbase - the document id, the operation option and the bodies of CCB_PUT
+
+The `couchbase` producer now uses the `key` option as the document id when the message has no `CamelCouchbaseId`
+header. When neither gives an id, and `autoStartIdForInserts` is not enabled, the call fails. Previously the document
+was written under the id of the Camel endpoint, such as `endpoint6`, and the `key` option was not read. The producer
+no longer removes the `CamelCouchbaseId` header after the call.
+
+The `operation` option is now an enum of `CCB_PUT`, `CCB_GET` and `CCB_DEL`. Any other value, including one in lower
+case, fails when the producer starts. Previously it did nothing.
+
+CCB_PUT now stores the body as follows:
+
+* Text or a `byte[]` that holds a JSON object or array is stored as a JSON document. Previously text was stored as a
+  JSON string, and a `byte[]` failed.
+* Any other `byte[]` is stored as a binary document. Read it back with `contentAsBytes()` of the `GetResult`.
+* A stream is read as bytes, and stored as a JSON document or as a binary document by the same rule. Previously it
+  failed.
+* Other text, a `Map`, a `List`, a `JsonObject` or a POJO is stored as before.
+
+The SQL++ query that the consumer generates when neither `statement` nor `collection` is set now reads the default
+collection of the bucket, ``FROM `bucket`.`_default`.`_default` AS `bucket` ``. Previously it failed on every poll with
+"Keyspace not found", as the query runs on the scope. For the same reason, an explicit `statement` that names the bucket
+in FROM fails: use the collection, such as ``FROM `_default` ``, or the full path.
+
+In view mode, the rows of a reduce view and the rows with a compound key no longer fail the poll. The body of a reduce
+row is its value, and it has no `CamelCouchbaseId` header. A compound key is set in `CamelCouchbaseKey` as its JSON text.

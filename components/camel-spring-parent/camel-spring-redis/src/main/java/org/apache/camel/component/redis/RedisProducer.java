@@ -17,13 +17,17 @@
 package org.apache.camel.component.redis;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
 import org.springframework.data.geo.Distance;
@@ -33,8 +37,28 @@ import org.springframework.data.redis.connection.RedisGeoCommands;
 
 public class RedisProducer extends HeaderSelectorProducer {
 
+    /**
+     * The commands of {@link Command} that have no {@link InvokeOnHeader} method in this producer.
+     */
+    static final Set<Command> UNSUPPORTED_COMMANDS = EnumSet.of(
+            Command.AUTH, Command.BGREWRITEAOF, Command.BGSAVE, Command.CONFIG, Command.DBSIZE, Command.DEBUG,
+            Command.FLUSHALL, Command.FLUSHDB, Command.INFO, Command.LASTSAVE, Command.MONITOR, Command.PSUBSCRIBE,
+            Command.PUNSUBSCRIBE, Command.RENAMEX, Command.SAVE, Command.SELECT, Command.SHUTDOWN, Command.SLAVEOF,
+            Command.SUBSCRIBE, Command.SUBSTR, Command.SYNC, Command.UNSUBSCRIBE);
+
+    /**
+     * The commands that read one value: the body is set to null when they find none, so a route can tell a miss from a
+     * value.
+     */
+    static final Set<Command> SINGLE_VALUE_COMMANDS = EnumSet.of(
+            Command.GET, Command.GETSET, Command.HGET, Command.LINDEX, Command.LPOP, Command.RPOP, Command.BLPOP,
+            Command.BRPOP, Command.RPOPLPUSH, Command.BRPOPLPUSH, Command.SPOP, Command.SRANDMEMBER, Command.RANDOMKEY,
+            Command.ZSCORE, Command.ZRANK, Command.ZREVRANK, Command.GEODIST);
+
     private final ExchangeConverter exchangeConverter = new ExchangeConverter();
     private final RedisClient client;
+    private final String header;
+    private final String defaultCommand;
 
     public RedisProducer(Endpoint endpoint,
                          String header,
@@ -42,11 +66,74 @@ public class RedisProducer extends HeaderSelectorProducer {
                          RedisClient redisClient) {
         super(endpoint, header, defaultHeaderValue);
         this.client = redisClient;
+        this.header = header;
+        this.defaultCommand = defaultHeaderValue;
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            Command command = resolveCommand(exchange);
+            if (command == Command.SUBSCRIBE || command == Command.PSUBSCRIBE) {
+                throw new UnsupportedOperationException(
+                        "The command " + command + " is for the spring-redis consumer: the producer does not support it."
+                                                        + " Use PUBLISH to post a message to a channel");
+            }
+            if (UNSUPPORTED_COMMANDS.contains(command)) {
+                throw new UnsupportedOperationException(
+                        "The spring-redis producer does not support the command " + command);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+        return super.process(exchange, callback);
+    }
+
+    @Override
+    protected void processResult(Exchange exchange, Object result) {
+        if (result == null && SINGLE_VALUE_COMMANDS.contains(resolveCommand(exchange))) {
+            // no value: do not leave the body as it was
+            exchange.getMessage().setBody(null);
+        } else {
+            super.processResult(exchange, result);
+        }
+    }
+
+    /**
+     * The command from the header, or the default command of the endpoint. A command in mixed case, such as Get, is set
+     * in the header in upper case, as the dispatch knows the upper and the lower case names only.
+     */
+    private Command resolveCommand(Exchange exchange) {
+        String name = exchange.getIn().getHeader(header, String.class);
+        if (name == null) {
+            name = defaultCommand;
+        }
+        Command command;
+        try {
+            command = Command.valueOf(name.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                    "Unknown command " + name + ": set the " + header
+                                               + " header to one of the commands listed in the spring-redis component documentation",
+                    e);
+        }
+        if (!name.equals(command.name()) && !name.equals(command.name().toLowerCase(Locale.ROOT))) {
+            exchange.getIn().setHeader(header, command.name());
+        }
+        return command;
     }
 
     @InvokeOnHeader("ECHO")
-    public String invokeEcho(Exchange exchange) {
-        return client.echo(exchangeConverter.getStringValue(exchange));
+    public String invokeEcho(Exchange exchange) throws NoSuchHeaderException {
+        String value = exchangeConverter.getStringValue(exchange);
+        if (value == null) {
+            throw new NoSuchHeaderException(
+                    "The ECHO command needs the " + RedisConstants.VALUE + " header with the text to echo", exchange,
+                    RedisConstants.VALUE);
+        }
+        return client.echo(value);
     }
 
     @InvokeOnHeader("PING")
@@ -385,6 +472,11 @@ public class RedisProducer extends HeaderSelectorProducer {
                 exchangeConverter.getMax(exchange));
     }
 
+    @InvokeOnHeader("ZSCORE")
+    public Double invokeZscore(Exchange exchange) {
+        return client.zscore(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange));
+    }
+
     @InvokeOnHeader("ZINCRBY")
     public Double invokeZincrby(Exchange exchange) {
         return client.zincrby(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
@@ -523,8 +615,8 @@ public class RedisProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader("MSETNX")
-    public void invokeMsetnx(Exchange exchange) {
-        client.msetnx(exchangeConverter.getValuesAsMap(exchange));
+    public Boolean invokeMsetnx(Exchange exchange) {
+        return client.msetnx(exchangeConverter.getValuesAsMap(exchange));
     }
 
     @InvokeOnHeader("SET")

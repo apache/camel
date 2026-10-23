@@ -110,7 +110,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     private int replicateTo;
 
     // Producer parameters
-    @UriParam(label = "producer", defaultValue = COUCHBASE_PUT)
+    @UriParam(label = "producer", defaultValue = COUCHBASE_PUT, enums = "CCB_PUT,CCB_GET,CCB_DEL")
     private String operation = COUCHBASE_PUT;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean autoStartIdForInserts;
@@ -300,7 +300,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     }
 
     /**
-     * The key to use
+     * The id of the document the producer puts, gets or deletes, when the message has no CamelCouchbaseId header
      */
     public void setKey(String key) {
         this.key = key;
@@ -379,7 +379,8 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     }
 
     /**
-     * The operation to do
+     * The operation to do: CCB_PUT stores the message body as the document (upsert), CCB_GET reads the document and
+     * CCB_DEL removes it
      */
     public void setOperation(String operation) {
         this.operation = operation;
@@ -446,10 +447,11 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
 
     /**
      * A SQL++ (N1QL) query statement for consuming documents. When set, the consumer uses SQL++ queries instead of
-     * MapReduce views. The query should select META().id AS __id to identify documents. Example: SELECT META().id AS
-     * __id, * FROM `myCollection` WHERE type = 'order' LIMIT 100. If not set and useView is false, a SQL++ query is
-     * auto-generated from the bucket, scope, collection, limit, skip, descending, rangeStartKey, and rangeEndKey
-     * options.
+     * MapReduce views. The query should select META().id AS __id to identify documents. The query runs on the scope
+     * (the default scope when the scope option is not set), so a single name in FROM is a collection of that scope; use
+     * `bucket`.`scope`.`collection` for another one. Example: SELECT META().id AS __id, * FROM `_default` WHERE type =
+     * 'order' LIMIT 100. If not set and useView is false, a SQL++ query is auto-generated from the bucket, scope,
+     * collection, limit, skip, descending, rangeStartKey, and rangeEndKey options.
      */
     public void setStatement(String statement) {
         this.statement = statement;
@@ -472,14 +474,16 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
      * Builds a SQL++ query from the endpoint options.
      */
     String buildSqlQuery() {
-        StringBuilder sb = new StringBuilder("SELECT META().id AS __id, * FROM `");
-        // Use the collection if set, otherwise use the bucket name (default collection)
+        StringBuilder sb = new StringBuilder("SELECT META().id AS __id, * FROM ");
+        // The query runs on the scope, where a single name is a collection of that scope. Without the collection
+        // option the consumer reads the default collection of the bucket, so the query names that one in full: the
+        // bucket name alone would be read as a collection of the scope, which does not exist. The alias keeps
+        // the bucket name as the key of the document in the row, as FROM `bucket` gave
         if (collection != null && !collection.isEmpty()) {
-            sb.append(collection);
+            sb.append('`').append(collection).append('`');
         } else {
-            sb.append(bucket);
+            sb.append('`').append(bucket).append("`.`_default`.`_default` AS `").append(bucket).append('`');
         }
-        sb.append('`');
 
         // WHERE clause from range keys
         String startKey = rangeStartKey;

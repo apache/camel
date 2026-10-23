@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.lang.reflect.Constructor;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +28,18 @@ import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.codec.DefaultJsonSerializer;
+import com.couchbase.client.java.codec.JsonSerializer;
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.GetOptions;
 import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.kv.RemoveOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.view.ViewOptions;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
@@ -49,6 +55,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -68,6 +76,7 @@ class CouchbaseConsumerBodyTest {
     private Scope scope;
     private Collection collection;
     private final List<Object> bodies = new ArrayList<>();
+    private final List<Exchange> exchanges = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -93,7 +102,10 @@ class CouchbaseConsumerBodyTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(uri).routeId("couchbase").process(exchange -> bodies.add(exchange.getMessage().getBody()));
+                from(uri).routeId("couchbase").process(exchange -> {
+                    bodies.add(exchange.getMessage().getBody());
+                    exchanges.add(exchange.copy());
+                });
             }
         });
         context.start();
@@ -123,6 +135,45 @@ class CouchbaseConsumerBodyTest {
         when(row.valueAs(Object.class)).thenReturn(Optional.ofNullable(value));
         when(row.keyAs(String.class)).thenReturn(Optional.of(id));
         return row;
+    }
+
+    /** A view row as the SDK parses it from the JSON the view service returns. */
+    private static ViewRow realViewRow(String json) throws Exception {
+        Constructor<ViewRow> constructor = ViewRow.class.getDeclaredConstructor(byte[].class, JsonSerializer.class);
+        constructor.setAccessible(true);
+        return constructor.newInstance(json.getBytes(StandardCharsets.UTF_8), DefaultJsonSerializer.create());
+    }
+
+    /**
+     * The rows of a reduce view have no document ID. They used to fail the whole poll with a NoSuchElementException;
+     * now the value is the body, as there is no document to fetch or to delete.
+     */
+    @Test
+    void aReduceViewRowHasNoIdAndItsValueIsTheBody() throws Exception {
+        viewReturns(realViewRow("{\"key\":null,\"value\":42}"));
+        CouchbaseConsumer consumer = startRoute(URI + VIEW + "&consumerProcessedStrategy=delete");
+
+        assertEquals(1, consumer.poll());
+
+        assertEquals(List.of(42), bodies);
+        assertNull(exchanges.get(0).getMessage().getHeader(CouchbaseConstants.HEADER_ID));
+        verify(collection, never()).get(anyString(), any(GetOptions.class));
+        verify(collection, never()).remove(anyString(), any(RemoveOptions.class));
+    }
+
+    /** A compound key is not a JSON string: it used to fail the whole poll, now its JSON text is the key header. */
+    @Test
+    void aCompoundKeyIsTheJsonTextOfTheKey() throws Exception {
+        viewReturns(realViewRow("{\"id\":\"doc-1\",\"key\":[2024,\"orders\"],\"value\":\"v\"}"),
+                realViewRow("{\"id\":\"doc-2\",\"key\":\"plain\",\"value\":\"w\"}"));
+        CouchbaseConsumer consumer = startRoute(URI + VIEW + "&fullDocument=false");
+
+        assertEquals(2, consumer.poll());
+
+        assertEquals("[2024,\"orders\"]", exchanges.get(0).getMessage().getHeader(CouchbaseConstants.HEADER_KEY));
+        assertEquals("doc-1", exchanges.get(0).getMessage().getHeader(CouchbaseConstants.HEADER_ID));
+        assertEquals("plain", exchanges.get(1).getMessage().getHeader(CouchbaseConstants.HEADER_KEY));
+        assertEquals(List.of("v", "w"), bodies);
     }
 
     @Test

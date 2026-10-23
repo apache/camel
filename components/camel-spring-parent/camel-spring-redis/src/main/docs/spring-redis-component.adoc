@@ -153,11 +153,45 @@ these keys:
               serializer: "#class:org.springframework.data.redis.serializer.StringRedisSerializer"
 ----
 
+The `KEYS` command sends its pattern through the key serializer too. With the default Java serialization a stored key
+starts with the bytes of the serialization header, so a pattern such as `order-*` matches no key. Use `KEYS` with
+keys stored as plain strings: set a `StringRedisSerializer` as the `serializer` as above, or, to keep Java
+serialization for the values, a `redisTemplate` with a `StringRedisSerializer` as its key serializer:
+
+[source,java]
+----
+RedisTemplate<String, Object> template = new RedisTemplate<>();
+template.setConnectionFactory(connectionFactory);
+template.setKeySerializer(new StringRedisSerializer());
+template.setHashKeySerializer(new StringRedisSerializer());
+template.afterPropertiesSet();
+----
+
+The consumer deserializes each message with the `serializer`, which is Java serialization by default. A message
+that the serializer cannot read, such as one posted as text by `redis-cli PUBLISH` or another Redis client, is given
+to the route as its raw bytes (`byte[]`). To receive such messages as text, set
+`serializer=#class:org.springframework.data.redis.serializer.StringRedisSerializer` on the consumer. When the route
+fails to process a message, the exchange is handed to the exception handler of the consumer (see the
+`exceptionHandler` and `bridgeErrorHandler` options).
+
 === Message headers evaluated by the Redis producer
 
 The producer issues commands to the server, and each command has
 a different set of parameters with specific types. The result from the
-command execution is returned in the message body.
+command execution is returned in the message body. A command whose result is `void` leaves the body as it was.
+
+The commands that read one value set the body to `null` when there is no value, such as `GET` of a key that does not
+exist, so a route can tell a miss from a value. These are `GET`, `GETSET`, `HGET`, `LINDEX`, `LPOP`, `RPOP`,
+`BLPOP`, `BRPOP` (also when the timeout passes), `RPOPLPUSH`, `BRPOPLPUSH`, `SPOP`, `SRANDMEMBER`, `RANDOMKEY`,
+`ZSCORE`, `ZRANK`, `ZREVRANK` and `GEODIST`.
+
+The `CamelRedis.Keys` header is a `Collection<String>`, or a `String` with one key or several keys separated by
+comma (a key that holds a comma needs the `Collection` form).
+
+The producer fails the exchange when the command is not one of the commands listed below: an unknown command fails
+with an `IllegalArgumentException`, and a command of the `command` option that the producer does not run (such as
+`AUTH`, `FLUSHDB`, `INFO` or `SELECT`) fails with an `UnsupportedOperationException`. `SUBSCRIBE` and `PSUBSCRIBE`
+are for the consumer; the producer posts messages with `PUBLISH`.
 
 [width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
@@ -243,19 +277,19 @@ available |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TIMEO
 
 |`SISMEMBER` |Determine if a given value is a member of a set |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Boolean
 
-|`SINTER` |Intersect multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String) |Set<Object>
+|`SINTER` |Intersect multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String) |Set<Object>
 
-|`SINTERSTORE` |Intersect multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+|`SINTERSTORE` |Intersect multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String),
 `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
-|`SUNION` |Add multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String) |Set<Object>
+|`SUNION` |Add multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String) |Set<Object>
 
-|`SUNIONSTORE` |Add multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+|`SUNIONSTORE` |Add multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String),
 `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
-|`SDIFF` |Subtract multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String) |Set<Object>
+|`SDIFF` |Subtract multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String) |Set<Object>
 
-|`SDIFFSTORE` |Subtract multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+|`SDIFFSTORE` |Subtract multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String),
 `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
 |`SRANDMEMBER` |Get one or multiple random members from a set |`RedisConstants.KEY`/"CamelRedis.Key" (String) |String
@@ -286,6 +320,8 @@ from high to low |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstant
 from high to low |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long),
 `RedisConstants.WITHSCORE`/"CamelRedis.WithScore" (Boolean) |Object
 
+|`ZSCORE` |Get the score of a member in a sorted set |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Double
+
 |`ZCARD` |Get the number of members in a sorted set |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
 |`ZCOUNT` |Count the members in a sorted set with scores within the given values |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.MIN`/"CamelRedis.Min" (Double), `RedisConstants.MAX`/"CamelRedis.Max"
@@ -302,11 +338,11 @@ from high to low |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstant
 
 |`ZREMRANGEBYSCORE` |Remove all members in a sorted set within the given scores |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |void
 
-|`ZUNIONSTORE` |Add multiple sorted sets and store the resulting-sorted set in a new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+|`ZUNIONSTORE` |Add multiple sorted sets and store the resulting-sorted set in a new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String),
 `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
 |`ZINTERSTORE` |Intersect multiple sorted sets and store the resulting sorted set in a
-new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String),
 `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 |=======================================================================
 
@@ -349,7 +385,7 @@ new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"
 
 |`MSET` |Set multiple keys to multiple values |`RedisConstants.VALUES`/"CamelRedis.Values" (Map<String, Object>) |void
 
-|`MSETNX` |Set multiple keys to multiple values only if none of the keys exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |void
+|`MSETNX` |Set multiple keys to multiple values only if none of the keys exist |`RedisConstants.VALUES`/"CamelRedis.Values" (Map<String, Object>) |Boolean
 
 |`GETSET` |Set the string value of a key and return its old value |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Object
 |=======================================================================
@@ -360,11 +396,11 @@ new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"
 
 |`EXISTS` |Determine if a key exists |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Boolean
 
-|`DEL` |Delete a key |`RedisConstants.KEYS`/"CamelRedis.Keys" (String) |void
+|`DEL` |Delete a key |`RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String) |void
 
 |`TYPE` |Determine the type stored at key |`RedisConstants.KEY`/"CamelRedis.Key" (String) |DataType
 
-|`KEYS` |Find all keys matching the given pattern |`RedisConstants.PATERN`/"CamelRedis.Pattern" (String) |Collection<String>
+|`KEYS` |Find all keys matching the given pattern (needs keys stored as strings, see above) |`RedisConstants.PATERN`/"CamelRedis.Pattern" (String) |Collection<String>
 
 |`RANDOMKEY` |Return a random key from the keyspace |`RedisConstants.PATERN`/"CamelRedis.Pattern" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (String) |String
 
@@ -412,11 +448,11 @@ milliseconds |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TI
 
 |`EXEC` |Execute all commands issued after MULTI |none |void
 
-|`WATCH` |Watch the given keys to determine execution of the MULTI/EXEC block |`RedisConstants.KEYS`/"CamelRedis.Keys" (String) |void
+|`WATCH` |Watch the given keys to determine execution of the MULTI/EXEC block |`RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String) |void
 
 |`UNWATCH` |Forget about all watched keys |none |void
 
-|`ECHO` |Echo the given string |`RedisConstants.VALUE`/"CamelRedis.Value" (String) |String
+|`ECHO` |Echo the given string (fails when the header is missing) |`RedisConstants.VALUE`/"CamelRedis.Value" (String) |String
 
 |`PING` |Ping the server |none |String
 

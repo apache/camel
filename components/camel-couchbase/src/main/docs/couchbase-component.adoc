@@ -100,7 +100,11 @@ YAML::
 ----
 ====
 
-This generates: `SELECT META().id AS \__id, * FROM \`myBucket\` ORDER BY META().id DESC LIMIT 10`
+This generates: `SELECT META().id AS \__id, * FROM \`myBucket\`.\`_default\`.\`_default\` AS \`myBucket\` ORDER BY META().id DESC LIMIT 10`
+
+The query runs on the scope of the endpoint (the default scope when `scope` is not set). With the `collection`
+option, the query reads that collection of the scope (`FROM \`myCollection\``). Without it, the query reads the
+default collection of the bucket, which is the collection the consumer fetches the documents from.
 
 ==== Explicit SQL++ statements
 
@@ -110,11 +114,16 @@ For complex queries (filters, joins, aggregations), set the `statement` option d
 [source,java]
 ----
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
-    + "&statement=SELECT META().id AS __id, * FROM `myCollection` WHERE type = 'order' LIMIT 100")
+    + "&statement=SELECT META().id AS __id, * FROM `_default` WHERE type = 'order' LIMIT 100")
     .to("direct:result");
 ----
 
 The query must include `META().id AS \__id` in the SELECT clause so the consumer can identify each document.
+
+The statement runs on the scope of the endpoint (the default scope when `scope` is not set), so a single name in
+`FROM` is a collection of that scope: in the default scope, `FROM \`_default\`` is the default collection of the
+bucket, and the bucket name alone fails with "Keyspace not found". Use the full path `\`bucket\`.\`scope\`.\`collection\`` for a collection of
+another scope.
 
 When `fullDocument` is `true` (the default), the consumer fetches the complete document from the KV store using
 the document ID. When `false`, the query result row is used directly as the message body.
@@ -135,6 +144,10 @@ from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
     + "&useView=true&designDocumentName=myDoc&viewName=myView&limit=10")
     .to("direct:result");
 ----
+
+Reduce views and compound keys work in view mode too. A row of a reduce view has no document ID: its value is the
+message body, with or without `fullDocument`, and the `CamelCouchbaseId` header is not set. A key that is not a
+string, such as the compound key `[2024, "orders"]`, is set in the `CamelCouchbaseKey` header as its JSON text.
 
 === Migrating from Views to SQL++
 
@@ -189,8 +202,59 @@ Or with an explicit SQL++ statement for more control:
 [source,java]
 ----
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
-    + "&statement=SELECT META().id AS __id, * FROM `myBucket` ORDER BY META().id DESC LIMIT 10")
+    + "&statement=SELECT META().id AS __id, * FROM `_default` ORDER BY META().id DESC LIMIT 10")
 ----
+
+== Producing documents
+
+The producer works on one document per message. The document id is the `CamelCouchbaseId` header, or the `key`
+option when the message has no such header. The call fails when neither gives an id, unless `autoStartIdForInserts`
+is enabled, which gives every document the next number as id. The producer leaves the `CamelCouchbaseId` header on
+the message, so a `CCB_GET` after a `CCB_PUT` in the same route reads the document the `CCB_PUT` stored.
+
+The `operation` option is one of the following; any other value fails when the producer starts:
+
+[cols="1,3,2",options="header"]
+|===
+| Operation | What it does | Message body afterwards
+
+| `CCB_PUT` (default)
+| Stores the message body as the document (an upsert), with the expiry of the `CamelCouchbaseTtl` header
+| `true`
+
+| `CCB_GET`
+| Reads the document
+| The `GetResult` of the SDK, for example `getBody(GetResult.class).contentAsObject()`
+
+| `CCB_DEL`
+| Removes the document
+| The text of the `MutationResult` of the SDK
+|===
+
+`CCB_PUT` stores the message body as follows:
+
+[cols="1,3",options="header"]
+|===
+| Message body | Stored as
+
+| Text (`String`) holding a JSON object or array
+| That JSON document, as it is (`RawJsonTranscoder`)
+
+| Other text
+| A JSON string
+
+| `byte[]` holding a JSON object or array
+| That JSON document, as it is (`RawJsonTranscoder`)
+
+| Other `byte[]`
+| A binary document (`RawBinaryTranscoder`); read it with `contentAsBytes()`
+
+| A stream (`InputStream` or stream cache)
+| Read as bytes, and then stored as a `byte[]` body is
+
+| A `Map`, a `List`, a `JsonObject`, a `JsonArray` or a POJO
+| A JSON document, serialized by the SDK
+|===
 
 == Couchbase SDK compatibility
 

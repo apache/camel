@@ -24,11 +24,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ValueOperations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -112,21 +110,22 @@ public class RedisStringTest extends RedisTestSupport {
                 RedisConstants.COMMAND, "SETBIT",
                 RedisConstants.KEY, "key",
                 RedisConstants.OFFSET, "10",
-                RedisConstants.VALUE, "0");
+                RedisConstants.VALUE, "false");
 
-        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>> any());
+        // the key goes through the key serializer of the template, as with SET and GET
+        verify(valueOperations).setBit("key", 10, false);
     }
 
     @Test
     public void shouldExecuteGETBIT() throws Exception {
-        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<Boolean>> any())).thenReturn(true);
+        when(valueOperations.getBit("key", 2)).thenReturn(true);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "GETBIT",
                 RedisConstants.KEY, "key",
                 RedisConstants.OFFSET, "2");
 
-        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>> any());
+        verify(valueOperations).getBit("key", 2);
         assertEquals(true, result);
     }
 
@@ -252,11 +251,14 @@ public class RedisStringTest extends RedisTestSupport {
         Map<String, String> values = new HashMap<>();
         values.put("field1", "valu1");
 
-        sendHeaders(
+        when(valueOperations.multiSetIfAbsent(values)).thenReturn(false);
+
+        Object result = sendHeaders(
                 RedisConstants.COMMAND, "MSETNX",
                 RedisConstants.VALUES, values);
 
         verify(valueOperations).multiSetIfAbsent(values);
+        assertEquals(false, result);
     }
 
     @Test
