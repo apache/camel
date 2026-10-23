@@ -58,4 +58,10 @@ public interface Polly2Constants {
     String CONTENT_TYPE = "CamelAwsPollyContentType";
     @Metadata(description = "Number of characters synthesized", javaType = "Integer")
     String REQUEST_CHARACTERS = "CamelAwsPollyRequestCharacters";
+    @Metadata(description = "The token of the next page for the describeVoices, listLexicons and listSpeechSynthesisTasks operations. "
+                            + "It is in and out: when set, it is sent as the next token of the request, and after the call it holds the "
+                            + "next token of the response, or it is removed when the response has none, which is the last page. "
+                            + "Remove it before calling a different list operation.",
+              javaType = "String")
+    String NEXT_TOKEN = "CamelAwsPollyNextToken";
 }

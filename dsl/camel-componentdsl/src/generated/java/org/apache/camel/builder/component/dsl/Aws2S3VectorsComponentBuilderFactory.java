@@ -70,7 +70,8 @@ public interface Aws2S3VectorsComponentBuilderFactory {
     
         
         /**
-         * The data type of the vector. Options: float32, float16.
+         * The data type of the vectors of the index to create. S3 Vectors
+         * supports float32 only.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -87,8 +88,8 @@ public interface Aws2S3VectorsComponentBuilderFactory {
     
         
         /**
-         * The distance metric to use for similarity search. Options: cosine,
-         * euclidean, dot-product.
+         * The distance metric of the index to create, which the similarity
+         * search uses. Options: cosine, euclidean.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -139,7 +140,11 @@ public interface Aws2S3VectorsComponentBuilderFactory {
         }
     
         /**
-         * The minimum similarity threshold for results.
+         * (deprecated) Never used: S3 Vectors has no similarity threshold. The
+         * consumer sets the CamelAwsS3VectorsDistance header to the distance of
+         * each vector from the query vector. Deprecation note: S3 Vectors has
+         * no similarity threshold, the component never used this option. Filter
+         * the results on their CamelAwsS3VectorsDistance header instead.
          * 
          * The option is a: &lt;code&gt;java.lang.Float&lt;/code&gt; type.
          * 
@@ -148,6 +153,7 @@ public interface Aws2S3VectorsComponentBuilderFactory {
          * @param similarityThreshold the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Aws2S3VectorsComponentBuilder similarityThreshold(java.lang.Float similarityThreshold) {
             doSetProperty("similarityThreshold", similarityThreshold);
             return this;
@@ -248,8 +254,10 @@ public interface Aws2S3VectorsComponentBuilderFactory {
         }
     
         /**
-         * Optional metadata filter for the consumer to filter vectors during
-         * polling.
+         * The metadata filter of the similarity search of the consumer, as a
+         * JSON object with the filter operators of S3 Vectors, such as {genre:
+         * {$eq: drama}}. Only the vectors whose metadata match the filter are
+         * consumed.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

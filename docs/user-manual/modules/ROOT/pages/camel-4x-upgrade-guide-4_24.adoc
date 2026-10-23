@@ -2636,3 +2636,84 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== camel-aws2-polly - textType, outputFormat and the next token
+
+* The `textType` and `outputFormat` options no longer have a default value, so the `CamelAwsPollyTextType` and
+  `CamelAwsPollyOutputFormat` headers are now read when the option is not set. Previously the defaults `TEXT` and `MP3`
+  were always set, and the headers were ignored: SSML sent with `CamelAwsPollyTextType=ssml` was spoken as plain text.
+  When neither the option nor the header is set, `TEXT` and `MP3` are still sent.
+* describeVoices, listLexicons and listSpeechSynthesisTasks now read and set the new `CamelAwsPollyNextToken` header:
+  it is sent as the token of the next page, and set to the token of the response, or removed on the last page. A route
+  that calls a different list operation on the same message must remove the header first.
+* The lexicon names are trimmed, and empty names are dropped.
+
+=== camel-aws2-translate - the languages and the code of Croatian
+
+* Each language now comes from its option, or else from its header. Previously, when one of the `sourceLanguage` and
+  `targetLanguage` options was set, both were taken from the options, and the request had no language for the other.
+* A missing target language, or a missing source language without `autodetectSourceLanguage`, now fails with an
+  `IllegalArgumentException` that names the option and the header.
+* `Translate2LanguageEnum.CROATIAN` is now `hr`, the code Amazon Translate uses. It was `cr`, which is Cree.
+
+=== camel-aws2-textract - feature types and the job id
+
+* The `CamelAwsTextractFeatureTypes` header now also takes Strings (in any case), as a list, an array or one String
+  with comma separated values. An unknown value, or an element of another type, fails with an
+  `IllegalArgumentException` instead of a `ClassCastException` in the AWS SDK. A single String, which was ignored
+  before, is now used.
+* startDocumentTextDetection, startDocumentAnalysis and startExpenseAnalysis now set the `CamelAwsTextractJobId`
+  header to the job id of the response, so a get step that follows uses it. The body is still the response.
+
+=== camel-aws2-timestream - describeScheduledQuery and the operation
+
+* describeScheduledQuery now sends the ARN of the `CamelAwsTimestreamScheduledQueryArn` header. Previously it worked
+  with `pojoRequest=true` only.
+* Without an operation option and an operation header, the producer fails with an `IllegalArgumentException` instead of
+  a `NullPointerException`. An operation of the other client type fails with a message that names the client type to
+  use; when it is the `operation` option, the route already fails to start.
+* An unknown client type in the URI fails with `Unknown clientType ...: use write or query`.
+* The catalog now describes `CamelAwsTimestreamRecord` as what writeRecords sends it as: the common attributes of the
+  records of `CamelAwsTimestreamRecordList`. `CamelAwsTimestreamRecordVersion` is listed as a `Long`, the type it is
+  read as.
+
+=== camel-aws2-s3-vectors - headers, returned data and metadata filter
+
+* The consumer and the producer no longer set the `CamelAwsS3VectorsVectorBucketName` and
+  `CamelAwsS3VectorsVectorIndexName` headers. They only echoed the endpoint, and the next aws2-s3-vectors step of the
+  route then used that bucket and index instead of its own: a route from the consumer to putVectors on another index
+  overwrote the consumed vectors. The headers still override the endpoint when the route sets them.
+* getVectors and deleteVectors take their keys from the message body when it holds keys (a String, or a collection or
+  an array of Strings), else from the `CamelAwsS3VectorsVectorId` header. Previously the header won, so a getVectors
+  after a putVectors got the key of the putVectors. Keys that are not Strings now fail with an
+  `IllegalArgumentException`.
+* getVectors now returns the data and the metadata of the vectors, and queryVectors and the consumer return the
+  metadata and the distance. Previously they returned the keys only. The consumer sets the new
+  `CamelAwsS3VectorsDistance` header.
+* The `CamelAwsS3VectorsMetadataFilter` header and the `consumerMetadataFilter` option are now applied. They are JSON
+  objects in the filter syntax of S3 Vectors. Invalid JSON fails the exchange, or the consumer does not start.
+  Previously both were ignored.
+* The `similarityThreshold` option and the `CamelAwsS3VectorsSimilarityThreshold` and
+  `CamelAwsS3VectorsSimilarityScore` headers are deprecated. They never did anything: S3 Vectors returns a distance and
+  has no threshold.
+* The values of `CamelAwsS3VectorsVectorMetadata` may be numbers, booleans and lists, which failed with a
+  `ClassCastException` before. A null in a vector fails with an `IllegalArgumentException` that names its position.
+* The `dataType` option no longer offers `float16`, and the `distanceMetric` option no longer offers `dot-product`:
+  S3 Vectors has neither.
+
+=== camel-aws-security-hub - headers of another type and failed imports
+
+* A `CamelAwsSecurityHubFilters`, `CamelAwsSecurityHubNote`, `CamelAwsSecurityHubSeverity` or
+  `CamelAwsSecurityHubWorkflow` header that is not of the AWS SDK type (`AwsSecurityFindingFilters`, `NoteUpdate`,
+  `SeverityUpdate`, `WorkflowUpdate`) now fails with an `IllegalArgumentException`. Previously it was ignored: getFindings
+  with the filters as JSON text returned every finding.
+* batchImportFindings now fails the exchange with an `IllegalStateException` when Security Hub does not import some of
+  the findings. The message names their ids and errors. The `CamelAwsSecurityHubFailedCount` and
+  `CamelAwsSecurityHubSuccessCount` headers and the body are still set.
+* batchImportFindings also takes an array or any collection of `AwsSecurityFinding` in the body. An element of another
+  type fails with an `IllegalArgumentException` instead of a `ClassCastException`.
+
+=== camel-aws-cloudtrail - the content type of the CloudEvent data type
+
+The `aws-cloudtrail:application-cloudevents` data type now sets the content type `application/json`, as the body is
+the JSON of the event. It was `text/plain`.

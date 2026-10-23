@@ -608,7 +608,9 @@ public interface SecurityHubEndpointBuilderFactory {
             return "CamelAwsSecurityHubOperation";
         }
         /**
-         * The list of findings to import.
+         * The findings to import, as a List of AwsSecurityFinding. When not
+         * set, the findings are taken from the body: a Collection or an array
+         * of AwsSecurityFinding, or one AwsSecurityFinding.
          * 
          * The option is a: {@code List<AwsSecurityFinding>} type.
          * 
@@ -633,7 +635,9 @@ public interface SecurityHubEndpointBuilderFactory {
             return "CamelAwsSecurityHubFindingIdentifiers";
         }
         /**
-         * The filters to apply when retrieving findings.
+         * The filters to apply when retrieving findings. It must be an
+         * AwsSecurityFindingFilters object; a value of another type, such as
+         * JSON text, fails the exchange.
          * 
          * The option is a: {@code AwsSecurityFindingFilters} type.
          * 
@@ -645,7 +649,8 @@ public interface SecurityHubEndpointBuilderFactory {
             return "CamelAwsSecurityHubFilters";
         }
         /**
-         * The note to add to findings during update.
+         * The note to add to findings during update. It must be a NoteUpdate
+         * object; a value of another type fails the exchange.
          * 
          * The option is a: {@code NoteUpdate} type.
          * 
@@ -657,7 +662,8 @@ public interface SecurityHubEndpointBuilderFactory {
             return "CamelAwsSecurityHubNote";
         }
         /**
-         * The severity to set on findings during update.
+         * The severity to set on findings during update. It must be a
+         * SeverityUpdate object; a value of another type fails the exchange.
          * 
          * The option is a: {@code SeverityUpdate} type.
          * 
@@ -669,7 +675,8 @@ public interface SecurityHubEndpointBuilderFactory {
             return "CamelAwsSecurityHubSeverity";
         }
         /**
-         * The workflow status to set on findings.
+         * The workflow status to set on findings. It must be a WorkflowUpdate
+         * object; a value of another type fails the exchange.
          * 
          * The option is a: {@code WorkflowUpdate} type.
          * 
@@ -755,7 +762,10 @@ public interface SecurityHubEndpointBuilderFactory {
             return "CamelAwsSecurityHubTypes";
         }
         /**
-         * The token for the next set of results.
+         * The token for the next set of results. It is both an input and an
+         * output: the operation sends it and then sets it to the token of the
+         * response, so remove it before calling a different list operation in
+         * the same route.
          * 
          * The option is a: {@code String} type.
          * 
@@ -779,7 +789,9 @@ public interface SecurityHubEndpointBuilderFactory {
             return "CamelAwsSecurityHubMaxResults";
         }
         /**
-         * The count of findings that failed to import.
+         * The count of findings that failed to import. When it is more than
+         * zero, the exchange fails with an exception naming the failed
+         * findings.
          * 
          * The option is a: {@code Integer} type.
          * 

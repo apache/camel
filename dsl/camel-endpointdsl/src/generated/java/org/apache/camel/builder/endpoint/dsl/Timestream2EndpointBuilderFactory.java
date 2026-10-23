@@ -646,7 +646,10 @@ public interface Timestream2EndpointBuilderFactory {
             return "CamelAwsTimestreamOperation";
         }
         /**
-         * Represents a time-series data point being written into Timestream.
+         * The common attributes of the writeRecords operation: the dimensions,
+         * measure and time values that all the records of the
+         * CamelAwsTimestreamRecordList header share. It is not written as a
+         * record of its own.
          * 
          * The option is a: {@code
          * software.amazon.awssdk.services.timestreamwrite.model.Record} type.
@@ -659,7 +662,7 @@ public interface Timestream2EndpointBuilderFactory {
             return "CamelAwsTimestreamRecord";
         }
         /**
-         * List of Records.
+         * The records of the writeRecords operation.
          * 
          * The option is a: {@code List} type.
          * 
@@ -744,9 +747,9 @@ public interface Timestream2EndpointBuilderFactory {
             return "CamelAwsTimestreamTargetTableName";
         }
         /**
-         * Record version.
+         * The record version of the createBatchLoadTask operation.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code Long} type.
          * 
          * Group: producer
          * 
@@ -825,7 +828,7 @@ public interface Timestream2EndpointBuilderFactory {
             return "CamelAwsTimestreamRetentionProperties";
         }
         /**
-         * Timestream Table Magentic Store Write properties.
+         * Timestream Table Magnetic Store Write properties.
          * 
          * The option is a: {@code
          * software.amazon.awssdk.services.timestreamwrite.model.MagneticStoreWriteProperties} type.
@@ -1083,7 +1086,7 @@ public interface Timestream2EndpointBuilderFactory {
             return "CamelAwsTimestreamErrorReportS3EncryptionOption";
         }
         /**
-         * he ARN for the IAM role that Timestream will assume when running the
+         * The ARN for the IAM role that Timestream will assume when running the
          * scheduled query.
          * 
          * The option is a: {@code String} type.

@@ -52,7 +52,9 @@ public interface Aws2TranslateComponentBuilderFactory {
     
         
         /**
-         * Being able to autodetect the source language.
+         * Being able to autodetect the source language. When enabled, the
+         * source language is auto, and the sourceLanguage option and the
+         * CamelAwsTranslateSourceLanguage header are not used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -180,7 +182,9 @@ public interface Aws2TranslateComponentBuilderFactory {
         }
     
         /**
-         * Source language to use.
+         * Source language to use. When not set, the
+         * CamelAwsTranslateSourceLanguage header is used. It is not used when
+         * autodetectSourceLanguage is enabled.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -195,7 +199,8 @@ public interface Aws2TranslateComponentBuilderFactory {
         }
     
         /**
-         * Target language to use.
+         * Target language to use. When not set, the
+         * CamelAwsTranslateTargetLanguage header is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

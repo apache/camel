@@ -16,17 +16,21 @@
  */
 package org.apache.camel.component.aws2.s3vectors;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
+import software.amazon.awssdk.services.s3vectors.model.QueryOutputVector;
 import software.amazon.awssdk.services.s3vectors.model.QueryVectorsRequest;
 import software.amazon.awssdk.services.s3vectors.model.QueryVectorsResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 class AWS2S3VectorsConsumerTest {
@@ -70,6 +74,69 @@ class AWS2S3VectorsConsumerTest {
 
             // delay used to be ignored (a shadow field on the configuration); it must now drive the actual poll interval
             assertThat(consumer.getDelay()).isEqualTo(1234L);
+        }
+    }
+
+    @Test
+    void consumerAsksForMetadataAndDistanceAndSendsTheFilter() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            S3VectorsClient client = Mockito.mock(S3VectorsClient.class);
+            ArgumentCaptor<QueryVectorsRequest> captor = ArgumentCaptor.forClass(QueryVectorsRequest.class);
+            when(client.queryVectors(captor.capture())).thenReturn(QueryVectorsResponse.builder()
+                    .vectors(QueryOutputVector.builder().key("v1").distance(0.25f).build())
+                    .build());
+            context.getRegistry().bind("client", client);
+            context.start();
+
+            AWS2S3VectorsEndpoint endpoint = context.getEndpoint(
+                    "aws2-s3-vectors://test-bucket?vectorIndexName=test-index&s3VectorsClient=#client"
+                                                                 + "&consumerQueryVector=0.1,0.2&startScheduler=false"
+                                                                 + "&consumerMetadataFilter={\"genre\": {\"$eq\": \"drama\"}}",
+                    AWS2S3VectorsEndpoint.class);
+            List<Exchange> received = new ArrayList<>();
+            AWS2S3VectorsConsumer consumer = (AWS2S3VectorsConsumer) endpoint.createConsumer(received::add);
+            consumer.start();
+            try {
+                consumer.poll();
+            } finally {
+                consumer.stop();
+            }
+
+            QueryVectorsRequest request = captor.getValue();
+            assertThat(request.returnMetadata()).isTrue();
+            assertThat(request.returnDistance()).isTrue();
+            assertThat(request.filter()).isNotNull();
+            assertThat(request.filter().asMap().get("genre").asMap().get("$eq").asString()).isEqualTo("drama");
+
+            assertThat(received).hasSize(1);
+            Exchange exchange = received.get(0);
+            assertThat(exchange.getIn().getHeader(AWS2S3VectorsConstants.VECTOR_ID)).isEqualTo("v1");
+            assertThat(exchange.getIn().getHeader(AWS2S3VectorsConstants.DISTANCE)).isEqualTo(0.25f);
+            // the bucket and the index are inputs of the producer: the consumer must not set them, or a producer
+            // later in the route would write to the bucket and index of the consumer
+            assertThat(exchange.getIn().getHeader(AWS2S3VectorsConstants.VECTOR_BUCKET_NAME)).isNull();
+            assertThat(exchange.getIn().getHeader(AWS2S3VectorsConstants.VECTOR_INDEX_NAME)).isNull();
+        }
+    }
+
+    @Test
+    void consumerRejectsAMetadataFilterThatIsNotJson() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            S3VectorsClient client = Mockito.mock(S3VectorsClient.class);
+            context.getRegistry().bind("client", client);
+            context.start();
+
+            AWS2S3VectorsEndpoint endpoint = context.getEndpoint(
+                    "aws2-s3-vectors://test-bucket?vectorIndexName=test-index&s3VectorsClient=#client"
+                                                                 + "&consumerQueryVector=0.1,0.2&startScheduler=false"
+                                                                 + "&consumerMetadataFilter=genre = drama",
+                    AWS2S3VectorsEndpoint.class);
+            AWS2S3VectorsConsumer consumer = (AWS2S3VectorsConsumer) endpoint.createConsumer(exchange -> {
+            });
+
+            assertThatThrownBy(consumer::start)
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("consumerMetadataFilter");
         }
     }
 }

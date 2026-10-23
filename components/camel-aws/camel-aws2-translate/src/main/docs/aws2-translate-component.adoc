@@ -43,7 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 Required Translate component options
 
-You have to provide the amazonTranslateClient in the
+You have to provide the translateClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/translate/[Amazon Translate] service.
 
@@ -73,6 +73,19 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
 Camel-AWS Translate component provides the following operation on the producer side:
 
 - translateText
+
+=== Source and target language
+
+Each language is taken from its option, or else from its header:
+
+- the source language from the `sourceLanguage` option, or else the `CamelAwsTranslateSourceLanguage` header;
+- the target language from the `targetLanguage` option, or else the `CamelAwsTranslateTargetLanguage` header.
+
+So one language can be set as an option and the other as a header.
+With `autodetectSourceLanguage=true`, the source language is `auto`, and Amazon Translate detects it.
+
+When the target language is missing, or the source language is missing and `autodetectSourceLanguage` is not enabled,
+the producer fails with an `IllegalArgumentException` that names the option and the header to set.
 
 == Examples
 
