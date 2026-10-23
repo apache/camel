@@ -291,6 +291,14 @@ When configuring TLS through `SSLContextParameters` with a standalone `TrustMana
 When both a `TrustManager` and a keystore are configured on `TrustManagersParameters`, the `TrustManager` is now used,
 as with the other components that use `SSLContextParameters`; before, the keystore-based trust options were used.
 
+=== camel-cometd - the CORS filter allows credentials only for listed origins
+
+With `crossOriginFilterOn=true`, the CORS responses now include `Access-Control-Allow-Credentials: true` only when
+`allowedOrigins` lists the origins explicitly, without any `*` or `null`. When `allowedOrigins` is not set, is `*`, or
+has an entry with a wildcard such as `https://*` or an entry `null`, the origin is still allowed, but without
+credentials. Previously credentials were allowed for every origin. A cross-origin client that sends cookies or other
+credentials must have its origin listed in `allowedOrigins`.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
