@@ -59,6 +59,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("aws-bedrock-agent-runtime", "camel-aws-bedrock"),
             Map.<String, String> entry("aws-cloudtrail", "camel-aws-cloudtrail"),
             Map.<String, String> entry("aws-config", "camel-aws-config"),
+            Map.<String, String> entry("aws-parameter-store", "camel-aws-parameter-store"),
             Map.<String, String> entry("aws-secrets-manager", "camel-aws-secrets-manager"),
             Map.<String, String> entry("aws-security-hub", "camel-aws-security-hub"),
             Map.<String, String> entry("aws2-athena", "camel-aws2-athena"),

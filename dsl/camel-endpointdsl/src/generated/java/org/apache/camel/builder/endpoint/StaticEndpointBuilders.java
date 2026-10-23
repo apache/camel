@@ -1127,6 +1127,46 @@ public class StaticEndpointBuilders {
         return AWSConfigEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * Syntax: <code>aws-parameter-store:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static ParameterStoreEndpointBuilderFactory.ParameterStoreEndpointBuilder awsParameterStore(String path) {
+        return awsParameterStore("aws-parameter-store", path);
+    }
+    /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * Syntax: <code>aws-parameter-store:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static ParameterStoreEndpointBuilderFactory.ParameterStoreEndpointBuilder awsParameterStore(String componentName, String path) {
+        return ParameterStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 

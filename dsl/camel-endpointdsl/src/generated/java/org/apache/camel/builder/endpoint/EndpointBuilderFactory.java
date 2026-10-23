@@ -304,6 +304,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.PQCEndpointBuilderFactory.PQCBuilders,
             org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.PahoBuilders,
             org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.PahoMqtt5Builders,
+            org.apache.camel.builder.endpoint.dsl.ParameterStoreEndpointBuilderFactory.ParameterStoreBuilders,
             org.apache.camel.builder.endpoint.dsl.PdfEndpointBuilderFactory.PdfBuilders,
             org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.PgEventBuilders,
             org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotBuilders,

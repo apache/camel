@@ -343,6 +343,19 @@ public class EndpointHeaderBuilders {
         return AWSConfigEndpointBuilderFactory.AWSConfigHeaderNameBuilder.INSTANCE;
     }
     /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static ParameterStoreEndpointBuilderFactory.ParameterStoreHeaderNameBuilder awsParameterStore() {
+        return ParameterStoreEndpointBuilderFactory.ParameterStoreHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 
