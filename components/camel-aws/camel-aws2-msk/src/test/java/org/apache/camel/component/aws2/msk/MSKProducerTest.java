@@ -28,8 +28,10 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo;
 import software.amazon.awssdk.services.kafka.model.ClusterState;
+import software.amazon.awssdk.services.kafka.model.CreateClusterRequest;
 import software.amazon.awssdk.services.kafka.model.CreateClusterResponse;
 import software.amazon.awssdk.services.kafka.model.DeleteClusterResponse;
+import software.amazon.awssdk.services.kafka.model.DescribeClusterRequest;
 import software.amazon.awssdk.services.kafka.model.DescribeClusterResponse;
 import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
@@ -177,6 +179,54 @@ public class MSKProducerTest extends CamelTestSupport {
                 .hasRootCauseMessage("describeCluster operation requires DescribeClusterRequest in POJO mode");
     }
 
+    @Test
+    void noOperationReportsHowToSetIt() {
+        assertThatThrownBy(() -> template.requestBody("direct:noOperation", "body"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(
+                        "Operation must be specified, either with the operation option or the CamelAwsMSKOperation header");
+    }
+
+    @Test
+    void createClusterWithBrokerNodesGroupInfoAsTextThrows() {
+        assertThatThrownBy(() -> template.requestBodyAndHeaders("direct:createCluster", "body",
+                Map.of(
+                        MSK2Constants.CLUSTER_NAME, "test-kafka",
+                        MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1",
+                        MSK2Constants.BROKER_NODES_NUMBER, 2,
+                        MSK2Constants.BROKER_NODES_GROUP_INFO, "kafka.m5.large")))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("The CamelAwsMSKBrokerNodesGroupInfo header must be a "
+                                     + BrokerNodeGroupInfo.class.getName() + " but was java.lang.String");
+    }
+
+    @Test
+    public void mskCreateClusterPojoSetsHeadersTest() throws Exception {
+        Exchange exchange = template.request("direct:createClusterPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody(CreateClusterRequest.builder().clusterName("test-kafka").kafkaVersion("2.1.1")
+                        .numberOfBrokerNodes(2).brokerNodeGroupInfo(BrokerNodeGroupInfo.builder().build()).build());
+            }
+        });
+
+        assertEquals("test-kafka", exchange.getMessage().getHeader(MSK2Constants.CLUSTER_ARN));
+        assertEquals(ClusterState.CREATING.name(), exchange.getMessage().getHeader(MSK2Constants.CLUSTER_STATE));
+    }
+
+    @Test
+    public void mskDescribeClusterPojoSetsHeadersTest() throws Exception {
+        Exchange exchange = template.request("direct:describeClusterPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody(DescribeClusterRequest.builder().clusterArn("test-kafka").build());
+            }
+        });
+
+        assertEquals("test-kafka", exchange.getMessage().getHeader(MSK2Constants.CLUSTER_ARN));
+        assertEquals(ClusterState.ACTIVE.name(), exchange.getMessage().getHeader(MSK2Constants.CLUSTER_STATE));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -193,6 +243,7 @@ public class MSKProducerTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:describeCluster").to("aws2-msk://test?mskClient=#amazonMskClient&operation=describeCluster")
                         .to("mock:result");
+                from("direct:noOperation").to("aws2-msk://test?mskClient=#amazonMskClient");
                 from("direct:createClusterPojo")
                         .to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster&pojoRequest=true");
                 from("direct:deleteClusterPojo")

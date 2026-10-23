@@ -19,29 +19,29 @@ package org.apache.camel.component.aws2.bedrock.agent;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Constants used in Camel AWS Bedrock Agent Runtime module SDK v2
+ * Constants used in Camel AWS Bedrock Agent module SDK v2
  */
 public interface BedrockAgentConstants {
     @Metadata(description = "The operation we want to perform", javaType = "String", label = "producer")
     String OPERATION = "CamelAwsBedrockAgentOperation";
 
-    @Metadata(description = "The header could be used to set up a data source Id dynamically while performing operation",
+    @Metadata(description = "The data source Id of the operation, used when the dataSourceId option is not set",
               javaType = "String", label = "producer")
     String DATASOURCE_ID = "CamelAwsBedrockAgentDataSourceId";
 
-    @Metadata(description = "The header could be used to set up a knowledge base Id dynamically while performing operation",
+    @Metadata(description = "The knowledge base Id of the operation, used when the knowledgeBaseId option is not set",
               javaType = "String", label = "producer")
     String KNOWLEDGE_BASE_ID = "CamelAwsBedrockAgentKnowledgeBaseId";
 
-    @Metadata(description = "The header contains the id of the ingestion job",
+    @Metadata(description = "The id of the ingestion job of the getIngestionJob operation, used when the ingestionJobId option is not set",
               javaType = "String", label = "producer")
     String INGESTION_JOB_ID = "CamelAwsBedrockAgentIngestionJobId";
 
-    @Metadata(description = "The header contains the status of the ingestion job",
-              javaType = "String", label = "consumer")
+    @Metadata(description = "The status of the ingestion job, set by the consumer and by the getIngestionJob operation",
+              javaType = "software.amazon.awssdk.services.bedrockagent.model.IngestionJobStatus", label = "common")
     String INGESTION_JOB_STATUS = "CamelAwsBedrockAgentIngestionJobStatus";
 
-    @Metadata(description = "The header contains the failure reasons of the ingestion job",
-              javaType = "java.util.List", label = "common")
+    @Metadata(description = "The failure reasons of the ingestion job, set by the consumer and by the getIngestionJob operation when the job has failure reasons",
+              javaType = "List<String>", label = "common")
     String INGESTION_JOB_FAILURE_REASONS = "CamelAwsBedrockAgentIngestionJobFailureReasons";
 }

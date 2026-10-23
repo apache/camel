@@ -130,7 +130,7 @@ public class Rekognition2Configuration implements Cloneable, AwsCommonConfigurat
     }
 
     /**
-     * The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction
+     * The operation to perform
      */
     public void setOperation(Rekognition2Operations operation) {
         this.operation = operation;

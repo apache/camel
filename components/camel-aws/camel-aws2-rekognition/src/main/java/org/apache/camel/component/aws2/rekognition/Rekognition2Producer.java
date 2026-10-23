@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.rekognition;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -156,7 +157,45 @@ public class Rekognition2Producer extends DefaultProducer {
         if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + Rekognition2Constants.OPERATION
+                                               + " header");
+        }
         return operation;
+    }
+
+    /**
+     * The facial attributes of a header, as the names of the AWS SDK (such as DEFAULT or ALL). The header can hold a
+     * collection (or array) of String or {@link Attribute} values, or a comma separated String.
+     */
+    private static List<String> getAttributeNames(Exchange exchange, String header) {
+        Object value = exchange.getIn().getHeader(header);
+        Collection<?> elements;
+        if (value instanceof Collection<?> collection) {
+            elements = collection;
+        } else if (value instanceof Object[] array) {
+            elements = List.of(array);
+        } else if (value instanceof String names) {
+            elements = List.of(names.split(","));
+        } else {
+            elements = List.of(value);
+        }
+        List<String> answer = new ArrayList<>();
+        for (Object element : elements) {
+            if (element instanceof Attribute attribute) {
+                answer.add(attribute.toString());
+            } else if (element instanceof String name) {
+                if (!name.isBlank()) {
+                    answer.add(name.trim());
+                }
+            } else if (element != null) {
+                throw new IllegalArgumentException(
+                        "The " + header + " header must hold String or " + Attribute.class.getName()
+                                                   + " values, but holds a " + element.getClass().getName());
+            }
+        }
+        return answer;
     }
 
     protected Rekognition2Configuration getConfiguration() {
@@ -531,8 +570,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 builder.image(image);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Rekognition2Constants.FACIAL_ATTRIBUTES))) {
-                List<Attribute> attributes = exchange.getIn().getHeader(Rekognition2Constants.FACIAL_ATTRIBUTES, List.class);
-                builder.attributes(attributes);
+                builder.attributesWithStrings(getAttributeNames(exchange, Rekognition2Constants.FACIAL_ATTRIBUTES));
             }
             DetectFacesResponse result;
             try {
@@ -881,9 +919,8 @@ public class Rekognition2Producer extends DefaultProducer {
                 builder.externalImageId(externalImageId);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Rekognition2Constants.DETECTION_ATTRIBUTES))) {
-                Collection<Attribute> detectionAttributes
-                        = exchange.getIn().getHeader(Rekognition2Constants.DETECTION_ATTRIBUTES, Collection.class);
-                builder.detectionAttributes(detectionAttributes);
+                builder.detectionAttributesWithStrings(
+                        getAttributeNames(exchange, Rekognition2Constants.DETECTION_ATTRIBUTES));
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Rekognition2Constants.MAX_FACES))) {
                 Integer maxFaces = exchange.getIn().getHeader(Rekognition2Constants.MAX_FACES, Integer.class);

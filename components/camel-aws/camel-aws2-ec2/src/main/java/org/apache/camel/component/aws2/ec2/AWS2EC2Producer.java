@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.aws2.ec2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -124,6 +126,11 @@ public class AWS2EC2Producer extends DefaultProducer {
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
+        if (ObjectHelper.isEmpty(operation)) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + AWS2EC2Constants.OPERATION
+                                               + " header");
+        }
         return operation;
     }
 
@@ -174,8 +181,8 @@ public class AWS2EC2Producer extends DefaultProducer {
                 throw new IllegalArgumentException("AMI must be specified");
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_TYPE))) {
-                instanceType = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.class);
-                builder.instanceType(instanceType.toString());
+                instanceType = getInstanceType(exchange);
+                builder.instanceType(instanceType);
             } else {
                 throw new IllegalArgumentException("Instance Type must be specified");
             }
@@ -261,8 +268,8 @@ public class AWS2EC2Producer extends DefaultProducer {
             }
         } else {
             StartInstancesRequest.Builder builder = StartInstancesRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+            instanceIds = getInstanceIds(exchange);
+            if (ObjectHelper.isNotEmpty(instanceIds)) {
                 builder.instanceIds(instanceIds);
             } else {
                 throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
@@ -306,8 +313,8 @@ public class AWS2EC2Producer extends DefaultProducer {
             }
         } else {
             StopInstancesRequest.Builder builder = StopInstancesRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+            instanceIds = getInstanceIds(exchange);
+            if (ObjectHelper.isNotEmpty(instanceIds)) {
                 builder.instanceIds(instanceIds);
             } else {
                 throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
@@ -351,8 +358,8 @@ public class AWS2EC2Producer extends DefaultProducer {
             }
         } else {
             TerminateInstancesRequest.Builder builder = TerminateInstancesRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+            instanceIds = getInstanceIds(exchange);
+            if (ObjectHelper.isNotEmpty(instanceIds)) {
                 builder.instanceIds(instanceIds);
             } else {
                 throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
@@ -383,7 +390,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 () -> {
                     DescribeInstancesRequest.Builder builder = DescribeInstancesRequest.builder();
                     Collection<String> instanceIds
-                            = getOptionalHeader(exchange, AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                            = getInstanceIds(exchange);
                     if (ObjectHelper.isNotEmpty(instanceIds)) {
                         builder.instanceIds(instanceIds);
                     }
@@ -413,7 +420,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 () -> {
                     DescribeInstanceStatusRequest.Builder builder = DescribeInstanceStatusRequest.builder();
                     Collection<String> instanceIds
-                            = getOptionalHeader(exchange, AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                            = getInstanceIds(exchange);
                     if (ObjectHelper.isNotEmpty(instanceIds)) {
                         builder.instanceIds(instanceIds);
                     }
@@ -453,8 +460,8 @@ public class AWS2EC2Producer extends DefaultProducer {
             }
         } else {
             RebootInstancesRequest.Builder builder = RebootInstancesRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+            instanceIds = getInstanceIds(exchange);
+            if (ObjectHelper.isNotEmpty(instanceIds)) {
                 builder.instanceIds(instanceIds);
             } else {
                 throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
@@ -494,8 +501,8 @@ public class AWS2EC2Producer extends DefaultProducer {
             }
         } else {
             MonitorInstancesRequest.Builder builder = MonitorInstancesRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+            instanceIds = getInstanceIds(exchange);
+            if (ObjectHelper.isNotEmpty(instanceIds)) {
                 builder.instanceIds(instanceIds);
             } else {
                 throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
@@ -539,8 +546,8 @@ public class AWS2EC2Producer extends DefaultProducer {
             }
         } else {
             UnmonitorInstancesRequest.Builder builder = UnmonitorInstancesRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+            instanceIds = getInstanceIds(exchange);
+            if (ObjectHelper.isNotEmpty(instanceIds)) {
                 builder.instanceIds(instanceIds);
             } else {
                 throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
@@ -585,8 +592,8 @@ public class AWS2EC2Producer extends DefaultProducer {
         } else {
             Collection<Tag> tags;
             CreateTagsRequest.Builder builder = CreateTagsRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+            instanceIds = getInstanceIds(exchange);
+            if (ObjectHelper.isNotEmpty(instanceIds)) {
                 builder.resources(instanceIds);
             } else {
                 throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
@@ -637,8 +644,8 @@ public class AWS2EC2Producer extends DefaultProducer {
         } else {
             Collection<Tag> tags;
             DeleteTagsRequest.Builder builder = DeleteTagsRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+            instanceIds = getInstanceIds(exchange);
+            if (ObjectHelper.isNotEmpty(instanceIds)) {
                 builder.resources(instanceIds);
             } else {
                 throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
@@ -668,6 +675,63 @@ public class AWS2EC2Producer extends DefaultProducer {
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+
+    /**
+     * The instance type of the {@link AWS2EC2Constants#INSTANCE_TYPE} header: an {@link InstanceType}, its AWS value
+     * (such as t2.micro), or the name of the constant (such as T2_MICRO).
+     */
+    private InstanceType getInstanceType(Exchange exchange) {
+        Object value = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_TYPE);
+        if (value instanceof InstanceType instanceType) {
+            return instanceType;
+        }
+        String text = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_TYPE, String.class);
+        if (text != null) {
+            text = text.trim();
+            InstanceType instanceType = InstanceType.fromValue(text);
+            if (instanceType != null && instanceType != InstanceType.UNKNOWN_TO_SDK_VERSION) {
+                return instanceType;
+            }
+            for (InstanceType candidate : InstanceType.knownValues()) {
+                if (candidate.name().equals(text)) {
+                    return candidate;
+                }
+            }
+        }
+        throw new IllegalArgumentException(
+                "Unknown instance type " + value + " in the " + AWS2EC2Constants.INSTANCE_TYPE
+                                           + " header: expected an InstanceType, such as t2.micro or T2_MICRO");
+    }
+
+    /**
+     * The instance ids of the {@link AWS2EC2Constants#INSTANCES_IDS} header: a Collection of ids, or a String of ids
+     * separated by commas. Returns null when the header is not set.
+     */
+    private Collection<String> getInstanceIds(Exchange exchange) {
+        Object value = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Collection<?> collection) {
+            List<String> ids = new ArrayList<>(collection.size());
+            for (Object id : collection) {
+                ids.add(id != null ? id.toString() : null);
+            }
+            return ids;
+        }
+        if (value instanceof String text) {
+            List<String> ids = new ArrayList<>();
+            for (String id : text.split(",")) {
+                if (!id.isBlank()) {
+                    ids.add(id.trim());
+                }
+            }
+            return ids;
+        }
+        throw new IllegalArgumentException(
+                "The " + AWS2EC2Constants.INSTANCES_IDS + " header must be a Collection<String> or a String of ids"
+                                           + " separated by commas, but was " + value.getClass().getName());
     }
 
     /**

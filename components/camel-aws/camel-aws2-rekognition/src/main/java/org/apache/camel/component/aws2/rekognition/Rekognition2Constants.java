@@ -37,13 +37,17 @@ public interface Rekognition2Constants {
               javaType = "Float")
     String USER_MATCH_THRESHOLD = "CamelAwsRekognitionUserMatchThreshold";
 
-    @Metadata(description = "The ID of the User", javaType = "String")
+    @Metadata(description = "Idempotency token of the request: a retry of associateFaces, createUser, deleteUser, "
+                            + "disassociateFaces or startMediaAnalysisJob with the same token is not processed again",
+              javaType = "String")
     String CLIENT_REQUEST_TOKEN = "CamelAwsRekognitionClientRequestToken";
 
-    @Metadata(description = "Source Input Image", javaType = "software.amazon.awssdk.services.rekognition.model.Image")
+    @Metadata(description = "Source Input Image of compareFaces",
+              javaType = "software.amazon.awssdk.services.rekognition.model.Image")
     String SOURCE_IMAGE = "CamelAwsRekognitionSourceImage";
 
-    @Metadata(description = "Target Input Image", javaType = "software.amazon.awssdk.services.rekognition.model.Image")
+    @Metadata(description = "Target Input Image of compareFaces",
+              javaType = "software.amazon.awssdk.services.rekognition.model.Image")
     String TARGET_IMAGE = "CamelAwsRekognitionTargetImage";
 
     @Metadata(description = "Similarity Score Threshold", javaType = "Float")
@@ -52,11 +56,13 @@ public interface Rekognition2Constants {
     @Metadata(description = "Allows to filter out detected faces that don’t meet a required quality bar.", javaType = "String")
     String QUALITY_FILTER = "CamelAwsRekognitionQualityFilter";
 
-    @Metadata(description = "Input Image", javaType = "software.amazon.awssdk.services.rekognition.model.Image")
+    @Metadata(description = "Input Image of the operations that analyze an image (all but compareFaces, which uses the source and target image headers)",
+              javaType = "software.amazon.awssdk.services.rekognition.model.Image")
     String IMAGE = "CamelAwsRekognitionImage";
 
-    @Metadata(description = "Facial Attributes to be returned",
-              javaType = "List<oftware.amazon.awssdk.services.rekognition.model.Attribute>")
+    @Metadata(description = "Facial Attributes to be returned by detectFaces: the names of the attributes (such as DEFAULT or ALL),"
+                            + " or Attribute values of the AWS SDK",
+              javaType = "Collection<String>")
     String FACIAL_ATTRIBUTES = "CamelAwsRekognitionFacialAttributes";
 
     @Metadata(description = "Maximum Labels to detect", javaType = "Integer")
@@ -116,7 +122,9 @@ public interface Rekognition2Constants {
     @Metadata(description = "The ID used to identify a user in the collection", javaType = "String")
     String EXTERNAL_IMAGE_ID = "CamelAwsRekognitionExternalImageId";
 
-    @Metadata(description = "An array of facial attributes to return", javaType = "Collection<String>")
+    @Metadata(description = "Facial Attributes to be returned by indexFaces: the names of the attributes (such as DEFAULT or ALL),"
+                            + " or Attribute values of the AWS SDK",
+              javaType = "Collection<String>")
     String DETECTION_ATTRIBUTES = "CamelAwsRekognitionDetectionAttributes";
 
     @Metadata(description = "The maximum number of faces to index", javaType = "Integer")

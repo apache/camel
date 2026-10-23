@@ -45,8 +45,7 @@ public interface Rekognition2EndpointBuilderFactory {
         }
 
         /**
-         * The operation to perform. It can be listFunctions, getFunction,
-         * createFunction, deleteFunction or invokeFunction.
+         * The operation to perform.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.rekognition.Rekognition2Operations</code> type.
@@ -62,8 +61,7 @@ public interface Rekognition2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform. It can be listFunctions, getFunction,
-         * createFunction, deleteFunction or invokeFunction.
+         * The operation to perform.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.rekognition.Rekognition2Operations</code> type.
@@ -656,7 +654,9 @@ public interface Rekognition2EndpointBuilderFactory {
             return "CamelAwsRekognitionUserMatchThreshold";
         }
         /**
-         * The ID of the User.
+         * Idempotency token of the request: a retry of associateFaces,
+         * createUser, deleteUser, disassociateFaces or startMediaAnalysisJob
+         * with the same token is not processed again.
          * 
          * The option is a: {@code String} type.
          * 
@@ -669,7 +669,7 @@ public interface Rekognition2EndpointBuilderFactory {
             return "CamelAwsRekognitionClientRequestToken";
         }
         /**
-         * Source Input Image.
+         * Source Input Image of compareFaces.
          * 
          * The option is a: {@code
          * software.amazon.awssdk.services.rekognition.model.Image} type.
@@ -682,7 +682,7 @@ public interface Rekognition2EndpointBuilderFactory {
             return "CamelAwsRekognitionSourceImage";
         }
         /**
-         * Target Input Image.
+         * Target Input Image of compareFaces.
          * 
          * The option is a: {@code
          * software.amazon.awssdk.services.rekognition.model.Image} type.
@@ -721,7 +721,8 @@ public interface Rekognition2EndpointBuilderFactory {
             return "CamelAwsRekognitionQualityFilter";
         }
         /**
-         * Input Image.
+         * Input Image of the operations that analyze an image (all but
+         * compareFaces, which uses the source and target image headers).
          * 
          * The option is a: {@code
          * software.amazon.awssdk.services.rekognition.model.Image} type.
@@ -734,11 +735,11 @@ public interface Rekognition2EndpointBuilderFactory {
             return "CamelAwsRekognitionImage";
         }
         /**
-         * Facial Attributes to be returned.
+         * Facial Attributes to be returned by detectFaces: the names of the
+         * attributes (such as DEFAULT or ALL), or Attribute values of the AWS
+         * SDK.
          * 
-         * The option is a: {@code
-         * List<oftware.amazon.awssdk.services.rekognition.model.Attribute>}
-         * type.
+         * The option is a: {@code Collection<String>} type.
          * 
          * Group: producer
          * 
@@ -957,7 +958,9 @@ public interface Rekognition2EndpointBuilderFactory {
             return "CamelAwsRekognitionExternalImageId";
         }
         /**
-         * An array of facial attributes to return.
+         * Facial Attributes to be returned by indexFaces: the names of the
+         * attributes (such as DEFAULT or ALL), or Attribute values of the AWS
+         * SDK.
          * 
          * The option is a: {@code Collection<String>} type.
          * 

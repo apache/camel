@@ -66,6 +66,11 @@ public class BedrockAgentProducer extends DefaultProducer {
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + BedrockAgentConstants.OPERATION
+                                               + " header");
+        }
         return operation;
     }
 

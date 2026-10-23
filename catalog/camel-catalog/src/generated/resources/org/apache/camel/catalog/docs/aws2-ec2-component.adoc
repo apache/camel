@@ -155,6 +155,9 @@ YAML::
 
 - startInstances: this operation will start a list of EC2 instances
 
+The `CamelAwsEC2InstancesIds` header is a collection of instance IDs, or a String of IDs separated by commas
+(such as `i-1,i-2`), which can be set from XML and YAML routes too.
+
 ._Java-only: sets a collection header for instance IDs_
 [source,java]
 ----

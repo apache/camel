@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.ec2;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,8 +39,8 @@ import software.amazon.awssdk.services.ec2.model.StopInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.TerminateInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EC2ComponentSpringTest extends CamelSpringTestSupport {
 
@@ -180,15 +181,15 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
 
     @Test
     public void ec2RebootInstancesTest() {
-        assertDoesNotThrow(() -> issueReboot());
-    }
-
-    private void issueReboot() {
-        template.request("direct:reboot", exchange -> {
+        Exchange exchange = template.request("direct:reboot", e -> {
             Collection<String> l = new ArrayList<>();
             l.add("test-1");
-            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
+            e.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
         });
+
+        assertNull(exchange.getException());
+        AmazonEC2ClientMock client = context.getRegistry().lookupByNameAndType("amazonEc2Client", AmazonEC2ClientMock.class);
+        assertEquals(List.of("test-1"), client.getLastRebootInstancesRequest().instanceIds());
     }
 
     @Test

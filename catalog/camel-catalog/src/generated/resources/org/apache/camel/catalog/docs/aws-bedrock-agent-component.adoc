@@ -14,8 +14,9 @@
 
 *{component-header}*
 
-The AWS2 Bedrock component supports invoking a supported LLM model from
-https://aws.amazon.com/bedrock/[AWS Bedrock] service.
+The AWS Bedrock Agent component works with the ingestion jobs of the knowledge bases of the
+https://aws.amazon.com/bedrock/[AWS Bedrock] service: an ingestion job syncs a data source into a knowledge base.
+The producer starts, lists and gets ingestion jobs, and the consumer polls the state of one ingestion job.
 
 Prerequisites
 
@@ -27,7 +28,7 @@ https://aws.amazon.com/bedrock/[Amazon Bedrock].
 == URI Format
 
 -------------------------
-aws-bedrock-agent-runtime://label[?options]
+aws-bedrock-agent://label[?options]
 -------------------------
 
 You can append query options to the URI in the following format:
@@ -42,9 +43,9 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-Required Bedrock component options
+Required Bedrock Agent component options
 
-You have to provide the bedrockRuntimeClient in the
+You have to provide the bedrockAgentClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/bedrock/[Amazon Bedrock] service.
 
@@ -68,6 +69,33 @@ You have also the possibility of using Profile Credentials Provider, by specifyi
 Only one of static, default and profile credentials could be used at the same time.
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== Bedrock Agent Producer operations
+
+The producer supports the following operations, set with the `operation` option or the `CamelAwsBedrockAgentOperation` header:
+
+- startIngestionJob: starts an ingestion job of the data source `dataSourceId` into the knowledge base `knowledgeBaseId`.
+The body is set to the id of the new ingestion job.
+- listIngestionJobs: lists the ingestion jobs of the data source `dataSourceId` of the knowledge base `knowledgeBaseId`.
+The body is set to the list of `IngestionJobSummary` of the AWS SDK.
+- getIngestionJob: gets the ingestion job `ingestionJobId` of the data source `dataSourceId` of the knowledge base `knowledgeBaseId`.
+The body is set to the `IngestionJob` of the AWS SDK, the `CamelAwsBedrockAgentIngestionJobStatus` header to its status,
+and the `CamelAwsBedrockAgentIngestionJobFailureReasons` header to its failure reasons, if it has any.
+
+The knowledge base, data source and ingestion job ids are taken from the `knowledgeBaseId`, `dataSourceId` and
+`ingestionJobId` options. The `CamelAwsBedrockAgentKnowledgeBaseId`, `CamelAwsBedrockAgentDataSourceId` and
+`CamelAwsBedrockAgentIngestionJobId` headers are used only when the option is not set.
+
+With `pojoRequest=true`, the body is the request of the AWS SDK instead (`StartIngestionJobRequest`,
+`ListIngestionJobsRequest` or `GetIngestionJobRequest`), and the ids are taken from it.
+
+=== Bedrock Agent Consumer
+
+The consumer polls the ingestion job `ingestionJobId` of the data source `dataSourceId` of the knowledge base
+`knowledgeBaseId`; the three options must be set. On every poll it sends an exchange with the `IngestionJob` of the AWS SDK
+as the body and the `CamelAwsBedrockAgentIngestionJobStatus` and `CamelAwsBedrockAgentIngestionJobFailureReasons` headers,
+as the getIngestionJob operation does. It does so on every poll, also when the job did not change since the previous poll,
+so filter on the status to act once the job is done, and set the poll `delay` to how often the job should be checked.
 
 === Example
 

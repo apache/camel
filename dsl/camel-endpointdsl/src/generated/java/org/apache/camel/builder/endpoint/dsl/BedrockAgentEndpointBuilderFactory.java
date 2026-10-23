@@ -44,7 +44,9 @@ public interface BedrockAgentEndpointBuilderFactory {
             return (AdvancedBedrockAgentEndpointConsumerBuilder) this;
         }
         /**
-         * Define the Data source Id we are going to use.
+         * Define the Data source Id we are going to use. The consumer and all
+         * the operations need it; when set, it is used instead of the
+         * CamelAwsBedrockAgentDataSourceId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -58,7 +60,25 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the Knowledge Base Id we are going to use.
+         * Define the Ingestion Job Id we want to track. The consumer and the
+         * getIngestionJob operation need it; when set, it is used instead of
+         * the CamelAwsBedrockAgentIngestionJobId header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param ingestionJobId the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentEndpointConsumerBuilder ingestionJobId(String ingestionJobId) {
+            doSetProperty("ingestionJobId", ingestionJobId);
+            return this;
+        }
+        /**
+         * Define the Knowledge Base Id we are going to use. The consumer and
+         * all the operations need it; when set, it is used instead of the
+         * CamelAwsBedrockAgentKnowledgeBaseId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -72,7 +92,8 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. It can be startIngestionJob,
+         * listIngestionJobs or getIngestionJob.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations</code> type.
@@ -88,7 +109,8 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. It can be startIngestionJob,
+         * listIngestionJobs or getIngestionJob.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations</code> type.
@@ -277,20 +299,6 @@ public interface BedrockAgentEndpointBuilderFactory {
          */
         default BedrockAgentEndpointConsumerBuilder useProfileCredentialsProvider(String useProfileCredentialsProvider) {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Define the Ingestion Job Id we want to track.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         * 
-         * @param ingestionJobId the value to set
-         * @return the dsl builder
-         */
-        default BedrockAgentEndpointConsumerBuilder ingestionJobId(String ingestionJobId) {
-            doSetProperty("ingestionJobId", ingestionJobId);
             return this;
         }
         /**
@@ -1175,7 +1183,9 @@ public interface BedrockAgentEndpointBuilderFactory {
         }
 
         /**
-         * Define the Data source Id we are going to use.
+         * Define the Data source Id we are going to use. The consumer and all
+         * the operations need it; when set, it is used instead of the
+         * CamelAwsBedrockAgentDataSourceId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1189,7 +1199,25 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the Knowledge Base Id we are going to use.
+         * Define the Ingestion Job Id we want to track. The consumer and the
+         * getIngestionJob operation need it; when set, it is used instead of
+         * the CamelAwsBedrockAgentIngestionJobId header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param ingestionJobId the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentEndpointProducerBuilder ingestionJobId(String ingestionJobId) {
+            doSetProperty("ingestionJobId", ingestionJobId);
+            return this;
+        }
+        /**
+         * Define the Knowledge Base Id we are going to use. The consumer and
+         * all the operations need it; when set, it is used instead of the
+         * CamelAwsBedrockAgentKnowledgeBaseId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1203,7 +1231,8 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. It can be startIngestionJob,
+         * listIngestionJobs or getIngestionJob.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations</code> type.
@@ -1219,7 +1248,8 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. It can be startIngestionJob,
+         * listIngestionJobs or getIngestionJob.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations</code> type.
@@ -1696,7 +1726,9 @@ public interface BedrockAgentEndpointBuilderFactory {
         }
 
         /**
-         * Define the Data source Id we are going to use.
+         * Define the Data source Id we are going to use. The consumer and all
+         * the operations need it; when set, it is used instead of the
+         * CamelAwsBedrockAgentDataSourceId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1710,7 +1742,25 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the Knowledge Base Id we are going to use.
+         * Define the Ingestion Job Id we want to track. The consumer and the
+         * getIngestionJob operation need it; when set, it is used instead of
+         * the CamelAwsBedrockAgentIngestionJobId header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param ingestionJobId the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentEndpointBuilder ingestionJobId(String ingestionJobId) {
+            doSetProperty("ingestionJobId", ingestionJobId);
+            return this;
+        }
+        /**
+         * Define the Knowledge Base Id we are going to use. The consumer and
+         * all the operations need it; when set, it is used instead of the
+         * CamelAwsBedrockAgentKnowledgeBaseId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1724,7 +1774,8 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. It can be startIngestionJob,
+         * listIngestionJobs or getIngestionJob.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations</code> type.
@@ -1740,7 +1791,8 @@ public interface BedrockAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. It can be startIngestionJob,
+         * listIngestionJobs or getIngestionJob.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations</code> type.
@@ -2233,373 +2285,81 @@ public interface BedrockAgentEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeOperation}.
+         * @return the name of the header {@code AwsBedrockAgentOperation}.
          */
-        public String awsBedrockAgentRuntimeOperation() {
-            return "CamelAwsBedrockAgentRuntimeOperation";
+        public String awsBedrockAgentOperation() {
+            return "CamelAwsBedrockAgentOperation";
         }
         /**
-         * When retrieving and generating a response, this header will contain
-         * the citations.
+         * The data source Id of the operation, used when the dataSourceId
+         * option is not set.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeCitations}.
+         * @return the name of the header {@code AwsBedrockAgentDataSourceId}.
          */
-        public String awsBedrockAgentRuntimeCitations() {
-            return "CamelAwsBedrockAgentRuntimeCitations";
+        public String awsBedrockAgentDataSourceId() {
+            return "CamelAwsBedrockAgentDataSourceId";
         }
         /**
-         * When retrieving and generating a response, this header will contain
-         * he unique identifier of the session. Reuse the same value to continue
-         * the same session with the knowledge base.
+         * The knowledge base Id of the operation, used when the knowledgeBaseId
+         * option is not set.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeSessionId}.
+         * AwsBedrockAgentKnowledgeBaseId}.
          */
-        public String awsBedrockAgentRuntimeSessionId() {
-            return "CamelAwsBedrockAgentRuntimeSessionId";
+        public String awsBedrockAgentKnowledgeBaseId() {
+            return "CamelAwsBedrockAgentKnowledgeBaseId";
         }
         /**
-         * The unique identifier of the agent to invoke. Overrides the agentId
-         * configured on the endpoint.
+         * The id of the ingestion job of the getIngestionJob operation, used
+         * when the ingestionJobId option is not set.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
-         * @return the name of the header {@code AwsBedrockAgentRuntimeAgentId}.
+         * @return the name of the header {@code AwsBedrockAgentIngestionJobId}.
          */
-        public String awsBedrockAgentRuntimeAgentId() {
-            return "CamelAwsBedrockAgentRuntimeAgentId";
+        public String awsBedrockAgentIngestionJobId() {
+            return "CamelAwsBedrockAgentIngestionJobId";
         }
         /**
-         * The unique identifier of the agent alias to invoke. Overrides the
-         * agentAliasId configured on the endpoint.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentAliasId}.
-         */
-        public String awsBedrockAgentRuntimeAgentAliasId() {
-            return "CamelAwsBedrockAgentRuntimeAgentAliasId";
-        }
-        /**
-         * Enables tracing for the agent invocation. When set, overrides the
-         * enableTrace option on the endpoint.
-         * 
-         * The option is a: {@code Boolean} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentEnableTrace}.
-         */
-        public String awsBedrockAgentRuntimeAgentEnableTrace() {
-            return "CamelAwsBedrockAgentRuntimeAgentEnableTrace";
-        }
-        /**
-         * Ends the agent session after this invocation.
-         * 
-         * The option is a: {@code Boolean} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentEndSession}.
-         */
-        public String awsBedrockAgentRuntimeAgentEndSession() {
-            return "CamelAwsBedrockAgentRuntimeAgentEndSession";
-        }
-        /**
-         * The unique identifier of the agent memory to use across sessions.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentMemoryId}.
-         */
-        public String awsBedrockAgentRuntimeAgentMemoryId() {
-            return "CamelAwsBedrockAgentRuntimeAgentMemoryId";
-        }
-        /**
-         * The streaming output mode (complete or chunks) for an agent
-         * invocation. When set, overrides the streamOutputMode option on the
-         * endpoint.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentStreamOutputMode}.
-         */
-        public String awsBedrockAgentRuntimeAgentStreamOutputMode() {
-            return "CamelAwsBedrockAgentRuntimeAgentStreamOutputMode";
-        }
-        /**
-         * The foundation model used by an inline agent. Overrides the
-         * foundationModel configured on the endpoint.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentFoundationModel}.
-         */
-        public String awsBedrockAgentRuntimeAgentFoundationModel() {
-            return "CamelAwsBedrockAgentRuntimeAgentFoundationModel";
-        }
-        /**
-         * The instruction given to an inline agent. Overrides the instruction
-         * configured on the endpoint.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentInstruction}.
-         */
-        public String awsBedrockAgentRuntimeAgentInstruction() {
-            return "CamelAwsBedrockAgentRuntimeAgentInstruction";
-        }
-        /**
-         * When invoking an agent with tracing enabled, this header will contain
-         * the list of TracePart emitted during the invocation. The elements are
-         * TracePart for invokeAgent and InlineAgentTracePart for
-         * invokeInlineAgent.
-         * 
-         * The option is a: {@code java.util.List} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentTraces}.
-         */
-        public String awsBedrockAgentRuntimeAgentTraces() {
-            return "CamelAwsBedrockAgentRuntimeAgentTraces";
-        }
-        /**
-         * When an agent invocation requires the caller to fulfil an action,
-         * this header will contain the list of return-control payloads emitted
-         * by the agent. The elements are ReturnControlPayload for invokeAgent
-         * and InlineAgentReturnControlPayload for invokeInlineAgent.
-         * 
-         * The option is a: {@code java.util.List} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentReturnControl}.
-         */
-        public String awsBedrockAgentRuntimeAgentReturnControl() {
-            return "CamelAwsBedrockAgentRuntimeAgentReturnControl";
-        }
-        /**
-         * When an agent invocation returns files, this header will contain the
-         * files emitted by the agent. The elements are FilePart for invokeAgent
-         * and InlineAgentFilePart for invokeInlineAgent.
-         * 
-         * The option is a: {@code java.util.List} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeAgentFiles}.
-         */
-        public String awsBedrockAgentRuntimeAgentFiles() {
-            return "CamelAwsBedrockAgentRuntimeAgentFiles";
-        }
-        /**
-         * The unique identifier of the flow to invoke. Overrides the
-         * flowIdentifier configured on the endpoint.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeFlowIdentifier}.
-         */
-        public String awsBedrockAgentRuntimeFlowIdentifier() {
-            return "CamelAwsBedrockAgentRuntimeFlowIdentifier";
-        }
-        /**
-         * The unique identifier of the flow alias to invoke. Overrides the
-         * flowAliasIdentifier configured on the endpoint.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeFlowAliasIdentifier}.
-         */
-        public String awsBedrockAgentRuntimeFlowAliasIdentifier() {
-            return "CamelAwsBedrockAgentRuntimeFlowAliasIdentifier";
-        }
-        /**
-         * Enables tracing for the flow invocation. When set, overrides the
-         * enableTrace option on the endpoint.
-         * 
-         * The option is a: {@code Boolean} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeFlowEnableTrace}.
-         */
-        public String awsBedrockAgentRuntimeFlowEnableTrace() {
-            return "CamelAwsBedrockAgentRuntimeFlowEnableTrace";
-        }
-        /**
-         * The unique identifier of an in-progress flow execution to continue.
-         * Used for multi-turn flow conversations.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeFlowExecutionId}.
-         */
-        public String awsBedrockAgentRuntimeFlowExecutionId() {
-            return "CamelAwsBedrockAgentRuntimeFlowExecutionId";
-        }
-        /**
-         * When invoking a flow, this header will contain the list of
-         * FlowOutputEvent emitted by the flow.
+         * The status of the ingestion job, set by the consumer and by the
+         * getIngestionJob operation.
          * 
          * The option is a: {@code
-         * java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.FlowOutputEvent>} type.
+         * software.amazon.awssdk.services.bedrockagent.model.IngestionJobStatus} type.
          * 
          * Group: common
          * 
          * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeFlowOutputs}.
+         * AwsBedrockAgentIngestionJobStatus}.
          */
-        public String awsBedrockAgentRuntimeFlowOutputs() {
-            return "CamelAwsBedrockAgentRuntimeFlowOutputs";
+        public String awsBedrockAgentIngestionJobStatus() {
+            return "CamelAwsBedrockAgentIngestionJobStatus";
         }
         /**
-         * When invoking a flow with tracing enabled, this header will contain
-         * the list of FlowTraceEvent emitted during execution.
+         * The failure reasons of the ingestion job, set by the consumer and by
+         * the getIngestionJob operation when the job has failure reasons.
          * 
-         * The option is a: {@code
-         * java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.FlowTraceEvent>} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeFlowTraces}.
-         */
-        public String awsBedrockAgentRuntimeFlowTraces() {
-            return "CamelAwsBedrockAgentRuntimeFlowTraces";
-        }
-        /**
-         * When invoking a flow, this header will contain the reason the flow
-         * completed (set when a FlowCompletionEvent is received).
-         * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code List<String>} type.
          * 
          * Group: common
          * 
          * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeFlowCompletionReason}.
+         * AwsBedrockAgentIngestionJobFailureReasons}.
          */
-        public String awsBedrockAgentRuntimeFlowCompletionReason() {
-            return "CamelAwsBedrockAgentRuntimeFlowCompletionReason";
-        }
-        /**
-         * When performing a retrieve operation, this header will contain the
-         * list of KnowledgeBaseRetrievalResult chunks returned by the knowledge
-         * base.
-         * 
-         * The option is a: {@code
-         * java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalResult>} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeRetrievedResults}.
-         */
-        public String awsBedrockAgentRuntimeRetrievedResults() {
-            return "CamelAwsBedrockAgentRuntimeRetrievedResults";
-        }
-        /**
-         * Overrides the maximum number of results returned by the retrieve
-         * operation. Must be a positive Integer; when not set the AWS service
-         * default is used.
-         * 
-         * The option is a: {@code Integer} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeNumberOfResults}.
-         */
-        public String awsBedrockAgentRuntimeNumberOfResults() {
-            return "CamelAwsBedrockAgentRuntimeNumberOfResults";
-        }
-        /**
-         * Overrides the search type used by the retrieve operation. Accepts the
-         * AWS SearchType enum (HYBRID, SEMANTIC) or its String representation.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeSearchType}.
-         */
-        public String awsBedrockAgentRuntimeSearchType() {
-            return "CamelAwsBedrockAgentRuntimeSearchType";
-        }
-        /**
-         * Pagination token used by the retrieve operation. Set on the
-         * in-message to request the next page; set on the out-message when the
-         * response carries one.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeNextToken}.
-         */
-        public String awsBedrockAgentRuntimeNextToken() {
-            return "CamelAwsBedrockAgentRuntimeNextToken";
-        }
-        /**
-         * When performing a retrieve operation, this header will contain the
-         * guardrail action (if any) applied by the knowledge base.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code
-         * AwsBedrockAgentRuntimeRetrieveGuardrailAction}.
-         */
-        public String awsBedrockAgentRuntimeRetrieveGuardrailAction() {
-            return "CamelAwsBedrockAgentRuntimeRetrieveGuardrailAction";
+        public String awsBedrockAgentIngestionJobFailureReasons() {
+            return "CamelAwsBedrockAgentIngestionJobFailureReasons";
         }
     }
     static BedrockAgentEndpointBuilder endpointBuilder(String componentName, String path) {

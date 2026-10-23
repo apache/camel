@@ -1772,7 +1772,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -1791,7 +1791,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
      * Category: cloud,messaging
      * Since: 3.1

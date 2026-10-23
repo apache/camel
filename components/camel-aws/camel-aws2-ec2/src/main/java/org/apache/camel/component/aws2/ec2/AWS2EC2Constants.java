@@ -25,7 +25,8 @@ public interface AWS2EC2Constants {
 
     @Metadata(description = "An image ID of the AWS marketplace", javaType = "String")
     String IMAGE_ID = "CamelAwsEC2ImageId";
-    @Metadata(description = "The instance type we want to create and run",
+    @Metadata(description = "The instance type we want to create and run, as an InstanceType, its AWS value (such as t2.micro)"
+                            + " or the name of the constant (such as T2_MICRO)",
               javaType = "software.amazon.awssdk.services.ec2.model.InstanceType")
     String INSTANCE_TYPE = "CamelAwsEC2InstanceType";
     @Metadata(description = "The operation we want to perform", javaType = "String")
@@ -43,7 +44,7 @@ public interface AWS2EC2Constants {
     @Metadata(description = "The security groups to associate to the instances", javaType = "Collection<String>")
     String INSTANCE_SECURITY_GROUPS = "CamelAwsEC2InstanceSecurityGroups";
     @Metadata(description = "A collection of instances IDS to execute start, stop, describe and\n" +
-                            "terminate operations on.",
+                            "terminate operations on. A String of ids separated by commas is accepted too.",
               javaType = "Collection<String>")
     String INSTANCES_IDS = "CamelAwsEC2InstancesIds";
     @Metadata(description = "The name of the key pair.", javaType = "String")

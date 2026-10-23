@@ -22,7 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.bedrock.agent.client.BedrockAgentClientFactory;
-import org.apache.camel.component.aws2.bedrock.agentruntime.BedrockAgentRuntimeConstants;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,7 +34,7 @@ import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent", title = "AWS Bedrock Agent",
              syntax = "aws-bedrock-agent:label", category = { Category.AI, Category.CLOUD },
-             headersClass = BedrockAgentRuntimeConstants.class)
+             headersClass = BedrockAgentConstants.class)
 public class BedrockAgentEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockAgentClient bedrockAgentClient;

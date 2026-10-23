@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.mq;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -29,9 +30,11 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.mq.model.BrokerState;
 import software.amazon.awssdk.services.mq.model.ConfigurationId;
+import software.amazon.awssdk.services.mq.model.CreateBrokerRequest;
 import software.amazon.awssdk.services.mq.model.CreateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.DeleteBrokerResponse;
 import software.amazon.awssdk.services.mq.model.DeploymentMode;
+import software.amazon.awssdk.services.mq.model.DescribeBrokerRequest;
 import software.amazon.awssdk.services.mq.model.DescribeBrokerResponse;
 import software.amazon.awssdk.services.mq.model.EngineType;
 import software.amazon.awssdk.services.mq.model.ListBrokersRequest;
@@ -252,6 +255,93 @@ public class MQProducerTest extends CamelTestSupport {
                 .hasRootCauseMessage("describeBroker operation requires DescribeBrokerRequest in POJO mode");
     }
 
+    @Test
+    void noOperationReportsHowToSetIt() {
+        assertThatThrownBy(() -> template.requestBody("direct:noOperation", "body"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(
+                        "Operation must be specified, either with the operation option or the CamelAwsMQOperation header");
+    }
+
+    @Test
+    void createBrokerWithUsersAsStringsThrows() {
+        assertThatThrownBy(() -> template.requestBodyAndHeaders("direct:createBroker", "body",
+                Map.of(
+                        MQ2Constants.BROKER_NAME, "test",
+                        MQ2Constants.BROKER_DEPLOYMENT_MODE, DeploymentMode.SINGLE_INSTANCE.toString(),
+                        MQ2Constants.BROKER_INSTANCE_TYPE, "mq.t2.micro",
+                        MQ2Constants.BROKER_ENGINE, EngineType.ACTIVEMQ.name(),
+                        MQ2Constants.BROKER_ENGINE_VERSION, "5.15.6",
+                        MQ2Constants.BROKER_USERS, List.of("camel"))))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("The CamelAwsMQBrokerUsers header must be a List of " + User.class.getName()
+                                     + ", but it contains a java.lang.String");
+    }
+
+    @Test
+    void createBrokerWithUsersAsTextThrows() {
+        assertThatThrownBy(() -> template.requestBodyAndHeaders("direct:createBroker", "body",
+                Map.of(
+                        MQ2Constants.BROKER_NAME, "test",
+                        MQ2Constants.BROKER_DEPLOYMENT_MODE, DeploymentMode.SINGLE_INSTANCE.toString(),
+                        MQ2Constants.BROKER_INSTANCE_TYPE, "mq.t2.micro",
+                        MQ2Constants.BROKER_ENGINE, EngineType.ACTIVEMQ.name(),
+                        MQ2Constants.BROKER_ENGINE_VERSION, "5.15.6",
+                        MQ2Constants.BROKER_USERS, "camel")))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("The CamelAwsMQBrokerUsers header must be a List of " + User.class.getName()
+                                     + ", but was a java.lang.String");
+    }
+
+    @Test
+    public void mqUpdateBrokerWithConfigurationIdAsTextTest() throws Exception {
+        Exchange exchange = template.request("direct:updateBroker", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(MQ2Constants.BROKER_ID, "1");
+                exchange.getIn().setHeader(MQ2Constants.CONFIGURATION_ID, "c-123");
+            }
+        });
+
+        UpdateBrokerResponse resultGet = (UpdateBrokerResponse) exchange.getIn().getBody();
+        assertEquals("c-123", resultGet.configuration().id());
+    }
+
+    @Test
+    void mqUpdateBrokerWithConfigurationIdOfWrongTypeThrows() {
+        assertThatThrownBy(() -> template.requestBodyAndHeaders("direct:updateBroker", "body",
+                Map.of(MQ2Constants.BROKER_ID, "1", MQ2Constants.CONFIGURATION_ID, 123)))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("The CamelAwsMQConfigurationID header must be a " + ConfigurationId.class.getName()
+                                     + " or the id of the configuration as a String, but was java.lang.Integer");
+    }
+
+    @Test
+    public void mqCreateBrokerPojoSetsHeadersTest() throws Exception {
+        Exchange exchange = template.request("direct:createBrokerPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody(CreateBrokerRequest.builder().brokerName("test").build());
+            }
+        });
+
+        assertEquals("1", exchange.getMessage().getHeader(MQ2Constants.BROKER_ID));
+        assertEquals("test", exchange.getMessage().getHeader(MQ2Constants.BROKER_ARN));
+    }
+
+    @Test
+    public void mqDescribeBrokerPojoSetsHeadersTest() throws Exception {
+        Exchange exchange = template.request("direct:describeBrokerPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody(DescribeBrokerRequest.builder().brokerId("1").build());
+            }
+        });
+
+        assertEquals("test", exchange.getMessage().getHeader(MQ2Constants.BROKER_ARN));
+        assertEquals(BrokerState.RUNNING.toString(), exchange.getMessage().getHeader(MQ2Constants.BROKER_STATE));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -272,6 +362,7 @@ public class MQProducerTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:describeBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=describeBroker")
                         .to("mock:result");
+                from("direct:noOperation").to("aws2-mq://test?amazonMqClient=#amazonMqClient");
                 from("direct:createBrokerPojo")
                         .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker&pojoRequest=true");
                 from("direct:deleteBrokerPojo")

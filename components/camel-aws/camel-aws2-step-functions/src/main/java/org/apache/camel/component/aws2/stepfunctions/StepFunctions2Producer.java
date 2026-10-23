@@ -79,6 +79,11 @@ public class StepFunctions2Producer extends DefaultProducer {
         if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + StepFunctions2Constants.OPERATION
+                                               + " header");
+        }
         return operation;
     }
 

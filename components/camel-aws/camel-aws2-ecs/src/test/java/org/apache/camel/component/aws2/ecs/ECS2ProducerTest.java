@@ -31,6 +31,7 @@ import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class ECS2ProducerTest extends CamelTestSupport {
 
@@ -131,11 +132,32 @@ public class ECS2ProducerTest extends CamelTestSupport {
         assertEquals("Test", resultGet.cluster().clusterName());
     }
 
+    @Test
+    public void ecsNoOperationTest() {
+        Exchange exchange = template.send("direct:noOperation", e -> {
+        });
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("Operation must be specified, either with the operation option or the CamelAwsECSOperation header",
+                cause.getMessage());
+    }
+
+    @Test
+    public void ecsListClustersPojoEmptyBodyTest() {
+        Exchange exchange = template.send("direct:listClustersPojo", e -> e.getIn().setBody(""));
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("Expected body of type " + ListClustersRequest.class.getName() + " but was java.lang.String",
+                cause.getMessage());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                from("direct:noOperation").to("aws2-ecs://test?ecsClient=#amazonEcsClient")
+                        .to("mock:result");
                 from("direct:listClusters").to("aws2-ecs://test?ecsClient=#amazonEcsClient&operation=listClusters")
                         .to("mock:result");
                 from("direct:listClustersPojo")

@@ -77,6 +77,11 @@ public class AWSConfigProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
+        if (ObjectHelper.isEmpty(operation)) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + AWSConfigConstants.OPERATION
+                                               + " header");
+        }
         return operation;
     }
 
@@ -245,7 +250,7 @@ public class AWSConfigProducer extends DefaultProducer {
                 String conformancePackName = exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME, String.class);
                 builder.conformancePackName(conformancePackName);
             } else {
-                throw new IllegalArgumentException("Rule Name must be specified");
+                throw new IllegalArgumentException("Conformance Pack Name must be specified");
             }
             String conformancePackS3TemplateUri = null;
             String conformancePackTemplateBody = null;
@@ -260,7 +265,8 @@ public class AWSConfigProducer extends DefaultProducer {
                 builder.templateBody(conformancePackTemplateBody);
             }
             if (ObjectHelper.isEmpty(conformancePackS3TemplateUri) && ObjectHelper.isEmpty(conformancePackTemplateBody)) {
-                throw new IllegalArgumentException("One of Conformace Pack S3 Template URI or Template Body must be specified");
+                throw new IllegalArgumentException(
+                        "One of Conformance Pack S3 Template URI or Template Body must be specified");
             }
             PutConformancePackResponse result;
             try {

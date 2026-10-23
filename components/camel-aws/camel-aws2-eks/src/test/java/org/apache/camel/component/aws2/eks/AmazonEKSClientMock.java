@@ -34,11 +34,18 @@ import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 
 public class AmazonEKSClientMock implements EksClient {
 
+    private CreateClusterRequest lastCreateClusterRequest;
+
     public AmazonEKSClientMock() {
+    }
+
+    public CreateClusterRequest getLastCreateClusterRequest() {
+        return lastCreateClusterRequest;
     }
 
     @Override
     public CreateClusterResponse createCluster(CreateClusterRequest request) {
+        lastCreateClusterRequest = request;
         CreateClusterResponse.Builder res = CreateClusterResponse.builder();
         Cluster cluster = Cluster.builder().name("Test").status(ClusterStatus.ACTIVE.name()).build();
         res.cluster(cluster);

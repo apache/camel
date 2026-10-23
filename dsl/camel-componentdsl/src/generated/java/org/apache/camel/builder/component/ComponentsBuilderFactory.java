@@ -588,7 +588,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
      * Category: cloud,messaging
      * Since: 3.1

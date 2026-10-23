@@ -367,11 +367,21 @@ public class StepFunctions2ProducerTest extends CamelTestSupport {
                 .hasRootCauseMessage(expectedMessage);
     }
 
+    @Test
+    void noOperationThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:noOperation", "test"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(
+                        "Operation must be specified, either with the operation option or the CamelAwsStepFunctionsOperation header");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                from("direct:noOperation")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient");
                 from("direct:createActivity")
                         .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createActivity")
                         .to("mock:result");

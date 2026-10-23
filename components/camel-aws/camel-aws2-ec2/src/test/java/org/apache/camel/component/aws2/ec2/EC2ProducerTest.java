@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.ec2;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -29,6 +30,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusResponse;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.InstanceStateName;
@@ -43,8 +45,9 @@ import software.amazon.awssdk.services.ec2.model.TerminateInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EC2ProducerTest extends CamelTestSupport {
 
@@ -208,15 +211,104 @@ public class EC2ProducerTest extends CamelTestSupport {
 
     @Test
     public void ec2RebootInstancesTest() {
-        assertDoesNotThrow(() -> issueReboot());
-    }
-
-    private void issueReboot() {
-        template.request("direct:reboot", exchange -> {
+        Exchange exchange = template.request("direct:reboot", e -> {
             Collection<String> l = new ArrayList<>();
             l.add("test-1");
-            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
+            e.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
         });
+
+        assertNull(exchange.getException());
+        assertEquals(List.of("test-1"), amazonEc2Client.getLastRebootInstancesRequest().instanceIds());
+    }
+
+    @Test
+    public void noOperation() {
+        Exchange exchange = template.send("direct:noOperation", e -> e.getIn().setBody("test"));
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("Operation must be specified, either with the operation option or the CamelAwsEC2Operation header",
+                exchange.getException().getMessage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "t2.micro", "T2_MICRO", " t2.micro " })
+    public void createAndRunInstancesWithInstanceTypeAsText(String instanceType) {
+        Exchange exchange = template.request("direct:createAndRun", e -> {
+            e.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "test-1");
+            e.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, instanceType);
+            e.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
+            e.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
+        });
+
+        assertNull(exchange.getException());
+        RunInstancesResponse resultGet = exchange.getMessage().getBody(RunInstancesResponse.class);
+        assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
+    }
+
+    @Test
+    public void createAndRunInstancesWithUnknownInstanceType() {
+        Exchange exchange = template.send("direct:createAndRun", e -> {
+            e.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "test-1");
+            e.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, "t2.nosuchsize");
+            e.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
+            e.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("Unknown instance type t2.nosuchsize in the CamelAwsEC2InstanceType header:"
+                     + " expected an InstanceType, such as t2.micro or T2_MICRO",
+                exchange.getException().getMessage());
+    }
+
+    @Test
+    public void stopInstancesWithIdsAsText() {
+        Exchange exchange = template.request("direct:stop",
+                e -> e.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, "test-1"));
+
+        assertNull(exchange.getException());
+        StopInstancesResponse resultGet = exchange.getMessage().getBody(StopInstancesResponse.class);
+        assertEquals(1, resultGet.stoppingInstances().size());
+        assertEquals("test-1", resultGet.stoppingInstances().get(0).instanceId());
+    }
+
+    @Test
+    public void rebootInstancesWithIdsSeparatedByCommas() {
+        Exchange exchange = template.request("direct:reboot",
+                e -> e.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, "test-1, test-2,,"));
+
+        assertNull(exchange.getException());
+        assertEquals(List.of("test-1", "test-2"), amazonEc2Client.getLastRebootInstancesRequest().instanceIds());
+    }
+
+    @Test
+    public void describeInstancesWithIdsAsText() {
+        Exchange exchange = template.request("direct:describe",
+                e -> e.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, "instance-1"));
+
+        assertNull(exchange.getException());
+        assertEquals(List.of("instance-1"), amazonEc2Client.getLastDescribeInstancesRequest().instanceIds());
+        DescribeInstancesResponse resultGet = exchange.getMessage().getBody(DescribeInstancesResponse.class);
+        assertEquals(1, resultGet.reservations().get(0).instances().size());
+    }
+
+    @Test
+    public void startInstancesWithOnlyCommasFails() {
+        Exchange exchange = template.send("direct:start",
+                e -> e.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, " , "));
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals(AWS2EC2Producer.MISSING_INSTANCES_MESSAGE, exchange.getException().getMessage());
+    }
+
+    @Test
+    public void stopInstancesWithIdsOfWrongTypeFails() {
+        Exchange exchange = template.send("direct:stop",
+                e -> e.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, 42));
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("The CamelAwsEC2InstancesIds header must be a Collection<String> or a String of ids separated by"
+                     + " commas, but was java.lang.Integer",
+                exchange.getException().getMessage());
     }
 
     @Test
@@ -282,6 +374,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                from("direct:noOperation")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client");
                 from("direct:createAndRun")
                         .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createAndRunInstances")
                         .to("mock:result");

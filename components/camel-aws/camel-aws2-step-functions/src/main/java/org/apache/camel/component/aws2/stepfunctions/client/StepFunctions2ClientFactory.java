@@ -18,6 +18,8 @@ package org.apache.camel.component.aws2.stepfunctions.client;
 
 import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.stepfunctions.StepFunctions2Configuration;
+import org.apache.camel.util.ObjectHelper;
+import software.amazon.awssdk.core.client.config.SdkAdvancedClientOption;
 import software.amazon.awssdk.services.sfn.SfnClient;
 
 /**
@@ -30,6 +32,9 @@ public final class StepFunctions2ClientFactory {
 
     /**
      * Create a SfnClient based on configuration.
+     * <p>
+     * When the endpoint is overridden (such as an emulator), the host prefix injection of the AWS SDK is disabled, as
+     * the SDK would otherwise put the {@code sync-} prefix before the host of the endpoint for startSyncExecution.
      *
      * @param  configuration The StepFunctions configuration
      * @return               Configured SfnClient
@@ -37,6 +42,13 @@ public final class StepFunctions2ClientFactory {
     public static SfnClient getSfnClient(StepFunctions2Configuration configuration) {
         return AwsClientBuilderUtil.buildClient(
                 configuration,
-                SfnClient::builder);
+                SfnClient::builder,
+                builder -> {
+                    if (configuration.isOverrideEndpoint()
+                            && ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+                        builder.overrideConfiguration(
+                                c -> c.putAdvancedOption(SdkAdvancedClientOption.DISABLE_HOST_PREFIX_INJECTION, true));
+                    }
+                });
     }
 }
