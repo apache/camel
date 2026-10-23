@@ -86,7 +86,7 @@ public class BatchConsumerRecoveryTest extends JmsExclusiveTestSupport {
         sendMessagesWithText(template, SJMS_QUEUE_NAME, 7, "After!");
 
         mock.assertIsSatisfied();
-        // fist batch
+        // first batch
         assertEquals(5, getBatchExchanges(mock.getExchanges().get(0)).size());
         assertEquals(List.of("Before!", "Before!", "After!", "After!", "After!"),
                 getBatchBodiesAsString(mock.getExchanges().get(0)));
