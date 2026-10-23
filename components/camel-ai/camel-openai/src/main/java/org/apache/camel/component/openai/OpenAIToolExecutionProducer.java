@@ -158,7 +158,8 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
         try {
             results = toolSearchEnabled
                     ? toolCallExecutor.execute(toolCalls, exchange,
-                            call -> toolSearch.execute(getEndpoint(), call, exchange))
+                            call -> toolSearch.execute(getEndpoint(), call, exchange),
+                            null)
                     : toolCallExecutor.execute(toolCalls, exchange);
         } finally {
             if (toolSearchEnabled) {

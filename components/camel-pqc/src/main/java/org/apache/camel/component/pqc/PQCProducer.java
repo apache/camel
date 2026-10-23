@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -41,6 +44,8 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridKEM;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
@@ -123,8 +128,9 @@ public class PQCProducer extends DefaultProducer {
     private KeyGenerator keyGenerator;
     private KeyPair keyPair;
 
-    // Keeps the "usage could not be recorded" warning to one line per producer instead of one per exchange
+    // Each keeps its warning to one line per producer instead of one per exchange
     private final AtomicBoolean usageRecordFailureWarned = new AtomicBoolean();
+    private final AtomicBoolean keyUsageNotRecordedWarned = new AtomicBoolean();
 
     // Set only when this producer created the Signature itself, so it knows how to create another one.
     // Left null when the user configured an instance, which then has to be shared and locked instead.
@@ -582,9 +588,13 @@ public class PQCProducer extends DefaultProducer {
             updateSignatureFromBody(signerForExchange, exchange.getMessage());
             signature = signerForExchange.sign();
         }
-        exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
 
+        // sign() has already advanced the one-time index inside a stateful private key. Record that before the
+        // signature leaves this processor, so a persistence failure fails the exchange instead of emitting a
+        // signature whose index advance was never stored - on restart that index would be handed out a second time.
         recordKeyUsageAfterSign(exchange);
+
+        exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
     }
 
     private void verification(Exchange exchange)
@@ -635,43 +645,111 @@ public class PQCProducer extends DefaultProducer {
     /**
      * Feeds the message body into the given {@link Signature} without materialising the whole payload as a String. A
      * {@code byte[]} body is used directly, an {@link InputStream} body is read in chunks (and reset afterwards when it
-     * is a re-readable {@link StreamCache} so downstream processors still see the payload), and any other body type
-     * falls back to its String representation, encoded as UTF-8.
+     * is a re-readable {@link StreamCache} so downstream processors still see the payload), and a file body is read in
+     * chunks from the file (see {@link #fileContent(Object)}). A {@code String} or {@link CharSequence} body is encoded
+     * as UTF-8, and any other body is read through {@link #rawBytes(Message, Object)}, which either gets its bytes or
+     * rejects it.
      */
     private static void updateSignatureFromBody(Signature signature, Message message)
             throws InvalidPayloadException, SignatureException, IOException {
-        Object body = message.getBody();
+        Object body = fileContent(message.getBody());
         if (body instanceof byte[] bytes) {
             signature.update(bytes);
+        } else if (body instanceof Path path) {
+            try (InputStream stream = Files.newInputStream(path)) {
+                updateSignatureFromStream(signature, stream);
+            }
         } else if (body instanceof InputStream stream) {
             try {
-                byte[] buffer = new byte[STREAM_BUFFER_SIZE];
-                int read;
-                while ((read = stream.read(buffer)) != -1) {
-                    signature.update(buffer, 0, read);
-                }
+                updateSignatureFromStream(signature, stream);
             } finally {
                 if (body instanceof StreamCache streamCache) {
                     streamCache.reset();
                 }
             }
+        } else if (body instanceof CharSequence text) {
+            signature.update(textToBytes(text));
         } else {
-            // Pin UTF-8: the JVM default charset is platform dependent, so signing and verifying on JVMs with a
-            // different default would disagree on the bytes for a non-ASCII payload
-            signature.update(message.getMandatoryBody(String.class).getBytes(StandardCharsets.UTF_8));
+            signature.update(rawBytes(message, body));
         }
+    }
+
+    /**
+     * Encodes a text body as UTF-8. The JVM default charset is platform dependent, so signing and verifying on JVMs
+     * with a different default would disagree on the bytes for a non-ASCII payload; UTF-8 keeps them in step.
+     */
+    private static byte[] textToBytes(CharSequence text) {
+        return text.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Returns the bytes of a body that is neither a {@code byte[]}, an {@link InputStream}, a file nor a
+     * {@link CharSequence}, by asking the type converter registry for a registered converter to {@code byte[]} - which
+     * covers bodies with a binary form such as a {@link java.nio.ByteBuffer}, a {@link java.io.ByteArrayOutputStream},
+     * a Netty {@code ByteBuf} or a Vert.x {@code Buffer}, so they are signed over their bytes rather than over a text
+     * rendering. A body with no such converter (for example a {@code Map} or a POJO) has no well-defined bytes to sign,
+     * so it is rejected with {@link InvalidPayloadException} rather than signed over an incidental text form. Fallback
+     * converters are not consulted, so the result does not depend on which components are on the classpath.
+     */
+    private static byte[] rawBytes(Message message, Object body) throws InvalidPayloadException {
+        Exchange exchange = message.getExchange();
+        if (body != null) {
+            // lookup finds only a registered converter, so a body with a binary form (ByteBuffer, ByteArrayOutputStream,
+            // Netty ByteBuf, Vert.x Buffer, ...) is converted, while a Map or POJO - which would only convert through a
+            // fallback converter, if any component provides one - is left for the InvalidPayloadException below, so the
+            // outcome does not depend on the classpath. tryConvertTo returns null instead of throwing on a miss.
+            TypeConverter converter = exchange.getContext().getTypeConverterRegistry().lookup(byte[].class, body.getClass());
+            if (converter != null) {
+                byte[] bytes = converter.tryConvertTo(byte[].class, exchange, body);
+                if (bytes != null) {
+                    return bytes;
+                }
+            }
+        }
+        throw new InvalidPayloadException(exchange, byte[].class, message);
+    }
+
+    private static void updateSignatureFromStream(Signature signature, InputStream stream)
+            throws SignatureException, IOException {
+        byte[] buffer = new byte[STREAM_BUFFER_SIZE];
+        int read;
+        while ((read = stream.read(buffer)) != -1) {
+            signature.update(buffer, 0, read);
+        }
+    }
+
+    /**
+     * Resolves a file body to the content to sign: a {@link WrappedFile} (the body of the file based consumers) gives
+     * its content, and a {@link File} is turned into its {@link Path}, so that the bytes of the file are read as they
+     * are. The content of a {@link WrappedFile} is a {@link File} for the local file system, otherwise the content the
+     * consumer has already loaded, such as a {@code byte[]} or an {@link InputStream}. Other bodies are not changed.
+     */
+    private static Object fileContent(Object body) {
+        if (body instanceof WrappedFile<?> wrappedFile) {
+            Object content = wrappedFile.getBody();
+            if (content != null) {
+                body = content;
+            }
+        }
+        if (body instanceof File file) {
+            return file.toPath();
+        }
+        return body;
     }
 
     /**
      * Returns the message body as a byte array without a String round-trip when it is already binary. Used by the
      * hybrid operations, which need the whole payload in memory. An {@link InputStream} is fully read (and reset
-     * afterwards when it is a re-readable {@link StreamCache}). Any other body type falls back to its String
-     * representation, encoded as UTF-8.
+     * afterwards when it is a re-readable {@link StreamCache}), and a file body is read from the file (see
+     * {@link #fileContent(Object)}). A {@code String} or {@link CharSequence} body is encoded as UTF-8, and any other
+     * body is read through {@link #rawBytes(Message, Object)}, which either gets its bytes or rejects it.
      */
     private static byte[] bodyToByteArray(Message message) throws InvalidPayloadException, IOException {
-        Object body = message.getBody();
+        Object body = fileContent(message.getBody());
         if (body instanceof byte[] bytes) {
             return bytes;
+        } else if (body instanceof Path path) {
+            return Files.readAllBytes(path);
         } else if (body instanceof InputStream stream) {
             try {
                 return stream.readAllBytes();
@@ -680,9 +758,10 @@ public class PQCProducer extends DefaultProducer {
                     streamCache.reset();
                 }
             }
+        } else if (body instanceof CharSequence text) {
+            return textToBytes(text);
         } else {
-            // Pin UTF-8, as updateSignatureFromBody does
-            return message.getMandatoryBody(String.class).getBytes(StandardCharsets.UTF_8);
+            return rawBytes(message, body);
         }
     }
 
@@ -830,15 +909,16 @@ public class PQCProducer extends DefaultProducer {
         // Parse to get individual signatures for headers
         HybridSignature.HybridSignatureComponents components = HybridSignature.parse(hybridSig);
 
-        exchange.getMessage().setHeader(PQCConstants.HYBRID_SIGNATURE, hybridSig);
-        exchange.getMessage().setHeader(PQCConstants.CLASSICAL_SIGNATURE, components.classicalSignature());
-        exchange.getMessage().setHeader(PQCConstants.PQC_SIGNATURE, components.pqcSignature());
-
+        // Recorded before the signatures are published, for the reason given in signature()
         try {
             recordKeyUsageAfterSign(exchange);
         } catch (Exception e) {
             throw new RuntimeCamelException("Failed to record key usage after hybrid signing", e);
         }
+
+        exchange.getMessage().setHeader(PQCConstants.HYBRID_SIGNATURE, hybridSig);
+        exchange.getMessage().setHeader(PQCConstants.CLASSICAL_SIGNATURE, components.classicalSignature());
+        exchange.getMessage().setHeader(PQCConstants.PQC_SIGNATURE, components.pqcSignature());
     }
 
     private void hybridVerification(Exchange exchange)
@@ -1224,18 +1304,25 @@ public class PQCProducer extends DefaultProducer {
             return;
         }
 
+        PrivateKey privateKey = keyPair.getPrivate();
+        boolean stateful = getStatefulKeyRemaining(privateKey) >= 0;
+
         KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
         if (klm == null) {
+            // Only the stateful risk is worth reporting here. A plain signing endpoint with no lifecycle management
+            // is an ordinary setup, and with no manager there is no maxKeyUsage threshold to miss.
+            if (stateful) {
+                warnKeyUsageNotRecorded(true, "no keyLifecycleManager is configured on the endpoint");
+            }
             return;
         }
 
         String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
         if (ObjectHelper.isEmpty(keyId)) {
+            warnKeyUsageNotRecorded(stateful,
+                    "the exchange carries no " + PQCConstants.KEY_ID + " header identifying the key");
             return;
         }
-
-        PrivateKey privateKey = keyPair.getPrivate();
-        boolean stateful = getStatefulKeyRemaining(privateKey) >= 0;
 
         KeyMetadata metadata;
         try {
@@ -1249,13 +1336,7 @@ public class PQCProducer extends DefaultProducer {
             return;
         }
         if (metadata == null) {
-            if (stateful) {
-                LOG.warn(
-                        "No metadata found for stateful key '{}'. The key index has been advanced by the signing operation "
-                         + "but cannot be persisted — on restart this index advance will be lost, which may lead to key reuse. "
-                         + "Ensure a KeyLifecycleManager is properly configured and the key is stored with metadata.",
-                        keyId);
-            }
+            warnKeyUsageNotRecorded(stateful, "the keyLifecycleManager holds no metadata for key '" + keyId + "'");
             return;
         }
 
@@ -1287,6 +1368,36 @@ public class PQCProducer extends DefaultProducer {
                      + " usageCount does not advance and a configured maxKeyUsage threshold may not be"
                      + " reached. The signature itself is unaffected. Reported once per producer.",
                     keyId, e);
+        }
+    }
+
+    /**
+     * Warns, once per producer, that a signing operation could not have its key usage recorded.
+     * <p/>
+     * For a stateful key this is the serious case: the operation has already consumed the one-time index inside the
+     * private key, so after a restart the key resumes at the old index and signs again with an index already in use,
+     * which is what the one-time property of LMS, HSS, XMSS and XMSSMT forbids.
+     * <p/>
+     * For any other key the consequence is milder: {@code usageCount} does not advance, so a configured
+     * {@code maxKeyUsage} rotation threshold is never reached. That is only worth saying when a
+     * {@code keyLifecycleManager} is configured at all - the caller suppresses it otherwise.
+     */
+    private void warnKeyUsageNotRecorded(boolean stateful, String reason) {
+        if (!keyUsageNotRecordedWarned.compareAndSet(false, true)) {
+            return;
+        }
+        if (stateful) {
+            LOG.warn("Signed with the stateful key of signature algorithm {} but its advanced index was not persisted,"
+                     + " because {}. On restart the key resumes at the previous index and may sign twice with the same"
+                     + " one-time index. Configure a keyLifecycleManager, store the key with metadata, and send the"
+                     + " {} header on every exchange. This is reported once per producer.",
+                    getConfiguration().getSignatureAlgorithm(), reason, PQCConstants.KEY_ID);
+        } else {
+            LOG.warn("Signed with the key of signature algorithm {} but its usage was not recorded, because {}."
+                     + " The usageCount of the key does not advance, so a configured maxKeyUsage rotation threshold"
+                     + " will never be reached. Send the {} header on every exchange and store the key with metadata."
+                     + " This is reported once per producer.",
+                    getConfiguration().getSignatureAlgorithm(), reason, PQCConstants.KEY_ID);
         }
     }
 

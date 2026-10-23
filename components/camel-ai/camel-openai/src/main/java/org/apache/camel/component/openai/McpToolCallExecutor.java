@@ -122,11 +122,12 @@ class McpToolCallExecutor extends ServiceSupport {
      * @throws Exception       when a tool call fails and the configured strategy is to fail the exchange
      */
     List<ToolResult> execute(List<ChatCompletionMessageToolCall> toolCalls, Exchange callingExchange) throws Exception {
-        return execute(toolCalls, callingExchange, null);
+        return execute(toolCalls, callingExchange, null, null);
     }
 
     List<ToolResult> execute(
-            List<ChatCompletionMessageToolCall> toolCalls, Exchange callingExchange, SearchDispatch searchDispatch)
+            List<ChatCompletionMessageToolCall> toolCalls, Exchange callingExchange,
+            SearchDispatch searchDispatch, String conversationId)
             throws Exception {
         if (toolCalls.isEmpty()) {
             return List.of();
@@ -140,17 +141,16 @@ class McpToolCallExecutor extends ServiceSupport {
         if (executorService == null || toolCalls.size() == 1) {
             List<ToolResult> results = new ArrayList<>(toolCalls.size());
             for (ChatCompletionMessageToolCall toolCall : toolCalls) {
-                results.add(executeOne(toolCall, toolState, callingExchange, searchDispatch));
+                results.add(executeOne(toolCall, toolState, callingExchange, searchDispatch, conversationId));
             }
             return results;
         }
-
-        return executeParallel(toolCalls, toolState, callingExchange, searchDispatch);
+        return executeParallel(toolCalls, toolState, callingExchange, searchDispatch, conversationId);
     }
 
     private List<ToolResult> executeParallel(
             List<ChatCompletionMessageToolCall> toolCalls, McpToolState toolState, Exchange callingExchange,
-            SearchDispatch searchDispatch)
+            SearchDispatch searchDispatch, String conversationId)
             throws Exception {
         LOG.debug("Executing {} tool call(s) in parallel", toolCalls.size());
 
@@ -160,7 +160,7 @@ class McpToolCallExecutor extends ServiceSupport {
         List<Future<ToolResult>> futures = new ArrayList<>(toolCalls.size());
         for (ChatCompletionMessageToolCall toolCall : toolCalls) {
             futures.add(executorService.submit(
-                    withMdc(mdc, () -> executeOne(toolCall, toolState, callingExchange, searchDispatch))));
+                    withMdc(mdc, () -> executeOne(toolCall, toolState, callingExchange, searchDispatch, conversationId))));
         }
 
         long timeout = endpoint.getConfiguration().getParallelToolTimeout();
@@ -234,7 +234,7 @@ class McpToolCallExecutor extends ServiceSupport {
 
     private ToolResult executeOne(
             ChatCompletionMessageToolCall toolCall, McpToolState toolState, Exchange callingExchange,
-            SearchDispatch searchDispatch)
+            SearchDispatch searchDispatch, String conversationId)
             throws Exception {
         long startNanos = System.nanoTime();
         OpenAIConfiguration config = endpoint.getConfiguration();
@@ -248,7 +248,7 @@ class McpToolCallExecutor extends ServiceSupport {
 
         AiToolSpec routeSpec = toolState.routeTools().get(toolName);
         if (routeSpec != null) {
-            return timed(startNanos, executeRouteTool(toolCall, routeSpec, toolState, config, callingExchange));
+            return timed(startNanos, executeRouteTool(toolCall, routeSpec, toolState, config, callingExchange, conversationId));
         }
 
         McpSyncClient mcpClient = toolState.toolClientMap().get(toolName);
@@ -300,7 +300,7 @@ class McpToolCallExecutor extends ServiceSupport {
             AiToolSpec spec,
             McpToolState toolState,
             OpenAIConfiguration config,
-            Exchange callingExchange)
+            Exchange callingExchange, String conversationId)
             throws Exception {
         String toolName = toolCall.asFunction().function().name();
         String argsJson = toolCall.asFunction().function().arguments();
@@ -313,7 +313,8 @@ class McpToolCallExecutor extends ServiceSupport {
             // exchange property) reaches the tool route; this is not a pooled consumer exchange, so it is not released
             // here (CAMEL-24832)
             Exchange toolExchange = AiToolExecutor.createToolExchange(callingExchange);
-            AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
+            AiToolResult result
+                    = AiToolExecutor.execute(spec, argsMap, toolExchange, toolCall.asFunction().id(), conversationId);
             if (result instanceof AiToolResult.Success success) {
                 LOG.debug("Route tool '{}' result: {}", toolName, success.value());
                 return new ToolResult(

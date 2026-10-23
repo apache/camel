@@ -63,6 +63,13 @@ public class AiToolConfiguration implements Cloneable {
     private String argSchema;
 
     @Metadata(label = "consumer")
+    @UriParam(defaultValue = "false", description = "Whether to populate the message body with the tool arguments "
+                                                    + "as a JSON string, excluding undeclared arguments and reserved names. "
+                                                    + "Declared argument headers remain available. "
+                                                    + "When disabled, the message body is left unchanged.")
+    private boolean argumentsAsBody;
+
+    @Metadata(label = "consumer")
     @UriParam(description = "Tool output schema fields. "
                             + "Format: outputParameter.NAME=TYPE, outputParameter.NAME.description=TEXT. "
                             + "Supported types: string, integer, number, boolean. "
@@ -159,6 +166,14 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setArgSchema(String argSchema) {
         this.argSchema = argSchema;
+    }
+
+    public boolean isArgumentsAsBody() {
+        return argumentsAsBody;
+    }
+
+    public void setArgumentsAsBody(boolean argumentsAsBody) {
+        this.argumentsAsBody = argumentsAsBody;
     }
 
     public Map<String, String> getOutputParameters() {

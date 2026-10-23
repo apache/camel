@@ -289,6 +289,62 @@ Supported options: `title`, `readOnlyHint`, `destructiveHint`, `idempotentHint`,
 
 The `title` option maps to the MCP tool's top-level `title` field (not `ToolAnnotations.title`). Boolean hint options use nullable configuration: when unset, Camel omits them from the published MCP tool even though the component catalog may list `defaultValue: false` for documentation tooling.
 
+=== Tool Arguments in the Body
+
+By default, tool arguments are exposed as individual headers and the message body is left unchanged.
+Set `argumentsAsBody=true` to also populate the body with a JSON string containing the tool-call arguments.
+This is useful when mapping a complete JSON document, for example with Kaoto Data Mapper.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:place_order
+      parameters:
+        description: Place a merchandise order
+        argSchema: classpath:place-order.args.schema.json
+        argumentsAsBody: true
+      steps:
+        - to:
+            uri: direct:mapOrder
+----
+
+For a tool call with a customer name and two items, `direct:mapOrder` receives this JSON-string body:
+
+[source,json]
+----
+{
+  "customerName": "Alice",
+  "items": [
+    { "sku": "TSHIRT", "quantity": 2 },
+    { "sku": "MUG", "quantity": 1 }
+  ]
+}
+----
+
+Nested objects, arrays and JSON value types are preserved. A call with no arguments produces `{}`.
+The body and individual argument headers include only declared arguments, after the same allowlist filtering.
+Camel logs a warning for each undeclared argument. Reserved names starting with `camel` or `org.apache.camel.`
+(case-insensitive) are excluded from both the body and argument headers. Missing required arguments still reject
+an invocation before the tool route runs. Required arguments are checked after reserved names are removed,
+so a required argument with a reserved name rejects the call even if the model supplied it.
+Rename such arguments to use names outside the reserved namespace. This option does not add full JSON Schema validation.
+
+=== Invocation Identifiers
+
+Tool routes receive `CamelAiToolCallId` and `CamelAiToolConversationId` when the calling adapter can supply them.
+These headers are populated independently of `argumentsAsBody`. An unavailable identifier is omitted rather than generated.
+
+* LangChain4j Agent supplies the tool execution request ID and the memory ID (converted to a string) as the conversation ID when the agent uses memory.
+  Agents without memory omit the conversation header, including the framework's default memory ID.
+* OpenAI supplies the tool-call ID. The Responses API also supplies its resolved conversation ID
+  (`CamelOpenAIConversationId` or the `conversationId` option); chat-completion callbacks omit it.
+* Spring AI Chat supplies the `CamelSpringAiChatConversationId` from the calling exchange. Its tool callback does not supply a call ID.
+* MCP server tool callbacks currently do not propagate these identifiers.
+
+For example, use `${header.CamelAiToolCallId}` to correlate route processing with a particular tool invocation.
+Several calls in the same conversation can share `CamelAiToolConversationId` while having different call IDs.
+
 === Tag-Based Discovery
 
 Tags group tools so that AI producers can select relevant subsets.

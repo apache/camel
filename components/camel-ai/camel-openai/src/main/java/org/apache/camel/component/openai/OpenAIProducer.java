@@ -477,7 +477,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 // Execute all tool calls in this batch
                 List<McpToolCallExecutor.ToolResult> batchResults = config.isToolSearch()
                         ? toolCallExecutor.execute(toolCalls, exchange,
-                                call -> toolSearch.execute(getEndpoint(), call, exchange))
+                                call -> toolSearch.execute(getEndpoint(), call, exchange),
+                                null)
                         : toolCallExecutor.execute(toolCalls, exchange);
                 observability.recordIteration(
                         modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,

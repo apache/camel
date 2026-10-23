@@ -77,6 +77,8 @@ The `google-mail:update-message-labels` data type transformer builds a `ModifyMe
 
 This is useful for modifying Gmail message labels (categorizing, archiving, starring, moving, etc.) without manually calling the labels/list API.
 
+The transformer calls the Gmail API with the credentials configured on the `google-mail` component (for example `camel.component.google-mail.clientId`, `clientSecret` and `refreshToken`, or `serviceAccountKey` and `delegate`). Credentials set only on an endpoint URI do not apply to the transformer.
+
 === Exchange Variables
 
 [cols="1,1,3"]

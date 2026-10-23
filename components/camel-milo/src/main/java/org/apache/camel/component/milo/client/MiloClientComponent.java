@@ -80,7 +80,8 @@ public class MiloClientComponent extends DefaultComponent {
     }
 
     /**
-     * Default delay in milliseconds between two attempts to connect to the server
+     * Default delay in milliseconds between two attempts to connect to the server, and between two attempts to create
+     * the monitored items that the server refused
      */
     public void setReconnectTimeout(final Long reconnectTimeout) {
         this.configuration.setReconnectTimeout(reconnectTimeout);

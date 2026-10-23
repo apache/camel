@@ -25,6 +25,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": target.setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "argumentsasbody":
+        case "argumentsAsBody": target.setArgumentsAsBody(property(camelContext, boolean.class, value)); return true;
         case "authorizationpolicy":
         case "authorizationPolicy": target.setAuthorizationPolicy(property(camelContext, org.apache.camel.spi.AuthorizationPolicy.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
@@ -55,6 +57,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
+        case "argumentsasbody":
+        case "argumentsAsBody": return boolean.class;
         case "authorizationpolicy":
         case "authorizationPolicy": return org.apache.camel.spi.AuthorizationPolicy.class;
         case "description": return java.lang.String.class;
@@ -86,6 +90,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return target.getArgSchema();
+        case "argumentsasbody":
+        case "argumentsAsBody": return target.isArgumentsAsBody();
         case "authorizationpolicy":
         case "authorizationPolicy": return target.getAuthorizationPolicy();
         case "description": return target.getDescription();

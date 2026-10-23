@@ -31,6 +31,7 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ai.tool.AiToolConstants;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -128,7 +129,8 @@ class McpToolCallExecutorTest {
                 List.of(toolCall("id-search", "tool_search_tool"), toolCall("id-b", "slow_b")),
                 new DefaultExchange(context),
                 call -> new McpToolCallExecutor.ToolResult(
-                        call.asFunction().id(), "tool_search_tool", "Tools found: slow_b", false, 0, true));
+                        call.asFunction().id(), "tool_search_tool", "Tools found: slow_b", false, 0, true),
+                null);
 
         assertThat(results).extracting(McpToolCallExecutor.ToolResult::toolCallId)
                 .containsExactly("id-search", "id-b");
@@ -327,11 +329,16 @@ class McpToolCallExecutorTest {
         // authenticated subject (kept as an exchange property) and the model cannot forge it; and the tool route gets a
         // clean message, so a tool that sets no body returns "No result" rather than the caller's prompt.
         AtomicReference<Object> seenSubject = new AtomicReference<>();
+        AtomicReference<String> seenCallId = new AtomicReference<>();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("ai-tool:checkSubject?tags=test&description=Check the caller subject")
-                        .process(e -> seenSubject.set(e.getProperty("CamelAuthenticatedSubject")));
+                        .process(e -> {
+                            seenSubject.set(e.getProperty("CamelAuthenticatedSubject"));
+                            seenCallId.set(e.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID, String.class));
+                            assertThat(e.getMessage().getHeader(AiToolConstants.CONVERSATION_ID)).isNull();
+                        });
             }
         });
 
@@ -358,9 +365,34 @@ class McpToolCallExecutorTest {
 
         // the tool route saw the caller's authenticated subject: the CALLING exchange was copied in, not a fresh one
         assertThat(seenSubject).hasValue("alice");
+        assertThat(seenCallId).hasValue("id-x");
         // and the message was clean: a tool that sets no body returns "No result", not the caller's prompt
         assertThat(results).singleElement()
                 .satisfies(r -> assertThat(r.content()).isEqualTo("No result"));
+    }
+
+    @Test
+    void parallelRouteToolsShareTheSuppliedConversationId() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("ai-tool:conversation?tags=conversation-test")
+                        .process(e -> {
+                            assertThat(e.getMessage().getHeader(AiToolConstants.CONVERSATION_ID)).isEqualTo("conv_parallel");
+                            e.getMessage().setBody(e.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID));
+                        });
+            }
+        });
+        AiToolSpec spec = AiToolRegistry.getOrCreate(context).getToolsByTag("conversation-test").iterator().next();
+        OpenAIEndpoint endpoint = newEndpoint(true, 0, Map.of(), Set.of());
+        endpoint.setMcpToolState(new McpToolState(List.of(), Map.of(), Map.of(), Set.of(), Map.of("conversation", spec)));
+        executor = startExecutor(endpoint);
+
+        List<McpToolCallExecutor.ToolResult> results = executor.execute(
+                List.of(toolCall("call-a", "conversation"), toolCall("call-b", "conversation")),
+                new DefaultExchange(context), null, "conv_parallel");
+
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::content).containsExactly("call-a", "call-b");
     }
 
     // ------------------------------------------------------------------

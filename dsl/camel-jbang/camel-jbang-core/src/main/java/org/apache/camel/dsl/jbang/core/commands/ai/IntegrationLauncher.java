@@ -473,9 +473,10 @@ public final class IntegrationLauncher {
             return true;
         }
         String name = Path.of(file).getFileName().toString();
-        // the file itself on the command line (a Groovy route), or a wildcard that camel run expands
-        return args.stream().anyMatch(a -> a.contains("*") || a.equals(name) || a.endsWith("/" + name)
-                || a.endsWith(":" + name));
+        // the file itself on the command line (a Groovy route), or a wildcard that camel run expands;
+        // options (starting with -) are excluded: a JVM option such as -Dtest=* is not a file glob
+        return args.stream().anyMatch(a -> (!a.startsWith("-") && a.contains("*")) || a.equals(name)
+                || a.endsWith("/" + name) || a.endsWith(":" + name));
     }
 
     /**

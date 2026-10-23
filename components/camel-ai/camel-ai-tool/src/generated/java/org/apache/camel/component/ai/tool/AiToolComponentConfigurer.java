@@ -32,6 +32,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": getOrCreateConfiguration(target).setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "argumentsasbody":
+        case "argumentsAsBody": getOrCreateConfiguration(target).setArgumentsAsBody(property(camelContext, boolean.class, value)); return true;
         case "authorizationpolicy":
         case "authorizationPolicy": getOrCreateConfiguration(target).setAuthorizationPolicy(property(camelContext, org.apache.camel.spi.AuthorizationPolicy.class, value)); return true;
         case "autowiredenabled":
@@ -67,6 +69,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
+        case "argumentsasbody":
+        case "argumentsAsBody": return boolean.class;
         case "authorizationpolicy":
         case "authorizationPolicy": return org.apache.camel.spi.AuthorizationPolicy.class;
         case "autowiredenabled":
@@ -103,6 +107,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return getOrCreateConfiguration(target).getArgSchema();
+        case "argumentsasbody":
+        case "argumentsAsBody": return getOrCreateConfiguration(target).isArgumentsAsBody();
         case "authorizationpolicy":
         case "authorizationPolicy": return getOrCreateConfiguration(target).getAuthorizationPolicy();
         case "autowiredenabled":

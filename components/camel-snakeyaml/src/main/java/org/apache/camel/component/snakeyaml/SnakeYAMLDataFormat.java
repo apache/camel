@@ -25,6 +25,9 @@ import java.io.Reader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -47,6 +50,13 @@ import org.yaml.snakeyaml.resolver.Resolver;
  * <a href="https://bitbucket.org/snakeyaml/snakeyaml">SnakeYAML</a>
  */
 @Dataformat("snakeYaml")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.ANY, description = "A Map, a List or a POJO to write as YAML"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "yaml",
+                                  description = "The YAML in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "yaml"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, dependsOn = "unmarshalType",
+                                    description = "A Map (LinkedHashMap) for a mapping, a List (ArrayList) for a sequence; a"
+                                                  + " document that is a single value gives that value"))
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
