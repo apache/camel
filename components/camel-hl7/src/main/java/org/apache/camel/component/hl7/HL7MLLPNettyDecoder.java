@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 class HL7MLLPNettyDecoder extends DelimiterBasedFrameDecoder {
 
     private static final Logger LOG = LoggerFactory.getLogger(HL7MLLPNettyDecoder.class);
-    private static final int MAX_FRAME_LENGTH = Integer.MAX_VALUE;
     private final HL7MLLPConfig config;
 
     /**
@@ -49,7 +48,7 @@ class HL7MLLPNettyDecoder extends DelimiterBasedFrameDecoder {
      * @throws java.lang.NullPointerException is config is null
      */
     HL7MLLPNettyDecoder(HL7MLLPConfig config) {
-        super(MAX_FRAME_LENGTH, true, Unpooled.copiedBuffer(
+        super(config.getMaxFrameLength(), true, Unpooled.copiedBuffer(
                 new char[] { config.getEndByte1(), config.getEndByte2() },
                 Charset.defaultCharset()));
         this.config = config;

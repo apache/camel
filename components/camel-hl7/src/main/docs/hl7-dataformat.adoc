@@ -69,6 +69,13 @@ the HL7 message content.
 
 |`convertLFtoCR` |`false` |Will convert `\n` to `\r` (`0x0d`, 13 decimal) as HL7 stipulates `\r` as
 segment terminators. The HAPI library requires the use of `\r`.
+
+|`maxFrameLength` |`2147483647` |Netty decoder (`HL7MLLPNettyDecoderFactory`) only: the maximum length in bytes of
+a message, counted from the start of the data up to the end bytes (the start byte included, the end bytes not). A
+longer message is discarded and fails with a `TooLongFrameException`: the Netty consumer reports it to its exception
+handler and closes the connection. The decoder fails as soon as more bytes than the limit have arrived without both end
+bytes, so a message of exactly this length fails when its first end byte arrives without the second; set the limit
+with some margin over the largest message you expect. The default (`Integer.MAX_VALUE`) means no limit.
 |===
 
 === Exposing an HL7 listener using Mina
