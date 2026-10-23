@@ -82,6 +82,12 @@ YAML::
 
 The file should be placed in the Body.
 
+The body of `detect` and `parse` must convert to an `InputStream`, such as a `java.io.File`, a `byte[]`, a `String` or
+a stream. A missing body or a body that does not convert, such as a `Map`, fails with an `InvalidPayloadException`.
+
+The `parse` operation writes its output in the `tikaParseOutputEncoding` and sets that encoding as the charset of the
+exchange (the `CamelCharsetName` exchange property), so converting the output to a `String` decodes it right.
+
 [tabs]
 ====
 Java::

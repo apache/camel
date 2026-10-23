@@ -42,6 +42,7 @@ public class DnsEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Producer createProducer() throws Exception {
         if (DnsType.dig == dnsType) {
             return new DnsDigProducer(this);
@@ -66,7 +67,8 @@ public class DnsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The type of the lookup.
+     * The type of the lookup. The wikipedia type is deprecated, as the Wikipedia over DNS service it queries is no
+     * longer available.
      */
     public void setDnsType(DnsType dnsType) {
         this.dnsType = dnsType;

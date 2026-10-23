@@ -2216,7 +2216,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param download the value to set
@@ -2235,7 +2235,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param download the value to set

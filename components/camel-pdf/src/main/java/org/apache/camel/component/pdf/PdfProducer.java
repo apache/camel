@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.pdf;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.component.pdf.text.AutoFormattedWriterAbstractFactory;
 import org.apache.camel.component.pdf.text.LineBuilderStrategy;
@@ -88,16 +93,27 @@ public class PdfProducer extends DefaultProducer {
         LOG.debug("Got {} operation, going to merge multiple files into a single pdf document.",
                 pdfConfiguration.getOperation());
         PDFMergerUtility mergerUtility = new PDFMergerUtility();
-        List<File> files = ExchangeHelper.getMandatoryHeader(exchange, FILES_TO_MERGE_HEADER_NAME, List.class);
+        List<?> files = ExchangeHelper.getMandatoryHeader(exchange, FILES_TO_MERGE_HEADER_NAME, List.class);
         if (files.size() < 2) {
             throw new IllegalArgumentException("Must provide at least 2 files to merge");
         }
-        for (File file : files) {
-            mergerUtility.addSource(file);
+        for (Object file : files) {
+            mergerUtility.addSource(toFile(file));
         }
         mergerUtility.setDestinationStream(new ByteArrayOutputStream());
         mergerUtility.mergeDocuments(RandomAccessStreamCacheImpl::new);
         return mergerUtility.getDestinationStream();
+    }
+
+    private static File toFile(Object file) {
+        if (file instanceof File f) {
+            return f;
+        } else if (file instanceof Path p) {
+            return p.toFile();
+        }
+        throw new IllegalArgumentException(
+                String.format("The %s header must hold java.io.File or java.nio.file.Path elements, but has %s",
+                        FILES_TO_MERGE_HEADER_NAME, file != null ? file.getClass().getName() : "null"));
     }
 
     private Object doAppend(Exchange exchange) throws IOException {
@@ -124,18 +140,18 @@ public class PdfProducer extends DefaultProducer {
         }
     }
 
-    private String doExtractText(Exchange exchange) throws IOException {
+    private String doExtractText(Exchange exchange) throws IOException, InvalidPayloadException {
         LOG.debug("Got {} operation, going to extract text from provided pdf.", pdfConfiguration.getOperation());
-        try (PDDocument document = exchange.getIn().getBody(PDDocument.class)) {
+        try (PDDocument document = exchange.getIn().getMandatoryBody(PDDocument.class)) {
             PDFTextStripper pdfTextStripper = new PDFTextStripper();
             return pdfTextStripper.getText(document);
         }
     }
 
-    private OutputStream doCreate(Exchange exchange) throws IOException {
+    private OutputStream doCreate(Exchange exchange) throws IOException, InvalidPayloadException {
         LOG.debug("Got {} operation, going to create and write provided string to pdf document.",
                 pdfConfiguration.getOperation());
-        String body = exchange.getIn().getBody(String.class);
+        String body = exchange.getIn().getMandatoryBody(String.class);
         try (PDDocument document = new PDDocument()) {
             StandardProtectionPolicy protectionPolicy = exchange.getIn().getHeader(
                     PROTECTION_POLICY_HEADER_NAME, StandardProtectionPolicy.class);

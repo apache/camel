@@ -16,20 +16,20 @@
  */
 package org.apache.camel.component.pdf;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -40,6 +40,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PdfCreationTest extends CamelTestSupport {
@@ -50,26 +52,21 @@ public class PdfCreationTest extends CamelTestSupport {
     @Test
     public void testPdfCreation() throws Exception {
         final String expectedText = "expectedText";
-        template.sendBody("direct:start", expectedText);
         resultEndpoint.setExpectedMessageCount(1);
-        resultEndpoint.expectedMessagesMatches(new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-                Object body = exchange.getIn().getBody();
-                assertThat(body, instanceOf(ByteArrayOutputStream.class));
-                try {
-                    PDDocument doc = Loader.loadPDF(
-                            new RandomAccessReadBuffer(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())));
-                    PDFTextStripper pdfTextStripper = new PDFTextStripper();
-                    String text = pdfTextStripper.getText(doc);
-                    assertEquals(1, doc.getNumberOfPages());
-                    assertThat(text, containsString(expectedText));
-                } catch (IOException e) {
-                    throw new RuntimeCamelException(e);
-                }
-                return true;
+        resultEndpoint.expectedMessagesMatches(exchange -> {
+            Object body = exchange.getIn().getBody();
+            assertThat(body, instanceOf(ByteArrayOutputStream.class));
+            try (PDDocument doc = Loader.loadPDF(((ByteArrayOutputStream) body).toByteArray())) {
+                String text = new PDFTextStripper().getText(doc);
+                assertEquals(1, doc.getNumberOfPages());
+                assertThat(text, containsString(expectedText));
+            } catch (IOException e) {
+                throw new RuntimeCamelException(e);
             }
+            return true;
         });
+
+        template.sendBody("direct:start", expectedText);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -82,34 +79,86 @@ public class PdfCreationTest extends CamelTestSupport {
         accessPermission.setCanPrint(false);
         StandardProtectionPolicy protectionPolicy = new StandardProtectionPolicy(ownerPass, userPass, accessPermission);
         protectionPolicy.setEncryptionKeyLength(128);
+
+        resultEndpoint.setExpectedMessageCount(1);
+        resultEndpoint.expectedMessagesMatches(exchange -> {
+            Object body = exchange.getIn().getBody();
+            assertThat(body, instanceOf(ByteArrayOutputStream.class));
+            try (PDDocument doc = Loader.loadPDF(((ByteArrayOutputStream) body).toByteArray(), userPass)) {
+                assertTrue(doc.isEncrypted(), "Expected encrypted document");
+                assertFalse(doc.getCurrentAccessPermission().canPrint(), "Printing should not be permitted");
+                String text = new PDFTextStripper().getText(doc);
+                assertEquals(1, doc.getNumberOfPages());
+                assertThat(text, containsString(expectedText));
+            } catch (IOException e) {
+                throw new RuntimeCamelException(e);
+            }
+            return true;
+        });
+
         template.sendBodyAndHeader("direct:start",
                 expectedText,
                 PdfHeaderConstants.PROTECTION_POLICY_HEADER_NAME,
                 protectionPolicy);
-
-        resultEndpoint.setExpectedMessageCount(1);
-        resultEndpoint.expectedMessagesMatches(new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-                Object body = exchange.getIn().getBody();
-                assertThat(body, instanceOf(ByteArrayOutputStream.class));
-                try {
-                    PDDocument doc
-                            = Loader.loadPDF(new RandomAccessReadBuffer(
-                                    new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())), userPass);
-                    assertTrue(doc.isEncrypted(), "Expected encrypted document");
-                    assertFalse(doc.getCurrentAccessPermission().canPrint(), "Printing should not be permitted");
-                    PDFTextStripper pdfTextStripper = new PDFTextStripper();
-                    String text = pdfTextStripper.getText(doc);
-                    assertEquals(1, doc.getNumberOfPages());
-                    assertThat(text, containsString(expectedText));
-                } catch (Exception e) {
-                    throw new RuntimeCamelException(e);
-                }
-                return true;
-            }
-        });
         resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testPageSizeOfCatalog() throws Exception {
+        assertMediaBox(PDRectangle.A4, "pdf:create");
+        assertMediaBox(PDRectangle.A4, "pdf:create?pageSize=A4");
+        assertMediaBox(PDRectangle.A5, "pdf:create?pageSize=A5");
+        assertMediaBox(PDRectangle.LETTER, "pdf:create?pageSize=LETTER");
+        assertMediaBox(PDRectangle.LEGAL, "pdf:create?pageSize=LEGAL");
+        assertMediaBox(PDRectangle.A4, "pdf:create?pageSize=A4&textProcessingFactory=autoFormatting");
+    }
+
+    @Test
+    public void testPageSizeOfOldName() throws Exception {
+        assertMediaBox(PDRectangle.A1, "pdf:create?pageSize=PAGE_SIZE_A1");
+        assertMediaBox(PDRectangle.LETTER, "pdf:create?pageSize=PAGE_SIZE_LETTER");
+    }
+
+    @Test
+    public void testUnknownPageSize() {
+        Exception e = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("pdf:create?pageSize=B5"));
+        assertThat(e.getCause().getMessage(), containsString("B5"));
+        assertThat(e.getCause().getMessage(), containsString("LETTER, LEGAL, A0, A1, A2, A3, A4, A5, A6"));
+    }
+
+    @Test
+    public void testCreateWithoutBody() {
+        Exception e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", null));
+        assertInstanceOf(InvalidPayloadException.class, e.getCause());
+    }
+
+    @Test
+    public void testCreateWithLineEndsAndTab() throws Exception {
+        Object body = template.requestBody("direct:create", "line one\r\nline two\rline\tthree\nline four\u0007");
+        try (PDDocument doc = Loader.loadPDF(((ByteArrayOutputStream) body).toByteArray())) {
+            String text = new PDFTextStripper().getText(doc);
+            assertThat(text, containsString("line one"));
+            assertThat(text, containsString("line two"));
+            assertThat(text, containsString("line    three"));
+            assertThat(text, containsString("line four"));
+        }
+    }
+
+    @Test
+    public void testCreateThenExtractText() {
+        String text = template.requestBody("direct:createExtract", "Hello from create", String.class);
+        assertThat(text, containsString("Hello from create"));
+    }
+
+    private void assertMediaBox(PDRectangle expected, String uri) throws IOException {
+        Object body = template.requestBody(uri, "Some text");
+        try (PDDocument doc = Loader.loadPDF(((ByteArrayOutputStream) body).toByteArray())) {
+            PDRectangle mediaBox = doc.getPage(0).getMediaBox();
+            assertEquals(expected.getWidth(), mediaBox.getWidth(), 0.01, uri);
+            assertEquals(expected.getHeight(), mediaBox.getHeight(), 0.01, uri);
+        }
     }
 
     @Override
@@ -120,6 +169,11 @@ public class PdfCreationTest extends CamelTestSupport {
                 from("direct:start")
                         .to("pdf:create?fontSize=6&font=COURIER&pageSize=PAGE_SIZE_A1")
                         .to("mock:result");
+                from("direct:create")
+                        .to("pdf:create");
+                from("direct:createExtract")
+                        .to("pdf:create")
+                        .to("pdf:extractText");
             }
         };
     }

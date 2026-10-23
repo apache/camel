@@ -62,6 +62,10 @@ import org.apache.camel.support.jsse.SSLContextParameters;
                               + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
+    private static final String REQUEST_URI = "requestUri";
+    private static final String DEFAULT_REQUEST_URI = "/";
+    private static final String EDI_MESSAGE_CONTENT_TYPE = "ediMessageContentType";
+
     @UriParam
     private AS2Configuration configuration;
 
@@ -166,12 +170,25 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         configuration.setAs2MessageStructure(as2MessageStructure);
     }
 
+    @Deprecated
     public String getEdiMessageType() {
         return configuration.getEdiMessageType();
     }
 
-    public void setEdiMessageContentType(String ediMessageType) {
+    @Deprecated
+    public void setEdiMessageType(String ediMessageType) {
         configuration.setEdiMessageType(ediMessageType);
+    }
+
+    public String getEdiMessageContentType() {
+        return configuration instanceof AS2ClientManagerEndpointConfiguration client
+                ? client.getEdiMessageContentType() : null;
+    }
+
+    public void setEdiMessageContentType(String ediMessageContentType) {
+        if (configuration instanceof AS2ClientManagerEndpointConfiguration client) {
+            client.setEdiMessageContentType(ediMessageContentType);
+        }
     }
 
     public String getEdiMessageTransferEncoding() {
@@ -276,6 +293,19 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     public void setSslContext(SSLContext sslContext) {
         configuration.setSslContext(sslContext);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void interceptProperties(Map<String, Object> properties) {
+        if (apiName == AS2ApiName.CLIENT) {
+            // the generated configuration of client/send has its own requestUri without the default
+            properties.putIfAbsent(REQUEST_URI, DEFAULT_REQUEST_URI);
+            // the deprecated ediMessageType is the content type when ediMessageContentType is not set
+            if (configuration.getEdiMessageType() != null) {
+                properties.putIfAbsent(EDI_MESSAGE_CONTENT_TYPE, configuration.getEdiMessageType());
+            }
+        }
     }
 
     @Override

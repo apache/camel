@@ -358,7 +358,8 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     /**
-     * The name of a header containing a JsonObject instance containing the operation variables.
+     * The name of a header containing the operation variables, as a JsonObject or a Map. The header is not sent as an
+     * HTTP header.
      */
     public void setVariablesHeader(String variablesHeader) {
         this.variablesHeader = variablesHeader;
@@ -369,7 +370,7 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     /**
-     * The name of a header containing the GraphQL query.
+     * The name of a header containing the GraphQL query. The header is not sent as an HTTP header.
      */
     public void setQueryHeader(String queryHeader) {
         this.queryHeader = queryHeader;

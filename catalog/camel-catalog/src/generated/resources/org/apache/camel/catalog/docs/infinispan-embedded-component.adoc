@@ -51,6 +51,21 @@ The consumer allows listening for events from local infinispan cache.
 
 If no cache configuration is provided, embedded cacheContainer is created directly in the component.
 
+=== Options read on the component only
+
+All the endpoints of the component share one cache manager, which the component creates when it starts. So the
+options that configure the cache manager are read on the component only: `configurationUri`, `cacheContainer`,
+`cacheContainerConfiguration` and `flags`. Set on an endpoint, these options are not used. Configure them on the
+component instead, for example in `application.properties`:
+
+[source,properties]
+----
+camel.component.infinispan-embedded.configuration-uri = file:/etc/infinispan/infinispan.xml
+----
+
+The `configurationUri` is read with the resource loader of Camel, so it can be a name on the class path, a
+`classpath:` or `file:` uri, or an absolute path, and it can use property placeholders.
+
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
@@ -244,11 +259,11 @@ from("infinispan-embedded:source")
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT) // <1>
     .setHeader(InfinispanConstants.KEY).constant("123") // <2>
-    .to("infinispan-embedded:myCacheName?cacheContainer=#cacheContainer"); // <3>
+    .to("infinispan-embedded:myCacheName"); // <3>
 ----
 <1> Set the operation to perform
 <2> Set the key used to identify the element in the cache
-<3> Use the configured cache manager `cacheContainer` from the registry to put an element to the cache named `myCacheName`
+<3> Put an element to the cache named `myCacheName` of the cache manager of the component
 --
 +
 It is possible to configure the lifetime and/or the idle time before the entry expires and gets evicted from the cache, as example:
@@ -281,7 +296,7 @@ from("direct:start")
             return qf.from(User.class).having("name").like("%abc%").build();
         }
     })
-    .to("infinispan-embedded:myCacheName?cacheContainer=#cacheManager") ;
+    .to("infinispan-embedded:myCacheName");
 ----
 +
 
@@ -293,7 +308,7 @@ Java::
 +
 [source,java]
 ----
-from("infinispan-embedded:myCacheName?cacheContainer=#cacheManager&customListener=#myCustomListener")
+from("infinispan-embedded:myCacheName?customListener=#myCustomListener")
   .to("mock:result");
 ----
 
@@ -302,7 +317,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="infinispan-embedded:myCacheName?cacheContainer=#cacheManager&amp;customListener=#myCustomListener"/>
+  <from uri="infinispan-embedded:myCacheName?customListener=#myCustomListener"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -315,7 +330,6 @@ YAML::
     from:
       uri: infinispan-embedded:myCacheName
       parameters:
-        cacheContainer: "#cacheManager"
         customListener: "#myCustomListener"
       steps:
         - to:
@@ -366,7 +380,7 @@ XML::
   <constructor-arg value="idempotent"/> <!--1-->
   <property name="configuration"> <!--2-->
     <bean class="org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration">
-      <property name="configurationUrl" value="classpath:infinispan.xml"/>
+      <property name="configurationUri" value="classpath:infinispan.xml"/>
     </bean>
   </property>
 </bean>
@@ -429,7 +443,7 @@ XML::
   <constructor-arg value="aggregation"/> <!--1-->
   <property name="configuration"> <!--2-->
     <bean class="org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration">
-      <property name="configurationUrl" value="classpath:infinispan.xml"/>
+      <property name="configurationUri" value="classpath:infinispan.xml"/>
     </bean>
   </property>
 </bean>

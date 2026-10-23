@@ -259,6 +259,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -267,6 +269,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointConsumerBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
@@ -1361,6 +1364,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1369,6 +1374,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointProducerBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
@@ -2484,6 +2490,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2492,6 +2500,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;

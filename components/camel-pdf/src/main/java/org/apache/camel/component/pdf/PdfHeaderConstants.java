@@ -42,9 +42,10 @@ public final class PdfHeaderConstants {
     @Metadata(description = """
             *Mandatory* header for `merge` operation and ignored in all other
             operations.
-            The array of pdf files that will be merged.
+            The list of pdf files that will be merged, each given as a `java.io.File`
+            or a `java.nio.file.Path`.
             """,
-              javaType = "java.util.List<java.io.File>")
+              javaType = "java.util.List<java.lang.Object>")
     public static final String FILES_TO_MERGE_HEADER_NAME = "CamelPdfFilesToMerge";
 
     private PdfHeaderConstants() {

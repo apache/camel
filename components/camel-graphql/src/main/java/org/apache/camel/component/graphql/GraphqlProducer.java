@@ -16,11 +16,19 @@
  */
 package org.apache.camel.component.graphql;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.file.Path;
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Registry;
@@ -31,6 +39,9 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.hc.client5.http.classic.HttpClient;
 
 public class GraphqlProducer extends DefaultAsyncProducer {
+
+    private static final String ACCEPT = "Accept";
+    private static final String ACCEPT_ENCODING = "Accept-Encoding";
 
     private Producer http;
 
@@ -91,17 +102,28 @@ public class GraphqlProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
 
         Exchange httpExchange = getEndpoint().createExchange();
+        Message request = httpExchange.getIn();
+        MessageHelper.copyHeaders(exchange.getMessage(), request, true);
+        // the query and the variables are sent in the JSON body, not as HTTP headers
+        if (getEndpoint().getQueryHeader() != null) {
+            request.removeHeader(getEndpoint().getQueryHeader());
+        }
+        if (getEndpoint().getVariablesHeader() != null) {
+            request.removeHeader(getEndpoint().getVariablesHeader());
+        }
+        // camel-http would compress the JSON body for a Content-Encoding header of the message
+        request.removeHeader(Exchange.CONTENT_ENCODING);
+        // the headers of the producer win over the headers of the message
         // not read by camel-http (skipControlHeaders=true): the httpMethod option of the internal endpoint decides
-        httpExchange.getIn().setHeader(HttpConstants.HTTP_METHOD, "post");
-        httpExchange.getIn().setHeader("Content-Type", "application/json");
-        httpExchange.getIn().setHeader("Accept", "application/json");
-        httpExchange.getIn().setHeader("Accept-Encoding", "gzip");
-        MessageHelper.copyHeaders(exchange.getMessage(), httpExchange.getIn(), true);
+        request.setHeader(HttpConstants.HTTP_METHOD, "post");
+        request.setHeader(Exchange.CONTENT_TYPE, "application/json");
+        request.setHeader(ACCEPT, "application/json");
+        request.setHeader(ACCEPT_ENCODING, "gzip");
 
         try {
             String requestBody
                     = buildRequestBody(getQuery(exchange), getEndpoint().getOperationName(), getVariables(exchange));
-            httpExchange.getIn().setBody(requestBody);
+            request.setBody(requestBody);
             try {
                 http.process(httpExchange);
                 String data = httpExchange.getMessage().getBody(String.class);
@@ -109,7 +131,17 @@ public class GraphqlProducer extends DefaultAsyncProducer {
             } catch (Exception e) {
                 exchange.setException(e);
             }
-            MessageHelper.copyHeaders(httpExchange.getMessage(), exchange.getIn(), true);
+            Message response = httpExchange.getMessage();
+            // the headers the producer set for the request do not stay on the message (a header of the message
+            // with the same name keeps its value); the Content-Type of the response of the server is kept
+            response.removeHeader(HttpConstants.HTTP_METHOD);
+            response.removeHeader(ACCEPT);
+            response.removeHeader(ACCEPT_ENCODING);
+            if (response == request) {
+                // no response message (a failed call): the Content-Type is the one of the request
+                response.removeHeader(Exchange.CONTENT_TYPE);
+            }
+            MessageHelper.copyHeaders(response, exchange.getIn(), true);
         } catch (Exception e) {
             exchange.setException(e);
         }
@@ -133,9 +165,22 @@ public class GraphqlProducer extends DefaultAsyncProducer {
         } else if (getEndpoint().getQueryHeader() != null) {
             query = exchange.getIn().getHeader(getEndpoint().getQueryHeader(), String.class);
         } else {
+            Object body = exchange.getIn().getBody();
+            if (body != null && !isQueryBody(body)) {
+                throw new InvalidPayloadException(
+                        exchange, String.class, exchange.getIn(),
+                        "the body is the GraphQL query when the query, queryFile and queryHeader options are not set,"
+                                                                  + " and must be text, bytes, a stream or a file");
+            }
             query = exchange.getIn().getMandatoryBody(String.class);
         }
         return query;
+    }
+
+    private static boolean isQueryBody(Object body) {
+        return body instanceof CharSequence || body instanceof byte[] || body instanceof InputStream
+                || body instanceof Reader || body instanceof File || body instanceof Path
+                || body instanceof WrappedFile;
     }
 
     private JsonObject getVariables(Exchange exchange) {
@@ -143,10 +188,20 @@ public class GraphqlProducer extends DefaultAsyncProducer {
         if (getEndpoint().getVariables() != null) {
             variables = getEndpoint().getVariables();
         } else if (getEndpoint().getVariablesHeader() != null) {
-            variables = exchange.getIn().getHeader(getEndpoint().getVariablesHeader(), JsonObject.class);
-        } else if (exchange.getIn().getBody() instanceof JsonObject) {
-            variables = exchange.getIn().getBody(JsonObject.class);
+            Object value = exchange.getIn().getHeader(getEndpoint().getVariablesHeader());
+            if (value instanceof Map<?, ?> map) {
+                variables = toJsonObject(map);
+            } else {
+                variables = exchange.getIn().getHeader(getEndpoint().getVariablesHeader(), JsonObject.class);
+            }
+        } else if (exchange.getIn().getBody() instanceof Map<?, ?> map) {
+            variables = toJsonObject(map);
         }
         return variables;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static JsonObject toJsonObject(Map<?, ?> map) {
+        return map instanceof JsonObject json ? json : new JsonObject((Map<String, ?>) map);
     }
 }

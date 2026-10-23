@@ -128,7 +128,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointServ
             configureConsumer(answer);
             return answer;
         } else {
-            throw new IllegalArgumentException("The type '" + this.type + "' is not valid!");
+            throw new IllegalArgumentException(
+                    "The snmp consumer needs the type option set to TRAP or POLL, not " + this.type
+                                               + " (GET_NEXT is for the producer)");
         }
     }
 
@@ -170,7 +172,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointServ
     }
 
     /**
-     * Which operation to perform such as poll, trap, etc.
+     * Which operation to perform such as poll, trap, etc. The consumer supports TRAP (receive traps) and POLL (poll the
+     * oids). The producer supports TRAP (send the PDU of the body as a trap), POLL (a GET of the oids, also done when
+     * no type is set) and GET_NEXT (a walk of the oids, for the producer only).
      */
     public void setType(SnmpActionType type) {
         this.type = type;
@@ -265,10 +269,10 @@ public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointServ
             host = "127.0.0.1";
         }
         if (port == -1) {
-            if (getType() == SnmpActionType.POLL) {
-                port = 161; // default snmp poll port
-            } else {
+            if (getType() == SnmpActionType.TRAP) {
                 port = 162; // default trap port
+            } else {
+                port = 161; // default snmp port of GET and GET_NEXT requests
             }
         }
 

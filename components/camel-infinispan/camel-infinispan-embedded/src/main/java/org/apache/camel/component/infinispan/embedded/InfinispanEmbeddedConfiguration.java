@@ -47,6 +47,9 @@ public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration imp
 
     /**
      * Specifies the cache Container to connect
+     * <p/>
+     * Read on the component only, as the cache manager is shared by all the endpoints of the component: set on an
+     * endpoint, this option is not used.
      */
     public EmbeddedCacheManager getCacheContainer() {
         return cacheContainer;
@@ -62,6 +65,9 @@ public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration imp
 
     /**
      * The CacheContainer configuration. Used if the cacheContainer is not defined.
+     * <p/>
+     * Read on the component only, as the cache manager is shared by all the endpoints of the component: set on an
+     * endpoint, this option is not used.
      */
     public void setCacheContainerConfiguration(Configuration cacheContainerConfiguration) {
         this.cacheContainerConfiguration = cacheContainerConfiguration;
@@ -126,6 +132,9 @@ public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration imp
 
     /**
      * A comma separated list of org.infinispan.context.Flag to be applied by default on each cache invocation
+     * <p/>
+     * Read on the component only, as the cache manager is shared by all the endpoints of the component: set on an
+     * endpoint, this option is not used.
      */
     public void setFlags(String flagsAsString) {
         String[] flagsArray = flagsAsString.split(",");

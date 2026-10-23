@@ -39,9 +39,15 @@ and receiving traps.
 
 == Snmp Producer
 
-It can also be used to request information using GET method.
+It can also be used to request information using GET method: the producer with `type=POLL`, or without a `type`,
+sends a GET request of the `oids` of the endpoint. With `type=GET_NEXT` the producer walks the `oids`
+(a GET_NEXT request is for the producer only, the consumer supports the types `TRAP` and `POLL`).
+With `type=TRAP` the producer sends the `org.snmp4j.PDU` of the message body as a trap.
 
-The response body type is `org.apache.camel.component.snmp.SnmpMessage`.
+The response body type is `org.apache.camel.component.snmp.SnmpMessage` (a list of them for `GET_NEXT`), and it converts
+to `String` as the XML text shown in "The result of a poll" below.
+
+Without a port in the endpoint, the default port is 162 for `type=TRAP` and 161 otherwise.
 
 
 // component options: START
@@ -108,7 +114,7 @@ Be prepared.
 -------------------------
 As you may notice, default `snmpVersion` is 0, which means `version1` in the endpoint if it is not set explicitly.
 Make sure you explicitly set `snmpVersion` which is not default value, in a case of where you are able to query SNMP tables with different versions.
-Other possible values are `version2c` and `version3`.
+Other possible values are 1, which means `version2c`, and 3, which means `version3`.
 
 == Examples
 
@@ -125,7 +131,8 @@ snmp:127.0.0.1:162?protocol=udp&type=TRAP
 -----------------------------------------
 
 You can get the community of SNMP TRAP with message
-header `securityName`, peer address of the SNMP TRAP with message header `peerAddress`.
+header `securityName` (an `org.snmp4j.smi.OctetString`), peer address of the SNMP TRAP with message header `peerAddress`
+(an `org.snmp4j.smi.Address`).
 
 Routing example in Java: (converts the SNMP PDU to XML String)
 

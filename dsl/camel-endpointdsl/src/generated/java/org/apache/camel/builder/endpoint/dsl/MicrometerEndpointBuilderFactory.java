@@ -238,8 +238,9 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Syntax: <code>micrometer:metricsType:metricsName</code>
          * 
-         * Path parameter: metricsType (required)
+         * Path parameter: metricsType
          * Type of metrics
+         * Default value: counter
          * There are 3 enums and the value can be one of: counter, summary,
          * timer
          * 
@@ -263,8 +264,9 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Syntax: <code>micrometer:metricsType:metricsName</code>
          * 
-         * Path parameter: metricsType (required)
+         * Path parameter: metricsType
          * Type of metrics
+         * Default value: counter
          * There are 3 enums and the value can be one of: counter, summary,
          * timer
          * 
@@ -307,7 +309,7 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Override histogram value in URI.
          * 
-         * The option is a: {@code long} type.
+         * The option is a: {@code Double} type.
          * 
          * Group: producer
          * 

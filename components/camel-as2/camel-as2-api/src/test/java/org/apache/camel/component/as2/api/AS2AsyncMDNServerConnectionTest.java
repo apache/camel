@@ -18,16 +18,20 @@ package org.apache.camel.component.as2.api;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.logging.log4j.Level;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AS2AsyncMDNServerConnectionTest {
@@ -61,9 +65,7 @@ class AS2AsyncMDNServerConnectionTest {
             }
         });
 
-        // Wait for server to be ready
-        Thread.sleep(200);
-
+        // the server socket is bound when the connection is created, so the server is ready
         // Send a request with a Host header that doesn't match the server's hostname
         // This previously caused HTTP 421 due to RequestValidateHost
         HttpURLConnection conn
@@ -79,5 +81,26 @@ class AS2AsyncMDNServerConnectionTest {
 
         // Should NOT get 421 (Misdirected Request) anymore
         assertNotEquals(421, responseCode, "Should not reject requests with non-matching Host header");
+    }
+
+    @Test
+    void closedConnectionAfterAReceiptIsNotLoggedAsError() throws Exception {
+        connection.receive("/test-mdn", (request, response, context) -> response.setCode(200));
+
+        try (LogCapture log = new LogCapture(AS2AsyncMDNServerConnection.class)) {
+            HttpURLConnection conn
+                    = (HttpURLConnection) new URL("http://localhost:" + port + "/test-mdn").openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "close");
+            conn.setDoOutput(true);
+            conn.getOutputStream().write("receipt".getBytes());
+            assertEquals(200, conn.getResponseCode());
+            conn.disconnect();
+
+            // the request handler thread ends when the sender closes the connection
+            await().atMost(10, TimeUnit.SECONDS).until(() -> log.hasMessageContaining("Connection is closed"));
+            assertEquals(List.of(), log.events(Level.ERROR), "a closed connection is not an error");
+            assertTrue(log.eventsContaining("Connection is closed").stream().allMatch(e -> e.getLevel() == Level.DEBUG));
+        }
     }
 }

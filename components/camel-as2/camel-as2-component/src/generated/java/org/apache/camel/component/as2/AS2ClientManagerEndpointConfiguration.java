@@ -44,7 +44,7 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="An RFC2822 address to request a receipt or null if no receipt requested")})
     private String dispositionNotificationTo;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="EDI message to transport")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="EDI message to transport: a String, an InputStream or a byte array")})
     private Object ediMessage;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The charset of the EDI message")})

@@ -12,7 +12,7 @@
 
 *{component-header}*
 
-The GraphQL component is a GraphQL client that communicates over HTTP and supports queries and mutations, but not subscriptions. It uses the https://hc.apache.org/httpcomponents-client-4.5.x/index.html[Apache HttpClient] library.
+The GraphQL component is a GraphQL client that communicates over HTTP and supports queries and mutations, but not subscriptions. It sends the requests with the xref:http-component.adoc[HTTP] component, which uses the Apache HttpClient 5 library.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -37,9 +37,21 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Message Body
 
-If the `variables` and `variablesHeader` parameters are not set and the IN body is a JsonObject instance, Camel will use it for the operation's variables. If the `query` and `queryFile` parameters are not set and the IN body is a String, Camel will use it as the query. Camel will store the GraphQL response from the external server on the OUT message body.
-All headers from the IN message will be copied to the OUT message, so headers are preserved during routing.
-Additionally, Camel will add the HTTP response headers as well to the OUT message headers.
+If the `query`, `queryFile` and `queryHeader` parameters are not set, the body is the query: it must be text, bytes, a stream or a file, and another body (such as a `Map`) fails with an `InvalidPayloadException`.
+Otherwise, if the `variables` and `variablesHeader` parameters are not set and the body is a `Map` (such as a `JsonObject`), Camel will use it for the operation's variables.
+Camel will store the GraphQL response from the external server on the message body.
+
+== HTTP Headers
+
+The headers of the message are sent as HTTP request headers (filtered by the `headerFilterStrategy`), except:
+
+* the headers named by the `queryHeader` and `variablesHeader` parameters, as the query and the variables are sent in the JSON body of the request;
+* a `Content-Encoding` header, as the request is not compressed.
+
+The producer always sends the request with `Content-Type: application/json`, `Accept: application/json` and `Accept-Encoding: gzip`, whatever the headers of the message are.
+
+After the call, the message keeps its own headers, and Camel adds the HTTP response headers (such as `CamelHttpResponseCode` and the `Content-Type` of the response).
+The headers the producer set for the request (`CamelHttpMethod`, `Accept` and `Accept-Encoding`) do not stay on the message: a header of the message with the same name keeps its value.
 
 == Examples
 

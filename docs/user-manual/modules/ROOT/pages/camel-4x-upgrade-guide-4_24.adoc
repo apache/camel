@@ -2636,3 +2636,97 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== camel-kafka - only a JSON array is sent as one record per element
+
+With `useIterator=true` (the default), the producer now splits a Jackson JSON node only when it is an array, for
+Jackson 2 and Jackson 3. An object node is now sent as one record; previously it was sent as one record per field
+value, without the field names, as the 4.22 upgrade guide said. A Jackson 3 scalar node is now sent as one record,
+where nothing was sent before.
+
+=== camel-dns - dig without a type, and the wikipedia type
+
+`dns:dig` without the `CamelDnsType` header now asks for type A, and without the `CamelDnsName` header fails with an
+`IllegalArgumentException` that names the header; both failed with a `NullPointerException` before. The `wikipedia`
+type and the `CamelDnsTerm` header are deprecated, as the service behind them is gone.
+
+=== camel-as2 - client/send
+
+* A partner answer with an HTTP status outside 2xx, such as a 500 when the route of the partner fails, now fails the
+  exchange. Previously the exchange succeeded with a null body. The `CamelAs2.interchange` exchange property is still
+  set.
+* The EDI message can now be a `byte[]`, a `java.io.File`, the file of a file consumer, or anything that converts to
+  bytes, as well as text and a stream.
+* The `requestUri` option now defaults to `/` for client/send, as the catalog says.
+* The `ediMessageType` option is deprecated: use `ediMessageContentType`. When only `ediMessageType` is set,
+  client/send uses it as the content type.
+* `ediMessageTransferEncoding=quoted-printable` now encodes the message as quoted-printable. Previously it was
+  encoded as Base64 but labelled quoted-printable, which the receiver rejected.
+
+=== camel-graphql - the HTTP headers of the request
+
+The `Content-Type`, `Accept` and `Accept-Encoding` headers of the request are now always the ones of the producer
+(JSON), whatever headers the message has, and a `Content-Encoding` header of the message is no longer sent. The
+headers named by the `queryHeader` and `variablesHeader` options are no longer sent as HTTP headers. After the call
+the `CamelHttpMethod`, `Accept` and `Accept-Encoding` headers that the producer set no longer stay on the message, so
+a later http producer no longer sends a POST because of them. When the body is the query, a body that is not text,
+bytes, a stream or a file, such as a Map, now fails instead of being sent as its `toString()`, and a Map body (or a
+Map in the variables header) is used as the variables.
+
+=== camel-vertx-http - Path and Reader bodies, and urlencoded forms
+
+A `java.nio.file.Path` body is now sent as a file and a `Reader` body as its text; both failed before. The values of
+an `application/x-www-form-urlencoded` String body are now decoded before Vert.x encodes the form, so an escape such as
+`%26` is no longer sent encoded twice, and a name that is repeated sends all its values. `RAW(...)` values are no
+longer recognized in such a form body.
+
+=== camel-github2 - getCommitFile
+
+getCommitFile now takes the commit from the `CamelGitHubCommitSha` header, which must be a commit id of 40
+hexadecimal characters, and the path of the file from the new `CamelGitHubFilePath` header, or else the body, and gives
+the content of the file at that commit. Previously the body was taken as the commit when the header was not set, and
+the operation could not give the content of a file.
+
+=== camel-pdf - page sizes, extractText and line ends
+
+* The `pageSize` values of the catalog (`LETTER`, `LEGAL`, `A0` to `A6`) now work: `pageSize=A4` gave a Letter page
+  before. The former names such as `PAGE_SIZE_A4` still work. An unknown value now fails when the endpoint is
+  created.
+* extractText now reads a `byte[]`, a `ByteArrayOutputStream` (the output of create and merge), a stream, a file or a
+  Path, so create followed by extractText works. Another body, or none, fails with an `InvalidPayloadException`.
+* create without a body fails with an `InvalidPayloadException`. With the default `lineTermination`, a CR LF or a CR
+  now ends a line, a tab is written as spaces and other control characters are left out; they failed before.
+* The `CamelPdfFilesToMerge` header of merge can also hold `java.nio.file.Path` elements.
+
+=== camel-tika - the body and the charset of the output
+
+detect and parse fail with an `InvalidPayloadException` for a body that does not convert to a stream, or no body,
+instead of a `NullPointerException`. parse now sets the charset of the exchange to `tikaParseOutputEncoding`, so the
+output converts to text in that charset.
+
+=== camel-infinispan-embedded - the configurationUri
+
+The `configurationUri` of the component now reads a `file:` URI, an absolute path and property placeholders, as well
+as a name on the class path. The `configurationUri`, `cacheContainer`, `cacheContainerConfiguration` and `flags`
+options are read on the component only: set on an endpoint they are not used.
+
+=== camel-snmp - the producer and the poll consumer
+
+* A producer without `type` now sends a GET with the `oids` of the endpoint, where it sent a GET without them, and
+  without a port in the URI a producer that is not of type TRAP now uses port 161 instead of 162.
+* The trap producer fails with an `InvalidPayloadException` for a body that is not an `org.snmp4j.PDU`.
+* The `SnmpMessage` body of the producer converts to the XML text of its PDU, as the body of the consumer is.
+* The POLL consumer now waits for the answer of each poll, and a poll without an answer counts as an empty poll, so
+  `sendEmptyMessageWhenIdle` and the backoff options work. `SnmpOIDPoller` no longer implements `ResponseListener`.
+
+=== camel-jdbc - generated keys, outputClass and the body
+
+The `CamelGeneratedKeysRows` header is now always a List of Maps of the key columns: the `outputClass` and `readSize`
+options no longer apply to it. An `outputClass` that does not resolve fails with an `IllegalArgumentException` that
+names the class, and a message without a body fails with an `InvalidPayloadException`. The `transacted` option is
+deprecated, as it is not used.
+
+=== camel-jsch - scp without a known hosts file
+
+With `useUserKnownHostsFile=false` and no `knownHostsFile`, scp no longer fails with a `NullPointerException`: no host
+is known, and `strictHostKeyChecking` decides whether to connect.

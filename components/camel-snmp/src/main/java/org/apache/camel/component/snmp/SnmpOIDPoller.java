@@ -28,7 +28,6 @@ import org.snmp4j.Snmp;
 import org.snmp4j.Target;
 import org.snmp4j.TransportMapping;
 import org.snmp4j.event.ResponseEvent;
-import org.snmp4j.event.ResponseListener;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.GenericAddress;
 import org.snmp4j.smi.OID;
@@ -39,7 +38,7 @@ import org.snmp4j.util.DefaultPDUFactory;
 import org.snmp4j.util.TreeEvent;
 import org.snmp4j.util.TreeUtils;
 
-public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseListener {
+public class SnmpOIDPoller extends ScheduledPollConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnmpOIDPoller.class);
 
@@ -48,7 +47,6 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     private Snmp snmp;
 
     private Target target;
-    private PDU pdu;
     private final SnmpEndpoint endpoint;
 
     public SnmpOIDPoller(SnmpEndpoint endpoint, Processor processor) {
@@ -73,7 +71,6 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
         this.snmp = new Snmp(this.transport);
         SnmpHelper.createAndSetUSM(endpoint);
-        this.pdu = SnmpHelper.createPDU(endpoint);
         this.target = SnmpHelper.createTarget(endpoint);
 
         // listen to the transport
@@ -100,16 +97,14 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
     @Override
     protected int poll() throws Exception {
-        this.pdu.clear();
-
-        int type = this.getPduType(this.endpoint.getType());
-
-        this.pdu.setType(type);
+        // a new request PDU for each poll, as SNMP4J keeps the PDU of a request to send it again on a retry
+        PDU pdu = SnmpHelper.createPDU(endpoint);
+        pdu.setType(this.getPduType(this.endpoint.getType()));
 
         if (!endpoint.isTreeList()) {
             // prepare the request items
             for (OID oid : this.endpoint.getOids()) {
-                this.pdu.add(new VariableBinding(oid));
+                pdu.add(new VariableBinding(oid));
             }
         } else {
             TreeUtils treeUtils = new TreeUtils(snmp, new DefaultPDUFactory());
@@ -132,34 +127,22 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
                         if (varBinding == null) {
                             continue;
                         }
-                        this.pdu.add(varBinding);
+                        pdu.add(varBinding);
                     }
                 }
             }
         }
 
-        // send the request
-        snmp.send(pdu, target, null, this);
-
-        return 1;
-    }
-
-    @Override
-    public void onResponse(ResponseEvent event) {
-        // Always cancel async request when response has been received
-        // otherwise a memory leak is created! Not canceling a request
-        // immediately can be useful when sending a request to a broadcast address.
-        ((Snmp) event.getSource()).cancel(event.getRequest(), this);
-
-        // check for valid response
-        if (event.getRequest() == null || event.getResponse() == null) {
-            // ignore null requests/responses
-            LOG.debug("Received invalid SNMP event. Request: {} / Response: {}", event.getRequest(), event.getResponse());
-            return;
+        // send the request and wait for the response, so the poll returns the number of messages it polled
+        ResponseEvent event = snmp.send(pdu, target);
+        if (event == null || event.getResponse() == null) {
+            // no response within the timeout and retries of the endpoint
+            LOG.debug("Received no SNMP response from {}", endpoint.getServerAddress());
+            return 0;
         }
 
-        PDU pdu = event.getResponse();
-        processPDU(pdu);
+        processPDU(event.getResponse());
+        return 1;
     }
 
     /**

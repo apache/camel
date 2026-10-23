@@ -2347,7 +2347,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param download the value to set
@@ -2366,7 +2366,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param download the value to set

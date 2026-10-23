@@ -17,9 +17,12 @@
 package org.apache.camel.component.tika;
 
 import java.io.File;
+import java.util.List;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,6 +32,8 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TikaDetectTest extends CamelTestSupport {
 
@@ -69,6 +74,20 @@ public class TikaDetectTest extends CamelTestSupport {
         File document = new File("src/test/resources/testGIF.gif");
         template.sendBody("direct:start", document);
         resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testDetectBodyNotStream() {
+        Exception e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", List.of("a", "b")));
+        assertInstanceOf(InvalidPayloadException.class, e.getCause());
+    }
+
+    @Test
+    public void testDetectWithoutBody() {
+        Exception e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", null));
+        assertInstanceOf(InvalidPayloadException.class, e.getCause());
     }
 
     @Override

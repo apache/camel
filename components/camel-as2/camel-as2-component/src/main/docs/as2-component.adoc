@@ -36,8 +36,10 @@ as2://apiName/methodName
 
 apiName can be one of:
 
-* client
-* server
+* client: `client/send` sends an EDI message to a trading partner
+* server: `server/listen` receives EDI messages
+* receipt: `receipt/receive` receives the asynchronous MDNs (receipts) that a `client/send` asked for with
+  `receiptDeliveryOption`
 
 
 // component options: START
@@ -99,6 +101,25 @@ An `as2://server/listen` consumer receives AS2 messages on `serverPortNumber`, f
 
 A `SIGNED`, `ENCRYPTED` or `SIGNED_ENCRYPTED` message structure also needs the keys and certificates of the signing
 and encrypting options.
+
+=== Sending with client/send
+
+The EDI message (`inBody: ediMessage`) can be text, a stream, a `byte[]` or a file, such as the `java.io.File` or the
+file of a `file` consumer, so a route can send the files of a folder without converting them first. Text is encoded
+with `ediMessageCharset` (US-ASCII when it is not set); the other types are sent as their bytes. Any other body that
+the type converters can turn into bytes is sent as those bytes, and a body that cannot be converted fails the
+exchange with a message that names its type.
+
+`requestUri` defaults to `/`. The content type of the message is set with `ediMessageContentType`; the older
+`ediMessageType` option is deprecated, and it is used only when `ediMessageContentType` is not set.
+
+`ediMessageTransferEncoding` can be `7bit`, `8bit`, `binary`, `base64` or `quoted-printable`.
+
+When the trading partner answers with an HTTP status outside 2xx, such as a 500 when the route of an AS2 server fails,
+the exchange fails with an exception that names the status code and reason. The exchange property
+`CamelAs2.interchange` still holds the `HttpCoreContext` with the request and the response. A 2xx answer sets the body
+to the receipt (MDN) when the partner returned one, and to `null` when there is none, such as a send without
+`dispositionNotificationTo` or with an asynchronous receipt.
 
 Several `as2://server/listen` consumers can share a `serverPortNumber`, each with its own `requestUriPattern`. Each
 consumer applies its own keys and certificates and its own asynchronous MDN settings (`mdnUserName`, `mdnPassword`,

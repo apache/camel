@@ -632,7 +632,8 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
 
     /**
      * Sets whether sending to kafka should send the message body as a single record, or use a java.util.Iterator to
-     * send multiple records to kafka (if the message body can be iterated).
+     * send multiple records to kafka (if the message body can be iterated). A Jackson JSON array node is sent as one
+     * record per element, and any other JSON node (such as an object) as one record.
      */
     public void setUseIterator(boolean useIterator) {
         this.useIterator = useIterator;

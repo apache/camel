@@ -45,8 +45,7 @@ public class MicrometerEndpoint extends DefaultEndpoint {
 
     protected MeterRegistry registry;
 
-    @UriPath(description = "Type of metrics", enums = "counter,summary,timer")
-    @Metadata(required = true)
+    @UriPath(description = "Type of metrics", enums = "counter,summary,timer", defaultValue = "counter")
     protected final Meter.Type metricsType;
     @UriPath(description = "Name of metrics")
     @Metadata(required = true, supportSimpleExpression = true)
