@@ -99,6 +99,8 @@ In case the KeyPair and the Signature Objects are not in the registry, it will p
 
 This will be true for standardized algorithms and for experimental ones.
 
+NOTE: The sign and verify operations stream the message body. A `byte[]` or `InputStream` body is fed to the signature in chunks without being materialised as a String, so large payloads (files, large messages) can be signed and verified without loading them fully into memory. A `java.io.File` or `java.nio.file.Path` body, and a file from a file consumer (a `GenericFile` body), is read the same way from the file, so the signature covers the bytes of the file. When the body is a re-readable `StreamCache` (for example with stream caching enabled) it is reset after reading so downstream processors still see the payload. A `String` (or any `CharSequence`) body is encoded as **UTF-8** so that signing and verifying agree regardless of the JVM default charset. Any other body that has a binary type converter (for example a `java.nio.ByteBuffer`, a `java.io.ByteArrayOutputStream`, a Netty `ByteBuf` or a Vert.x `Buffer`) is signed over those bytes. A body with no binary representation (for example a `Map` or a POJO) is rejected with an `InvalidPayloadException`; convert it to a `String`, `byte[]` or other binary type earlier in the route.
+
 == Examples
 
 - ML-DSA
