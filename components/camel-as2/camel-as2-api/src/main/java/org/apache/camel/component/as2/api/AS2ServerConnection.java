@@ -157,6 +157,11 @@ public class AS2ServerConnection {
                  validateSigningCertificateChain, null, null, null, null);
         }
 
+        /**
+         * Creates a configuration with its own asynchronous MDN settings: an asynchronous MDN for a request matched by
+         * it is delivered with these credentials (a user name and password, or an access token), and only to a delivery
+         * address in {@code asyncMdnAllowedHosts} when that list is set.
+         */
         public AS2ConsumerConfiguration(
                                         AS2SignatureAlgorithm signingAlgorithm,
                                         Certificate[] signingCertificateChain,
