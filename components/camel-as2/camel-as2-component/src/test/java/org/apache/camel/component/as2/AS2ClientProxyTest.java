@@ -159,6 +159,21 @@ public class AS2ClientProxyTest extends AbstractAS2ITSupport {
     }
 
     @Test
+    public void refusedHttpConnectionIsNotReused() {
+        assertEachSendIsRefused("direct://HTTP_WRONG_PASSWORD", httpRequestLine());
+        assertEquals(0, httpRequestHandler.getCount());
+    }
+
+    @Test
+    public void refusedHttpConnectionIsNotReusedWhenTheProxyKeepsItOpen() {
+        // the 407 then has a body and the proxy waits for a retry on the same connection: it must not be reused
+        proxy.setKeepAliveAfterRefusal(true);
+
+        assertEachSendIsRefused("direct://HTTP_WRONG_PASSWORD", httpRequestLine());
+        assertEquals(0, httpRequestHandler.getCount());
+    }
+
+    @Test
     public void sendsHttpsThroughProxyTunnel() {
         HttpEntity mdn = requestBodyAndHeaders("direct://HTTPS", EDI_MESSAGE, as2Headers());
 
@@ -213,13 +228,32 @@ public class AS2ClientProxyTest extends AbstractAS2ITSupport {
     }
 
     @Test
+    public void refusedTunnelIsNotReused() {
+        // a connection without its tunnel must not go back to the pool, or the next send skips CONNECT and TLS
+        assertEachSendIsRefused("direct://HTTPS_WRONG_PASSWORD", httpsConnectLine());
+        assertEquals(0, httpsRequestHandler.getCount());
+    }
+
+    @Test
+    public void refusedTunnelIsNotReusedWhenTheProxyKeepsItOpen() {
+        proxy.setKeepAliveAfterRefusal(true);
+
+        assertEachSendIsRefused("direct://HTTPS_WRONG_PASSWORD", httpsConnectLine());
+        assertEquals(0, httpsRequestHandler.getCount());
+    }
+
+    @Test
     public void verifiesTheTargetHostNameThroughTheTunnel() {
         // the certificate names localhost, which is also the proxy's name: the handshake must check the target's
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> requestBodyAndHeaders("direct://HTTPS_IP_TARGET", EDI_MESSAGE, as2Headers()));
+        for (int i = 0; i < 2; i++) {
+            CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                    () -> requestBodyAndHeaders("direct://HTTPS_IP_TARGET", EDI_MESSAGE, as2Headers()));
+            assertTrue(hasCause(e, SSLException.class), rootMessage(e));
+        }
 
-        assertEquals(List.of("CONNECT 127.0.0.1:" + httpsServer.getLocalPort() + " HTTP/1.1"), proxy.getRequestLines());
-        assertTrue(hasCause(e, SSLException.class), rootMessage(e));
+        // a failed handshake leaves no connection in the pool: the second send opens a new tunnel
+        String connectLine = "CONNECT 127.0.0.1:" + httpsServer.getLocalPort() + " HTTP/1.1";
+        assertEquals(List.of(connectLine, connectLine), proxy.getRequestLines());
         assertEquals(0, httpsRequestHandler.getCount());
     }
 
@@ -278,6 +312,24 @@ public class AS2ClientProxyTest extends AbstractAS2ITSupport {
                                 httpsServer.getLocalPort(), proxy.getPort(), PROXY_USER, PROXY_PASSWORD);
             }
         };
+    }
+
+    /**
+     * Sends twice through a route the proxy refuses: each send must get the 407 on a new connection to the proxy.
+     */
+    private void assertEachSendIsRefused(String route, String requestLine) {
+        for (int i = 0; i < 2; i++) {
+            CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                    () -> requestBodyAndHeaders(route, EDI_MESSAGE, as2Headers()));
+            assertTrue(rootMessage(e).contains("407"), rootMessage(e));
+        }
+
+        assertEquals(List.of(requestLine, requestLine), proxy.getRequestLines());
+        assertEquals(2, proxy.getConnectionCount());
+    }
+
+    private String httpRequestLine() {
+        return "POST http://localhost:" + httpServer.getLocalPort() + "/ HTTP/1.1";
     }
 
     private String httpsConnectLine() {

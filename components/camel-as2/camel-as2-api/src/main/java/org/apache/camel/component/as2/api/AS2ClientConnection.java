@@ -66,6 +66,7 @@ import org.apache.hc.core5.http.protocol.RequestDate;
 import org.apache.hc.core5.http.protocol.RequestExpectContinue;
 import org.apache.hc.core5.http.protocol.RequestTargetHost;
 import org.apache.hc.core5.http.protocol.RequestUserAgent;
+import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.net.URIAuthority;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
@@ -238,10 +239,17 @@ public class AS2ClientConnection {
         try {
             endpoint = leaseRequest.get(Timeout.ofSeconds(RETRIEVE_CONNECTION_TIMEOUT_SECONDS));
             if (!endpoint.isConnected()) {
-                connectionPoolManager.connect(endpoint, TimeValue.ofMilliseconds(connectionTimeoutMilliseconds), httpContext);
-                if (route.isTunnelled()) {
-                    createTunnel(endpoint);
-                    connectionPoolManager.upgrade(endpoint, httpContext);
+                try {
+                    connectionPoolManager.connect(endpoint, TimeValue.ofMilliseconds(connectionTimeoutMilliseconds),
+                            httpContext);
+                    if (route.isTunnelled()) {
+                        createTunnel(endpoint);
+                        connectionPoolManager.upgrade(endpoint, httpContext);
+                    }
+                } catch (IOException | HttpException | RuntimeException e) {
+                    // a connection without its tunnel or its TLS layer must not go back to the pool
+                    endpoint.close(CloseMode.IMMEDIATE);
+                    throw e;
                 }
             }
             // Execute Request
@@ -257,6 +265,15 @@ public class AS2ClientConnection {
                 }
             };
             response = endpoint.execute(UUID.randomUUID().toString(), request, requestExecutor, httpContext);
+            if (route.getProxyHost() != null && !route.isTunnelled()
+                    && response.getCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
+                // the proxy may keep the connection open with the body of its 407 unread: it must not be reused
+                endpoint.close(CloseMode.IMMEDIATE);
+                // only the proxy answers 407: the message has not reached the AS2 partner
+                throw new HttpException(
+                        "Proxy " + route.getProxyHost().toHostString() + " refused to forward the request to "
+                                        + targetHost.toHostString() + ": " + new StatusLine(response));
+            }
         } finally {
             if (endpoint != null) {
                 TimeValue keepAlive = null;
@@ -277,13 +294,6 @@ public class AS2ClientConnection {
                     IOHelper.close(endpoint);
                 }
             }
-        }
-        if (route.getProxyHost() != null && !route.isTunnelled()
-                && response.getCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
-            // only the proxy answers 407: the message has not reached the AS2 partner
-            throw new HttpException(
-                    "Proxy " + route.getProxyHost().toHostString() + " refused to forward the request to "
-                                    + targetHost.toHostString() + ": " + new StatusLine(response));
         }
         return response;
     }

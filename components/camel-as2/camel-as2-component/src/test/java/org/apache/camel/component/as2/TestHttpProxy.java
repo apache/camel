@@ -35,12 +35,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.util.IOHelper;
 
 /**
  * A minimal HTTP forward proxy for tests. It forwards plain http requests sent in absolute form and opens CONNECT
  * tunnels, and records the request line and the Proxy-Authorization header of every request it receives.
+ * <p>
+ * It refuses a request without the required credentials with a 407. By default it then closes the connection; it can
+ * also keep the connection open with a body in the 407, like a proxy waiting for the client to retry with credentials.
  */
 final class TestHttpProxy implements Closeable {
 
@@ -51,6 +55,8 @@ final class TestHttpProxy implements Closeable {
     private final List<String> requestLines = new CopyOnWriteArrayList<>();
     private final List<String> proxyAuthorizations = new CopyOnWriteArrayList<>();
     private final Map<String, String> hostAliases = new ConcurrentHashMap<>();
+    private final AtomicInteger connectionCount = new AtomicInteger();
+    private volatile boolean keepAliveAfterRefusal;
 
     /**
      * @param requiredAuthorization the Proxy-Authorization value the proxy requires, or null to require none
@@ -71,6 +77,21 @@ final class TestHttpProxy implements Closeable {
 
     List<String> getProxyAuthorizations() {
         return proxyAuthorizations;
+    }
+
+    /**
+     * The number of connections on which the clients sent a request to the proxy. A client's startup check opens a
+     * connection without sending anything, so it is not counted.
+     */
+    int getConnectionCount() {
+        return connectionCount.get();
+    }
+
+    /**
+     * Keeps the connection open after a 407, which carries a body, instead of closing it.
+     */
+    void setKeepAliveAfterRefusal(boolean keepAliveAfterRefusal) {
+        this.keepAliveAfterRefusal = keepAliveAfterRefusal;
     }
 
     /**
@@ -104,48 +125,77 @@ final class TestHttpProxy implements Closeable {
         try {
             InputStream in = new BufferedInputStream(client.getInputStream());
             OutputStream out = client.getOutputStream();
-            String requestLine = readLine(in);
-            if (requestLine == null) {
-                return;
-            }
-            List<String> headers = new ArrayList<>();
-            String proxyAuthorization = null;
-            for (String header = readLine(in); header != null && !header.isEmpty(); header = readLine(in)) {
-                if (header.toLowerCase(Locale.ROOT).startsWith("proxy-authorization:")) {
-                    proxyAuthorization = header.substring(header.indexOf(':') + 1).trim();
-                } else {
-                    headers.add(header);
-                }
-            }
-            requestLines.add(requestLine);
-            proxyAuthorizations.add(String.valueOf(proxyAuthorization));
-
-            if (requiredAuthorization != null && !requiredAuthorization.equals(proxyAuthorization)) {
-                write(out, "HTTP/1.1 407 Proxy Authentication Required\r\nProxy-Authenticate: Basic realm=\"test\"\r\n"
-                           + "Content-Length: 0\r\nConnection: close\r\n\r\n");
-                return;
-            }
-
-            String[] parts = requestLine.split(" ");
-            if ("CONNECT".equals(parts[0])) {
-                String[] hostPort = parts[1].split(":");
-                Socket target = connect(hostPort[0], Integer.parseInt(hostPort[1]));
-                write(out, "HTTP/1.1 200 Connection established\r\n\r\n");
-                relay(in, out, target);
-            } else {
-                // forward in origin form, without the proxy's own credentials
-                URI uri = URI.create(parts[1]);
-                Socket target = connect(uri.getHost(), uri.getPort());
-                StringBuilder head = new StringBuilder(parts[0] + " " + uri.getRawPath() + " " + parts[2] + "\r\n");
-                headers.forEach(h -> head.append(h).append("\r\n"));
-                write(target.getOutputStream(), head.append("\r\n").toString());
-                relay(in, out, target);
+            // a refused request is followed by the next one on the same connection when it is kept alive
+            boolean firstRequest = true;
+            while (handleRequest(in, out, firstRequest)) {
+                firstRequest = false;
             }
         } catch (IOException e) {
             // connection closed
         } finally {
             IOHelper.close(client);
         }
+    }
+
+    /**
+     * @return true when the connection stays open for another request
+     */
+    private boolean handleRequest(InputStream in, OutputStream out, boolean firstRequest) throws IOException {
+        String requestLine = readLine(in);
+        if (requestLine == null) {
+            return false;
+        }
+        if (firstRequest) {
+            connectionCount.incrementAndGet();
+        }
+        List<String> headers = new ArrayList<>();
+        String proxyAuthorization = null;
+        long contentLength = 0;
+        for (String header = readLine(in); header != null && !header.isEmpty(); header = readLine(in)) {
+            String name = header.substring(0, Math.max(header.indexOf(':'), 0)).trim().toLowerCase(Locale.ROOT);
+            String value = header.substring(header.indexOf(':') + 1).trim();
+            if ("proxy-authorization".equals(name)) {
+                proxyAuthorization = value;
+            } else {
+                if ("content-length".equals(name)) {
+                    contentLength = Long.parseLong(value);
+                }
+                headers.add(header);
+            }
+        }
+        requestLines.add(requestLine);
+        proxyAuthorizations.add(String.valueOf(proxyAuthorization));
+
+        if (requiredAuthorization != null && !requiredAuthorization.equals(proxyAuthorization)) {
+            if (keepAliveAfterRefusal) {
+                // read the refused request's body, so the next request on this connection can be read
+                in.skipNBytes(contentLength);
+                String body = "<html><body>Proxy authentication required</body></html>";
+                write(out, "HTTP/1.1 407 Proxy Authentication Required\r\nProxy-Authenticate: Basic realm=\"test\"\r\n"
+                           + "Content-Type: text/html\r\nContent-Length: " + body.length() + "\r\n\r\n" + body);
+                return true;
+            }
+            write(out, "HTTP/1.1 407 Proxy Authentication Required\r\nProxy-Authenticate: Basic realm=\"test\"\r\n"
+                       + "Content-Length: 0\r\nConnection: close\r\n\r\n");
+            return false;
+        }
+
+        String[] parts = requestLine.split(" ");
+        if ("CONNECT".equals(parts[0])) {
+            String[] hostPort = parts[1].split(":");
+            Socket target = connect(hostPort[0], Integer.parseInt(hostPort[1]));
+            write(out, "HTTP/1.1 200 Connection established\r\n\r\n");
+            relay(in, out, target);
+        } else {
+            // forward in origin form, without the proxy's own credentials
+            URI uri = URI.create(parts[1]);
+            Socket target = connect(uri.getHost(), uri.getPort());
+            StringBuilder head = new StringBuilder(parts[0] + " " + uri.getRawPath() + " " + parts[2] + "\r\n");
+            headers.forEach(h -> head.append(h).append("\r\n"));
+            write(target.getOutputStream(), head.append("\r\n").toString());
+            relay(in, out, target);
+        }
+        return false;
     }
 
     private Socket connect(String host, int port) throws IOException {
