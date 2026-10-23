@@ -58,13 +58,21 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "toolsearch":
+        case "toolSearch": target.getConfiguration().setToolSearch(property(camelContext, boolean.class, value)); return true;
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": target.getConfiguration().setToolSearchEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": target.getConfiguration().setToolSearchMaxResults(property(camelContext, int.class, value)); return true;
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": target.getConfiguration().setToolSearchStrategy(property(camelContext, org.apache.camel.component.ai.tool.AiToolSearchStrategy.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"agent", "agentConfiguration", "agentFactory"};
+        return new String[]{"agent", "agentConfiguration", "agentFactory", "toolSearchEmbeddingModel"};
     }
 
     @Override
@@ -105,6 +113,14 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "tags": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
         case "timeout": return java.time.Duration.class;
+        case "toolsearch":
+        case "toolSearch": return boolean.class;
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": return int.class;
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": return org.apache.camel.component.ai.tool.AiToolSearchStrategy.class;
         default: return null;
         }
     }
@@ -148,6 +164,14 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "tags": return target.getConfiguration().getTags();
         case "temperature": return target.getConfiguration().getTemperature();
         case "timeout": return target.getConfiguration().getTimeout();
+        case "toolsearch":
+        case "toolSearch": return target.getConfiguration().isToolSearch();
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": return target.getConfiguration().getToolSearchEmbeddingModel();
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": return target.getConfiguration().getToolSearchMaxResults();
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": return target.getConfiguration().getToolSearchStrategy();
         default: return null;
         }
     }

@@ -56,6 +56,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "toolsearch":
+        case "toolSearch": target.setToolSearch(property(camelContext, boolean.class, value)); return true;
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": target.setToolSearchEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": target.setToolSearchMaxResults(property(camelContext, int.class, value)); return true;
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": target.setToolSearchStrategy(property(camelContext, org.apache.camel.component.ai.tool.AiToolSearchStrategy.class, value)); return true;
         default: return false;
         }
     }
@@ -96,6 +104,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "tags": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
         case "timeout": return java.time.Duration.class;
+        case "toolsearch":
+        case "toolSearch": return boolean.class;
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": return int.class;
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": return org.apache.camel.component.ai.tool.AiToolSearchStrategy.class;
         default: return null;
         }
     }
@@ -137,6 +153,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "tags": return target.getTags();
         case "temperature": return target.getTemperature();
         case "timeout": return target.getTimeout();
+        case "toolsearch":
+        case "toolSearch": return target.isToolSearch();
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": return target.getToolSearchEmbeddingModel();
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": return target.getToolSearchMaxResults();
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": return target.getToolSearchStrategy();
         default: return null;
         }
     }

@@ -485,6 +485,28 @@ context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
 The event is emitted best-effort: when no `EventNotifier` is registered nothing is published, and a failure to notify
 never affects the refusal returned to the model.
 
+=== Tool search visibility
+
+`searchable` controls whether a route tool is sent to the model immediately or only after a producer with tool search enabled finds it. The default is `false`, so the tool stays directly visible. `searchable=true` omits the tool from the initial model request and makes it eligible for search together with remote MCP tools.
+
+Searchability is a visibility policy. It does not authorize the call. An `authorizationPolicy` on the tool is still applied when the model invokes it. With tool search disabled on the producer, `searchable` has no effect and the tool is exposed as before.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:invoice
+      parameters:
+        tags: erp
+        searchable: true
+        description: "Look up an invoice by id"
+        parameter.id: string
+        parameter.id.required: true
+      steps:
+        - to:
+            uri: bean:invoiceService
+----
+
 == See Also
 
 * xref:langchain4j-agent-component.adoc[LangChain4j Agent Component] — discovers ai-tool tools via the `tags` option

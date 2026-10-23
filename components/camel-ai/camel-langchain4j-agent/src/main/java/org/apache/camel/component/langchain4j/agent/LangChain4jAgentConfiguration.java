@@ -21,7 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import dev.langchain4j.mcp.client.McpClient;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.ai.tool.AiToolSearch;
+import org.apache.camel.component.ai.tool.AiToolSearchStrategy;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
@@ -122,6 +125,32 @@ public class LangChain4jAgentConfiguration implements Cloneable {
                             + " Only supported in inline agent creation mode (agentConfiguration without agent or agentFactory)."
                             + " URI value overrides the same option on the agentConfiguration bean.")
     private Boolean executeToolsConcurrently;
+
+    @UriParam(defaultValue = "false")
+    @Metadata(label = "producer",
+              description = "When true, route tools marked searchable and remote MCP tools are omitted from the initial "
+                            + "model request and exposed through one synthetic search tool. Directly visible route tools "
+                            + "and customTools stay in the request. Search is a visibility policy, not authorization. "
+                            + "Enabling it does not skip MCP tools/list. A dynamic tool provider registered outside Camel "
+                            + "is not searched. Only supported in inline agent creation mode.")
+    private boolean toolSearch;
+
+    @UriParam(defaultValue = "5")
+    @Metadata(label = "producer",
+              description = "Maximum number of tools returned by one tool search. Route and MCP tools are ranked together.")
+    private int toolSearchMaxResults = AiToolSearch.DEFAULT_MAX_RESULTS;
+
+    @UriParam(enums = "keyword,vector", defaultValue = "keyword")
+    @Metadata(label = "producer",
+              description = "How tool search ranks route and MCP tools. 'keyword' matches the tool name and description. "
+                            + "'vector' uses cosine similarity and requires toolSearchEmbeddingModel. Vector search "
+                            + "does not fall back to keyword search.")
+    private AiToolSearchStrategy toolSearchStrategy = AiToolSearchStrategy.KEYWORD;
+
+    @UriParam
+    @Metadata(label = "producer", autowired = true,
+              description = "LangChain4j embedding model used when toolSearchStrategy=vector. Required for vector search.")
+    private EmbeddingModel toolSearchEmbeddingModel;
 
     public LangChain4jAgentConfiguration() {
     }
@@ -389,5 +418,37 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setExecuteToolsConcurrently(Boolean executeToolsConcurrently) {
         this.executeToolsConcurrently = executeToolsConcurrently;
+    }
+
+    public boolean isToolSearch() {
+        return toolSearch;
+    }
+
+    public void setToolSearch(boolean toolSearch) {
+        this.toolSearch = toolSearch;
+    }
+
+    public int getToolSearchMaxResults() {
+        return toolSearchMaxResults;
+    }
+
+    public void setToolSearchMaxResults(int toolSearchMaxResults) {
+        this.toolSearchMaxResults = toolSearchMaxResults;
+    }
+
+    public AiToolSearchStrategy getToolSearchStrategy() {
+        return toolSearchStrategy;
+    }
+
+    public void setToolSearchStrategy(AiToolSearchStrategy toolSearchStrategy) {
+        this.toolSearchStrategy = toolSearchStrategy;
+    }
+
+    public EmbeddingModel getToolSearchEmbeddingModel() {
+        return toolSearchEmbeddingModel;
+    }
+
+    public void setToolSearchEmbeddingModel(EmbeddingModel toolSearchEmbeddingModel) {
+        this.toolSearchEmbeddingModel = toolSearchEmbeddingModel;
     }
 }

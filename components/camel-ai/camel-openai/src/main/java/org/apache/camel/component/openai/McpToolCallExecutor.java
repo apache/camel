@@ -36,6 +36,7 @@ import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ai.tool.AiToolExecutor;
 import org.apache.camel.component.ai.tool.AiToolResult;
+import org.apache.camel.component.ai.tool.AiToolSearch;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -80,6 +81,15 @@ class McpToolCallExecutor extends ServiceSupport {
             boolean success) {
     }
 
+    /**
+     * Handles the synthetic tool-search call before route or MCP lookup. Absent when tool search is disabled, so
+     * existing batches are unchanged.
+     */
+    @FunctionalInterface
+    interface SearchDispatch {
+        ToolResult search(ChatCompletionMessageToolCall toolCall) throws Exception;
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (endpoint.getConfiguration().isParallelToolExecution()) {
@@ -112,6 +122,12 @@ class McpToolCallExecutor extends ServiceSupport {
      * @throws Exception       when a tool call fails and the configured strategy is to fail the exchange
      */
     List<ToolResult> execute(List<ChatCompletionMessageToolCall> toolCalls, Exchange callingExchange) throws Exception {
+        return execute(toolCalls, callingExchange, null);
+    }
+
+    List<ToolResult> execute(
+            List<ChatCompletionMessageToolCall> toolCalls, Exchange callingExchange, SearchDispatch searchDispatch)
+            throws Exception {
         if (toolCalls.isEmpty()) {
             return List.of();
         }
@@ -124,16 +140,17 @@ class McpToolCallExecutor extends ServiceSupport {
         if (executorService == null || toolCalls.size() == 1) {
             List<ToolResult> results = new ArrayList<>(toolCalls.size());
             for (ChatCompletionMessageToolCall toolCall : toolCalls) {
-                results.add(executeOne(toolCall, toolState, callingExchange));
+                results.add(executeOne(toolCall, toolState, callingExchange, searchDispatch));
             }
             return results;
         }
 
-        return executeParallel(toolCalls, toolState, callingExchange);
+        return executeParallel(toolCalls, toolState, callingExchange, searchDispatch);
     }
 
     private List<ToolResult> executeParallel(
-            List<ChatCompletionMessageToolCall> toolCalls, McpToolState toolState, Exchange callingExchange)
+            List<ChatCompletionMessageToolCall> toolCalls, McpToolState toolState, Exchange callingExchange,
+            SearchDispatch searchDispatch)
             throws Exception {
         LOG.debug("Executing {} tool call(s) in parallel", toolCalls.size());
 
@@ -142,7 +159,8 @@ class McpToolCallExecutor extends ServiceSupport {
 
         List<Future<ToolResult>> futures = new ArrayList<>(toolCalls.size());
         for (ChatCompletionMessageToolCall toolCall : toolCalls) {
-            futures.add(executorService.submit(withMdc(mdc, () -> executeOne(toolCall, toolState, callingExchange))));
+            futures.add(executorService.submit(
+                    withMdc(mdc, () -> executeOne(toolCall, toolState, callingExchange, searchDispatch))));
         }
 
         long timeout = endpoint.getConfiguration().getParallelToolTimeout();
@@ -214,12 +232,19 @@ class McpToolCallExecutor extends ServiceSupport {
         };
     }
 
-    private ToolResult executeOne(ChatCompletionMessageToolCall toolCall, McpToolState toolState, Exchange callingExchange)
+    private ToolResult executeOne(
+            ChatCompletionMessageToolCall toolCall, McpToolState toolState, Exchange callingExchange,
+            SearchDispatch searchDispatch)
             throws Exception {
         long startNanos = System.nanoTime();
         OpenAIConfiguration config = endpoint.getConfiguration();
         String toolName = toolCall.asFunction().function().name();
         String argsJson = toolCall.asFunction().function().arguments();
+
+        // Search is not a route or MCP tool. Dispatch it before either lookup so a reserved name cannot fall through.
+        if (searchDispatch != null && AiToolSearch.TOOL_NAME.equals(toolName)) {
+            return timed(startNanos, searchDispatch.search(toolCall));
+        }
 
         AiToolSpec routeSpec = toolState.routeTools().get(toolName);
         if (routeSpec != null) {

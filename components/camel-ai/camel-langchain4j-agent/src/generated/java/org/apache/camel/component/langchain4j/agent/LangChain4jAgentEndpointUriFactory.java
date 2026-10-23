@@ -24,7 +24,7 @@ public class LangChain4jAgentEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(25);
         props.add("agent");
         props.add("agentConfiguration");
         props.add("agentFactory");
@@ -46,6 +46,10 @@ public class LangChain4jAgentEndpointUriFactory extends org.apache.camel.support
         props.add("tags");
         props.add("temperature");
         props.add("timeout");
+        props.add("toolSearch");
+        props.add("toolSearchEmbeddingModel");
+        props.add("toolSearchMaxResults");
+        props.add("toolSearchStrategy");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("apiKey");

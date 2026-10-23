@@ -179,6 +179,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             // fail at startup, before any client or MCP session exists, for the options a batch cannot honour
             OpenAIBatchSupport.validateConfiguration(configuration);
         }
+        if (operation == OpenAIOperations.chatCompletion || operation == OpenAIOperations.toolExecution) {
+            OpenAIToolSearch.validateConfiguration(configuration);
+        }
         mcpStopped = false;
         if (operation != OpenAIOperations.webhook) {
             // the webhook consumer verifies signatures with a client of its own and needs no API key
@@ -188,6 +191,10 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             registerRouteToolRegistryListener();
             initializeMcpServers();
             refreshRouteTools();
+            if (configuration.isToolSearch()
+                    && (operation == OpenAIOperations.chatCompletion || operation == OpenAIOperations.toolExecution)) {
+                OpenAIToolSearch.rejectReservedName(mcpToolState);
+            }
         }
     }
 

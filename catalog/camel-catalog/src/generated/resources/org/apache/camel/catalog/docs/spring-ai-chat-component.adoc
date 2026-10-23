@@ -1007,6 +1007,29 @@ discovered via `tags` and configured via `toolCallbacks`, and finally against a 
 under that name. A name that resolves nowhere fails the exchange with an `IllegalArgumentException` listing the
 available tools. You can combine `toolNames` with `tags` — both tool sources are additive.
 
+=== Tool search
+
+`toolSearch=true` omits route tools marked `searchable=true`, and remote MCP tools that already passed the server filters, from the initial model request. A route tool with `searchable=false` stays directly visible, as do `toolCallbacks`. The model finds hidden tools through one synthetic `tool_search_tool`. Route and MCP tools are ranked together, and a match is executed by its original callback. Names discovered for a `CamelSpringAiChatConversationId` stay available on later turns of that conversation. Without that header, discovery lasts for the current request only.
+
+Enabling tool search does not skip MCP `tools/list`. It only reduces the definitions sent to the model. `toolSearch=false` (the default) sends the current combined set, and the `searchable` flag has no effect.
+
+Camel has to build the `ChatClient` from `chatModel`. A prebuilt `chatClient` cannot install the search advisor and fails at startup when `toolSearch=true`. `toolSearchStrategy=vector` requires an autowired `toolSearchEmbeddingModel` and does not fall back to keyword search.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ask
+      steps:
+        - to:
+            uri: spring-ai-chat:chat
+            parameters:
+              chatModel: "#chatModel"
+              tags: erp
+              toolSearch: true
+              toolSearchMaxResults: 5
+----
+
 === Tool Context
 
 Pass contextual data (user ID, session info, tenant ID, etc.) to tools during execution.

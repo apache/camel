@@ -107,6 +107,13 @@ public class AiToolConfiguration implements Cloneable {
                             + "Also published as an MCP tool annotation when the tool is exposed via camel-mcp-server.")
     private Boolean returnDirect;
 
+    @Metadata(label = "consumer", defaultValue = "false")
+    @UriParam(description = "When true, this route tool is eligible for tool search and is omitted from the initial "
+                            + "model request while the producer has tool search enabled. When false, the tool stays "
+                            + "directly visible to the model. Searchability is a visibility policy, not an authorization "
+                            + "policy, and has no effect when tool search is disabled.")
+    private boolean searchable;
+
     @Metadata(label = "consumer,security")
     @UriParam(description = "Reference to an org.apache.camel.spi.AuthorizationPolicy used to authorize tool calls "
                             + "before the route runs. Set it on the component to guard every tool route by "
@@ -216,6 +223,14 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setReturnDirect(Boolean returnDirect) {
         this.returnDirect = returnDirect;
+    }
+
+    public boolean isSearchable() {
+        return searchable;
+    }
+
+    public void setSearchable(boolean searchable) {
+        this.searchable = searchable;
     }
 
     public AuthorizationPolicy getAuthorizationPolicy() {

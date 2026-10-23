@@ -57,6 +57,7 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIToolExecutionProducer.class);
 
     private McpToolCallExecutor toolCallExecutor;
+    private final OpenAIToolSearch toolSearch = new OpenAIToolSearch();
 
     public OpenAIToolExecutionProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -149,7 +150,21 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                     "No tools configured on the endpoint. Configure mcpServer.* parameters and/or the tags option.");
         }
 
-        List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls, exchange);
+        boolean toolSearchEnabled = config.isToolSearch();
+        if (toolSearchEnabled) {
+            toolSearch.openSession(exchange, config);
+        }
+        List<McpToolCallExecutor.ToolResult> results;
+        try {
+            results = toolSearchEnabled
+                    ? toolCallExecutor.execute(toolCalls, exchange,
+                            call -> toolSearch.execute(getEndpoint(), call, exchange))
+                    : toolCallExecutor.execute(toolCalls, exchange);
+        } finally {
+            if (toolSearchEnabled) {
+                toolSearch.closeSession(exchange, config);
+            }
+        }
         for (McpToolCallExecutor.ToolResult result : results) {
             history.add(ChatCompletionMessageParam.ofTool(
                     ChatCompletionToolMessageParam.builder()

@@ -120,6 +120,24 @@ class McpToolCallExecutorTest {
     }
 
     @Test
+    void searchDispatchRunsBeforeRouteOrMcpLookupAndKeepsCallOrder() throws Exception {
+        OpenAIEndpoint endpoint = newEndpoint(true, 0, Map.of("slow_b", staticClient("B")), Set.of("slow_b"));
+        executor = startExecutor(endpoint);
+
+        List<McpToolCallExecutor.ToolResult> results = executor.execute(
+                List.of(toolCall("id-search", "tool_search_tool"), toolCall("id-b", "slow_b")),
+                new DefaultExchange(context),
+                call -> new McpToolCallExecutor.ToolResult(
+                        call.asFunction().id(), "tool_search_tool", "Tools found: slow_b", false, 0, true));
+
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::toolCallId)
+                .containsExactly("id-search", "id-b");
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::content)
+                .containsExactly("Tools found: slow_b", "B");
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::returnDirect).containsExactly(false, true);
+    }
+
+    @Test
     void emptyBatchReturnsNoResults() throws Exception {
         OpenAIEndpoint endpoint = newEndpoint(true, 0, Map.of("tool_a", staticClient("A")), Set.of());
         executor = startExecutor(endpoint);

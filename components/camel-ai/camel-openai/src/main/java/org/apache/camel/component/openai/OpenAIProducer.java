@@ -54,6 +54,7 @@ import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
+import org.apache.camel.component.ai.tool.AiToolSearchSession;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
@@ -74,6 +75,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private Class<?> outputClassResolved;
     private McpToolCallExecutor toolCallExecutor;
+    private final OpenAIToolSearch toolSearch = new OpenAIToolSearch();
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -205,24 +207,44 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         applyAdditionalBodyProperties(paramsBuilder, config);
 
-        // Add MCP tools to the request if configured
+        // Add tools to the request. Search keeps the catalogue snapshot unchanged and only changes which definitions
+        // are advertised. MCP tools/list still ran when the snapshot was built.
         List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpToolState().tools();
         boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
-        if (hasMcpTools) {
-            for (ChatCompletionFunctionTool tool : mcpTools) {
-                paramsBuilder.addTool(tool);
-            }
+        boolean toolSearchEnabled = config.isToolSearch();
+        if (toolSearchEnabled) {
+            toolSearch.openSession(exchange, config);
         }
+        try {
+            if (toolSearchEnabled) {
+                AiToolSearchSession session = exchange.getProperty(
+                        OpenAIToolSearch.SESSION_PROPERTY, AiToolSearchSession.class);
+                for (ChatCompletionFunctionTool tool : OpenAIToolSearch.select(
+                        config, getEndpoint().getMcpToolState(), session)) {
+                    paramsBuilder.addTool(tool);
+                }
+            } else if (hasMcpTools) {
+                for (ChatCompletionFunctionTool tool : mcpTools) {
+                    paramsBuilder.addTool(tool);
+                }
+            }
 
-        ChatCompletionCreateParams params = paramsBuilder.build();
+            ChatCompletionCreateParams params = paramsBuilder.build();
 
-        if (Boolean.TRUE.equals(streaming) && hasMcpTools && config.isAutoToolExecution()) {
-            LOG.info("Streaming with MCP tools is not supported; falling back to non-streaming for the agentic loop");
-            processNonStreaming(exchange, params, config);
-        } else if (Boolean.TRUE.equals(streaming)) {
-            processStreaming(exchange, params);
-        } else {
-            processNonStreaming(exchange, params, config);
+            // Search installs a synthetic tool even when every real tool is omitted, so the agentic loop still runs.
+            boolean agenticTools = toolSearchEnabled || hasMcpTools;
+            if (Boolean.TRUE.equals(streaming) && agenticTools && config.isAutoToolExecution()) {
+                LOG.info("Streaming with MCP tools is not supported; falling back to non-streaming for the agentic loop");
+                processNonStreaming(exchange, params, config);
+            } else if (Boolean.TRUE.equals(streaming)) {
+                processStreaming(exchange, params);
+            } else {
+                processNonStreaming(exchange, params, config);
+            }
+        } finally {
+            if (toolSearchEnabled) {
+                toolSearch.closeSession(exchange, config);
+            }
         }
     }
 
@@ -321,12 +343,13 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             throws Exception {
         List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpToolState().tools();
         boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
+        boolean agenticTools = config.isToolSearch() || hasMcpTools;
 
-        if (!hasMcpTools || !config.isAutoToolExecution()) {
-            // Path A: No MCP tools or auto-execution disabled -- existing behavior
+        if (!agenticTools || !config.isAutoToolExecution()) {
+            // Path A: No tools, or auto-execution disabled. Searchable tools are already omitted from params.
             processNonStreamingSimple(exchange, params, config);
         } else {
-            // Path B: MCP tools with agentic loop
+            // Path B: tools with agentic loop, including a request whose only initial tool is tool search
             processNonStreamingAgentic(exchange, params, config);
         }
     }
@@ -378,6 +401,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 modelCall++;
                 long iterationStartNanos = System.nanoTime();
                 OpenAIAgenticTokenTracker.Snapshot tokensBefore = tokenTracker.snapshot();
+
+                if (config.isToolSearch()) {
+                    AiToolSearchSession session = exchange.getProperty(
+                            OpenAIToolSearch.SESSION_PROPERTY, AiToolSearchSession.class);
+                    if (session == null) {
+                        session = toolSearch.openSession(exchange, config);
+                    }
+                    paramsBuilder.tools(toolSearch.toolsFor(getEndpoint(), session));
+                }
 
                 ChatCompletion response = createChatCompletion(exchange, paramsBuilder.build());
                 tokenTracker.addUsage(response);
@@ -443,7 +475,10 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 }
 
                 // Execute all tool calls in this batch
-                List<McpToolCallExecutor.ToolResult> batchResults = toolCallExecutor.execute(toolCalls, exchange);
+                List<McpToolCallExecutor.ToolResult> batchResults = config.isToolSearch()
+                        ? toolCallExecutor.execute(toolCalls, exchange,
+                                call -> toolSearch.execute(getEndpoint(), call, exchange))
+                        : toolCallExecutor.execute(toolCalls, exchange);
                 observability.recordIteration(
                         modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
                         batchResults);

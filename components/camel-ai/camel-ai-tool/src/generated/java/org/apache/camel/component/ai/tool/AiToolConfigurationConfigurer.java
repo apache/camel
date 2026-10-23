@@ -43,6 +43,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "readOnlyHint": target.setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "returndirect":
         case "returnDirect": target.setReturnDirect(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "searchable": target.setSearchable(property(camelContext, boolean.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": target.setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -72,6 +73,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "readOnlyHint": return java.lang.Boolean.class;
         case "returndirect":
         case "returnDirect": return java.lang.Boolean.class;
+        case "searchable": return boolean.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
         default: return null;
@@ -102,6 +104,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "readOnlyHint": return target.getReadOnlyHint();
         case "returndirect":
         case "returnDirect": return target.getReturnDirect();
+        case "searchable": return target.isSearchable();
         case "tags": return target.getTags();
         case "title": return target.getTitle();
         default: return null;

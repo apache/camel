@@ -473,6 +473,30 @@ NOTE: Tool execution errors always bypass `returnDirect` — errors are sent bac
 
 Route-based tools registered via the xref:components::ai-tool-component.adoc[ai-tool component] can also declare `returnDirect=true` on the `ai-tool` endpoint. Configure the OpenAI endpoint with the `tags` option to expose matching route tools alongside MCP tools; their annotations (including `returnDirect`) are honoured in the agentic loop the same way as MCP tool annotations.
 
+=== Tool search
+
+`toolSearch=true` is a visibility policy. Route tools with `searchable=false` stay in the initial model request. Route tools with `searchable=true`, and remote MCP tools that already passed the server, name, and provider filters, are omitted until the model calls the synthetic `tool_search_tool`. Route and MCP tools are ranked together. A match is sent with its full definition on the next model turn and is executed by the original route or MCP handler.
+
+Enabling tool search does not skip MCP `tools/list`. It only reduces the definitions sent to the model. `toolSearch=false` (the default) sends the current combined set, and the `searchable` flag has no effect.
+
+`toolSearchStrategy=keyword` (the default) matches the tool name and description. `toolSearchStrategy=vector` requires `toolSearchEmbeddingModel` and does not fall back to keyword search. `toolSearchMaxResults` defaults to 5. Discovered names are kept for the conversation when `conversationMemory=true`, and only for the current request otherwise. The name `tool_search_tool` is reserved while search is enabled.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ask
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4o-mini
+              tags: erp
+              toolSearch: true
+              toolSearchMaxResults: 5
+              toolSearchStrategy: keyword
+----
+
 === MCP Tool Call Headers
 
 The following headers are set after the agentic loop completes:

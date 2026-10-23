@@ -24,7 +24,7 @@ public class SpringAiChatEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(36);
+        Set<String> props = new HashSet<>(40);
         props.add("advisors");
         props.add("chatClient");
         props.add("chatId");
@@ -55,6 +55,10 @@ public class SpringAiChatEndpointUriFactory extends org.apache.camel.support.com
         props.add("toolCallbacks");
         props.add("toolContext");
         props.add("toolNames");
+        props.add("toolSearch");
+        props.add("toolSearchEmbeddingModel");
+        props.add("toolSearchMaxResults");
+        props.add("toolSearchStrategy");
         props.add("topK");
         props.add("topKSampling");
         props.add("topP");
