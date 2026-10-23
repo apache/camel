@@ -81,6 +81,8 @@ public class VertxHelperTest {
 
         assertThat(options.isSsl()).isTrue();
         assertThat(options.getTrustOptions()).isNotNull();
+        assertThat(options.getTrustOptions().getTrustManagerFactory(null).getTrustManagers())
+                .containsExactly(customTrustManager);
     }
 
     @Test
@@ -95,6 +97,8 @@ public class VertxHelperTest {
 
         assertThat(options.isSsl()).isTrue();
         assertThat(options.getTrustOptions()).isNotNull();
+        assertThat(options.getTrustOptions().getTrustManagerFactory(null).getTrustManagers())
+                .containsExactly(TrustAllTrustManager.INSTANCE);
     }
 
     @Test
