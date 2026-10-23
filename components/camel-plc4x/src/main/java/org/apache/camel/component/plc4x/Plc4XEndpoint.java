@@ -155,22 +155,26 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     public void reconnectIfNeeded() throws PlcConnectionException {
         if (isConnected()) {
             LOGGER.trace("No reconnect needed, already connected");
-        } else if (autoReconnect && connection == null) {
+        } else if (autoReconnect) {
+            // a lost PLC4X connection cannot always connect again (the S7 and EtherNet/IP drivers fail on a closed
+            // transport), so it is replaced by a new one
+            closeLostConnection();
             connection = plcDriverManager.getConnection(connectionString);
-            LOGGER.debug("Successfully reconnected");
-        } else if (autoReconnect && !isConnected()) {
-            if (connection != null) {
-                connection.connect();
-            }
-            // If reconnection fails without Exception, reset connection
-            if (!isConnected()) {
-                LOGGER.debug("No connection established after connect, resetting connection");
-                connection = plcDriverManager.getConnection(connectionString);
-            }
             LOGGER.debug("Successfully reconnected");
         } else {
             LOGGER.warn("Connection lost and auto-reconnect is turned off, shutting down Plc4XEndpoint");
             stop();
+        }
+    }
+
+    private void closeLostConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (Exception e) {
+                LOGGER.debug("Closing the lost connection failed: {}", e.getMessage());
+            }
+            connection = null;
         }
     }
 

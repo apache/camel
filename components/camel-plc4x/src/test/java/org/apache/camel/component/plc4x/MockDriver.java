@@ -25,6 +25,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.plc4x.java.api.PlcConnection;
@@ -46,8 +47,10 @@ import static org.mockito.Mockito.*;
  * Test driver for the {@code mock} protocol. A read returns the values a test programmed with
  * {@link #programRead(String, Object...)} when every tag in the request is programmed, and Mockito deep stubs
  * otherwise. A programmed {@link #failedRead()} fails the whole read, a programmed
- * {@link #responseCode(PlcResponseCode)} answers that tag with an error code. The programming is static because every
- * driver manager loads its own driver instance; tests call {@link #reset()}.
+ * {@link #responseCode(PlcResponseCode)} answers that tag with an error code. A connection reports that it is connected
+ * from {@code connect()} until {@link #dropConnections()} drops it; a dropped connection cannot connect again, as after
+ * a PLC restart. The programming is static because every driver manager loads its own driver instance; tests call
+ * {@link #reset()}.
  */
 public class MockDriver implements PlcDriver {
 
@@ -58,6 +61,8 @@ public class MockDriver implements PlcDriver {
     private static final List<String> CONNECTION_STRINGS = new CopyOnWriteArrayList<>();
     private static final Object FAILED_READ = new Object();
     private static volatile boolean refuseConnections;
+    private static final AtomicInteger CREATED_CONNECTIONS = new AtomicInteger();
+    private static volatile int droppedConnections;
 
     /**
      * Programs the values that successive reads of a tag address return; the last value repeats once they are used up.
@@ -122,6 +127,14 @@ public class MockDriver implements PlcDriver {
     }
 
     /**
+     * Drops the connections made so far, as a restarted PLC does: they report that they are not connected from now on
+     * and fail to connect again, while a new connection succeeds.
+     */
+    public static void dropConnections() {
+        droppedConnections = CREATED_CONNECTIONS.get();
+    }
+
+    /**
      * @return the number of connection attempts refused since the last {@link #reset()}
      */
     public static int refusedConnections() {
@@ -143,6 +156,8 @@ public class MockDriver implements PlcDriver {
         PROGRAMMED_TAGS.clear();
         refuseConnections = false;
         REFUSED_CONNECTIONS.set(0);
+        CREATED_CONNECTIONS.set(0);
+        droppedConnections = 0;
         CONNECTION_STRINGS.clear();
     }
 
@@ -165,6 +180,17 @@ public class MockDriver implements PlcDriver {
         }
         // Mock a connection.
         PlcConnection plcConnectionMock = mock(PlcConnection.class, RETURNS_DEEP_STUBS);
+        int connectionNumber = CREATED_CONNECTIONS.getAndIncrement();
+        AtomicBoolean connected = new AtomicBoolean();
+        doAnswer(invocation -> {
+            if (connectionNumber < droppedConnections) {
+                throw new PlcConnectionException("Transport is not open");
+            }
+            connected.set(true);
+            return null;
+        }).when(plcConnectionMock).connect();
+        when(plcConnectionMock.isConnected())
+                .thenAnswer(invocation -> connected.get() && connectionNumber >= droppedConnections);
         when(plcConnectionMock.getMetadata().isReadSupported()).thenReturn(true);
         when(plcConnectionMock.getMetadata().isWriteSupported()).thenReturn(true);
         when(plcConnectionMock.readRequestBuilder()).thenAnswer(invocation -> readRequestBuilder());
