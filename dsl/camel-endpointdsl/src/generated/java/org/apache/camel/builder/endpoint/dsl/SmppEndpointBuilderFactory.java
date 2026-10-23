@@ -3011,13 +3011,12 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppDoneDate";
         }
         /**
-         * only for SubmitSm, SubmitMulti and DataSm. Specifies the encoding
-         * (character set name) of the bytes in the message body. If the message
-         * body is a string then this is not relevant because Java Strings are
-         * always Unicode. If the body is a byte array then this header can be
-         * used to indicate that it is ISO-8859-1 or some other value. Default
-         * value is specified by the endpoint configuration parameter
-         * _encoding_.
+         * only for SubmitSm, SubmitMulti and ReplaceSm. Specifies the encoding
+         * (character set name) the text of the message body is encoded in, as
+         * the short message. A byte array body is first read as text, in the
+         * charset of the exchange, unless an 8-bit data coding or alphabet
+         * header sends it as it is. Default value is specified by the endpoint
+         * configuration parameter _encoding_.
          * 
          * The option is a: {@code String} type.
          * 
