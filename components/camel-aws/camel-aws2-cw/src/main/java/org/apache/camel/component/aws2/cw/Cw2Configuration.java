@@ -135,7 +135,7 @@ public class Cw2Configuration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * The metric unit
+     * The metric unit, the name of a StandardUnit such as Count or Bytes, in any case
      */
     public void setUnit(String unit) {
         this.unit = unit;

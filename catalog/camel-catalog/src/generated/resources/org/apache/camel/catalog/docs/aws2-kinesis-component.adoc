@@ -86,6 +86,10 @@ Messages with batch size more than 500 is allowed. Producer will split them into
 
 The batch type needs to implement the `Iterable` interface. For example, it can be a `List`, `Set` or any other collection type.
 The message type can be one or more of types `byte[]`, `ByteBuffer`, UTF-8 `String`, or `InputStream`. Other types are not supported.
+A `java.nio.file.Path` body is not a batch: like a `java.io.File`, it is sent as a single record with the content of the file.
+
+A body that is not an `Iterable` is sent as a single record, converted to a `byte[]`.
+A body that does not convert to a `byte[]` fails with an `InvalidPayloadException`.
 
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider

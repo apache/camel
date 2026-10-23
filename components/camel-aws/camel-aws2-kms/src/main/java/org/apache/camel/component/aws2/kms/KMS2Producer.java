@@ -263,11 +263,14 @@ public class KMS2Producer extends DefaultProducer {
                     LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
+            } else if (ObjectHelper.isEmpty(payload)) {
+                throw new IllegalArgumentException(
+                        String.format("The message body is empty: with pojoRequest=true the body must be a %s",
+                                requestClass.getName()));
             } else {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
-                                requestClass.getName(),
-                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
+                                requestClass.getName(), payload.getClass().getName()));
             }
         } else {
             try {

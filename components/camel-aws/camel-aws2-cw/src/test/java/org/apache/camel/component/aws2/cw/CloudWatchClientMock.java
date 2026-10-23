@@ -34,6 +34,12 @@ import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataResponse;
 
 public class CloudWatchClientMock implements CloudWatchClient {
 
+    private PutMetricDataRequest lastPutMetricDataRequest;
+
+    public PutMetricDataRequest getLastPutMetricDataRequest() {
+        return lastPutMetricDataRequest;
+    }
+
     @Override
     public String serviceName() {
         return null;
@@ -45,6 +51,7 @@ public class CloudWatchClientMock implements CloudWatchClient {
 
     @Override
     public PutMetricDataResponse putMetricData(PutMetricDataRequest request) {
+        lastPutMetricDataRequest = request;
         PutMetricDataResponse.Builder builder = PutMetricDataResponse.builder();
         return builder.build();
     }

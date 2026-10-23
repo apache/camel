@@ -26,6 +26,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 
 public class QueryCommand extends AbstractDdbCommand {
 
@@ -41,7 +42,8 @@ public class QueryCommand extends AbstractDdbCommand {
                 .keyConditions(determineKeyConditions())
                 .exclusiveStartKey(determineExclusiveStartKey())
                 .limit(determineLimit())
-                .scanIndexForward(determineScanIndexForward());
+                .scanIndexForward(determineScanIndexForward())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL);
 
         // Check if we have set an Index Name
         String indexName = determineIndexName();

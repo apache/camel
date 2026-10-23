@@ -18,9 +18,10 @@ package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
+import java.util.StringJoiner;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -103,6 +104,11 @@ public class SecretsManagerProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified: set the operation option or the "
+                                               + SecretsManagerConstants.OPERATION + " header");
+        }
         return operation;
     }
 
@@ -156,7 +162,6 @@ public class SecretsManagerProducer extends DefaultProducer {
             request = exchange.getIn().getMandatoryBody(CreateSecretRequest.class);
         } else {
             CreateSecretRequest.Builder builder = CreateSecretRequest.builder();
-            String payload = exchange.getIn().getMandatoryBody(String.class);
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_NAME))) {
                 String secretName = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_NAME, String.class);
                 builder.name(secretName);
@@ -168,9 +173,9 @@ public class SecretsManagerProducer extends DefaultProducer {
                 builder.description(descr);
             }
             if (getConfiguration().isBinaryPayload()) {
-                builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
+                builder.secretBinary(SdkBytes.fromByteArray(exchange.getIn().getMandatoryBody(byte[].class)));
             } else {
-                builder.secretString(payload);
+                builder.secretString(exchange.getIn().getMandatoryBody(String.class));
             }
             request = builder.build();
         }
@@ -207,11 +212,7 @@ public class SecretsManagerProducer extends DefaultProducer {
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
-        if (getConfiguration().isBinaryPayload()) {
-            message.setBody(new String(Base64.getDecoder().decode(result.secretBinary().asByteBuffer()).array()));
-        } else {
-            message.setBody(result.secretString());
-        }
+        message.setBody(secretValue(result.secretBinary(), result.secretString()));
         if (ObjectHelper.isNotEmpty(result.versionId())) {
             exchange.getMessage().setHeader(SecretsManagerConstants.SECRET_VERSION_ID, result.versionId());
         }
@@ -315,7 +316,6 @@ public class SecretsManagerProducer extends DefaultProducer {
             request = exchange.getIn().getMandatoryBody(UpdateSecretRequest.class);
         } else {
             UpdateSecretRequest.Builder builder = UpdateSecretRequest.builder();
-            String payload = exchange.getIn().getMandatoryBody(String.class);
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
                 String secretId = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID, String.class);
                 builder.secretId(secretId);
@@ -327,9 +327,9 @@ public class SecretsManagerProducer extends DefaultProducer {
                 builder.description(descr);
             }
             if (getConfiguration().isBinaryPayload()) {
-                builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
+                builder.secretBinary(SdkBytes.fromByteArray(exchange.getIn().getMandatoryBody(byte[].class)));
             } else {
-                builder.secretString(payload);
+                builder.secretString(exchange.getIn().getMandatoryBody(String.class));
             }
             request = builder.build();
         }
@@ -407,7 +407,7 @@ public class SecretsManagerProducer extends DefaultProducer {
     }
 
     private void batchGetSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
-            throws InvalidPayloadException {
+            throws InvalidPayloadException, CamelExchangeException {
         BatchGetSecretValueRequest request = null;
         BatchGetSecretValueResponse result;
         if (getConfiguration().isPojoRequest()) {
@@ -430,32 +430,22 @@ public class SecretsManagerProducer extends DefaultProducer {
             LOG.trace("Batch Get Secret value command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
+        if (result.hasErrors() && !result.errors().isEmpty()) {
+            StringJoiner errors = new StringJoiner(", ");
+            for (APIErrorType error : result.errors()) {
+                errors.add(error.secretId() + " (" + error.errorCode() + ": " + error.message() + ")");
+            }
+            throw new CamelExchangeException("Batch get secret value could not get the secrets: " + errors, exchange);
+        }
+        // the version ids are in the same order as the values, also when a secret has no version id
+        List<Object> secretsReturned = new ArrayList<>();
+        List<String> versionIds = new ArrayList<>();
+        for (SecretValueEntry entry : result.secretValues()) {
+            secretsReturned.add(secretValue(entry.secretBinary(), entry.secretString()));
+            versionIds.add(entry.versionId());
+        }
         Message message = getMessageForResponse(exchange);
-        if (getConfiguration().isBinaryPayload()) {
-            List<String> secretsReturned = new ArrayList<String>();
-            if (!result.secretValues().isEmpty()) {
-                for (SecretValueEntry entry : result.secretValues()) {
-                    secretsReturned.add(new String(Base64.getDecoder().decode(entry.secretBinary().asByteBuffer()).array()));
-                }
-            }
-            message.setBody(secretsReturned);
-        } else {
-            List<String> secretsReturned = new ArrayList<String>();
-            if (!result.secretValues().isEmpty()) {
-                for (SecretValueEntry entry : result.secretValues()) {
-                    secretsReturned.add(entry.secretString());
-                }
-            }
-            message.setBody(secretsReturned);
-        }
-        List<String> versionIds = new ArrayList<String>();
-        if (!result.secretValues().isEmpty()) {
-            for (SecretValueEntry entry : result.secretValues()) {
-                if (ObjectHelper.isNotEmpty(entry.versionId())) {
-                    versionIds.add(entry.versionId());
-                }
-            }
-        }
+        message.setBody(secretsReturned);
         exchange.getMessage().setHeader(SecretsManagerConstants.SECRET_VERSION_IDS, versionIds);
     }
 
@@ -467,7 +457,6 @@ public class SecretsManagerProducer extends DefaultProducer {
             request = exchange.getIn().getMandatoryBody(PutSecretValueRequest.class);
         } else {
             PutSecretValueRequest.Builder builder = PutSecretValueRequest.builder();
-            String payload = exchange.getIn().getMandatoryBody(String.class);
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
                 String secretId = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID, String.class);
                 builder.secretId(secretId);
@@ -475,9 +464,9 @@ public class SecretsManagerProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Secret Id must be specified");
             }
             if (getConfiguration().isBinaryPayload()) {
-                builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
+                builder.secretBinary(SdkBytes.fromByteArray(exchange.getIn().getMandatoryBody(byte[].class)));
             } else {
-                builder.secretString(payload);
+                builder.secretString(exchange.getIn().getMandatoryBody(String.class));
             }
             request = builder.build();
         }
@@ -489,6 +478,16 @@ public class SecretsManagerProducer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+    }
+
+    /**
+     * The value of a secret: the bytes of a binary secret, or the text of a string secret
+     */
+    private static Object secretValue(SdkBytes secretBinary, String secretString) {
+        if (secretBinary != null) {
+            return secretBinary.asByteArray();
+        }
+        return secretString;
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

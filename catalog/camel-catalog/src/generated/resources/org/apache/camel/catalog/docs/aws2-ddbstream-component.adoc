@@ -43,19 +43,9 @@ include::partial$component-endpoint-headers.adoc[]
 
 Required DynamoDBStream component options
 
-You have to provide the DynamoDbStreamsClient in the
-Registry with proxies and relevant credentials
-configured.
-
-== Sequence Numbers
-
-You can provide a literal string as the sequence number or provide a
-bean in the registry. An example of using the bean would be to save your
-current position in the change feed and restore it on Camel startup.
-
-It is an error to provide a sequence number that is greater than the
-largest sequence number in the describe-streams result, as this will
-lead to the AWS call returning an HTTP 400.
+You have to provide the credentials to access the stream: the `accessKey` and `secretKey` options, one of the
+credentials providers (see below), or your own `DynamoDbStreamsClient` with the `amazonDynamoDbStreamsClient`
+option.
 
 == Usage
 

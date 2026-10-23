@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.ses;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
@@ -56,9 +58,9 @@ public class Ses2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
-        boolean mail = body instanceof jakarta.mail.Message;
-        if (mail) {
-            SendRawEmailRequest request = createRawMailRequest(exchange);
+        if (body instanceof SendRawEmailRequest || body instanceof RawMessage || body instanceof jakarta.mail.Message) {
+            SendRawEmailRequest request = body instanceof SendRawEmailRequest rawRequest
+                    ? rawRequest : createRawMailRequest(exchange, body);
             LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
             SendRawEmailResponse result = getEndpoint().getSESClient().sendRawEmail(request);
             LOG.trace("Received result [{}]", result);
@@ -74,7 +76,7 @@ public class Ses2Producer extends DefaultProducer {
         }
     }
 
-    private SendEmailRequest createMailRequest(Exchange exchange) {
+    private SendEmailRequest createMailRequest(Exchange exchange) throws InvalidPayloadException {
         SendEmailRequest.Builder request = SendEmailRequest.builder();
         request.source(determineFrom(exchange));
         request.destination(determineDestination(exchange));
@@ -86,26 +88,27 @@ public class Ses2Producer extends DefaultProducer {
         return request.build();
     }
 
-    private SendRawEmailRequest createRawMailRequest(Exchange exchange) throws Exception {
+    private SendRawEmailRequest createRawMailRequest(Exchange exchange, Object body) throws Exception {
         SendRawEmailRequest.Builder request = SendRawEmailRequest.builder();
         request.source(determineFrom(exchange));
-        request.destinations(determineRawTo(exchange));
-        request.rawMessage(createRawMessage(exchange));
+        // without destinations SES sends the mail to the recipients of its To, Cc and Bcc headers
+        List<String> destinations = new ArrayList<>(determineRawTo(exchange));
+        destinations.addAll(determineRawCc(exchange));
+        destinations.addAll(determineRawBcc(exchange));
+        if (!destinations.isEmpty()) {
+            request.destinations(destinations);
+        }
+        request.rawMessage(body instanceof RawMessage raw ? raw : createRawMessage((jakarta.mail.Message) body));
         request.tags(determineTags(exchange));
         request.configurationSetName(determineConfigurationSet(exchange));
         return request.build();
     }
 
-    private software.amazon.awssdk.services.ses.model.Message createMessage(Exchange exchange) {
+    private software.amazon.awssdk.services.ses.model.Message createMessage(Exchange exchange)
+            throws InvalidPayloadException {
         software.amazon.awssdk.services.ses.model.Message.Builder message
                 = software.amazon.awssdk.services.ses.model.Message.builder();
-        String content;
-        if (exchange.getIn().getBody() instanceof RawMessage raw) {
-            // SdkBytes.toString() is a debug descriptor (SdkBytes(bytes=0x...)), not the payload
-            content = raw.data().asUtf8String();
-        } else {
-            content = exchange.getIn().getBody(String.class);
-        }
+        String content = exchange.getIn().getMandatoryBody(String.class);
         boolean isHtmlEmail = exchange.getIn().getHeader(Ses2Constants.HTML_EMAIL, false, Boolean.class);
         if (isHtmlEmail) {
             message.body(Body.builder().html(Content.builder().data(content).build()).build());
@@ -116,10 +119,9 @@ public class Ses2Producer extends DefaultProducer {
         return message.build();
     }
 
-    private RawMessage createRawMessage(Exchange exchange) throws Exception {
+    private RawMessage createRawMessage(jakarta.mail.Message content) throws Exception {
         RawMessage.Builder message
                 = RawMessage.builder();
-        jakarta.mail.Message content = exchange.getIn().getBody(jakarta.mail.Message.class);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         content.writeTo(bos);
         message.data(SdkBytes.fromByteArrayUnsafe(bos.toByteArray()));

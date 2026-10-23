@@ -45,8 +45,8 @@ public interface Lambda2EndpointBuilderFactory {
         }
 
         /**
-         * The operation to perform. It can be listFunctions, getFunction,
-         * createFunction, deleteFunction or invokeFunction.
+         * The operation to perform. See the list of available operations in the
+         * component documentation.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.lambda.Lambda2Operations</code>
@@ -63,8 +63,8 @@ public interface Lambda2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform. It can be listFunctions, getFunction,
-         * createFunction, deleteFunction or invokeFunction.
+         * The operation to perform. See the list of available operations in the
+         * component documentation.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.lambda.Lambda2Operations</code>
@@ -652,8 +652,8 @@ public interface Lambda2EndpointBuilderFactory {
             return "CamelAwsLambdaS3ObjectVersion";
         }
         /**
-         * The local path of the zip file (the deployment package). Content of
-         * zip file can also be put in Message body.
+         * The local path of the zip file (the deployment package). Without this
+         * header and the S3 headers, the message body is the zip.
          * 
          * The option is a: {@code String} type.
          * 
@@ -693,8 +693,7 @@ public interface Lambda2EndpointBuilderFactory {
         }
         /**
          * The runtime environment for the Lambda function you are uploading.
-         * (nodejs, nodejs4.3, nodejs6.10, java8, python2.7, python3.6,
-         * dotnetcore1.0, odejs4.3-edge).
+         * (for example nodejs22.x, java21 or python3.13).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1050,7 +1049,8 @@ public interface Lambda2EndpointBuilderFactory {
         }
         /**
          * If present, indicates that an error occurred during function
-         * execution.
+         * execution. The exchange does not fail: the body is the JSON of the
+         * error.
          * 
          * The option is a: {@code String} type.
          * 

@@ -131,7 +131,15 @@ public class AmazonDDBClientMock implements DynamoDbClient {
     @Override
     public UpdateTableResponse updateTable(UpdateTableRequest updateTableRequest) {
         this.updateTableRequest = updateTableRequest;
-        return null;
+        return UpdateTableResponse.builder()
+                .tableDescription(TableDescription.builder().tableName(updateTableRequest.tableName())
+                        .tableStatus(TableStatus.UPDATING)
+                        .creationDateTime(Instant.ofEpochMilli(NOW)).itemCount(100L)
+                        .keySchema(KeySchemaElement.builder().attributeName("name").build())
+                        .provisionedThroughput(ProvisionedThroughputDescription.builder().readCapacityUnits(5L)
+                                .writeCapacityUnits(5L).build())
+                        .tableSizeBytes(1000L).build())
+                .build();
     }
 
     @Override

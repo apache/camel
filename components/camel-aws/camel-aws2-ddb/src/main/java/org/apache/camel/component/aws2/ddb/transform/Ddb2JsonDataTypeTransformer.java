@@ -21,12 +21,12 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws2.ddb.Ddb2Constants;
@@ -53,6 +53,11 @@ import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
  *
  * The input type supports the operations: PutItem, UpdateItem, DeleteItem
  *
+ * The operation comes from the route: the {@code CamelAwsDdbOperation} header, else the exchange property
+ * {@code operation}. The transformer then sets the operation header and the headers of that operation. When the route
+ * names no operation, the transformer does not set the operation header, so the operation option of the endpoint
+ * applies, and it sets the item, key and update values headers that PutItem, UpdateItem and DeleteItem need.
+ *
  * For PutItem operation the Json body defines all item attributes.
  *
  * For DeleteItem operation the Json body defines only the primary key attributes that identify the item to delete.
@@ -60,18 +65,20 @@ import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
  * For UpdateItem operation the Json body defines both key attributes to identify the item to be updated and all item
  * attributes tht get updated on the item.
  *
- * The given Json body can use "operation", "key" and "item" as top level properties that will be mapped to respective
- * attribute value maps:
+ * The given Json body can use "key" and "item" as top level properties that will be mapped to respective attribute
+ * value maps:
  *
  * <pre>
  * {@code
  * {
- *   "operation": "PutItem"
  *   "key": {},
  *   "item": {}
  * }
  * }
  * </pre>
+ *
+ * A top level "operation" property of the Json body does not choose the operation: the transformer fails unless the
+ * route names that same operation.
  *
  * The transformer will extract the objects and set respective attribute value maps as header entries. This is a
  * comfortable way to define different key and item attribute value maps e.g. on UpdateItem operation.
@@ -94,8 +101,7 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
 
         JsonNode jsonBody = getBodyAsJsonNode(message);
 
-        String operation
-                = Optional.ofNullable(jsonBody.get("operation")).map(JsonNode::asText).orElse(Ddb2Operations.PutItem.name());
+        String operation = null;
         if (message.getExchange().hasProperties()
                 && ObjectHelper.isNotEmpty(message.getExchange().getProperty("operation", String.class))) {
             operation = message.getExchange().getProperty("operation", String.class);
@@ -103,6 +109,14 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
 
         if (message.getHeaders().containsKey(Ddb2Constants.OPERATION)) {
             operation = message.getHeader(Ddb2Constants.OPERATION, Ddb2Operations.class).name();
+        }
+
+        JsonNode bodyOperation = jsonBody.get("operation");
+        if (bodyOperation != null) {
+            checkBodyOperation(bodyOperation.asText(), operation);
+            // the operation field is no attribute of the item or key
+            jsonBody = jsonBody.deepCopy();
+            ((ObjectNode) jsonBody).remove("operation");
         }
 
         JsonNode key = jsonBody.get("key");
@@ -127,6 +141,15 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
 
         final Map<String, AttributeValue> keyMap = getAttributeValueMap(keyProps);
 
+        if (operation == null) {
+            // the operation of the endpoint applies: set the headers that PutItem, UpdateItem and DeleteItem need,
+            // but not the return values, as their default differs per operation
+            message.setHeader(Ddb2Constants.ITEM, getAttributeValueMap(itemProps));
+            message.setHeader(Ddb2Constants.KEY, keyMap);
+            message.setHeader(Ddb2Constants.UPDATE_VALUES, getAttributeValueUpdateMap(itemProps));
+            return;
+        }
+
         switch (Ddb2Operations.valueOf(operation)) {
             case PutItem:
                 message.setHeader(Ddb2Constants.OPERATION, Ddb2Operations.PutItem);
@@ -146,6 +169,21 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
                 break;
             default:
                 throw new UnsupportedOperationException(String.format("Unsupported operation '%s'", operation));
+        }
+    }
+
+    private static void checkBodyOperation(String bodyOperation, String operation) {
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    String.format("The JSON body names the operation %s: set the operation with the %s header or the operation"
+                                  + " exchange property, the transformer no longer takes it from the body",
+                            bodyOperation, Ddb2Constants.OPERATION));
+        }
+        if (!operation.equals(bodyOperation)) {
+            throw new IllegalArgumentException(
+                    String.format("The JSON body names the operation %s, but the route names %s: set the operation with the %s"
+                                  + " header or the operation exchange property",
+                            bodyOperation, operation, Ddb2Constants.OPERATION));
         }
     }
 

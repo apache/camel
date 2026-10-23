@@ -34,7 +34,8 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
  * Receive messages from AWS DynamoDB Stream.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true,
-             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING })
+             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING },
+             headersClass = Ddb2StreamConstants.class)
 public class Ddb2StreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam

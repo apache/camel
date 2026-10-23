@@ -25,9 +25,11 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DescribeTableCommandTest {
 
@@ -51,7 +53,7 @@ public class DescribeTableCommandTest {
         List<KeySchemaElement> keySchema = new ArrayList<>();
         keySchema.add(KeySchemaElement.builder().attributeName("name").build());
         assertEquals("FULL_DESCRIBE_TABLE", ddbClient.describeTableRequest.tableName());
-        assertEquals("FULL_DESCRIBE_TABLE", exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME));
+        assertNull(exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME));
         assertEquals(TableStatus.ACTIVE, exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS));
 
         assertEquals(100L, exchange.getIn().getHeader(Ddb2Constants.ITEM_COUNT));
@@ -59,5 +61,18 @@ public class DescribeTableCommandTest {
         assertEquals(20L, exchange.getIn().getHeader(Ddb2Constants.READ_CAPACITY));
         assertEquals(10L, exchange.getIn().getHeader(Ddb2Constants.WRITE_CAPACITY));
         assertEquals(1000L, exchange.getIn().getHeader(Ddb2Constants.TABLE_SIZE));
+        assertEquals(20L, exchange.getIn().getHeader(Ddb2Constants.PROVISIONED_THROUGHPUT,
+                ProvisionedThroughputDescription.class).readCapacityUnits());
+    }
+
+    @Test
+    public void testExecuteKeepsTableNameHeaderOfTheRoute() {
+        configuration.setTableName("OTHER_TABLE");
+        exchange.getIn().setHeader(Ddb2Constants.TABLE_NAME, "FULL_DESCRIBE_TABLE");
+
+        command.execute();
+
+        assertEquals("FULL_DESCRIBE_TABLE", ddbClient.describeTableRequest.tableName());
+        assertEquals("FULL_DESCRIBE_TABLE", exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME));
     }
 }

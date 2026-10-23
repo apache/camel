@@ -25,6 +25,7 @@ import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescr
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DeleteTableCommandTest {
 
@@ -53,5 +54,7 @@ public class DeleteTableCommandTest {
         assertEquals(Long.valueOf(10L), exchange.getIn().getHeader(Ddb2Constants.ITEM_COUNT, Long.class));
         assertEquals(Long.valueOf(20L), exchange.getIn().getHeader(Ddb2Constants.TABLE_SIZE, Long.class));
         assertEquals(TableStatus.ACTIVE, exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS, TableStatus.class));
+        // the table name is an input header: the next aws2-ddb step must not take it as its table
+        assertNull(exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME));
     }
 }

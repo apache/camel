@@ -99,6 +99,8 @@ import software.amazon.awssdk.services.iam.model.User;
 
 public class AmazonIAMClientMock implements IamClient {
 
+    UpdateAccessKeyRequest lastUpdateAccessKeyRequest;
+
     @Override
     public CreateAccessKeyResponse createAccessKey(CreateAccessKeyRequest createAccessKeyRequest) {
         CreateAccessKeyResponse.Builder res = CreateAccessKeyResponse.builder();
@@ -214,6 +216,7 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public UpdateAccessKeyResponse updateAccessKey(UpdateAccessKeyRequest updateAccessKeyRequest) {
+        lastUpdateAccessKeyRequest = updateAccessKeyRequest;
         UpdateAccessKeyResponse result = UpdateAccessKeyResponse.builder().build();
         return result;
     }

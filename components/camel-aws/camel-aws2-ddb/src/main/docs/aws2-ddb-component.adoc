@@ -27,8 +27,11 @@ https://aws.amazon.com/dynamodb[Amazon DynamoDB].
 == URI Format
 
 ----
-aws2-ddb://domainName[?options]
+aws2-ddb://tableName[?options]
 ----
+
+The `tableName` is the DynamoDB table the operations work on. The `CamelAwsDdbTableName` header, when set,
+names another table for a message.
 
 You can append query options to the URI in the following format:
 
@@ -85,7 +88,7 @@ DynamoDbClient client = DynamoDbClient.builder()
 getCamelContext().getRegistry().bind("client", client);
 
 from("direct:start")
-    .to("aws2-ddb://domainName?amazonDDBClient=#client");
+    .to("aws2-ddb://tableName?amazonDDBClient=#client");
 ----
 
 The `#client` refers to a `DynamoDbClient` in the
@@ -108,6 +111,73 @@ Registry.
 - TransactWriteItems
 - UpdateItem
 - UpdateTable
+
+=== Result headers that are also inputs
+
+The operations put their results in headers and keep the body. A few of these headers are also read as input by a
+later aws2-ddb step of the same route:
+
+- DescribeTable sets `CamelAwsDdbReadCapacity` and `CamelAwsDdbWriteCapacity` to the capacity of the table. A
+following UpdateTable reads them as the capacity to set, before the `readCapacity` and `writeCapacity` options, so
+remove them before that UpdateTable.
+- ExecuteStatement sets `CamelAwsDdbNextToken` to the token of the next page of the statement, and reads it as the
+token of the page to read. A loop can page through the results of a statement with it, but remove it before running
+another statement.
+
+DescribeTable, DeleteTable and UpdateTable do not set the `CamelAwsDdbTableName` header, so the next step works on
+the table it is configured with.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:resize
+      steps:
+        - to:
+            uri: aws2-ddb:orders
+            parameters:
+              operation: DescribeTable
+        - log:
+            message: "The orders table reads ${header.CamelAwsDdbReadCapacity} units"
+        - removeHeader:
+            name: CamelAwsDdbReadCapacity
+        - removeHeader:
+            name: CamelAwsDdbWriteCapacity
+        - to:
+            uri: aws2-ddb:orders
+            parameters:
+              operation: UpdateTable
+              readCapacity: 10
+              writeCapacity: 10
+----
+
+=== JSON data type transformer
+
+The `aws2-ddb:application-json` data type transformer turns a JSON body into the headers of PutItem, UpdateItem and
+DeleteItem. The JSON properties become the attributes of the item. The body can also have a top-level `key` property
+with the key attributes and a top-level `item` property with the item attributes, such as for UpdateItem.
+
+The route chooses the operation with the `CamelAwsDdbOperation` header or the `operation` exchange property; the
+transformer then sets the headers of that operation. When the route sets neither, the transformer leaves the
+operation to the `operation` option of the endpoint, and sets the `CamelAwsDdbItem`, `CamelAwsDdbKey` and
+`CamelAwsDdbUpdateValues` headers.
+
+The JSON body does not choose the operation: a body with a top-level `operation` property fails, unless the route
+sets that same operation.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:remove
+      steps:
+        - transformDataType:
+            toType: aws2-ddb:application-json
+        - to:
+            uri: aws2-ddb:orders
+            parameters:
+              operation: DeleteItem
+----
 
 == Dependencies
 
