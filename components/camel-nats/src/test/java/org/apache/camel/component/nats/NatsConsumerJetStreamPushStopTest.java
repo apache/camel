@@ -18,6 +18,7 @@ package org.apache.camel.component.nats;
 
 import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,8 +45,11 @@ import io.nats.client.api.ServerInfo;
 import io.nats.client.impl.NatsJetStreamMetaData;
 import io.nats.client.impl.NatsMessage;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -171,6 +176,40 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
         assertFalse(slowInterrupted.get(), "the step in flight must not be interrupted by the stops");
     }
 
+    @Test
+    void stopWhileSubscribingIsNotReportedAsAnError() throws Exception {
+        DefaultConsumer consumer = (DefaultConsumer) context.getRoute("orders").getConsumer();
+        ServiceHelper.stopService(consumer);
+        List<Throwable> reported = new CopyOnWriteArrayList<>();
+        consumer.setExceptionHandler(new ExceptionHandler() {
+            @Override
+            public void handleException(Throwable exception) {
+                reported.add(exception);
+            }
+
+            @Override
+            public void handleException(String message, Throwable exception) {
+                reported.add(exception);
+            }
+
+            @Override
+            public void handleException(String message, Exchange exchange, Throwable exception) {
+                reported.add(exception);
+            }
+        });
+
+        // the consumer stops while its task subscribes: the stop closes the dispatcher that the task passes to the
+        // subscribe, which then fails with "Dispatcher is closed"
+        server.beforeSubscribe = () -> ServiceHelper.stopService(consumer);
+        ServiceHelper.startService(consumer);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.refusedSubscribes() == 1);
+
+        // the default exception handler would log it at WARN, but a stop is not an error
+        await().during(Duration.ofMillis(500)).atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(reported.isEmpty(), () -> "reported: " + reported));
+        assertEquals(0, server.activeSubscriptions(), "no subscription left once the consumer stopped");
+    }
+
     /**
      * A JetStream server with one stream, faked at the level of the jnats interfaces the consumer calls. Each push
      * subscription has its own consumer (DeliverPolicy.New starts after the last published message) which delivers on
@@ -185,6 +224,9 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
         final List<FakeSubscription> subscriptions = new ArrayList<>();
         final Map<JetStreamSubscription, FakeSubscription> bySubscription = new IdentityHashMap<>();
         final Set<Dispatcher> closed = Collections.newSetFromMap(new IdentityHashMap<>());
+        // runs on the thread of the consumer, before a push subscribe reaches the server
+        volatile Runnable beforeSubscribe;
+        int refusedSubscribes;
 
         final class FakeSubscription {
             final Dispatcher dispatcher;
@@ -204,6 +246,10 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
             notifyAll();
         }
 
+        synchronized int refusedSubscribes() {
+            return refusedSubscribes;
+        }
+
         synchronized int closedDispatchers() {
             return closed.size();
         }
@@ -216,6 +262,10 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
             JetStreamManagement jsm = proxy(JetStreamManagement.class, (name, args) -> null);
             JetStream js = proxy(JetStream.class, (name, args) -> {
                 if ("subscribe".equals(name) && args.length == 6 && args[5] instanceof PushSubscribeOptions o) {
+                    Runnable hook = beforeSubscribe;
+                    if (hook != null) {
+                        hook.run();
+                    }
                     return subscribe(o.getConsumerConfiguration(), (Dispatcher) args[2], (MessageHandler) args[3]);
                 }
                 throw new UnsupportedOperationException(name);
@@ -277,6 +327,7 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
         private synchronized JetStreamSubscription subscribe(
                 ConsumerConfiguration cc, Dispatcher dispatcher, MessageHandler handler) {
             if (closed.contains(dispatcher)) {
+                refusedSubscribes++;
                 throw new IllegalStateException("Dispatcher is closed");
             }
             FakeSubscription f = new FakeSubscription(dispatcher);

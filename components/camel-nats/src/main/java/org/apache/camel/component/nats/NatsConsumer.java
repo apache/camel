@@ -241,7 +241,14 @@ public class NatsConsumer extends DefaultConsumer {
                     setupStandardNatsConsumer(topic, queueName, maxMessages);
                 }
             } catch (final Exception e) {
-                NatsConsumer.this.getExceptionHandler().handleException("Error during processing", e);
+                if (!NatsConsumer.this.isRunAllowed()) {
+                    // the consumer stopped meanwhile (its stop closes the dispatcher that a JetStream push subscribe
+                    // uses, which then fails): nothing to report
+                    LOG.debug("Not consuming from topic {} as the consumer is stopping",
+                            getEndpoint().getConfiguration().getTopic(), e);
+                } else {
+                    NatsConsumer.this.getExceptionHandler().handleException("Error during processing", e);
+                }
             }
 
         }
