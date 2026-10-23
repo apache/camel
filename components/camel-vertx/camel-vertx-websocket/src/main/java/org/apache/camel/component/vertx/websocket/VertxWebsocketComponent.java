@@ -197,9 +197,12 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         if (configuration.getSslContextParameters() != hostSslContextParameters) {
             throw new IllegalArgumentException(
                     "Cannot start the consumer for " + configuration.getWebsocketURI() + " because the server on "
-                                               + hostKey + " is already serving consumers with different "
-                                               + "sslContextParameters. All consumers on the same host and port must "
-                                               + "use the same SSLContextParameters instance.");
+                                               + hostKey
+                                               + (hostSslContextParameters == null
+                                                       ? " was started without TLS"
+                                                       : " was started with other sslContextParameters")
+                                               + ". All consumers on the same host and port must use the same "
+                                               + "SSLContextParameters instance, or none.");
         }
 
         host.connect(consumer);
