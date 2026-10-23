@@ -1161,6 +1161,25 @@ On Jira Cloud the Jira consumers now read the pages of a search with the next pa
 start index: with `maxResults` above 50, a search with more than 50 results failed on the second page with
 `UnsupportedOperationException`.
 
+=== camel-netty-http - an ambiguous request path is rejected when a security constraint is configured
+
+A `netty-http` consumer configured with a `securityConstraint` now rejects, with HTTP 400, a request whose path
+contains `.` or `..` segments (including their percent-encoded `%2e` form). Such a path is ambiguous: the security
+constraint, the consumer dispatch and the route may each interpret it differently, so with `matchOnUriPrefix=true` and a
+specific inclusion such as `/admin/*`, a request like `/foo/../admin/x` (or its encoded `/foo/%2e%2e/admin/x` form)
+could be matched against the inclusions and exclusions in a different form than the one the route handles. Rejecting
+it up front keeps the constraint decision and the routed path consistent. A well-behaved HTTP client normalizes
+dot-segments before sending, so normal traffic is unaffected.
+
+For the same reason, such a consumer also rejects with HTTP 400 a request whose path contains an empty segment (`//`),
+a `;` path parameter (also as `%3b`) or a `\` (also as `%5c`). A backend the route forwards the request to may collapse
+the empty segment, strip the path parameter or treat the backslash as a `/`, and so act on a different path than the one
+the constraint was checked against. A route that needs matrix parameters (`;`) must not configure a
+`securityConstraint` on the same consumer.
+
+This applies only when a `securityConstraint` is configured; a consumer without one is unchanged, and continues to
+receive the request path as sent.
+
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
 A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now
