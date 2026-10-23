@@ -231,7 +231,7 @@ public class RedisProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrateg
         case "ZREVRANK": return target.invokeZrevrank(exchange);
         case "zunionstore":
         case "ZUNIONSTORE": target.invokeZunionstore(exchange); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

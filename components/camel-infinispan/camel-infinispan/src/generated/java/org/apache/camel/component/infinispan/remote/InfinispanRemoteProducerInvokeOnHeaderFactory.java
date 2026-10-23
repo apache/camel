@@ -23,7 +23,7 @@ public class InfinispanRemoteProducerInvokeOnHeaderFactory implements InvokeOnHe
         case "QUERY": target.onQuery(exchange.getMessage()); return null;
         case "stats":
         case "STATS": target.onStats(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

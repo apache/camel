@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -256,6 +257,23 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
             assertTrue(elements.containsKey(k));
             assertEquals(map.get(k), elements.get(k));
         });
+    }
+
+    // ****************************
+    // Unknown action
+    // ****************************
+
+    @Test
+    void testUnknownActionFails() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        Exchange exchange = fluentTemplate().withHeader(CaffeineConstants.ACTION, "NOSUCH").withBody("Hello")
+                .to("direct://start").send();
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("Unsupported value NOSUCH of header " + CaffeineConstants.ACTION, e.getMessage());
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************

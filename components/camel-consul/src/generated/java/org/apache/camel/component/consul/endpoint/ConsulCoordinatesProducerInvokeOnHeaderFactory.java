@@ -23,7 +23,7 @@ public class ConsulCoordinatesProducerInvokeOnHeaderFactory implements InvokeOnH
         case "DATACENTERS": target.datacenters(exchange.getMessage()); return null;
         case "nodes":
         case "NODES": target.nodes(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

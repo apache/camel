@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.component;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,18 +175,22 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
             Object value = exchange.getIn().getBody();
             if (value != null) {
                 try {
+                    Class<?> type = null;
                     // attempt to find out type via configurer so we avoid using reflection
                     PropertyConfigurer configurer = endpoint.getComponent().getEndpointPropertyConfigurer();
                     if (configurer instanceof PropertyConfigurerGetter getter) {
-                        Class<?> type = getter.getOptionType(inBodyProperty, true);
-                        if (type != null) {
-                            value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
-                        }
-                    } else {
+                        type = getter.getOptionType(inBodyProperty, true);
+                    }
+                    if (type == null) {
+                        // the configurer knows the options of the endpoint, not the parameters of the API methods
+                        type = methodHelper.allArguments().get(inBodyProperty);
+                    }
+                    if (type == null && !(configurer instanceof PropertyConfigurerGetter)) {
                         // fallback to be reflection based
-                        value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(
-                                endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType(),
-                                exchange, value);
+                        type = endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType();
+                    }
+                    if (type != null && !isArrayValueForArrayType(type, value)) {
+                        value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
                     }
                 } catch (Exception e) {
                     exchange.setException(new RuntimeCamelException(
@@ -209,5 +214,10 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
         }
 
         return true;
+    }
+
+    // a collection or an array for an array parameter is converted when the method is invoked
+    private static boolean isArrayValueForArrayType(Class<?> type, Object value) {
+        return type.isArray() && (value instanceof Collection<?> || value.getClass().isArray());
     }
 }

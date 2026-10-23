@@ -31,7 +31,7 @@ public class ConsulAgentProducerInvokeOnHeaderFactory implements InvokeOnHeaderS
         case "REGISTER": target.invokeRegister(exchange.getMessage()); return null;
         case "services":
         case "SERVICES": return target.invokeServices(exchange.getMessage());
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

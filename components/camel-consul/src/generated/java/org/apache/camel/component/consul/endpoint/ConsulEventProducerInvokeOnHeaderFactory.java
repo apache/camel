@@ -23,7 +23,7 @@ public class ConsulEventProducerInvokeOnHeaderFactory implements InvokeOnHeaderS
         case "FIRE": target.fire(exchange.getMessage()); return null;
         case "list":
         case "LIST": target.list(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

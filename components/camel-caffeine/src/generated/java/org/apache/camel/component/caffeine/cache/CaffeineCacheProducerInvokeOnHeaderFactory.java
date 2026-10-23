@@ -35,7 +35,7 @@ public class CaffeineCacheProducerInvokeOnHeaderFactory implements InvokeOnHeade
         case "PUT": target.onPut(exchange.getMessage()); return null;
         case "put_all":
         case "PUT_ALL": target.onPutAll(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

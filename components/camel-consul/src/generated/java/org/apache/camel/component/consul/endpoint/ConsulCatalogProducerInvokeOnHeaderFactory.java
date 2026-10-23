@@ -33,7 +33,7 @@ public class ConsulCatalogProducerInvokeOnHeaderFactory implements InvokeOnHeade
         case "LIST_SERVICES": target.listServices(exchange.getMessage()); return null;
         case "register":
         case "REGISTER": target.register(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

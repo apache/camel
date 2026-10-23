@@ -29,7 +29,7 @@ public class HelsinkiServiceNowProducerInvokeOnHeaderFactory implements InvokeOn
         case "service_catalog_categories": target.invokeProcessor10(exchange); return null;
         case "service_catalog_items": target.invokeProcessor8(exchange); return null;
         case "table": target.invokeProcessor1(exchange); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

@@ -23,7 +23,7 @@ public class ConsulStatusProducerInvokeOnHeaderFactory implements InvokeOnHeader
         case "LEADER": return target.invokeChecks(exchange.getMessage());
         case "peers":
         case "PEERS": return target.invokePeers(exchange.getMessage());
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 
