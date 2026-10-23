@@ -275,6 +275,34 @@ public class AS2ClientProxyTest extends AbstractAS2ITSupport {
         assertTrue(e.getMessage().contains("proxyPort"), e.getMessage());
     }
 
+    @Test
+    public void proxyAuthUsernameAloneIsRefused() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> createClientConnection("localhost", proxy.getPort(), PROXY_USER, null));
+
+        assertEquals("proxyAuthUsername and proxyAuthPassword must be set together", e.getMessage());
+    }
+
+    @Test
+    public void proxyAuthPasswordAloneIsRefused() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> createClientConnection("localhost", proxy.getPort(), null, PROXY_PASSWORD));
+
+        assertEquals("proxyAuthUsername and proxyAuthPassword must be set together", e.getMessage());
+    }
+
+    @Test
+    public void proxyAuthUsernameAloneFailsTheRouteStartup() {
+        // the endpoint creates its client connection when it is configured, so the mistake is reported at startup
+        Exception e = assertThrows(Exception.class,
+                () -> context.getEndpoint("as2://client/send?inBody=ediMessage&targetPortNumber=" + httpServer.getLocalPort()
+                                          + "&proxyHost=localhost&proxyPort=" + proxy.getPort() + "&proxyAuthUsername="
+                                          + PROXY_USER));
+
+        assertTrue(hasCause(e, IllegalArgumentException.class), rootMessage(e));
+        assertEquals("proxyAuthUsername and proxyAuthPassword must be set together", rootMessage(e));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -337,9 +365,16 @@ public class AS2ClientProxyTest extends AbstractAS2ITSupport {
     }
 
     private AS2ClientConnection createClientConnection(String proxyHost, Integer proxyPort) throws IOException {
+        return createClientConnection(proxyHost, proxyPort, null, null);
+    }
+
+    private AS2ClientConnection createClientConnection(
+            String proxyHost, Integer proxyPort, String proxyAuthUsername, String proxyAuthPassword)
+            throws IOException {
         return new AS2ClientConnection(
                 "1.1", "Camel AS2 Endpoint", "example.org", "localhost", httpServer.getLocalPort(), Duration.ofSeconds(5),
-                Duration.ofSeconds(5), 5, Duration.ofMinutes(15), null, null, false, proxyHost, proxyPort, null, null);
+                Duration.ofSeconds(5), 5, Duration.ofMinutes(15), null, null, false, proxyHost, proxyPort,
+                proxyAuthUsername, proxyAuthPassword);
     }
 
     private static HttpRequest assertReceived(CountingRequestHandler requestHandler) {

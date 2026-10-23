@@ -125,6 +125,9 @@ public class AS2ClientConnection {
             if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 this.proxyAuthorization = "Basic " + Base64.getEncoder().encodeToString(
                         (proxyAuthUsername + ":" + proxyAuthPassword).getBytes(StandardCharsets.UTF_8));
+            } else if (proxyAuthUsername != null || proxyAuthPassword != null) {
+                // one credential alone is a configuration mistake: report it now rather than as a 407 on the first send
+                throw new IllegalArgumentException("proxyAuthUsername and proxyAuthPassword must be set together");
             }
         } else {
             this.route = new HttpRoute(targetHost);

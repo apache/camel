@@ -119,9 +119,10 @@ When outbound traffic must go through an HTTP forward proxy, set `proxyHost` and
 
 If the proxy requires authentication, set `proxyAuthUsername` and `proxyAuthPassword`. They are sent to the
 proxy as a preemptive Basic `Proxy-Authorization` header, on the `CONNECT` request when tunnelling, and are not
-sent to the AS2 partner. If the proxy refuses the request, for example with `407 Proxy Authentication Required`,
-the send fails with an exception, as the message has not reached the partner. The proxy options apply to the AS2
-client only: asynchronous MDNs are delivered directly.
+sent to the AS2 partner. Setting only one of them is a configuration error: the endpoint fails to start. If the
+proxy refuses the request, for example with `407 Proxy Authentication Required`, the send fails with an exception,
+as the message has not reached the partner. The proxy options apply to the AS2 client only: asynchronous MDNs are
+delivered directly.
 
 [source,yaml]
 ----
