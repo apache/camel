@@ -2437,7 +2437,10 @@ always `null` even on success. A route that reads the result of an awaited call 
 A `milo-client` write, method call or read, or a `milo-browse` browse, that fails (for example with `Bad_Timeout`, or
 because the session was lost) no longer disconnects the client connection and rebuilds the subscriptions of the
 consumers that share it. The failure is still set on the exchange of an awaited request. A lost session is recovered by
-the client itself, and a session that the server no longer has rebuilds the connection, as before.
+the client itself, and a session that the server no longer has rebuilds the connection, as before. The client recovers
+a lost session with the endpoint and the server certificate it found when it connected, so a server that changes either
+while it cannot be reached is reached again only when Camel rebuilds the connection, for example when the Camel context
+restarts.
 
 Producer requests and `MiloClientConnection.getOpcUaClient()` no longer wait for the subscription work on the same
 connection to finish, such as a consumer that starts or stops, or the periodic attempt to create the monitored items
