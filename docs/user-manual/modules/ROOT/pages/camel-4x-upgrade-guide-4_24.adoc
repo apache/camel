@@ -263,6 +263,15 @@ configuration (the `camel.component.google-mail.*` options), kept until the comp
 client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
 credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
 
+=== camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
+
+All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the
+`sslContextParameters` of the first consumer to start. A consumer started later with different `sslContextParameters`
+(including one with none while the server uses some, or the other way round) used to start and be served with the
+first consumer's settings. Such a consumer now fails to start with an `IllegalArgumentException` naming the host and
+port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
+reference, or the global SSL context parameters), or move consumers that need other settings to another port.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint
