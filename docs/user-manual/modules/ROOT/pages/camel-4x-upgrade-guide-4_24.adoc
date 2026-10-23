@@ -2173,6 +2173,14 @@ wraps an `ExecutionException`, with the `RuntimeCamelException` (status and body
 order of the messages is the same. The steps after the producer now run on the calling thread, and no longer on a
 thread of the HTTP client.
 
+=== camel-nats - the JetStream push consumer subscribes again when its ephemeral consumer was deleted
+
+With `jetstreamEnabled=true` and `pullSubscription=false`, the consumer now creates its ephemeral JetStream consumer
+again after a reconnect when the server deleted it, starting at the first message the route did not acknowledge, so
+the route can see again the messages after that one. A durable consumer is not created again (a WARN is logged), and a
+consumer deleted while the connection stays up is not detected. See the
+xref:components::nats-component.adoc[NATS component] page for the details.
+
 === camel-vertx-websocket - the client consumer makes one reconnect attempt at a time
 
 When the WebSocket of a consumer with `consumeAsClient=true` is closed, the consumer now makes one reconnect attempt
