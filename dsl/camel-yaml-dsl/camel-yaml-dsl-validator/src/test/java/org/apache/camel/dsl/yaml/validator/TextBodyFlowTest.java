@@ -1900,6 +1900,125 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfAwsAiServices() {
+        // translate, comprehend, the speech of polly and the question of retrieveAndGenerate are text, and the invoke
+        // operations of aws-bedrock send the body as its toString(), so a Map is not the JSON of the request; the
+        // translation is text and a cloudtrail event is JSON in bytes. converse, rekognition, textract and timestream
+        // take their input from headers, and polly without an operation is not known, as the component may set it
+        String yaml = """
+                - route:
+                    id: translate
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"text": "Ciao"}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-translate:t?sourceLanguage=it&targetLanguage=en
+                - route:
+                    id: analyze
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"text": "Great service"}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-comprehend:c?operation=detectSentiment&languageCode=en
+                - route:
+                    id: speak
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"text": "Hello"}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-polly:p?operation=synthesizeSpeech&voiceId=Joanna
+                - route:
+                    id: prompt
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"inputText": "Hello"}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws-bedrock:b?operation=invokeTextModel&modelId=amazon.titan-text-express-v1
+                - route:
+                    id: ask
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"question": "What is Camel?"}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws-bedrock-agent-runtime:a?operation=retrieveAndGenerate&knowledgeBaseId=kb1
+                - route:
+                    id: translated
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: Ciao
+                        - to: aws2-translate:t?sourceLanguage=it&targetLanguage=en
+                        - setHeader:
+                            name: text
+                            simple: ${body[text]}
+                - route:
+                    id: trail
+                    from:
+                      uri: aws-cloudtrail:trail
+                      steps:
+                        - setHeader:
+                            name: event
+                            simple: ${body[eventName]}
+                - route:
+                    id: converse
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws-bedrock:b?operation=converse&modelId=amazon.titan-text-express-v1
+                - route:
+                    id: labels
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-rekognition:r?operation=detectLabels
+                        - to: aws2-textract:t?operation=detectDocumentText
+                        - to: aws2-timestream:write:w?operation=writeRecords
+                - route:
+                    id: voice
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-polly:p?voiceId=Joanna
+                """;
+        assertThat(lines(yaml)).hasSize(7)
+                .anySatisfy(m -> assertThat(m).contains("route translate: to: aws2-translate needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route analyze: to: aws2-comprehend needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route speak: to: aws2-polly needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route prompt: to: aws-bedrock needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route ask: to: aws-bedrock-agent-runtime needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route translated: simple reads a field of the body (${body[text]})"))
+                .anySatisfy(m -> assertThat(m).contains("route trail: simple reads a field of the body (${body[eventName]})"));
+    }
+
+    @Test
     public void testAnOptionValueInAnotherStyleOfTheEnum() {
         // the catalog and the enum type converter take convert-to-json and convertToJson as CONVERT_TO_JSON, so after
         // docling the body is the document of that operation, and not the text of the default operation
