@@ -48,6 +48,10 @@ earlier in the route.
 
 Signatures created by earlier versions may not verify and need to be created again.
 
+=== camel-netty-http - securityConfiguration is copied per endpoint
+
+When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-docling - output path handling
