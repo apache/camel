@@ -22,11 +22,19 @@ import net.thisptr.jackson.jq.Versions;
 import net.thisptr.jackson.jq.module.loaders.BuiltinModuleLoader;
 import org.apache.camel.Expression;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 
 @Language("jq")
+@BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
+                                    format = "json", description = "JSON as text, bytes, a stream or a file, or a Map"),
+           expressionOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL }, dependsOn = "resultType",
+                                     description = "A JsonNode; a List of JsonNode when the filter gives several, null when it"
+                                                   + " gives none"))
 public class JqLanguage extends SingleInputTypedLanguageSupport implements StaticService {
 
     private Scope rootScope;

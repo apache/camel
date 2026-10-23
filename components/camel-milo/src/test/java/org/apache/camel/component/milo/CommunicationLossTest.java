@@ -16,13 +16,6 @@
  */
 package org.apache.camel.component.milo;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -99,11 +92,11 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
     @RegisterExtension
     AvailablePortFinder.Port reconnectTimeoutRelayPort = AvailablePortFinder.find();
 
-    private final Relay relay = new Relay();
+    private final TcpRelay relay = new TcpRelay();
 
-    private final Relay lateRelay = new Relay();
+    private final TcpRelay lateRelay = new TcpRelay();
 
-    private final Relay reconnectTimeoutRelay = new Relay();
+    private final TcpRelay reconnectTimeoutRelay = new TcpRelay();
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -113,12 +106,10 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
                 from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
 
                 // the consumers deliver the current values while they start, so the tests start these routes
-                from(resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(relayPort.getPort())))
-                        .routeId("item1").autoStartup(false).to(MOCK_ITEM_1);
+                from(throughRelay(MILO_CLIENT_ITEM_1)).routeId("item1").autoStartup(false).to(MOCK_ITEM_1);
 
                 // a node the server refuses, on the same connection
-                from(resolve(MILO_CLIENT_UNKNOWN).replace("@@relay@@", Integer.toString(relayPort.getPort())))
-                        .routeId("unknown").autoStartup(false).to(MOCK_UNKNOWN);
+                from(throughRelay(MILO_CLIENT_UNKNOWN)).routeId("unknown").autoStartup(false).to(MOCK_UNKNOWN);
 
                 // its own relay, so its own connection, which the test starts while the relay is down
                 from(resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(lateRelayPort.getPort())))
@@ -130,6 +121,14 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
                         .routeId("reconnectTimeout").autoStartup(false).to(MOCK_RECONNECT_TIMEOUT);
             }
         };
+    }
+
+    /**
+     * The URI of a consumer that reaches the server through the relay. These consumers share one connection, which
+     * creates the refused node again every second.
+     */
+    private String throughRelay(final String uri) {
+        return resolve(uri).replace("@@relay@@", Integer.toString(relayPort.getPort())) + "&reconnectTimeout=1000";
     }
 
     @Override
@@ -164,9 +163,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         unknownEndpoint.expectedMessageCount(0);
         unknownEndpoint.setSleepForEmptyTest(500);
 
-        final MiloClientEndpoint endpoint = context.getEndpoint(
-                resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(relayPort.getPort())),
-                MiloClientEndpoint.class);
+        final MiloClientEndpoint endpoint = context.getEndpoint(throughRelay(MILO_CLIENT_ITEM_1), MiloClientEndpoint.class);
         final MiloClientConnection connection = endpoint.createConnection();
         try {
             final OpcUaClient client = connection.getOpcUaClient();
@@ -229,9 +226,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         context.getRouteController().startRoute("unknown");
         unknownEndpoint.assertIsSatisfied();
 
-        final MiloClientEndpoint endpoint = context.getEndpoint(
-                resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(relayPort.getPort())),
-                MiloClientEndpoint.class);
+        final MiloClientEndpoint endpoint = context.getEndpoint(throughRelay(MILO_CLIENT_ITEM_1), MiloClientEndpoint.class);
         final MiloClientConnection connection = endpoint.createConnection();
         try {
             final OpcUaClient client = connection.getOpcUaClient();
@@ -253,7 +248,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
             // the server stays unreachable for longer than the retry interval of the refused node
             relay.stop();
             await().atMost(10, TimeUnit.SECONDS).until(() -> item1Endpoint.getReceivedCounter() >= 1);
-            await().during(12, TimeUnit.SECONDS).atMost(15, TimeUnit.SECONDS)
+            await().during(3, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
                     .until(() -> unknownEndpoint.getReceivedCounter() == 0);
             // an attempt while the session is lost is skipped: it does not hold the connection until the session is back
             assertSame(client, CompletableFuture.supplyAsync(connection::getOpcUaClient).get(2, TimeUnit.SECONDS));
@@ -311,91 +306,5 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         testBody(reconnectTimeoutEndpoint.message(0), assertGoodValue("Foo"));
         reconnectTimeoutRelay.start(reconnectTimeoutRelayPort.getPort(), getServerPort());
         reconnectTimeoutEndpoint.assertIsSatisfied();
-    }
-
-    /**
-     * A TCP relay to the server, whose connections the test can drop while it keeps listening, and which can be down
-     * while the client tries to connect.
-     */
-    private static final class Relay {
-
-        private volatile ServerSocket listener;
-
-        private final List<Socket> sockets = new ArrayList<>();
-
-        void start(final int port, final int serverPort) throws IOException {
-            final ServerSocket listener = new ServerSocket(port);
-            this.listener = listener;
-            final Thread acceptor = new Thread(() -> {
-                while (!listener.isClosed()) {
-                    Socket client = null;
-                    try {
-                        client = listener.accept();
-                        final Socket server = new Socket("localhost", serverPort);
-                        synchronized (sockets) {
-                            sockets.add(client);
-                            sockets.add(server);
-                        }
-                        pump(client, server);
-                        pump(server, client);
-                    } catch (final IOException e) {
-                        // the listener was closed, or the server refused: nothing to relay
-                        if (client != null) {
-                            close(client);
-                        }
-                    }
-                }
-            }, "relay-" + port);
-            acceptor.setDaemon(true);
-            acceptor.start();
-        }
-
-        private static void pump(final Socket from, final Socket to) {
-            final Thread thread = new Thread(() -> {
-                final byte[] buffer = new byte[8192];
-                try (InputStream in = from.getInputStream(); OutputStream out = to.getOutputStream()) {
-                    int read;
-                    while ((read = in.read(buffer)) >= 0) {
-                        out.write(buffer, 0, read);
-                        out.flush();
-                    }
-                } catch (final IOException e) {
-                    // the connection was dropped
-                } finally {
-                    close(from);
-                    close(to);
-                }
-            }, "relay-pump");
-            thread.setDaemon(true);
-            thread.start();
-        }
-
-        void dropConnections() {
-            synchronized (sockets) {
-                sockets.forEach(Relay::close);
-                sockets.clear();
-            }
-        }
-
-        void stop() {
-            final ServerSocket listener = this.listener;
-            this.listener = null;
-            if (listener != null) {
-                try {
-                    listener.close();
-                } catch (final IOException e) {
-                    // nothing left to close
-                }
-            }
-            dropConnections();
-        }
-
-        private static void close(final Socket socket) {
-            try {
-                socket.close();
-            } catch (final IOException e) {
-                // already closed
-            }
-        }
     }
 }

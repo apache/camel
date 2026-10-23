@@ -221,6 +221,29 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testEqualsOnTheBodySaysHowToCompare() {
+        // CAMEL-26041: Camel does not call equals on a bean, so the text of the body is not why it fails
+        exchange.getIn().setBody("test-value-2");
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.equals('test-value-2')}")
+                        .evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("equals('test-value-2') (Camel does not call equals on a bean: compare with an"
+                                            + " operator instead, such as ${body} == 'value' in simple)")
+                .doesNotContain("unmarshal");
+    }
+
+    @Test
+    public void testHashCodeOnAListIsNotAMissingElement() {
+        // CAMEL-26041: nor is the body a List without such a method or key
+        exchange.getIn().setBody(List.of("A1", "A2"));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.hashCode()}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("hashCode() (Camel does not call hashCode on a bean)")
+                .doesNotContain("a List has no method");
+    }
+
+    @Test
     public void testKeyOnTheFileAsReadSaysToUnmarshal() {
         // CAMEL-25749: ${body[status]} on the file consumer's body, before any unmarshal
         GenericFile<File> file = new GenericFile<>();

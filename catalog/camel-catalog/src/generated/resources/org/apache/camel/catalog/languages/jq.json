@@ -15,6 +15,10 @@
     "modelName": "jq",
     "modelJavaType": "org.apache.camel.model.language.JqExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "bytes", "stream", "file", "map" ], "format": "json", "description": "JSON as text, bytes, a stream or a file, or a Map" },
+    "expressionOut": { "carriers": [ "pojo", "list", "null" ], "dependsOn": [ "resultType" ], "description": "A JsonNode; a List of JsonNode when the filter gives several, null when it gives none" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

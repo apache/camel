@@ -122,6 +122,75 @@ public class MailEndpoint extends ScheduledPollEndpoint {
 
 Aliases are descriptive names for discovery only; they cannot be used as the scheme in an endpoint URI.
 
+=== Body types in the Catalog
+
+The options of a component say how to configure it, but not what the message body is after a step. That is the
+question people, IDEs and AI agents ask most when they write the next step of a route: the file consumer gives the
+file it read, the `http` producer leaves the response as a byte array or a stream, and after `unmarshal: json` the body
+is a `Map` or a `List`.
+
+A component, data format or language can declare its body types, and the catalog then has a `bodyTypes` section with
+one entry per side:
+
+[width="100%",cols="25%,75%",options="header",]
+|===
+|Side |The body
+|`consumerOut` |The body of the message the consumer creates.
+|`consumerReply` |The bodies a consumer that answers the caller can reply with: the body the route ends with.
+|`producerIn` |The bodies the producer can send or write.
+|`producerOut` |The body after the producer.
+|`marshalIn`, `marshalOut` |The bodies a data format can marshal, and the body after marshal.
+|`unmarshalIn`, `unmarshalOut` |The bodies a data format can unmarshal, and the body after unmarshal.
+|`expressionIn`, `expressionOut` |The bodies the expressions of a language can read, and their result.
+|===
+
+Each side has the _carriers_ of the body, the kinds of Java object it is in: `null`, `text`, `bytes`, `stream`,
+`file`, `value`, `map`, `list`, `iterator` (read once, with no size and no index) and `pojo`; `unchanged` for a step
+that leaves the body as it was, `any` for a step that takes any body, and `unknown` for a body that depends on what
+the other system sends or on a class the user configures. A side can also have the Java type when the body is always of that type, the format of the payload (json,
+xml, csv, yaml, text or binary), the options the body depends on, the body for other values of an option, and a
+description:
+
+[source,json]
+----
+"bodyTypes": {
+  "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "dependsOn": [ "source" ],
+    "description": "The XML to transform: text, bytes, a stream, a file, a DOM or another javax.xml.transform.Source. ..." },
+  "producerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "dependsOn": [ "resultHandlerFactory" ],
+    "byOption": [ { "option": "output", "value": "bytes", "carriers": [ "bytes" ], "javaType": "byte[]" }, ... ],
+    "description": "The result of the transformation" }
+}
+----
+
+The sides say what the body is with the default options. A side that is not in the catalog is not known, and tooling
+should not guess it. The Java API gives them on the model:
+
+[source,java]
+----
+CamelCatalog catalog = new DefaultCamelCatalog();
+
+BodyTypeModel out = catalog.componentModel("xslt").getBodyType(BodyTypeModel.PRODUCER_OUT);
+out.getCarriers();     // [text]
+out.getJavaType();     // java.lang.String
+----
+
+Component developers declare them with the `@BodyTypes` annotation on the endpoint, data format or language class. A
+subclass does not have the body types of its superclass, as it may change the body:
+
+[source,java]
+----
+@BodyTypes(consumerOut = @BodyType(value = Carrier.FILE, description = "The file as read ..."),
+           producerIn = @BodyType({ Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+           producerOut = @BodyType(Carrier.UNCHANGED))
+@UriEndpoint(firstVersion = "1.0.0", scheme = "file", ...)
+public class FileEndpoint extends GenericFileEndpoint<File> {
+----
+
+The build checks that each side belongs to the kind (a consumer-only component has no producer sides), that the
+options a side names exist, that `unchanged` is only on the body after a step and `any` only on what a step needs.
+The values are read from the code that sets the body, and checked against the body types the message history records
+when the routes run.
+
 === Documentation in the Catalog
 
 The catalog includes the AsciiDoc documentation pages from all modules. This makes the full

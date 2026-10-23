@@ -630,7 +630,9 @@ public interface AS2EndpointBuilderFactory {
          * the list is refused, and the configured
          * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
          * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached.
+         * sender-supplied address but no credentials are attached. The option
+         * applies to the consumer endpoint it is set on: consumers sharing a
+         * serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -762,7 +764,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The access token that is used by the server when it sends an async
-         * MDN.
+         * MDN. The option applies to the consumer endpoint it is set on, like
+         * mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -777,7 +780,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The password that is used by the server for basic authentication when
-         * it sends an async MDN.
+         * it sends an async MDN. The option applies to the consumer endpoint it
+         * is set on, like mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -794,7 +798,9 @@ public interface AS2EndpointBuilderFactory {
          * The user-name that is used by the server for basic authentication
          * when it sends an async MDN. If options for basic authentication and
          * bearer authentication are both set then basic authentication takes
-         * precedence.
+         * precedence. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each send their async MDNs with
+         * their own values.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1841,7 +1847,9 @@ public interface AS2EndpointBuilderFactory {
          * the list is refused, and the configured
          * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
          * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached.
+         * sender-supplied address but no credentials are attached. The option
+         * applies to the consumer endpoint it is set on: consumers sharing a
+         * serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1973,7 +1981,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The access token that is used by the server when it sends an async
-         * MDN.
+         * MDN. The option applies to the consumer endpoint it is set on, like
+         * mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1988,7 +1997,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The password that is used by the server for basic authentication when
-         * it sends an async MDN.
+         * it sends an async MDN. The option applies to the consumer endpoint it
+         * is set on, like mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2005,7 +2015,9 @@ public interface AS2EndpointBuilderFactory {
          * The user-name that is used by the server for basic authentication
          * when it sends an async MDN. If options for basic authentication and
          * bearer authentication are both set then basic authentication takes
-         * precedence.
+         * precedence. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each send their async MDNs with
+         * their own values.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2918,7 +2930,9 @@ public interface AS2EndpointBuilderFactory {
          * the list is refused, and the configured
          * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
          * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached.
+         * sender-supplied address but no credentials are attached. The option
+         * applies to the consumer endpoint it is set on: consumers sharing a
+         * serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3050,7 +3064,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The access token that is used by the server when it sends an async
-         * MDN.
+         * MDN. The option applies to the consumer endpoint it is set on, like
+         * mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3065,7 +3080,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The password that is used by the server for basic authentication when
-         * it sends an async MDN.
+         * it sends an async MDN. The option applies to the consumer endpoint it
+         * is set on, like mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3082,7 +3098,9 @@ public interface AS2EndpointBuilderFactory {
          * The user-name that is used by the server for basic authentication
          * when it sends an async MDN. If options for basic authentication and
          * bearer authentication are both set then basic authentication takes
-         * precedence.
+         * precedence. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each send their async MDNs with
+         * their own values.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

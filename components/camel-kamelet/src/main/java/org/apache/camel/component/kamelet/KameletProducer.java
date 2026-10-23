@@ -55,7 +55,9 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public boolean process(Exchange exchange, AsyncCallback originalCallback) {
+        // the endpoint may want to know the exchange whose call is completing when the calling route continues
+        final AsyncCallback callback = endpoint.completingCallback(exchange, originalCallback);
         try {
             final KameletConsumer consumer = getConsumer();
             if (consumer == null) {

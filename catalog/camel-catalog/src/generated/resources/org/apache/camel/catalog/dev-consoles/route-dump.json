@@ -96,6 +96,10 @@
               "type": "string",
               "description": "The source location (only present when known)"
             },
+            "checksum": {
+              "type": "string",
+              "description": "The checksum of the route as written, the same in every run: the dump is of this version of the route (only present when known, as it needs camel-xml-io)"
+            },
             "format": {
               "type": "string",
               "description": "The dump format, xml\/yaml\/java (only present when the dump succeeded)"

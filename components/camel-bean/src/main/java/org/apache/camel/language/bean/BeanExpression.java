@@ -416,6 +416,24 @@ public class BeanExpression implements Expression, Predicate {
     }
 
     /**
+     * Why ${body.equals('x')}, ${body.hashCode()} and the other methods Camel does not call on a bean fail: the body is
+     * not the reason, so the hint says what to write instead of what the body is (CAMEL-26041). Null for another
+     * method.
+     */
+    private static String excludedMethodHint(String methodName) {
+        String name = methodName != null ? StringHelper.before(methodName, "(", methodName).trim() : null;
+        // getClass is excluded from the bean binding, but BeanInfo invokes it on its own
+        if (name == null || "getClass".equals(name) || !BeanInfo.isExcludedMethodName(name)) {
+            return null;
+        }
+        if ("equals".equals(name)) {
+            return " (Camel does not call equals on a bean: compare with an operator instead, such as ${body} == 'value'"
+                   + " in simple)";
+        }
+        return " (Camel does not call " + name + " on a bean)";
+    }
+
+    /**
      * The bean name, or for an OGNL on the message body (${body.foo()}) what the body is, so the message does not say
      * "on null".
      */
@@ -543,6 +561,13 @@ public class BeanExpression implements Expression, Predicate {
                 return value;
             }
             String method = methodHint(methodName, resultExchange.getException());
+            String excluded = excludedMethodHint(methodName);
+            if (excluded != null) {
+                // ${body.equals('x')}: no bean binding calls it, whatever the body is (CAMEL-26041)
+                throw new RuntimeBeanExpressionException(
+                        exchange, describeBean(holder, beanName, exchange), method + excluded,
+                        resultExchange.getException());
+            }
             Object bean = beanOf(holder, exchange);
             String body = bodyHint(exchange, bean);
             String list = body == null ? listHint(bean, methodName) : null;

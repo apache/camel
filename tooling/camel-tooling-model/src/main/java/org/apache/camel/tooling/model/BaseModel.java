@@ -38,6 +38,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     protected boolean nativeSupported;
     protected List<String> aliases = new ArrayList<>();
     protected Map<String, Object> metadata = new LinkedHashMap<>();
+    protected Map<String, BodyTypeModel> bodyTypes = new LinkedHashMap<>();
 
     public static Comparator<BaseModel<?>> compareTitle() {
         return (m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle());
@@ -173,6 +174,26 @@ public abstract class BaseModel<O extends BaseOptionModel> {
 
     public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
+    }
+
+    /**
+     * The body types of a component, data format or language, by side ({@link BodyTypeModel#CONSUMER_OUT},
+     * {@link BodyTypeModel#PRODUCER_IN}...): the body a step needs and the body it leaves. A side that is not here is
+     * not known.
+     */
+    public Map<String, BodyTypeModel> getBodyTypes() {
+        return bodyTypes;
+    }
+
+    public void setBodyTypes(Map<String, BodyTypeModel> bodyTypes) {
+        this.bodyTypes = bodyTypes;
+    }
+
+    /**
+     * The body type of a side, such as {@link BodyTypeModel#PRODUCER_OUT}, or null when it is not known.
+     */
+    public BodyTypeModel getBodyType(String side) {
+        return bodyTypes.get(side);
     }
 
     @Override

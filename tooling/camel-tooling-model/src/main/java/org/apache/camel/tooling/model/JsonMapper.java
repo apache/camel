@@ -19,7 +19,9 @@ package org.apache.camel.tooling.model;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -97,6 +99,7 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("component");
         ComponentModel model = new ComponentModel();
         parseComponentModel(mobj, model);
+        model.setBodyTypes(parseBodyTypes(obj.getMap("bodyTypes")));
         JsonObject mcprp = (JsonObject) obj.get("componentProperties");
         if (mcprp != null) {
             for (Map.Entry<String, Object> entry : mcprp.entrySet()) {
@@ -252,6 +255,7 @@ public final class JsonMapper {
         if (!headers.isEmpty()) {
             wrapper.put("headers", asJsonObject(headers));
         }
+        bodyTypesToJson(model, wrapper);
         wrapper.put("properties", asJsonObject(model.getEndpointOptions()));
         if (!model.getApiOptions().isEmpty()) {
             wrapper.put("apis", apiModelAsJsonObject(model.getApiOptions(), false));
@@ -269,6 +273,7 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("dataformat");
         DataFormatModel model = new DataFormatModel();
         parseModel(mobj, model);
+        model.setBodyTypes(parseBodyTypes(obj.getMap("bodyTypes")));
         parseArtifact(mobj, model);
         model.setModelName(mobj.getString("modelName"));
         model.setModelJavaType(mobj.getString("modelJavaType"));
@@ -297,6 +302,7 @@ public final class JsonMapper {
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("dataformat", obj);
+        bodyTypesToJson(model, wrapper);
         wrapper.put("properties", asJsonObject(model.getOptions()));
         return wrapper;
     }
@@ -478,6 +484,7 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("language");
         LanguageModel model = new LanguageModel();
         parseModel(mobj, model);
+        model.setBodyTypes(parseBodyTypes(obj.getMap("bodyTypes")));
         model.setModelName(mobj.getString("modelName"));
         model.setModelJavaType(mobj.getString("modelJavaType"));
         parseArtifact(mobj, model);
@@ -523,6 +530,7 @@ public final class JsonMapper {
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("language", obj);
+        bodyTypesToJson(model, wrapper);
         wrapper.put("properties", asJsonObject(model.getOptions()));
         final List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
         if (!functions.isEmpty()) {
@@ -691,6 +699,84 @@ public final class JsonMapper {
             model.setAliases(aliases.stream().collect(Collectors.toList()));
         }
         model.setMetadata(mobj.getMapOrDefault("metadata", new JsonObject()));
+    }
+
+    /** The body types of a component, data format or language: one object per side (CAMEL-24961). */
+    private static Map<String, BodyTypeModel> parseBodyTypes(JsonObject json) {
+        Map<String, BodyTypeModel> answer = new LinkedHashMap<>();
+        if (json == null) {
+            return answer;
+        }
+        for (Map.Entry<String, Object> entry : json.entrySet()) {
+            JsonObject side = (JsonObject) entry.getValue();
+            BodyTypeModel bodyType = new BodyTypeModel();
+            bodyType.setCarriers(stringList(side.getCollection("carriers")));
+            bodyType.setJavaType(side.getString("javaType"));
+            bodyType.setFormat(side.getString("format"));
+            bodyType.setDependsOn(stringList(side.getCollection("dependsOn")));
+            Collection<JsonObject> byOption = side.getCollection("byOption");
+            if (byOption != null) {
+                for (JsonObject when : byOption) {
+                    BodyTypeModel.OptionBodyTypeModel option = new BodyTypeModel.OptionBodyTypeModel();
+                    option.setOption(when.getString("option"));
+                    option.setValue(when.getString("value"));
+                    option.setCarriers(stringList(when.getCollection("carriers")));
+                    option.setJavaType(when.getString("javaType"));
+                    bodyType.getByOption().add(option);
+                }
+            }
+            bodyType.setDescription(side.getString("description"));
+            answer.put(entry.getKey(), bodyType);
+        }
+        return answer;
+    }
+
+    private static List<String> stringList(Collection<String> values) {
+        return values != null ? new ArrayList<>(values) : new ArrayList<>();
+    }
+
+    /** The body types as a section of their own, next to the options, so each side is a line of the catalog. */
+    private static void bodyTypesToJson(BaseModel<?> model, JsonObject wrapper) {
+        if (model.getBodyTypes().isEmpty()) {
+            return;
+        }
+        wrapper.put("bodyTypes", asJsonObjectBodyTypes(model.getBodyTypes()));
+    }
+
+    /**
+     * The body types of a component, data format or language as the catalog has them: an object per side, with the
+     * carriers, the Java type, the format, the options it depends on, the body for other option values and the
+     * description (CAMEL-24961).
+     */
+    public static JsonObject asJsonObjectBodyTypes(Map<String, BodyTypeModel> bodyTypes) {
+        JsonObject json = new JsonObject();
+        for (Map.Entry<String, BodyTypeModel> entry : bodyTypes.entrySet()) {
+            BodyTypeModel bodyType = entry.getValue();
+            JsonObject side = new JsonObject();
+            side.put("carriers", bodyType.getCarriers());
+            side.put("javaType", bodyType.getJavaType());
+            side.put("format", bodyType.getFormat());
+            if (!bodyType.getDependsOn().isEmpty()) {
+                side.put("dependsOn", bodyType.getDependsOn());
+            }
+            if (!bodyType.getByOption().isEmpty()) {
+                JsonArray byOption = new JsonArray();
+                for (BodyTypeModel.OptionBodyTypeModel option : bodyType.getByOption()) {
+                    JsonObject when = new JsonObject();
+                    when.put("option", option.getOption());
+                    when.put("value", option.getValue());
+                    when.put("carriers", option.getCarriers());
+                    when.put("javaType", option.getJavaType());
+                    when.entrySet().removeIf(e -> e.getValue() == null);
+                    byOption.add(when);
+                }
+                side.put("byOption", byOption);
+            }
+            side.put("description", bodyType.getDescription());
+            side.entrySet().removeIf(e -> e.getValue() == null);
+            json.put(entry.getKey(), side);
+        }
+        return json;
     }
 
     private static void parseOption(JsonObject mp, BaseOptionModel option, String name) {
