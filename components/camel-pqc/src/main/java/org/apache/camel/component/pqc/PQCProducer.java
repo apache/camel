@@ -202,7 +202,6 @@ public class PQCProducer extends DefaultProducer {
         exchange.getMessage().setHeader(PQCConstants.VERIFY, verified);
     }
 
-
     /**
      * Feeds the message body into the given {@link Signature} without materialising the whole payload as a String. A
      * {@code byte[]} body is used directly, an {@link InputStream} body is read in chunks (and reset afterwards when it
