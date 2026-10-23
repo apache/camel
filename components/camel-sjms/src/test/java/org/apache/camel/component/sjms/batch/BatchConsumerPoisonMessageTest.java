@@ -67,7 +67,6 @@ public class BatchConsumerPoisonMessageTest extends JmsTestSupport {
         mock.assertIsSatisfied();
         assertBatchSizesInOrder(mock, 5);
 
-        Pattern hello = Pattern.compile("Hello [1-4]!");
         Pattern poison = Pattern.compile("Poison JMS message payload: Failed.*", Pattern.DOTALL);
 
         List<Exchange> exchanges = BatchTestHelper.getBatchExchanges(mock.getReceivedExchanges().get(0));
@@ -81,7 +80,7 @@ public class BatchConsumerPoisonMessageTest extends JmsTestSupport {
         assertEquals(1, exchanges.stream().filter(x -> x.getException() != null).count());
 
         assertTrue(exchanges.stream()
-                .allMatch(x -> x.getIn(SjmsMessage.class).getJmsMessage() instanceof Message),
+                .allMatch(x -> x.getIn(SjmsMessage.class).getJmsMessage() != null),
                 "every exchange must carry a JMS message");
     }
 
