@@ -1989,6 +1989,10 @@ threw an `IndexOutOfBoundsException` at the end. `markSupported()` now returns `
 anything): a reader that needs mark support has to wrap the stream, for example in a `BufferedInputStream`.
 `reset()` goes back to the start of the body, as before.
 
+=== camel-netty-http - securityConfiguration is copied per endpoint
+
+When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
+
 === camel-netty - hostnameVerification verifies the host instead of failing
 
 `hostnameVerification=true` on a `netty` producer, or on a consumer with `clientMode=true`, now checks that the
