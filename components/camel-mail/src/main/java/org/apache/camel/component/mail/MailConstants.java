@@ -45,9 +45,10 @@ public final class MailConstants {
     @Metadata(label = "consumer", description = "Deletes the messages after they have been processed.", javaType = "boolean")
     public static final String MAIL_DELETE = "CamelMailDelete";
     @Metadata(label = "producer",
-              description = "The alternative body of the mail, as plain text for mail clients that cannot show HTML, when"
-                            + " the body is sent as text/html. The alternativeBodyHeader option can change the name of"
-                            + " this header.",
+              description = "The alternative body of the mail, as plain text. When set, the mail is sent as"
+                            + " multipart/alternative with this text and the body (typically HTML) as its two parts, so"
+                            + " mail clients that cannot show HTML show the text. The alternativeBodyHeader option can"
+                            + " change the name of this header.",
               javaType = "String")
     public static final String MAIL_ALTERNATIVE_BODY = "CamelMailAlternativeBody";
     public static final String MAIL_DEFAULT_FOLDER = "INBOX";
