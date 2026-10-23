@@ -17,7 +17,6 @@
 package org.apache.camel.component.jgroups;
 
 import java.io.ObjectInputFilter;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -51,7 +50,8 @@ import org.slf4j.LoggerFactory;
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
-    private AtomicInteger connectCount = new AtomicInteger();
+    // the producers and consumers connected to the channel this endpoint created, guarded by connectLock
+    private int connectCount;
     // connects and disconnects the channel this endpoint created together with its count, so that a producer that
     // stops and a consumer that starts at the same time leave the channel connected for the consumer
     private final Lock connectLock = new ReentrantLock();
@@ -238,7 +238,9 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Connect shared channel, called by producer and consumer.
+     * Connects the channel of this endpoint, called by producer and consumer. A channel this endpoint did not create
+     * (such as the channel of the component) is counted by the component, as other endpoints can use it; a channel this
+     * endpoint created is counted by the endpoint.
      */
     public void connect() throws Exception {
         LOG.trace("Connecting JGroups Channel {}", getEndpointUri());
@@ -250,14 +252,15 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         try {
             resolvedChannel.connect(clusterName);
             // counted after a successful connect, as a producer or consumer whose connect failed does not disconnect
-            connectCount.incrementAndGet();
+            connectCount++;
         } finally {
             connectLock.unlock();
         }
     }
 
     /**
-     * Disconnect shared channel, called by producer and consumer.
+     * Disconnects the channel of this endpoint when its last producer or consumer disconnects, called by producer and
+     * consumer.
      */
     public void disconnect() {
         if (!isOwnChannel()) {
@@ -266,7 +269,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         }
         connectLock.lock();
         try {
-            if (connectCount.decrementAndGet() == 0) {
+            if (--connectCount == 0) {
                 LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
                 resolvedChannel.disconnect();
             }
