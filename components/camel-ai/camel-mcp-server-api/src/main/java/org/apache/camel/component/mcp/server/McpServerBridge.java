@@ -162,7 +162,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
 
         registry = AiToolRegistry.getOrCreate(camelContext);
         resourceRegistry = AiResourceRegistry.getOrCreate(camelContext);
-        // subscribe before snapshotting so no concurrent registration is missed; publishing is idempotent
+        // subscribe before snapshotting so no concurrent registration is missed: publishing a published spec again is
+        // a no-op, a refused one is offered to the engine again
         registry.addListener(listener);
         resourceRegistry.addListener(resourceListener);
         registry.getTools().forEach((tag, specs) -> {
@@ -236,8 +237,14 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                         spec.getName());
                 return;
             }
+            try {
+                engine.toolAdded(createTool(spec));
+            } catch (McpServerRefusedException e) {
+                LOG.error("Refusing to expose MCP tool '{}': {}", spec.getName(), e.getMessage(), e.getCause());
+                return;
+            }
+            // track only what the engine accepted: a refused name stays free and is never passed to toolRemoved
             published.put(spec.getName(), spec);
-            engine.toolAdded(createTool(spec));
         } finally {
             lock.unlock();
         }
@@ -284,8 +291,13 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 }
                 return;
             }
+            try {
+                engine.resourceAdded(createResource(spec));
+            } catch (McpServerRefusedException e) {
+                LOG.error("Refusing to expose MCP resource '{}': {}", spec.getUri(), e.getMessage(), e.getCause());
+                return;
+            }
             publishedResources.put(spec.getUri(), spec);
-            engine.resourceAdded(createResource(spec));
         } finally {
             lock.unlock();
         }
