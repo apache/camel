@@ -193,6 +193,150 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible route tools and toolCallbacks
+         * stay in the request. Search is a visibility policy, not
+         * authorization. Enabling it does not skip MCP tools/list. Camel must
+         * build the ChatClient from chatModel.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default SpringAiChatEndpointBuilder toolSearch(boolean toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible route tools and toolCallbacks
+         * stay in the request. Search is a visibility policy, not
+         * authorization. Enabling it does not skip MCP tools/list. Camel must
+         * build the ChatClient from chatModel.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default SpringAiChatEndpointBuilder toolSearch(String toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * Spring AI embedding model used when toolSearchStrategy=vector.
+         * Required for vector search.
+         * 
+         * The option is a:
+         * <code>org.springframework.ai.embedding.EmbeddingModel</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param toolSearchEmbeddingModel the value to set
+         * @return the dsl builder
+         */
+        default SpringAiChatEndpointBuilder toolSearchEmbeddingModel(org.springframework.ai.embedding.EmbeddingModel toolSearchEmbeddingModel) {
+            doSetProperty("toolSearchEmbeddingModel", toolSearchEmbeddingModel);
+            return this;
+        }
+        /**
+         * Spring AI embedding model used when toolSearchStrategy=vector.
+         * Required for vector search.
+         * 
+         * The option will be converted to a
+         * <code>org.springframework.ai.embedding.EmbeddingModel</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param toolSearchEmbeddingModel the value to set
+         * @return the dsl builder
+         */
+        default SpringAiChatEndpointBuilder toolSearchEmbeddingModel(String toolSearchEmbeddingModel) {
+            doSetProperty("toolSearchEmbeddingModel", toolSearchEmbeddingModel);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: producer
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default SpringAiChatEndpointBuilder toolSearchMaxResults(int toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: producer
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default SpringAiChatEndpointBuilder toolSearchMaxResults(String toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'keyword' matches the tool
+         * name and description. 'vector' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: keyword
+         * Group: producer
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default SpringAiChatEndpointBuilder toolSearchStrategy(org.apache.camel.component.ai.tool.AiToolSearchStrategy toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'keyword' matches the tool
+         * name and description. 'vector' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: keyword
+         * Group: producer
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default SpringAiChatEndpointBuilder toolSearchStrategy(String toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+        /**
          * Default user message text for multimodal requests. Can be combined
          * with media data in the message body.
          * 

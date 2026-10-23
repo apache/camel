@@ -398,6 +398,44 @@ public interface AiToolEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, this route tool is eligible for tool search and is omitted
+         * from the initial model request while the producer has tool search
+         * enabled. When false, the tool stays directly visible to the model.
+         * Searchability is a visibility policy, not an authorization policy,
+         * and has no effect when tool search is disabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param searchable the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder searchable(boolean searchable) {
+            doSetProperty("searchable", searchable);
+            return this;
+        }
+        /**
+         * When true, this route tool is eligible for tool search and is omitted
+         * from the initial model request while the producer has tool search
+         * enabled. When false, the tool stays directly visible to the model.
+         * Searchability is a visibility policy, not an authorization policy,
+         * and has no effect when tool search is disabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param searchable the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder searchable(String searchable) {
+            doSetProperty("searchable", searchable);
+            return this;
+        }
+        /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
          * LLM. When omitted, the tool goes into a default pool available to all

@@ -12703,7 +12703,7 @@
       }, {
         "name" : "allowUnmarshallType",
         "type" : "boolean",
-        "description" : "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.",
+        "description" : "If enabled then Jackson, Gson or JSON-B is allowed to attempt to use the CamelJacksonUnmarshalType, CamelGsonUnmarshalType or CamelJsonbUnmarshallType header during the unmarshalling. This should only be enabled when desired to be used.",
         "title" : "Allow Unmarshall Type",
         "default" : "false",
         "displayName" : "Allow Unmarshall Type",
@@ -13713,24 +13713,14 @@
         "index" : 2,
         "group" : "common"
       }, {
-        "name" : "lengthMarker",
-        "type" : "boolean",
-        "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
-        "title" : "Length Marker",
-        "default" : "false",
-        "displayName" : "Length Marker",
-        "kind" : "attribute",
-        "index" : 3,
-        "group" : "common"
-      }, {
         "name" : "strict",
         "type" : "boolean",
-        "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+        "description" : "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict recoveries of the TOON specification, such as accepting an array whose length differs from the declared length; other malformed TOON still fails.",
         "title" : "Strict",
         "default" : "true",
         "displayName" : "Strict",
         "kind" : "attribute",
-        "index" : 4,
+        "index" : 3,
         "group" : "common"
       }, {
         "name" : "contentTypeHeader",
@@ -13740,7 +13730,7 @@
         "default" : "true",
         "displayName" : "Content Type Header",
         "kind" : "attribute",
-        "index" : 5,
+        "index" : 4,
         "group" : "common"
       } ]
     },
@@ -17006,7 +16996,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 14,
@@ -17248,7 +17238,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 14,
@@ -17490,7 +17480,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 14,
@@ -18055,7 +18045,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 14,
@@ -18297,7 +18287,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 14,
@@ -18539,7 +18529,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 14,
@@ -18866,7 +18856,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 8,
@@ -19102,7 +19092,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 16,
@@ -19353,7 +19343,7 @@
         "type" : "boolean",
         "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
         "title" : "Skip Binding On Error Code",
-        "default" : "false",
+        "default" : "true",
         "displayName" : "Skip Binding On Error Code",
         "kind" : "attribute",
         "index" : 8,
@@ -19651,8 +19641,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "langChain4jLineTokenizer" : {
@@ -19707,8 +19696,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "langChain4jParagraphTokenizer" : {
@@ -19763,8 +19751,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "langChain4jSentenceTokenizer" : {
@@ -19819,8 +19806,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "langChain4jTokenizer" : {
@@ -19897,8 +19883,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "customTransformer" : {

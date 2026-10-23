@@ -222,7 +222,7 @@ public final class AiToolSearchIndex {
         if (left.length != right.length) {
             throw new IllegalArgumentException(
                     "Cannot compare embeddings with different dimensions: "
-                     + left.length + " and " + right.length);
+                                               + left.length + " and " + right.length);
         }
         int length = left.length;
         double dot = 0;

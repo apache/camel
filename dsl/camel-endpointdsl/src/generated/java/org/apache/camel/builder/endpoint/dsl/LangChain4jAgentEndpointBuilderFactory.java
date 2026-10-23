@@ -335,6 +335,152 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible route tools and customTools
+         * stay in the request. Search is a visibility policy, not
+         * authorization. Enabling it does not skip MCP tools/list. A dynamic
+         * tool provider registered outside Camel is not searched. Only
+         * supported in inline agent creation mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder toolSearch(boolean toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible route tools and customTools
+         * stay in the request. Search is a visibility policy, not
+         * authorization. Enabling it does not skip MCP tools/list. A dynamic
+         * tool provider registered outside Camel is not searched. Only
+         * supported in inline agent creation mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder toolSearch(String toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * LangChain4j embedding model used when toolSearchStrategy=vector.
+         * Required for vector search.
+         * 
+         * The option is a:
+         * <code>dev.langchain4j.model.embedding.EmbeddingModel</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param toolSearchEmbeddingModel the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder toolSearchEmbeddingModel(dev.langchain4j.model.embedding.EmbeddingModel toolSearchEmbeddingModel) {
+            doSetProperty("toolSearchEmbeddingModel", toolSearchEmbeddingModel);
+            return this;
+        }
+        /**
+         * LangChain4j embedding model used when toolSearchStrategy=vector.
+         * Required for vector search.
+         * 
+         * The option will be converted to a
+         * <code>dev.langchain4j.model.embedding.EmbeddingModel</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param toolSearchEmbeddingModel the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder toolSearchEmbeddingModel(String toolSearchEmbeddingModel) {
+            doSetProperty("toolSearchEmbeddingModel", toolSearchEmbeddingModel);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: producer
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder toolSearchMaxResults(int toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: producer
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder toolSearchMaxResults(String toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'keyword' matches the tool
+         * name and description. 'vector' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: keyword
+         * Group: producer
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder toolSearchStrategy(org.apache.camel.component.ai.tool.AiToolSearchStrategy toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'keyword' matches the tool
+         * name and description. 'vector' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: keyword
+         * Group: producer
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder toolSearchStrategy(String toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+        /**
          * The URL of the provider's API (http://localhost:11434 for a local
          * Ollama), when the model is created from the provider. The provider's
          * default when not set.

@@ -263,6 +263,85 @@ public interface Langchain4jAgentComponentBuilderFactory {
     
         
         /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible route tools and customTools
+         * stay in the request. Search is a visibility policy, not
+         * authorization. Enabling it does not skip MCP tools/list. A dynamic
+         * tool provider registered outside Camel is not searched. Only
+         * supported in inline agent creation mode.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder toolSearch(boolean toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+    
+        /**
+         * LangChain4j embedding model used when toolSearchStrategy=vector.
+         * Required for vector search.
+         * 
+         * The option is a:
+         * &lt;code&gt;dev.langchain4j.model.embedding.EmbeddingModel&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param toolSearchEmbeddingModel the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder toolSearchEmbeddingModel(dev.langchain4j.model.embedding.EmbeddingModel toolSearchEmbeddingModel) {
+            doSetProperty("toolSearchEmbeddingModel", toolSearchEmbeddingModel);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: producer
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder toolSearchMaxResults(int toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+    
+        
+        /**
+         * How tool search ranks route and MCP tools. 'keyword' matches the tool
+         * name and description. 'vector' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.ai.tool.AiToolSearchStrategy&lt;/code&gt; type.
+         * 
+         * Default: keyword
+         * Group: producer
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder toolSearchStrategy(org.apache.camel.component.ai.tool.AiToolSearchStrategy toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -495,6 +574,10 @@ public interface Langchain4jAgentComponentBuilderFactory {
             case "maxToolCallingRoundTrips": getOrCreateConfiguration((LangChain4jAgentComponent) component).setMaxToolCallingRoundTrips((int) value); return true;
             case "outputClass": getOrCreateConfiguration((LangChain4jAgentComponent) component).setOutputClass((java.lang.Class) value); return true;
             case "tags": getOrCreateConfiguration((LangChain4jAgentComponent) component).setTags((java.lang.String) value); return true;
+            case "toolSearch": getOrCreateConfiguration((LangChain4jAgentComponent) component).setToolSearch((boolean) value); return true;
+            case "toolSearchEmbeddingModel": getOrCreateConfiguration((LangChain4jAgentComponent) component).setToolSearchEmbeddingModel((dev.langchain4j.model.embedding.EmbeddingModel) value); return true;
+            case "toolSearchMaxResults": getOrCreateConfiguration((LangChain4jAgentComponent) component).setToolSearchMaxResults((int) value); return true;
+            case "toolSearchStrategy": getOrCreateConfiguration((LangChain4jAgentComponent) component).setToolSearchStrategy((org.apache.camel.component.ai.tool.AiToolSearchStrategy) value); return true;
             case "autowiredEnabled": ((LangChain4jAgentComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "mcpClients": getOrCreateConfiguration((LangChain4jAgentComponent) component).setMcpClients((java.util.List) value); return true;
             case "mcpServer": getOrCreateConfiguration((LangChain4jAgentComponent) component).setMcpServer((java.util.Map) value); return true;
