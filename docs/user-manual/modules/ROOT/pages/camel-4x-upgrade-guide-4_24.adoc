@@ -1183,6 +1183,14 @@ It is now written with all its decimals, so a record that is unmarshalled and ma
 `Double` that is the result of a calculation is written with all its digits too (`0.1 + 0.2` as `0.30000000000000004`,
 before `0.3`). Set `precision` to get a fixed number of decimals, as before.
 
+=== camel-stax - the text mode of xtokenize gives the text as an XML parser reads it
+
+With mode `t`, `xtokenize` returned the characters between the tags of the element as they are written: entity and
+character references were not decoded (`AT&amp;T` instead of `AT&T`), and the content of a CDATA section was left
+out. The text is now decoded and includes the content of CDATA sections, so a route that decoded the entities itself
+must stop doing so. With a `group` greater than 1, the texts in the `<group>` element are escaped as XML text, so the
+group is still well-formed XML.
+
 === camel-smooks - allowExternalEntities applies to Smooks Source bodies and to a reader declared without a class
 
 The Smooks component and `SmooksProcessor` now parse a message body that is already a Smooks `Source`

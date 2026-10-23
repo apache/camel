@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -45,6 +47,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.util.EscapeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -361,7 +364,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             return token;
         }
 
-        private String createContextualToken(String token) {
+        private String createContextualToken(String token) throws XMLStreamException {
             StringBuilder sb = new StringBuilder();
             if (mode == 'w' && group == 1) {
                 for (int i = 0; i < segments.size(); i++) {
@@ -374,7 +377,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 }
 
             } else if (mode == 'i') {
-                final String stag = token.substring(0, token.indexOf('>') + 1);
+                final String stag = token.substring(0, startTagEnd(token) + 1);
                 Set<String> skip = new HashSet<>();
                 Matcher matcher = NAMESPACE_PATTERN.matcher(stag);
                 char quote = 0;
@@ -406,25 +409,65 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 }
                 sb.append(token, stag.length() - (empty ? 2 : 1), token.length());
             } else if (mode == 'u') {
-                int bp = token.indexOf(">");
+                int bp = startTagEnd(token);
                 int ep = token.lastIndexOf("</");
                 if (bp > 0 && ep > 0) {
                     sb.append(token, bp + 1, ep);
                 }
             } else if (mode == 't') {
-                int bp = 0;
-                for (;;) {
-                    int ep = token.indexOf('>', bp);
-                    bp = token.indexOf('<', ep);
-                    if (bp < 0) {
-                        break;
-                    }
-                    sb.append(token, ep + 1, bp);
-                }
+                String text = getTextContent(token);
+                // a group of texts is wrapped in a group element, so it must stay XML text
+                sb.append(group > 1 ? EscapeHelper.xml(text) : text);
             } else {
                 return token;
             }
 
+            return sb.toString();
+        }
+
+        /**
+         * The index of the '>' that ends the start tag at the beginning of the token. A '>' inside a quoted attribute
+         * value does not end the start tag.
+         */
+        private static int startTagEnd(String token) {
+            char quote = 0;
+            for (int i = 0; i < token.length(); i++) {
+                char c = token.charAt(i);
+                if (quote != 0) {
+                    if (c == quote) {
+                        quote = 0;
+                    }
+                } else if (c == '"' || c == '\'') {
+                    quote = c;
+                } else if (c == '>') {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        /**
+         * The text content of the element token as an XML parser gives it: entity and character references decoded, the
+         * content of CDATA sections included, comments and processing instructions left out.
+         */
+        private static String getTextContent(String token) throws XMLStreamException {
+            StringBuilder sb = new StringBuilder();
+            XMLStreamReader r = TextInputFactory.FACTORY.createXMLStreamReader(new StringReader(token));
+            try {
+                while (r.hasNext()) {
+                    int event = r.next();
+                    if (event == XMLStreamConstants.CHARACTERS || event == XMLStreamConstants.CDATA
+                            || event == XMLStreamConstants.SPACE) {
+                        sb.append(r.getText());
+                    } else if (event == XMLStreamConstants.ENTITY_REFERENCE) {
+                        // an entity that the token does not declare is kept as it is written
+                        String text = r.getText();
+                        sb.append(text != null ? text : "&" + r.getLocalName() + ";");
+                    }
+                }
+            } finally {
+                r.close();
+            }
             return sb.toString();
         }
 
@@ -605,6 +648,21 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             }
             // need to close the original input stream as well as the reader do not delegate close it
             IOHelper.close(in);
+        }
+    }
+
+    /**
+     * The factory of the readers that get the text of a token in the text mode, created once. It is configured before
+     * it is published and then only creates readers.
+     */
+    private static final class TextInputFactory {
+        static final XMLInputFactory FACTORY = create();
+
+        private static XMLInputFactory create() {
+            // not namespace aware, as the token may use prefixes that its ancestors declare
+            XMLInputFactory factory = StaxConverter.createXMLInputFactory(false);
+            factory.setProperty(XMLInputFactory.IS_COALESCING, true);
+            return factory;
         }
     }
 
