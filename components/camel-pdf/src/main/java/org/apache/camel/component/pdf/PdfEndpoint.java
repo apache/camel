@@ -46,12 +46,12 @@ import org.apache.camel.support.DefaultEndpoint;
                                                 + " marshal it first. extractText reads a PDF from bytes, a stream, a file or a"
                                                 + " PDDocument, not from text. merge takes the files from the"
                                                 + " CamelPdfFilesToMerge header"),
-           producerOut = @BodyType(value = Carrier.POJO, javaType = "java.io.ByteArrayOutputStream",
+           producerOut = @BodyType(value = Carrier.BYTES, javaType = "java.io.ByteArrayOutputStream",
                                    byOption = @BodyType.When(option = "operation", value = "extractText",
                                                              carriers = Carrier.TEXT, javaType = "java.lang.String"),
-                                   description = "The PDF of create, append and merge in a ByteArrayOutputStream, which"
-                                                 + " converts to bytes (convertBodyTo byte[] before extractText). The text of"
-                                                 + " the document for extractText"))
+                                   description = "The PDF of create, append and merge as bytes, in a ByteArrayOutputStream:"
+                                                 + " convertBodyTo byte[] before extractText. The text of the document for"
+                                                 + " extractText"))
 public class PdfEndpoint extends DefaultEndpoint {
 
     @UriParam

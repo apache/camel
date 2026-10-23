@@ -36,12 +36,12 @@ import org.apache.camel.support.DefaultEndpoint;
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The document: text, bytes, a stream or a file. A Map, a List, a POJO or no"
                                                 + " body fails, and parse fails on an empty document"),
-           producerOut = @BodyType(value = Carrier.POJO, javaType = "java.io.ByteArrayOutputStream",
+           producerOut = @BodyType(value = Carrier.BYTES, javaType = "java.io.ByteArrayOutputStream",
                                    byOption = @BodyType.When(option = "operation", value = "detect", carriers = Carrier.TEXT,
                                                              javaType = "java.lang.String"),
-                                   description = "parse gives a ByteArrayOutputStream with the content as XHTML, or as HTML or"
-                                                 + " plain text with tikaParseOutputFormat, in tikaParseOutputEncoding, and the"
-                                                 + " metadata of the document in headers; camel-tika parses HTML and text,"
+                                   description = "parse gives the content as bytes, in a ByteArrayOutputStream: XHTML, or HTML"
+                                                 + " or plain text with tikaParseOutputFormat, in tikaParseOutputEncoding, and"
+                                                 + " the metadata of the document in headers; camel-tika parses HTML and text,"
                                                  + " other types need their Tika parser module. detect gives the media type as"
                                                  + " text, such as text/html"))
 public class TikaEndpoint extends DefaultEndpoint {
