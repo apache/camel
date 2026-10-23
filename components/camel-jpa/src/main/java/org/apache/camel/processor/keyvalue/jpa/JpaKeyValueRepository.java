@@ -32,6 +32,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.jpa.DefaultTransactionStrategy;
+import org.apache.camel.component.jpa.JpaHelper;
 import org.apache.camel.component.jpa.TransactionStrategy;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
@@ -476,7 +477,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
     @Override
     protected void doInit() throws Exception {
         if (transactionStrategy == null) {
-            transactionStrategy = new DefaultTransactionStrategy(null, entityManagerFactory);
+            transactionStrategy = JpaHelper.resolveTransactionStrategy(null, entityManagerFactory);
         }
     }
 

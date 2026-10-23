@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.jpa.DefaultTransactionStrategy;
+import org.apache.camel.component.jpa.JpaHelper;
 import org.apache.camel.component.jpa.TransactionStrategy;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.service.ServiceSupport;
@@ -58,7 +58,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     private boolean sharedEntityManager;
 
     public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, String processorName) {
-        this(entityManagerFactory, createDefaultTransactionStrategy(entityManagerFactory), processorName);
+        this(entityManagerFactory, JpaHelper.resolveTransactionStrategy(null, entityManagerFactory), processorName);
     }
 
     public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, TransactionStrategy transactionStrategy,
@@ -75,10 +75,6 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     public static JpaMessageIdRepository jpaMessageIdRepository(
             EntityManagerFactory entityManagerFactory, String processorName) {
         return new JpaMessageIdRepository(entityManagerFactory, processorName);
-    }
-
-    private static TransactionStrategy createDefaultTransactionStrategy(EntityManagerFactory entityManagerFactory) {
-        return new DefaultTransactionStrategy(null, entityManagerFactory);
     }
 
     @Override

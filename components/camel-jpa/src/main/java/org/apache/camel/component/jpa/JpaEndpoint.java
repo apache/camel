@@ -622,8 +622,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    protected DefaultTransactionStrategy createTransactionStrategy() {
-        return new DefaultTransactionStrategy(getCamelContext(), getEntityManagerFactory());
+    protected TransactionStrategy createTransactionStrategy() {
+        return JpaHelper.resolveTransactionStrategy(getCamelContext(), getEntityManagerFactory());
     }
 
     protected Expression createProducerExpression() {

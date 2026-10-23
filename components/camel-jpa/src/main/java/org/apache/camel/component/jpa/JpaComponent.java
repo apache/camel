@@ -185,7 +185,7 @@ public class JpaComponent extends HealthCheckComponent {
 
     private void createTransactionStrategy() {
         if (transactionStrategy == null && getEntityManagerFactory() != null) {
-            transactionStrategy = new DefaultTransactionStrategy(getCamelContext(), getEntityManagerFactory());
+            transactionStrategy = JpaHelper.resolveTransactionStrategy(getCamelContext(), getEntityManagerFactory());
         }
     }
 

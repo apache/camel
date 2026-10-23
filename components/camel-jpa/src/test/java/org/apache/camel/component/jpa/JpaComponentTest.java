@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.orm.jpa.JpaTransactionManager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -85,6 +86,60 @@ public class JpaComponentTest extends CamelTestSupport {
             JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
             assertNotNull(jpa);
             assertNotNull(jpa.getEntityType());
+        }
+    }
+
+    @Test
+    public void testJpaComponentDefaultTransactionStrategy() throws Exception {
+        EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            comp.setEntityManagerFactory(fac);
+            comp.init();
+            assertInstanceOf(DefaultTransactionStrategy.class, comp.getTransactionStrategy());
+
+            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
+            jpa.init();
+            assertSame(comp.getTransactionStrategy(), jpa.getTransactionStrategy());
+        } finally {
+            fac.close();
+        }
+    }
+
+    @Test
+    public void testJpaComponentTransactionStrategyFromRegistry() throws Exception {
+        TransactionStrategy strategy = Runnable::run;
+        context.getRegistry().bind("myTransactionStrategy", strategy);
+
+        EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            comp.setEntityManagerFactory(fac);
+            comp.init();
+            assertSame(strategy, comp.getTransactionStrategy());
+
+            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
+            jpa.init();
+            assertSame(strategy, jpa.getTransactionStrategy());
+        } finally {
+            fac.close();
+        }
+    }
+
+    @Test
+    public void testJpaEndpointTransactionStrategyFromRegistry() throws Exception {
+        TransactionStrategy strategy = Runnable::run;
+        context.getRegistry().bind("myTransactionStrategy", strategy);
+
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            comp.init();
+            // no EntityManagerFactory on the component, so the endpoint resolves its own strategy
+            assertNull(comp.getTransactionStrategy());
+
+            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
+            jpa.init();
+            assertSame(strategy, jpa.getTransactionStrategy());
         }
     }
 
