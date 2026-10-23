@@ -175,7 +175,16 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
     }
 
     void checkConsumer() {
-        lock.lock();
+        try {
+            // a check runs on the executor of the consumer (a pool), and another check may hold the lock while it
+            // waits to try again: the stop of the consumer interrupts both (shutdownNow), and this one then leaves at
+            // once instead of waiting for the lock
+            lock.lockInterruptibly();
+        } catch (InterruptedException e) {
+            checkQueued.set(false);
+            Thread.currentThread().interrupt();
+            return;
+        }
         try {
             // a reconnect from now on queues the next check
             checkQueued.set(false);
