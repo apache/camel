@@ -931,12 +931,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -947,12 +948,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1186,12 +1188,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1202,12 +1205,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1380,12 +1384,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1396,12 +1401,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set

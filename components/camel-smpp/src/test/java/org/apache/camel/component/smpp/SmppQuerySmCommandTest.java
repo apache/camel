@@ -81,4 +81,21 @@ public class SmppQuerySmCommandTest {
         assertEquals((byte) 0, exchange.getMessage().getHeader(SmppConstants.ERROR));
         assertNotNull(exchange.getMessage().getHeader(SmppConstants.FINAL_DATE));
     }
+
+    @Test
+    public void executeInOutKeepsTheBodyAndTheHeaders() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "QuerySm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+        exchange.getIn().setHeader("marker", "kept");
+        exchange.getIn().setBody("the body");
+        when(session.queryShortMessage("1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616"))
+                .thenReturn(new QuerySmResult("-300101010000004+", MessageState.DELIVERED, (byte) 0));
+
+        command.execute(exchange);
+
+        assertEquals("the body", exchange.getMessage().getBody());
+        assertEquals("kept", exchange.getMessage().getHeader("marker"));
+        assertEquals("DELIVERED", exchange.getMessage().getHeader(SmppConstants.MESSAGE_STATE));
+    }
 }

@@ -78,13 +78,6 @@ public class SolrProducer extends DefaultAsyncProducer {
             SolrUtils.addHeadersForCommit(modifiableSolrParams);
         }
 
-        // SolrRequest<?> are generated via SolrRequestConverter when not provided in exchange body:
-        // The code below ensures the body is not null in order to ensure conversion via SolrRequestConverter is run
-        // if conversion is not valid, an InvalidPayloadException will be thrown by the converter
-        if (message.getBody() == null) {
-            message.setBody(new Object());
-        }
-
         // Determine solr operation
         final SolrOperation operation = resolveSolrOperation(exchange, hasSolrParams);
 

@@ -29,7 +29,9 @@ public interface SmppConstants {
                                                 "URI option `alphabet` settings above.",
               javaType = "Byte")
     String ALPHABET = "CamelSmppAlphabet";
-    @Metadata(description = "The command", javaType = "String")
+    @Metadata(description = "The command to send: SubmitSm (the default when the header is missing), ReplaceSm, QuerySm,\n" +
+                            "SubmitMulti, CancelSm or DataSm. The names are case-sensitive, and any other value fails.",
+              javaType = "String")
     String COMMAND = "CamelSmppCommand";
     @Metadata(label = "consumer", description = "*only for AlertNotification, DeliverSm and DataSm* The command id field\n" +
                                                 "identifies the particular SMPP PDU. For the complete list of defined\n" +

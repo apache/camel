@@ -48,7 +48,7 @@ public class PahoMqtt5Producer extends DefaultProducer {
                 getEndpoint().getConfiguration().isRetained(), Boolean.class);
         MqttProperties properties
                 = exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES, MqttProperties.class);
-        byte[] payload = exchange.getIn().getBody(byte[].class);
+        byte[] payload = exchange.getIn().getMandatoryBody(byte[].class);
 
         MqttMessage message = new MqttMessage(payload);
         message.setQos(qos);

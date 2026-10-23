@@ -21,7 +21,7 @@ import java.io.InputStream;
 public class SshResult {
 
     @Deprecated
-    public static final String STDERR = SshConstants.EXIT_VALUE;
+    public static final String STDERR = SshConstants.STDERR;
 
     @Deprecated
     public static final String EXIT_VALUE = SshConstants.EXIT_VALUE;

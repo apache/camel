@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.telegram.util;
 
+import java.nio.charset.Charset;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.telegram.TelegramConstants;
 import org.apache.camel.component.telegram.TelegramMediaType;
 import org.apache.camel.component.telegram.TelegramParseMode;
@@ -30,6 +33,7 @@ import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.ReplyMarkup;
 import org.apache.camel.component.telegram.model.Update;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * Utilities for converting between Telegram APIs and standard java objects.
@@ -51,63 +55,40 @@ public final class TelegramConverter {
     }
 
     /**
-     * Fallback converter for any unlisted object, using String default mapping.
+     * Fallback converter for any unlisted object. With a media type header other than TEXT, the content (such as a
+     * stream, a file or a stream cache) is read as bytes and sent as that media; otherwise it is sent as text.
      */
     @Converter
-    public static OutgoingMessage toOutgoingMessage(Object message, Exchange exchange) {
+    public static OutgoingMessage toOutgoingMessage(Object message, Exchange exchange)
+            throws NoTypeConversionAvailableException {
+        TelegramMediaType type = getMediaType(exchange);
+        if (type != null && type != TelegramMediaType.TEXT) {
+            byte[] content = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, message);
+            return toOutgoingMessage(content, exchange);
+        }
         String content = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, message);
         return toOutgoingMessage(content, exchange);
     }
 
     @Converter
     public static OutgoingMessage toOutgoingMessage(String message, Exchange exchange) {
-        Object typeObj = exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE);
-        TelegramMediaType type;
-        if (typeObj instanceof String) {
-            type = TelegramMediaType.valueOf((String) typeObj);
-        } else {
-            type = (TelegramMediaType) typeObj;
-        }
+        TelegramMediaType type = getMediaType(exchange);
 
         // If the message is a string, it will be converted to a OutgoingTextMessage
         if (type == null) {
             type = TelegramMediaType.TEXT;
         }
 
-        OutgoingMessage result;
-
-        switch (type) {
-            case TEXT: {
-                OutgoingTextMessage txt = new OutgoingTextMessage();
-                txt.setText(message);
-
-                TelegramParseMode parseMode = getParseMode(exchange);
-                if (parseMode != null) {
-                    txt.setParseMode(parseMode.getCode());
-                }
-
-                result = txt;
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("Unsupported conversion from String to media type " + type);
-            }
+        if (type != TelegramMediaType.TEXT) {
+            throw new IllegalArgumentException("Unsupported conversion from String to media type " + type);
         }
-
-        return result;
+        return toOutgoingTextMessage(message, exchange);
     }
 
     @Converter
     public static OutgoingMessage toOutgoingMessage(byte[] message, Exchange exchange) {
-        Object typeObj = exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE);
-        TelegramMediaType type;
-        if (typeObj instanceof String) {
-            type = TelegramMediaType.valueOf((String) typeObj);
-        } else {
-            type = (TelegramMediaType) typeObj;
-        }
+        TelegramMediaType type = getMediaType(exchange);
 
-        // If the message is a string, it will be converted to a OutgoingTextMessage
         if (type == null) {
             throw new IllegalStateException(
                     "Binary message require the header " + TelegramConstants.TELEGRAM_MEDIA_TYPE
@@ -118,6 +99,12 @@ public final class TelegramConverter {
         OutgoingMessage result;
 
         switch (type) {
+            case TEXT: {
+                // the bytes of a text, in the charset of the exchange
+                result = toOutgoingTextMessage(new String(message, Charset.forName(ExchangeHelper.getCharsetName(exchange))),
+                        exchange);
+                break;
+            }
             case PHOTO_JPG:
             case PHOTO_PNG: {
                 OutgoingPhotoMessage img = new OutgoingPhotoMessage();
@@ -179,6 +166,25 @@ public final class TelegramConverter {
         }
 
         return result;
+    }
+
+    private static OutgoingTextMessage toOutgoingTextMessage(String message, Exchange exchange) {
+        OutgoingTextMessage txt = new OutgoingTextMessage();
+        txt.setText(message);
+
+        TelegramParseMode parseMode = getParseMode(exchange);
+        if (parseMode != null) {
+            txt.setParseMode(parseMode.getCode());
+        }
+        return txt;
+    }
+
+    private static TelegramMediaType getMediaType(Exchange exchange) {
+        Object typeObj = exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE);
+        if (typeObj instanceof String) {
+            return TelegramMediaType.valueOf((String) typeObj);
+        }
+        return (TelegramMediaType) typeObj;
     }
 
     private static TelegramParseMode getParseMode(Exchange exchange) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -25,6 +26,7 @@ import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.Address;
@@ -47,8 +49,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -559,5 +563,38 @@ public class SmppSubmitMultiCommandTest {
         command.execute(exchange);
         assertEquals(Arrays.asList("1", "2"), exchange.getMessage().getHeader(SmppConstants.ID));
         assertEquals(2, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+    }
+
+    @Test
+    public void missingBodyFailsWithInvalidPayloadException() {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
+
+        SmppException e = assertThrows(SmppException.class, () -> command.execute(exchange));
+
+        assertInstanceOf(InvalidPayloadException.class, e.getCause());
+    }
+
+    @Test
+    public void executeInOutKeepsTheBodyAndTheHeaders() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
+        exchange.getIn().setHeader("marker", "kept");
+        exchange.getIn().setBody(new ByteArrayInputStream("short message body".getBytes()));
+
+        when(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(new Address[] { new Address(TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717") }),
+                eq(new ESMClass()), eq((byte) 0), eq((byte) 1), (String) isNull(), (String) isNull(),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                eq(ReplaceIfPresentFlag.DEFAULT), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
+                eq("short message body".getBytes())))
+                .thenReturn(new SubmitMultiResult("1", new UnsuccessDelivery[0], null));
+
+        command.execute(exchange);
+
+        // the stream is replaced by its text, so the body can still be read after the send
+        assertEquals("short message body", exchange.getMessage().getBody());
+        assertEquals("kept", exchange.getMessage().getHeader("marker"));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
     }
 }

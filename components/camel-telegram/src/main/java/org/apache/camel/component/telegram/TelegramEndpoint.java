@@ -59,8 +59,8 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     private TelegramConfiguration configuration;
     @UriParam(label = "advanced")
     private HttpClient client;
-    @UriParam(label = "advanced", defaultValue = "" + (1024 * 1024))
-    private int bufferSize = 1024 * 1024;
+    @UriParam(label = "advanced", defaultValue = "" + (8 * 1024))
+    private int bufferSize = 8 * 1024;
 
     private WebhookConfiguration webhookConfiguration;
 
@@ -229,7 +229,8 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     }
 
     /**
-     * The initial in-memory buffer size used when transferring data between Camel and AHC Client.
+     * The initial size, in bytes, of the in-memory buffer for the body of a request sent to Telegram. The buffer grows
+     * to the size of the content, so it does not limit the size of the media that can be sent.
      */
     public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;

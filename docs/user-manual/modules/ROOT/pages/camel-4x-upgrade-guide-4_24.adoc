@@ -2661,3 +2661,146 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== camel-mail - the text of multipart mails, the charset of sent text, and producers on imap or pop3
+
+A multipart mail without a text part, such as one with only a PDF attachment, now converts to a `String` or an
+`InputStream` as `null`. Previously it converted to `jakarta.mail.internet.MimeMultipart@...`, and the type converter
+then remembered that conversion, so every later multipart mail in the CamelContext converted to such a text too. A
+`Message` whose content is null also converts to `null`.
+
+A text part that Jakarta Mail has no content handler for, such as `text/csv` or `text/calendar`, now converts to its
+text in the charset of the part. Previously it converted to the name of a stream.
+
+When the `contentType` of the mail producer is `text/*` and gives no charset (not in the option, the header or the
+`CamelCharsetName` exchange property), the Content-Type of the sent mail now declares the charset the text is encoded
+in: `mail.mime.charset`, else the default charset of the JVM (UTF-8). The bytes sent are unchanged. Previously the
+Content-Type had no charset, so a reader decoded the text as US-ASCII. This also applies when
+`ignoreUnsupportedCharset=true` drops an unsupported charset.
+
+An endpoint on `imap`, `imaps`, `pop3` or `pop3s` used as a producer now fails when the producer is created. Previously
+every send failed with `NoSuchProviderException: invalid provider`. Use `smtp` or `smtps` to send mails.
+
+A mail read with `mapMailMessage=false` can now be sent with `smtp`: a `MimeMessage` body that comes from a mail store
+is sent as a copy, as the messages of a store are read-only. A `MimeMessage` built by the route is sent as it is.
+
+Setting the body of the message of a mail consumer, also to `null`, now sticks. Previously a `null` body gave the
+content of the mail again when it was read next.
+
+=== camel-smpp - the body of the producer, InOut, and unknown commands
+
+After an InOut send, the message now keeps its body and the headers set before the send, and the result headers, such
+as `CamelSmppId`, are added. Previously the message had only the result headers and no body.
+
+A `CamelSmppCommand` value that is not a command now fails with an `IllegalArgumentException`. Previously the body was
+sent as an SMS (SubmitSm). The names are case-sensitive, and a message without the header is still sent with SubmitSm.
+
+SubmitSm, SubmitMulti and ReplaceSm read the body once, so a stream body is no longer sent as an empty short message.
+A body that is not a `String` or a `byte[]`, such as a stream or a file, is replaced on the message by the value it is
+converted to. A message without a body fails with an `SmppException` caused by an `InvalidPayloadException`, instead of
+a `NullPointerException`.
+
+With the `dataCoding` or `alphabet` option set to an 8-bit value, and neither the `CamelSmppDataCoding` nor the
+`CamelSmppAlphabet` header set, a `byte[]` body is now sent as it is, as with the headers. Previously its bytes were
+decoded as text, so bytes that are not text became `?`. A text body is still encoded with the `encoding` option. A
+message whose data coding is 8-bit is now split by its length in bytes.
+
+`SmppSmCommand.getShortMessage(Message)` now declares `throws SmppException`.
+
+=== camel-paho, camel-paho-mqtt5 - a body that does not convert to bytes
+
+The `paho` and `paho-mqtt5` producers now fail with an `InvalidPayloadException` that names the type of the body for a
+body that does not convert to a `byte[]`, such as a `Map`, a POJO or no body. Previously they failed with a
+`NullPointerException` with no message.
+
+=== camel-spring-rabbitmq - the content type and the correlation id of a consumer reply
+
+The reply of a `spring-rabbitmq` consumer used to take the content type of the request whenever the route left the
+`CamelSpringRabbitmqContentType` header as the request set it. Now, when the route leaves the header unchanged:
+
+* A `String` reply keeps the content type of the request, as before.
+* A `byte[]` or stream reply keeps it too, unless it is a text content type such as `text/plain`. It is then sent as
+  `application/octet-stream`, so the requester receives a `byte[]` and does not decode the bytes as text.
+* Any other reply body gets the content type that the message converter derives from it.
+
+A content type that the route sets is used as it is. A reply whose body is a Spring AMQP `Message` now gets the
+correlation id of the request when it has none, so the requester no longer times out.
+
+The producer is unchanged: a route that changes the type of the body of a consumed message and sends it on should
+remove the `CamelSpringRabbitmqContentType` header.
+
+=== camel-nats - the replies of an InOut consumer
+
+A `nats` consumer with `exchangePattern=InOut` now answers with an empty reply when the route ends with no body.
+Previously it sent no reply, and the requester timed out. A body that does not convert to a `byte[]`, such as a `Map` or
+a POJO, is still not sent, but the error now goes to the exception handler of the consumer, which logs it at WARN level.
+
+A consumer with `jetstreamEnabled=true` and `exchangePattern=InOut` no longer publishes the reply to the ack subject of
+the JetStream message. InOut replies are for core NATS only, and the consumer logs a WARN when it starts.
+
+=== camel-solr - the converter to Map, and bodies that are not sent
+
+With camel-solr on the classpath, converting a value that is not a Solr response to a `java.util.Map` no longer gives an
+empty `Map`. It now fails, or gives `null` with `tryConvertTo`, as without camel-solr.
+
+Without a body:
+
+* SEARCH and DELETE now fail with an `InvalidPayloadException`. Previously they searched for, or deleted, the text
+  `java.lang.Object@...`.
+* SEARCH still works with the `CamelSolrQueryString` header, or a `CamelSolrParam.q` header.
+* INSERT builds the document from the `CamelSolrField.*` headers.
+* INSERT and DELETE with request parameters, such as the commit of `autoCommit=true`, send only the parameters.
+
+An INSERT of a body that is not a document, such as plain text, a `byte[]`, a stream, a number or a bean without
+`@Field`, now fails with an `InvalidPayloadException` also when the request has parameters. Previously it reported
+success and stored nothing.
+
+The catalog now says that `deleteByQuery` defaults to `false`, as it always did at runtime. A `null` value in a `Map`
+body or in a `CamelSolrField.*` header is left out of the document, instead of failing with a `NullPointerException`.
+
+=== camel-ssh - the shell channel and sleepForShellPrompt
+
+An `ssh` endpoint with `channelType=shell` and no `shellPrompt` now fails when it starts. Previously each command
+failed with a `NullPointerException`.
+
+`sleepForShellPrompt` now defaults to 100 milliseconds, as the documentation said. Previously it was 0, so the shell
+channel waited for the prompt in a busy loop.
+
+The deprecated `SshResult.STDERR` is `CamelSshStderr` again. Previously it was `CamelSshExitValue`.
+
+=== camel-slack - the JSON of the webhook mode
+
+In webhook mode the `slack` producer now writes the JSON keys in snake_case, as Slack reads them, such as `icon_emoji`,
+`icon_url`, `thread_ts`, `unfurl_links`, `image_url`, `alt_text`, `author_name` and `title_link`, and `short` for the
+fields of an attachment. Previously they were written in camelCase, and Slack ignored them.
+
+Other changes:
+
+* The send no longer changes the message body.
+* The `channel`, `username`, `iconUrl` and `iconEmoji` of the endpoint are set only when the endpoint sets them, so a
+  `SlackMessage` body keeps its own values when the endpoint has none.
+* A `com.slack.api.model.Message` body also gets the icons of the endpoint.
+* A `RuntimeException` from the send now fails the exchange, instead of being thrown.
+
+In token mode a `SlackMessage` body now sends its attachments too, not only its text.
+
+The Slack CloudEvents data type transformer now sets `CamelCloudEventSource` to `slack.<appId>` and
+`CamelCloudEventSubject` to the channel. Previously they were `slack.true` and `true`.
+
+=== camel-telegram - media bodies, messages without text, and answers that are not ok
+
+The `telegram` producer changes:
+
+* A `byte[]` body with `CamelTelegramMediaType=TEXT` is now sent as a text message, decoded in the charset of the
+  exchange. Previously it was sent as a document named `file`.
+* A stream, a file or a stream cache body with a media type other than TEXT is now sent as that media. Previously it
+  failed with "Unsupported conversion from String".
+* An `IncomingMessage` body without text, such as a received photo, is no longer sent, as a `null` body is not.
+  Previously its `toString()` was sent as the text.
+* An answer of the Bot API with `"ok": false` now fails the exchange with the error code and the description of the
+  answer. Previously the body was a `MessageResult` with `ok=false`.
+
+The `bufferSize` option no longer limits the size of a request, so media larger than 1 MB can be sent. It is now the
+initial size of the buffer, and its default changed from 1048576 to 8192. The parts of a multipart request that are
+numbers or booleans, such as `duration` or `disable_notification`, are now sent; previously they were sent empty. The
+text parts are written in UTF-8, as they declare.

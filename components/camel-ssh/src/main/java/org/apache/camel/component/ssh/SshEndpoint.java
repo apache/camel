@@ -26,6 +26,8 @@ import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 
 /**
@@ -61,6 +63,15 @@ public class SshEndpoint extends ScheduledPollEndpoint implements EndpointServic
         SshConsumer consumer = new SshConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (Channel.CHANNEL_SHELL.equals(getChannelType()) && ObjectHelper.isEmpty(getShellPrompt())) {
+            throw new IllegalArgumentException(
+                    "The shell channel needs the shellPrompt option: set shellPrompt to the text the shell prompt ends with");
+        }
+        super.doStart();
     }
 
     @Override

@@ -99,6 +99,14 @@ YAML::
 ----
 ====
 
+The `timeout` option covers connecting to the server, authenticating and opening the channel, not the run of
+the command. The producer waits until the command ends, with no time limit, so a command that does not end
+blocks the thread that sends the message.
+
+With `channelType=shell`, the `shellPrompt` option is required, and the endpoint fails to start without it.
+The producer reads the output of the shell until it ends with the `shellPrompt` text, and checks the output
+every `sleepForShellPrompt` milliseconds (100 by default).
+
 === Authentication
 
 The SSH Component can authenticate against the remote SSH server using

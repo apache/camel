@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.Alphabet;
@@ -35,6 +37,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
@@ -277,5 +281,46 @@ public class SmppReplaceSmCommandTest {
                 eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
                 eq((byte) 0),
                 eq(bodyNarrowed));
+    }
+
+    @Test
+    public void streamBodyIsReadOnce() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+        exchange.getIn().setBody(new ByteArrayInputStream("new short message body".getBytes()));
+
+        command.execute(exchange);
+
+        verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                (String) isNull(), (String) isNull(),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq((byte) 0),
+                eq("new short message body".getBytes()));
+    }
+
+    @Test
+    public void missingBodyFailsWithInvalidPayloadException() {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+
+        SmppException e = assertThrows(SmppException.class, () -> command.execute(exchange));
+
+        assertInstanceOf(InvalidPayloadException.class, e.getCause());
+    }
+
+    @Test
+    public void executeInOutKeepsTheBodyAndTheHeaders() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+        exchange.getIn().setHeader("marker", "kept");
+        exchange.getIn().setBody("new short message body");
+
+        command.execute(exchange);
+
+        assertEquals("new short message body", exchange.getMessage().getBody());
+        assertEquals("kept", exchange.getMessage().getHeader("marker"));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
 }

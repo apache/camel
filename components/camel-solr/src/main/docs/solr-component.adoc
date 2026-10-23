@@ -58,19 +58,30 @@ the following. Some operations also require the message body to be set.
 |=======================================================================
 |Operation |Message body |Description
 
-|`INSERT` | n/a |inserts/updates a document using message headers (solr fields must be prefixed with "CamelSolrField.")
+|`INSERT` | n/a |inserts/updates a document using message headers (solr fields must be prefixed with "CamelSolrField."), or with no such headers, sends only the solr parameters (such as a commit)
 |`INSERT` | File |inserts/updates a document or documents using the given File (using ContentStreamUpdateRequest)
 |`INSERT` | SolrInputDocument or Collection<SolrInputDocument>|inserts/updates a document or documents based on the given (collection of) SolrInputDocument
 |`INSERT` | bean or Collection<bean> |inserts/updates a document or documents based on values in an http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated bean]
 |`INSERT` | String |inserts/updates a document or documents index based on the given XML or json as string (must follow SolrInputDocument format)
 
-|`DELETE` | String or Collection<String> | delete a record by ID (or collection of ids) or by a query (or a collection of queries) when header "deleteByQuery=true"
+|`DELETE` | String or Collection<String> | delete a record by ID (or collection of ids), or by a query (or a collection of queries) when the header `CamelSolrDeleteByQuery` or the option `deleteByQuery` is true (false by default)
+|`DELETE` | n/a | sends only the solr parameters (such as a commit)
 
 |`PING` |SolrPing | Pings the solr instance
 
 |`SEARCH` |SolrQuery | Performs a search request to the solr instance
 |`SEARCH` |QueryRequest | Performs a search request to the solr instance
+|`SEARCH` |String | Performs a search request with the body as the query
+|`SEARCH` | n/a | Performs a search request with the query of the `CamelSolrQueryString` header (or the `CamelSolrParam.q` header)
 |=======================================================================
+
+When the message has no body and the headers do not give what the operation needs (the `CamelSolrField.` headers or
+solr parameters for `INSERT`, solr parameters for `DELETE`, the `CamelSolrQueryString` header for `SEARCH`), the
+operation fails with an `InvalidPayloadException`. An `INSERT` of a body that is not a document (such as plain
+text, a byte array or a bean without `@Field` annotations) fails with the same exception, also when the request has
+solr parameters (such as the commit the `autoCommit` option adds).
+
+A field of a `Map` body or a `CamelSolrField.` header with a null value is left out of the document.
 
 == Example
 
@@ -85,15 +96,15 @@ Java::
 from("direct:insert")
     .setHeader("CamelSolrOperation", constant("INSERT"))
     .setHeader("CamelSolrField.id", body())
-    .to("solr://localhost:8983/solr");
+    .to("solr://localhost:8983/solr/mycollection");
 
 from("direct:delete")
     .setHeader("CamelSolrOperation", constant("DELETE"))
-    .to("solr://localhost:8983/solr");
+    .to("solr://localhost:8983/solr/mycollection");
 
 from("direct:search")
     .setHeader("CamelSolrOperation", constant("SEARCH"))
-    .to("solr://localhost:8983/solr");
+    .to("solr://localhost:8983/solr/mycollection");
 ----
 
 XML::
@@ -108,21 +119,21 @@ XML::
     <setHeader name="CamelSolrField.id">
         <simple>${body}</simple>
     </setHeader>
-    <to uri="solr://localhost:8983/solr"/>
+    <to uri="solr://localhost:8983/solr/mycollection"/>
 </route>
 <route>
     <from uri="direct:delete"/>
     <setHeader name="CamelSolrOperation">
         <constant>DELETE</constant>
     </setHeader>
-    <to uri="solr://localhost:8983/solr"/>
+    <to uri="solr://localhost:8983/solr/mycollection"/>
 </route>
 <route>
     <from uri="direct:search"/>
     <setHeader name="CamelSolrOperation">
         <constant>SEARCH</constant>
     </setHeader>
-    <to uri="solr://localhost:8983/solr"/>
+    <to uri="solr://localhost:8983/solr/mycollection"/>
 </route>
 ----
 
@@ -145,7 +156,7 @@ YAML::
               simple:
                 expression: "${body}"
         - to:
-            uri: solr://localhost:8983/solr
+            uri: solr://localhost:8983/solr/mycollection
 - route:
     from:
       uri: direct:delete
@@ -156,7 +167,7 @@ YAML::
               constant:
                 expression: DELETE
         - to:
-            uri: solr://localhost:8983/solr
+            uri: solr://localhost:8983/solr/mycollection
 - route:
     from:
       uri: direct:search
@@ -167,12 +178,12 @@ YAML::
               constant:
                 expression: SEARCH
         - to:
-            uri: solr://localhost:8983/solr
+            uri: solr://localhost:8983/solr/mycollection
 ----
 ====
 
 A client would simply need to pass a body message to the insert or
-delete routes and then call the commit route.
+delete routes, with the `CamelSolrParam.commit` header to commit the change.
 
 ._Java-only: sending messages to Solr routes using ProducerTemplate_
 [source,java]

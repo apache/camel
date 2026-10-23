@@ -35,6 +35,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.model.MessageResult;
+import org.apache.camel.component.telegram.model.OutgoingGameMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.SendVenueMessage;
@@ -79,6 +80,18 @@ class TelegramProducerFailureTest extends TelegramTestSupport {
         Throwable failure = assertFailsOnce("direct:telegram", telegramUri(), new SendLocationMessage(59.9386292, 30.3141308));
 
         assertThat(failure).isInstanceOf(RuntimeCamelException.class).hasMessageContaining("Could not parse the response");
+    }
+
+    @Test
+    void answerWithOkFalseFailsTheExchangeOnceWithItsDescription() throws Exception {
+        OutgoingGameMessage game = new OutgoingGameMessage();
+        game.setGameShortName("unknown");
+
+        Throwable failure = assertFailsOnce("direct:telegram", telegramUri(), game);
+
+        assertThat(failure).isInstanceOf(RuntimeCamelException.class)
+                .hasMessageContaining("Bad Request: game not found")
+                .hasMessageContaining("400");
     }
 
     @Test
@@ -298,6 +311,9 @@ class TelegramProducerFailureTest extends TelegramTestSupport {
                 // Telegram answers 400, for example for a chat that does not exist
                 .addErrorEndpoint("sendMessage", "POST", 400)
                 // 200 with a body that is not JSON, for example the error page of a proxy
-                .addEndpoint("sendLocation", "POST", String.class, "<html>Bad Gateway</html>");
+                .addEndpoint("sendLocation", "POST", String.class, "<html>Bad Gateway</html>")
+                // 200 with an answer that is not ok
+                .addEndpoint("sendGame", "POST", String.class,
+                        "{\"ok\":false,\"error_code\":400,\"description\":\"Bad Request: game not found\"}");
     }
 }

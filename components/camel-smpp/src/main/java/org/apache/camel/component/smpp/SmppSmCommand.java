@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.extra.NegativeResponseException;
@@ -91,7 +92,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         Alphabet alphabet = determineAlphabet(message);
         String body = message.getBody(String.class);
 
-        if (SmppUtils.is8Bit(alphabet)) {
+        if (SmppUtils.is8Bit(alphabet) || has8bitDataCoding(message)) {
             // an 8-bit message is split by its length in bytes (the signature of this method is kept, so subclasses
             // that override it keep working, at the cost of encoding the body again)
             splitter = new Smpp8BitSplitter(getShortMessage(message).length);
@@ -103,26 +104,54 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         return splitter;
     }
 
-    protected final byte[] getShortMessage(Message message) {
+    protected final byte[] getShortMessage(Message message) throws SmppException {
         if (has8bitDataCoding(message)) {
-            return message.getBody(byte[].class);
+            return readBody(message, byte[].class);
         } else {
+            String body = readBody(message, String.class);
             byte providedAlphabet = getProvidedAlphabet(message);
             Alphabet determinedAlphabet = determineAlphabet(message);
             Charset charset = determineCharset(message, providedAlphabet, determinedAlphabet.value());
-            String body = message.getBody(String.class);
             return body.getBytes(charset);
         }
     }
 
-    private static boolean has8bitDataCoding(Message message) {
+    /**
+     * Reads the body as the given type. A body that is not a String or a byte array, such as a stream that can be read
+     * only once, is replaced by the value it is converted to, so the alphabet, the splitter and the short message are
+     * all built from the same content.
+     */
+    private static <T> T readBody(Message message, Class<T> type) throws SmppException {
+        Object body = message.getBody();
+        T answer;
+        try {
+            answer = message.getMandatoryBody(type);
+        } catch (InvalidPayloadException e) {
+            throw new SmppException(e);
+        }
+        if (!(body instanceof String) && !(body instanceof byte[])) {
+            message.setBody(answer);
+        }
+        return answer;
+    }
+
+    private boolean has8bitDataCoding(Message message) {
         Byte dcs = message.getHeader(SmppConstants.DATA_CODING, Byte.class);
         if (dcs != null) {
             return SmppUtils.is8Bit(Alphabet.parseDataCoding(dcs.byteValue()));
-        } else {
-            Byte alphabet = message.getHeader(SmppConstants.ALPHABET, Byte.class);
-            return alphabet != null && SmppUtils.is8Bit(Alphabet.valueOf(alphabet));
         }
+        Byte alphabet = message.getHeader(SmppConstants.ALPHABET, Byte.class);
+        if (alphabet != null) {
+            return SmppUtils.is8Bit(Alphabet.valueOf(alphabet));
+        }
+        // the endpoint options send only a byte array as it is: text is encoded with the encoding option
+        return message.getBody() instanceof byte[]
+                && (SmppUtils.is8Bit(Alphabet.parseDataCoding(config.getDataCoding()))
+                        || is8BitAlphabet(config.getAlphabet()));
+    }
+
+    private static boolean is8BitAlphabet(byte alphabet) {
+        return alphabet == Alphabet.ALPHA_8_BIT.value() || alphabet == Alphabet.ALPHA_UNSPECIFIED_2.value();
     }
 
     private byte getProvidedAlphabet(Message message) {

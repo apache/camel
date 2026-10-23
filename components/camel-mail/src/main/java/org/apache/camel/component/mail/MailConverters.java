@@ -30,7 +30,10 @@ import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.internet.ContentType;
 import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeUtility;
 import jakarta.mail.search.SearchTerm;
 
 import org.apache.camel.Converter;
@@ -58,8 +61,9 @@ public final class MailConverters {
     /**
      * Converts the given JavaMail message to a String body. Can return null.
      */
-    @Converter
+    @Converter(allowNull = true)
     public static String toString(Message message) throws MessagingException, IOException {
+        Part part = message;
         Object content = message.getContent();
         while (content instanceof MimeMultipart multipart) {
             if (multipart.getCount() == 0) {
@@ -68,20 +72,17 @@ public final class MailConverters {
                 // deployment accepts as valid.
                 return null;
             }
-            BodyPart part = multipart.getBodyPart(0);
+            part = multipart.getBodyPart(0);
             content = part.getContent();
         }
-        if (content != null) {
-            return content.toString();
-        }
-        return null;
+        return contentToString(part, content);
     }
 
     /**
      * Converts the given JavaMail multipart to a String body, where the content-type of the multipart must be text
-     * based (ie start with text). Can return null.
+     * based (ie start with text). Can return null, when the multipart has no text part.
      */
-    @Converter
+    @Converter(allowNull = true)
     public static String toString(Multipart multipart) throws MessagingException, IOException {
         try {
             int size = multipart.getCount();
@@ -98,7 +99,7 @@ public final class MailConverters {
                 // Perform a case-insensitive "startsWith" check that works for different locales
                 String prefix = "text";
                 if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
-                    return content.toString();
+                    return contentToString(part, content);
                 }
             }
         } catch (MessagingException e) {
@@ -112,6 +113,28 @@ public final class MailConverters {
         return null;
     }
 
+    private static String contentToString(Part part, Object content) throws MessagingException, IOException {
+        if (content instanceof InputStream is && part.isMimeType("text/*")) {
+            // a text type Jakarta Mail has no content handler for, such as text/csv or text/calendar
+            try (is) {
+                return new String(is.readAllBytes(), charsetOf(part));
+            }
+        }
+        return content != null ? content.toString() : null;
+    }
+
+    private static String charsetOf(Part part) throws MessagingException {
+        String type = part.getContentType();
+        String charset = null;
+        try {
+            charset = new ContentType(type).getParameter("charset");
+        } catch (MessagingException e) {
+            // a Content-Type that cannot be parsed, so use the MIME default
+        }
+        // the MIME default, as Jakarta Mail decodes a text/plain part without a charset
+        return MimeUtility.javaCharset(charset != null ? charset : "us-ascii");
+    }
+
     /**
      * Converts the given JavaMail message to an InputStream.
      */
@@ -122,9 +145,9 @@ public final class MailConverters {
 
     /**
      * Converts the given JavaMail multipart to a InputStream body, where the content-type of the multipart must be text
-     * based (ie start with text). Can return null.
+     * based (ie start with text). Can return null, when the multipart has no text part.
      */
-    @Converter
+    @Converter(allowNull = true)
     public static InputStream toInputStream(Multipart multipart, Exchange exchange) throws IOException, MessagingException {
         String s = toString(multipart);
         if (s == null) {

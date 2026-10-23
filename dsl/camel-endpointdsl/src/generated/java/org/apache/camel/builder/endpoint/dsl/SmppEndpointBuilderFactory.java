@@ -2866,7 +2866,9 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppAlphabet";
         }
         /**
-         * The command.
+         * The command to send: SubmitSm (the default when the header is
+         * missing), ReplaceSm, QuerySm, SubmitMulti, CancelSm or DataSm. The
+         * names are case-sensitive, and any other value fails.
          * 
          * The option is a: {@code String} type.
          * 

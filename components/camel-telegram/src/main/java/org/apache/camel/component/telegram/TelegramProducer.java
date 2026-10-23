@@ -18,6 +18,7 @@ package org.apache.camel.component.telegram;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.NoChatIdRequired;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -46,6 +47,13 @@ public class TelegramProducer extends DefaultAsyncProducer {
         if (body == null) {
             // fail fast
             LOG.debug("Received exchange with empty body, skipping");
+            callback.done(true);
+            return true;
+        }
+
+        if (body instanceof IncomingMessage incomingMessage && incomingMessage.getText() == null) {
+            // a received message without text, such as a photo, has nothing to send back
+            LOG.debug("Received exchange with an incoming message without text, skipping");
             callback.done(true);
             return true;
         }

@@ -119,6 +119,12 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
 
     @Override
     public Producer createProducer() throws Exception {
+        String protocol = configuration.getProtocol();
+        if (protocol.startsWith("imap") || protocol.startsWith("pop3")) {
+            throw new IllegalArgumentException(
+                    "Protocol " + protocol + " cannot be used for a MailProducer. Please use smtp or smtps to send mails.");
+        }
+
         JavaMailSender sender = configuration.getJavaMailSender();
         if (sender == null) {
             // use default mail sender

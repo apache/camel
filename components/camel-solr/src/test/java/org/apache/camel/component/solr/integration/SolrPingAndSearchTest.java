@@ -84,11 +84,9 @@ class SolrPingAndSearchTest extends SolrTestSupport {
     }
 
     @Test
-    public void clusterStatusToTestInfraInstance() throws InvalidPayloadException {
+    public void clusterStatusToTestInfraInstance() {
 
         Exchange responseExchange = processRequest("direct:start", new CollectionAdminRequest.ClusterStatus(), Map.of());
-        Map<?, ?> map = responseExchange.getMessage().getMandatoryBody(Map.class);
-        LOG.info("Solr response = {}", map);
         // clusterstatus should fail as we're not running in solrCloud mode
         assertTrue(responseExchange.isFailed());
         assertInstanceOf(CamelExchangeException.class, responseExchange.getException());

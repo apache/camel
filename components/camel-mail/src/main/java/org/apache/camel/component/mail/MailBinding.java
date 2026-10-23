@@ -220,11 +220,23 @@ public class MailBinding {
             String charset = determineCharSet(configuration, exchange);
             // must replace charset, even with null in case its an unsupported charset
             contentType = MailUtils.replaceCharSet(contentType, charset);
+            if (isText(contentType) && MailUtils.getCharSetFromContentType(contentType) == null) {
+                // the text is encoded in the default charset of Jakarta Mail (mail.mime.charset, else the JVM default),
+                // so declare it, as a reader takes text without a charset as US-ASCII
+                contentType
+                        = MailUtils.replaceCharSet(contentType, MimeUtility.mimeCharset(MimeUtility.getDefaultJavaCharset()));
+            }
         }
 
         LOG.trace("Determined Content-Type: {}", contentType);
 
         return contentType;
+    }
+
+    private static boolean isText(String contentType) {
+        // Perform a case-insensitive "startsWith" check that works for different locales
+        String prefix = "text/";
+        return contentType.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 
     protected static String determineCharSet(MailConfiguration configuration, Exchange exchange) {
