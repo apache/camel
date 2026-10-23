@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BatchConsumerPoisonMessageTest extends JmsTestSupport {
@@ -70,21 +71,15 @@ public class BatchConsumerPoisonMessageTest extends JmsTestSupport {
         Pattern poison = Pattern.compile("Poison JMS message payload: Failed.*", Pattern.DOTALL);
 
         List<Exchange> exchanges = BatchTestHelper.getBatchExchanges(mock.getReceivedExchanges().get(0));
-        assertEquals(messages.size(), exchanges.size(), "batch size");
 
-        // 1. every exchange with an exception has the poison body
-        assertTrue(exchanges.stream()
-                .filter(x -> x.getException() != null)
-                .allMatch(x -> poison.matcher(x.getIn().getBody(String.class)).matches()),
-                "exchanges with an exception must have the poison body");
+        assertEquals("Hello 1!", exchanges.get(0).getIn().getBody(String.class));
+        assertEquals("Hello 2!", exchanges.get(1).getIn().getBody(String.class));
+        assertNotNull(exchanges.get(2).getException());
+        assertTrue(poison.matcher(exchanges.get(2).getIn().getBody(String.class)).matches());
+        assertEquals("Hello 3!", exchanges.get(3).getIn().getBody(String.class));
+        assertEquals("Hello 4!", exchanges.get(4).getIn().getBody(String.class));
+        assertEquals(1, exchanges.stream().filter(x -> x.getException() != null).count());
 
-        // 2. every exchange without an exception has a hello body
-        assertTrue(exchanges.stream()
-                .filter(x -> x.getException() == null)
-                .allMatch(x -> hello.matcher(x.getIn().getBody(String.class)).matches()),
-                "exchanges without an exception must have a hello body");
-
-        // 3. every exchange carries the JMS message
         assertTrue(exchanges.stream()
                 .allMatch(x -> x.getIn(SjmsMessage.class).getJmsMessage() instanceof Message),
                 "every exchange must carry a JMS message");

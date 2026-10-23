@@ -344,6 +344,29 @@ fast the broker redelivers is up to its redelivery policy, for example `max-deli
 for example with `split(body())` and `doTry`, or with `onException(...).handled(true)`. The messages
 of a redelivered batch have the `JMSRedelivered` header set.
 
+Similar to the standard consumer, the batch consumer does not preload the JMS properties and payload of each message
+before adding it to the batch (see `eagerLoadingOfProperties`). The exchange body and headers are loaded when they
+are first used. A poison message, one whose payload cannot be read or mapped, throws an exception when it is read.
+With `split(body())`, the Splitter reads the `SjmsMessage` when it copies it. This happens before the split's
+`doTry`, so without additional error handling one bad message fails the whole batch. With `transacted=true` or
+`CLIENT_ACKNOWLEDGE`, the batch is then redelivered. With `AUTO_ACKNOWLEDGE`, the messages are already acknowledged
+and the batch is lost.
+
+With `eagerLoadingOfProperties=true`, the batch consumer loads the JMS properties and payload before the message is
+added to the batch. For a poison message, where the properties or the payload cannot be loaded, the exception is
+set on the individual exchange and the body is set to the result of the `eagerPoisonBody` simple expression (default
+`Poison JMS message payload: ${exception.message}`; `eagerPoisonBody=false` turns this off). The route should check
+each exchange of the batch for an exception (`Exchange.getException()`) and handle it. Do this before using
+`split(body())`, because the split copies only the message, not the exception.
+
+When the route or the consumer is stopped, a partial batch (fewer than `batchSize` messages) is handled
+according to the acknowledgement mode. With `transacted=true` or `CLIENT_ACKNOWLEDGE`, the partial batch is not
+routed. Its messages are not acknowledged, so the broker redelivers them after the restart, with the
+`JMSRedelivered` header set to `true`. The redelivery counts towards the broker's delivery limit. With
+`AUTO_ACKNOWLEDGE`, the messages are already acknowledged, so the partial batch is routed during the stop, within
+the 10-second shutdown wait of the consumer's executor. A batch that is still being processed when the wait
+expires is lost.
+
 With `concurrentConsumers` greater than 1, each consumer collects and routes its own batches, so several
 batches are processed in parallel.
 

@@ -112,6 +112,8 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
 
         sendMessagesWithText(template, "sjms:queue:" + QUEUE_NAME, 20, "Before!");
 
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(20, receivedMessages(mock)));
+
         mock.assertIsSatisfied();
         assertEquals(20, receivedMessages(mock));
         assertEquals(CONSUMERS, countWorkerThreads(QUEUE_NAME));
@@ -133,6 +135,8 @@ class BatchConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
         mock.setMinimumExpectedMessageCount(4);
 
         sendMessagesWithText(template, "sjms:queue:" + QUEUE_NAME, 20, "After!");
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(20, receivedMessages(mock)));
 
         mock.assertIsSatisfied();
         assertEquals(20, receivedMessages(mock));
