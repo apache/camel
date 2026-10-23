@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -139,6 +140,47 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         getMockEndpoint("mock:unzip").expectedHeaderReceived(FILE_NAME, "file");
 
         template.sendBody("direct:unzip", getZippedText("file"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testUnzipWithFolderEntry() throws Exception {
+        // CAMEL-26008: the folder entry of an archive of a folder with one file is not an entry of its own
+        getMockEndpoint("mock:unzip").expectedBodiesReceived(TEXT);
+        getMockEndpoint("mock:unzip").expectedHeaderReceived(FILE_NAME, "poem.txt");
+
+        template.sendBody("direct:unzip", getZippedTextInFolder("poems/", "poems/poem.txt"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testUnzipWithMoreThanOneFileEntry() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            zos.putNextEntry(new ZipEntry("poems/"));
+            zos.putNextEntry(new ZipEntry("poems/a.txt"));
+            zos.write(TEXT.getBytes(StandardCharsets.UTF_8));
+            zos.putNextEntry(new ZipEntry("poems/b.txt"));
+            zos.write(TEXT.getBytes(StandardCharsets.UTF_8));
+        }
+        byte[] zipped = baos.toByteArray();
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:unzip", zipped));
+        assertIsInstanceOf(IllegalStateException.class, e.getCause());
+        assertEquals("Zip file has more than 1 entry.", e.getCause().getMessage());
+    }
+
+    @Test
+    public void testUnzipIteratorEntryFileLength() throws Exception {
+        // CAMEL-26009: each entry has its own size, not the CamelFileLength of the archive
+        MockEndpoint mock = getMockEndpoint("mock:unzipIteratorSplit");
+        mock.expectedBodiesReceived(TEXT);
+        mock.expectedHeaderReceived(Exchange.FILE_LENGTH, (long) TEXT.getBytes(StandardCharsets.UTF_8).length);
+
+        template.sendBodyAndHeader("direct:unzipIteratorSplit", getZippedText("poem.txt"), Exchange.FILE_LENGTH, 12345L);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -342,6 +384,13 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
                 from("direct:corruptUnzip").unmarshal().zipFile().to("mock:corruptUnzip");
                 from("direct:zipStreamCache").streamCache(true).marshal().zipFile().to("mock:zipStreamCache");
+
+                ZipFileDataFormat iteratorZip = new ZipFileDataFormat();
+                iteratorZip.setUsingIterator(true);
+                from("direct:unzipIteratorSplit").unmarshal(iteratorZip)
+                        .split(body())
+                            .to("mock:unzipIteratorSplit")
+                        .end();
 
                 ZipFileDataFormat maxDecompressedSizeZip = new ZipFileDataFormat();
                 // Only allow 10 bytes to be decompressed

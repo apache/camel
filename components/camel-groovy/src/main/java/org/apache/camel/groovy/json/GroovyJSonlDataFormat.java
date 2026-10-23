@@ -19,6 +19,7 @@ package org.apache.camel.groovy.json;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Map;
 
 import groovy.json.JsonOutput;
@@ -49,8 +50,9 @@ public class GroovyJSonlDataFormat extends ServiceSupport implements DataFormat,
         if (graph instanceof Node n) {
             graph = NodeToJsonHelper.nodeToJson(n);
         }
-        if (graph instanceof Map map) {
-            serialize(exchange, map, stream);
+        if (graph instanceof Map || graph instanceof Collection) {
+            // a collection is written as a JSON array, as JsonOutput does
+            serialize(exchange, graph, stream);
         } else {
             // optional jackson 2.x or 3.x support
             String type = graph.getClass().getName();
@@ -75,8 +77,8 @@ public class GroovyJSonlDataFormat extends ServiceSupport implements DataFormat,
         return "groovyJson";
     }
 
-    private void serialize(Exchange exchange, Map map, OutputStream stream) throws IOException {
-        String out = prettyPrint ? toPrettyJson(map) : JsonOutput.toJson(map);
+    private void serialize(Exchange exchange, Object value, OutputStream stream) throws IOException {
+        String out = prettyPrint ? toPrettyJson(value) : JsonOutput.toJson(value);
         stream.write(out.getBytes(ExchangeHelper.getCharset(exchange, true)));
     }
 

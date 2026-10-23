@@ -2831,8 +2831,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(jo, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(jo, "secureTag", def.getSecureTag(), null);
-        doWriteAttribute(jo, "secureTagContents", def.getSecureTagContents(), null);
-        doWriteAttribute(jo, "keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
+        doWriteAttribute(jo, "secureTagContents", def.getSecureTagContents(), "true");
+        doWriteAttribute(jo, "keyCipherAlgorithm", def.getKeyCipherAlgorithm(), null);
         doWriteAttribute(jo, "recipientKeyAlias", def.getRecipientKeyAlias(), null);
         doWriteAttribute(jo, "keyOrTrustStoreParameters", def.getKeyOrTrustStoreParameters(), null);
         doWriteAttribute(jo, "keyPassword", def.getKeyPassword(), null);

@@ -88,11 +88,16 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 body = Collections.singleton(body).iterator();
             }
             for (Object model : ObjectHelper.createIterable(body)) {
-                String name = model.getClass().getName();
-                Map<String, Object> row = new HashMap<>();
-                row.put(name, model);
-                row.putAll(createLinkedFieldsModel(model));
-                models.add(row);
+                if (model instanceof Map) {
+                    // a map of the model class names to the objects, as with bindyCsv and bindyKvp
+                    models.add((Map<String, Object>) model);
+                } else {
+                    String name = model.getClass().getName();
+                    Map<String, Object> row = new HashMap<>();
+                    row.put(name, model);
+                    row.putAll(createLinkedFieldsModel(model));
+                    models.add(row);
+                }
             }
         } else {
             // cast to the expected type
@@ -143,7 +148,9 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             }
 
             if (result == null) {
-                // marshal as a normal / default row
+                // marshal as a normal / default row, and fail rather than write an empty line for a row that has no
+                // object of the model
+                checkModelRow(exchange, factory, model);
                 result = factory.unbind(getCamelContext(), model);
             }
 

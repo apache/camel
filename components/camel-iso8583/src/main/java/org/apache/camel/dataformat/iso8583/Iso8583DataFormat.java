@@ -17,10 +17,14 @@
 package org.apache.camel.dataformat.iso8583;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.MessageFactory;
+import com.solab.iso8583.parse.ConfigParser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -29,6 +33,7 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -37,6 +42,8 @@ import org.apache.camel.support.service.ServiceSupport;
 @Dataformat("iso8583")
 @Metadata(firstVersion = "4.14.0", title = "ISO-8583")
 public class Iso8583DataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+
+    private static final String DEFAULT_CONFIG_FILE = "j8583-config.xml";
 
     private CamelContext camelContext;
     private MessageFactory messageFactory;
@@ -73,6 +80,11 @@ public class Iso8583DataFormat extends ServiceSupport implements DataFormat, Dat
         byte[] data = camelContext.getTypeConverter().mandatoryConvertTo(byte[].class, exchange, stream);
         // hex-based to int
         String iType = exchange.getMessage().getHeader(Iso8583Constants.ISO_TYPE, isoType, String.class);
+        if (iType == null) {
+            throw new IllegalArgumentException(
+                    "The ISO-Type of the message is unknown: set the isoType option of the iso8583 data format, or the "
+                                               + Iso8583Constants.ISO_TYPE + " header");
+        }
         int i = Integer.parseUnsignedInt(iType, 16);
         // the ISO header of a message type is optional, and it can be binary
         byte[] binaryHeader = messageFactory.getBinaryIsoHeader(i);
@@ -123,14 +135,28 @@ public class Iso8583DataFormat extends ServiceSupport implements DataFormat, Dat
             if (allowAutoWiredMessageFormat) {
                 messageFactory = CamelContextHelper.findSingleByType(camelContext, MessageFactory.class);
             }
+            boolean mandatory = configFile != null;
             if (messageFactory == null) {
                 messageFactory = new MessageFactory();
                 if (configFile == null) {
-                    configFile = "j8583-config.xml";
+                    configFile = DEFAULT_CONFIG_FILE;
                 }
             }
             if (configFile != null) {
-                messageFactory.setConfigPath(configFile);
+                configureMessageFactory(mandatory);
+            }
+        }
+    }
+
+    private void configureMessageFactory(boolean mandatory) throws Exception {
+        // load with the Camel resource loader (classpath: by default, file:, http: and so on), as j8583 itself only
+        // loads from the classpath
+        InputStream is = mandatory
+                ? ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, configFile)
+                : ResourceHelper.resolveResourceAsInputStream(camelContext, configFile);
+        if (is != null) {
+            try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                ConfigParser.configureFromReader(messageFactory, reader);
             }
         }
     }

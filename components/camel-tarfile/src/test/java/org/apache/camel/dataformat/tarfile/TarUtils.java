@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,6 +82,21 @@ final class TarUtils {
         } finally {
             tos.closeArchiveEntry();
             IOHelper.close(bais, tos);
+        }
+        return baos.toByteArray();
+    }
+
+    static byte[] getTaredTexts(String... entryNames) throws IOException {
+        byte[] data = TEXT.getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (TarArchiveOutputStream tos = new TarArchiveOutputStream(baos)) {
+            for (String entryName : entryNames) {
+                TarArchiveEntry entry = new TarArchiveEntry(entryName);
+                entry.setSize(data.length);
+                tos.putArchiveEntry(entry);
+                tos.write(data);
+                tos.closeArchiveEntry();
+            }
         }
         return baos.toByteArray();
     }

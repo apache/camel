@@ -2661,3 +2661,33 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== Data formats - bodies they cannot write fail, and stream bodies
+
+Several data formats wrote a body they cannot handle as empty or wrong output, or returned a stream that was closed
+by the time the next step read it. They now behave as follows:
+
+* `bindyCsv`, `bindyFixed` and `bindyKvp`: marshal of a body that is not an object of the model class, a List of them,
+  or a Map of the model class names to the objects fails with an `InvalidPayloadException`, instead of writing an
+  empty line. `bindyFixed` now takes a Map as a record of model class names, as `bindyCsv` and `bindyKvp` do.
+* `flatpack`: marshal writes a single Map as one row, and fails with an `InvalidPayloadException` for a body that is
+  neither a Map nor a List of Maps. The name of the data format, as shown in JMX and in error messages, is now
+  `flatpack` instead of `flatback`.
+* `protobufJackson`: a body that is already JSON text (a String with a JSON object or array, bytes, a stream or a
+  file) is no longer written as it is and labelled `application/protobuf`. It is marshalled as any other body.
+* `toon`: marshal reads a `byte[]`, a stream or a file as JSON text, as it does a String.
+* `base64`: unmarshal decodes the data right away and returns a stream cache, instead of a stream that decoded
+  while it was read.
+* `mimeMultipart`: unmarshal of a message that is not a multipart leaves the body as it was, instead of setting it
+  to a stream.
+* `tarFile`: with `usingIterator`, each entry is copied into a stream cache, as `zipFile` does, so a split that is
+  not streaming gets the content of each entry. Marshal takes the size of the entry from the body, not from the
+  `CamelFileLength` header. The messages of the `tarFile` and `zipFile` iterators have the size of their entry in
+  `CamelFileLength`, instead of the size of the archive.
+* `zipFile` and `tarFile`: unmarshal without `usingIterator` skips the folder entries, so an archive of a folder with
+  one file gives that file. An archive with only folder entries now fails.
+* `iso8583`: the `configFile` is loaded with the Camel resource loader, so `file:` and `http:` work, and a
+  `configFile` that is set but not found fails at startup. Without the `isoType` option and the
+  `CamelIso8583IsoType` header, unmarshal fails with a message that says so.
+* `xmlSecurity`: the catalog now gives the defaults the data format uses: `secureTagContents` is `true`, and
+  `keyCipherAlgorithm` has no default. The behaviour is unchanged.

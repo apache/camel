@@ -36,7 +36,9 @@ import org.apache.camel.spi.Metadata;
 public class Iso8583DataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(description = "The j8583 configuration file to load from classpath", defaultValue = "j8583-config.xml")
+    @Metadata(description = "The j8583 configuration file. It is loaded from the classpath by default; use the"
+                            + " file: or http: prefix to load it from somewhere else.",
+              defaultValue = "j8583-config.xml")
     private String configFile;
     @XmlAttribute
     @Metadata(description = "The default ISO-Type to use")

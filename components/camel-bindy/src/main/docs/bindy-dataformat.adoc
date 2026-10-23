@@ -1974,6 +1974,10 @@ from("direct:handleOrders")
    .to("file://outbox")
 ----
 
+The body to marshal is an object of the model class (`classType`), a `List` of them,
+or a `Map` of the model class names to the objects (one record). Any other body,
+such as a `Map` of field values or a `String`, fails with an `InvalidPayloadException`.
+
 === Using Spring XML
 
 This is really easy to use Spring as your favorite DSL language to

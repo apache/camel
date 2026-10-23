@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.toon;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -33,6 +34,7 @@ import dev.toonformat.jtoon.PathExpansion;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -90,6 +92,12 @@ public class ToonDataFormat extends ServiceSupport
         if (graph instanceof String json) {
             // String bodies are JSON documents (JSON-to-TOON), not TOON string scalars.
             // JToon.encodeJson rejects non-JSON text such as "hello world".
+            toon = JToon.encodeJson(json, options);
+        } else if (graph instanceof byte[] || graph instanceof InputStream || graph instanceof File
+                || graph instanceof WrappedFile) {
+            // bytes, a stream or a file hold JSON text as a String does (read in the charset of the exchange),
+            // which JToon.encode would write as an array of numbers, nothing or the path of the file
+            String json = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, graph);
             toon = JToon.encodeJson(json, options);
         } else {
             toon = JToon.encode(graph, options);

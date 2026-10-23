@@ -74,6 +74,8 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
      * Use the default CBOR Jackson {@link ObjectMapper} and {@link Object}
      */
     public CBORDataFormat() {
+        // as Jackson does: a Map for a CBOR map, a List for an array
+        this.unmarshalType = Object.class;
     }
 
     /**
@@ -347,7 +349,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (unmarshalTypeName != null && unmarshalType == null) {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
             unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
         if (collectionTypeName != null && collectionType == null) {

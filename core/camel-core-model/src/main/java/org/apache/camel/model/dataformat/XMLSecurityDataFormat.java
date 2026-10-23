@@ -63,13 +63,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @Metadata(description = "The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted.")
     private String secureTag;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean",
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
               description = "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element."
                             + " false = Element Level, true = Element Content Level.")
     private String secureTagContents;
     @XmlAttribute
-    @Metadata(defaultValue = "RSA_OAEP", enums = "RSA_v1dot5,RSA_OAEP,RSA_OAEP_11",
-              description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key.")
+    @Metadata(enums = "RSA_v1dot5,RSA_OAEP,RSA_OAEP_11",
+              description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key."
+                            + " When not set, marshal uses RSA_OAEP when the recipientKeyAlias is set, and unmarshal decrypts"
+                            + " with the symmetric key of the passPhrase.")
     private String keyCipherAlgorithm;
     @XmlAttribute
     @Metadata(description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.")
@@ -348,7 +350,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
         /**
          * A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element.
-         * false = Element Level. true = Element Content Level.
+         * false = Element Level. true = Element Content Level (the default).
          */
         public Builder secureTagContents(String secureTagContents) {
             this.secureTagContents = secureTagContents;
@@ -357,7 +359,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
         /**
          * A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element.
-         * false = Element Level. true = Element Content Level.
+         * false = Element Level. true = Element Content Level (the default).
          */
         public Builder secureTagContents(boolean secureTagContents) {
             this.secureTagContents = Boolean.toString(secureTagContents);
@@ -371,7 +373,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
          * <li>XMLCipher.RSA_OAEP</li>
          * <li>XMLCipher.RSA_OAEP_11</li>
          * </ul>
-         * The default value is XMLCipher.RSA_OAEP
+         * When not set, marshal uses XMLCipher.RSA_OAEP when the recipientKeyAlias is set, and unmarshal decrypts with
+         * the symmetric key of the passPhrase.
          */
         public Builder keyCipherAlgorithm(String keyCipherAlgorithm) {
             this.keyCipherAlgorithm = keyCipherAlgorithm;

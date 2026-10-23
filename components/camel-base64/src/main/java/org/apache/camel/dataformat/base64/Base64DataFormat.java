@@ -24,6 +24,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.codec.binary.Base64;
@@ -74,7 +75,15 @@ public class Base64DataFormat extends ServiceSupport implements DataFormat, Data
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream input) throws Exception {
-        return new Base64InputStream(input, false, lineLength, lineSeparator);
+        // decode now, as the input stream is closed when unmarshal returns (CAMEL-25995)
+        OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
+        InputStream decoded = new Base64InputStream(input, false, lineLength, lineSeparator);
+        try {
+            IOHelper.copy(decoded, osb);
+            return osb.build();
+        } finally {
+            IOHelper.close(osb, decoded);
+        }
     }
 
     public int getLineLength() {

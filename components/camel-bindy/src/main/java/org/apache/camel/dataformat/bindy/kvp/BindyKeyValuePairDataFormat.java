@@ -85,6 +85,8 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
             } else {
                 row = Collections.singletonMap(model.getClass().getName(), model);
             }
+            // fail rather than write an empty line for a row that has no object of the model
+            checkModelRow(exchange, factory, row);
             String result = factory.unbind(getCamelContext(), row);
             outputStream.write(converter.convertTo(byte[].class, exchange, result));
             outputStream.write(crlf);

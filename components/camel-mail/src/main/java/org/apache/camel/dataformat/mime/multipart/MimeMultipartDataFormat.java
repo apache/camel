@@ -265,6 +265,19 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     }
 
     @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
+        if (!headersInline) {
+            String contentType = exchange.getIn().getHeader(CONTENT_TYPE, String.class);
+            if (contentType == null || !isMultipartContentType(contentType)) {
+                // not a multipart: leave the body as it was, instead of the input stream that is closed when
+                // unmarshal returns
+                return body;
+            }
+        }
+        return super.unmarshal(exchange, body);
+    }
+
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, MessagingException {
         if (headersInline) {
             return unmarshalWithInlineHeaders(exchange, stream);

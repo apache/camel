@@ -115,7 +115,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {
-                ZipArchiveEntry entry = zis.getNextEntry();
+                ZipArchiveEntry entry = getNextFileEntry(zis);
                 if (entry != null) {
                     exchange.getMessage().setHeader(FILE_NAME, FileUtil.stripPath(entry.getName()));
                     IOHelper.copy(zis, osb, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
@@ -123,7 +123,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
                     throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
                 }
 
-                entry = zis.getNextEntry();
+                entry = getNextFileEntry(zis);
                 if (entry != null) {
                     throw new IllegalStateException("Zip file has more than 1 entry.");
                 }
@@ -133,6 +133,17 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
                 IOHelper.close(osb, zis, bis);
             }
         }
+    }
+
+    private static ZipArchiveEntry getNextFileEntry(ZipArchiveInputStream zis) throws IOException {
+        // skip the folder entries, as an archive of a folder with one file has an entry for the folder too
+        ZipArchiveEntry entry;
+        while ((entry = zis.getNextEntry()) != null) {
+            if (!entry.isDirectory()) {
+                return entry;
+            }
+        }
+        return null;
     }
 
     private void createZipEntries(ZipArchiveOutputStream zos, String filepath, Long fileLength) throws IOException {

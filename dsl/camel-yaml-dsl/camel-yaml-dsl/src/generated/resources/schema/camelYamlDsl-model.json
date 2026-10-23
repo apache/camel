@@ -10617,7 +10617,7 @@
         "name" : "barcodeFormat",
         "type" : "enum",
         "enum" : [ "AZTEC", "CODABAR", "CODE_39", "CODE_93", "CODE_128", "DATA_MATRIX", "EAN_8", "EAN_13", "ITF", "MAXICODE", "PDF_417", "QR_CODE", "RSS_14", "RSS_EXPANDED", "UPC_A", "UPC_E", "UPC_EAN_EXTENSION" ],
-        "description" : "Barcode format such as QR-Code.",
+        "description" : "Barcode format such as QR-Code. MAXICODE, RSS_14, RSS_EXPANDED and UPC_EAN_EXTENSION cannot be written by marshal, as there is no encoder for them; unmarshal reads the format of the image.",
         "title" : "Barcode Format",
         "default" : "QR_CODE",
         "displayName" : "Barcode Format",
@@ -12146,7 +12146,7 @@
       }, {
         "name" : "configFile",
         "type" : "string",
-        "description" : "The j8583 configuration file to load from classpath",
+        "description" : "The j8583 configuration file. It is loaded from the classpath by default; use the file: or http: prefix to load it from somewhere else.",
         "title" : "Config File",
         "default" : "j8583-config.xml",
         "displayName" : "Config File",
@@ -14106,9 +14106,8 @@
         "name" : "keyCipherAlgorithm",
         "type" : "enum",
         "enum" : [ "RSA_v1dot5", "RSA_OAEP", "RSA_OAEP_11" ],
-        "description" : "The cipher algorithm to be used for encryption/decryption of the asymmetric key.",
-        "title" : "Key Cipher Algorithm",
-        "default" : "RSA_OAEP"
+        "description" : "The cipher algorithm to be used for encryption/decryption of the asymmetric key. When not set, marshal uses RSA_OAEP when the recipientKeyAlias is set, and unmarshal decrypts with the symmetric key of the passPhrase.",
+        "title" : "Key Cipher Algorithm"
       }, {
         "name" : "keyOrTrustStoreParameters",
         "type" : "string",
@@ -14156,7 +14155,7 @@
         "type" : "boolean",
         "description" : "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false = Element Level, true = Element Content Level.",
         "title" : "Secure Tag Contents",
-        "default" : "false"
+        "default" : "true"
       }, {
         "name" : "xmlCipherAlgorithm",
         "type" : "enum",

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.dataformat.toon;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,13 +29,21 @@ import java.util.Map;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ToonDataFormatTest extends CamelTestSupport {
+
+    private static final String FILE_DIR = "target/data/toon";
+
+    @TempDir
+    Path tempDir;
 
     @Test
     void marshalAndUnmarshalMap() {
@@ -115,6 +128,54 @@ class ToonDataFormatTest extends CamelTestSupport {
         Map<String, Object> map = (Map<String, Object>) result;
         assertThat(map.get("name")).isEqualTo("Ada");
         assertNumberEquals(map.get("id"), 1);
+    }
+
+    @Test
+    void marshalJsonBytesAsDocument() {
+        byte[] json = "{\"id\":1}".getBytes(StandardCharsets.UTF_8);
+
+        String toon = template.requestBody("direct:marshal", json, String.class);
+        assertThat(toon).isEqualTo("id: 1");
+    }
+
+    @Test
+    void marshalJsonBytesInCharsetOfExchange() {
+        byte[] json = "{\"name\":\"J\u00fcrgen\"}".getBytes(StandardCharsets.ISO_8859_1);
+
+        Exchange exchange = template.request("direct:marshal", e -> {
+            e.setProperty(Exchange.CHARSET_NAME, "ISO-8859-1");
+            e.getIn().setBody(json);
+        });
+        byte[] toon = exchange.getMessage().getBody(byte[].class);
+        assertThat(new String(toon, StandardCharsets.ISO_8859_1)).isEqualTo("name: J\u00fcrgen");
+    }
+
+    @Test
+    void marshalJsonStreamAsDocument() {
+        ByteArrayInputStream json = new ByteArrayInputStream("{\"id\":1}".getBytes(StandardCharsets.UTF_8));
+
+        String toon = template.requestBody("direct:marshal", json, String.class);
+        assertThat(toon).isEqualTo("id: 1");
+    }
+
+    @Test
+    void marshalJsonFileAsDocument() throws Exception {
+        File file = Files.writeString(tempDir.resolve("doc.json"), "{\"id\":1}").toFile();
+
+        String toon = template.requestBody("direct:marshal", file, String.class);
+        assertThat(toon).isEqualTo("id: 1");
+    }
+
+    @Test
+    void marshalJsonFromFileConsumerAsDocument() throws Exception {
+        deleteDirectory(FILE_DIR);
+        Files.createDirectories(Path.of(FILE_DIR));
+        Files.writeString(Path.of(FILE_DIR, "doc.json"), "{\"id\":1}");
+
+        MockEndpoint mock = getMockEndpoint("mock:file");
+        mock.expectedBodiesReceived("id: 1");
+        context.getRouteController().startRoute("file");
+        mock.assertIsSatisfied();
     }
 
     @Test
@@ -309,6 +370,10 @@ class ToonDataFormatTest extends CamelTestSupport {
                 from("direct:indent").marshal(dataFormat().toon().indent(4).end());
                 from("direct:noContentType").marshal(dataFormat().toon().contentTypeHeader(false).end());
                 from("direct:strictFalse").unmarshal(dataFormat().toon().strict(false).end());
+                from("file:" + FILE_DIR + "?noop=true&initialDelay=0&delay=10").routeId("file").autoStartup(false)
+                        .marshal().toon()
+                        .convertBodyTo(String.class)
+                        .to("mock:file");
             }
         };
     }
