@@ -43,6 +43,8 @@ stream:http?httpUrl=http:myserver:8080/data
 If the `stream:header` URI is specified, the `stream` header is used to
 find the stream to write to. This option is available only for stream
 producers (that is, it cannot appear in `from()`).
+A message without a `stream` header, or with one that is not a `java.io.OutputStream`,
+fails with a `NoSuchHeaderException`.
 
 
 // component options: START
@@ -64,7 +66,7 @@ mode are not followed by the newline character (as opposed to the
 output stream. +
  The special `stream:header` URI is used for custom output streams. Just
 add a `java.io.OutputStream` object to `message.in.header` in the key
-`header`. +
+`stream`. +
  See samples for an example.
 
 == Examples

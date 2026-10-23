@@ -47,6 +47,24 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+=== Input and output types
+
+With the default `inputType`, `Hydrated`, the body can be:
+
+* JSON text (a `String` or other text whose first non-whitespace character is `{` or `[`), which is parsed as JSON;
+* bytes, an `InputStream` (including a stream cache) or a file (`java.io.File`, `java.nio.file.Path` or the file of the
+xref:file-component.adoc[File] component), which is parsed as JSON. The text is decoded in the charset of the
+exchange (`Exchange.CHARSET_NAME`) when one is set; otherwise the JSON parser detects the encoding;
+* a `Map` or a `List` (hydrated JSON), which is used as it is.
+
+Text that does not start with `{` or `[` is passed to the specification as it is. Text that starts with `{` or `[`
+but is not valid JSON fails with the parse error.
+
+With `inputType=JsonString`, the body is always parsed as JSON.
+
+The output is hydrated JSON (a `Map` or a `List`) by default; set `outputType=JsonString` to get a JSON `String`.
 
 == Examples
 

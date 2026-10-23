@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.schematron;
 
+import java.nio.charset.StandardCharsets;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -30,6 +32,7 @@ import org.xml.sax.XMLReader;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
@@ -39,13 +42,18 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Schematron Producer Unit Test.
  */
 public class SchematronProducerTest extends CamelTestSupport {
 
+    private static final String ISO_8859_1_XML
+            = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><doc><chapter><title>Caf\u00e9</title></chapter></doc>";
+
     private static SchematronProducer producer;
+    private static SchematronProducer encodingProducer;
 
     @BeforeAll
     public static void setUP() {
@@ -56,6 +64,38 @@ public class SchematronProducerTest extends CamelTestSupport {
                 .getTemplates(ClassLoader.getSystemResourceAsStream("sch/schematron-1.sch"), fac);
         endpoint.setRules(templates);
         producer = new SchematronProducer(endpoint);
+
+        SchematronEndpoint encodingEndpoint = new SchematronEndpoint();
+        encodingEndpoint.setRules(TemplatesFactory.newInstance()
+                .getTemplates(ClassLoader.getSystemResourceAsStream("sch/schematron-encoding.sch"), fac));
+        encodingProducer = new SchematronProducer(encodingEndpoint);
+    }
+
+    @Test
+    public void testProcessNoBody() {
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
+
+        assertThrows(InvalidPayloadException.class, () -> producer.process(exc));
+    }
+
+    @Test
+    public void testProcessBytesWithDeclaredEncoding() throws Exception {
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
+        exc.getIn().setBody(ISO_8859_1_XML.getBytes(StandardCharsets.ISO_8859_1));
+
+        encodingProducer.process(exc);
+
+        assertEquals(Constants.SUCCESS, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
+    }
+
+    @Test
+    public void testProcessStringWithDeclaredEncoding() throws Exception {
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
+        exc.getIn().setBody(ISO_8859_1_XML);
+
+        encodingProducer.process(exc);
+
+        assertEquals(Constants.SUCCESS, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
     }
 
     @Test

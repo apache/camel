@@ -152,6 +152,11 @@ public interface JsonataEndpointBuilderFactory {
         }
         /**
          * Specifies if the input should be Jackson JsonNode or a JSON String.
+         * With Jackson, a body that is JSON text (its first non-whitespace
+         * character is { or ), bytes, a stream or a file is parsed as JSON,
+         * other text is a JSON string value, and any other body, such as a Map
+         * or a List, is converted by Jackson. With JsonString, the body is
+         * always parsed as JSON.
          * 
          * The option is a:
          * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
@@ -168,6 +173,11 @@ public interface JsonataEndpointBuilderFactory {
         }
         /**
          * Specifies if the input should be Jackson JsonNode or a JSON String.
+         * With Jackson, a body that is JSON text (its first non-whitespace
+         * character is { or ), bytes, a stream or a file is parsed as JSON,
+         * other text is a JSON string value, and any other body, such as a Map
+         * or a List, is converted by Jackson. With JsonString, the body is
+         * always parsed as JSON.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.

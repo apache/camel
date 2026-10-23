@@ -18,6 +18,8 @@ package org.apache.camel.component.stub;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -43,6 +45,9 @@ public class StubComponent extends SedaComponent {
     private boolean shadow;
     @Metadata(label = "advanced")
     private String shadowPattern;
+
+    // guards making room in a queue without consumers, as the endpoints of a queue may have several producers
+    private final Lock noConsumerLock = new ReentrantLock();
 
     public StubComponent() {
     }
@@ -109,6 +114,10 @@ public class StubComponent extends SedaComponent {
      */
     public void setShadowPattern(String shadowPattern) {
         this.shadowPattern = shadowPattern;
+    }
+
+    Lock getNoConsumerLock() {
+        return noConsumerLock;
     }
 
     @Override

@@ -32,7 +32,9 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -97,13 +99,17 @@ public class StreamProducer extends DefaultAsyncProducer {
         LOG.debug("About to write to file: {}", fileName);
         File f = new File(fileName);
         // will create a new file if missing or append to existing
-        f.getParentFile().mkdirs();
+        File parent = f.getParentFile();
+        if (parent != null) {
+            parent.mkdirs();
+        }
         f.createNewFile();
         return new FileOutputStream(f, true);
     }
 
-    private OutputStream resolveStreamFromHeader(Object o, Exchange exchange) {
-        return exchange.getContext().getTypeConverter().convertTo(OutputStream.class, o);
+    private OutputStream resolveStreamFromHeader(Exchange exchange) throws NoSuchHeaderException {
+        // the stream header is mandatory, and must be (convertible to) an OutputStream
+        return ExchangeHelper.getMandatoryHeader(exchange, "stream", OutputStream.class);
     }
 
     private void delay(long ms) throws InterruptedException {
@@ -171,7 +177,7 @@ public class StreamProducer extends DefaultAsyncProducer {
             return;
         }
         if ("header".equals(uri)) {
-            outputStream = resolveStreamFromHeader(exchange.getIn().getHeader("stream"), exchange);
+            outputStream = resolveStreamFromHeader(exchange);
             LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
         } else {
             openStream();
