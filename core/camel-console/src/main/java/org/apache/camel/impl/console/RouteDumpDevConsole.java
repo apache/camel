@@ -53,6 +53,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
             @Metadata(description = "The route ID") String routeId,
             @Metadata(description = "The route's endpoint URI") String from,
             @Metadata(description = "The source location (only present when known)") String source,
+            @Metadata(description = "The checksum of the route as written, the same in every run: the dump is of this version of the route (only present when known, as it needs camel-xml-io)") String checksum,
             @Metadata(description = "The dump format, xml/yaml/java (only present when the dump succeeded)") String format,
             @Metadata(description = "The dumped route source code (only present when the dump succeeded)") List<CodeLine> code) {
     }
@@ -105,6 +106,9 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
             if (mrb.getSourceLocation() != null) {
                 sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
             }
+            if (mrb.getChecksum() != null) {
+                sb.append(String.format("%n    Checksum: %s", mrb.getChecksum()));
+            }
             if (dump != null && !dump.isEmpty()) {
                 sb.append("\n\n");
                 for (String line : dump.split("\n")) {
@@ -154,7 +158,8 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 // ignore
             }
 
-            list.add(new RouteEntry(mrb.getRouteId(), mrb.getEndpointUri(), mrb.getSourceLocation(), format, code));
+            list.add(new RouteEntry(
+                    mrb.getRouteId(), mrb.getEndpointUri(), mrb.getSourceLocation(), mrb.getChecksum(), format, code));
             return null;
         };
         doCall(options, task);

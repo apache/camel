@@ -102,6 +102,19 @@ final class HeaderChecks {
                + "=true on the endpoint, as the exchange property ${exchangeProperty." + name + "}";
     }
 
+    /** A name that reaches for the reply of a request-reply, such as CamelJmsReplyTo. */
+    private static final Pattern REPLY_NAME = Pattern.compile("Reply");
+
+    /**
+     * For a reply header read or set by hand on a JMS route: Camel does request-reply itself (r20 runs built replies by
+     * hand after "did you mean JMSReplyTo?"). Only given when the file's components set JMSReplyTo, so the reply
+     * headers of other components (CamelFtpReplyCode, CamelNatsReplyTo) keep their "did you mean".
+     */
+    static final String JMS_REQUEST_REPLY_HINT
+            = "For request-reply over JMS, send with pattern: InOut on the to: and Camel sets JMSReplyTo and waits for the"
+              + " reply (the body at the end of the service route); you do not need to set JMSReplyTo or replyTo"
+              + " yourself.";
+
     /**
      * What an invented Camel* header is usually reaching for, keyed on a fragment of its name, and the expression that
      * answers it. Tried when no real header is close: in a timer-triggered route there is no message source to name, so
@@ -293,8 +306,13 @@ final class HeaderChecks {
                 String scheme = best != null && owner.containsKey(best.split(", ")[0]) ? owner.get(best.split(", ")[0]) : null;
                 StringBuilder sb = new StringBuilder("Line ").append(i + 1).append(": header ").append(name)
                         .append(" is not set by ").append(String.join(", ", schemes)).append(" (the value would be null)");
-                if (best != null) {
+                if (best != null && "JMSReplyTo".equals(best.split(", ")[0])) {
+                    // "did you mean JMSReplyTo?" led to replies set by hand: request-reply is done by Camel
+                    sb.append(" ").append(JMS_REQUEST_REPLY_HINT);
+                } else if (best != null) {
                     sb.append(": did you mean ").append(best).append("?");
+                } else if (known.contains("JMSReplyTo") && REPLY_NAME.matcher(name).find()) {
+                    sb.append(" ").append(JMS_REQUEST_REPLY_HINT);
                 } else {
                     String hint = intentHint(name);
                     if (hint != null) {

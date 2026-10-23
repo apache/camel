@@ -134,6 +134,25 @@ class CatalogDocsTest {
     }
 
     @Test
+    void theBodyTypesSayWhatTheBodyIsAfterAStep() throws Exception {
+        // CAMEL-24961: what the options of a component do not say
+        JsonObject xslt = catalogDoc(Map.of("name", "xslt", "kind", "component", "includeOptions", false));
+        JsonObject out = ((JsonObject) xslt.get("bodyTypes")).getMap("producerOut");
+        assertEquals(List.of("text"), out.getCollection("carriers"));
+        assertEquals("java.lang.String", out.getString("javaType"));
+        assertTrue(xslt.getString("bodyTypesHint").contains("A side not listed is not known"));
+
+        JsonObject json = catalogDoc(Map.of("name", "json", "kind", "dataformat", "includeOptions", false));
+        JsonObject unmarshalOut = ((JsonObject) json.get("bodyTypes")).getMap("unmarshalOut");
+        assertEquals(List.of("map", "list"), unmarshalOut.getCollection("carriers"));
+
+        // a component that does not declare them has none, rather than a guess
+        JsonObject kafka = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", false));
+        assertNull(kafka.get("bodyTypes"));
+        assertNull(kafka.get("bodyTypesHint"));
+    }
+
+    @Test
     void endpointArgumentValidatesAUriAgainstTheComponent() throws Exception {
         JsonObject bad = catalogDoc(Map.of("endpoint", "timer:tick?period=5s&fixedRte=true&repeatCount=abc"));
         assertEquals("timer", bad.getString("name"));
@@ -266,6 +285,23 @@ class CatalogDocsTest {
             assertEquals("jms", first.getString("name"), term);
             assertTrue(first.getString("note").contains("Connecting to a broker"), first.toJson());
         }
+    }
+
+    /** The one element of a JSON list by a field: models wrote $[?(...)][0], an empty list (the r20 REST runs). */
+    @Test
+    void theJsonPathAnswerSaysHowToPickOneElement() throws Exception {
+        JsonObject doc = catalogDoc(Map.of("name", "jsonpath"));
+        assertTrue(doc.getString("usage").contains("resultType: java.util.Map"), doc.getString("usage"));
+        assertTrue(doc.getString("usage").contains("an index after the filter gives an empty list"), doc.getString("usage"));
+    }
+
+    @Test
+    void aWrongHeaderNameIsAnsweredWithTheRightOne() {
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        JsonObject result = CatalogDocs.find(catalog, "CamelHttpStatusCode", null, 10);
+        assertTrue(result.getString("header").startsWith("Camel has no header CamelHttpStatusCode"), result.toJson());
+        assertTrue(result.getString("header").contains("CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)"));
+        assertNull(CatalogDocs.find(catalog, "CamelHttpResponseCode", null, 10).get("header"));
     }
 
     @Test

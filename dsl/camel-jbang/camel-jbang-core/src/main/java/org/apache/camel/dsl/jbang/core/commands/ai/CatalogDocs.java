@@ -66,6 +66,14 @@ public final class CatalogDocs {
     /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
     private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
 
+    static final String BODY_TYPES_HINT = "the message body with the default options. consumerOut: the body a from:"
+                                          + " gives the route; consumerReply: the bodies it can reply with; producerIn:"
+                                          + " the bodies a to: can send; producerOut: the body after the to:; marshal,"
+                                          + " unmarshal and expression In/Out: the same for a data format and a"
+                                          + " language. Carriers: text, bytes, stream, file, value, map, list,"
+                                          + " iterator (no size, no index), pojo, null, unchanged, any, unknown. A side"
+                                          + " not listed is not known";
+
     /**
      * The rules a small model gets wrong most: functions live inside the placeholder, operators between placeholders.
      * Sent with the simple language result so an answer's examples follow the same shape as the catalog's.
@@ -1089,6 +1097,12 @@ public final class CatalogDocs {
         } else {
             result.put("message", "Best match first; camel_catalog_doc gives the options of one");
         }
+        // a header name models write for one that has another name, such as CamelHttpStatusCode
+        String wrong = HeaderChecks.WRONG_NAMES.get(term.trim());
+        if (wrong != null) {
+            result.put("header", "Camel has no header " + term.trim() + ": " + wrong);
+            result.put("message", result.getString("message") + "; " + result.getString("header"));
+        }
         return result;
     }
 
@@ -1626,6 +1640,11 @@ public final class CatalogDocs {
                 result.put("deprecationNote", model.getDeprecationNote());
             }
         }
+        if (!model.getBodyTypes().isEmpty()) {
+            // what the body is after the step and what it needs, which the options do not say (CAMEL-24961)
+            result.put("bodyTypes", JsonMapper.asJsonObjectBodyTypes(model.getBodyTypes()));
+            result.put("bodyTypesHint", BODY_TYPES_HINT);
+        }
     }
 
     /**
@@ -1678,6 +1697,15 @@ public final class CatalogDocs {
         }
         return answer;
     }
+
+    /**
+     * How to pick the one element of a JSON list by a field: the answer of camel_catalog_doc jsonpath says it first.
+     */
+    static final String JSONPATH_ONE_ELEMENT = "to pick the one element of a list by a field, write a filter with"
+                                               + " resultType: java.util.Map, such as expression: \"$[?(@.orderId =="
+                                               + " '${header.id}')]\" and resultType: java.util.Map: the element when one"
+                                               + " matches, null when none does (an index after the filter gives an empty"
+                                               + " list); camel_catalog_sample jsonpath shows it in a route";
 
     /** How many options of a component are listed in full when no filter is given (CAMEL-25541). */
     static final int DEFAULT_OPTIONS_LIMIT = 20;
@@ -2321,6 +2349,10 @@ public final class CatalogDocs {
         }
         if ("simple".equals(model.getName()) || "csimple".equals(model.getName())) {
             result.put("syntax", SIMPLE_SYNTAX);
+        }
+        if ("jsonpath".equals(model.getName())) {
+            // the one element of a list by a field, which models wrote as $[?(...)][0], an empty list
+            result.put("usage", JSONPATH_ONE_ELEMENT);
         }
         JsonObject script = scriptVariables(model.getName());
         if (script != null) {

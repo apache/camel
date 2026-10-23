@@ -35,6 +35,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -74,6 +77,15 @@ import org.slf4j.LoggerFactory;
         "protocol=http"
 })
 @ManagedResource(description = "Managed HttpEndpoint")
+@BodyTypes(producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The request body: text, bytes, a stream or a file. A Map or a List fails:"
+                                                + " marshal it first. Without httpMethod, no body sends a GET and a body a"
+                                                + " POST"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.NULL },
+                                   description = "The response body: a byte array when its Content-Length is at most"
+                                                 + " responsePayloadStreamingThreshold (8192), otherwise the stream cache"
+                                                 + " (the stream itself with disableStreamCache); null for a response"
+                                                 + " without a body"))
 public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);

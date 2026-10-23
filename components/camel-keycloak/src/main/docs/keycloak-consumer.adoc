@@ -14,6 +14,15 @@ The consumer supports two types of events:
 
 The consumer uses a polling mechanism with fingerprint-based deduplication to ensure events are not processed multiple times.
 
+Keycloak returns the most recent events first. The first poll reads the latest `maxResults` events; every later poll
+reads all the events since the previous poll, page by page (`maxResults` is then the page size), so no event is skipped
+when more than `maxResults` events happened between two polls. When the first poll finds no event (a new realm, or a
+filter that has not matched yet), the later polls read every event as well.
+
+A poll after a long outage of a busy realm can therefore be large: it reads all the events that Keycloak still keeps
+(see the event expiration of the realm), and creates their exchanges before it routes them. `maxResults` does not limit
+the size of such a poll, only the size of each page.
+
 == Configuration
 
 The consumer supports the same authentication methods as the producer (access token, refresh token, username/password, or client credentials):
@@ -664,7 +673,7 @@ The consumer supports the following configuration options:
 
 | `realm` | | The Keycloak realm to consume events from (required)
 | `eventType` | events | Type of events to consume: `events` or `admin-events`
-| `maxResults` | 100 | Maximum number of events to retrieve per poll
+| `maxResults` | 100 | Maximum number of events of the first poll, and the page size of the later polls, which read every event since the previous poll
 | `first` | 0 | Offset for pagination (first result index)
 | `initialDelay` | 1000 | Delay before first poll (milliseconds)
 | `delay` | 500 | Delay between polls (milliseconds)

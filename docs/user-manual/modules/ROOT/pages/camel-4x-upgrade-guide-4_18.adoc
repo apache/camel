@@ -413,6 +413,15 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-pubnub - the producer uses its configured channel
+
+The pubnub producer no longer reads the `CamelPubNubChannel` header. This header is set by the pubnub consumer to the
+channel a message was received on, and the producer used it instead of the channel configured on its endpoint, so a
+route from one pubnub endpoint to another sent each message back to the channel it came from. The producer now uses the
+channel of its endpoint, for every operation. To choose a different channel for a message, set the new
+`CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
+the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
@@ -1657,12 +1666,15 @@ Swift (`SwiftConstants`):
 |===
 
 `SwiftConstants.CONTAINER_METADATA_PREFIX`, `SwiftConstants.VERSIONS_LOCATION`,
-`SwiftConstants.CONTAINER_READ`, and `SwiftConstants.CONTAINER_WRITE`
-intentionally keep their previous values (`X-Container-Meta-`,
-`X-Versions-Location`, `X-Container-Read`, `X-Container-Write`) because they
-are part of the Swift HTTP protocol contract used by openstack4j to forward
-container metadata and ACLs to the Swift backend. Renaming them would break
-interoperability with the Swift API.
+`SwiftConstants.CONTAINER_READ`, and `SwiftConstants.CONTAINER_WRITE` keep
+their previous values (`X-Container-Meta-`, `X-Versions-Location`,
+`X-Container-Read`, `X-Container-Write`) in this release.
+
+NOTE: These four constants have since been renamed to follow the Camel naming
+convention; see CAMEL-25895 for the releases that carry the change. They are
+Exchange header keys only: openstack4j builds the `X-Container-*` wire headers
+itself from `CreateUpdateContainerOptions`, so the Camel header name never
+reaches Swift.
 
 Routes that reference the constants symbolically (for example
 `setHeader(OpenstackConstants.OPERATION, ...)`) continue to work without

@@ -192,9 +192,19 @@ monitor filter (`monitorFilterType`, `dataChangeFilter*`). Tags that need a diff
 need a consumer of their own.
 
 A node that does not exist on the server does not affect the other nodes. A node that cannot be monitored is
-reported once with its status code and is not retried; restarting the route or a rebuilt connection to the server creates the monitored items again.
-A node whose namespace URI (`nsu=`) is not in the namespace table of the server is reported in the same way.
+reported once with its status code, and Camel tries to create its monitored item again every `reconnectTimeout` (10
+seconds by default) while the connection lasts, for all such nodes of the connection in one request. A failed attempt
+delivers nothing; once the item is created, the node delivers its current value as its first value. This covers a node
+that is added to the server later, for example with a new PLC program, and a server that refused the item because it had
+too many. A rebuilt connection creates the monitored items of all nodes again, and a stopped consumer is not retried.
+A node whose namespace URI (`nsu=`) is not in the namespace table of the server is reported and retried in the same
+way, so a namespace that the server adds later is found.
 The consumer delivers one exchange with the bad status code for such a node, and the `CamelMiloNodeId` header names it.
+
+The `milo-client` developer console (`/q/dev/milo-client`, for example with `camel run --console`) shows which nodes are
+not monitored: for each connection of the consumers, it lists the routes that use it, whether its session is active, the
+number of monitored nodes, and the refused nodes, each with the status of the latest attempt to create its monitored
+item. Reading it does not wait for a request to the server in progress.
 
 === Status codes and null values
 
@@ -404,8 +414,8 @@ If neither option is configured, the client does not connect to an endpoint that
 insecure: the connection is encrypted, but the client does not authenticate the server it talks to.
 
 When the server certificate cannot be validated, the client logs a `WARN` message that starts with `Failed to
-connect`, and tries again every 10 seconds, so a certificate moved to `trusted/certs` is used at the next attempt. A
-producer fails with `IllegalStateException: No connected`, whose cause gives the reason.
+connect`, and tries again after `reconnectTimeout` (10 seconds by default), so a certificate moved to `trusted/certs`
+is used at the next attempt. A producer fails with `IllegalStateException: No connected`, whose cause gives the reason.
 
 The same validator checks the server certificate that the user name and password are encrypted with. With the
 security policy `None`, the server is not authenticated, whatever the configuration.

@@ -21,11 +21,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AfterPropertiesConfigured;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.UriEndpoint;
@@ -37,6 +42,12 @@ import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(firstVersion = "3.8.0", scheme = "kamelet", syntax = "kamelet:templateId/routeId", title = "Kamelet",
              lenientProperties = true, category = Category.CORE)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the Kamelet sends, as its data types or its template say. In"
+                                                 + " the template of a Kamelet, kamelet:source gives the body the caller"
+                                                 + " sent"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNKNOWN, description = "The body the template of the Kamelet ends with"))
 public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesConfigured {
     private final String key;
     private final Map<String, Object> kameletProperties;
@@ -190,6 +201,15 @@ public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesC
             this.kameletProperties.clear();
             this.kameletProperties.putAll(kameletProperties);
         }
+    }
+
+    /**
+     * The callback the producer calls when the Kamelet is done with the exchange, and the calling route continues. The
+     * default is the given callback. An endpoint that removes the route it created when it is shut down uses it to know
+     * the exchange whose call is completing when it is shut down (as toD does inside this callback).
+     */
+    AsyncCallback completingCallback(Exchange exchange, AsyncCallback callback) {
+        return callback;
     }
 
     @Override

@@ -17,7 +17,10 @@
 package org.apache.camel.component.iggy;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +39,9 @@ public class IggyConsumer extends DefaultConsumer {
     private IggyClientConnectionPool iggyClientConnectionPool;
     private ExecutorService executor;
     private final List<IggyFetchRecords> tasks = new ArrayList<>();
+    // the pooled clients that joined the consumer group (the membership belongs to the connection of a client)
+    private final Set<IggyBaseClient> groupMembers
+            = Collections.synchronizedSet(Collections.newSetFromMap(new IdentityHashMap<>()));
 
     public IggyConsumer(IggyEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -62,6 +68,7 @@ public class IggyConsumer extends DefaultConsumer {
         try {
             endpoint.initializeTopic(client);
             endpoint.initializeConsumerGroup(client);
+            groupMembers.add(client);
         } finally {
             iggyClientConnectionPool.returnClient(client);
         }
@@ -112,6 +119,7 @@ public class IggyConsumer extends DefaultConsumer {
             }
         }
         tasks.clear();
+        groupMembers.clear();
         executor = null;
         if (iggyClientConnectionPool != null) {
             iggyClientConnectionPool.close();
@@ -119,5 +127,28 @@ public class IggyConsumer extends DefaultConsumer {
         }
 
         super.doStop();
+    }
+
+    /**
+     * Makes the client a member of the consumer group unless it joined already. A client the pool created after a
+     * failed poll is a new connection, which the server does not know as a member: its polls would fail with
+     * ConsumerGroupMemberNotFound.
+     */
+    void joinConsumerGroupIfNeeded(IggyBaseClient client) {
+        if (!groupMembers.contains(client)) {
+            endpoint.joinConsumerGroup(client);
+            groupMembers.add(client);
+            LOG.info("Joined the consumer group {} of stream {} and topic {} again with a new client"
+                     + " (the client of a failed poll was discarded)",
+                    endpoint.getConfiguration().getConsumerGroupName(), endpoint.getConfiguration().getStreamName(),
+                    endpoint.getTopicName());
+        }
+    }
+
+    /**
+     * Forgets a client that is discarded.
+     */
+    void clientDiscarded(IggyBaseClient client) {
+        groupMembers.remove(client);
     }
 }

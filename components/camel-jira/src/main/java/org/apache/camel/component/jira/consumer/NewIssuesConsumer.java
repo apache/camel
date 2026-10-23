@@ -129,15 +129,18 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
      * @return queue of new issues
      */
     private Queue<Issue> getNewIssues() {
-        String jqlFilter;
+        Queue<Issue> issues;
         // If we have processed an issue before, use its timestamp to get only the newer ones
         if (latestIssue != null) {
-            jqlFilter = String.format(NEW_ISSUES_JQL_FORMAT, getServerTimestamp(), getEndpoint().getJql());
+            String jqlFilter = String.format(NEW_ISSUES_JQL_FORMAT, getServerTimestamp(), getEndpoint().getJql());
+            // all of them: the newest one becomes the latest issue, so a new issue left out by maxResults would never
+            // be returned again; maxResults is the page size here
+            int maxResults = getEndpoint().getMaxResults();
+            int pageSize = maxResults > 0 ? Math.min(maxResults, SEARCH_MAX_PER_QUERY) : SEARCH_MAX_PER_QUERY;
+            issues = getIssues(jqlFilter, SEARCH_START_AT, pageSize, Integer.MAX_VALUE);
         } else {
-            jqlFilter = getEndpoint().getJql();
+            issues = getIssues(getEndpoint().getJql());
         }
-
-        Queue<Issue> issues = getIssues(jqlFilter);
 
         if (!issues.isEmpty()) {
             if (latestIssue != null) {

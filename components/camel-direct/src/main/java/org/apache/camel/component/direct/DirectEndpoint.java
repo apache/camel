@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,9 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name",
              remote = false, internal = true, category = { Category.CORE, Category.MESSAGING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNCHANGED, description = "The body the caller sent"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNKNOWN, description = "The body the route it calls ends with"))
 public class DirectEndpoint extends DefaultEndpoint {
 
     private final DirectComponent component;
