@@ -2131,6 +2131,16 @@ To keep the previous behaviour, filter the exchanges with a bad status out right
 `filter(simple("${body.statusCode.bad} == false"))`. This also drops the other bad statuses, such as the refusal of a
 node, and the current values delivered after an outage still arrive.
 
+=== camel-milo - an awaited write, call or read that fails now fails the exchange
+
+An awaited `milo-client` write, method call or read whose server-side operation fails, for example a write
+of a wrong type or a call that times out, now fails the exchange and lets the route's error handler run.
+Before, the exchange completed without an error and with a `null` body, silently discarding the failure.
+
+An awaited `call` that succeeds now returns the `CallMethodResult` as the exchange body. Before, the body was
+always `null` even on success. A route that reads the result of an awaited call must be updated to read the
+`CallMethodResult` from the body instead of expecting `null`.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of

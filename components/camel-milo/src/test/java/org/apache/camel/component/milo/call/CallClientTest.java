@@ -37,6 +37,7 @@ import org.eclipse.milo.opcua.stack.core.security.*;
 import org.eclipse.milo.opcua.stack.core.transport.TransportProfile;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MessageSecurityMode;
+import org.eclipse.milo.opcua.stack.core.types.structured.CallMethodResult;
 import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
 import org.eclipse.milo.opcua.stack.transport.server.tcp.OpcTcpServerTransport;
 import org.eclipse.milo.opcua.stack.transport.server.tcp.OpcTcpServerTransportConfig;
@@ -48,7 +49,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.milo.NodeIds.nodeValue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for calling from the client side
@@ -192,6 +195,18 @@ public class CallClientTest extends AbstractMiloServerTest {
                 .setTransportProfile(TransportProfile.TCP_UASC_UABINARY)
                 .setBindPort(getServerPort())
                 .build();
+    }
+
+    @Test
+    public void testAwaitedCallReturnsResult() {
+        // Before CAMEL-25694, the call() handleAsync unconditionally returned null even on success,
+        // so an awaited call always left the exchange body null. Now the body is the CallMethodResult.
+        final CallMethodResult result = this.producer1.requestBodyAndHeader(
+                "foo", "CamelMiloAwait", true, CallMethodResult.class);
+
+        assertNotNull(result);
+        assertTrue(result.getStatusCode().isGood());
+        assertEquals("out-foo", result.getOutputArguments()[0].getValue());
     }
 
     @Test
