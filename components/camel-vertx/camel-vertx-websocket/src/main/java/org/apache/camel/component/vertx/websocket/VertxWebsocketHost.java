@@ -66,6 +66,13 @@ public class VertxWebsocketHost {
     }
 
     /**
+     * The configuration of the server that every consumer on this host and port is served by
+     */
+    public VertxWebsocketHostConfiguration getHostConfiguration() {
+        return hostConfiguration;
+    }
+
+    /**
      * Sets up a Vert.x route and handler for the WebSocket path specified by the consumer configuration
      */
     public synchronized void connect(VertxWebsocketConsumer consumer) {
