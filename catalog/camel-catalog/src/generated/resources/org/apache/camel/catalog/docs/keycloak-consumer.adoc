@@ -452,6 +452,11 @@ YAML::
 
 === Audit Trail
 
+The route below sends each admin event as a JSON audit record to Kafka, and inserts the same record into an
+`audit_trail` table with the xref:ROOT:jdbc-component.adoc[JDBC] component. The JDBC component runs the SQL in the
+message body, and with `useHeadersAsParameters=true` it takes the values of the named parameters (`:?name`) from the
+`CamelJdbcParameters` header.
+
 [tabs]
 ====
 Java::
@@ -466,23 +471,26 @@ from("keycloak:adminEvents"
      + "&delay=10000")
     .process(exchange -> {
         AdminEventRepresentation event = exchange.getIn().getBody(AdminEventRepresentation.class);
+        AuthDetailsRepresentation authDetails = event.getAuthDetails();
 
-        // Build audit record
+        // Build audit record (every named parameter of the SQL insert needs a value, null included)
         Map<String, Object> auditRecord = new HashMap<>();
-        auditRecord.put("timestamp", new Date(event.getTime()));
+        auditRecord.put("timestamp", event.getTime());
         auditRecord.put("operation", event.getOperationType());
         auditRecord.put("resourceType", event.getResourceType());
         auditRecord.put("resourcePath", event.getResourcePath());
-
-        if (event.getAuthDetails() != null) {
-            auditRecord.put("userId", event.getAuthDetails().getUserId());
-            auditRecord.put("ipAddress", event.getAuthDetails().getIpAddress());
-        }
+        auditRecord.put("userId", authDetails != null ? authDetails.getUserId() : null);
+        auditRecord.put("ipAddress", authDetails != null ? authDetails.getIpAddress() : null);
 
         exchange.getIn().setBody(auditRecord);
+        // the values of the named parameters of the SQL insert
+        exchange.getIn().setHeader("CamelJdbcParameters", auditRecord);
     })
     .marshal().json()
     .to("kafka:audit-trail?brokers=localhost:9092")
+    // the JDBC component runs the SQL in the message body
+    .setBody(constant("insert into audit_trail (event_time, operation, resource_type, resource_path, user_id, ip_address)"
+                      + " values (:?timestamp, :?operation, :?resourceType, :?resourcePath, :?userId, :?ipAddress)"))
     .to("jdbc:dataSource?useHeadersAsParameters=true");
 ----
 
@@ -500,22 +508,36 @@ YAML::
         maxResults=100&
         delay=10000
       steps:
+        # build the audit record (every named parameter of the SQL insert needs a value, null included)
         - setBody:
-            simple: >
-              {
-                "timestamp": ${body.time},
-                "operation": "${body.operationType}",
-                "resourceType": "${body.resourceType}",
-                "resourcePath": "${body.resourcePath}",
-                "userId": "${body.authDetails.userId}",
-                "ipAddress": "${body.authDetails.ipAddress}"
-              }
+            expression:
+              simple:
+                expression: >-
+                  ${map(timestamp,${body.time},
+                  operation,${body.operationType},
+                  resourceType,${body.resourceType},
+                  resourcePath,${body.resourcePath},
+                  userId,${body?.authDetails?.userId},
+                  ipAddress,${body?.authDetails?.ipAddress})}
+        # the values of the named parameters of the SQL insert
+        - setHeader:
+            name: CamelJdbcParameters
+            expression:
+              simple:
+                expression: "${body}"
         - marshal:
             json: {}
         - to:
             uri: kafka:audit-trail
             parameters:
               brokers: "localhost:9092"
+        # the JDBC component runs the SQL in the message body
+        - setBody:
+            expression:
+              constant:
+                expression: >-
+                  insert into audit_trail (event_time, operation, resource_type, resource_path, user_id, ip_address)
+                  values (:?timestamp, :?operation, :?resourceType, :?resourcePath, :?userId, :?ipAddress)
         - to:
             uri: jdbc:dataSource
             parameters:
