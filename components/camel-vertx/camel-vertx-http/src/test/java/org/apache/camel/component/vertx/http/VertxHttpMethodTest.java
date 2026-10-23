@@ -71,6 +71,14 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
     }
 
     @Test
+    public void testEndpointConfigurationPrecedenceOverHeader() {
+        // the header cannot override the method of the endpoint, as in camel-http
+        String result = template.requestBodyAndHeader(getProducerUri() + "?httpMethod=DELETE", null, Exchange.HTTP_METHOD,
+                HttpMethod.PUT.name(), String.class);
+        assertEquals(HttpMethod.DELETE.name(), result);
+    }
+
+    @Test
     public void testHeaderConfigurationPrecedence() {
         String result = template.requestBodyAndHeader(getProducerUri() + "?foo=bar", null, Exchange.HTTP_METHOD,
                 HttpMethod.PUT.name(), String.class);
