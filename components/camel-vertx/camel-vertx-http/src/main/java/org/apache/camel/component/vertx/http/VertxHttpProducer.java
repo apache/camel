@@ -23,10 +23,13 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.streams.ReadStream;
 import io.vertx.ext.web.client.HttpRequest;
@@ -162,18 +165,41 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
     }
 
     private Handler<AsyncResult<HttpResponse<Buffer>>> createResultHandler(Exchange exchange, AsyncCallback callback) {
+        // the Vert.x of the request: when the CamelContext stops during the call, closing the web client fails the
+        // request, and the stopped component no longer returns its Vert.x when this handler runs
+        Vertx vertx = getEndpoint().getVertx();
         // Process the response on a thread from the Vert.x worker pool since there may be blocking code:
         // - If a custom VertxHttpBinding is in use
         // - If the Camel error handler routes to logic that contains blocking code
-        return response -> getEndpoint().getVertx().executeBlocking((Callable<Void>) () -> {
+        return response -> {
+            // the exchange is completed once: by the task, or when the worker pool refuses the task
+            AtomicBoolean completed = new AtomicBoolean();
             try {
-                vertxHttpBinding.handleResponse(getEndpoint(), exchange, response);
-            } catch (Exception e) {
-                exchange.setException(e);
-            } finally {
-                callback.done(false);
+                vertx.executeBlocking((Callable<Void>) () -> {
+                    try {
+                        vertxHttpBinding.handleResponse(getEndpoint(), exchange, response);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    } finally {
+                        if (completed.compareAndSet(false, true)) {
+                            callback.done(false);
+                        }
+                    }
+                    return null;
+                }).onFailure(e -> completeWithException(exchange, callback, completed, e));
+            } catch (RejectedExecutionException e) {
+                // the worker pool of the Vert.x is already shut down (for example while the Vert.x closes): the task
+                // never runs, Vert.x fails its future and throws the exception
+                completeWithException(exchange, callback, completed, e);
             }
-            return null;
-        });
+        };
+    }
+
+    private static void completeWithException(
+            Exchange exchange, AsyncCallback callback, AtomicBoolean completed, Throwable cause) {
+        if (completed.compareAndSet(false, true)) {
+            exchange.setException(cause);
+            callback.done(false);
+        }
     }
 }
