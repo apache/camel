@@ -252,7 +252,7 @@ public class GitHub2Endpoint extends ScheduledPollEndpoint implements EndpointSe
     }
 
     /**
-     * To use the given encoding when getting a git commit file
+     * The charset of the content of the file for the getCommitFile producer (the default charset of the JVM if not set)
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
