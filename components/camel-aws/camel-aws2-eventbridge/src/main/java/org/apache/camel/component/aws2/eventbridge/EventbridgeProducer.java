@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -435,11 +436,11 @@ public class EventbridgeProducer extends DefaultProducer {
                 "Put Events",
                 (PutEventsResponse response, Message message) -> {
                     message.setHeader(EventbridgeConstants.FAILED_ENTRY_COUNT, response.failedEntryCount());
-                    failOnRejectedEvents(response);
+                    failOnRejectedEvents(response, exchange);
                 });
     }
 
-    private static void failOnRejectedEvents(PutEventsResponse response) {
+    private static void failOnRejectedEvents(PutEventsResponse response, Exchange exchange) {
         Integer failedEntryCount = response.failedEntryCount();
         if (failedEntryCount == null || failedEntryCount == 0) {
             return;
@@ -452,7 +453,7 @@ public class EventbridgeProducer extends DefaultProducer {
         String what = response.entries().size() > 1
                 ? failedEntryCount + " of " + response.entries().size() + " events"
                 : "the event";
-        throw new IllegalStateException("EventBridge rejected " + what + ": " + errors);
+        throw new CamelExecutionException("EventBridge rejected " + what + ": " + errors, exchange);
     }
 
     private static String describeError(PutEventsResultEntry entry) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.eventbridge;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -80,7 +81,7 @@ class EventbridgeProducerTest {
                 .build());
 
         assertThatThrownBy(() -> producer.process(exchange))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(CamelExecutionException.class)
                 .hasMessageContaining("EventBridge rejected the event")
                 .hasMessageContaining("MalformedDetail")
                 .hasMessageContaining("Detail is malformed.");

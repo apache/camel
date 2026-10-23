@@ -2661,6 +2661,7 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
 === camel-aws2-sqs - sendBatchMessage of more than 10 entries
 
 With more than 10 entries, which are sent in requests of 10, the message body is now one `SendMessageBatchResponse`
@@ -2705,7 +2706,7 @@ other operations do. Previously they failed without the headers.
 === camel-aws2-eventbridge - putEvent fails when the event is rejected
 
 When EventBridge rejects the event, for example with `MalformedDetail` for a detail that is not a JSON object, the
-putEvent operation now fails the exchange with an `IllegalStateException` that has the error code and message.
+putEvent operation now fails the exchange with a `CamelExecutionException` that has the error code and message.
 Previously only the `CamelAwsEventbridgeFailedEntryCount` header showed it; the header is still set. Without a body,
 putEvent now fails with the `InvalidPayloadException` itself instead of a `RuntimeException`. The ARNs of the
 `CamelAwsEventbridgeResourcesArn` header are now trimmed.
