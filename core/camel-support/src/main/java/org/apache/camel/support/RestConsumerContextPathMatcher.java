@@ -40,7 +40,12 @@ import java.util.stream.Collectors;
 public final class RestConsumerContextPathMatcher {
 
     private static final Pattern CONSUMER_PATH_PARAMETER_PATTERN = Pattern.compile("([^{]*)(\\{.*?\\})([^{]*)");
-    private static final Map<String, Pattern> PATH_PATTERN = new ConcurrentHashMap<>();
+    // shared by every consumer with the same path (other HTTP method, port, component or CamelContext), so each
+    // pattern counts the consumers that registered it
+    private static final Map<String, RegisteredPattern> PATH_PATTERN = new ConcurrentHashMap<>();
+
+    private record RegisteredPattern(Pattern pattern, int consumers) {
+    }
 
     private RestConsumerContextPathMatcher() {
     }
@@ -238,7 +243,8 @@ public final class RestConsumerContextPathMatcher {
     }
 
     /**
-     * Pre-compiled consumer path for wildcard match
+     * Pre-compiled consumer path for wildcard match. Each consumer that registers a path must unregister it once with
+     * {@link #unRegister(String)} when it is removed.
      *
      * @param consumerPath a consumer path
      */
@@ -259,16 +265,19 @@ public final class RestConsumerContextPathMatcher {
 
         // Match the provided path against the regex pattern
         Pattern pattern = Pattern.compile(regex);
-        PATH_PATTERN.put(consumerPath, pattern);
+        PATH_PATTERN.compute(consumerPath,
+                (path, registered) -> new RegisteredPattern(pattern, registered != null ? registered.consumers() + 1 : 1));
     }
 
     /**
-     * if the rest consumer is removed, we also remove pattern cache.
+     * if the rest consumer is removed, we also remove pattern cache, unless other consumers registered the same path.
      *
      * @param consumerPath a consumer path
      */
     public static void unRegister(String consumerPath) {
-        PATH_PATTERN.remove(consumerPath);
+        PATH_PATTERN.computeIfPresent(consumerPath,
+                (path, registered) -> registered.consumers() > 1
+                        ? new RegisteredPattern(registered.pattern(), registered.consumers() - 1) : null);
     }
 
     /**
@@ -390,12 +399,12 @@ public final class RestConsumerContextPathMatcher {
             requestPath = requestPath + "/";
         }
 
-        Pattern pattern = PATH_PATTERN.get(consumerPath);
-        if (pattern == null) {
+        RegisteredPattern registered = PATH_PATTERN.get(consumerPath);
+        if (registered == null) {
             return false;
         }
 
-        Matcher matcher = pattern.matcher(requestPath);
+        Matcher matcher = registered.pattern().matcher(requestPath);
 
         return matcher.matches();
     }
