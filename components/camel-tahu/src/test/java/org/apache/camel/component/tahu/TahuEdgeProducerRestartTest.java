@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -184,6 +186,50 @@ class TahuEdgeProducerRestartTest {
             // Node is left running without a started producer
             waitFor(broker, () -> count(broker, ndeath) == 2);
             assertNull(TahuEdgeProducer.descriptorClients.get(new EdgeNodeDescriptor("TwoGroup", "TwoNode")));
+        }
+    }
+
+    @Test
+    void deviceProducerCreatedWhileTheEdgeNodeIsStoppedUsesTheClientOfTheEdgeNode() throws Exception {
+        try (FakeMqttBroker broker = new FakeMqttBroker(); CamelContext context = new DefaultCamelContext()) {
+            TahuEdgeEndpoint node = context.getEndpoint(
+                    "tahu-edge:LateGroup/LateNode?deviceIds=D1&servers=Mqtt:tcp://localhost:" + broker.getPort(),
+                    TahuEdgeEndpoint.class);
+            node.setMetricDataTypePayloadMap(new SparkplugBPayloadMap.SparkplugBPayloadMapBuilder()
+                    .addMetric(new MetricBuilder("level", MetricDataType.Int32, 0).createMetric()).createPayload());
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:node").routeId("node").to(node);
+                }
+            });
+            context.start();
+            waitFor(broker, () -> count(broker, "spBv1.0/LateGroup/NBIRTH/LateNode") == 1);
+            context.getRouteController().stopRoute("node");
+
+            // the Device URI has none of the Edge Node options (deviceIds, servers): without the fix its producer
+            // created the client of the Edge Node from them and failed to start with a NullPointerException
+            TahuEdgeEndpoint device = context.getEndpoint("tahu-edge:LateGroup/LateNode/D1", TahuEdgeEndpoint.class);
+            device.setMetricDataTypePayloadMap(new SparkplugBPayloadMap.SparkplugBPayloadMapBuilder()
+                    .addMetric(new MetricBuilder("level", MetricDataType.Int32, 0).createMetric()).createPayload());
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:device").routeId("device").to(device);
+                }
+            });
+
+            // the Edge Node has no started producer, so the Device data cannot be published
+            ProducerTemplate template = context.createProducerTemplate();
+            Exchange failed = template.send("direct:device", e -> e.getMessage().setBody(payload(1)));
+            IllegalStateException e = assertInstanceOf(IllegalStateException.class, failed.getException());
+            assertTrue(e.getMessage().contains("LateGroup/LateNode"), e.getMessage());
+
+            // the Edge Node producer creates the client from its own endpoint, with the metric map of the Device
+            context.getRouteController().startRoute("node");
+            waitFor(broker, () -> count(broker, "spBv1.0/LateGroup/DBIRTH/LateNode/D1") == 1);
+            template.sendBody("direct:device", payload(2));
+            waitFor(broker, () -> count(broker, "spBv1.0/LateGroup/DDATA/LateNode/D1") == 1);
         }
     }
 

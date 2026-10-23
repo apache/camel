@@ -57,7 +57,8 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
     protected volatile TahuEdgeClient tahuEdgeClient;
     protected ExecutorService clientExecutorService;
     protected final EdgeNodeDescriptor edgeNodeDescriptor;
-    private final EdgeNodeDescriptor clientDescriptor;
+    // the Edge Node of the producer, whose client it uses
+    protected final EdgeNodeDescriptor clientDescriptor;
     private final TahuEdgeEndpoint endpoint;
 
     private TahuEdgeProducer(TahuEdgeEndpoint endpoint, EdgeNodeDescriptor edgeNodeDescriptor) {
@@ -68,12 +69,14 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
         this.edgeNodeDescriptor = edgeNodeDescriptor;
         this.endpoint = endpoint;
 
-        // Only create clients for Edge Nodes, not Devices. If passed a DeviceDescriptor, create/lookup based on its
-        // EdgeNodeDescriptor, i.e. minus its deviceId.
+        // A DeviceDescriptor looks up the client of its EdgeNodeDescriptor, i.e. minus its deviceId.
         clientDescriptor = edgeNodeDescriptor.isDeviceDescriptor()
                 ? ((DeviceDescriptor) edgeNodeDescriptor).getEdgeNodeDescriptor() : edgeNodeDescriptor;
 
-        tahuEdgeClient = createClient(endpoint, edgeNodeDescriptor);
+        // Only an Edge Node producer creates the client of its Edge Node: the options that describe the Edge Node
+        // (deviceIds, primaryHostId, servers) are on the Edge Node endpoint, not on a Device endpoint. A Device producer
+        // takes the client of its Edge Node when it publishes, and adds its metric map to it when it starts.
+        tahuEdgeClient = edgeNodeDescriptor.isDeviceDescriptor() ? null : createClient(endpoint, edgeNodeDescriptor);
     }
 
     /**
@@ -272,6 +275,25 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
     static final class TahuEdgeDeviceProducer extends TahuEdgeProducer {
         private TahuEdgeDeviceProducer(TahuEdgeEndpoint endpoint, DeviceDescriptor deviceDescriptor) {
             super(endpoint, deviceDescriptor);
+        }
+
+        /**
+         * The client that the started Edge Node producer of this Device created. A Device producer never creates one,
+         * and it does not publish on a client that a stopped Edge Node producer shut down.
+         *
+         * @throws IllegalStateException when no Edge Node producer of the Edge Node of this Device is started
+         */
+        @Override
+        protected TahuEdgeClient currentClient() {
+            TahuEdgeClient client = descriptorClients.get(clientDescriptor);
+            if (client == null) {
+                throw new IllegalStateException(
+                        "Cannot publish the data of Device " + edgeNodeDescriptor.getDescriptorString()
+                                                + ": no producer of its Edge Node " + clientDescriptor.getDescriptorString()
+                                                + " is started");
+            }
+            tahuEdgeClient = client;
+            return client;
         }
     }
 
