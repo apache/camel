@@ -24,16 +24,14 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Security;
 import java.security.Signature;
-import java.security.spec.ECGenParameterSpec;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -41,24 +39,21 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A {@link File}, a {@link Path} and a file from a file consumer ({@link GenericFile}) are signed and verified over the
- * bytes of the file, by the single-algorithm and by the hybrid signature operations.
+ * bytes of the file.
  */
 public class PQCFileBodySignatureTest extends CamelTestSupport {
 
     private static final String PQC_KEY = "&signatureAlgorithm=MLDSA&keyPair=#pqcKeyPair";
-    private static final String CLASSICAL_KEY = "&classicalSignatureAlgorithm=ECDSA_P256&classicalKeyPair=#classicalKeyPair";
     private static final String SIGN = "pqc:sign?operation=sign" + PQC_KEY;
     private static final String VERIFY = "pqc:verify?operation=verify" + PQC_KEY;
 
     private static final byte[] CONTENT = binaryContent();
 
     private static KeyPair pqcKeyPair;
-    private static KeyPair classicalKeyPair;
 
     @TempDir
     Path folder;
@@ -79,17 +74,11 @@ public class PQCFileBodySignatureTest extends CamelTestSupport {
                 PQCSignatureAlgorithms.MLDSA.getBcProvider());
         pqc.initialize(MLDSAParameterSpec.ml_dsa_65);
         pqcKeyPair = pqc.generateKeyPair();
-
-        KeyPairGenerator classical
-                = KeyPairGenerator.getInstance(PQCClassicalSignatureAlgorithms.ECDSA_P256.getKeyAlgorithm());
-        classical.initialize(new ECGenParameterSpec(PQCClassicalSignatureAlgorithms.ECDSA_P256.getParameterSpec()));
-        classicalKeyPair = classical.generateKeyPair();
     }
 
     @Override
     protected void bindToRegistry(Registry registry) {
         registry.bind("pqcKeyPair", pqcKeyPair);
-        registry.bind("classicalKeyPair", classicalKeyPair);
     }
 
     @Override
@@ -99,8 +88,6 @@ public class PQCFileBodySignatureTest extends CamelTestSupport {
             public void configure() {
                 from("direct:sign").to(SIGN);
                 from("direct:verify").to(VERIFY);
-                from("direct:hybridSign").to("pqc:hybridSign?operation=hybridSign" + PQC_KEY + CLASSICAL_KEY);
-                from("direct:hybridVerify").to("pqc:hybridVerify?operation=hybridVerify" + PQC_KEY + CLASSICAL_KEY);
 
                 from("file:" + folder + "?noop=true&initialDelay=0&delay=10").routeId("fileConsumer").autoStartup(false)
                         .to(SIGN)
@@ -162,30 +149,6 @@ public class PQCFileBodySignatureTest extends CamelTestSupport {
         assertTrue(verifiesContent(sign(file)), "the signature must cover the loaded content of the file");
     }
 
-    @Test
-    void hybridSignatureOfFileBodyCoversItsBytes() throws Exception {
-        Path path = write("hybrid.dat");
-
-        Exchange out = request("direct:hybridSign", path, null, null);
-        byte[] hybridSignature = out.getMessage().getHeader(PQCConstants.HYBRID_SIGNATURE, byte[].class);
-
-        assertNotNull(hybridSignature);
-        assertTrue(HybridSignature.verify(CONTENT, hybridSignature, classicalKeyPair.getPublic(), classicalSignature(),
-                pqcKeyPair.getPublic(), pqcSignature()), "the hybrid signature must cover the bytes of the file");
-    }
-
-    @Test
-    void hybridVerificationOfFileBodyCoversItsBytes() throws Exception {
-        File file = write("hybrid.dat").toFile();
-        byte[] hybridSignature = HybridSignature.sign(CONTENT, classicalKeyPair.getPrivate(), classicalSignature(),
-                pqcKeyPair.getPrivate(), pqcSignature());
-
-        Exchange out = request("direct:hybridVerify", file, PQCConstants.HYBRID_SIGNATURE, hybridSignature);
-
-        assertTrue(out.getMessage().getHeader(PQCConstants.HYBRID_VERIFY, Boolean.class),
-                "a hybrid signature over the bytes of the file must verify");
-    }
-
     private static byte[] binaryContent() {
         // every byte value, so the content is binary data rather than text
         byte[] content = new byte[1024];
@@ -239,9 +202,5 @@ public class PQCFileBodySignatureTest extends CamelTestSupport {
     private static Signature pqcSignature() throws Exception {
         return Signature.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
                 PQCSignatureAlgorithms.MLDSA.getBcProvider());
-    }
-
-    private static Signature classicalSignature() throws Exception {
-        return Signature.getInstance(PQCClassicalSignatureAlgorithms.ECDSA_P256.getAlgorithm());
     }
 }

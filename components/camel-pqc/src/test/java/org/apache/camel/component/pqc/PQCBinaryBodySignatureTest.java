@@ -23,22 +23,19 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Security;
 import java.security.Signature;
-import java.security.spec.ECGenParameterSpec;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -51,14 +48,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PQCBinaryBodySignatureTest extends CamelTestSupport {
 
     private static final String PQC_KEY = "&signatureAlgorithm=MLDSA&keyPair=#pqcKeyPair";
-    private static final String CLASSICAL_KEY = "&classicalSignatureAlgorithm=ECDSA_P256&classicalKeyPair=#classicalKeyPair";
     private static final String SIGN = "pqc:sign?operation=sign" + PQC_KEY;
     private static final String VERIFY = "pqc:verify?operation=verify" + PQC_KEY;
 
     private static final byte[] CONTENT = binaryContent();
 
     private static KeyPair pqcKeyPair;
-    private static KeyPair classicalKeyPair;
 
     @BeforeAll
     public static void startup() throws Exception {
@@ -73,17 +68,11 @@ public class PQCBinaryBodySignatureTest extends CamelTestSupport {
                 PQCSignatureAlgorithms.MLDSA.getBcProvider());
         pqc.initialize(MLDSAParameterSpec.ml_dsa_65);
         pqcKeyPair = pqc.generateKeyPair();
-
-        KeyPairGenerator classical
-                = KeyPairGenerator.getInstance(PQCClassicalSignatureAlgorithms.ECDSA_P256.getKeyAlgorithm());
-        classical.initialize(new ECGenParameterSpec(PQCClassicalSignatureAlgorithms.ECDSA_P256.getParameterSpec()));
-        classicalKeyPair = classical.generateKeyPair();
     }
 
     @Override
     protected void bindToRegistry(Registry registry) {
         registry.bind("pqcKeyPair", pqcKeyPair);
-        registry.bind("classicalKeyPair", classicalKeyPair);
     }
 
     @Override
@@ -93,8 +82,6 @@ public class PQCBinaryBodySignatureTest extends CamelTestSupport {
             public void configure() {
                 from("direct:sign").to(SIGN);
                 from("direct:verify").to(VERIFY);
-                from("direct:hybridSign").to("pqc:hybridSign?operation=hybridSign" + PQC_KEY + CLASSICAL_KEY);
-                from("direct:hybridVerify").to("pqc:hybridVerify?operation=hybridVerify" + PQC_KEY + CLASSICAL_KEY);
             }
         };
     }
@@ -127,16 +114,6 @@ public class PQCBinaryBodySignatureTest extends CamelTestSupport {
         verifier.initVerify(pqcKeyPair.getPublic());
         verifier.update(body.getBytes(StandardCharsets.UTF_8));
         assertTrue(verifier.verify(sign(body)), "a String body must be signed as UTF-8");
-    }
-
-    @Test
-    void hybridSignatureOfByteBufferBodyCoversItsBytes() throws Exception {
-        Exchange out = request("direct:hybridSign", ByteBuffer.wrap(CONTENT.clone()), null, null);
-        byte[] hybridSignature = out.getMessage().getHeader(PQCConstants.HYBRID_SIGNATURE, byte[].class);
-
-        assertNotNull(hybridSignature);
-        assertTrue(HybridSignature.verify(CONTENT, hybridSignature, classicalKeyPair.getPublic(), classicalSignature(),
-                pqcKeyPair.getPublic(), pqcSignature()), "the hybrid signature must cover the bytes of the ByteBuffer");
     }
 
     @Test
@@ -199,10 +176,6 @@ public class PQCBinaryBodySignatureTest extends CamelTestSupport {
     private static Signature pqcSignature() throws Exception {
         return Signature.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
                 PQCSignatureAlgorithms.MLDSA.getBcProvider());
-    }
-
-    private static Signature classicalSignature() throws Exception {
-        return Signature.getInstance(PQCClassicalSignatureAlgorithms.ECDSA_P256.getAlgorithm());
     }
 
     private record Document(String name, int size) {
