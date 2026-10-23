@@ -860,6 +860,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
                 exchange.setException(new RouteStoppingException(notAllowedReason()));
+            } else if (!exchange.getExchangeExtension().isInterrupted()) {
+                // log the cut-off WARN when the exchange already has a RouteStoppingException and
+                // is not marked as interrupted: this is the route-level exchange whose error handler
+                // was stopped (e.g. in MulticastProcessor.doStop()) while a sub-exchange was inflight;
+                // interrupted sub-exchanges are logged only once through their own path
+                logCutOffByRouteStop(exchange, exchange.getException(), logger.getLevel());
             }
             AsyncCallback cb = callback;
             taskFactory.release(this);
