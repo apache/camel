@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.deflater;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -36,9 +37,24 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 @Dataformat("gzipDeflater")
 public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
+    /**
+     * The default maximum decompressed size (in bytes), which corresponds to 1G.
+     */
+    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
+
+    private long maxDecompressedSize = DEFAULT_MAXIMUM_DECOMPRESSED_SIZE;
+
     @Override
     public String getDataFormatName() {
         return "gzipDeflater";
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 
     @Override
@@ -67,12 +83,20 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
                     .setInputStream(new BufferedInputStream(inputStream))
                     .setDecompressConcatenated(true)
                     .get();
-            IOHelper.copy(unzipInput, osb);
+            copyDecompressed(unzipInput, osb);
             return osb.build();
         } finally {
             // must close all input streams
             IOHelper.close(osb, unzipInput, inputStream);
         }
+    }
+
+    /**
+     * Copies the decompressed data to the output. Fails with an {@link IOException} when the data is larger than
+     * maxDecompressedSize bytes (0 or less for no limit). Package-private for tests.
+     */
+    void copyDecompressed(InputStream decompressed, OutputStream output) throws IOException {
+        IOHelper.copy(decompressed, output, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
     }
 
     @Override

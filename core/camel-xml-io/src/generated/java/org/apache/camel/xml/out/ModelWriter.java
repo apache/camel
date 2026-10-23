@@ -2489,6 +2489,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteGzipDeflaterDataFormat(String name, GzipDeflaterDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
         endElement(name);
     }
     protected void doWriteHL7DataFormat(String name, HL7DataFormat def) throws IOException {
@@ -2861,6 +2862,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("compressionLevel", def.getCompressionLevel(), "-1");
+        doWriteAttribute("maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
         endElement(name);
     }
     protected void doWriteZipFileDataFormat(String name, ZipFileDataFormat def) throws IOException {

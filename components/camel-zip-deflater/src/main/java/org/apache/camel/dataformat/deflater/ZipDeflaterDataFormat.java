@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.deflater;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
@@ -36,7 +37,13 @@ import org.apache.camel.util.IOHelper;
 @Dataformat("zipDeflater")
 public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
+    /**
+     * The default maximum decompressed size (in bytes), which corresponds to 1G.
+     */
+    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
+
     private int compressionLevel;
+    private long maxDecompressedSize = DEFAULT_MAXIMUM_DECOMPRESSED_SIZE;
 
     public ZipDeflaterDataFormat() {
         this.compressionLevel = Deflater.DEFAULT_COMPRESSION;
@@ -57,6 +64,14 @@ public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat,
 
     public void setCompressionLevel(int compressionLevel) {
         this.compressionLevel = compressionLevel;
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 
     @Override
@@ -87,12 +102,20 @@ public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat,
         OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
         try {
-            IOHelper.copy(inflaterInputStream, osb);
+            copyDecompressed(inflaterInputStream, osb);
             return osb.build();
         } finally {
             // must close input streams
             IOHelper.close(osb, inflaterInputStream, inputStream);
         }
+    }
+
+    /**
+     * Copies the decompressed data to the output. Fails with an {@link IOException} when the data is larger than
+     * maxDecompressedSize bytes (0 or less for no limit). Package-private for tests.
+     */
+    void copyDecompressed(InputStream decompressed, OutputStream output) throws IOException {
+        IOHelper.copy(decompressed, output, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
     }
 
     @Override

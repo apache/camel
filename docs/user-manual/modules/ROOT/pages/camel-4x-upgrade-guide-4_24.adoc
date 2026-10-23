@@ -1346,6 +1346,17 @@ the content of the earlier file was lost. The later entry is now added with a nu
 `orders (1).csv`, `orders (2).csv`, and so on. Entry names can therefore differ from the file names (or the
 `CamelFileName` header). Use `preserveFolderStructure=true` to keep the folders in the entry names instead.
 
+=== camel-zip-deflater - gzipDeflater and zipDeflater limit the decompressed size
+
+The `gzipDeflater` and `zipDeflater` data formats have the `maxDecompressedSize` option of the `zipFile` and
+`tarFile` data formats, with the same default of 1073741824 bytes (1 GiB). An unmarshal of a message that decompresses
+to more than that now fails with an `IOException` ("The InputStream entry being copied exceeds the maximum allowed
+size"). Routes that unmarshal larger messages set a higher limit, or `-1` for no limit, for example
+`<gzipDeflater maxDecompressedSize="-1"/>` or `unmarshal(dataFormat().zipDeflater().maxDecompressedSize(-1).end())`.
+The limit counts the whole decompressed message. For example, when a `.tar.gz` file is unmarshalled with
+`gzipDeflater` and then split into its entries, the limit applies to the whole tar archive, not to each entry as the
+limit of `tarFile` does.
+
 === camel-milo - each client connection has thread pools of its own
 
 A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse
