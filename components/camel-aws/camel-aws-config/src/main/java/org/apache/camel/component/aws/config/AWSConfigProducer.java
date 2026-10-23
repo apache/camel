@@ -198,7 +198,7 @@ public class AWSConfigProducer extends DefaultProducer {
                     result = configClient.describeComplianceByConfigRule(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Compliance by Config rule command returned the error code {}",
-                            ase.awsErrorDetails().errorCode());
+                            AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -219,7 +219,7 @@ public class AWSConfigProducer extends DefaultProducer {
                 result = configClient.describeComplianceByConfigRule(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("Describe Compliance by Config Rule command returned the error code {}",
-                        ase.awsErrorDetails().errorCode());
+                        AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -290,7 +290,7 @@ public class AWSConfigProducer extends DefaultProducer {
                     result = configClient.deleteConformancePack(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Remove Conformance Pack rule command returned the error code {}",
-                            ase.awsErrorDetails().errorCode());
+                            AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);

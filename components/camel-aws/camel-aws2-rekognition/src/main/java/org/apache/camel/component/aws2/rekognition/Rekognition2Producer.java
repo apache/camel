@@ -695,7 +695,7 @@ public class Rekognition2Producer extends DefaultProducer {
                     result = rekognitionClient.detectProtectiveEquipment(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Detect Protective Equipment command returned the error code {}",
-                            ase.awsErrorDetails().errorCode());
+                            AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
