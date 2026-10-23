@@ -258,9 +258,9 @@ class SourceViewer {
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
-    // the Kamelet checks of a YAML file (CAMEL-25411): its problems, and the notes that do not block a save
+    // the Kamelet checks of a YAML file (CAMEL-25411), and the notes of a YAML file that do not block a save
     private EndpointValidator kameletValidator;
-    private EndpointValidator kameletNotes;
+    private EndpointValidator yamlNotes;
     // the lines whose problem is a note, not an error: marked as a warning and counted apart (CAMEL-25411)
     private Set<Integer> noteLines = Set.of();
     private EndpointValidator routeValidator;
@@ -349,11 +349,11 @@ class SourceViewer {
     }
 
     /**
-     * What a Kamelet file does that works but is not right (a camel: dependency its template does not use): marked and
-     * said when saved, but not blocking the save.
+     * What a YAML file does that works but is not right (a Kamelet's camel: dependency its template does not use, a
+     * direct: endpoint no route consumes): marked and said when saved, but not blocking the save.
      */
-    void setKameletNotes(EndpointValidator kameletNotes) {
-        this.kameletNotes = kameletNotes;
+    void setYamlNotes(EndpointValidator yamlNotes) {
+        this.yamlNotes = yamlNotes;
     }
 
     /**
@@ -388,7 +388,7 @@ class SourceViewer {
         endpointValidator = null;
         simpleValidator = null;
         kameletValidator = null;
-        kameletNotes = null;
+        yamlNotes = null;
         noteLines = Set.of();
         routeValidator = null;
         cursorQuickDocProvider = null;
@@ -429,7 +429,7 @@ class SourceViewer {
         endpointValidator = null;
         simpleValidator = null;
         kameletValidator = null;
-        kameletNotes = null;
+        yamlNotes = null;
         noteLines = Set.of();
         routeValidator = null;
         cursorQuickDocProvider = null;
@@ -1274,7 +1274,7 @@ class SourceViewer {
                 return;
             }
             List<String> notes = new ArrayList<>();
-            addAll(notes, kameletNotes, content);
+            addAll(notes, yamlNotes, content);
             if (!notes.isEmpty()) {
                 // marked, and said when saved, but not blocking the save
                 routeProblems = notes;
@@ -1517,7 +1517,7 @@ class SourceViewer {
             }
             addAll(msgs, kameletValidator, content);
             List<String> notes = new ArrayList<>();
-            addAll(notes, kameletNotes, content);
+            addAll(notes, yamlNotes, content);
             if (!notes.isEmpty()) {
                 // a line with an error is marked as an error
                 Set<Integer> lines = new HashSet<>(buildInlineErrors(notes, content).keySet());

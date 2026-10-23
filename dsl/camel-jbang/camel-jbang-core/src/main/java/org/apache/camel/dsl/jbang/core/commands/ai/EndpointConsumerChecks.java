@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -48,6 +49,8 @@ public final class EndpointConsumerChecks {
     private static final Pattern JAVA_FROM = Pattern.compile("(?<![.\\w])from\\s*\\(");
     /** The build files of a project whose routes are spread over src/main/java and src/main/resources. */
     private static final List<String> BUILD_FILES = List.of("pom.xml", "build.gradle", "build.gradle.kts");
+    /** The endpoint of a message of {@link EndpointConsumers#check(String, Set)}. */
+    private static final Pattern UNCONSUMED = Pattern.compile("sends to ([^,\\s]+), and no route consumes it");
 
     private EndpointConsumerChecks() {
     }
@@ -71,12 +74,50 @@ public final class EndpointConsumerChecks {
     }
 
     /**
+     * As {@link #validateYamlConsumers(String, Path, String, CamelCatalog)}, with the endpoints the other route files
+     * consume already known, as an editor keeps them while the file is typed: each message is on the lines that send to
+     * the endpoint, as "Line N: message", and without a line prefix when none of the lines names it as written.
+     *
+     * @param  consumedElsewhere what {@link #consumed(Path, String, CamelCatalog)} returned; null says nothing
+     * @return                   the messages, one per line that sends to an endpoint no route consumes
+     */
+    public static List<String> validateYamlConsumers(String content, Set<String> consumedElsewhere) {
+        List<String> answer = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        for (String msg : EndpointConsumers.check(content, consumedElsewhere)) {
+            Matcher m = UNCONSUMED.matcher(msg);
+            List<Integer> found = m.find() ? linesNaming(lines, m.group(1)) : List.of();
+            if (found.isEmpty()) {
+                answer.add(msg);
+            }
+            for (int line : found) {
+                answer.add("Line " + (line + 1) + ": " + msg);
+            }
+        }
+        return answer;
+    }
+
+    /** The lines, from 0, that name the endpoint (direct:cheese, also as direct://cheese), comments left out. */
+    private static List<Integer> linesNaming(String[] lines, String endpoint) {
+        int colon = endpoint.indexOf(':');
+        Pattern p = Pattern.compile("(?<![\\w.:/-])" + Pattern.quote(endpoint.substring(0, colon + 1)) + "(?://)?"
+                                    + Pattern.quote(endpoint.substring(colon + 1)) + "(?![\\w.-])");
+        List<Integer> answer = new ArrayList<>();
+        for (int i = 0; i < lines.length; i++) {
+            if (!lines[i].trim().startsWith("#") && p.matcher(lines[i]).find()) {
+                answer.add(i);
+            }
+        }
+        return answer;
+    }
+
+    /**
      * The {@code direct:} and {@code seda:} endpoints the route files under the directory consume, leaving out the file
      * being validated; null when they cannot be known: no directory, a directory that is only a part of a Maven or
      * Gradle project, more files than the scan looks at, or a route input the scan cannot read (a Java {@code from(}
      * with no literal, a placeholder, a route template), which could be any endpoint.
      */
-    static Set<String> consumed(Path directory, String excludeFile, CamelCatalog catalog) {
+    public static Set<String> consumed(Path directory, String excludeFile, CamelCatalog catalog) {
         if (directory == null || !Files.isDirectory(directory)) {
             return null;
         }
