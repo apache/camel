@@ -265,7 +265,7 @@ class SourceKameletValidationTest {
         SourceViewer viewer = new SourceViewer();
         viewer.setNotificationCallback((msg, error) -> lastNotification.set(msg));
         viewer.setKameletValidator(content -> SourceEditAssist.validateKamelets(file, content));
-        viewer.setYamlNotes(content -> SourceEditAssist.kameletNotes(file, content));
+        viewer.setNotes(content -> SourceEditAssist.kameletNotes(file, content));
         return viewer;
     }
 

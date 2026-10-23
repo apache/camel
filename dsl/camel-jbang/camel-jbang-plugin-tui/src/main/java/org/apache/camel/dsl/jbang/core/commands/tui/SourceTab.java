@@ -921,15 +921,24 @@ class SourceTab extends AbstractTab {
         }
     }
 
+    /** The direct: and seda: endpoints the file sends to and no route of the project consumes, as notes. */
+    private List<String> consumerNotes(Path filePath, String content) {
+        return consumedEndpoints.notes(filePath, rootDir, content, assist.validationCatalog(), assist.javaSources(),
+                () -> sourceViewer.recheck(filePath));
+    }
+
     /**
      * Points the viewer's quick-doc, autocomplete, validation and deprecation hooks at the providers matching the file
      * type (Camel YAML, other Camel source, properties, or none).
      */
     private void configureEditAssist(Path filePath) {
+        consumedEndpoints.expire();
         // the Camel checks of a Java or XML DSL route file (CAMEL-25208); YAML has its own
         boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
                 && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
+        // a direct: or seda: endpoint no route consumes is a note (CAMEL-24955); a YAML file sets its notes below
+        sourceViewer.setNotes(routeFile ? content -> consumerNotes(filePath, content) : null);
         sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
         SourceCompletion completion = sourceViewer.completion();
@@ -964,10 +973,8 @@ class SourceTab extends AbstractTab {
                 // the shape of a Kamelet file and the kamelet: endpoints of a route (CAMEL-25411)
                 sourceViewer.setKameletValidator(content -> SourceEditAssist.validateKamelets(filePath, content));
                 // the notes: a Kamelet's unused dependency, a direct: or seda: endpoint no route consumes (CAMEL-24955)
-                sourceViewer.setYamlNotes(content -> SourceEditAssist.isKameletFile(filePath)
-                        ? SourceEditAssist.kameletNotes(filePath, content)
-                        : consumedEndpoints.notes(filePath, rootDir, content, assist.validationCatalog(),
-                                () -> sourceViewer.reloadIfShowing(filePath)));
+                sourceViewer.setNotes(content -> SourceEditAssist.isKameletFile(filePath)
+                        ? SourceEditAssist.kameletNotes(filePath, content) : consumerNotes(filePath, content));
                 completion.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {

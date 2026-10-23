@@ -31,6 +31,10 @@ explorer on the left and a source viewer on the right.
 - The problems of a Camel file are marked as soon as it opens: a red ✗ on
   their lines and the count in the title; the panel at the bottom says the
   problem of the selected line, and **F9** goes to the next one
+- A note, something that works but is not right, is a yellow ⚠ instead, counted
+  apart as `notes`, and does not keep the file from being saved: a `direct:` or
+  `seda:` endpoint no route of the project consumes, a dependency a Kamelet does
+  not use
 - **u** — usages: the routes that consume from the endpoint of the line and the
   steps that send to it (direct:, seda:...), across the project; **Enter** goes there
 - **/** — search in source

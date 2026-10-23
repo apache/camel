@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,6 +96,28 @@ public final class EndpointConsumerChecks {
             }
         }
         return answer;
+    }
+
+    /**
+     * The Java and XML DSL twin of {@link #validateYamlConsumers(String, Set)}: the direct: and seda: endpoints the
+     * routes of the source send to and no route consumes, as "Line N: message" on the first line that sends to each.
+     *
+     * @param  javaSources       the Java sources of the project, for the constants a route refers to in another class
+     * @param  consumedElsewhere what {@link #consumed(Path, String, CamelCatalog)} returned; null says nothing
+     * @return                   the messages; none for a file that is not a Java or XML DSL source
+     */
+    public static List<String> validateRouteConsumers(
+            String fileName, String content, CamelCatalog catalog, Map<String, Supplier<String>> javaSources,
+            Set<String> consumedElsewhere) {
+        if (consumedElsewhere == null) {
+            return List.of();
+        }
+        RouteModel model = RouteModel.read(fileName, content, catalog, javaSources);
+        if (model == null) {
+            return List.of();
+        }
+        List<RouteNodes.Node> nodes = RouteNodes.withExpressionLines(RouteNodes.of(model, catalog), content);
+        return ModelChecks.consumers(model, nodes, content, catalog, consumedElsewhere);
     }
 
     /** The lines, from 0, that name the endpoint (direct:cheese, also as direct://cheese), comments left out. */

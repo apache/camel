@@ -18,10 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.EndpointConsumerChecks;
@@ -59,20 +62,28 @@ final class ConsumedEndpoints {
     }
 
     /**
-     * The notes of a YAML route file: each line that sends to a direct: or seda: endpoint no route of the project
-     * consumes, as "Line N: message"; none while the other route files are being read the first time.
+     * The notes of a YAML, Java or XML route file: each direct: or seda: endpoint it sends to that no route of the
+     * project consumes, as "Line N: message"; none while the other route files are being read the first time.
      *
-     * @param rootDir  the project directory, whose route files are read; the file's own directory when it is not in it
-     * @param onChange called on the UI thread when a read finds other endpoints, to mark the file again
+     * @param rootDir     the project directory, whose route files are read; the file's own directory when it is not in
+     *                    it
+     * @param javaSources the Java sources of the project, for the constants a Java route refers to in another class
+     * @param onChange    called on the UI thread when a read finds other endpoints, to mark the file again
      */
-    List<String> notes(Path file, Path rootDir, String content, CamelCatalog catalog, Runnable onChange) {
+    List<String> notes(
+            Path file, Path rootDir, String content, CamelCatalog catalog, Map<String, Supplier<String>> javaSources,
+            Runnable onChange) {
         Path f = file.toAbsolutePath().normalize();
         Path root = rootDir != null ? rootDir.toAbsolutePath().normalize() : null;
         if (root == null || !f.startsWith(root)) {
             root = f.getParent();
         }
-        return EndpointConsumerChecks.validateYamlConsumers(content,
-                get(root, root.relativize(f).toString(), catalog, onChange));
+        Set<String> consumed = get(root, root.relativize(f).toString(), catalog, onChange);
+        String name = f.getFileName().toString();
+        String lower = name.toLowerCase(Locale.ROOT);
+        return lower.endsWith(".yaml") || lower.endsWith(".yml")
+                ? EndpointConsumerChecks.validateYamlConsumers(content, consumed)
+                : EndpointConsumerChecks.validateRouteConsumers(name, content, catalog, javaSources, consumed);
     }
 
     /**
@@ -96,6 +107,16 @@ final class ConsumedEndpoints {
             startRead();
         }
         return consumed;
+    }
+
+    /**
+     * Has the next {@link #get} read the files again, keeping what was read meanwhile: a file was just opened, and the
+     * other files may have changed since they were read, in the TUI or outside it.
+     */
+    synchronized void expire() {
+        if (readTime != 0) {
+            readTime = 1;
+        }
     }
 
     /** Reads the endpoints of the file asked about last; the caller holds the lock. */

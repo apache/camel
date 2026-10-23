@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,7 +33,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
-import com.networknt.schema.Error;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -254,16 +252,10 @@ class SourceViewer {
     // the tree of the route the cursor is in, at the top right (Ctrl+T); the setting gives the default
     private boolean routeTreeShown;
     private final RouteTreePanel routeTree = new RouteTreePanel();
-    private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
-    private PropertiesValidator propertiesValidator;
-    private EndpointValidator endpointValidator;
-    private EndpointValidator simpleValidator;
-    // the Kamelet checks of a YAML file (CAMEL-25411), and the notes of a YAML file that do not block a save
-    private EndpointValidator kameletValidator;
-    private EndpointValidator yamlNotes;
+    // the checks of the file by its type: the errors, and the notes that do not block a save
+    private final SourceChecks checks = new SourceChecks();
     // the lines whose problem is a note, not an error: marked as a warning and counted apart (CAMEL-25411)
     private Set<Integer> noteLines = Set.of();
-    private EndpointValidator routeValidator;
     private MonitorContext.AskAi askAi;
     private CursorQuickDocProvider cursorQuickDocProvider;
     private List<String> routeProblems = List.of();
@@ -328,15 +320,15 @@ class SourceViewer {
     }
 
     void setPropertiesValidator(PropertiesValidator propertiesValidator) {
-        this.propertiesValidator = propertiesValidator;
+        checks.setPropertiesValidator(propertiesValidator);
     }
 
     void setEndpointValidator(EndpointValidator endpointValidator) {
-        this.endpointValidator = endpointValidator;
+        checks.setEndpointValidator(endpointValidator);
     }
 
     void setSimpleValidator(EndpointValidator simpleValidator) {
-        this.simpleValidator = simpleValidator;
+        checks.setSimpleValidator(simpleValidator);
     }
 
     /**
@@ -345,15 +337,15 @@ class SourceViewer {
      * saved, as the other problems of a YAML file.
      */
     void setKameletValidator(EndpointValidator kameletValidator) {
-        this.kameletValidator = kameletValidator;
+        checks.setKameletValidator(kameletValidator);
     }
 
     /**
-     * What a YAML file does that works but is not right (a Kamelet's camel: dependency its template does not use, a
-     * direct: endpoint no route consumes): marked and said when saved, but not blocking the save.
+     * What a YAML, Java or XML route file does that works but is not right (a Kamelet's camel: dependency its template
+     * does not use, a direct: endpoint no route consumes): marked and said when saved, but not blocking the save.
      */
-    void setYamlNotes(EndpointValidator yamlNotes) {
-        this.yamlNotes = yamlNotes;
+    void setNotes(EndpointValidator notes) {
+        checks.setNotes(notes);
     }
 
     /**
@@ -362,7 +354,7 @@ class SourceViewer {
      * as a Java file is the application's code, and what the checks cannot know must never keep it from being saved.
      */
     void setRouteValidator(EndpointValidator routeValidator) {
-        this.routeValidator = routeValidator;
+        checks.setRouteValidator(routeValidator);
     }
 
     /**
@@ -384,13 +376,8 @@ class SourceViewer {
         onLineSelected = null;
         deprecatedLines = Collections.emptySet();
         editableFile = null;
-        propertiesValidator = null;
-        endpointValidator = null;
-        simpleValidator = null;
-        kameletValidator = null;
-        yamlNotes = null;
+        checks.clear();
         noteLines = Set.of();
-        routeValidator = null;
         cursorQuickDocProvider = null;
         completion.clearLanguageProviders();
     }
@@ -425,13 +412,8 @@ class SourceViewer {
         loadedFilePath = null;
         completion.reset();
         editableFile = null;
-        propertiesValidator = null;
-        endpointValidator = null;
-        simpleValidator = null;
-        kameletValidator = null;
-        yamlNotes = null;
+        checks.clear();
         noteLines = Set.of();
-        routeValidator = null;
         cursorQuickDocProvider = null;
     }
 
@@ -564,6 +546,19 @@ class SourceViewer {
         int line = selectedLine;
         loadFile(editableFile);
         goToLine(Math.min(line, Math.max(0, getLineCount() - 1)));
+    }
+
+    /**
+     * Checks the file shown again, as what its checks read besides the file changed (the endpoints the other route
+     * files consume): the view is loaded again, and the editor checks its text now, as it would after the next change.
+     */
+    void recheck(Path file) {
+        if (!editMode) {
+            reloadIfShowing(file);
+        } else if (validationErrors == null && file != null && editableFile != null
+                && editableFile.toAbsolutePath().normalize().equals(file.toAbsolutePath().normalize())) {
+            inlineErrors = validateContent(editState.text());
+        }
     }
 
     int getLineCount() {
@@ -1249,62 +1244,24 @@ class SourceViewer {
     }
 
     private void validateAndNotify(String content) {
-        routeProblems = List.of();
-        if (validateOnSave && isCamelYamlFile()) {
-            List<String> msgs = new ArrayList<>();
-            msgs.addAll(SourceValidationSupport.formatSchemaErrors(validateYaml(content), content));
-            if (endpointValidator != null) {
-                List<String> endpointErrors = endpointValidator.validate(content);
-                if (endpointErrors != null) {
-                    msgs.addAll(endpointErrors);
-                }
-            }
-            if (simpleValidator != null) {
-                List<String> simpleErrors = simpleValidator.validate(content);
-                if (simpleErrors != null) {
-                    msgs.addAll(simpleErrors);
-                }
-            }
-            addAll(msgs, kameletValidator, content);
-            noteLines = Set.of();
-            if (!msgs.isEmpty()) {
-                validationErrors = msgs;
-                validationErrorScroll = 0;
-                inlineErrors = buildInlineErrors(msgs, content);
-                return;
-            }
-            List<String> notes = new ArrayList<>();
-            addAll(notes, yamlNotes, content);
-            if (!notes.isEmpty()) {
-                // marked, and said when saved, but not blocking the save
-                routeProblems = notes;
-                inlineErrors = buildInlineErrors(notes, content);
-                noteLines = new HashSet<>(inlineErrors.keySet());
-                return;
-            }
-        } else if (validateOnSave && isPropertiesFile() && propertiesValidator != null) {
-            List<String> msgs = validateProperties(content);
-            if (!msgs.isEmpty()) {
-                validationErrors = msgs;
-                validationErrorScroll = 0;
-                inlineErrors = buildInlineErrors(msgs, content);
-                return;
-            }
-        } else if (validateOnSave && routeValidator != null) {
-            List<String> msgs = routeValidator.validate(content);
-            msgs = msgs != null ? msgs : List.of();
-            inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
-            if (isXmlFile() && !msgs.isEmpty()) {
-                // XML routes as YAML routes: the problems are shown and the file is not saved
-                validationErrors = msgs;
-                validationErrorScroll = 0;
-            } else {
-                // Java: marked, and said when saved, but not blocking the save
-                routeProblems = msgs;
-            }
-            return;
+        SourceChecks.Found found = validateOnSave ? checks.checkOnSave(kind(), content) : SourceChecks.Found.NONE;
+        inlineErrors = found.byLine(content);
+        noteLines = found.noteLines(content);
+        if (found.blocksSave(kind())) {
+            validationErrors = found.errors();
+            validationErrorScroll = 0;
+            routeProblems = List.of();
+        } else {
+            // a note, or the problems of a Java file: marked, and said when saved, but not blocking the save
+            routeProblems = found.all();
         }
-        inlineErrors = Collections.emptyMap();
+    }
+
+    /** The kind of the file edited, for its checks. */
+    private SourceChecks.Kind kind() {
+        return isCamelYamlFile() ? SourceChecks.Kind.YAML
+                : isPropertiesFile() ? SourceChecks.Kind.PROPERTIES
+                : isXmlFile() ? SourceChecks.Kind.XML : SourceChecks.Kind.OTHER;
     }
 
     /** The notice of a save: the file, and the Camel problems of a Java or XML route file when it has some. */
@@ -1494,48 +1451,14 @@ class SourceViewer {
         lastBackgroundValidationTime = now;
         lastBackgroundValidationContent = content;
 
-        List<String> msgs = validateContent(content);
-        inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+        inlineErrors = validateContent(content);
     }
 
-    /** The problems the checks of the file type (Camel YAML, properties, Java or XML routes) find in the content. */
-    private List<String> validateContent(String content) {
-        List<String> msgs = new ArrayList<>();
-        noteLines = Set.of();
-        if (isCamelYamlFile()) {
-            if (endpointValidator != null) {
-                List<String> endpointErrors = endpointValidator.validate(content);
-                if (endpointErrors != null) {
-                    msgs.addAll(endpointErrors);
-                }
-            }
-            if (simpleValidator != null) {
-                List<String> simpleErrors = simpleValidator.validate(content);
-                if (simpleErrors != null) {
-                    msgs.addAll(simpleErrors);
-                }
-            }
-            addAll(msgs, kameletValidator, content);
-            List<String> notes = new ArrayList<>();
-            addAll(notes, yamlNotes, content);
-            if (!notes.isEmpty()) {
-                // a line with an error is marked as an error
-                Set<Integer> lines = new HashSet<>(buildInlineErrors(notes, content).keySet());
-                if (!msgs.isEmpty()) {
-                    lines.removeAll(buildInlineErrors(msgs, content).keySet());
-                }
-                noteLines = lines;
-                msgs.addAll(notes);
-            }
-        } else if (isPropertiesFile() && propertiesValidator != null) {
-            msgs.addAll(validateProperties(content));
-        } else if (routeValidator != null) {
-            List<String> routeErrors = routeValidator.validate(content);
-            if (routeErrors != null) {
-                msgs.addAll(routeErrors);
-            }
-        }
-        return msgs;
+    /** The problems the checks of the file type find in the content, by line; the lines of the notes are kept apart. */
+    private Map<Integer, String> validateContent(String content) {
+        SourceChecks.Found found = checks.check(kind(), content);
+        noteLines = found.noteLines(content);
+        return found.byLine(content);
     }
 
     /** The title spans counting the problems of the lines: the errors, and apart from them the notes. */
@@ -1562,23 +1485,13 @@ class SourceViewer {
         return noteLines;
     }
 
-    private static void addAll(List<String> msgs, EndpointValidator validator, String content) {
-        if (validator != null) {
-            List<String> found = validator.validate(content);
-            if (found != null) {
-                msgs.addAll(found);
-            }
-        }
-    }
-
     /** The problems of the file just loaded, by line; none when the checks fail or do not apply. */
     private Map<Integer, String> problemsOnLoad(String content) {
         if (isMarkdownFile) {
             return Collections.emptyMap();
         }
         try {
-            List<String> msgs = validateContent(content);
-            return msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+            return validateContent(content);
         } catch (RuntimeException e) {
             return Collections.emptyMap();
         }
@@ -1610,21 +1523,6 @@ class SourceViewer {
             }
         }
         return visible != null ? visible : inlineErrors;
-    }
-
-    private List<String> validateProperties(String content) {
-        return SourceValidationSupport.validatePropertiesLines(content, propertiesValidator::validate);
-    }
-
-    private List<Error> validateYaml(String content) {
-        try {
-            if (yamlValidator == null) {
-                yamlValidator = new org.apache.camel.dsl.yaml.validator.YamlValidator();
-            }
-            return yamlValidator.validate(content);
-        } catch (Exception e) {
-            return List.of();
-        }
     }
 
     private void notifySave(String message, boolean error) {
