@@ -31,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FileWatchComponentTest extends FileWatchComponentTestBase {
 
@@ -156,6 +157,17 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
                 watchCreate.getExchanges().get(0).getIn().getHeader(FileWatchConstants.FILE_LAST_MODIFIED, Long.class));
     }
 
+    @Test
+    public void testLastModifiedHeaderNotSetForDelete() throws Exception {
+        MockEndpoint watchDelete = getMockEndpoint("mock:watchDelete");
+        watchDelete.expectedMinimumMessageCount(1);
+
+        Files.delete(testFiles.get(0));
+
+        watchDelete.assertIsSatisfied();
+        assertNull(watchDelete.getExchanges().get(0).getIn().getHeader(FileWatchConstants.FILE_LAST_MODIFIED));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -187,6 +199,9 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
 
                 fromF("file-watch://%s?events=DELETE,MODIFY", testPath())
                         .to("mock:watchDeleteOrModify");
+
+                fromF("file-watch://%s?events=DELETE", testPath())
+                        .to("mock:watchDelete");
             }
         };
     }
