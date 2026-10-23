@@ -73,10 +73,10 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
         clientDescriptor = edgeNodeDescriptor.isDeviceDescriptor()
                 ? ((DeviceDescriptor) edgeNodeDescriptor).getEdgeNodeDescriptor() : edgeNodeDescriptor;
 
-        // Only an Edge Node producer creates the client of its Edge Node: the options that describe the Edge Node
-        // (deviceIds, primaryHostId, servers) are on the Edge Node endpoint, not on a Device endpoint. A Device producer
-        // takes the client of its Edge Node when it publishes, and adds its metric map to it when it starts.
-        tahuEdgeClient = edgeNodeDescriptor.isDeviceDescriptor() ? null : createClient(endpoint, edgeNodeDescriptor);
+        // Only an Edge Node producer creates the client of its Edge Node, when it starts (clientForStart): the options
+        // that describe the Edge Node (deviceIds, primaryHostId, servers) are on the Edge Node endpoint, not on a Device
+        // endpoint. A Device producer takes the client of its Edge Node when it publishes, and adds its metric map to it
+        // when it starts.
     }
 
     /**
@@ -95,7 +95,8 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
     }
 
     /**
-     * The client to start: the client of this producer, or a new one when a stop shut it down.
+     * The client to start: the client of the Edge Node in the map, or a new one when there is none (a stop shut it down
+     * and removed it, or no Edge Node producer started yet).
      */
     protected TahuEdgeClient clientForStart() {
         TahuEdgeClient client = createClient(endpoint, edgeNodeDescriptor);
