@@ -21,6 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.UUID;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -134,6 +136,24 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         }
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testLastModifiedHeaderIsTimeOfFile() throws Exception {
+        MockEndpoint watchCreate = getMockEndpoint("mock:watchCreate");
+        watchCreate.expectedMessageCount(1);
+
+        // create the file outside the watched directory with an old last modified time, and move it in,
+        // so the last modified time of the file differs from the time of the event
+        Path staging = Files.createDirectories(folder.resolve("staging"));
+        Path file = Files.writeString(staging.resolve("old.txt"), "Hello");
+        long lastModified = Instant.parse("2020-01-01T00:00:00Z").toEpochMilli();
+        Files.setLastModifiedTime(file, FileTime.fromMillis(lastModified));
+        Files.move(file, Paths.get(testPath(), "old.txt"));
+
+        watchCreate.assertIsSatisfied();
+        assertEquals(lastModified,
+                watchCreate.getExchanges().get(0).getIn().getHeader(FileWatchConstants.FILE_LAST_MODIFIED, Long.class));
     }
 
     @Override
