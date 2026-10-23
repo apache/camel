@@ -25,6 +25,15 @@ a required value. Rename these parameters and update their `parameter.*` or `arg
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
 Java 17 is no longer supported. Upgrade your JDK to 21 or later before upgrading to Camel 4.24.
 
+=== camel-core - Package scanning of JARs no longer includes sibling packages
+
+When scanning classes in a package (for example `camel.main.base-package-scan=com.acme.routes`, or
+`PackageScanClassResolver.findImplementations`), classes found in a JAR were also included when they belonged to a
+sibling package whose name merely started with the scanned package name, such as `com.acme.routesupport` or
+`com.acme.routes2`. Scanning a directory on the classpath never did this. Both now only include the scanned package
+and its sub packages, so a `RoutesBuilder` or `@Configuration` class in such a sibling package is no longer
+discovered when running from a JAR; list that package explicitly if it should be scanned.
+
 === camel-core - Route.clearRouteModel() is deprecated
 
 The `Route.clearRouteModel()` method is deprecated and is now a no-op. It will be removed in a later release.
