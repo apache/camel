@@ -763,6 +763,19 @@ public class EndpointHeaderBuilders {
         return Translate2EndpointBuilderFactory.Translate2HeaderNameBuilder.INSTANCE;
     }
     /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static EventGridEndpointBuilderFactory.EventGridHeaderNameBuilder azureEventgrid() {
+        return EventGridEndpointBuilderFactory.EventGridHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * Send and receive events to/from Azure Event Hubs using AMQP protocol.
      * 

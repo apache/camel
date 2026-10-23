@@ -2519,6 +2519,46 @@ public class StaticEndpointBuilders {
         return CosmosDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * Syntax: <code>azure-eventgrid:topicEndpoint</code>
+     * 
+     * Path parameter: topicEndpoint (required)
+     * The topic endpoint URL where events will be published.
+     * 
+     * @param path topicEndpoint
+     * @return the dsl builder
+     */
+    public static EventGridEndpointBuilderFactory.EventGridEndpointBuilder azureEventgrid(String path) {
+        return azureEventgrid("azure-eventgrid", path);
+    }
+    /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * Syntax: <code>azure-eventgrid:topicEndpoint</code>
+     * 
+     * Path parameter: topicEndpoint (required)
+     * The topic endpoint URL where events will be published.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topicEndpoint
+     * @return the dsl builder
+     */
+    public static EventGridEndpointBuilderFactory.EventGridEndpointBuilder azureEventgrid(String componentName, String path) {
+        return EventGridEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * Send and receive events to/from Azure Event Hubs using AMQP protocol.
      * 

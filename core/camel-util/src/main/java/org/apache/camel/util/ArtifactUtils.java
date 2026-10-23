@@ -93,6 +93,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("aws2-transcribe", "camel-aws2-transcribe"),
             Map.<String, String> entry("aws2-translate", "camel-aws2-translate"),
             Map.<String, String> entry("azure-cosmosdb", "camel-azure-cosmosdb"),
+            Map.<String, String> entry("azure-eventgrid", "camel-azure-eventgrid"),
             Map.<String, String> entry("azure-eventhubs", "camel-azure-eventhubs"),
             Map.<String, String> entry("azure-files", "camel-azure-files"),
             Map.<String, String> entry("azure-functions", "camel-azure-functions"),

@@ -120,6 +120,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchBuilders,
             org.apache.camel.builder.endpoint.dsl.ElasticsearchRestClientEndpointBuilderFactory.ElasticsearchRestClientBuilders,
             org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory.EventBuilders,
+            org.apache.camel.builder.endpoint.dsl.EventGridEndpointBuilderFactory.EventGridBuilders,
             org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsBuilders,
             org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeBuilders,
             org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.ExecBuilders,
