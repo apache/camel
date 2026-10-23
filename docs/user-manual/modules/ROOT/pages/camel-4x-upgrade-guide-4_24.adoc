@@ -2612,3 +2612,11 @@ With `crossOriginFilterOn=true`, the CORS responses now include `Access-Control-
 has an entry with a wildcard such as `https://*` or an entry `null`, the origin is still allowed, but without credentials. Previously credentials
 were allowed for every origin. A cross-origin client that sends cookies or other credentials must have its origin
 listed in `allowedOrigins`.
+
+=== camel-tahu - a Device producer uses the client of its started Edge Node producer
+
+A Device producer (`tahu-edge:group/edgeNode/device`) no longer creates the client of its Edge Node: only the Edge
+Node producer creates it, from the options of the Edge Node endpoint (`deviceIds`, `primaryHostId`, `servers`). A
+Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
+`NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
+Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
