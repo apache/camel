@@ -91,6 +91,39 @@ no PLC. With a real PLC, the driver in the URI and the addresses of the tags fol
             message: "Tags read: ${body}"
 ----
 
+With the `trigger` option, the consumer reads the tags each time a boolean trigger tag rises. It polls the trigger tag
+every `period` milliseconds on the connection of the endpoint, starting when the route starts; `period` is required
+with `trigger` and must be positive. On a rising edge of the trigger, from `false` (or from no value read yet) to
+`true`, the consumer delivers one exchange whose body is a `Map<String,Object>` of the tags, read in the same request
+as the trigger. The trigger tag is not part of the body; it is read under the reserved name `TRIGGER_VAR`, which no tag
+may use. While the trigger stays `true`, no further exchange is delivered.
+
+A poll that fails, for example because a tag cannot be read or the PLC cannot be reached, is reported to the exception
+handler of the consumer (or to the error handler of the route with `bridgeErrorHandler=true`), and polling continues.
+The trigger value read before the failure is forgotten, so a trigger that is `true` at the first successful poll after
+a failure counts as a rising edge. Automatic recovery after a lost connection needs `autoReconnect=true`: a poll then
+replaces a lost connection with a new one. With the default `autoReconnect=false`, the endpoint stops on the first lost
+connection and does not recover. Likewise, a connection that cannot be set up when the route starts is retried by the
+polls with `autoReconnect=true`, and fails the start of the route without it.
+
+The following route reads a register of a Modbus TCP device each time coil 1 goes from `false` to `true`, checking the
+coil every 100 milliseconds:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: plc4x:modbus-tcp://192.168.0.10:502
+      parameters:
+        trigger: "coil:1"
+        period: 100
+        autoReconnect: true
+        tag.counter: "holding-register:2:INT"
+      steps:
+        - log:
+            message: "Counter read on trigger: ${body}"
+----
+
 === Polling Consumer
 
 The polling consumer supports consecutive reading. The input and output are the same as for the regular consumer.
