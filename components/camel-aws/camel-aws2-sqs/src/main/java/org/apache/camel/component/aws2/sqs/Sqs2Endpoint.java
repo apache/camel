@@ -33,6 +33,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.clock.Clock;
 import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.apache.camel.spi.*;
+import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.support.MonotonicClock;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -60,6 +61,30 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS Simple Queue Service (SQS)",
              syntax = "aws2-sqs:queueNameOrArn", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = Sqs2Constants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The body of the SQS message"),
+           producerIn = @BodyType(value = Carrier.TEXT,
+                                  byOption = @BodyType.When(option = "operation", value = "sendBatchMessage",
+                                                            carriers = { Carrier.LIST, Carrier.TEXT }),
+                                  description = "The body of the message to send, as text, so a Map or a POJO is sent as"
+                                                + " its toString(): marshal it first. sendBatchMessage takes a List of"
+                                                + " text, or text that batchSeparator splits"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "sendBatchMessage",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse"),
+                                           @BodyType.When(option = "operation", value = "deleteMessage",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.sqs.model.DeleteMessageResponse"),
+                                           @BodyType.When(option = "operation", value = "listQueues", carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.sqs.model.ListQueuesResponse"),
+                                           @BodyType.When(option = "operation", value = "purgeQueue", carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.sqs.model.PurgeQueueResponse"),
+                                           @BodyType.When(option = "operation", value = "deleteQueue", carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.sqs.model.DeleteQueueResponse") },
+                                   description = "Unchanged for a send, with the id of the message in a header; the response"
+                                                 + " of the AWS SDK for the other operations"))
 public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Endpoint.class);

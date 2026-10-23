@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== camel-ai-tool - required arguments with reserved names reject the call
+
+Required tool arguments whose names start with `camel` or `org.apache.camel.` (case-insensitive)
+now reject the invocation before the tool route runs. Previously, these arguments could pass the
+required-argument check and then be discarded by the reserved-name filter, leaving the route without
+a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
@@ -2085,6 +2092,21 @@ on the bytes of a non-ASCII payload and make verification fail.
 already UTF-8 (JEP 400), so this is a no-op there; on Java 17 with a non-UTF-8 default, the
 signature of a non-ASCII `String` payload changes. Binary bodies (`byte[]`, `InputStream`) are
 unaffected, as they are signed byte-for-byte.
+
+=== camel-pqc - message bodies are signed and verified over their bytes
+
+The `sign`, `verify`, `hybridSign` and `hybridVerify` operations now read a `java.io.File` or `java.nio.file.Path`
+body, and a file from a file consumer (a `GenericFile` body), as bytes from the file, the same way as a `byte[]` or
+`InputStream` body. A `String` (or any `CharSequence`) body is encoded as UTF-8, and any other body that has a binary
+type converter (for example a `java.nio.ByteBuffer`, a `java.io.ByteArrayOutputStream`, a Netty `ByteBuf` or a Vert.x
+`Buffer`) is signed over those bytes.
+
+A body with no binary representation (for example a `Map` or a POJO) is no longer signed over its `toString()`: it is
+now rejected with an `InvalidPayloadException`. Convert such a body to a `String`, `byte[]` or other binary type
+earlier in the route.
+
+Signatures created by earlier versions over a `File`, `Path`, `GenericFile` or other non-`byte[]`/`InputStream` body
+may not verify and need to be created again.
 
 === camel-sql - Schema-qualified aggregation repository names
 

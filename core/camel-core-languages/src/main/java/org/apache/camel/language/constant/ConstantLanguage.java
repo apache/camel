@@ -20,6 +20,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
@@ -29,6 +32,9 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * A language for constant expressions.
  */
 @Language("constant")
+@BodyTypes(expressionOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "resultType",
+                                     description = "The text as it is written; resource:classpath:name loads the text of the"
+                                                   + " resource"))
 public class ConstantLanguage extends LanguageSupport {
 
     public static Expression constant(Object value) {

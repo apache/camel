@@ -63,7 +63,7 @@
         <activemq-artemis-version>2.57.0</activemq-artemis-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
-        <alibabacloud-oss-version>0.6.0</alibabacloud-oss-version>
+        <alibabacloud-oss-version>0.6.1</alibabacloud-oss-version>
         <aliyun-sdk-mns-version>2.0.0</aliyun-sdk-mns-version>
         <aliyun-fc-open-version>2.1.0</aliyun-fc-open-version>
         <aliyun-dysmsapi-version>4.6.0</aliyun-dysmsapi-version>
@@ -266,7 +266,7 @@
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
         <jackson2-version>2.22.3</jackson2-version>
-        <jackson3-version>3.2.3</jackson3-version>
+        <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.4</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
         <jandex-version>3.6.0</jandex-version>
@@ -307,7 +307,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.7</jettison-version>
         <jgit-version>7.8.0.202609011348-r</jgit-version>
-        <jgroups-version>5.5.7.Final</jgroups-version>
+        <jgroups-version>5.5.8.Final</jgroups-version>
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
         <jira-rest-client-api-version>6.0.4</jira-rest-client-api-version>
         <jira-sal-api-version>7.2.1</jira-sal-api-version>
@@ -396,14 +396,14 @@
         <microprofile-config-version>3.1.2</microprofile-config-version>
         <milo-version>1.1.8</milo-version>
         <milvus-client-version>2.6.25</milvus-client-version>
-        <mina-version>2.2.9</mina-version>
+        <mina-version>2.2.10</mina-version>
         <minio-version>9.0.3</minio-version>
         <mockito-version>5.24.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.13.0</mongo-java-driver-version>
         <msal4j-version>1.26.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
-        <mvel-version>2.5.4.Final</mvel-version>
+        <mvel-version>2.6.0.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
         <neo4j-version>6.3.0</neo4j-version>
@@ -535,7 +535,7 @@
         <testcontainers-version>2.0.5</testcontainers-version>
         <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
         <tika-version>4.1.0</tika-version>
-        <twilio-version>13.0.2</twilio-version>
+        <twilio-version>13.1.0</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-servlet-version>2.3.26.Final</undertow-servlet-version>
         <undertow-version>2.4.4.Final</undertow-version>

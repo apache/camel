@@ -26,6 +26,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -55,6 +58,27 @@ import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
 @Metadata(annotations = {
         "protocol=http",
 })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.BYTES, Carrier.NULL, Carrier.MAP, Carrier.FILE },
+                                   dependsOn = "consumerComponentName",
+                                   byOption = @BodyType.When(option = "bindingMode", value = "json",
+                                                             carriers = { Carrier.MAP, Carrier.LIST, Carrier.POJO }),
+                                   description = "The request body as the HTTP consumer gives it (platform-http by"
+                                                 + " default). With bindingMode json, the object of inType, or a Map or a"
+                                                 + " List without inType"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM },
+                                     dependsOn = "consumerComponentName",
+                                     byOption = @BodyType.When(option = "bindingMode", value = "json", carriers = Carrier.ANY),
+                                     description = "The response body as the HTTP consumer writes it. With bindingMode json,"
+                                                   + " any object, which the binding writes as JSON"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "producerComponentName",
+                                  byOption = @BodyType.When(option = "bindingMode", value = "json", carriers = Carrier.ANY),
+                                  description = "The request body the HTTP producer sends (the http component by default)."
+                                                + " With bindingMode json, any object, which the binding writes as JSON"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.NULL },
+                                   dependsOn = { "producerComponentName", "outType" },
+                                   description = "The response body as the HTTP producer gives it; with bindingMode json and"
+                                                 + " outType, an object of outType"))
 public class RestEndpoint extends DefaultEndpoint {
 
     public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS

@@ -25,6 +25,9 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -34,6 +37,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  * XPath language.
  */
 @Language("xpath")
+@BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                    format = "xml", description = "XML as text, bytes, a stream or a file, or a DOM"),
+           expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.NodeList", dependsOn = "resultType",
+                                     byOption = {
+                                             @BodyType.When(option = "resultQName", value = "STRING", carriers = Carrier.TEXT,
+                                                            javaType = "java.lang.String"),
+                                             @BodyType.When(option = "resultQName", value = "NUMBER", carriers = Carrier.VALUE,
+                                                            javaType = "java.lang.Double"),
+                                             @BodyType.When(option = "resultQName", value = "BOOLEAN", carriers = Carrier.VALUE,
+                                                            javaType = "java.lang.Boolean"),
+                                             @BodyType.When(option = "resultQName", value = "NODE", carriers = Carrier.POJO,
+                                                            javaType = "org.w3c.dom.Node") },
+                                     description = "The nodes the expression selects"))
 public class XPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
     private QName resultQName;
     private Class<?> documentType;

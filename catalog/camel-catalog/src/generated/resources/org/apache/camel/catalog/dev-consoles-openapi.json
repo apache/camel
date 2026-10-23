@@ -4486,6 +4486,84 @@
 				}
 			}
 		},
+		"\/q\/dev\/milo-client": {
+			"get": {
+				"summary": "OPC UA Client",
+				"description": "OPC UA client connections and their refused monitored items",
+				"operationId": "milo-client",
+				"responses": {
+					"200": {
+						"description": "OPC UA Client output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"connections": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"endpointUri": {
+														"type": "string",
+														"description": "The OPC UA server endpoint, with its password masked"
+													},
+													"clientId": {
+														"type": "string",
+														"description": "The client id of the connection (only present when one is set)"
+													},
+													"routeIds": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "The ids of the routes whose consumers use the connection"
+													},
+													"sessionActive": {
+														"type": "boolean",
+														"description": "Whether the session with the server is active"
+													},
+													"monitoredNodes": {
+														"type": "integer",
+														"description": "The number of nodes that have a monitored item on the server"
+													},
+													"refusedNodes": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"nodeId": {
+																	"type": "string",
+																	"description": "The node ID"
+																},
+																"status": {
+																	"type": "string",
+																	"description": "The status of the latest attempt to create the monitored item of the node: the refusal, or the failure of the attempt"
+																},
+																"reason": {
+																	"type": "string",
+																	"description": "Why the client refused the node without asking the server (only present when it did)"
+																}
+															}
+														},
+														"description": "The nodes whose monitored item was refused, which are created again every reconnectTimeout milliseconds"
+													}
+												},
+												"required": [
+													"sessionActive",
+													"monitoredNodes"
+												]
+											},
+											"description": "The connections of the consumers"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/opentelemetry": {
 			"get": {
 				"summary": "OpenTelemetry Spans",
