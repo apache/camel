@@ -6102,3 +6102,9 @@ A scheduled pool with virtual threads now keeps `poolSize` threads (before: none
 queue, the same as a scheduled pool with platform threads. After shutdown, it handles a rejected task with the rejected
 policy of its thread pool profile (by default it discards the task) instead of throwing `RejectedExecutionException`.
 
+=== camel-jpa - a TransactionStrategy in the registry is used by default
+
+When no `TransactionStrategy` is configured, the JPA component and endpoint now use the single `TransactionStrategy`
+bean in the registry, if there is one, before creating the Spring based `DefaultTransactionStrategy`. Without such a
+bean nothing changes. The return type of the protected method `JpaEndpoint.createTransactionStrategy()` is now
+`TransactionStrategy` instead of `DefaultTransactionStrategy`.
