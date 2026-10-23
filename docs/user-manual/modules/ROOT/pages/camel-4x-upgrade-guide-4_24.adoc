@@ -3978,3 +3978,12 @@ receive it: a message sent to `spring-event:foo` goes to `from("spring-event:foo
 
 Other application events of the `ApplicationContext`, such as `ContextRefreshedEvent` or an `ApplicationEvent` body
 published by a producer, still go to every consumer.
+
+=== camel-quartz - a route that keeps its trigger fires again when it is added again or after a restart
+
+With `deleteJob=false` (as with `pauseJob=true`), a route pauses its trigger when it stops, and only the same endpoint
+resumed it. A route that was removed and added again (a reload, a route template removed and added), and a route that
+started after a restart with a persistent job store that is not clustered, therefore never fired again. The route now
+resumes the paused trigger when it starts. This also resumes a trigger that was paused outside Camel, for example
+with the Quartz API, while the route was not running; keep the route stopped to keep such a trigger paused. A
+clustered job store is not changed, as Camel does not pause triggers there.

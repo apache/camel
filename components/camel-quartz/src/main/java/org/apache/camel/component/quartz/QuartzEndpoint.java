@@ -399,6 +399,14 @@ public class QuartzEndpoint extends DefaultEndpoint {
             if (hasTriggerChanged(oldTrigger, trigger)) {
                 scheduler.rescheduleJob(triggerKey, trigger);
             }
+            // the consumer pauses the trigger when it stops, and a trigger that is not deleted then (deleteJob=false, as
+            // with pauseJob=true) stays paused: paused by the endpoint of a route that was removed and is added again,
+            // or before a restart with a persistent job store. This endpoint resumes it when its consumer starts, as it
+            // does for a trigger it paused itself. A clustered job store is left as it is, as no trigger is paused there
+            if (!deleteJob && !scheduler.getMetaData().isJobStoreClustered()
+                    && scheduler.getTriggerState(triggerKey) == Trigger.TriggerState.PAUSED) {
+                jobPaused.set(true);
+            }
         } else {
             try {
                 if (hasTriggerExpired(scheduler, trigger)) {
