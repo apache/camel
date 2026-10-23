@@ -64,6 +64,16 @@ import org.slf4j.LoggerFactory;
  * When the consumer cannot be checked or created again (JetStream not ready yet after a server restart, the stream is
  * gone), this keeps trying while the route runs: a few times one second apart, then with a growing delay up to 30
  * seconds, with a WARN after the first attempts.
+ * <p>
+ * The consumer is checked only after a reconnect (when jnats has subscribed the deliver subject again). A consumer that
+ * is deleted while the connection stays up (for example by an administrator) is not detected, and the route receives
+ * nothing more: an idle heartbeat would detect it, but it is not allowed with a queue group, and its alarm goes to the
+ * error listener of the connection, which the route does not own when the connection is shared.
+ * <p>
+ * The delivered messages that are not settled yet are found with {@link Message#lastAck()} on each delivery. jnats
+ * writes that field on the thread that acknowledges, without synchronization, so a read here can miss a recent
+ * acknowledgement: the consumer then resumes at an earlier message and the server delivers it again, nothing is
+ * skipped.
  */
 final class NatsJetStreamPushConsumerKeeper implements MessageHandler, ConnectionListener {
 

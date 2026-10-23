@@ -67,7 +67,8 @@ public class NatsConsumer extends DefaultConsumer {
     private boolean active;
     // set by the consuming task, and again by the push consumer keeper, and read when the consumer stops
     private volatile JetStreamSubscription jetStreamSubscription;
-    private NatsJetStreamPushConsumerKeeper pushConsumerKeeper;
+    // set by the consuming task and read when the consumer stops
+    private volatile NatsJetStreamPushConsumerKeeper pushConsumerKeeper;
 
     public NatsConsumer(NatsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -300,6 +301,10 @@ public class NatsConsumer extends DefaultConsumer {
                         streamInfo != null ? streamInfo.getCreateTime() : null,
                         streamInfo != null && streamInfo.getStreamState() != null
                                 ? streamInfo.getStreamState().getLastSequence() : -1);
+                if (!NatsConsumer.this.isRunAllowed()) {
+                    // stopped while subscribing: doStop did not see the keeper
+                    keeper.stop();
+                }
 
                 NatsConsumer.this.setActive(true);
             }

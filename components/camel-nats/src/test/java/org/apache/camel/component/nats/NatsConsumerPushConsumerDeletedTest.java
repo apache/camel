@@ -210,6 +210,39 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
         assertEquals(List.of(), handled, "a subscribe that fails as the route stops is not reported");
     }
 
+    @Test
+    void removesItsConnectionListenerWhenTheRouteStopsWhileItSubscribes() throws Exception {
+        int added = server.listenersAdded.get();
+        // the route is stopped while the consumer makes its first subscription, so the stop does not see the keeper
+        // yet: the keeper must not stay registered on the (shared) connection
+        server.beforeSubscribe = () -> {
+            server.beforeSubscribe = null;
+            String routeId = context.getRoutes().get(0).getId();
+            Thread stopper = new Thread(() -> {
+                try {
+                    context.getRouteController().stopRoute(routeId);
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }, "route-stopper");
+            stopper.start();
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
+            while (stopper.isAlive() && System.nanoTime() < deadline) {
+                try {
+                    stopper.join(1000);
+                } catch (InterruptedException e) {
+                    // the stop interrupts the executor of the consumer, which runs this
+                }
+            }
+        };
+        consumeWith("exceptionHandler=#handler");
+
+        // the keeper of the new route registered its listener, after the stop
+        await().atMost(20, TimeUnit.SECONDS).until(() -> server.listenersAdded.get() == added + 1);
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(List.of(), server.listeners, "no keeper listens to the connection after the stop"));
+    }
+
     /**
      * Replaces the route of the test by one consuming with the given options.
      */
@@ -487,6 +520,8 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
         final List<FakeConsumer> consumers = new ArrayList<>();
         final List<ConsumerConfiguration> configurations = new ArrayList<>();
         final List<ConnectionListener> listeners = new CopyOnWriteArrayList<>();
+        // the connection listeners added so far
+        final AtomicInteger listenersAdded = new AtomicInteger();
         boolean connected = true;
         boolean streamExists = true;
         // the consumer lookups answered with stream not found
@@ -599,7 +634,10 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
                 case "jetStreamManagement" -> jsm;
                 case "jetStream" -> js;
                 case "createDispatcher" -> dispatcher();
-                case "addConnectionListener" -> listeners.add((ConnectionListener) args[0]);
+                case "addConnectionListener" -> {
+                    listenersAdded.incrementAndGet();
+                    yield listeners.add((ConnectionListener) args[0]);
+                }
                 case "closeDispatcher" -> {
                     synchronized (this) {
                         closedDispatchers.add((Dispatcher) args[0]);
