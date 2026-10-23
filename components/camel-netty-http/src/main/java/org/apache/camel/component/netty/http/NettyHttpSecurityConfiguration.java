@@ -17,12 +17,13 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Security configuration for the {@link NettyHttpConsumer}.
  */
-public class NettyHttpSecurityConfiguration {
+public class NettyHttpSecurityConfiguration implements Cloneable {
 
     @Metadata(label = "security", defaultValue = "true", description = "Whether to enable authentication")
     private boolean authenticate = true;
@@ -111,6 +112,14 @@ public class NettyHttpSecurityConfiguration {
      */
     public void setLoginDeniedLoggingLevel(LoggingLevel loginDeniedLoggingLevel) {
         this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
+    }
+
+    public NettyHttpSecurityConfiguration copy() {
+        try {
+            return (NettyHttpSecurityConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
 }
