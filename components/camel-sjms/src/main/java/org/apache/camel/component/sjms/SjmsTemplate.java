@@ -139,7 +139,7 @@ public class SjmsTemplate {
                 this.message = messageCreator.createMessage(session);
                 MessageProducer producer = session.createProducer(dest);
                 try {
-                    send(producer, message);
+                    send(producer, message, exchange.getIn());
                 } finally {
                     closeProducer(producer);
                 }
@@ -170,6 +170,20 @@ public class SjmsTemplate {
     }
 
     public void send(MessageProducer producer, Message message) throws Exception {
+        send(producer, message, null);
+    }
+
+    /**
+     * Sends the message with the producer.
+     *
+     * @param producer     the producer
+     * @param message      the JMS message
+     * @param camelMessage the Camel message the JMS message was created from. With preserveMessageQos, the priority and
+     *                     delivery mode of the JMS message are only used when this message has the JMSPriority or
+     *                     JMSDeliveryMode header, otherwise those of the endpoint. When null, those of the JMS message
+     *                     are used.
+     */
+    public void send(MessageProducer producer, Message message, org.apache.camel.Message camelMessage) throws Exception {
         if (preserveMessageQos) {
             long ttl = message.getJMSExpiration();
             if (ttl != 0) {
@@ -178,19 +192,28 @@ public class SjmsTemplate {
                 if (ttl <= 0) {
                     ttl = 1;
                 }
+            } else {
+                // the message has no expiration, so use the time to live of the endpoint (timeToLive, or the
+                // requestTimeout for request/reply), which is 0 (never expires) when none is configured
+                ttl = this.timeToLive;
             }
 
-            int priority = message.getJMSPriority();
-            if (priority < 0 || priority > 9) {
+            // a new JMS message always has a priority and delivery mode (the binding sets PERSISTENT, and the
+            // priority is the default of the JMS client, 0 with ActiveMQ Classic), so they are only taken from the
+            // message when the Camel message has the header; otherwise the endpoint values are used
+            int priority = this.priority;
+            if (camelMessage == null || camelMessage.getHeader(JmsConstants.JMS_PRIORITY) != null) {
+                int messagePriority = message.getJMSPriority();
                 // use priority from endpoint if not provided on message with a valid range
-                priority = this.priority;
+                if (messagePriority >= 0 && messagePriority <= 9) {
+                    priority = messagePriority;
+                }
             }
 
-            // if a delivery mode was set as a JMS header then we have used a temporary
-            // property to store it - CamelJMSDeliveryMode. Otherwise we could not keep
-            // track whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
-            // if it was set or not, so we can never tell if end user provided it in a header
-            int resolvedDeliveryMode = resolveDeliveryMode(message);
+            int resolvedDeliveryMode = this.deliveryMode;
+            if (camelMessage == null || camelMessage.getHeader(JmsConstants.JMS_DELIVERY_MODE) != null) {
+                resolvedDeliveryMode = resolveDeliveryMode(message);
+            }
 
             producer.send(message, resolvedDeliveryMode, priority, ttl);
         } else if (explicitQosEnabled) {

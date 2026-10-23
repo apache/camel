@@ -315,7 +315,7 @@ public class EndpointMessageListener implements SessionMessageListener {
 
                     producer = messageProducerCreator.create(session, endpoint, replyDestination);
 
-                    template.send(producer, reply);
+                    template.send(producer, reply, out);
                 } finally {
                     close(producer);
                 }

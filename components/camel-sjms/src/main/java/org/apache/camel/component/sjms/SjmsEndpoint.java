@@ -408,6 +408,7 @@ public class SjmsEndpoint extends DefaultEndpoint
             template.setQoSSettings(dm, getPriority(), getTimeToLive());
         }
         template.setDestinationCreationStrategy(getDestinationCreationStrategy());
+        template.setPreserveMessageQos(isPreserveMessageQos());
 
         return template;
     }
