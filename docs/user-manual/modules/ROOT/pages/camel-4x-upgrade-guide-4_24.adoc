@@ -1560,6 +1560,17 @@ placeholder or a route template parameter in them never matched (Switch) or did 
 They are now resolved at startup like the other EIP options; a placeholder of a property that does not exist now
 fails the route at startup.
 
+=== camel-kamelet - the route of a Kamelet endpoint is removed with the endpoint
+
+A Kamelet endpoint creates a route from the Kamelet's template. When the endpoint is created while the CamelContext
+runs and is shut down later, its route is now stopped and removed as well; before, it stayed behind and kept running.
+This applies to an endpoint that is used once and discarded (`toD`, `recipientList` or `routingSlip` with
+`cacheSize=-1`), which kept one more route for every message. It also applies to a route added at runtime (such as a
+dev-mode reload or `CamelContext.addRoutes`) that consumes from a Kamelet (`from("kamelet:my-source")`): removing that
+route now also removes the route of the Kamelet. A route id given in the uri (`kamelet:my-source/myRoute` or
+`routeId=`) is shared by the endpoints that use it, so such a route is not removed. Routes created when the
+CamelContext starts are not changed.
+
 === camel-undertow - the producer refuses a request target or header value with control characters
 
 The undertow producer writes the path, query and header values of the outgoing request to the socket one character at
