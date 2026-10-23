@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "scheduler", title = "Scheduler", syntax = "scheduler:name",
              remote = false, consumerOnly = true, category = { Category.CORE, Category.SCHEDULING },
              headersClass = SchedulerConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL, description = "No body: the message only starts the route"))
 public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     @UriPath

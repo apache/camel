@@ -15,6 +15,10 @@
     "modelName": "jsonpath",
     "modelJavaType": "org.apache.camel.model.language.JsonPathExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "JSON as text, bytes, a stream or a file, or parsed: a Map or a List. A POJO is read through Jackson" },
+    "expressionOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "writeAsString", "value": "true", "carriers": [ "text", "list" ] } ], "description": "The value the path selects: a Map for an object, a List for an array or for a path with a wildcard or a filter, otherwise text, a number or a boolean" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

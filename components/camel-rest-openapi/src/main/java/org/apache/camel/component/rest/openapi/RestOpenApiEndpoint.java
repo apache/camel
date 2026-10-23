@@ -95,7 +95,17 @@ import static org.apache.camel.util.StringHelper.before;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
              syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API })
-@BodyTypes(producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.BYTES, Carrier.NULL, Carrier.MAP, Carrier.FILE },
+                                   dependsOn = "consumerComponentName",
+                                   description = "The request body as the HTTP consumer gives it (platform-http by default)."
+                                                 + " With the json binding mode of the rest configuration, the object of the"
+                                                 + " schema (bindingPackageScan), or a Map or a List"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM },
+                                     dependsOn = "consumerComponentName",
+                                     description = "The response body as the HTTP consumer writes it. With the json binding"
+                                                   + " mode of the rest configuration, any object, which the binding writes as"
+                                                   + " JSON"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   dependsOn = "componentName",
                                   description = "The request body of the operation, which the http component sends: text,"
                                                 + " bytes, a stream or a file. A Map or a List fails: marshal it first"),

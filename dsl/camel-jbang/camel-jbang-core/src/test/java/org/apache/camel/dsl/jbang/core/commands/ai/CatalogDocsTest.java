@@ -28,6 +28,7 @@ import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -135,21 +136,47 @@ class CatalogDocsTest {
 
     @Test
     void theBodyTypesSayWhatTheBodyIsAfterAStep() throws Exception {
-        // CAMEL-24961: what the options of a component do not say
+        // CAMEL-24961: what the options of a component do not say, a line per side
         JsonObject xslt = catalogDoc(Map.of("name", "xslt", "kind", "component", "includeOptions", false));
-        JsonObject out = ((JsonObject) xslt.get("bodyTypes")).getMap("producerOut");
-        assertEquals(List.of("text"), out.getCollection("carriers"));
-        assertEquals("java.lang.String", out.getString("javaType"));
-        assertTrue(xslt.getString("bodyTypesHint").contains("A side not listed is not known"));
+        JsonObject sides = (JsonObject) xslt.get("bodyTypes");
+        assertEquals("text, bytes, stream, file or pojo, as xml. The XML to transform: text, bytes, a stream, a file, a"
+                     + " DOM or another javax.xml.transform.Source. A Map, a List or no body fails. With"
+                     + " failOnNullBody=false: null, text, bytes, stream, file or pojo. Not known when source is set",
+                sides.getString("producerIn"));
+        assertTrue(sides.getString("producerOut").startsWith("text (java.lang.String). The result of the transformation."
+                                                             + " With output=bytes: bytes (byte[]); output=DOM: pojo"));
+        assertTrue(xslt.getString("bodyTypesHint").contains("a side not listed is not known"));
+
+        // the options that make a side not known read as a list
+        JsonObject jms = catalogDoc(Map.of("name", "jms", "kind", "component", "includeOptions", false));
+        assertTrue(((JsonObject) jms.get("bodyTypes")).getString("producerIn")
+                .endsWith(". Not known when jmsMessageType, messageConverter or transferExchange is set"));
 
         JsonObject json = catalogDoc(Map.of("name", "json", "kind", "dataformat", "includeOptions", false));
-        JsonObject unmarshalOut = ((JsonObject) json.get("bodyTypes")).getMap("unmarshalOut");
-        assertEquals(List.of("map", "list"), unmarshalOut.getCollection("carriers"));
+        assertTrue(((JsonObject) json.get("bodyTypes")).getString("unmarshalOut").startsWith("map or list. "));
+
+        // a language: what its expressions read, and their result
+        JsonObject xpath = catalogDoc(Map.of("name", "xpath", "kind", "language", "includeOptions", false));
+        assertTrue(((JsonObject) xpath.get("bodyTypes")).getString("expressionOut")
+                .startsWith("pojo (org.w3c.dom.NodeList). The nodes the expression selects. With resultQName=STRING: text"));
 
         // a component that does not declare them has none, rather than a guess
-        JsonObject kafka = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", false));
-        assertNull(kafka.get("bodyTypes"));
-        assertNull(kafka.get("bodyTypesHint"));
+        JsonObject jdbc = catalogDoc(Map.of("name", "jdbc", "kind", "component", "includeOptions", false));
+        assertNull(jdbc.get("bodyTypes"));
+        assertNull(jdbc.get("bodyTypesHint"));
+    }
+
+    @Test
+    void aBodyWithoutCarriersIsUnknown() {
+        // the build rejects it, but a catalog read from elsewhere may have one: the line says unknown
+        BodyTypeModel side = new BodyTypeModel();
+        side.setCarriers(List.of("text"));
+        BodyTypeModel.OptionBodyTypeModel bytes = new BodyTypeModel.OptionBodyTypeModel();
+        bytes.setOption("output");
+        bytes.setValue("bytes");
+        side.getByOption().add(bytes);
+        JsonObject lines = CatalogDocs.bodyTypes(Map.of(BodyTypeModel.PRODUCER_OUT, side));
+        assertEquals("text. With output=bytes: unknown", lines.getString(BodyTypeModel.PRODUCER_OUT));
     }
 
     @Test

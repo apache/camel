@@ -47,6 +47,8 @@
     "useGlobalSslContextParameters": { "index": 20, "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." }
   },
   "bodyTypes": {
+    "consumerOut": { "carriers": [ "stream", "bytes", "null", "map", "file" ], "dependsOn": [ "consumerComponentName" ], "description": "The request body as the HTTP consumer gives it (platform-http by default). With the json binding mode of the rest configuration, the object of the schema (bindingPackageScan), or a Map or a List" },
+    "consumerReply": { "carriers": [ "null", "text", "bytes", "stream" ], "dependsOn": [ "consumerComponentName" ], "description": "The response body as the HTTP consumer writes it. With the json binding mode of the rest configuration, any object, which the binding writes as JSON" },
     "producerIn": { "carriers": [ "null", "text", "bytes", "stream", "file" ], "dependsOn": [ "componentName" ], "description": "The request body of the operation, which the http component sends: text, bytes, a stream or a file. A Map or a List fails: marshal it first" },
     "producerOut": { "carriers": [ "bytes", "stream", "null" ], "dependsOn": [ "componentName" ], "description": "The response body, as the http component gives it: a byte array or the stream cache; null for a response without a body" }
   },

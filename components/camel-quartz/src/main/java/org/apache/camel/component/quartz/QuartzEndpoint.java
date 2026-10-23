@@ -30,6 +30,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -61,6 +64,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName",
              remote = false, consumerOnly = true, category = { Category.SCHEDULING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL, description = "No body: the message only starts the route"))
 public class QuartzEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);

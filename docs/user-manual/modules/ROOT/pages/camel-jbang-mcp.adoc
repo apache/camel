@@ -315,8 +315,11 @@ project `directory` as an argument, the runtime tools take the integration `name
   (`mail.*` of smtp) are listed in `prefixOptions`. A filter that matches no option says so, with the closest
   option names. The answer lists the `sections` of the component page, those that contain the filter first, and
   `docPage=<section title>` returns one. A full key (`camel.server.port`, `camel.jbang.dependencies`) answers
-  its group of `application.properties` keys, the key first. An answer is cut at 16 000 characters, with a
-  marker that says what was left out.
+  its group of `application.properties` keys, the key first. A component, data format or language that
+  declares its body types has them in `bodyTypes`, a line per side: what a `from:` gives the route
+  (`consumerOut`), what a `to:` can send (`producerIn`) and the body after it (`producerOut`), and so on (see
+  xref:camel-catalog.adoc#_body_types_in_the_catalog[Body types in the Catalog]). An answer is cut at 18 000
+  characters, with a marker that says what was left out.
   `includeOptions` picks the options listed: `common` (the default) leaves out the deprecated and advanced
   ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`
   none; `optionsFilter` matches a keyword in the option names, descriptions and groups and searches all
