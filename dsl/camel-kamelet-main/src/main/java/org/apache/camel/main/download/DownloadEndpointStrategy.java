@@ -27,9 +27,11 @@ import org.apache.camel.util.StringHelper;
 public class DownloadEndpointStrategy implements EndpointStrategy {
 
     private final CamelContext camelContext;
+    private final boolean export;
 
-    public DownloadEndpointStrategy(CamelContext camelContext, boolean silent) {
+    public DownloadEndpointStrategy(CamelContext camelContext, boolean export) {
         this.camelContext = camelContext;
+        this.export = export;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class DownloadEndpointStrategy implements EndpointStrategy {
             if (name != null) {
                 camelContext.resolveDataFormat(name);
             }
-        } else if ("master".equals(scheme) && endpoint instanceof StubEndpoint) {
+        } else if (export && "master".equals(scheme) && endpoint instanceof StubEndpoint) {
             // a stubbed master endpoint does not create its delegate endpoint, so resolve it here (CAMEL-25186)
             String delegateUri = extractDelegateUri(uri);
             if (delegateUri != null) {
