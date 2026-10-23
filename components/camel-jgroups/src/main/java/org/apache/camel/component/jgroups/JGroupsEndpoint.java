@@ -18,6 +18,8 @@ package org.apache.camel.component.jgroups;
 
 import java.io.ObjectInputFilter;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -50,6 +52,9 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
     private AtomicInteger connectCount = new AtomicInteger();
+    // connects and disconnects the channel this endpoint created together with its count, so that a producer that
+    // stops and a consumer that starts at the same time leave the channel connected for the consumer
+    private final Lock connectLock = new ReentrantLock();
 
     private JChannel channel;
     private JChannel resolvedChannel;
@@ -219,7 +224,10 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         return stack != null && stack.findProtocol(AUTH.class, SYM_ENCRYPT.class, ASYM_ENCRYPT.class) != null;
     }
 
-    private JChannel resolveChannel() throws Exception {
+    /**
+     * The channel of the endpoint: the channel option, or a channel it creates. Package-private for tests.
+     */
+    JChannel resolveChannel() throws Exception {
         if (channel != null) {
             return channel;
         }
@@ -238,8 +246,14 @@ public class JGroupsEndpoint extends DefaultEndpoint {
             ((JGroupsComponent) getComponent()).connectSharedChannel(resolvedChannel, clusterName);
             return;
         }
-        connectCount.incrementAndGet();
-        resolvedChannel.connect(clusterName);
+        connectLock.lock();
+        try {
+            resolvedChannel.connect(clusterName);
+            // counted after a successful connect, as a producer or consumer whose connect failed does not disconnect
+            connectCount.incrementAndGet();
+        } finally {
+            connectLock.unlock();
+        }
     }
 
     /**
@@ -250,9 +264,14 @@ public class JGroupsEndpoint extends DefaultEndpoint {
             ((JGroupsComponent) getComponent()).disconnectSharedChannel(resolvedChannel);
             return;
         }
-        if (connectCount.decrementAndGet() == 0) {
-            LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
-            resolvedChannel.disconnect();
+        connectLock.lock();
+        try {
+            if (connectCount.decrementAndGet() == 0) {
+                LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
+                resolvedChannel.disconnect();
+            }
+        } finally {
+            connectLock.unlock();
         }
     }
 
