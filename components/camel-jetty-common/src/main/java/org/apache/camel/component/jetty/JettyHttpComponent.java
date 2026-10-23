@@ -140,10 +140,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         final QueuedThreadPool threadPool;
         int refCount;
 
-        ConnectorRef(Server server, ServerConnector connector, CamelServlet servlet) {
-            this(server, connector, servlet, null);
-        }
-
         ConnectorRef(Server server, ServerConnector connector, CamelServlet servlet, QueuedThreadPool threadPool) {
             this.server = server;
             this.connector = connector;
