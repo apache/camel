@@ -87,8 +87,12 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
             }
         } else if (action == Action.SUSPEND) {
             if (routeStatus == ServiceStatus.Started) {
-                suspendOrStopConsumer(route.getConsumer());
-                if (ServiceHelper.isStopped(route.getConsumer())) {
+                Consumer consumer = route.getConsumer();
+                // only a consumer that this suspend stopped, not one that was stopped already (by another policy, or
+                // by the shutdown strategy while the route is being stopped)
+                boolean alreadyStopped = ServiceHelper.isStopped(consumer);
+                suspendOrStopConsumer(consumer);
+                if (!alreadyStopped && ServiceHelper.isStopped(consumer)) {
                     consumersStoppedBySuspend.add(route.getId());
                 }
             } else {
@@ -149,6 +153,14 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
     @Override
     public void onStop(Route route) {
         super.onStop(route);
+        consumersStoppedBySuspend.remove(route.getId());
+    }
+
+    @Override
+    public void onResume(Route route) {
+        super.onResume(route);
+        // the route (and its consumer) resumed; a route whose consumer is not Suspendable is stopped and started by the
+        // route controller instead (onStop and onStart), so this only makes sure that no record outlives a resume
         consumersStoppedBySuspend.remove(route.getId());
     }
 

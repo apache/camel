@@ -107,6 +107,67 @@ class ScheduledRoutePolicyNonSuspendableConsumerTest extends NoBuilderTest {
     }
 
     @Test
+    void scheduledSuspendDoesNotRecordAConsumerThatWasAlreadyStopped() throws Exception {
+        Route route = startRouteWithActionsRunByTheTest();
+        ScheduledRoutePolicy policy = scheduledRoutePolicy(route);
+        Consumer consumer = route.getConsumer();
+
+        // something else stopped the consumer (such as a throttling policy), and the route is still started
+        ServiceHelper.stopService(consumer);
+        policy.onJobExecute(ScheduledRoutePolicyConstants.Action.SUSPEND, route);
+
+        // the consumer was not stopped by the scheduled suspend, so the scheduled resume or start leaves it stopped
+        policy.onJobExecute(ScheduledRoutePolicyConstants.Action.RESUME, route);
+        assertTrue(ServiceHelper.isStopped(consumer), "the scheduled resume started a consumer it did not stop");
+        policy.onJobExecute(ScheduledRoutePolicyConstants.Action.START, route);
+        assertTrue(ServiceHelper.isStopped(consumer), "the scheduled start started a consumer it did not stop");
+    }
+
+    @Test
+    void routeSuspendedAndResumedAfterTheScheduledSuspendKeepsNoRecordOfIt() throws Exception {
+        Route route = startRouteWithActionsRunByTheTest();
+        ScheduledRoutePolicy policy = scheduledRoutePolicy(route);
+        Consumer consumer = route.getConsumer();
+
+        policy.onJobExecute(ScheduledRoutePolicyConstants.Action.SUSPEND, route);
+        assertTrue(ServiceHelper.isStopped(consumer), "consumer should be stopped");
+
+        // the route controller suspends and resumes the route: its consumer is not Suspendable, so the route does not
+        // support suspension, and the route controller stops and starts the route instead
+        context.getRouteController().suspendRoute("test");
+        context.getRouteController().resumeRoute("test");
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
+        route = context.getRoute("test");
+        Consumer started = route.getConsumer();
+        assertTrue(ServiceHelper.isStarted(started), "consumer should be started by the route controller");
+
+        // something else stops the consumer: the scheduled suspend before the resume of the route no longer counts
+        ServiceHelper.stopService(started);
+        policy.onJobExecute(ScheduledRoutePolicyConstants.Action.RESUME, route);
+        assertTrue(ServiceHelper.isStopped(started), "the scheduled resume started a consumer it did not stop");
+    }
+
+    /**
+     * Starts a route with a non-Suspendable consumer and a scheduled route policy whose triggers never fire: the test
+     * runs the actions as the scheduler would.
+     */
+    private Route startRouteWithActionsRunByTheTest() throws Exception {
+        context.addEndpoint("listener:in", new ListenerEndpoint());
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                policy.setRouteSuspendTime("0 0 0 1 1 ? 2099");
+                policy.setRouteResumeTime("0 0 0 1 1 ? 2099");
+                policy.setRouteStartTime("0 0 0 1 1 ? 2099");
+
+                from("listener:in").routeId("test").routePolicy(policy).to("mock:result");
+            }
+        });
+        context.start();
+        return context.getRoute("test");
+    }
+
+    @Test
     void scheduledResumeOrStartDoesNotStartTheConsumerWhileCamelStops() throws Exception {
         List<String> startedDuringShutdown = runScheduledResumeAndStartWhileStopping(false);
 
