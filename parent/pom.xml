@@ -396,7 +396,7 @@
         <microprofile-config-version>3.1.2</microprofile-config-version>
         <milo-version>1.1.8</milo-version>
         <milvus-client-version>2.6.25</milvus-client-version>
-        <mina-version>2.2.9</mina-version>
+        <mina-version>2.2.10</mina-version>
         <minio-version>9.0.3</minio-version>
         <mockito-version>5.24.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
