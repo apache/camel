@@ -46,6 +46,7 @@ import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
 import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.hc.core5.http.impl.io.HttpRequestExecutor;
 import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.HttpConnectionFactory;
@@ -156,11 +157,6 @@ public class AS2ClientConnection {
         connectionKeepAliveStrategy = (response, context) -> {
             TimeValue ttl = TimeValue.of(connectionPoolTtl);
             for (Header h : response.getHeaders()) {
-                if (AS2Header.CONNECTION.equalsIgnoreCase(h.getName())) {
-                    if (AS2Header.CLOSE.equalsIgnoreCase(h.getValue())) {
-                        ttl = TimeValue.NEG_ONE_MILLISECOND;
-                    }
-                }
                 if (AS2Header.KEEP_ALIVE.equalsIgnoreCase(h.getName())) {
                     HeaderElement headerElement = MessageSupport.parseElements(h).get(0);
                     if (headerElement.getValue() != null && "timeout".equalsIgnoreCase(headerElement.getName())) {
@@ -217,15 +213,11 @@ public class AS2ClientConnection {
             response = endpoint.execute(UUID.randomUUID().toString(), request, requestExecutor, httpContext);
         } finally {
             if (endpoint != null) {
+                // a null keep-alive makes the pool close the connection: a zero or negative one keeps it with no expiry
                 TimeValue keepAlive = null;
-                if (response != null) {
-                    // Normal happy path: release with computed keep-alive.
+                if (response != null && DefaultConnectionReuseStrategy.INSTANCE.keepAlive(request, response, httpContext)) {
+                    // the partner allows the connection to be reused (no Connection: close, the response has a length)
                     keepAlive = connectionKeepAliveStrategy.getKeepAliveDuration(response, httpContext);
-                }
-                if (keepAlive == null) {
-                    // If we didn't get a response, something failed mid-flight:
-                    // do NOT keep this connection around. Close it and release with zero keep-alive.
-                    keepAlive = TimeValue.ZERO_MILLISECONDS;
                 }
                 try {
                     connectionPoolManager.release(endpoint, null, keepAlive);
