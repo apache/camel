@@ -18,6 +18,7 @@ package org.apache.camel.component.plc4x;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -54,6 +55,9 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
             = "plc4x:mock:10.10.10.1/1/1?trigger=TRIG&period=50&tag.temperature=TEMP";
     private static final String RESERVED_TAG_NAME = PLC + "&trigger=TRIG&period=50&tag.TRIGGER_VAR=TEMP";
     private static final String WITHOUT_PERIOD = PLC + "&trigger=TRIG&tag.temperature=TEMP";
+    private static final String DRIVER_PARAMETERS = PLC + "&trigger=TRIG&period=100&tag.temperature=TEMP"
+                                                    + "&exceptionHandler=#pollFailures&exchangePattern=InOnly"
+                                                    + "&remote-rack=1&request-timeout-ms=500&percent-encoded=%25DB1";
 
     private final PollFailures pollFailures = new PollFailures();
 
@@ -263,6 +267,23 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
         assertTrue(cause.getMessage().contains("period"), cause::getMessage);
     }
 
+    @Test
+    public void handsTheDriverOnlyItsOwnConnectionParameters() throws Exception {
+        MockDriver.programRead("TRIG", true);
+        MockDriver.programRead("TEMP", 21);
+        MockEndpoint result = getMockEndpoint("mock:driverParameters");
+        result.expectedMessageCount(1);
+
+        context.getRouteController().startRoute("driverParameters");
+
+        result.assertIsSatisfied(10000);
+        assertEquals(Set.of("mock:10.10.10.1/1/1?percent-encoded=%25DB1&remote-rack=1&request-timeout-ms=500"),
+                Set.copyOf(MockDriver.connectionStrings()));
+        String uri = context.getEndpoint(DRIVER_PARAMETERS, Plc4XEndpoint.class).getUri();
+        assertTrue(uri.contains("trigger=TRIG") && uri.contains("autoReconnect=true"),
+                () -> "The endpoint no longer reports its configured uri: " + uri);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -275,6 +296,7 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
                         .to("mock:withoutAutoReconnect");
                 from(RESERVED_TAG_NAME).routeId("reservedTagName").autoStartup(false).to("mock:reservedTagName");
                 from(WITHOUT_PERIOD).routeId("withoutPeriod").autoStartup(false).to("mock:withoutPeriod");
+                from(DRIVER_PARAMETERS).routeId("driverParameters").autoStartup(false).to("mock:driverParameters");
             }
         };
     }
