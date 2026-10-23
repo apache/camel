@@ -334,9 +334,6 @@ public class ProducerOnSharedConnectionTest extends AbstractMiloServerTest {
     }
 
     /**
-     * Asserts that an awaited request failed with the given status code of the client
-     */
-    /**
      * A connection creates a node that the server refused again while its producer sends a request. With one processor
      * the executor that completes the requests has a single thread, as here: a write completes while the server holds
      * the attempt, which waits for its answer.
@@ -403,6 +400,9 @@ public class ProducerOnSharedConnectionTest extends AbstractMiloServerTest {
         }
     }
 
+    /**
+     * Asserts that an awaited request failed with the given status code of the client
+     */
     private static void assertStatus(final long statusCode, final Exchange exchange) {
         final UaException failure = ObjectHelper.getException(UaException.class, exchange.getException());
         assertNotNull(failure, () -> "Expected a UaException, but the exchange failed with " + exchange.getException());
