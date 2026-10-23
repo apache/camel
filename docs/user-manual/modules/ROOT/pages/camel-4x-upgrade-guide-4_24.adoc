@@ -2416,6 +2416,18 @@ To keep the previous behaviour, filter the exchanges with a bad status out right
 `filter(simple("${body.statusCode.bad} == false"))`. This also drops the other bad statuses, such as the refusal of a
 node, and the current values delivered after an outage still arrive.
 
+=== camel-milo - an awaited write, call or read that fails now fails the exchange
+
+An awaited `milo-client` write, method call or read that fails at the service or transport level, for example a
+request that times out (`Bad_Timeout`) or a lost connection, now fails the exchange and lets the route's error
+handler run. Before, the exchange completed without an error and with a `null` body, silently discarding the failure.
+A bad status for the node itself, such as `Bad_TypeMismatch` on a write, is not a failure of the operation and is
+still returned as the body.
+
+An awaited `call` that succeeds now returns the `CallMethodResult` as the exchange body. Before, the body was
+always `null` even on success. A route that reads the result of an awaited call must be updated to read the
+`CallMethodResult` from the body instead of expecting `null`.
+
 === camel-milo - the reconnectTimeout of the components sets the delay between connection attempts
 
 `setReconnectTimeout` on the `milo-client` and `milo-browse` components set the request timeout of every service call,
