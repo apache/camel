@@ -35,7 +35,7 @@ public interface Aws2MqComponentBuilderFactory {
      * AWS MQ (camel-aws2-mq)
      * Manage AWS MQ instances.
      * 
-     * Category: cloud,messaging
+     * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
      * 

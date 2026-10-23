@@ -616,18 +616,6 @@ public interface EKS2EndpointBuilderFactory {
             return "CamelAwsEKSMaxResults";
         }
         /**
-         * A key description to use while performing a createKey operation.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code AwsEKSDescription}.
-         */
-        public String awsEKSDescription() {
-            return "CamelAwsEKSDescription";
-        }
-        /**
          * The cluster name.
          * 
          * The option is a: {@code String} type.

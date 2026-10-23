@@ -26,8 +26,6 @@ public interface EKS2Constants {
     String OPERATION = "CamelAwsEKSOperation";
     @Metadata(description = "The limit number of results while listing clusters", javaType = "Integer")
     String MAX_RESULTS = "CamelAwsEKSMaxResults";
-    @Metadata(description = "A key description to use while performing a createKey operation", javaType = "String")
-    String DESCRIPTION = "CamelAwsEKSDescription";
     @Metadata(description = "The cluster name", javaType = "String")
     String CLUSTER_NAME = "CamelAwsEKSClusterName";
     @Metadata(description = "The role ARN to use while creating the cluster", javaType = "String")

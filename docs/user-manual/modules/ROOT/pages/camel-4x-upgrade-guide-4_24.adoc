@@ -2682,3 +2682,8 @@ set the response as the message body, as the other delete operations do.
 The catalog and the endpoint DSL of `aws-bedrock-agent` listed the headers of `aws-bedrock-agent-runtime`. They now
 list the headers of `aws-bedrock-agent`, so the `CamelAwsBedrockAgentRuntime*` header names are no longer in the
 header builder of the `aws-bedrock-agent` endpoint DSL.
+
+The `CamelAwsEKSDescription` header of `aws2-eks` is removed, together with the `EKS2Constants.DESCRIPTION` constant and
+its method in the header builder of the endpoint DSL. No operation of the component read it.
+
+The `aws2-mq` component, which manages Amazon MQ brokers, is now in the `management` category instead of `messaging`.

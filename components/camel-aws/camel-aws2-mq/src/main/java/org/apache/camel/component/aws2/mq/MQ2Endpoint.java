@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.mq.MqClient;
  * Manage AWS MQ instances.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-mq", title = "AWS MQ", syntax = "aws2-mq:label", producerOnly = true,
-             category = { Category.CLOUD, Category.MESSAGING }, headersClass = MQ2Constants.class)
+             category = { Category.CLOUD, Category.MANAGEMENT }, headersClass = MQ2Constants.class)
 public class MQ2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private MqClient mqClient;
