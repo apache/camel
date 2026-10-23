@@ -124,7 +124,10 @@ public class AS2AsyncMDNConsumer extends AbstractApiConsumer<AS2ApiName, AS2Conf
         }
 
         if (exception != null) {
-            throw new HttpException("Failed to process AS2 receipt: " + exception.getMessage(), exception);
+            // the text of the exception is the body of the HTTP 500 that the partner gets
+            String text = getEndpoint().getConfiguration().isMuteException()
+                    ? "Failed to process AS2 receipt" : "Failed to process AS2 receipt: " + exception.getMessage();
+            throw new HttpException(text, exception);
         }
     }
 

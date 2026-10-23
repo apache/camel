@@ -2661,3 +2661,10 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== camel-as2 - the response to a failed route does not carry the message of the exception
+
+The server/listen and receipt/receive consumers have the new `muteException` option, `true` by default: when the
+route fails, the HTTP 500 that the partner gets says only that the message (or the receipt) could not be processed.
+Before, its body was the message of the exception of the route. Set `muteException=false` to send the message of the
+exception as before.

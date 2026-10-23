@@ -54,6 +54,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("MdnPassword", java.lang.String.class);
         map.put("MdnUserName", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("MuteException", boolean.class);
         map.put("Password", java.lang.String.class);
         map.put("ReceiptDeliveryOption", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
@@ -142,6 +143,8 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnUserName": target.setMdnUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": target.setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
@@ -250,6 +253,8 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnUserName": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "password": return java.lang.String.class;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return java.lang.String.class;
@@ -354,6 +359,8 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnUserName": return target.getMdnUserName();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "password": return target.getPassword();
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return target.getReceiptDeliveryOption();

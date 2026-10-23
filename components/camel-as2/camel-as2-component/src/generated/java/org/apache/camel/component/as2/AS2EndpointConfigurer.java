@@ -52,6 +52,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("TargetHostname", java.lang.String.class);
         map.put("TargetPortNumber", java.lang.Integer.class);
         map.put("UserAgent", java.lang.String.class);
+        map.put("MuteException", boolean.class);
         map.put("ExceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("ExchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("ExpectContinue", boolean.class);
@@ -144,6 +145,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mdnPassword": target.getConfiguration().setMdnPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "mdnusername":
         case "mdnUserName": target.getConfiguration().setMdnUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": target.getConfiguration().setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
@@ -252,6 +255,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mdnPassword": return java.lang.String.class;
         case "mdnusername":
         case "mdnUserName": return java.lang.String.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "password": return java.lang.String.class;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return java.lang.String.class;
@@ -356,6 +361,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mdnPassword": return target.getConfiguration().getMdnPassword();
         case "mdnusername":
         case "mdnUserName": return target.getConfiguration().getMdnUserName();
+        case "muteexception":
+        case "muteException": return target.getConfiguration().isMuteException();
         case "password": return target.getConfiguration().getPassword();
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return target.getConfiguration().getReceiptDeliveryOption();

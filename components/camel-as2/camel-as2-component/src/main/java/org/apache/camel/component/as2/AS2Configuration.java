@@ -120,6 +120,8 @@ public class AS2Configuration {
     private SSLContext sslContext;
     @UriParam(label = "security")
     private String asyncMdnAllowedHosts;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
     @UriParam(label = "security")
     private HostnameVerifier hostnameVerifier;
@@ -710,5 +712,17 @@ public class AS2Configuration {
      */
     public void setAsyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
         this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side (server listen or receipt receive), the HTTP
+     * response only says that the message or the receipt could not be processed, and not the message of the exception.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 }
