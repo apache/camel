@@ -73,13 +73,13 @@ import org.apache.camel.support.jsse.SSLContextParameters;
                                                  + " DispositionNotificationMultipartReportEntity, or a MultipartSignedEntity"
                                                  + " when it is signed. The CamelAs2.interchange exchange property holds the"
                                                  + " HttpCoreContext"),
-           producerIn = @BodyType(value = Carrier.ANY,
-                                  byOption = @BodyType.When(option = "inBody", value = "ediMessage",
-                                                            carriers = { Carrier.TEXT, Carrier.STREAM }),
-                                  description = "The EDI message of client/send with inBody=ediMessage, as it is: text, encoded"
-                                                + " in ediMessageCharset (us-ascii when not set), or a stream. Bytes, a file or"
-                                                + " a Map fail: convertBodyTo String first. Without inBody, the message comes"
-                                                + " from the CamelAs2.ediMessage header"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names the argument of the method it is: with"
+                                                + " inBody=ediMessage it is the EDI message of client/send, passed as it is,"
+                                                + " which must be text, encoded in ediMessageCharset (us-ascii when not set),"
+                                                + " or a stream; convert bytes or a file to text first. Without inBody the"
+                                                + " message comes from the ediMessage option or the CamelAs2.ediMessage"
+                                                + " header"),
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
                                    description = "The receipt (MDN) in the response when dispositionNotificationTo asks for"
                                                  + " one: a DispositionNotificationMultipartReportEntity, or a"
