@@ -84,7 +84,7 @@ public class AvroListener {
         if (AVRO_HTTP_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             AvroRpcHttpServerFactory factory = ResolverHelper.resolveMandatoryService(camelContext,
                     "avro-rpc-http-server-factory", AvroRpcHttpServerFactory.class, "camel-avro-rpc");
-            return factory.create(responder, configuration.getPort());
+            return factory.create(responder, configuration.getHost(), configuration.getPort());
         } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             return new NettyServer(responder, new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {
