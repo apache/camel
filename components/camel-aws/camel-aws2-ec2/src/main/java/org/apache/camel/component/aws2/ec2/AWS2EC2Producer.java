@@ -690,7 +690,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         if (text != null) {
             text = text.trim();
             InstanceType instanceType = InstanceType.fromValue(text);
-            if (instanceType != null && instanceType != InstanceType.UNKNOWN_TO_SDK_VERSION) {
+            if (instanceType != InstanceType.UNKNOWN_TO_SDK_VERSION) {
                 return instanceType;
             }
             for (InstanceType candidate : InstanceType.knownValues()) {
@@ -716,7 +716,9 @@ public class AWS2EC2Producer extends DefaultProducer {
         if (value instanceof Collection<?> collection) {
             List<String> ids = new ArrayList<>(collection.size());
             for (Object id : collection) {
-                ids.add(id != null ? id.toString() : null);
+                if (id != null) {
+                    ids.add(id.toString());
+                }
             }
             return ids;
         }
