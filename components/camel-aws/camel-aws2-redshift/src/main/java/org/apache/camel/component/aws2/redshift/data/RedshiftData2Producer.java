@@ -49,16 +49,16 @@ public class RedshiftData2Producer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-            case listDatabases -> listDatabases(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case listSchemas -> listSchemas(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case listStatements -> listStatements(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case listTables -> listTables(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case describeTable -> describeTable(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case executeStatement -> executeStatement(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case batchExecuteStatement -> batchExecuteStatement(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case cancelStatement -> cancelStatement(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case describeStatement -> describeStatement(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case getStatementResult -> getStatementResult(getConfiguration().getAwsRedshiftDataClient(), exchange);
+            case listDatabases -> listDatabases(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case listSchemas -> listSchemas(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case listStatements -> listStatements(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case listTables -> listTables(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case describeTable -> describeTable(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case executeStatement -> executeStatement(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case batchExecuteStatement -> batchExecuteStatement(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case cancelStatement -> cancelStatement(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case describeStatement -> describeStatement(getEndpoint().getAwsRedshiftDataClient(), exchange);
+            case getStatementResult -> getStatementResult(getEndpoint().getAwsRedshiftDataClient(), exchange);
             default -> throw new IllegalArgumentException("Unsupported operation");
         }
     }
