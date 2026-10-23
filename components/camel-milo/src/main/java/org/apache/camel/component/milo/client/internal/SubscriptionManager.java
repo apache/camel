@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,6 +49,8 @@ import java.util.stream.Stream;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
+import org.apache.camel.component.milo.client.MiloClientConnection.MonitoringState;
+import org.apache.camel.component.milo.client.MiloClientConnection.RefusedNode;
 import org.apache.camel.component.milo.client.MonitorFilterConfiguration;
 import org.eclipse.milo.opcua.sdk.client.DiscoveryClient;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
@@ -255,7 +259,8 @@ public class SubscriptionManager {
 
         /**
          * Whether the server refused to monitor the node: its status is that refusal, whatever the communication, until
-         * its item is created
+         * its item is created. Set under the lock of the manager when a call hands the refusal out for delivery, and
+         * cleared under it when a call creates the item.
          */
         private volatile boolean refused;
 
@@ -293,11 +298,13 @@ public class SubscriptionManager {
         }
 
         /**
-         * Delivers the status with which the server refused to monitor the node.
+         * Delivers the status with which the server refused to monitor the node, unless its item has been created
+         * since: the node then delivers its values instead.
          */
-        void refuse(final long generation, final DataValue status) {
-            this.refused = true;
-            deliver(generation, status);
+        synchronized void refuse(final long generation, final DataValue status) {
+            if (this.refused) {
+                deliver(generation, status);
+            }
         }
 
         /**
@@ -326,7 +333,8 @@ public class SubscriptionManager {
     }
 
     /**
-     * A status value for a node that could not be monitored, delivered to its consumer outside of the lock
+     * A status value for a node that could not be monitored, delivered to its consumer outside of the lock while the
+     * node is still refused
      */
     private record PendingValue(Subscription subscription, long generation, DataValue value) {
         void deliver() {
@@ -340,9 +348,25 @@ public class SubscriptionManager {
         private final SubscriptionListenerImpl listener;
         private final long generation;
 
-        private final Map<UInteger, OpcUaMonitoredItem> goodSubscriptions = new HashMap<>();
+        /**
+         * The monitored items by client handle, written under {@code lock} and counted by the monitoring state without
+         * it
+         */
+        private final Map<UInteger, OpcUaMonitoredItem> goodSubscriptions = new ConcurrentHashMap<>();
 
         private final Map<String, UShort> namespaceCache = new ConcurrentHashMap<>();
+
+        /**
+         * The nodes whose monitored item was refused on this connection, by client handle, each with the status of its
+         * latest attempt, which are created again every {@code reconnectTimeout} milliseconds. Written under
+         * {@code lock} and read by the monitoring state without it.
+         */
+        private final Map<UInteger, RefusedNode> refused = new ConcurrentSkipListMap<>();
+
+        /**
+         * The next attempt to create the refused nodes again, if one is scheduled, guarded by {@code lock}
+         */
+        private Future<?> retryJob;
 
         Connected(final OpcUaClient client, final OpcUaSubscription manager, final SubscriptionListenerImpl listener) {
             this.client = client;
@@ -352,15 +376,21 @@ public class SubscriptionManager {
         }
 
         /**
-         * Creates the monitored items of the subscriptions on the server.
+         * Creates the monitored items of the subscriptions on the server. A node that the server refuses to monitor is
+         * created again on this connection every {@code reconnectTimeout} milliseconds, until its item is created or it
+         * is unregistered.
          *
          * @param  subscriptions the subscriptions to create, by client handle
+         * @param  retry         whether this is an attempt to create refused nodes again: their refusal has been queued
+         *                       for delivery already, so a node refused again is neither logged above DEBUG nor
+         *                       delivered
          * @return               the bad status values of the nodes that could not be monitored, to be delivered to
          *                       their consumers after the lock of the manager has been released
-         * @throws UaException   if the server rejected the CreateMonitoredItems service call, the connection has to be
-         *                       rebuilt
+         * @throws UaException   if the server rejected the CreateMonitoredItems service call; unless {@code retry} is
+         *                       set, the connection has to be rebuilt
          */
-        public List<PendingValue> putSubscriptions(final Map<UInteger, Subscription> subscriptions) throws Exception {
+        public List<PendingValue> putSubscriptions(final Map<UInteger, Subscription> subscriptions, final boolean retry)
+                throws Exception {
 
             final List<PendingValue> pendingValues = new ArrayList<>();
 
@@ -373,18 +403,24 @@ public class SubscriptionManager {
             // Milo 1.0.5 API: create monitored items and set up listeners
             final List<OpcUaMonitoredItem> items = new ArrayList<>(subscriptions.size());
             final Map<OpcUaMonitoredItem, UInteger> itemToClientHandle = new HashMap<>();
+            // the namespace URIs that the server does not have, read once per call: all nodes of a missing namespace
+            final Set<String> unknownNamespaces = new HashSet<>();
 
             for (final Map.Entry<UInteger, Subscription> entry : subscriptions.entrySet()) {
                 final Subscription s = entry.getValue();
 
-                final NodeId node = lookupNamespace(s.getNodeId()).get();
+                final String namespaceUri = s.getNodeId().getNamespaceUri();
+                final NodeId node = namespaceUri != null && unknownNamespaces.contains(namespaceUri)
+                        ? null : lookupNamespace(s.getNodeId()).get();
 
                 if (node == null) {
-                    // reported once like a node the server rejects, the other nodes and the connection are not affected
-                    final StatusCode status = new StatusCode(StatusCodes.Bad_NodeIdUnknown);
-                    LOG.warn("Monitored item for node {} could not be created, the namespace URI is unknown to the server: {}",
-                            s.getNodeId().toParseableString(), status);
-                    pendingValues.add(new PendingValue(s, this.generation, new DataValue(status)));
+                    if (namespaceUri != null) {
+                        unknownNamespaces.add(namespaceUri);
+                    }
+                    // refused like a node the server rejects, the other nodes and the connection are not affected; the
+                    // namespace table is read again on the next attempt, so a namespace added later is found
+                    refuse(entry.getKey(), s, new StatusCode(StatusCodes.Bad_NodeIdUnknown),
+                            "the namespace URI is unknown to the server", retry, pendingValues);
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     final OpcUaMonitoredItem item = new OpcUaMonitoredItem(itemId, MonitoringMode.Reporting);
@@ -425,17 +461,18 @@ public class SubscriptionManager {
                     if (result.isGood()) {
                         this.goodSubscriptions.put(clientHandle, item);
                         subscriptions.get(clientHandle).refused = false;
+                        if (this.refused.remove(clientHandle) != null && retry) {
+                            LOG.info("Monitored item for node {} created on retry",
+                                    subscriptions.get(clientHandle).getNodeId().toParseableString());
+                        }
                     } else if (result.serviceResult().isBad()) {
                         failedItems.add(item);
                         rejectedServiceResult = result.serviceResult();
                     } else {
-                        // reported once, the item is created again when the consumer restarts or the connection is rebuilt
+                        // reported once, the item is created again later on this connection
                         failedItems.add(item);
-                        final Subscription s = subscriptions.get(clientHandle);
-                        final StatusCode status = result.operationResult().orElse(result.serviceResult());
-                        LOG.warn("Monitored item for node {} could not be created: {}", s.getNodeId().toParseableString(),
-                                status);
-                        pendingValues.add(new PendingValue(s, this.generation, new DataValue(status)));
+                        refuse(clientHandle, subscriptions.get(clientHandle),
+                                result.operationResult().orElse(result.serviceResult()), null, retry, pendingValues);
                     }
                 }
 
@@ -451,7 +488,56 @@ public class SubscriptionManager {
                 }
             }
 
+            // marked under the lock once the call has succeeded: a refusal that the creation of its item overtakes, by
+            // an attempt or a new connection, is then dropped, and a call that fails leaves the nodes to the loss report
+            // of the connection
+            pendingValues.forEach(pending -> pending.subscription().refused = true);
+            scheduleRetry();
             return pendingValues;
+        }
+
+        /**
+         * Records that the server refused to monitor a node. The first refusal is logged at WARN and queued for
+         * delivery to the consumer, a refusal on a later attempt only logged at DEBUG.
+         */
+        private void refuse(
+                final UInteger clientHandle, final Subscription s, final StatusCode status, final String reason,
+                final boolean retry, final List<PendingValue> pendingValues) {
+            final String node = s.getNodeId().toParseableString();
+            this.refused.put(clientHandle, new RefusedNode(node, status, reason));
+            final String because = reason == null ? "" : ", " + reason;
+            if (retry) {
+                LOG.debug("Monitored item for node {} could not be created on retry{}: {}", node, because, status);
+            } else {
+                LOG.warn("Monitored item for node {} could not be created{}, trying again every {} ms: {}", node, because,
+                        SubscriptionManager.this.reconnectTimeout, status);
+                pendingValues.add(new PendingValue(s, this.generation, new DataValue(status)));
+            }
+        }
+
+        /**
+         * Schedules the next attempt to create the refused nodes again, unless there is none or one is scheduled. The
+         * timer runs on the reconnect thread, the attempt, which blocks until the server answers, on the executor of
+         * the connection, so that a slow attempt does not hold up a reconnect.
+         */
+        private void scheduleRetry() {
+            if (this.refused.isEmpty() || this.retryJob != null || SubscriptionManager.this.disposed) {
+                return;
+            }
+            this.retryJob = SubscriptionManager.this.reconnectExecutor.schedule(
+                    () -> SubscriptionManager.this.executor.execute(() -> retryRefused(this)),
+                    SubscriptionManager.this.reconnectTimeout, TimeUnit.MILLISECONDS);
+        }
+
+        /**
+         * Cancels the next attempt to create the refused nodes again, if one is scheduled: a connection that is
+         * replaced or disposed is not retried
+         */
+        private void cancelRetry() {
+            if (this.retryJob != null) {
+                this.retryJob.cancel(false);
+                this.retryJob = null;
+            }
         }
 
         /**
@@ -474,12 +560,13 @@ public class SubscriptionManager {
             this.manager.deleteMonitoredItems();
 
             this.manager.create();
-            return putSubscriptions(monitored);
+            return putSubscriptions(monitored, false);
         }
 
         public void deactivate(final List<UInteger> clientHandles) throws Exception {
             final List<OpcUaMonitoredItem> items = new ArrayList<>(clientHandles.size());
             for (final UInteger clientHandle : clientHandles) {
+                this.refused.remove(clientHandle);
                 final OpcUaMonitoredItem item = this.goodSubscriptions.remove(clientHandle);
                 if (item != null) {
                     items.add(item);
@@ -884,7 +971,10 @@ public class SubscriptionManager {
     private final ServerCertificateTrust serverCertificateTrust;
     private final Lock lock = new ReentrantLock();
 
-    private Connected connected;
+    /**
+     * The current connection, written under {@code lock} and read by the monitoring state without it
+     */
+    private volatile Connected connected;
     private volatile Throwable lastConnectFailure;
     private volatile boolean disposed;
     private Future<?> reconnectJob;
@@ -919,6 +1009,23 @@ public class SubscriptionManager {
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * Returns what the current connection monitors. It is read without {@code lock}, which a service call holds until
+     * the server answers, so its values are read one after the other and need not be consistent with each other.
+     *
+     * @return the monitoring state, with no session and no nodes while there is no connection or it is being closed
+     */
+    public MonitoringState getMonitoringState() {
+        final Connected connected = this.connected;
+        // a connection that is being closed can wait for the server, its nodes are reported lost already
+        if (connected == null || this.disposed || connected.listener.closed) {
+            return new MonitoringState(false, 0, List.of());
+        }
+        return new MonitoringState(
+                connected.listener.sessionActive, connected.goodSubscriptions.size(),
+                List.copyOf(connected.refused.values()));
     }
 
     /**
@@ -1040,6 +1147,58 @@ public class SubscriptionManager {
         pendingValues.forEach(PendingValue::deliver);
     }
 
+    /**
+     * Creates the nodes that the server refused to monitor on a connection again, in one CreateMonitoredItems call,
+     * while the connection is the current one. Nothing is delivered to the consumers: a node created now delivers its
+     * first value from the server, and its refusal, if not delivered yet, is dropped. While the session is not active,
+     * the attempt is skipped. A call that fails is made again with the next attempt and never rebuilds the connection,
+     * which would interrupt the nodes that are monitored: a lost session or subscription is recovered without it. Its
+     * failure is the status of the nodes until the next attempt.
+     * <p>
+     * Like the registration of a consumer, the attempt holds {@code lock} until the server answers, so that a consumer
+     * that stops or a subscription that is recreated in the meantime cannot interleave with it, and the producers and
+     * {@link #getOpcUaClient()} wait for it. The wait is bounded: the attempt is only sent while the session is active,
+     * a call in flight when the connection drops silently fails once the keep-alive of the client declares the session
+     * lost, and a call that the server does not answer fails after the request timeout.
+     */
+    private void retryRefused(final Connected connected) {
+        lock.lock();
+        try {
+            connected.retryJob = null;
+            if (this.disposed || this.connected != connected || connected.refused.isEmpty()) {
+                return;
+            }
+            if (!connected.listener.sessionActive) {
+                LOG.debug("Session not active, the refused monitored items are created again later");
+                connected.scheduleRetry();
+                return;
+            }
+            final Map<UInteger, Subscription> refused = new LinkedHashMap<>();
+            for (final UInteger clientHandle : connected.refused.keySet()) {
+                final Subscription subscription = this.subscriptions.get(clientHandle);
+                if (subscription != null) {
+                    refused.put(clientHandle, subscription);
+                }
+            }
+            final Map<UInteger, RefusedNode> beforeAttempt = new HashMap<>(connected.refused);
+            try {
+                connected.putSubscriptions(refused, true);
+            } catch (final Exception e) {
+                LOG.debug("Failed to create the refused monitored items again, trying again later", e);
+                // the call was rejected or failed, or the namespace table could not be read: a node that the attempt
+                // did not answer, whose entry is still the one from before it, has the failure of the attempt
+                final StatusCode failure
+                        = UaException.extractStatusCode(e).orElse(new StatusCode(StatusCodes.Bad_UnexpectedError));
+                refused.keySet().forEach(clientHandle -> connected.refused.computeIfPresent(clientHandle,
+                        (handle, node) -> node == beforeAttempt.get(handle)
+                                ? new RefusedNode(node.nodeId(), failure, null) : node));
+                connected.scheduleRetry();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
     private boolean isCurrent(final OpcUaSubscription subscription) {
         return !this.disposed && this.connected != null && this.connected.manager == subscription;
     }
@@ -1114,6 +1273,7 @@ public class SubscriptionManager {
             if (this.connected != null) {
                 // the nodes lose their communication with the connection, after the values it still delivers
                 reportLoss(this.connected.manager, this.connected.generation, this.subscriptions);
+                this.connected.cancelRetry();
                 this.connected.dispose();
                 this.connected = null;
             }
@@ -1163,7 +1323,7 @@ public class SubscriptionManager {
 
                 try {
                     LOG.debug("Setting subscriptions: {}", this.subscriptions.size());
-                    pendingValues.addAll(connected.putSubscriptions(this.subscriptions));
+                    pendingValues.addAll(connected.putSubscriptions(this.subscriptions, false));
 
                     LOG.debug("Update state : {} -> {}", this.connected, connected);
                     final Connected oldConnected = this.connected;
@@ -1172,11 +1332,13 @@ public class SubscriptionManager {
 
                     if (oldConnected != null) {
                         LOG.debug("Dispose old state");
+                        oldConnected.cancelRetry();
                         oldConnected.dispose();
                     }
 
                 } catch (final Exception e) {
                     LOG.info("Failed to set subscriptions", e);
+                    connected.cancelRetry();
                     connected.dispose();
                     throw e;
                 }
@@ -1336,6 +1498,10 @@ public class SubscriptionManager {
             }
             this.disposed = true;
             connected = this.connected;
+            if (connected != null) {
+                // the next attempt is cancelled under the lock that guards it, the connection is disposed outside of it
+                connected.cancelRetry();
+            }
             if (this.reconnectJob != null) {
                 // a waiting reconnect would keep the thread of the reconnect executor until it is due
                 this.reconnectJob.cancel(false);
@@ -1504,7 +1670,7 @@ public class SubscriptionManager {
                 reportLoss(this.connected.manager, this.connected.generation, subscriptions);
             }
 
-            whenConnected(connected -> pendingValues.addAll(connected.putSubscriptions(subscriptions)));
+            whenConnected(connected -> pendingValues.addAll(connected.putSubscriptions(subscriptions, false)));
         } finally {
             lock.unlock();
         }

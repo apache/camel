@@ -221,6 +221,29 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testEqualsOnTheBodySaysHowToCompare() {
+        // CAMEL-26041: Camel does not call equals on a bean, so the text of the body is not why it fails
+        exchange.getIn().setBody("test-value-2");
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.equals('test-value-2')}")
+                        .evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("equals('test-value-2') (Camel does not call equals on a bean: compare with an"
+                                            + " operator instead, such as ${body} == 'value' in simple)")
+                .doesNotContain("unmarshal");
+    }
+
+    @Test
+    public void testHashCodeOnAListIsNotAMissingElement() {
+        // CAMEL-26041: nor is the body a List without such a method or key
+        exchange.getIn().setBody(List.of("A1", "A2"));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.hashCode()}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("hashCode() (Camel does not call hashCode on a bean)")
+                .doesNotContain("a List has no method");
+    }
+
+    @Test
     public void testKeyOnTheFileAsReadSaysToUnmarshal() {
         // CAMEL-25749: ${body[status]} on the file consumer's body, before any unmarshal
         GenericFile<File> file = new GenericFile<>();
@@ -242,10 +265,11 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.orderId}").evaluate(exchange,
                         String.class));
-        assertThat(e.getMessage()).contains("(a List has no method or key orderId: pick an element first, such as"
-                                            + " [0].orderId, or the element whose orderId has a given value with jsonpath,"
-                                            + " such as jsonpath: \"$[?(@.orderId == '${header.orderId}')]\" with"
-                                            + " resultType java.util.Map, or split it)");
+        // the lookup by a field first: given [0] first, models took the first element
+        assertThat(e.getMessage()).contains("(a List has no method or key orderId: to pick the element whose orderId"
+                                            + " has a given value, use jsonpath: \"$[?(@.orderId == '${header.orderId}')]\""
+                                            + " with resultType java.util.Map (the element, or null when none matches);"
+                                            + " [0].orderId reads the first element; or split it)");
     }
 
     @Test
@@ -254,7 +278,8 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.find(o -> o.orderId == 1)}")
                         .evaluate(exchange, String.class));
-        assertThat(e.getMessage()).contains("(a List has no such method: pick an element first, such as [0].field");
+        assertThat(e.getMessage()).contains("(a List has no such method: to pick the element whose field has a given"
+                                            + " value, use jsonpath");
     }
 
     @Test

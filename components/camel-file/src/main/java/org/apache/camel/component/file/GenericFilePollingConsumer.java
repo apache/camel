@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.Consumer;
 import org.apache.camel.DynamicPollingConsumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.PooledExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.EventDrivenPollingConsumer;
@@ -31,6 +32,8 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFilePollingConsumer.class);
     private final long delay;
+    // the exchange found by the poll of the calling thread, returned directly by receive
+    private final ThreadLocal<Exchange[]> polledByThisThread = new ThreadLocal<>();
 
     public GenericFilePollingConsumer(GenericFileEndpoint endpoint) {
         super(endpoint);
@@ -73,12 +76,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
         if (LOG.isTraceEnabled()) {
             LOG.trace("receiveNoWait polling file: {}", getConsumer().getEndpoint());
         }
-        int polled = doReceive(exchange, 0);
-        if (polled > 0) {
-            return super.receive(0);
-        } else {
-            return null;
-        }
+        return pollAndTake(exchange, 0, 0);
     }
 
     @Override
@@ -86,12 +84,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
         if (LOG.isTraceEnabled()) {
             LOG.trace("receive polling file: {}", getConsumer().getEndpoint());
         }
-        int polled = doReceive(exchange, Long.MAX_VALUE);
-        if (polled > 0) {
-            return super.receive();
-        } else {
-            return null;
-        }
+        return pollAndTake(exchange, Long.MAX_VALUE, -1);
     }
 
     @Override
@@ -99,12 +92,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
         if (LOG.isTraceEnabled()) {
             LOG.trace("receive({}) polling file: {}", timeout, getConsumer().getEndpoint());
         }
-        int polled = doReceive(exchange, timeout);
-        if (polled > 0) {
-            return super.receive(timeout);
-        } else {
-            return null;
-        }
+        return pollAndTake(exchange, timeout, timeout);
     }
 
     @Override
@@ -120,6 +108,28 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
     @Override
     public Exchange receive(long timeout) {
         return receive(null, timeout);
+    }
+
+    /**
+     * Polls and returns the exchange found by this poll, or the head of the queue when the exchange was processed on
+     * another thread.
+     */
+    private Exchange pollAndTake(Exchange exchange, long pollTimeout, long receiveTimeout) {
+        Exchange[] slot = new Exchange[1];
+        polledByThisThread.set(slot);
+        int polled;
+        try {
+            polled = doReceive(exchange, pollTimeout);
+        } finally {
+            polledByThisThread.remove();
+        }
+        if (slot[0] != null) {
+            return slot[0];
+        } else if (polled > 0) {
+            return receiveTimeout < 0 ? super.receive() : super.receive(receiveTimeout);
+        } else {
+            return null;
+        }
     }
 
     protected int doReceive(Exchange exchange, long timeout) {
@@ -216,6 +226,12 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
         Object name = exchange.getIn().getHeader(FileConstants.FILE_NAME);
         if (name != null) {
             LOG.debug("Received file: {}", name);
+        }
+        Exchange[] slot = polledByThisThread.get();
+        if (slot != null && slot[0] == null) {
+            // a receive call on this thread is polling, so return the exchange to that call
+            slot[0] = isCopy() || exchange instanceof PooledExchange ? prepareCopy(exchange, true) : exchange;
+            return;
         }
         super.process(exchange);
     }

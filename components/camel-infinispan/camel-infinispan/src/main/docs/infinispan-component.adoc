@@ -200,6 +200,25 @@ The resulting value is returned in the exchange *body*.
 Write methods like put(key, value) and remove(key) do not return the previous value by default.
 ====
 
+=== Key and cache name headers
+
+The `key` option of the endpoint takes precedence over the `CamelInfinispanKey` header. When the endpoint does not set
+`key`, the producer uses the `CamelInfinispanKey` header.
+
+The `CamelInfinispanCacheName` header takes precedence over the cache name of the endpoint.
+
+An `infinispan` consumer sets `CamelInfinispanKey` and `CamelInfinispanCacheName` to the key and the cache of the event.
+When a route sends those events to an `infinispan` producer, the producer works on the cache of the event, and on the key
+of the event unless the endpoint sets `key`. To use the cache and the key configured on the producer endpoint, remove
+the headers first:
+
+[source,java]
+----
+from("infinispan:source")
+    .removeHeaders("CamelInfinispan*")
+    .to("infinispan:target?operation=PUT&key=myKey&value=myValue");
+----
+
 == Examples
 
 * Put a key/value into a named cache:
