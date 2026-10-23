@@ -198,7 +198,7 @@ For these operations, `accountName` and `queueName` are *required*.
 |`createQueue` | Creates a new queue.
 |`deleteQueue` | Permanently deletes the queue.
 |`clearQueue`| Deletes all messages in the queue..
-|`sendMessage`| *Default Producer Operation* Sends a message with a given time-to-live and timeout period where the message is invisible in the queue. The message text is evaluated from the exchange message body.
+|`sendMessage`| *Default Producer Operation* Sends a message with a given time-to-live and timeout period where the message is invisible in the queue. The message text is evaluated from the exchange message body; without a body the operation fails with an `InvalidPayloadException`.
                 By default, if the queue doesn't exist, it will create an empty queue first. If you want to disable this, set the config `createQueue` or header `CamelAzureStorageQueueCreateQueue` to `false`.
 |`deleteMessage`| Deletes the specified message in the queue.
 |`receiveMessages`|  Retrieves up to the maximum number of messages from the queue and hides them from other operations for the timeout period. However, it will not dequeue the message from the queue due to reliability reasons.

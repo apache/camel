@@ -208,7 +208,7 @@ For these operations, `accountName`, `containerName` and `blobName` are *require
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
 |Operation |Blob Type|Description
-|`getBlob`  |Common|Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`getBlob`  |Common|Get the content of the blob. You can restrict the output of this operation to a blob range. The content is written to the body when the body is an `OutputStream`; any other body is replaced by an `InputStream` of the content.
 |`deleteBlob`  |Common|Delete a blob.
 |`downloadBlobToFile` |Common|Download the entire blob into a file specified by the path. The file will be created and must not exist, if the file already exists a `FileAlreadyExistsException` will be thrown.
 |`downloadLink`  |Common| Generate the download link for the specified blob using shared access signatures (SAS). This by default only limits to 1hour of allowed access. However, you can override the default expiration duration through the headers.

@@ -101,7 +101,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint
               description = "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used")
     private String pubsubEndpoint;
     @UriParam(label = "producer,advanced",
-              description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer")
+              description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer. It is used only for a body that is not a String or a byte array and that the type converter cannot convert to a byte array.")
     @Metadata(autowired = true)
     private GooglePubsubSerializer serializer;
     @UriParam(label = "producer,advanced",

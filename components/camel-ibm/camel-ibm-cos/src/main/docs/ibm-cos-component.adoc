@@ -78,6 +78,17 @@ If you don't specify an operation explicitly, the producer will do:
 - a single file upload
 - a multipart upload if multiPartUpload option is enabled
 
+=== Content length of putObject
+
+The putObject operation sends the content length of the object with the upload. When the length of the body is
+known, such as a `byte[]`, a `String`, a stream cache, a `java.io.File`, a `java.nio.file.Path` or the file of the
+xref:file-component.adoc[File] consumer, that length is used and the `CamelIBMCOSContentLength` header is ignored.
+The consumer and getObject set this header to the length of the object they read, so it is wrong once the route
+changed the body, and the upload would fail.
+
+Only for a stream of unknown length is the `CamelIBMCOSContentLength` header used, so the stream does not have to be
+read to know its length. Without the header, the stream is read into a stream cache first to compute its length.
+
 == Examples
 
 For example, to read file `hello.txt` from bucket `helloBucket`, use the following snippet:

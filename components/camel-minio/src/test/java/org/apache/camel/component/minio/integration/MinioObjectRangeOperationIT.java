@@ -67,7 +67,7 @@ class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
                              + "The maximum size of an object is 5TB.");
         });
 
-        template.send("direct:getPartialObject", exchange -> {
+        template.send("direct:getObjectRange", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "element.txt");
             exchange.getIn().setHeader(MinioConstants.OFFSET, 0);
             exchange.getIn().setHeader(MinioConstants.LENGTH, 9);
@@ -82,11 +82,11 @@ class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
             @Override
             public void configure() {
                 String minioEndpoint = "minio://mycamelbucket?autoCreateBucket=true";
-                String minioEndpoint1 = "minio://mycamelbucket?operation=getPartialObject";
+                String minioEndpoint1 = "minio://mycamelbucket?operation=getObjectRange";
 
                 from("direct:putObject").to(minioEndpoint);
 
-                from("direct:getPartialObject").to(minioEndpoint1).process(exchange -> {
+                from("direct:getObjectRange").to(minioEndpoint1).process(exchange -> {
                     InputStream minioPartialObject = exchange.getIn().getBody(InputStream.class);
                     LOG.info(readInputStream(minioPartialObject));
 

@@ -129,36 +129,36 @@ public class IBMCOSProducer extends DefaultProducer {
             metadata.setContentType(contentType);
         }
 
-        // Check for WrappedFile to get file length (works for remote files like SFTP)
         Object body = exchange.getIn().getMandatoryBody();
-        long wrappedFileLength = -1;
-        if (body instanceof WrappedFile<?> wf) {
-            wrappedFileLength = wf.getFileLength();
-        }
-
         InputStream inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
 
-        // Calculate content length if not provided to avoid SDK warnings
-        Long contentLength = exchange.getIn().getHeader(IBMCOSConstants.CONTENT_LENGTH, Long.class);
-        if (contentLength != null) {
-            metadata.setContentLength(contentLength);
-        } else if (wrappedFileLength > 0) {
-            // Use file length from WrappedFile (avoids reading stream into memory)
-            metadata.setContentLength(wrappedFileLength);
-        } else {
-            // such as a java.nio.file.Path, byte[] or stream cache
-            long length = PayloadHelper.getLength(body);
-            if (length < 0) {
-                length = PayloadHelper.getLength(inputStream);
-            }
-            if (length < 0) {
+        // The length of the body when it is known without reading it, such as a WrappedFile (works for remote files
+        // like SFTP), java.io.File, java.nio.file.Path, byte[], String or stream cache. The content length header is not
+        // used for such a body, as it can be stale once the route changed the body (for example the length of an object
+        // read by the consumer or getObject), and the SDK fails when the data does not have that length.
+        long length = -1;
+        if (body instanceof WrappedFile<?> wf && wf.getFileLength() > 0) {
+            length = wf.getFileLength();
+        }
+        if (length < 0) {
+            length = PayloadHelper.getLength(body);
+        }
+        if (length < 0) {
+            length = PayloadHelper.getLength(inputStream);
+        }
+        if (length < 0) {
+            // a stream of unknown length
+            Long contentLength = exchange.getIn().getHeader(IBMCOSConstants.CONTENT_LENGTH, Long.class);
+            if (contentLength != null) {
+                length = contentLength;
+            } else {
                 // copy the data to calculate the length, which uses stream caching
                 // so big payloads are spooled to disk when spooling is enabled
                 inputStream = PayloadHelper.cacheStream(exchange, inputStream);
                 length = PayloadHelper.getLength(inputStream);
             }
-            metadata.setContentLength(length);
         }
+        metadata.setContentLength(length);
 
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, inputStream, metadata);
 

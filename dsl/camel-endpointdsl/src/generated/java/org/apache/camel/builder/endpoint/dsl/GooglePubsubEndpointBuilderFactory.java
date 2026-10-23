@@ -704,7 +704,9 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * A custom GooglePubsubSerializer to use for serializing message
-         * payloads in the producer.
+         * payloads in the producer. It is used only for a body that is not a
+         * String or a byte array and that the type converter cannot convert to
+         * a byte array.
          * 
          * The option is a:
          * <code>org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer</code> type.
@@ -720,7 +722,9 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * A custom GooglePubsubSerializer to use for serializing message
-         * payloads in the producer.
+         * payloads in the producer. It is used only for a body that is not a
+         * String or a byte array and that the type converter cannot convert to
+         * a byte array.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer</code> type.

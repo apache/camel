@@ -22,6 +22,7 @@ import java.util.Map;
 import com.azure.core.http.rest.Response;
 import com.azure.storage.queue.models.UpdateMessageResult;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
 import org.apache.camel.component.azure.storage.queue.QueueConfigurationOptionsProxy;
 import org.apache.camel.component.azure.storage.queue.QueueConstants;
@@ -76,9 +77,10 @@ public class QueueOperations {
         return buildResponseWithEmptyBody(client.delete(timeout));
     }
 
-    public QueueOperationResponse sendMessage(final Exchange exchange) {
+    public QueueOperationResponse sendMessage(final Exchange exchange) throws InvalidPayloadException {
         ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
+        final String text = exchange.getIn().getMandatoryBody(String.class);
         final boolean queueCreated = configurationOptionsProxy.isCreateQueue(exchange);
 
         if (queueCreated) {
@@ -87,7 +89,6 @@ public class QueueOperations {
             client.createIfNotExists(metadata, timeout);
         }
 
-        final String text = exchange.getIn().getBody(String.class);
         final Duration visibilityTimeout = configurationOptionsProxy.getVisibilityTimeout(exchange);
         final Duration timeToLive = configurationOptionsProxy.getTimeToLive(exchange);
         final Duration timeout = configurationOptionsProxy.getTimeout(exchange);

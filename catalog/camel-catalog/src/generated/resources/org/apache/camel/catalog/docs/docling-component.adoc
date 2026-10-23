@@ -119,9 +119,13 @@ include::partial$component-endpoint-headers.adoc[]
 The component accepts the following input types in the message body:
 
 - `String` - Document content. It is only read as a location when the endpoint opts in - see <<_input_sources>> below
-- `byte[]` - Binary document content
+- `byte[]` - Binary document content, written to a temporary file
 - `File` - File object
-- `InputStream` - Input stream containing document data
+- `InputStream` - Input stream containing document data, such as the stream body of an HTTP or FTP consumer, or
+the stream cache that stream caching makes of a stream. It is written to a temporary file as a `byte[]` is; a
+stream cache is reset afterwards, so the route can read it again.
+
+A `byte[]` or `InputStream` body larger than `maxFileSize`, and a `File` larger than it, is rejected.
 
 For the batch operations the body may also be a `List<String>` or `String[]` of file paths, a `List<File>`
 or `File[]`, or a single directory path `String`.
