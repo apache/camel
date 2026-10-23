@@ -455,7 +455,8 @@ YAML::
 The route below sends each admin event as a JSON audit record to Kafka, and inserts the same record into an
 `audit_trail` table with the xref:ROOT:jdbc-component.adoc[JDBC] component. The JDBC component runs the SQL in the
 message body, and with `useHeadersAsParameters=true` it takes the values of the named parameters (`:?name`) from the
-`CamelJdbcParameters` header.
+`CamelJdbcParameters` header. The `timestamp` is the time of the event as Keycloak gives it, in milliseconds since the
+epoch, the same in the JSON record and in the table, so the `event_time` column is a `BIGINT`.
 
 [tabs]
 ====
