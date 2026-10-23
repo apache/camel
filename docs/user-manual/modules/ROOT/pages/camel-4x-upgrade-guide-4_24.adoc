@@ -1787,6 +1787,19 @@ login; an IP address must be listed as a subject alternative name of the certifi
 host of the endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour. A custom
 `ftpClient` set on the endpoint is not changed.
 
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - ${file:name} in moveExisting is the name of the file
+
+With `fileExist=Move`, the `${file:name}` token of `moveExisting` is now the name of the existing file in its
+directory, as the producer of `ftp`, `ftps` and `sftp` already used it with the default `stepwise=true`. With
+`stepwise=false`, with a `tempFileName`, and in `mina-sftp`, it was the path of the file from the login directory, and
+a relative `moveExisting` is put below the directory of the file. So `moveExisting=backup/${file:name}` for
+`hello.txt` in the directory `inbox/orders` moved the existing file to `inbox/orders/backup/inbox/orders/hello.txt`;
+it is now moved to `inbox/orders/backup/hello.txt`. The tokens `${file:name.noext}` and `${file:name.noext.single}`
+read the same name and change the same way: `inbox/orders/hello` is now `hello`. A backup kept in the nested
+directory is no longer found there, for example by the check for an existing backup when
+`eagerDeleteTargetFile=false`, or by a job that reads the backups. `${file:parent}`, `${file:onlyname}` and
+`${file:ext}` are unchanged, and so is a `moveExisting` without `${...}` such as `moveExisting=backup`.
+
 === camel-aws-secrets-manager - the CloudTrail refresh task reads every event since the last check
 
 With `camel.vault.aws.refreshEnabled=true` and without SQS notification, each check now reads every page of the

@@ -51,7 +51,11 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
         //any leading separator
         String parent = FileUtil.stripLeadingSeparator(FileUtil.onlyPath(fileName));
         String onlyName = FileUtil.stripPath(fileName);
-        dummy.getIn().setHeader(FtpConstants.FILE_NAME, fileName);
+        // the file name is the name in the directory of the file, as when the producer has changed into that
+        // directory (stepwise=true); a relative result is completed with that directory below. Without stepwise
+        // (and in mina-sftp) the given name has the path from the login directory, and with it ${file:name} would
+        // put that path again below the directory of the file
+        dummy.getIn().setHeader(FtpConstants.FILE_NAME, onlyName);
         dummy.getIn().setHeader(FtpConstants.FILE_NAME_ONLY, onlyName);
         dummy.getIn().setHeader(FtpConstants.FILE_PARENT, parent);
 
