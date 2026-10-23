@@ -51,7 +51,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
     public void process(Exchange exchange) {
         if (connection == null) {
             try {
-                connection = endpoint.createConnection();
+                connection = endpoint.acquireConnection(this);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeExchangeException("Interrupted while connecting to XMPP server.", exchange, e);
@@ -101,12 +101,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
     private void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
         lock.lock();
         try {
-            if (!connection.isConnected()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
-                }
-                connection.connect();
-            }
+            // the connection is shared by the consumers and producers of the account
+            endpoint.reconnect(connection);
         } finally {
             lock.unlock();
         }
@@ -116,7 +112,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         if (connection == null) {
             try {
-                connection = endpoint.createConnection();
+                connection = endpoint.acquireConnection(this);
             } catch (SmackException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
                     throw new RuntimeCamelException(
@@ -160,16 +156,20 @@ public class XmppGroupChatProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (chat != null) {
-            LOG.info("Leaving room: {}", room);
-            chat.leave();
+        try {
+            if (chat != null) {
+                LOG.info("Leaving room: {}", room);
+                chat.leave();
+            }
+        } finally {
+            chat = null;
+            // also when leaving failed: the connection is down, or Smack no longer has us in the room
+            if (connection != null) {
+                // the connection is shared with the other consumers and producers of the account
+                endpoint.releaseConnection(this);
+            }
+            connection = null;
         }
-        chat = null;
-
-        if (connection != null && connection.isConnected()) {
-            connection.disconnect();
-        }
-        connection = null;
 
         super.doStop();
     }

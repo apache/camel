@@ -74,8 +74,6 @@ public class NettyHttpComponent extends NettyComponent
     private NettyHttpSecurityConfiguration securityConfiguration;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "consumer", defaultValue = "true")
-    private boolean muteException = true;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -317,15 +315,22 @@ public class NettyHttpComponent extends NettyComponent
     }
 
     public boolean isMuteException() {
-        return muteException;
+        NettyHttpConfiguration configuration = getConfiguration();
+        return configuration == null || configuration.isMuteException();
     }
 
     /**
      * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
      * exception's stack trace.
+     * <p>
+     * The option is held by the {@link #getConfiguration() configuration}, so this is the same option as
+     * {@code configuration.muteException}.
      */
     public void setMuteException(boolean muteException) {
-        this.muteException = muteException;
+        if (getConfiguration() == null) {
+            setConfiguration(new NettyHttpConfiguration());
+        }
+        getConfiguration().setMuteException(muteException);
     }
 
     public HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {

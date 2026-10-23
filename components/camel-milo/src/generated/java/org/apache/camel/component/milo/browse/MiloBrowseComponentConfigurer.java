@@ -74,6 +74,8 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "producturi":
         case "productUri": getOrCreateConfiguration(target).setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnecttimeout":
+        case "reconnectTimeout": getOrCreateConfiguration(target).setReconnectTimeout(property(camelContext, long.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "requestedpublishinginterval":
@@ -143,6 +145,8 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "password": return java.lang.String.class;
         case "producturi":
         case "productUri": return java.lang.String.class;
+        case "reconnecttimeout":
+        case "reconnectTimeout": return long.class;
         case "requesttimeout":
         case "requestTimeout": return java.lang.Long.class;
         case "requestedpublishinginterval":
@@ -208,6 +212,8 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "password": return getOrCreateConfiguration(target).getPassword();
         case "producturi":
         case "productUri": return getOrCreateConfiguration(target).getProductUri();
+        case "reconnecttimeout":
+        case "reconnectTimeout": return getOrCreateConfiguration(target).getReconnectTimeout();
         case "requesttimeout":
         case "requestTimeout": return getOrCreateConfiguration(target).getRequestTimeout();
         case "requestedpublishinginterval":

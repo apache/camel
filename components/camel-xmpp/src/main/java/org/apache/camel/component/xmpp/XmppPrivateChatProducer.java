@@ -55,7 +55,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         // make sure we are connected
         try {
             if (connection == null) {
-                connection = endpoint.createConnection();
+                connection = endpoint.acquireConnection(this);
             }
 
             if (!connection.isConnected()) {
@@ -113,12 +113,8 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     private void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
         lock.lock();
         try {
-            if (!connection.isConnected()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
-                }
-                connection.connect();
-            }
+            // the connection is shared by the consumers and producers of the account
+            endpoint.reconnect(connection);
         } finally {
             lock.unlock();
         }
@@ -128,7 +124,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         if (connection == null) {
             try {
-                connection = endpoint.createConnection();
+                connection = endpoint.acquireConnection(this);
             } catch (SmackException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
                     throw new RuntimeCamelException(
@@ -144,8 +140,9 @@ public class XmppPrivateChatProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (connection != null && connection.isConnected()) {
-            connection.disconnect();
+        if (connection != null) {
+            // the connection is shared with the other consumers and producers of the account
+            endpoint.releaseConnection(this);
         }
         connection = null;
         super.doStop();

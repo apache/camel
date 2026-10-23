@@ -39,7 +39,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.lmax.disruptor.InsufficientCapacityException;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +81,8 @@ public class DisruptorReference {
 
     //access guarded by this
     private ExecutorService executor;
+    // the CamelContext whose ExecutorServiceManager created the executor, which shuts it down when it stops
+    private CamelContext executorContext;
 
     private LifecycleAwareExchangeEventHandler[] handlers = new LifecycleAwareExchangeEventHandler[0];
 
@@ -256,17 +260,42 @@ public class DisruptorReference {
         }
     }
 
+    /**
+     * The CamelContext to create the threads of the event handlers with: the CamelContext of an endpoint that uses this
+     * Disruptor (with disruptor-vm, the endpoints can belong to several CamelContexts), else that of the component that
+     * created it.
+     */
+    private CamelContext resolveExecutorContext() {
+        for (DisruptorEndpoint endpoint : endpoints) {
+            CamelContext context = endpoint.getCamelContext();
+            if (context != null) {
+                return context;
+            }
+        }
+        return component.getCamelContext();
+    }
+
+    private boolean isExecutorContextInUse() {
+        for (DisruptorEndpoint endpoint : endpoints) {
+            if (endpoint.getCamelContext() == executorContext) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void resizeThreadPoolExecutor(final int newSize) {
         if (executor == null && newSize > 0) {
             LOGGER.debug("Creating new executor with {} threads", newSize);
             //no thread pool executor yet, create a new one
-            executor = component.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, uri,
-                    newSize);
+            executorContext = resolveExecutorContext();
+            executor = executorContext.getExecutorServiceManager().newFixedThreadPool(this, uri, newSize);
         } else if (executor != null && newSize <= 0) {
             LOGGER.debug("Shutting down executor");
             //we need to shut down our executor
-            component.getCamelContext().getExecutorServiceManager().shutdown(executor);
+            executorContext.getExecutorServiceManager().shutdown(executor);
             executor = null;
+            executorContext = null;
         } else if (executor instanceof ThreadPoolExecutor threadPoolExecutor) {
             LOGGER.debug("Resizing existing executor to {} threads", newSize);
             //our thread pool executor is of type ThreadPoolExecutor, we know how to resize it
@@ -283,10 +312,10 @@ public class DisruptorReference {
         } else if (newSize > 0) {
             LOGGER.debug("Shutting down old and creating new executor with {} threads", newSize);
             //hmmm...no idea what kind of executor this is...just kill it and start fresh
-            component.getCamelContext().getExecutorServiceManager().shutdown(executor);
+            executorContext.getExecutorServiceManager().shutdown(executor);
 
-            executor = component.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, uri,
-                    newSize);
+            executorContext = resolveExecutorContext();
+            executor = executorContext.getExecutorServiceManager().newFixedThreadPool(this, uri, newSize);
         }
     }
 
@@ -404,6 +433,21 @@ public class DisruptorReference {
             }
             endpoints.remove(disruptorEndpoint);
             LOGGER.debug("Endpoint removed: {}, new total endpoints {}", disruptorEndpoint, getEndpointCount());
+            if (executor != null && !endpoints.isEmpty() && !isExecutorContextInUse()) {
+                // a disruptor-vm queue shared with other CamelContexts: the CamelContext of the threads of the event
+                // handlers no longer uses the queue, and shuts the threads down when it stops, so move them to the
+                // CamelContext of an endpoint that still uses it, or its consumers stop consuming for good
+                LOGGER.info("Moving the event handlers of disruptor {} from CamelContext {}, which no longer uses it, to"
+                            + " CamelContext {}",
+                        uri, executorContext.getName(), resolveExecutorContext().getName());
+                shutdownDisruptor(true);
+                shutdownExecutor();
+                try {
+                    start();
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+            }
         } finally {
             lock.unlock();
         }

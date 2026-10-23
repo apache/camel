@@ -26,7 +26,8 @@ public abstract class InfinispanConfiguration {
               enums = "PUT,PUTASYNC,PUTALL,PUTALLASYNC,PUTIFABSENT,PUTIFABSENTASYNC,GET,GETORDEFAULT,CONTAINSKEY,CONTAINSVALUE,REMOVE,REMOVEASYNC,REPLACE,REPLACEASYNC,SIZE,CLEAR,CLEARASYNC,QUERY,STATS,COMPUTE,COMPUTEASYNC")
     private InfinispanOperation operation = InfinispanOperation.PUT;
 
-    @UriParam(label = "producer", description = "Set a specific key for producer operations")
+    @UriParam(label = "producer",
+              description = "Set a specific key for producer operations. When set, it takes precedence over the CamelInfinispanKey header.")
     private Object key;
 
     @UriParam(label = "producer", description = "Set a specific value for producer operations")

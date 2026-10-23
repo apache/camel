@@ -90,12 +90,16 @@ public class UnmarshalProcessorTest extends TestSupport {
     @Test
     public void testAllowNullBody() throws Exception {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), null);
+        exchange.getIn().setHeader("foo", "bar");
+        Message in = exchange.getIn();
         Processor processor = new UnmarshalProcessor(new MyDataFormat(exchange), true);
 
         processor.process(exchange);
 
         assertNull(exchange.getMessage().getBody(), "UnmarshalProcessor should allow null body");
         assertNull(exchange.getException(), "UnmarshalProcessor should allow null body");
+        assertSame(in, exchange.getMessage(), "UnmarshalProcessor should leave the message as it is");
+        assertEquals("bar", exchange.getMessage().getHeader("foo"), "UnmarshalProcessor should keep the headers");
     }
 
     @Test

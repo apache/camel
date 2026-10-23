@@ -41,6 +41,7 @@ import static org.apache.camel.component.ai.tool.AiTool.SCHEME;
              syntax = "ai-tool:toolName",
              consumerOnly = true,
              remote = false,
+             headersClass = AiToolConstants.class,
              category = { Category.AI })
 public class AiToolEndpoint extends DefaultEndpoint {
 
