@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -49,6 +49,8 @@ import java.util.stream.Stream;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
+import org.apache.camel.component.milo.client.MiloClientConnection.MonitoringState;
+import org.apache.camel.component.milo.client.MiloClientConnection.RefusedNode;
 import org.apache.camel.component.milo.client.MonitorFilterConfiguration;
 import org.eclipse.milo.opcua.sdk.client.DiscoveryClient;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
@@ -346,15 +348,20 @@ public class SubscriptionManager {
         private final SubscriptionListenerImpl listener;
         private final long generation;
 
-        private final Map<UInteger, OpcUaMonitoredItem> goodSubscriptions = new HashMap<>();
+        /**
+         * The monitored items by client handle, written under {@code lock} and counted by the monitoring state without
+         * it
+         */
+        private final Map<UInteger, OpcUaMonitoredItem> goodSubscriptions = new ConcurrentHashMap<>();
 
         private final Map<String, UShort> namespaceCache = new ConcurrentHashMap<>();
 
         /**
-         * The client handles of the nodes that the server refused to monitor on this connection, which are created
-         * again every {@code reconnectTimeout} milliseconds, guarded by {@code lock}
+         * The nodes whose monitored item was refused on this connection, by client handle, each with the status of its
+         * latest attempt, which are created again every {@code reconnectTimeout} milliseconds. Written under
+         * {@code lock} and read by the monitoring state without it.
          */
-        private final Set<UInteger> refused = new LinkedHashSet<>();
+        private final Map<UInteger, RefusedNode> refused = new ConcurrentSkipListMap<>();
 
         /**
          * The next attempt to create the refused nodes again, if one is scheduled, guarded by {@code lock}
@@ -454,7 +461,7 @@ public class SubscriptionManager {
                     if (result.isGood()) {
                         this.goodSubscriptions.put(clientHandle, item);
                         subscriptions.get(clientHandle).refused = false;
-                        if (this.refused.remove(clientHandle) && retry) {
+                        if (this.refused.remove(clientHandle) != null && retry) {
                             LOG.info("Monitored item for node {} created on retry",
                                     subscriptions.get(clientHandle).getNodeId().toParseableString());
                         }
@@ -496,8 +503,8 @@ public class SubscriptionManager {
         private void refuse(
                 final UInteger clientHandle, final Subscription s, final StatusCode status, final String reason,
                 final boolean retry, final List<PendingValue> pendingValues) {
-            this.refused.add(clientHandle);
             final String node = s.getNodeId().toParseableString();
+            this.refused.put(clientHandle, new RefusedNode(node, status, reason));
             final String because = reason == null ? "" : ", " + reason;
             if (retry) {
                 LOG.debug("Monitored item for node {} could not be created on retry{}: {}", node, because, status);
@@ -964,7 +971,10 @@ public class SubscriptionManager {
     private final ServerCertificateTrust serverCertificateTrust;
     private final Lock lock = new ReentrantLock();
 
-    private Connected connected;
+    /**
+     * The current connection, written under {@code lock} and read by the monitoring state without it
+     */
+    private volatile Connected connected;
     private volatile Throwable lastConnectFailure;
     private volatile boolean disposed;
     private Future<?> reconnectJob;
@@ -999,6 +1009,23 @@ public class SubscriptionManager {
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * Returns what the current connection monitors. It is read without {@code lock}, which a service call holds until
+     * the server answers, so its values are read one after the other and need not be consistent with each other.
+     *
+     * @return the monitoring state, with no session and no nodes while there is no connection or it is being closed
+     */
+    public MonitoringState getMonitoringState() {
+        final Connected connected = this.connected;
+        // a connection that is being closed can wait for the server, its nodes are reported lost already
+        if (connected == null || this.disposed || connected.listener.closed) {
+            return new MonitoringState(false, 0, List.of());
+        }
+        return new MonitoringState(
+                connected.listener.sessionActive, connected.goodSubscriptions.size(),
+                List.copyOf(connected.refused.values()));
     }
 
     /**
@@ -1125,7 +1152,8 @@ public class SubscriptionManager {
      * while the connection is the current one. Nothing is delivered to the consumers: a node created now delivers its
      * first value from the server, and its refusal, if not delivered yet, is dropped. While the session is not active,
      * the attempt is skipped. A call that fails is made again with the next attempt and never rebuilds the connection,
-     * which would interrupt the nodes that are monitored: a lost session or subscription is recovered without it.
+     * which would interrupt the nodes that are monitored: a lost session or subscription is recovered without it. Its
+     * failure is the status of the nodes until the next attempt.
      * <p>
      * Like the registration of a consumer, the attempt holds {@code lock} until the server answers, so that a consumer
      * that stops or a subscription that is recreated in the meantime cannot interleave with it, and the producers and
@@ -1146,16 +1174,24 @@ public class SubscriptionManager {
                 return;
             }
             final Map<UInteger, Subscription> refused = new LinkedHashMap<>();
-            for (final UInteger clientHandle : connected.refused) {
+            for (final UInteger clientHandle : connected.refused.keySet()) {
                 final Subscription subscription = this.subscriptions.get(clientHandle);
                 if (subscription != null) {
                     refused.put(clientHandle, subscription);
                 }
             }
+            final Map<UInteger, RefusedNode> beforeAttempt = new HashMap<>(connected.refused);
             try {
                 connected.putSubscriptions(refused, true);
             } catch (final Exception e) {
                 LOG.debug("Failed to create the refused monitored items again, trying again later", e);
+                // the call was rejected or failed, or the namespace table could not be read: a node that the attempt
+                // did not answer, whose entry is still the one from before it, has the failure of the attempt
+                final StatusCode failure
+                        = UaException.extractStatusCode(e).orElse(new StatusCode(StatusCodes.Bad_UnexpectedError));
+                refused.keySet().forEach(clientHandle -> connected.refused.computeIfPresent(clientHandle,
+                        (handle, node) -> node == beforeAttempt.get(handle)
+                                ? new RefusedNode(node.nodeId(), failure, null) : node));
                 connected.scheduleRetry();
             }
         } finally {
@@ -1672,13 +1708,12 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.call(nodeId, methodId, inputArguments).handleAsync((status, e) -> {
+            return this.connected.call(nodeId, methodId, inputArguments).whenCompleteAsync((status, e) -> {
                 // handle outside the lock, running using
-                // handleAsync
+                // whenCompleteAsync (preserves the original exceptional completion)
                 if (e != null) {
                     handleConnectionFailure(e);
                 }
-                return null;
             }, this.executor);
         } finally {
             lock.unlock();
@@ -1692,13 +1727,12 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.write(nodeId, value).handleAsync((status, e) -> {
+            return this.connected.write(nodeId, value).whenCompleteAsync((status, e) -> {
                 // handle outside the lock, running using
-                // handleAsync
+                // whenCompleteAsync (preserves the original exceptional completion)
                 if (e != null) {
                     handleConnectionFailure(e);
                 }
-                return status;
             }, this.executor);
         } finally {
             lock.unlock();
@@ -1712,13 +1746,12 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.readValues(nodeIds).handleAsync((nodes, e) -> {
+            return this.connected.readValues(nodeIds).whenCompleteAsync((nodes, e) -> {
                 // handle outside the lock, running using
-                // handleAsync
+                // whenCompleteAsync (preserves the original exceptional completion)
                 if (e != null) {
                     handleConnectionFailure(e);
                 }
-                return nodes;
             }, this.executor);
         } finally {
             lock.unlock();
@@ -1736,13 +1769,12 @@ public class SubscriptionManager {
 
             return this.connected.browse(expandedNodeIds, direction, nodeClasses, 1, maxDepth,
                     null != filter ? Pattern.compile(filter) : null, includeSubTypes, maxNodesPerRequest)
-                    .handleAsync((browseResult, e) -> {
+                    .whenCompleteAsync((browseResult, e) -> {
                         // handle outside the lock, running using
-                        // handleAsync
+                        // whenCompleteAsync (preserves the original exceptional completion)
                         if (e != null) {
                             handleConnectionFailure(e);
                         }
-                        return browseResult;
                     }, this.executor);
         } finally {
             lock.unlock();

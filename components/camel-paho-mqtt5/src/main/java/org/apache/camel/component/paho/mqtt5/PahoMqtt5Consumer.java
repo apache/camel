@@ -29,13 +29,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
-import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
-import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
-import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,60 +95,8 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                 client.connect(connectionOptions);
             }
 
-            client.setCallback(new MqttCallback() {
-
-                @Override
-                public void connectComplete(boolean reconnect, String serverURI) {
-                    // the connect of reconnect() subscribes again itself, only when the broker did not keep the session
-                    boolean own = ownReconnect.compareAndSet(true, false);
-                    if (reconnect && !own) {
-                        try {
-                            client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
-                        } catch (MqttException e) {
-                            if (stopClient) {
-                                LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
-                                        e.getMessage(), e);
-                                restartRouteAsync();
-                            } else {
-                                LOG.error(
-                                        "MQTT resubscribe failed on reconnect with externally provided client,"
-                                          + " route will not be auto-restarted: {}",
-                                        e.getMessage(), e);
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void authPacketArrived(int reasonCode, MqttProperties properties) {
-                    LOG.debug("Auth packet arrived {} {}", reasonCode, properties);
-                }
-
-                @Override
-                public void disconnected(MqttDisconnectResponse response) {
-                    LOG.debug("MQTT broker disconnected due {}", response.getReasonString(), response.getException());
-                }
-
-                @Override
-                public void mqttErrorOccurred(MqttException exception) {
-                    LOG.debug("Error occurred {}", exception.getMessage(), exception);
-                }
-
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    LOG.debug("Message arrived on topic: {} -> {}", topic, message);
-                    Exchange exchange = createExchange(message, topic);
-
-                    // use default consumer callback
-                    AsyncCallback cb = defaultConsumerCallback(exchange, true);
-                    getAsyncProcessor().process(exchange, cb);
-                }
-
-                @Override
-                public void deliveryComplete(IMqttToken token) {
-                    LOG.debug("Delivery complete. Token: {}", token);
-                }
-            });
+            // the client can be shared by the consumers of several endpoints, and it has a single callback
+            PahoMqtt5ClientCallback.register(client, this, stopClient);
 
             LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
             client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
@@ -170,6 +115,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                 }
                 closeOwnedClient(ownedClient, startException);
             }
+            PahoMqtt5ClientCallback.unregister(this);
             throw startException;
         }
     }
@@ -209,6 +155,18 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         try {
             super.doStop();
 
+            MqttClient sharedClient = ownedClient == null ? client : null;
+            if (sharedClient != null) {
+                // the messages of a shared client no longer go to this consumer (the own client of the consumer is
+                // unregistered after its disconnect, so that its messages are routed until then, as before)
+                boolean topicStillUsed = PahoMqtt5ClientCallback.unregister(this);
+                if (sharedClient.isConnected() && getEndpoint().getConfiguration().isCleanStart() && !topicStillUsed) {
+                    // the client stays connected for the other users, so remove the subscription of this consumer (unless
+                    // another consumer of the client uses the same topic filter: the broker has one subscription)
+                    LOG.debug("Unsubscribing shared client from topic: {}", getEndpoint().getTopic());
+                    sharedClient.unsubscribe(getEndpoint().getTopic());
+                }
+            }
             if (ownedClient != null && ownedClient.isConnected()) {
                 String topic = getEndpoint().getTopic();
                 // only unsubscribe if we are not durable
@@ -225,7 +183,11 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         } catch (Exception e) {
             stopException = e;
         } finally {
-            client = null;
+            PahoMqtt5ClientCallback.unregister(this);
+            if (ownedClient != null) {
+                // an externally provided client is kept, so that the consumer uses it again when it starts again
+                client = null;
+            }
             stopClient = false;
             if (ownedClient != null) {
                 stopException = closeOwnedClient(ownedClient, stopException);
@@ -252,6 +214,50 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     private boolean isSessionKeptAfterDisconnect() {
         PahoMqtt5Configuration configuration = getEndpoint().getConfiguration();
         return !configuration.isCleanStart() && configuration.getSessionExpiryInterval() > 0;
+    }
+
+    /**
+     * The client connected again: subscribes again after a reconnect of the client, but not after the connect of
+     * {@link #reconnect(MqttClient)}, which subscribes again itself, only when the broker did not keep the session.
+     */
+    void connectComplete(boolean reconnect) {
+        boolean own = ownReconnect.compareAndSet(true, false);
+        if (reconnect && !own) {
+            resubscribe();
+        }
+    }
+
+    /**
+     * Subscribes again after the client reconnected.
+     */
+    void resubscribe() {
+        MqttClient current = client;
+        if (current == null || !isRunAllowed()) {
+            // stopping: do not subscribe the topic again, the stop unsubscribes it
+            return;
+        }
+        try {
+            current.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+        } catch (MqttException e) {
+            if (stopClient) {
+                LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
+                        e.getMessage(), e);
+                restartRouteAsync();
+            } else {
+                LOG.error(
+                        "MQTT resubscribe failed on reconnect with externally provided client,"
+                          + " route will not be auto-restarted: {}",
+                        e.getMessage(), e);
+            }
+        }
+    }
+
+    void onMessageArrived(String topic, MqttMessage message) {
+        Exchange exchange = createExchange(message, topic);
+
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     MqttClient createClient() throws MqttException {

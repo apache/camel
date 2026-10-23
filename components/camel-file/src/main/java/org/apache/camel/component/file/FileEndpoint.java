@@ -31,6 +31,9 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -46,6 +49,17 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName",
              category = { Category.FILE, Category.CORE }, headersClass = FileConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.FILE,
+                                   description = "The file as read: a GenericFile (a java.io.File with preMove), which"
+                                                 + " converts to text, bytes or a stream"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "allowNullBody", value = "true",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE }),
+                                  description = "What converts to an InputStream: text, bytes, a stream or a file. A Map or"
+                                                + " a List fails: marshal it first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileEndpoint.class);

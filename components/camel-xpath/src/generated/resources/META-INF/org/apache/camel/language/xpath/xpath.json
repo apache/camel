@@ -15,6 +15,10 @@
     "modelName": "xpath",
     "modelJavaType": "org.apache.camel.model.language.XPathExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "description": "XML as text, bytes, a stream or a file, or a DOM" },
+    "expressionOut": { "carriers": [ "pojo" ], "javaType": "org.w3c.dom.NodeList", "dependsOn": [ "resultType" ], "byOption": [ { "option": "resultQName", "value": "STRING", "carriers": [ "text" ], "javaType": "java.lang.String" }, { "option": "resultQName", "value": "NUMBER", "carriers": [ "value" ], "javaType": "java.lang.Double" }, { "option": "resultQName", "value": "BOOLEAN", "carriers": [ "value" ], "javaType": "java.lang.Boolean" }, { "option": "resultQName", "value": "NODE", "carriers": [ "pojo" ], "javaType": "org.w3c.dom.Node" } ], "description": "The nodes the expression selects" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

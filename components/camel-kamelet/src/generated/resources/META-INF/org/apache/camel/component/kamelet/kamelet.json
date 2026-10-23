@@ -36,6 +36,11 @@
     "noErrorHandler": { "index": 9, "kind": "property", "displayName": "No Error Handler", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether kamelets should use error handling or not. By default, the Kamelet uses the same error handler as from the calling route. This means that if the calling route has error handling that performs retries, or routing to a dead letter channel, then the kamelet route will use this also. This can be turned off by setting this option to true. If off then the kamelet route is not using error handling, and any exception thrown will for source kamelets be logged by the consumer, and the sink\/action kamelets will fail processing." },
     "routeTemplateLoaderListener": { "index": 10, "kind": "property", "displayName": "Route Template Loader Listener", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.spi.RouteTemplateLoaderListener", "deprecated": false, "autowired": true, "secret": false, "description": "To plugin a custom listener for when the Kamelet component is loading Kamelets from external resources." }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unknown" ], "description": "The body the Kamelet sends, as its data types or its template say. In the template of a Kamelet, kamelet:source gives the body the caller sent" },
+    "producerIn": { "carriers": [ "any" ] },
+    "producerOut": { "carriers": [ "unknown" ], "description": "The body the template of the Kamelet ends with" }
+  },
   "properties": {
     "templateId": { "index": 0, "kind": "path", "displayName": "Template Id", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Route Template ID" },
     "routeId": { "index": 1, "kind": "path", "displayName": "Route Id", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Route ID. Default value notice: The ID will be auto-generated if not provided" },

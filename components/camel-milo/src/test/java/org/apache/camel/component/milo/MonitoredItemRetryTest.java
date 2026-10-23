@@ -43,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * A node that the server refuses to monitor is reported once and created again on the same connection, every 10
- * seconds, until the server has it or its consumer stops
+ * A node that the server refuses to monitor is reported once and created again on the same connection, every
+ * {@code reconnectTimeout} milliseconds, until the server has it or its consumer stops
  */
 public class MonitoredItemRetryTest extends AbstractMiloServerTest {
 
@@ -55,10 +55,12 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
     // a namespace that the server does not have until a test adds it
     private static final String LATE_NAMESPACE_URI = "urn:org:apache:camel:late";
 
-    // the client endpoints only differ in their nodes, so they share one connection
+    // the client endpoints only differ in their nodes, so they share one connection, which creates the refused nodes
+    // again every second
     private static final String MILO_CLIENT_BASE = "milo-client:opc.tcp://foo:bar@localhost:@@port@@"
                                                    + "?allowedSecurityPolicies=None&overrideHost=true"
-                                                   + "&samplingInterval=50&requestedPublishingInterval=100";
+                                                   + "&samplingInterval=50&requestedPublishingInterval=100"
+                                                   + "&reconnectTimeout=1000";
 
     private static final String MILO_CLIENT = MILO_CLIENT_BASE + "&node=";
 
@@ -138,7 +140,7 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
             // the node is created on the server: its first value follows the refusal, without another bad status
             lateItemEndpoint.reset();
             lateItemEndpoint.expectedMessageCount(1);
-            lateItemEndpoint.setResultWaitTime(30_000);
+            lateItemEndpoint.setResultWaitTime(10_000);
             lateItemEndpoint.setAssertPeriod(2_000);
             testBody(lateItemEndpoint.message(0), assertGoodValue("Foo"));
             template.sendBody("milo-server:lateItem", "Foo");
@@ -169,7 +171,7 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
 
             lateNamespaceItemEndpoint.reset();
             lateNamespaceItemEndpoint.expectedMessageCount(1);
-            lateNamespaceItemEndpoint.setResultWaitTime(30_000);
+            lateNamespaceItemEndpoint.setResultWaitTime(10_000);
             lateNamespaceItemEndpoint.setAssertPeriod(2_000);
             testBody(lateNamespaceItemEndpoint.message(0), assertGoodValue("Foo"));
             namespace.startup();
@@ -208,8 +210,8 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
             stoppedItemEndpoint.expectedMessageCount(0);
             template.sendBody("milo-server:stoppedItem", "Foo");
 
-            // the next attempt would have created it by now
-            await().during(15, TimeUnit.SECONDS).atMost(20, TimeUnit.SECONDS)
+            // the next attempts would have created it by now
+            await().during(3, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
                     .until(() -> client.getSubscriptions().get(0).getMonitoredItems().stream()
                             .noneMatch(item -> "stoppedItem"
                                     .equals(item.getReadValueId().getNodeId().getIdentifier())));
@@ -254,7 +256,7 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
     private void holdRefusalOfMissingNode(final Exchange exchange) throws InterruptedException {
         if (MISSING_NODE.equals(exchange.getMessage().getHeader(MiloConstants.HEADER_NODE_ID))) {
             template.sendBody("milo-server:overtakenItem", "Foo");
-            overtakenCreated.await(30, TimeUnit.SECONDS);
+            overtakenCreated.await(10, TimeUnit.SECONDS);
         } else if (exchange.getMessage().getBody(DataValue.class).getStatusCode().isGood()) {
             overtakenCreated.countDown();
         }

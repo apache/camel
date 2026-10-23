@@ -99,8 +99,19 @@ public class PahoSendDynamicAware extends ServiceSupport implements SendDynamicA
 
     @Override
     public Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
-        // no post processor is needed
-        return null;
+        if (exchange.getMessage().getHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC) != null) {
+            // the topic header was set before toD, so it is not ours to remove
+            return null;
+        }
+
+        // remove the topic header the pre processor has set, so a later send of the same exchange
+        // (another toD, a loop) is not published to this topic
+        return new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getMessage().removeHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC);
+            }
+        };
     }
 
     private String parseTopicName(String uri) {

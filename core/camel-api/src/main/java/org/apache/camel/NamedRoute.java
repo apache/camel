@@ -100,4 +100,19 @@ public interface NamedRoute {
         return null;
     }
 
+    /**
+     * Gets the checksum of the route as written: its steps, options and expressions, with property placeholders as
+     * written, without the ids Camel generates and where the route is in its source. The same route gives the same
+     * checksum in every run, so tools can tell which routes changed. It is computed when the route is prepared, before
+     * the parts of route configurations are added to it.
+     *
+     * @return the checksum, or null when it is not known (camel-xml-io is not on the classpath)
+     * @see    org.apache.camel.spi.ModelChecksumGenerator
+     * @since  4.24
+     */
+    @Nullable
+    default String getChecksum() {
+        return null;
+    }
+
 }

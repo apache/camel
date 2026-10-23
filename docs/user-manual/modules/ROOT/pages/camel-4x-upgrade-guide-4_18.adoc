@@ -413,6 +413,29 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-pubnub - the producer uses its configured channel
+
+The pubnub producer no longer reads the `CamelPubNubChannel` header. This header is set by the pubnub consumer to the
+channel a message was received on, and the producer used it instead of the channel configured on its endpoint, so a
+route from one pubnub endpoint to another sent each message back to the channel it came from. The producer now uses the
+channel of its endpoint, for every operation. To choose a different channel for a message, set the new
+`CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
+the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
+
+=== camel-pqc - message bodies are signed and verified over their bytes
+
+The `sign` and `verify` operations now sign and verify the message body over its bytes for every body type that has a
+well-defined binary form. A `byte[]` or `InputStream` body, a `java.io.File` or `java.nio.file.Path` body, and a file
+from a file consumer (a `GenericFile` body), are read as bytes. A `String` (or any `CharSequence`) body is encoded as
+UTF-8, and any other body that has a binary type converter (for example a `java.nio.ByteBuffer`, a
+`java.io.ByteArrayOutputStream`, a Netty `ByteBuf` or a Vert.x `Buffer`) is signed over those bytes.
+
+A body with no binary representation (for example a `Map` or a POJO) is no longer signed over its `toString()`: it is
+now rejected with an `InvalidPayloadException`. Convert such a body to a `String`, `byte[]` or other binary type
+earlier in the route.
+
+Signatures created by earlier versions may not verify and need to be created again.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
