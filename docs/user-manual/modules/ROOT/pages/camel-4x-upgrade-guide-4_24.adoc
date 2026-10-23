@@ -1539,6 +1539,13 @@ Every other value is converted to one String and sent as one header as before: a
 commas), a `byte[]` and the other primitive arrays, a `Map`, and a Vert.x `JsonObject` or `JsonArray` (sent as JSON).
 A route that needs the old single header can set the header to a String, for example with `String.valueOf(list)`.
 
+=== camel-vertx - standalone TrustManager on SSLContextParameters is applied
+
+When configuring TLS through `SSLContextParameters` with a standalone `TrustManager` instance (via `TrustManagersParameters.setTrustManager(...)`), Vert.x components now wrap and apply the configured `TrustManager`. Previously, only `TrustAllTrustManager.INSTANCE` and KeyStore-backed configurations were applied, and other standalone `TrustManager` instances were not set on the underlying Vert.x options.
+
+When both a `TrustManager` and a keystore are configured on `TrustManagersParameters`, the `TrustManager` is now used,
+as with the other components that use `SSLContextParameters`; before, the keystore-based trust options were used.
+
 === camel-knative-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the consumer maps a request header
