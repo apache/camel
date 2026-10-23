@@ -202,7 +202,7 @@ public class CallClientTest extends AbstractMiloServerTest {
         // Before CAMEL-25694, the call() handleAsync unconditionally returned null even on success,
         // so an awaited call always left the exchange body null. Now the body is the CallMethodResult.
         final CallMethodResult result = this.producer1.requestBodyAndHeader(
-                "foo", "CamelMiloAwait", true, CallMethodResult.class);
+                DIRECT_START_1, "foo", "CamelMiloAwait", true, CallMethodResult.class);
 
         assertNotNull(result);
         assertTrue(result.getStatusCode().isGood());
