@@ -237,8 +237,13 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
         };
         consumeWith("exceptionHandler=#handler");
 
-        // the keeper of the new route registered its listener, after the stop
-        await().atMost(20, TimeUnit.SECONDS).until(() -> server.listenersAdded.get() == added + 1);
+        // the keeper of the new route registered its listener after the stop, or (when the stop closes the dispatcher,
+        // CAMEL-25847) jnats refused the subscribe on the closed dispatcher and no keeper was started
+        await().atMost(20, TimeUnit.SECONDS).until(() -> {
+            synchronized (server) {
+                return server.listenersAdded.get() == added + 1 || server.refusedSubscribes > 0;
+            }
+        });
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(
                 () -> assertEquals(List.of(), server.listeners, "no keeper listens to the connection after the stop"));
     }
