@@ -2019,6 +2019,68 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfAwsDataAndAdminServices() {
+        // the SQL of startQueryExecution of aws2-athena is text, so a Map is sent as its toString(), and queryVectors
+        // of aws2-s3-vectors gives a List of the vectors found, not text. ecs, eks, mq, msk, config, security-hub,
+        // step-functions and redshift-data take their input from headers, the vector of putVectors can be in a header,
+        // and athena without an operation is not known, as the component may set it
+        String yaml = """
+                - route:
+                    id: query
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"sql": "SELECT 1"}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-athena:a?operation=startQueryExecution&outputLocation=s3://bucket/path/
+                - route:
+                    id: similar
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '[0.1, 0.2, 0.3]'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-s3-vectors:v?operation=queryVectors&vectorIndexName=i
+                        - to: aws2-translate:t?sourceLanguage=en&targetLanguage=de
+                - route:
+                    id: admin
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-ecs:e?operation=listClusters
+                        - to: aws2-eks:k?operation=listClusters
+                        - to: aws2-mq:m?operation=listBrokers
+                        - to: aws2-msk:k?operation=listClusters
+                        - to: aws-config:c?operation=describeRuleCompliance
+                        - to: aws-security-hub:s?operation=getFindings
+                        - to: aws2-step-functions:f?operation=startExecution
+                        - to: aws2-redshift-data:r?operation=executeStatement
+                - route:
+                    id: vectors
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-s3-vectors:v?operation=putVectors&vectorIndexName=i
+                        - to: aws2-athena:a?outputLocation=s3://bucket/path/
+                """;
+        assertThat(lines(yaml)).hasSize(2)
+                .anySatisfy(m -> assertThat(m).contains("route query: to: aws2-athena needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route similar: to: aws2-translate needs the body as text"));
+    }
+
+    @Test
     public void testAnOptionValueInAnotherStyleOfTheEnum() {
         // the catalog and the enum type converter take convert-to-json and convertToJson as CONVERT_TO_JSON, so after
         // docling the body is the document of that operation, and not the text of the default operation
