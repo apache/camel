@@ -42,6 +42,7 @@ import io.nats.client.api.DeliverPolicy;
 import io.nats.client.api.ServerInfo;
 import io.nats.client.impl.NatsJetStreamMetaData;
 import io.nats.client.impl.NatsMessage;
+import org.apache.camel.Consumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
@@ -145,6 +146,29 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
         assertTrue(slowDone.get(), "the step in flight completes");
         // the dispatcher (and its thread) is closed once the message is done
         await().atMost(10, TimeUnit.SECONDS).until(() -> server.closedDispatchers() == 1);
+    }
+
+    @Test
+    void eachRunOfTheConsumerClosesItsOwnDispatcher() throws Exception {
+        server.publish("slow");
+        assertTrue(slowEntered.await(10, TimeUnit.SECONDS), "the exchange is in flight");
+
+        // a route policy (such as a throttling policy) stops and starts the same consumer, which is not Suspendable,
+        // while an exchange is in flight: each start makes a new dispatcher
+        Consumer consumer = context.getRoute("orders").getConsumer();
+        ServiceHelper.stopService(consumer);
+        assertEquals(0, server.closedDispatchers(), "the dispatcher of the exchange in flight is not closed yet");
+        ServiceHelper.startService(consumer);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.activeSubscriptions() > 0);
+
+        // the second run has no message in flight, so its dispatcher is closed when it stops
+        ServiceHelper.stopService(consumer);
+        assertEquals(1, server.closedDispatchers(), "the dispatcher of the second run is closed when it stops");
+
+        // the exchange of the first run is done: the dispatcher of the first run is closed too
+        releaseSlow.countDown();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.closedDispatchers() == 2);
+        assertFalse(slowInterrupted.get(), "the step in flight must not be interrupted by the stops");
     }
 
     /**
