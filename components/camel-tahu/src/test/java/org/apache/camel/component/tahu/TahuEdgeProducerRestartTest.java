@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.eclipse.tahu.message.model.EdgeNodeDescriptor;
 import org.eclipse.tahu.message.model.Metric.MetricBuilder;
 import org.eclipse.tahu.message.model.MetricDataType;
 import org.eclipse.tahu.message.model.SparkplugBPayload;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -144,6 +146,44 @@ class TahuEdgeProducerRestartTest {
             ProducerTemplate template = context.createProducerTemplate();
             template.sendBody("direct:device1", payload(1));
             waitFor(broker, () -> count(broker, "spBv1.0/SharedGroup/DDATA/SharedNode/D1") == 1);
+        }
+    }
+
+    @Test
+    void clientIsShutDownWhenBothProducersOfTheEdgeNodeStopAfterOneWasRestarted() throws Exception {
+        try (FakeMqttBroker broker = new FakeMqttBroker(); CamelContext context = new DefaultCamelContext()) {
+            TahuEdgeEndpoint node = context.getEndpoint(
+                    "tahu-edge:TwoGroup/TwoNode?deviceIds=D1&servers=Mqtt:tcp://localhost:" + broker.getPort(),
+                    TahuEdgeEndpoint.class);
+            node.setMetricDataTypePayloadMap(new SparkplugBPayloadMap.SparkplugBPayloadMapBuilder()
+                    .addMetric(new MetricBuilder("level", MetricDataType.Int32, 0).createMetric()).createPayload());
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    // two producers of the same Edge Node
+                    from("direct:node1").routeId("node1").to(node);
+                    from("direct:node2").routeId("node2").to(node);
+                }
+            });
+            context.start();
+
+            String nbirth = "spBv1.0/TwoGroup/NBIRTH/TwoNode";
+            String ndeath = "spBv1.0/TwoGroup/NDEATH/TwoNode";
+            waitFor(broker, () -> count(broker, nbirth) == 1);
+
+            // the restarted producer shuts down the first client and starts a second one; the other producer still
+            // refers to the first client
+            context.getRouteController().stopRoute("node1");
+            context.getRouteController().startRoute("node1");
+            waitFor(broker, () -> count(broker, nbirth) == 2);
+
+            context.getRouteController().stopRoute("node2");
+            context.getRouteController().stopRoute("node1");
+
+            // the second client is shut down (its NDEATH is published) and removed, so that no client of this Edge
+            // Node is left running without a started producer
+            waitFor(broker, () -> count(broker, ndeath) == 2);
+            assertNull(TahuEdgeProducer.descriptorClients.get(new EdgeNodeDescriptor("TwoGroup", "TwoNode")));
         }
     }
 

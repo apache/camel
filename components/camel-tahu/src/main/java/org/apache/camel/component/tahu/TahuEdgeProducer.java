@@ -257,7 +257,9 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
 
             Future<?> clientFuture = descriptorFutures.remove(edgeNodeDescriptor);
             if (clientFuture != null) {
-                TahuEdgeClient client = tahuEdgeClient;
+                // the client of the future just removed: another producer of this Edge Node may have been restarted
+                // since this producer took its client, so its own reference can be a client that is already shut down
+                TahuEdgeClient client = currentClient();
                 client.shutdown();
                 // a shut down client cannot connect again: the next start of an Edge Node producer creates a new
                 // client, else it would take this one from the map and never connect
