@@ -2102,3 +2102,15 @@ acknowledged and the failure is left to the Camel error handler. A consumer that
 option leaves a failed QoS 1 message on a session that the broker keeps unacknowledged, as before; as the consumer does
 not connect that client, set the `cleanStart` and `sessionExpiryInterval` of the endpoint to match its connection
 options.
+
+=== camel-milo - an awaited write, call or read that fails now fails the exchange
+
+An awaited `milo-client` write, method call or read that fails at the service or transport level, for example a
+request that times out (`Bad_Timeout`) or a lost connection, now fails the exchange and lets the route's error
+handler run. Before, the exchange completed without an error and with a `null` body, silently discarding the failure.
+A bad status for the node itself, such as `Bad_TypeMismatch` on a write, is not a failure of the operation and is
+still returned as the body.
+
+An awaited `call` that succeeds now returns the `CallMethodResult` as the exchange body. Before, the body was
+always `null` even on success. A route that reads the result of an awaited call must be updated to read the
+`CallMethodResult` from the body instead of expecting `null`.
