@@ -29,6 +29,7 @@ import com.networknt.schema.path.NodePath;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.Route;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.from;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.normalize;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.routes;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
@@ -63,21 +64,15 @@ final class BodyTypeFlow {
     /** The REST verbs that carry no body, so a route they send to starts with none. */
     private static final Set<String> VERBS_WITHOUT_BODY = Set.of("get", "delete", "head");
 
-    /** The consumers that produce no body of their own, so the message reaching the route has none. */
-    private static final Set<String> NO_BODY_CONSUMER = Set.of("timer", "quartz", "scheduler", "cron");
-
     private BodyTypeFlow() {
     }
 
-    static void check(JsonNode target, NodePath path, List<Error> errors) {
-        check(target, path, errors, Set.of());
-    }
-
     /**
-     * @param known the endpoints the caller knows deliver no body, such as {@code direct:getStock} for the GET
-     *              operation of an OpenAPI specification the route binds to (CAMEL-24844 phase B)
+     * @param known     the endpoints the caller knows deliver no body, such as {@code direct:getStock} for the GET
+     *                  operation of an OpenAPI specification the route binds to (CAMEL-24844 phase B)
+     * @param bodyTypes the body types of the catalog, which say the consumers that give no body (timer, cron)
      */
-    static void check(JsonNode target, NodePath path, List<Error> errors, Set<String> known) {
+    static void check(JsonNode target, NodePath path, List<Error> errors, Set<String> known, CatalogBodyTypes bodyTypes) {
         List<Route> routes = routes(target);
         if (routes.isEmpty()) {
             return;
@@ -106,7 +101,7 @@ final class BodyTypeFlow {
             if (reader == null) {
                 continue;
             }
-            if (!certainlyWithoutABody(r, callers, restless, new HashSet<>())) {
+            if (!certainlyWithoutABody(r, callers, restless, new HashSet<>(), bodyTypes)) {
                 continue;
             }
             errors.add(Error.builder()
@@ -131,7 +126,7 @@ final class BodyTypeFlow {
      */
     private static boolean certainlyWithoutABody(
             Route route, Map<Route, List<Route>> callers, Set<String> restless,
-            Set<Route> seen) {
+            Set<Route> seen, CatalogBodyTypes bodyTypes) {
         if (!seen.add(route)) {
             return false; // a cycle: say nothing
         }
@@ -139,7 +134,9 @@ final class BodyTypeFlow {
         if (scheme == null) {
             return false;
         }
-        if (NO_BODY_CONSUMER.contains(scheme)) {
+        // a consumer that produces no body of its own, as the catalog says: timer, cron, scheduler, quartz
+        CatalogBodyTypes.Answer out = bodyTypes.consumerOut(route.fromUri(), from(route.node()));
+        if (out != null && out.none()) {
             return true;
         }
         if (!"direct".equals(scheme) && !"seda".equals(scheme) && !"direct-vm".equals(scheme)) {
@@ -155,7 +152,7 @@ final class BodyTypeFlow {
             if (setsTheBodyBeforeSendingTo(caller, route)) {
                 return false;
             }
-            if (!certainlyWithoutABody(caller, callers, restless, seen)) {
+            if (!certainlyWithoutABody(caller, callers, restless, seen, bodyTypes)) {
                 return false;
             }
         }
