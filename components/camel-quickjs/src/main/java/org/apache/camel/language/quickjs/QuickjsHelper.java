@@ -153,6 +153,79 @@ final class QuickjsHelper {
     static final String CAMEL_FACADE = camelFacade();
 
     /**
+     * JavaScript that prepares the script result for the JSON hand-over to Java, where a {@code Set} or a {@code Map}
+     * would become an empty object and a typed array an object of index to value: a {@code Set} becomes an array, a
+     * {@code Map} an object (its keys as strings), a typed array or an {@code ArrayBuffer} an array of numbers, and a
+     * {@code DataView} an array of its bytes, also when nested in objects and arrays. A primitive is returned after one
+     * type check, and an object or array is only copied when something in it is converted. A value with {@code toJSON}
+     * (such as a {@code Date}) and a cyclic reference are left to JSON as before. The built-ins are captured once so a
+     * script cannot replace them.
+     */
+    private static final String RESULT_CONVERTER = """
+            const __camelResult = (() => {
+              const SetType = Set;
+              const MapType = Map;
+              const ArrayBufferType = ArrayBuffer;
+              const DataViewType = DataView;
+              const Uint8ArrayType = Uint8Array;
+              const isView = ArrayBuffer.isView;
+              const isArray = Array.isArray;
+              const from = Array.from;
+              const keys = Object.keys;
+              const fromEntries = Object.fromEntries;
+              const define = Object.defineProperty;
+              const isObject = v => typeof v === "object" && v !== null;
+              const put = (o, k, v) => define(o, k, { value: v, writable: true, enumerable: true, configurable: true });
+              const convert = (v, path) => {
+                if (typeof v.toJSON === "function" || path.includes(v)) {
+                  return v;
+                }
+                if (v instanceof ArrayBufferType) {
+                  return from(new Uint8ArrayType(v));
+                }
+                if (isView(v)) {
+                  return v instanceof DataViewType ? from(new Uint8ArrayType(v.buffer, v.byteOffset, v.byteLength)) : from(v);
+                }
+                const element = x => isObject(x) ? convert(x, path) : x;
+                path.push(v);
+                let copy;
+                if (v instanceof SetType) {
+                  copy = from(v, element);
+                } else if (v instanceof MapType) {
+                  copy = fromEntries(from(v, ([k, x]) => [String(k), element(x)]));
+                } else if (isArray(v)) {
+                  for (let i = 0; i < v.length; i++) {
+                    const x = v[i];
+                    const c = element(x);
+                    if (c !== x) {
+                      copy = copy || v.slice();
+                      copy[i] = c;
+                    }
+                  }
+                } else {
+                  const names = keys(v);
+                  for (let i = 0; i < names.length; i++) {
+                    const x = v[names[i]];
+                    const c = element(x);
+                    if (c !== x && !copy) {
+                      copy = {};
+                      for (let j = 0; j < i; j++) {
+                        put(copy, names[j], v[names[j]]);
+                      }
+                    }
+                    if (copy) {
+                      put(copy, names[i], c);
+                    }
+                  }
+                }
+                path.pop();
+                return copy || v;
+              };
+              return v => isObject(v) ? convert(v, []) : v;
+            })();
+            """;
+
+    /**
      * Prologue and epilogue shared by every script function: QuickJS4J host identifiers on {@code globalThis} are
      * replaced with stubs while the user script runs and restored afterwards so result delivery still works on a reused
      * engine. Do not {@code delete} those properties: the host function {@code java_invoke} is installed once per
@@ -186,7 +259,7 @@ final class QuickjsHelper {
      * declarations do not leak into {@code globalThis} between calls. Binding names must be valid JavaScript
      * identifiers.
      */
-    static final String EVAL_WRAPPER = CAMEL_FACADE
+    static final String EVAL_WRAPPER = CAMEL_FACADE + RESULT_CONVERTER
                                        + """
                                                export function camelEval(bindings, script) {
                                                  const names = Object.keys(bindings);
@@ -195,7 +268,7 @@ final class QuickjsHelper {
                                                      '"use strict"; return eval(__camel_quickjs_script);');
                                                """
                                        + indent(SANDBOX_ENTER, 2)
-                                       + "    return fn(...values, __camelFacade, __camel_stub_invoke, undefined, script);\n"
+                                       + "    return __camelResult(fn(...values, __camelFacade, __camel_stub_invoke, undefined, script));\n"
                                        + indent(SANDBOX_EXIT, 2)
                                        + "}\n";
 
@@ -235,7 +308,7 @@ final class QuickjsHelper {
      * exactly as before.
      */
     static String scriptLibrary(String script, boolean expressionForm) {
-        StringBuilder sb = new StringBuilder(CAMEL_FACADE);
+        StringBuilder sb = new StringBuilder(CAMEL_FACADE).append(RESULT_CONVERTER);
         sb.append("function __camelScript(").append(String.join(", ", EXCHANGE_BINDINGS))
                 .append(", camel, java_invoke, quickjs4j_engine) {\n  \"use strict\";\n");
         if (expressionForm) {
@@ -246,11 +319,11 @@ final class QuickjsHelper {
         }
         sb.append("export function camelEval(b, s) {\n");
         sb.append(indent(SANDBOX_ENTER, 1));
-        sb.append("    return __camelScript(");
+        sb.append("    return __camelResult(__camelScript(");
         for (String name : EXCHANGE_BINDINGS) {
             sb.append("b.").append(name).append(", ");
         }
-        sb.append("__camelFacade, __camel_stub_invoke, undefined);\n");
+        sb.append("__camelFacade, __camel_stub_invoke, undefined));\n");
         sb.append(indent(SANDBOX_EXIT, 1));
         sb.append("}\n");
         return sb.toString();

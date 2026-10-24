@@ -36,7 +36,8 @@ include::partial$language-options.adoc[]
 
 === Setting a result type
 
-The xref:datasonnet-language.adoc[DataSonnet] expression will return a `com.datasonnet.document.Document` by default. The
+The xref:datasonnet-language.adoc[DataSonnet] expression will return a `com.datasonnet.document.Document` by default, or
+`null` when the result is `null`. The
 document preserves the content type metadata along with the contents of the transformation result. In predicates,
 however, the Document will be automatically unwrapped and the boolean content will be returned. Similarly, any time you
 want the content in a specific result type like a String. To do this, you have to instruct the
@@ -118,7 +119,8 @@ And for output media type:
 
 NOTE: With the body media type `application/x-java-object`, the body is the Java object it is: JSON text is a string,
 not an object, so `body.foo` fails on it. Set `bodyMediaType`, or a `Content-Type` header, to read text, bytes, a
-stream or a file in that format, such as `application/json`, `application/xml` or `application/csv`.
+stream or a file in that format, such as `application/json`, `application/xml` or `application/csv`. Without a
+media type, a stream is read as text.
 
 === Functions
 

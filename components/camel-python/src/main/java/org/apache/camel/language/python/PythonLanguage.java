@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.BodyType;
@@ -38,9 +39,9 @@ import org.python.util.PythonInterpreter;
 @BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
                                     description = "The body as it is, in the variable body: a String is a Python unicode"
                                                   + " string, and other Java objects keep their methods"),
-           expressionOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "resultType",
-                                     description = "The Python text, str(), of what the script returns: a dict as its Python"
-                                                   + " text, and None as the text None"))
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "The Java value of what the script returns: a dict as a Map, a list or a"
+                                                   + " tuple as a List, a set as a Set, and None as null"))
 public class PythonLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     private final Map<String, PyCode> compiledScriptsCache;
@@ -92,12 +93,13 @@ public class PythonLanguage extends TypedLanguageSupport implements ScriptingLan
                     bindings.forEach(compiler::set);
                 }
                 PyObject out = compiler.eval(code);
-                if (out != null) {
-                    String value = out.toString();
+                Object value = PythonExpression.toJava(out);
+                if (value != null) {
                     return getCamelContext().getTypeConverter().convertTo(resultType, value);
                 }
             } catch (Exception e) {
-                throw new ExpressionIllegalSyntaxException(script, e);
+                // the script compiled above, so this is an error while it runs
+                throw new ExpressionEvaluationException(null, "Error evaluating python script: " + script, null, e);
             } finally {
                 compiler.cleanup();
             }

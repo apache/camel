@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.Predicate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,6 +45,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.language.python3.Python3Language.python3;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisabledIfSystemProperty(named = "os.arch", matches = "(?i)(s390x|ppc64le)")
 class Python3LanguageEvalTest {
@@ -197,6 +199,62 @@ class Python3LanguageEvalTest {
         Map<Object, Object> inner = castMap(nested.get(1));
         assertThat(inner.getClass().getName()).doesNotContain("polyglot");
         assertThat(inner).containsEntry("k", 2);
+    }
+
+    @Test
+    void bytesResultIsByteArray() {
+        Language language = context.resolveLanguage("python3");
+        Exchange exchange = exchangeWithBody(null);
+        assertThat(language.createExpression("b'ab\\xff'").evaluate(exchange, Object.class))
+                .isEqualTo(new byte[] { 'a', 'b', -1 });
+        assertThat(language.createExpression("bytearray(b'xy')").evaluate(exchange, Object.class))
+                .isEqualTo(new byte[] { 'x', 'y' });
+        assertThat(language.createExpression("memoryview(b'abcd')[1:3]").evaluate(exchange, Object.class))
+                .isEqualTo(new byte[] { 'b', 'c' });
+        assertThat(language.createExpression("b''").evaluate(exchange, Object.class)).isEqualTo(new byte[0]);
+        Map<Object, Object> map = castMap(language.createExpression("{'data': b'z'}").evaluate(exchange, Object.class));
+        assertThat(map.get("data")).isEqualTo(new byte[] { 'z' });
+        assertThat(language.createExpression("b'hi'").evaluate(exchange, String.class)).isEqualTo("hi");
+    }
+
+    @Test
+    void byteArrayBodyIsReturnedAsIs() {
+        byte[] body = { 1, 2 };
+        Object result
+                = context.resolveLanguage("python3").createExpression("body").evaluate(exchangeWithBody(body), Object.class);
+        assertThat(result).isSameAs(body);
+    }
+
+    @Test
+    void returnedFunctionFailsAtEvaluation() {
+        String message = "The script returned a function, which cannot be used after the script ends: return a value instead";
+        Language language = context.resolveLanguage("python3");
+        Exchange exchange = exchangeWithBody(null);
+        for (String script : List.of("lambda x: x", "def f():\n    return 1\nf",
+                "class C:\n    def m(self):\n        return 1\nC().m",
+                "len", "[].append")) {
+            assertThatThrownBy(() -> language.createExpression(script).evaluate(exchange, Object.class))
+                    .as(script)
+                    .isInstanceOf(ExpressionEvaluationException.class)
+                    .hasMessage(message);
+        }
+        assertThatThrownBy(() -> ((ScriptingLanguage) language).evaluate("lambda: 1", null, Object.class))
+                .isInstanceOf(ExpressionEvaluationException.class)
+                .hasMessage(message);
+    }
+
+    @Test
+    void callableDataIsNotTakenForAFunction() {
+        Language language = context.resolveLanguage("python3");
+        Runnable task = () -> {
+        };
+        Map<String, Object> bindings = new HashMap<>();
+        bindings.put("task", task);
+        assertThat(((ScriptingLanguage) language).evaluate("task", bindings, Object.class)).isSameAs(task);
+        // an instance of a class with __call__, even one named function, is data and not rejected
+        Object instance = language.createExpression("class function:\n    def __call__(self):\n        return 1\nfunction()")
+                .evaluate(exchangeWithBody(null), Object.class);
+        assertThat(instance).isNotNull();
     }
 
     @Test

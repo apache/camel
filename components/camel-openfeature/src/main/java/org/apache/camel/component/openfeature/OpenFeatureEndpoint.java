@@ -31,6 +31,7 @@ import dev.openfeature.contrib.providers.flagd.Config;
 import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
+import dev.openfeature.sdk.ErrorCode;
 import dev.openfeature.sdk.FeatureProvider;
 import dev.openfeature.sdk.FlagEvaluationDetails;
 import dev.openfeature.sdk.MutableContext;
@@ -165,29 +166,56 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
      * side effects on headers or properties.
      */
     public Object evaluate(String flagKey, String evaluationType, String targetingKey, Map<String, Object> contextMap) {
+        return evaluate(flagKey, evaluationType, targetingKey, contextMap, false);
+    }
+
+    /**
+     * Evaluate a flag from the language path with explicit parameters. Does not read from or write to the exchange — no
+     * side effects on headers or properties.
+     *
+     * @param booleanFallback when the string evaluation reports that the flag is not a string flag
+     *                        ({@link ErrorCode#TYPE_MISMATCH}), evaluate the flag again as a boolean, so a boolean flag
+     *                        gives its value
+     */
+    public Object evaluate(
+            String flagKey, String evaluationType, String targetingKey, Map<String, Object> contextMap,
+            boolean booleanFallback) {
         MutableContext ctx = buildMutableContext(targetingKey, contextMap);
-        return evaluateDetails(flagKey, evaluationType, ctx).getValue();
+        FlagEvaluationDetails<?> details = resolveDetails(flagKey, evaluationType, ctx);
+        if (booleanFallback && details.getErrorCode() == ErrorCode.TYPE_MISMATCH && !isBooleanEvaluation(evaluationType)) {
+            FlagEvaluationDetails<?> booleanDetails = resolveDetails(flagKey, "boolean", ctx);
+            if (booleanDetails.getErrorCode() == null) {
+                details = booleanDetails;
+            }
+        }
+        logEvaluationError(flagKey, details);
+        return details.getValue();
     }
 
     private FlagEvaluationDetails<?> evaluateDetails(String flagKey, String evaluationType, MutableContext ctx) {
+        FlagEvaluationDetails<?> details = resolveDetails(flagKey, evaluationType, ctx);
+        logEvaluationError(flagKey, details);
+        return details;
+    }
+
+    private FlagEvaluationDetails<?> resolveDetails(String flagKey, String evaluationType, MutableContext ctx) {
         Client c = client;
         if (c == null) {
             throw new IllegalStateException("OpenFeature endpoint is not started");
         }
 
-        FlagEvaluationDetails<?> details;
         if (isBooleanEvaluation(evaluationType)) {
             boolean defaultVal = Boolean.parseBoolean(configuration.getDefaultValue());
-            details = c.getBooleanDetails(flagKey, defaultVal, ctx);
-        } else {
-            details = c.getStringDetails(flagKey, configuration.getDefaultValue(), ctx);
+            return c.getBooleanDetails(flagKey, defaultVal, ctx);
         }
+        return c.getStringDetails(flagKey, configuration.getDefaultValue(), ctx);
+    }
 
+    private static void logEvaluationError(String flagKey, FlagEvaluationDetails<?> details) {
         if (details.getErrorCode() != null) {
             LOG.warn("OpenFeature evaluation error for flag '{}': {} - {}",
                     flagKey, details.getErrorCode(), details.getErrorMessage());
         }
-        return details;
     }
 
     @SuppressWarnings("unchecked")

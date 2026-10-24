@@ -32,6 +32,11 @@
         ]
       }
     },
+    "max-retries": {
+      "state": "ENABLED",
+      "variants": { "low": 3, "high": 5 },
+      "defaultVariant": "low"
+    },
     "disabled-flag": {
       "state": "DISABLED",
       "variants": { "on": true, "off": false },
