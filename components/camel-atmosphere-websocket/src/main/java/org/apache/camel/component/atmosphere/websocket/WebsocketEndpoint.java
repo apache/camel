@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -47,6 +50,18 @@ import org.apache.camel.util.StringHelper;
           annotations = {
                   "protocol=http",
           })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.NULL },
+                                   byOption = @BodyType.When(option = "useStreaming", value = "true",
+                                                             carriers = { Carrier.STREAM, Carrier.NULL }),
+                                   description = "A String for a text message, a byte array for a binary one; null for the"
+                                                 + " open, close and error events (the servlet init parameter events=true)."
+                                                 + " A message the producer could not deliver comes back with the"
+                                                 + " CamelAtmosphereWebsocketErrorType header. The consumer does not reply"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM },
+                                  description = "Text or a Reader as a text message, bytes or an InputStream as a binary"
+                                                + " one; other bodies as their toString. No body sends nothing. Sent to all"
+                                                + " peers with sendToAll, otherwise to the connection key headers"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, description = "The body is kept"))
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;

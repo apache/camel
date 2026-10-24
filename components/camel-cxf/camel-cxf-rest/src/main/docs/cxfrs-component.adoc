@@ -120,12 +120,12 @@ The header name matches the Body Part name.
 
 Additionally, the following rules apply to the *Response mapping*:
 
-* If the message body type is different to `javax.ws.rs.core.Response`
+* If the message body type is different to `jakarta.ws.rs.core.Response`
 (user-built response), a new `Response` is created and the message body
 is set as the entity (so long it's not null). The response status code
 is taken from the `Exchange.HTTP_RESPONSE_CODE` header, or defaults to
 200 OK if not present.
-* If the message body type is equal to `javax.ws.rs.core.Response`, it
+* If the message body type is equal to `jakarta.ws.rs.core.Response`, it
 means that the user has built a custom response, and therefore it is
 respected, and it becomes the final response.
 * In all cases, Camel headers permitted by custom or default

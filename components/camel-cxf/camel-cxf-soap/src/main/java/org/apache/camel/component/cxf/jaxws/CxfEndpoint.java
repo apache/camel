@@ -66,6 +66,9 @@ import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
 import org.apache.camel.component.cxf.feature.RAWDataFormatFeature;
 import org.apache.camel.component.cxf.transport.header.CxfHeaderFilterStrategy;
 import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -132,6 +135,81 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
 @Metadata(annotations = {
         "protocol=http",
 })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.LIST, Carrier.NULL },
+                                   byOption = {
+                                           @BodyType.When(option = "dataFormat", value = "PAYLOAD", carriers = Carrier.POJO,
+                                                          javaType = "org.apache.camel.component.cxf.common.CxfPayload"),
+                                           @BodyType.When(option = "dataFormat", value = "RAW", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "dataFormat", value = "MESSAGE", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "dataFormat", value = "CXF_MESSAGE", carriers = Carrier.POJO,
+                                                          javaType = "jakarta.xml.soap.SOAPMessage") },
+                                   description = "POJO: a MessageContentsList of the parameters of the operation, typed as the"
+                                                 + " service class declares them, with its name in the CamelCxfOperationName"
+                                                 + " header; null for an operation without parameters. PAYLOAD: a CxfPayload"
+                                                 + " of the elements of the soap:Body and the SOAP headers. RAW: the stream of"
+                                                 + " the whole SOAP envelope, without the operation name. CXF_MESSAGE: the SAAJ"
+                                                 + " SOAPMessage"),
+           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.POJO, Carrier.LIST, Carrier.NULL },
+                                     byOption = {
+                                             @BodyType.When(option = "dataFormat", value = "PAYLOAD",
+                                                            carriers = {
+                                                                    Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.NULL }),
+                                             @BodyType.When(option = "dataFormat", value = "RAW",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE, Carrier.NULL }),
+                                             @BodyType.When(option = "dataFormat", value = "MESSAGE",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE, Carrier.NULL }),
+                                             @BodyType.When(option = "dataFormat", value = "CXF_MESSAGE",
+                                                            carriers = Carrier.POJO) },
+                                     description = "POJO: the return value of the operation, of the type the service class"
+                                                   + " declares, or a List or array of it and the out and holder parameters;"
+                                                   + " another type is a SOAP fault, so the request MessageContentsList only"
+                                                   + " fits an echo. PAYLOAD: a CxfPayload, or the XML of the soap:Body"
+                                                   + " contents as text, bytes, a stream or a DOM; a body that does not convert"
+                                                   + " sends an empty soap:Body. RAW: the whole SOAP envelope as text, bytes, a"
+                                                   + " stream or a file. CXF_MESSAGE: a SOAPMessage or a javax.xml.transform"
+                                                   + " Source; text or a stream sends an empty envelope"),
+           producerIn = @BodyType(value = { Carrier.LIST, Carrier.TEXT, Carrier.VALUE, Carrier.POJO, Carrier.NULL },
+                                  byOption = {
+                                          @BodyType.When(option = "dataFormat", value = "PAYLOAD",
+                                                         carriers = {
+                                                                 Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
+                                                                 Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "dataFormat", value = "RAW",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "dataFormat", value = "MESSAGE",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "dataFormat", value = "CXF_MESSAGE",
+                                                         carriers = Carrier.POJO) },
+                                  description = "POJO: the parameters of the operation (the CamelCxfOperationName header or"
+                                                + " defaultOperationName) as a List or an array, or the one parameter as"
+                                                + " the body; each of the type the service class declares. A body that is"
+                                                + " not a List is split like the split EIP does, so text with a comma or a"
+                                                + " byte array is several parameters: wrap it in a List. PAYLOAD: a"
+                                                + " CxfPayload, or the XML of the soap:Body contents as text, bytes, a stream,"
+                                                + " a file or a DOM. RAW: the whole SOAP envelope. CXF_MESSAGE: a SOAPMessage"
+                                                + " or a javax.xml.transform Source"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.NULL, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "dataFormat", value = "PAYLOAD", carriers = Carrier.POJO,
+                                                          javaType = "org.apache.camel.component.cxf.common.CxfPayload"),
+                                           @BodyType.When(option = "dataFormat", value = "RAW", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "dataFormat", value = "MESSAGE", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "dataFormat", value = "CXF_MESSAGE", carriers = Carrier.POJO,
+                                                          javaType = "jakarta.xml.soap.SOAPMessage") },
+                                   description = "POJO: a MessageContentsList with the return value of the operation first,"
+                                                 + " then the out and holder parameters; null for a void operation, and the"
+                                                 + " body unchanged for a one-way one. PAYLOAD: a CxfPayload of the"
+                                                 + " soap:Body contents. RAW: the stream of the SOAP envelope of the"
+                                                 + " response, read once. CXF_MESSAGE: the SAAJ SOAPMessage"))
 public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);

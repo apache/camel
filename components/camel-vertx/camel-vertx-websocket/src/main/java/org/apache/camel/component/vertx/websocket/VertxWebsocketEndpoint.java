@@ -38,6 +38,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.vertx.common.VertxHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -58,6 +61,21 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
              syntax = "vertx-websocket:host:port/path", category = { Category.HTTP, Category.NETWORKING },
              headersClass = VertxWebsocketConstants.class, lenientProperties = true)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES },
+                                   byOption = @BodyType.When(option = "fireWebSocketConnectionEvents", value = "true",
+                                                             carriers = {
+                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.POJO,
+                                                                     Carrier.NULL }),
+                                   description = "The message received: a String for a text frame, a byte array for a binary"
+                                                 + " frame. With fireWebSocketConnectionEvents=true, the OPEN event has the"
+                                                 + " Vert.x ServerWebSocket as body and the CLOSE event no body: the"
+                                                 + " CamelVertxWebsocket.event header tells them apart"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "A String is sent as a text frame and a byte array as a binary frame; any other"
+                                                + " body is converted to a String and sent as a text frame, so a stream with"
+                                                + " binary content must be converted to bytes first, and a Map or a POJO is sent"
+                                                + " as its toString: marshal it first. No body sends nothing"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointServiceLocation, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketEndpoint.class);

@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -38,6 +41,22 @@ import org.apache.camel.support.DefaultEndpoint;
 @Metadata(annotations = {
         "protocol=http",
 })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, format = "xml",
+                                   description = "The payload of the SOAP body as a javax.xml.transform.Source (a DOMSource with"
+                                                 + " the default SAAJ message factory); convertBodyTo String gives the XML."
+                                                 + " The SOAP header is in the CamelSpringWebserviceSoapHeader header"),
+           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.POJO }, format = "xml",
+                                     description = "The response payload as XML: a String, bytes, a stream cache, a Source or a"
+                                                   + " DOM Document. A body that does not convert to a Source, such as a Map, gives"
+                                                   + " an empty SOAP body without an error"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.POJO }, format = "xml",
+                                  description = "The request payload as XML: a String, bytes, a stream cache, a Source or a DOM"
+                                                + " Document. No body, a File, a Map or a number fails: read or marshal it to"
+                                                + " XML first"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL }, format = "xml",
+                                   description = "The payload of the SOAP response as a javax.xml.transform.Source (a DOMSource"
+                                                 + " with the default SAAJ message factory), null for an empty SOAP body; also with"
+                                                 + " the InOnly pattern"))
 public class SpringWebserviceEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     @UriParam
