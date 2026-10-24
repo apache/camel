@@ -25,11 +25,13 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.component.ApiMethodHelperTest.TestMethod;
 import org.junit.jupiter.api.Test;
 
@@ -68,6 +70,26 @@ public class AbstractApiProducerTest extends ContextTestSupport {
         Object out = template.requestBody(endpoint, "2");
         assertTrue(out instanceof String[], "Should be an array: " + out);
         assertEquals(2, ((String[]) out).length);
+    }
+
+    @Test
+    public void testArgumentHeaderSetByTheConversionOfTheBody() throws Exception {
+        // as the converter of a Google Drive file sets the header of its media content
+        context.getTypeConverterRegistry().addTypeConverter(String.class, TestName.class, new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+                exchange.getIn().setHeader("CamelTestApi.times", 2);
+                return type.cast(((TestName) value).name());
+            }
+        });
+        Endpoint endpoint = createEndpoint("greetTimes", "name");
+
+        Object out = template.requestBody(endpoint, new TestName("World"));
+        assertTrue(out instanceof String[], "Should be an array: " + out);
+        assertEquals(2, ((String[]) out).length);
+    }
+
+    record TestName(String name) {
     }
 
     private Endpoint createEndpoint(String methodName, String inBody) throws Exception {

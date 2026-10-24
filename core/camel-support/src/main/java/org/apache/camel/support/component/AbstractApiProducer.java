@@ -190,7 +190,16 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
                         type = endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType();
                     }
                     if (type != null && !isArrayValueForArrayType(type, value)) {
-                        value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
+                        Object converted
+                                = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
+                        if (converted != value) {
+                            // a converter may set the header of another argument, such as the media content of a
+                            // Google Drive file, after the headers were read: add the arguments the headers have now
+                            Map<String, Object> fromHeaders = new HashMap<>();
+                            propertiesHelper.getExchangeProperties(exchange, fromHeaders);
+                            fromHeaders.forEach(properties::putIfAbsent);
+                        }
+                        value = converted;
                     }
                 } catch (Exception e) {
                     exchange.setException(new RuntimeCamelException(
