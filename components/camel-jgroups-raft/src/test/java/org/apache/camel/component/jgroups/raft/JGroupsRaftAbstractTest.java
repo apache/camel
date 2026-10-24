@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.awaitility.core.ConditionTimeoutException;
 import org.jgroups.raft.RaftHandle;
 
 import static org.awaitility.Awaitility.await;
@@ -43,22 +44,26 @@ public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
      * address to forward to.
      */
     protected void waitForLeader(int attempts, RaftHandle... handles) {
-        await().atMost(attempts, TimeUnit.SECONDS)
-                .pollInterval(500, TimeUnit.MILLISECONDS)
-                .until(() -> {
-                    boolean hasLeader = false;
-                    for (RaftHandle rh : handles) {
-                        if (!rh.channel().isConnected()) {
-                            continue;
+        try {
+            await().atMost(attempts, TimeUnit.SECONDS)
+                    .pollInterval(500, TimeUnit.MILLISECONDS)
+                    .until(() -> {
+                        boolean hasLeader = false;
+                        for (RaftHandle rh : handles) {
+                            if (!rh.channel().isConnected()) {
+                                continue;
+                            }
+                            if (rh.isLeader()) {
+                                hasLeader = true;
+                            }
+                            if (rh.leader() == null) {
+                                return false;
+                            }
                         }
-                        if (rh.isLeader()) {
-                            hasLeader = true;
-                        }
-                        if (rh.leader() == null) {
-                            return false;
-                        }
-                    }
-                    return hasLeader;
-                });
+                        return hasLeader;
+                    });
+        } catch (ConditionTimeoutException e) {
+            throw new ConditionTimeoutException(e.getMessage() + System.lineSeparator() + RaftNodesState.describe(handles), e);
+        }
     }
 }
