@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -33,6 +36,16 @@ import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS
 @UriEndpoint(firstVersion = "2.22.0", scheme = SCHEME_MYBATIS_BEAN, title = "MyBatis Bean",
              syntax = "mybatis-bean:beanName:methodName", producerOnly = true, category = { Category.DATABASE },
              headersClass = MyBatisConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The argument of the method of the mapper, converted to its parameter type"
+                                                + " by the bean binding, so the text 123 fits an int parameter. With"
+                                                + " inputHeader the argument is that header and the body is not read"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = "outputHeader",
+                                   description = "What the method of the mapper returns, as it declares it: a bean, a List of"
+                                                 + " rows, a Map, a value such as the count of an update, or null for no row;"
+                                                 + " also in the CamelMyBatisResult header. A void method leaves the body"
+                                                 + " unchanged. With outputHeader the result goes in that header and the body"
+                                                 + " is unchanged"))
 public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
 
     @UriPath

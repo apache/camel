@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,44 @@ import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MYBATIS, title = "MyBatis", syntax = "mybatis:statement",
              category = { Category.DATABASE }, headersClass = MyBatisConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = "outputHeader",
+                                   byOption = @BodyType.When(option = "useIterator", value = "false", carriers = Carrier.LIST),
+                                   description = "One row of the select per message, as the resultType or resultMap of the"
+                                                 + " statement maps it: a bean, a Map or a single value, and null for a row of"
+                                                 + " only nulls. With useIterator=false a List of all the rows in one message;"
+                                                 + " with outputHeader the row goes in that header and the body is null"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The parameter of the statement, given to MyBatis as it is, without type"
+                                                + " conversion: it must fit the parameterType, so the text 123 fails an int"
+                                                + " parameter. A bean or a Map for several parameters; no body runs the"
+                                                + " statement without one. Insert, Update and Delete run once per element of"
+                                                + " a List, an array or an Iterator, the List variants once with the whole"
+                                                + " List. With inputHeader the parameter is that header and the body is not"
+                                                + " read"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = "outputHeader",
+                                   byOption = {
+                                           @BodyType.When(option = "statementType", value = "SelectOne",
+                                                          carriers = Carrier.UNKNOWN),
+                                           @BodyType.When(option = "statementType", value = "SelectList",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "statementType", value = "Insert",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "statementType", value = "InsertList",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "statementType", value = "Update",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "statementType", value = "UpdateList",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "statementType", value = "Delete",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "statementType", value = "DeleteList",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "By the statementType, which the producer needs: SelectOne gives the one"
+                                                 + " row as the statement maps it (a bean, a Map or a value), or null for no"
+                                                 + " row; SelectList a List of the rows. Insert, Update and Delete leave the"
+                                                 + " body unchanged, with the count of rows in the CamelMyBatisResult header."
+                                                 + " With outputHeader the result goes in that header and the body is"
+                                                 + " unchanged"))
 public class MyBatisEndpoint extends BaseMyBatisEndpoint {
 
     @UriPath

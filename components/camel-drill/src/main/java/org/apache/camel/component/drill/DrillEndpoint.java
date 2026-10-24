@@ -26,6 +26,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.drill.util.StringUtils;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -40,6 +43,15 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true,
              category = { Category.DATABASE, Category.BIGDATA }, headersClass = DrillConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not read: the query comes from the CamelDrillQuery header,"
+                                                + " and a query in the body without that header fails"),
+           producerOut = @BodyType(value = Carrier.LIST,
+                                   javaType = "java.util.List<java.util.Map<String, Object>>",
+                                   description = "The rows of the query: a List of Maps of the column names (case"
+                                                 + " insensitive) and their values, an empty List for no rows. A statement"
+                                                 + " such as CREATE TABLE AS, DROP or ALTER SESSION gives the one row Drill"
+                                                 + " answers with, such as ok and summary"))
 public class DrillEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Host name or IP address")

@@ -24,6 +24,9 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -35,6 +38,20 @@ import org.jooq.ResultQuery;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType", title = "JOOQ",
              category = { Category.DATABASE })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   description = "One row of the table of the entityType per message, as the jOOQ"
+                                                 + " UpdatableRecord of that class"),
+           producerIn = @BodyType(value = Carrier.POJO, dependsOn = "query",
+                                  description = "A jOOQ object, by the operation: a record of the entityType to store for"
+                                                + " NONE, an org.jooq.Query for EXECUTE, an org.jooq.ResultQuery (a select)"
+                                                + " for FETCH. Text, a Map or a List fails: there is no conversion to them."
+                                                + " With the query option the SQL is that query and the body is not read"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "operation", value = "FETCH", carriers = Carrier.LIST,
+                                                             javaType = "org.jooq.Result"),
+                                   description = "NONE stores the record and EXECUTE runs the query, both leave the body"
+                                                 + " unchanged. FETCH gives the org.jooq.Result of the query, a List of its"
+                                                 + " records, which is empty for no row"))
 public class JooqEndpoint extends ScheduledPollEndpoint {
 
     private Expression producerExpression;

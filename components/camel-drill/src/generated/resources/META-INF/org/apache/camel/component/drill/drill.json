@@ -30,6 +30,10 @@
   "headers": {
     "CamelDrillQuery": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The drill query", "constantName": "org.apache.camel.component.drill.DrillConstants#DRILL_QUERY" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "The body is not read: the query comes from the CamelDrillQuery header, and a query in the body without that header fails" },
+    "producerOut": { "carriers": [ "list" ], "javaType": "java.util.List<java.util.Map<String, Object>>", "description": "The rows of the query: a List of Maps of the column names (case insensitive) and their values, an empty List for no rows. A statement such as CREATE TABLE AS, DROP or ALTER SESSION gives the one row Drill answers with, such as ok and summary" }
+  },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Host name or IP address" },
     "clusterId": { "index": 1, "kind": "parameter", "displayName": "Cluster Id", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Cluster ID https:\/\/drill.apache.org\/docs\/using-the-jdbc-driver\/#determining-the-cluster-id" },

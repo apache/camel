@@ -49,11 +49,13 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Message Body
 
-The response from MyBatis will only be set as the body if it's a
-`SELECT` statement. That means, for example, for `INSERT` statements
-Camel will not replace the body. This allows you to continue routing and
-keep the original body. The response from MyBatis is always stored in
-the header with the key `CamelMyBatisResult`.
+The value the mapper method returns is set as the body, and is also stored in
+the header with the key `CamelMyBatisResult`. That is the bean, the `List` or
+the `Map` of a select (or null when there is no row), and the count of rows of an
+`INSERT`, `UPDATE` or `DELETE` method that returns an `int`. A `void` method
+leaves the body as it was, which allows you to continue routing with the
+original body. With the `outputHeader` option the result is stored in that
+header instead, and the body is not changed.
 
 == Examples
 

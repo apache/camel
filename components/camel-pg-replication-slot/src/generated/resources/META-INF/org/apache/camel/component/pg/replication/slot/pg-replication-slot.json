@@ -29,6 +29,9 @@
     "healthCheckConsumerEnabled": { "index": 2, "kind": "property", "displayName": "Health Check Consumer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all consumer based health checks from this component" },
     "healthCheckProducerEnabled": { "index": 3, "kind": "property", "displayName": "Health Check Producer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all producer based health checks from this component. Notice: Camel has by default disabled all producer based health-checks. You can turn on producer checks globally by setting camel.health.producersEnabled=true." }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "One message of the output plugin of the slot, as bytes: text for test_decoding, JSON for wal2json, the binary protocol for pgoutput; convert it to a String for the text plugins. The exchange id is the LSN of the message" }
+  },
   "properties": {
     "slot": { "index": 0, "kind": "path", "displayName": "Slot", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Replication Slot name" },
     "host": { "index": 1, "kind": "path", "displayName": "Host", "group": "common", "label": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "localhost", "description": "Postgres host" },

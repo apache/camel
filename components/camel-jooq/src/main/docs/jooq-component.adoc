@@ -104,9 +104,9 @@ When using jooq as a producer you can use any of the following `JooqOperation` o
 [width="100%",cols="1,2",options="header"]
 |===
 | Operation | Description
-| none | Execute a query (default)
-| execute | Execute a query with no expected results
-| fetch | Execute a query and the result of the query is stored as the new message body
+| none | Store the entity (the record of the entity type) in the message body (default)
+| execute | Execute a query (an `org.jooq.Query` in the message body, or the `query` option) with no expected results
+| fetch | Execute a query (an `org.jooq.ResultQuery` in the message body, or the `query` option) and the `org.jooq.Result` of the query is stored as the new message body
 |===
 
 ==  Example
