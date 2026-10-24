@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,12 @@ import org.springframework.batch.core.launch.JobLauncher;
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName",
              remote = false, producerOnly = true, headersClass = SpringBatchConstants.class, category = { Category.WORKFLOW })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not read: the job parameters are the message headers (Date, Long and"
+                                                + " Double values as such, other values as text; a null header value fails)"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.springframework.batch.core.job.JobExecution",
+                                   description = "The JobExecution of the launched job, with its status and exit status; the"
+                                                 + " headers stay as they were"))
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath
