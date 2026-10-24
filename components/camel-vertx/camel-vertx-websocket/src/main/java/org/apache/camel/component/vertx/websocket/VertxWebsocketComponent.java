@@ -29,6 +29,7 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
@@ -189,6 +190,20 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
 
             return createVertxWebsocketHost(hostConfiguration, hostKey);
         });
+
+        // every consumer on this host and port is served by the one server the first consumer configured, so a consumer
+        // with other SSLContextParameters cannot be served with them, and must not start as if it were
+        SSLContextParameters hostSslContextParameters = host.getHostConfiguration().getSslContextParameters();
+        if (configuration.getSslContextParameters() != hostSslContextParameters) {
+            throw new IllegalArgumentException(
+                    "Cannot start the consumer for " + configuration.getWebsocketURI() + " because the server on "
+                                               + hostKey
+                                               + (hostSslContextParameters == null
+                                                       ? " was started without TLS"
+                                                       : " was started with other sslContextParameters")
+                                               + ". All consumers on the same host and port must use the same "
+                                               + "SSLContextParameters instance, or none.");
+        }
 
         host.connect(consumer);
         try {
