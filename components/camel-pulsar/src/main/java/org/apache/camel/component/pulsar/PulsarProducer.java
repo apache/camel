@@ -138,7 +138,6 @@ public class PulsarProducer extends DefaultAsyncProducer {
                         .batchingMaxPublishDelay(configuration.getBatchingMaxPublishDelayMicros(), TimeUnit.MICROSECONDS)
                         .batchingMaxMessages(configuration.getMaxPendingMessages())
                         .enableBatching(configuration.isBatchingEnabled()).batcherBuilder(configuration.getBatcherBuilder())
-                        .initialSequenceId(configuration.getInitialSequenceId())
                         .compressionType(configuration.getCompressionType())
                         .hashingScheme(HashingScheme.valueOf(configuration.getHashingScheme()))
                         .enableChunking(configuration.isChunkingEnabled());
@@ -149,6 +148,13 @@ public class PulsarProducer extends DefaultAsyncProducer {
                 }
                 if (producerName != null) {
                     producerBuilder.producerName(producerName);
+                }
+                // with a negative value (the default -1) the initial sequence id is not set, so the Pulsar client
+                // continues after the last sequence id the broker has for the producer name. Passing -1 would make
+                // every start begin again at sequence id 0, and with deduplication enabled the broker would drop the
+                // messages of the new run as duplicates of the previous one
+                if (configuration.getInitialSequenceId() >= 0) {
+                    producerBuilder.initialSequenceId(configuration.getInitialSequenceId());
                 }
                 producer = producerBuilder.create();
             }

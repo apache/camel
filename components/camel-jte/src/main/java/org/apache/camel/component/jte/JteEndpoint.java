@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.jte;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+
 import gg.jte.TemplateEngine;
 import gg.jte.TemplateOutput;
 import gg.jte.output.StringOutput;
@@ -125,7 +130,9 @@ public class JteEndpoint extends ResourceEndpoint {
                 exchange.getIn().removeHeader(JteConstants.JTE_TEMPLATE);
                 // add template in code resolver so we can find it
                 if (codeResolver != null) {
-                    name = exchange.getExchangeId();
+                    // named after its content: the engine compiles each template name into a class that it keeps,
+                    // so a name per exchange would compile the same template again for every exchange
+                    name = headerTemplateName(content);
                     codeResolver.addTemplateFromHeader(name, content);
                 }
             }
@@ -162,4 +169,17 @@ public class JteEndpoint extends ResourceEndpoint {
         ExchangeHelper.setInOutBodyPatternAware(exchange, s);
     }
 
+    /**
+     * The name of a template given in the {@link JteConstants#JTE_TEMPLATE} header: the same for the same template
+     * content, and different for different contents.
+     */
+    static String headerTemplateName(String content) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            return "header-" + HexFormat.of().formatHex(digest.digest(content.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException e) {
+            // every Java platform supports SHA-256
+            throw new IllegalStateException(e);
+        }
+    }
 }

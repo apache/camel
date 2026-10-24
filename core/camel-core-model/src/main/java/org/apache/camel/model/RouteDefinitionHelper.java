@@ -38,6 +38,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.spi.ModelChecksumGenerator;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
@@ -421,6 +422,11 @@ public final class RouteDefinitionHelper {
         // init the route inputs
         initRouteInput();
 
+        // the checksum of the route as written, before the parts of route configurations are merged into it
+        if (route.getChecksum() == null) {
+            route.setChecksum(checksum(context, route));
+        }
+
         // abstracts is the cross cutting concerns
         List<ProcessorDefinition<?>> abstracts = new ArrayList<>();
 
@@ -453,6 +459,24 @@ public final class RouteDefinitionHelper {
         route.clearOutput();
         route.getOutputs().addAll(lower);
         route.getOutputs().addAll(0, upper);
+    }
+
+    /**
+     * The checksum of a route as written: the same route gives the same checksum in every run, so tools can tell which
+     * routes changed (see {@link ModelChecksumGenerator}). A tool that reads a route from its source without running it
+     * gets the checksum of the running route from this method too.
+     *
+     * @param  context the camel context
+     * @param  route   the route, before it is prepared
+     * @return         the checksum, or <tt>null</tt> when it cannot be computed (camel-xml-io is not on the classpath)
+     */
+    public static String checksum(CamelContext context, NamedNode route) {
+        if (context == null || route == null) {
+            return null;
+        }
+        ModelChecksumGenerator generator
+                = context.getCamelContextExtension().getContextPlugin(ModelChecksumGenerator.class);
+        return generator != null ? generator.generateChecksum(context, route) : null;
     }
 
     /**

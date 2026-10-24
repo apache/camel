@@ -859,7 +859,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void publishKeyAndValueByExplicitlySpecifyingTheKeyAndValueOptionsHeaderHavePriorities() {
+    default void publishKeyAndValueByExplicitlySpecifyingTheKeyAndValueOptionsKeyOptionHasPriority() {
         fluentTemplate()
                 .to("direct:explicitput")
                 .withHeader(InfinispanConstants.KEY, KEY_ONE)
@@ -867,6 +867,8 @@ public interface InfinispanProducerTestSupport {
                 .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT)
                 .send();
 
-        assertEquals(VALUE_ONE, getCache().get(KEY_ONE));
+        // the key option of the endpoint wins over the key header, the value header still wins over the value option
+        assertEquals(VALUE_ONE, getCache().get("a"));
+        assertNull(getCache().get(KEY_ONE));
     }
 }

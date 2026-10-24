@@ -32,6 +32,10 @@
     <name>Camel :: CXF :: Parent</name>
     <description>Camel CXF parent</description>
 
+    <properties>
+        <camel.surefire.forkCount>0.5C</camel.surefire.forkCount>
+    </properties>
+
     <modules>
         <module>camel-cxf-common</module>
         <module>camel-cxf-transport</module>

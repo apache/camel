@@ -269,8 +269,35 @@ class AuthoringToolsEditTest {
         assertThat(result.getString("status")).isEqualTo("not-found");
         assertThat(result.getInteger("edit")).isEqualTo(2);
         assertThat(result.getString("message")).startsWith("Edit 2 of 2: ")
-                .endsWith("None of the edits was made: the file is unchanged.");
+                .endsWith("None of the edits was written, so the file is unchanged, also not edit 1, which matched: send"
+                          + " all 2 edits again in one call, the text to find of each copied from the file as it is"
+                          + " (fileWindow).");
+        // the window is the file as it is, without edit 1 in it: a window with edit 1 made in it was read as edit 1
+        // written, and only edit 2 was sent again (r21 of the local-model benchmark)
+        assertThat(result.getString("fileWindow")).contains("message: \"one\"").doesNotContain("uno");
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"))).isEqualTo(ROUTE);
+    }
+
+    /** A write of the content the file has: nothing is written, and the answer says so. */
+    @Test
+    void aWriteOfTheContentTheFileHasIsUnchanged(@TempDir Path dir) throws IOException {
+        Path file = dir.resolve("demo.camel.yaml");
+        Files.writeString(file, ROUTE);
+        java.nio.file.attribute.FileTime before = java.nio.file.attribute.FileTime.fromMillis(1_000_000L);
+        Files.setLastModifiedTime(file, before);
+
+        JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, "demo.camel.yaml", ROUTE, true);
+
+        assertThat(result.getString("status")).as(result.toJson()).isEqualTo("unchanged");
+        assertThat(result.getString("message")).startsWith("The file already has exactly this content, so nothing was"
+                                                           + " written and nothing reloads.");
+        assertThat(Files.getLastModifiedTime(file)).as("not written: no reload").isEqualTo(before);
+
+        // an edit whose replacement is the text the file has
+        JsonObject edit = edit(dir, "message: \"one\"", "message: \"one\"");
+        assertThat(edit.getString("status")).as(edit.toJson()).isEqualTo("unchanged");
+        assertThat(edit.getString("message")).startsWith("The edit leaves the file as it is");
+        assertThat(Files.getLastModifiedTime(file)).isEqualTo(before);
     }
 
     @Test
