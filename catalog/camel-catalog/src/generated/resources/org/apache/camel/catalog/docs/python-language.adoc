@@ -29,7 +29,6 @@ include::partial$language-options.adoc[]
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Variable |Type |Description
-|*this* |Exchange |the Exchange is the root object
 |exchange |Exchange |the Exchange
 |camelContext |CamelContext |the CamelContext
 |exchangeId |String |the exchange id
@@ -54,6 +53,9 @@ reserved word in Python (use `message` or `request`), and the deprecated `out` a
 The `variable` and `variables` bindings are the exchange-scoped variables (for example set with the
 xref:eips:setVariable-eip.adoc[Set Variable] EIP). Global and route variables, such as `global:foo`,
 are not in this map; use `exchange.getVariable('global:foo')` for those.
+
+The result of a script is its Python text, as `str()` gives it: a dict gives its Python text, and `None` gives the
+text `None`. Set `resultType` to convert the text to another type.
 
 == Examples
 

@@ -41,6 +41,9 @@ import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticInput;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.semantic.internal.SemanticAuditService;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
@@ -51,6 +54,13 @@ import org.apache.camel.support.LanguageSupport;
 @Metadata(title = "Semantic Evaluation",
           description = "Invoke named evaluations of message content to produce boolean decisions, categories, scores and label sets through provider adapters",
           label = "language,ai", firstVersion = "4.23.0")
+@BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.MAP, Carrier.LIST, Carrier.BYTES, Carrier.STREAM },
+                                    description = "The state, the body unless the declaration selects another: text, a Map or a"
+                                                  + " List, and bytes, a stream or Base64 text only with an image Content-Type."
+                                                  + " Another body fails: select ${bodyAs(String)}"),
+           expressionOut = @BodyType(value = { Carrier.VALUE, Carrier.TEXT, Carrier.LIST, Carrier.MAP },
+                                     description = "What the operation of the expert gives: a Boolean, a category as text, a"
+                                                   + " score or a Set of labels, and with refs: a Map of the results by name"))
 public class SemanticLanguage extends LanguageSupport {
     public static final String RESULT = "CamelSemanticResult";
     public static final String RESULTS = "CamelSemanticResults";
