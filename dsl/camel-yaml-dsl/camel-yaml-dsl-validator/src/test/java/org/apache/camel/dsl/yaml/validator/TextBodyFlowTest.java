@@ -1403,7 +1403,7 @@ public class TextBodyFlowTest {
                 .anySatisfy(m -> assertThat(m)
                         .contains("route queue: simple reads a field of the body (${body[id]})")
                         .contains("the azure-storage-queue consumer gives it as a stream"))
-                .anySatisfy(m -> assertThat(m).contains("to: google-pubsub needs the body as text or bytes"));
+                .anySatisfy(m -> assertThat(m).contains("to: google-pubsub needs the body as text, bytes, a stream or a file"));
     }
 
     @Test

@@ -3160,3 +3160,52 @@ instead. The aws-ddb-sink Kamelet sets the exchange property, and is not affecte
   always null before.
 * The catalog now gives the types the headers have, such as `TableStatus` for `CamelAwsDdbTableStatus` and `Instant`
   for `CamelAwsDdbCreationDate`, and lists the `CamelAwsDdbNextToken` header and the headers of aws2-ddbstream.
+
+=== camel-azure-storage-blob - getBlob writes only into an OutputStream body
+
+The getBlob operation now writes the blob into the message body only when the body is an `OutputStream`. A body that
+only converts to one, such as a `java.io.File`, a `java.nio.file.Path` or the file of a file consumer, is replaced by an
+`InputStream` of the blob, as any other body is. Previously such a file was overwritten with the blob, also with
+`noop=true` on the file consumer. To save a blob into a file, use the downloadBlobToFile operation, or a `file`
+endpoint after getBlob.
+
+uploadBlockBlob, uploadBlockBlobChunked and commitAppendBlob without a body now fail with an `InvalidPayloadException`
+instead of a `NullPointerException`, and commitAppendBlob and uploadPageBlob without a body no longer create an empty
+blob first.
+
+=== camel-azure-storage-queue - sendMessage without a body
+
+sendMessage without a body now fails with an `InvalidPayloadException`, before the queue is created, instead of a
+`NullPointerException` of the Azure SDK.
+
+=== camel-azure-servicebus - the body of the consumer converts to bytes and streams
+
+The body that the consumer gives is a `com.azure.core.util.BinaryData`, which now converts to `byte[]` and `InputStream`
+as well as to `String`, so an unmarshal, a file producer or `convertBodyTo` byte[] can follow the consumer directly.
+
+=== camel-google-pubsub - the producer sends the content of streams and files
+
+A body that is not a String or a `byte[]` is now converted to a `byte[]` first, and only a body that does not convert
+goes to the serializer (Java serialization by default). So a stream, a stream cache, a `java.nio.file.Path` and the file
+of a file consumer are now sent as their content, where they failed with a `NotSerializableException`, and a
+`java.io.File` is sent as the content of the file instead of as a serialized File object. A Map or a POJO is serialized
+as before, and a custom `serializer` is now called only for such bodies. A message without a body now fails with an
+`InvalidPayloadException`, where it published a serialized null.
+
+=== camel-ibm-cos - the content length of putObject
+
+putObject now takes the content length from the body when the length of the body is known (a `byte[]`, a String, a
+stream cache, a file), and uses the `CamelIBMCOSContentLength` header only for a stream of unknown length. Previously
+the header won, so a route that read an object, changed the body and wrote it failed, as the header still had the
+length of the object it read.
+
+=== camel-minio - the getObjectRange operation
+
+The `getObjectRange` operation, as the catalog and the documentation name it, now works for the `operation` option and
+the `CamelMinioOperation` header; it failed at startup. The former name `getPartialObject` still works, but is
+deprecated.
+
+=== camel-docling - a stream body
+
+An `InputStream` body, such as a stream cache, is now written to a temporary file as a `byte[]` body is, within
+`maxFileSize`, instead of failing with an `InvalidPayloadException`.

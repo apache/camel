@@ -42,8 +42,7 @@ import org.apache.camel.util.ObjectHelper;
              headersClass = ServiceBusConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.azure.core.util.BinaryData",
                                    description = "The payload of the Service Bus message as an Azure BinaryData, which"
-                                                 + " converts to a String but not to bytes or a stream: convert it to a"
-                                                 + " String before an unmarshal, a file or another producer"),
+                                                 + " converts to a String, bytes or a stream"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.LIST },
                                   description = "Sent as text by default: bytes, a stream or a file are read as text, so"
                                                 + " binary content needs binary=true. A BinaryData, as the consumer gives it, is"

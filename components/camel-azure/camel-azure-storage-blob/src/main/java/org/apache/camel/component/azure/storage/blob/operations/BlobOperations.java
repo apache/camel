@@ -60,6 +60,7 @@ import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlobClientBase;
 import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.azure.common.AzureFileNameHelper;
@@ -102,7 +103,9 @@ public class BlobOperations {
         }
 
         final Message message = BlobUtils.getInMessage(exchange);
-        final OutputStream outputStream = ObjectHelper.isEmpty(message) ? null : message.getBody(OutputStream.class);
+        // only an OutputStream body is written to, not a body that converts to one (such as a File, which would be emptied)
+        final OutputStream outputStream
+                = message != null && message.getBody() instanceof OutputStream os ? os : null;
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final BlobCommonRequestOptions blobCommonRequestOptions = getCommonRequestOptions(exchange);
         final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange))
@@ -217,7 +220,7 @@ public class BlobOperations {
         return BlobOperationResponse.createWithEmptyBody(headers.toMap());
     }
 
-    public BlobOperationResponse uploadBlockBlob(final Exchange exchange) throws IOException {
+    public BlobOperationResponse uploadBlockBlob(final Exchange exchange) throws IOException, InvalidPayloadException {
         ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final BlobStreamAndLength blobStreamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
@@ -242,7 +245,7 @@ public class BlobOperations {
         }
     }
 
-    public BlobOperationResponse uploadBlockBlobChunked(final Exchange exchange) throws IOException {
+    public BlobOperationResponse uploadBlockBlobChunked(final Exchange exchange) throws IOException, InvalidPayloadException {
         ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
@@ -466,9 +469,11 @@ public class BlobOperations {
         return BlobOperationResponse.create(response);
     }
 
-    public BlobOperationResponse commitAppendBlob(final Exchange exchange) throws IOException {
+    public BlobOperationResponse commitAppendBlob(final Exchange exchange) throws IOException, InvalidPayloadException {
         ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
+        // read the body first, so an upload without a body does not leave an empty blob behind
+        final BlobStreamAndLength streamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final boolean createAppendBlob = configurationProxy.isCreateAppendBlob(exchange);
 
@@ -477,7 +482,6 @@ public class BlobOperations {
             createAppendBlob(exchange);
         }
 
-        final BlobStreamAndLength streamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
         BlobLeaseClient leaseClient = null;
         try {
             leaseClient = acquireLeaseIfConfigured(commonRequestOptions.getBlobRequestConditions(), exchange);
@@ -519,6 +523,8 @@ public class BlobOperations {
     public BlobOperationResponse uploadPageBlob(final Exchange exchange) throws Exception {
         ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
+        // read the body first, so an upload without a body does not leave an empty blob behind
+        final InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
         final boolean createPageBlob = configurationProxy.isCreatePageBlob(exchange);
 
         // only if header is true and we don't have one exists
@@ -526,7 +532,6 @@ public class BlobOperations {
             createPageBlob(exchange);
         }
 
-        final InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
         final BlobCommonRequestOptions requestOptions = getCommonRequestOptions(exchange);
         final PageRange pageRange = configurationProxy.getPageRange(exchange);
         if (pageRange == null) {

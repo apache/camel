@@ -83,7 +83,7 @@
     "CamelAzureServiceBusCorrelationId": { "index": 24, "kind": "header", "displayName": "", "group": "common", "label": "common", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Gets or Sets a correlation identifier.", "constantName": "org.apache.camel.component.azure.servicebus.ServiceBusConstants#CORRELATION_ID" }
   },
   "bodyTypes": {
-    "consumerOut": { "carriers": [ "pojo" ], "javaType": "com.azure.core.util.BinaryData", "description": "The payload of the Service Bus message as an Azure BinaryData, which converts to a String but not to bytes or a stream: convert it to a String before an unmarshal, a file or another producer" },
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "com.azure.core.util.BinaryData", "description": "The payload of the Service Bus message as an Azure BinaryData, which converts to a String, bytes or a stream" },
     "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "list" ], "description": "Sent as text by default: bytes, a stream or a file are read as text, so binary content needs binary=true. A BinaryData, as the consumer gives it, is sent as it is, and a Map or a POJO is sent as its toString(): marshal it first. A List is sent as one message per element" },
     "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged, also after scheduleMessages" }
   },

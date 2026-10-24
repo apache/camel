@@ -100,8 +100,8 @@ public class MinioProducer extends DefaultProducer {
                 case getObject:
                     getObject(minioClient, exchange);
                     break;
-                case getPartialObject:
-                    getPartialObject(minioClient, exchange);
+                case getObjectRange, getPartialObject:
+                    getObjectRange(minioClient, exchange);
                     break;
                 case createDownloadLink:
                     createPresignedUrl(minioClient, exchange, Http.Method.GET);
@@ -351,7 +351,7 @@ public class MinioProducer extends DefaultProducer {
         }
     }
 
-    private void getPartialObject(MinioClient minioClient, Exchange exchange) throws Exception {
+    private void getObjectRange(MinioClient minioClient, Exchange exchange) throws Exception {
 
         if (getConfiguration().isPojoRequest()) {
             GetObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(GetObjectArgs.Builder.class);

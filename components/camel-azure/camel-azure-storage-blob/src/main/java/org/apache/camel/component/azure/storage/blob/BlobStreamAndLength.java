@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.PayloadHelper;
@@ -39,9 +40,13 @@ public final class BlobStreamAndLength {
         this.streamLength = streamLength;
     }
 
-    public static BlobStreamAndLength createBlobStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
+    public static BlobStreamAndLength createBlobStreamAndLengthFromExchangeBody(final Exchange exchange)
+            throws IOException, InvalidPayloadException {
         final Message message = exchange.getIn();
         Object body = message.getBody();
+        if (body == null) {
+            throw new InvalidPayloadException(exchange, InputStream.class);
+        }
         Long blobSize = message.getHeader(BlobConstants.BLOB_UPLOAD_SIZE, () -> null, Long.class);
         message.removeHeader(BlobConstants.BLOB_UPLOAD_SIZE); // remove to avoid issues for further uploads
 

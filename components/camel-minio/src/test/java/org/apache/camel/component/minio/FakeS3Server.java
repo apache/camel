@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -34,8 +35,8 @@ import com.sun.net.httpserver.HttpServer;
 
 /**
  * A minimal in-process fake of the S3 API calls the minio consumer makes for a single bucket: head bucket, list objects
- * (v2, paginated with max-keys and start-after/continuation-token), stat, get and delete object. The gets (or the stats
- * and gets) of an object can be refused with 403 (AccessDenied).
+ * (v2, paginated with max-keys and start-after/continuation-token), stat, get (also of a byte range) and delete object.
+ * The gets (or the stats and gets) of an object can be refused with 403 (AccessDenied).
  */
 final class FakeS3Server {
 
@@ -144,8 +145,18 @@ final class FakeS3Server {
                     noSuchKey(http, key);
                 } else {
                     gets.computeIfAbsent(key, k -> new AtomicInteger()).incrementAndGet();
+                    String range = http.getRequestHeaders().getFirst("Range");
+                    int status = 200;
+                    if (range != null && range.startsWith("bytes=")) {
+                        // bytes=first-last (both inclusive), as the client sends for an offset and a length
+                        String[] bounds = range.substring(6).split("-");
+                        int first = Integer.parseInt(bounds[0]);
+                        int last = bounds.length > 1 ? Integer.parseInt(bounds[1]) : data.length - 1;
+                        data = Arrays.copyOfRange(data, first, Math.min(last + 1, data.length));
+                        status = 206;
+                    }
                     objectHeaders(http, data);
-                    http.sendResponseHeaders(200, data.length);
+                    http.sendResponseHeaders(status, data.length);
                     try (OutputStream os = http.getResponseBody()) {
                         os.write(data);
                     }

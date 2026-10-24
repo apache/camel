@@ -55,11 +55,18 @@ include::partial$component-endpoint-headers.adoc[]
 Producer endpoints can accept and deliver to PubSub individual and grouped
 exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
 
-Google PubSub expects the payload to be byte[] array, Producer endpoints will send:
+Google PubSub expects the payload to be byte[] array, Producer endpoints will send, in this order:
 
 * String body as `byte[]` encoded as UTF-8
 * `byte[]` body as is
-* Everything else will be serialised into a `byte[]` array
+* any other body that the Camel type converter can convert to `byte[]`, as the result of that conversion.
+This sends the content of a stream, a stream cache, a `java.io.File`, a `java.nio.file.Path` or the file of the
+xref:file-component.adoc[File] consumer, so `from("file:inbox").to("google-pubsub:project:topic")` publishes the content of each file.
+* everything else is passed to the `serializer`, which by default uses Java serialization (`ObjectOutputStream`),
+so for example a `Map` or a POJO is sent as Java-serialized bytes. Set a custom `serializer` to send such bodies in another format,
+or marshal the body (for example to JSON) before the producer.
+
+A message without a body is not sent: the producer fails with an `InvalidPayloadException`.
 
 A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as PubSub attributes.
 

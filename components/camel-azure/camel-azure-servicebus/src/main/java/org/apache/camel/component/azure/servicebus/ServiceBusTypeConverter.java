@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.io.InputStream;
+
 import com.azure.core.util.BinaryData;
 import org.apache.camel.Converter;
 import org.apache.camel.util.ObjectHelper;
@@ -32,6 +34,16 @@ public final class ServiceBusTypeConverter {
             return binaryData.toString();
         }
         return null;
+    }
+
+    @Converter
+    public static byte[] toBytes(final BinaryData binaryData) {
+        return binaryData.toBytes();
+    }
+
+    @Converter
+    public static InputStream toInputStream(final BinaryData binaryData) {
+        return binaryData.toStream();
     }
 
     @Converter(allowNull = true)

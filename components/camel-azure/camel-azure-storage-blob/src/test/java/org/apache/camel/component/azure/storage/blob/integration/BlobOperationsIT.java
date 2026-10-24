@@ -363,7 +363,7 @@ class BlobOperationsIT extends Base {
     }
 
     @Test
-    void testCreateAndUpdateAppendBlob() throws IOException {
+    void testCreateAndUpdateAppendBlob() throws Exception {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 

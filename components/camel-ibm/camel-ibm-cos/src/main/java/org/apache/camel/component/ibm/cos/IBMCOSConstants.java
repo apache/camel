@@ -39,7 +39,8 @@ public interface IBMCOSConstants {
     @Metadata(description = "The *optional* Content-Encoding HTTP header specifying what content encodings have been applied to the object",
               javaType = "String")
     String CONTENT_ENCODING = "CamelIBMCOSContentEncoding";
-    @Metadata(description = "The Content-Length HTTP header indicating the size of the associated object in bytes",
+    @Metadata(description = "The Content-Length HTTP header indicating the size of the associated object in bytes."
+                            + " The putObject operation uses it only for a stream body of unknown length, and takes the length from the body otherwise.",
               javaType = "Long")
     String CONTENT_LENGTH = "CamelIBMCOSContentLength";
     @Metadata(description = "The base64 encoded 128-bit MD5 digest of the associated object",

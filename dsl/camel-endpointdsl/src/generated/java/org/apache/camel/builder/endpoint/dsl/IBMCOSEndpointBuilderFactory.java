@@ -1787,7 +1787,8 @@ public interface IBMCOSEndpointBuilderFactory {
         }
         /**
          * The Content-Length HTTP header indicating the size of the associated
-         * object in bytes.
+         * object in bytes. The putObject operation uses it only for a stream
+         * body of unknown length, and takes the length from the body otherwise.
          * 
          * The option is a: {@code Long} type.
          * 
