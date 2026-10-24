@@ -36,7 +36,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class QuickjsSerializationTest {
@@ -200,9 +199,32 @@ class QuickjsSerializationTest {
     @Test
     void cyclicResultWithSetDoesNotRecurseForever() {
         Exchange exchange = new DefaultExchange(context);
-        // the cycle is left to JSON as before; the conversion must not follow it into a stack overflow
-        assertThatCode(() -> language().createExpression("const o = { s: new Set([1]) }; o.self = o; o;")
+        // the cycle is left to JSON, which fails it; the conversion must not follow it into a stack overflow
+        assertThatThrownBy(() -> language().createExpression("const o = { s: new Set([1]) }; o.self = o; o;")
                 .evaluate(exchange, Object.class))
-                .doesNotThrowAnyException();
+                .isInstanceOf(ExpressionEvaluationException.class)
+                .hasMessageContaining("The script gave no result");
+    }
+
+    @Test
+    void resultThatCannotReachJavaFailsInsteadOfGivingThePreviousResult() {
+        Exchange exchange = new DefaultExchange(context);
+        Language language = language();
+        for (String script : List.of("1n", "({ big: 1n })", "new BigInt64Array(2)", "const o = {}; o.self = o; o;",
+                "({ toJSON() { throw new Error('no JSON') } })", "Promise.reject(new Error('boom'))")) {
+            assertThat(language.createExpression("5").evaluate(exchange, Object.class)).isEqualTo(5);
+            assertThatThrownBy(() -> language.createExpression(script).evaluate(exchange, Object.class))
+                    .as(script)
+                    .isInstanceOf(ExpressionEvaluationException.class)
+                    .hasMessageContaining("The script gave no result");
+        }
+        assertThat(language.createExpression("Promise.resolve(6)").evaluate(exchange, Object.class)).isEqualTo(6);
+        assertThat(language.createExpression("null").evaluate(exchange, Object.class)).isNull();
+
+        ScriptingLanguage scripting = (ScriptingLanguage) language;
+        assertThat(scripting.evaluate("x", Map.of("x", 7), Object.class)).isEqualTo(7);
+        assertThatThrownBy(() -> scripting.evaluate("BigInt(x)", Map.of("x", 7), Object.class))
+                .isInstanceOf(ExpressionEvaluationException.class)
+                .hasMessageContaining("The script gave no result");
     }
 }

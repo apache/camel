@@ -164,7 +164,9 @@ As an expression, the JSON value of the script becomes the Camel result (then co
 with Camel type converters when a result type is requested): an object becomes a `Map` and an
 array a `List`, a `Date` becomes its ISO text, and `undefined`, `NaN` or a function becomes `null`.
 A `Set` becomes a `List`, a JavaScript `Map` a `Map` (its keys as text), and a typed array or an
-`ArrayBuffer` a `List` of numbers, also when nested. In `setBody` and `transform` this result
+`ArrayBuffer` a `List` of numbers, also when nested. A result that has no JSON form, such as a
+`BigInt` or a cyclic object, fails the evaluation, as does a `Promise` that is rejected; a `Promise`
+that resolves gives its value. In `setBody` and `transform` this result
 replaces a body the script set with `camel.setBody(...)`.
 
 As a predicate (`.when().quickjs(...)` or `.filter().quickjs(...)`), the result is converted to
