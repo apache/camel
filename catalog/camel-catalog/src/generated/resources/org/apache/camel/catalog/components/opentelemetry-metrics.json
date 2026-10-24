@@ -37,6 +37,10 @@
     "CamelMetricsDescription": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override description value in URI", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_METRIC_DESCRIPTION" },
     "CamelMetricsAttributes": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "io.opentelemetry.api.common.Attributes", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "To augment meter attributes defined as URI parameters", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_METRIC_ATTRIBUTES" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "Not used, unless an option such as increment, decrement or value is a simple expression that reads it, which must then give a number. The CamelMetrics headers override the options" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged; the CamelMetrics headers are removed" }
+  },
   "properties": {
     "metricType": { "index": 0, "kind": "path", "displayName": "Metric Type", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.opentelemetry.metrics.InstrumentType", "enum": [ "counter", "summary", "timer" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Type of metrics" },
     "metricName": { "index": 1, "kind": "path", "displayName": "Metric Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportSimpleExpression": true, "description": "Name of metric" },
