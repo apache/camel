@@ -87,6 +87,16 @@ class PythonResultTest extends LanguageTestSupport {
     }
 
     @Test
+    void collectionsThatHoldThemselvesAreCopiedOnce() {
+        Map<?, ?> map = assertInstanceOf(Map.class, evaluate("(lambda d: d.__setitem__('self', d) or d)({})"));
+        assertSame(map, map.get("self"));
+
+        List<?> list = assertInstanceOf(List.class, evaluate("(lambda l: l.append(l) or l)([1])"));
+        assertEquals(1, list.get(0));
+        assertSame(list, list.get(1));
+    }
+
+    @Test
     void resultIsConvertedToTheRequestedType() {
         assertExpression("1 + 2", "3");
         assertExpression("'5'", 5);

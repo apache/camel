@@ -18,6 +18,7 @@ package org.apache.camel.language.python;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -109,9 +110,14 @@ public class PythonExpression extends ExpressionSupport {
      * The Java value of what a script returns: None is null, a Python string, number or boolean is the Java String,
      * number or Boolean, and a Java object bound to the script (such as the body) is that object. A dict, list, tuple
      * or set is copied into a LinkedHashMap, ArrayList or LinkedHashSet of Java values, as the Jython collections are
-     * live views that give their Python text from toString() and keep nested Python collections.
+     * live views that give their Python text from toString() and keep nested Python collections. A collection that
+     * holds itself is copied once, and the copy holds itself.
      */
     static Object toJava(Object value) {
+        return toJava(value, new IdentityHashMap<>());
+    }
+
+    private static Object toJava(Object value, Map<Object, Object> copies) {
         if (!(value instanceof PyObject py)) {
             return value;
         }
@@ -120,21 +126,28 @@ public class PythonExpression extends ExpressionSupport {
             // None, a Python string, number or boolean, or a Java object
             return answer;
         }
+        Object copied = copies.get(answer);
+        if (copied != null) {
+            return copied;
+        }
         if (answer instanceof Map<?, ?> map) {
             Map<Object, Object> copy = new LinkedHashMap<>();
-            map.forEach((k, v) -> copy.put(toJava(k), toJava(v)));
+            copies.put(answer, copy);
+            map.forEach((k, v) -> copy.put(toJava(k, copies), toJava(v, copies)));
             return copy;
         } else if (answer instanceof List<?> list) {
-            return copyInto(list, new ArrayList<>(list.size()));
+            return copyInto(answer, list, new ArrayList<>(list.size()), copies);
         } else if (answer instanceof Set<?> set) {
-            return copyInto(set, new LinkedHashSet<>());
+            return copyInto(answer, set, new LinkedHashSet<>(), copies);
         }
         return answer;
     }
 
-    private static <C extends Collection<Object>> C copyInto(Collection<?> source, C target) {
+    private static <C extends Collection<Object>> C copyInto(
+            Object answer, Collection<?> source, C target, Map<Object, Object> copies) {
+        copies.put(answer, target);
         for (Object element : source) {
-            target.add(toJava(element));
+            target.add(toJava(element, copies));
         }
         return target;
     }
