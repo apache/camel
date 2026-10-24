@@ -44,6 +44,7 @@ import static org.apache.camel.component.ai.tool.AiTool.SCHEME;
              syntax = "ai-tool:toolName",
              consumerOnly = true,
              remote = false,
+             headersClass = AiToolConstants.class,
              category = { Category.AI })
 @BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
                                    description = "No body: each argument of the tool call is a header named as its"

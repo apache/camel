@@ -18,6 +18,7 @@ package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.jgroups.JChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,10 @@ public class JGroupsConsumer extends DefaultConsumer {
 
     private final CamelJGroupsReceiver receiver;
     private final JGroupsEndpoint endpoint;
+    // whether this consumer connected the channel, so that only a consumer that connected it disconnects it (a consumer
+    // that failed to start is stopped as well, while the channel can be used by the producers and consumers of other
+    // endpoints)
+    private volatile boolean connected;
 
     public JGroupsConsumer(JGroupsEndpoint endpoint, Processor processor, String clusterName) {
         super(endpoint, processor);
@@ -50,13 +55,21 @@ public class JGroupsConsumer extends DefaultConsumer {
         LOG.debug("Connecting receiver: {} to the cluster: {}.", receiver, clusterName);
         endpoint.getResolvedChannel().setReceiver(receiver);
         endpoint.connect();
+        connected = true;
     }
 
     @Override
     protected void doStop() throws Exception {
         LOG.debug("Closing connection to cluster: {} from receiver: {}.", clusterName, receiver);
-        endpoint.getResolvedChannel().setReceiver(null);
-        endpoint.disconnect();
+        JChannel channel = endpoint.getResolvedChannel();
+        if (channel != null && channel.getReceiver() == receiver) {
+            // only remove the receiver of this consumer, not the one of another consumer of the channel
+            channel.setReceiver(null);
+        }
+        if (connected) {
+            connected = false;
+            endpoint.disconnect();
+        }
         super.doStop();
     }
 }

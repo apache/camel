@@ -128,6 +128,6 @@ public class GoogleMailUpdateMessageLabelsDataTypeTransformer extends Transforme
 
     private Gmail getGmailClient() {
         GoogleMailComponent component = getCamelContext().getComponent("google-mail", GoogleMailComponent.class);
-        return component.getClient(component.getConfiguration());
+        return component.getClient();
     }
 }

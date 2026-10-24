@@ -292,3 +292,33 @@ from("nats:mytopic?jetstreamEnabled=true&jetstreamName=mystream&durableName=myco
 
 If the route completes without calling any NatsManualAck method, the message remains unacknowledged
 and NATS will redeliver it after `ackWait` expires (default 30 seconds).
+
+=== JetStream push consumer whose consumer was deleted
+
+With `jetstreamEnabled=true` and `pullSubscription=false`, the server deletes an ephemeral
+JetStream consumer (no `durableName`, and no durable name in the `consumerConfiguration`)
+after about 5 seconds without a subscriber, for example while the client is disconnected, and
+loses it on a restart. After every reconnect the Camel consumer asks the server for its
+consumer, and subscribes again when its ephemeral consumer is gone:
+
+* The new consumer starts at the first message the route did not acknowledge, so the route can
+see again the messages after that one (with `ackPolicy=None`, after the last message
+delivered). A message that was not acknowledged and was already delivered `maxDeliver` times
+does not count, as the server does not deliver it again.
+* When nothing was delivered yet, a consumer with the deliver policy `New` (or `Last`) starts
+after (or at) the last message of the stream at the subscribe.
+* On a stream with `WorkQueue` retention, and on a stream that was created again since the
+route subscribed, the new consumer uses the consumer configuration as it is (from the first
+message of the new stream for `New` and `Last`).
+* When the consumer cannot be checked or created again (for example JetStream is not ready yet
+after a server restart, or the stream is gone until it is created again), the Camel consumer
+keeps trying while the route runs, a few times a second apart and then up to every 30 seconds,
+and logs a WARN after the first attempts.
+
+A durable consumer is not created again: when it is gone (deleted by an administrator, or
+after its `inactiveThreshold`), the Camel consumer logs a WARN and keeps its subscription, and
+messages arrive again when the durable is created again with the same deliver subject.
+
+The consumer is checked only after a reconnect. A consumer that is deleted while the
+connection stays up (for example with `nats consumer rm`) is not detected, and the route
+receives nothing more until it is restarted.

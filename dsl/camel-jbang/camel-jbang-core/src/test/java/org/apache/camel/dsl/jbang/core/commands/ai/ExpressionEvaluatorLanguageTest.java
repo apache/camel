@@ -31,6 +31,16 @@ class ExpressionEvaluatorLanguageTest {
 
     private static final String STOCK = "[{\"sku\":\"CAMEL-MUG\",\"qty\":42},{\"sku\":\"CAMEL-CAP\",\"qty\":0}]";
 
+    /** A jsonpath filter gives a list: the answer says how a route gets the one element (r20 REST runs). */
+    @Test
+    void aJsonPathFilterSaysHowToGetTheOneElement() {
+        assertThat(ExpressionEvaluator.filterNote("jsonpath", "$[?(@.sku == 'CAMEL-MUG')]", "ok"))
+                .contains("resultType: java.util.Map gives the one element").contains("an index after the filter");
+        assertThat(ExpressionEvaluator.filterNote("jsonpath", "$.sku", "ok")).isNull();
+        assertThat(ExpressionEvaluator.filterNote("simple", "${body}", "ok")).isNull();
+        assertThat(ExpressionEvaluator.filterNote("jsonpath", "$[?(@.sku == 'X')", "error")).isNull();
+    }
+
     @Test
     void aLanguageThatCannotBeLoadedSaysWhatToDo() {
         JsonObject result = ExpressionEvaluator.evaluate(new ToolContext(), "no-such-language", "x", null);

@@ -48,7 +48,7 @@ public interface StepFunctions2Constants {
     @Metadata(description = "The ARN of the state machine activity", javaType = "String")
     String ACTIVITY_ARN = "CamelAwsStepFunctionsActivityArn";
 
-    @Metadata(description = "The limit number of results while listing state machines", javaType = "Integer")
+    @Metadata(description = "The limit number of results while listing activities", javaType = "Integer")
     String ACTIVITIES_MAX_RESULTS = "CamelAwsStepFunctionsActivitiesMaxResults";
 
     @Metadata(description = "The Amazon Resource Name (ARN) of the execution.", javaType = "String")
