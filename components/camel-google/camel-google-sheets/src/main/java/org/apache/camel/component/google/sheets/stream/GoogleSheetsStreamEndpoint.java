@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,14 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-sheets-stream:spreadsheetId",
              consumerOnly = true,
              category = { Category.CLOUD, Category.DOCUMENT }, headersClass = GoogleSheetsStreamConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = @BodyType.When(option = "splitResults", value = "true",
+                                                             carriers = { Carrier.LIST, Carrier.POJO }),
+                                   description = "One message per poll with the Spreadsheet, or, when range is set, one"
+                                                 + " message per range with its ValueRange. splitResults with range gives"
+                                                 + " one message per row (or column, by majorDimension) with the List of its"
+                                                 + " values. The Spreadsheet and the ValueRange are GenericJson, which is"
+                                                 + " also a Map of the JSON fields"))
 public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
