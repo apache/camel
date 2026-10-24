@@ -18,6 +18,8 @@ package org.apache.camel.language.datasonnet;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -42,6 +44,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -78,20 +81,28 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
     @Override
     public boolean matches(Exchange exchange) {
-        this.outputMediaType = MediaTypes.APPLICATION_JAVA;
-        return evaluate(exchange, Boolean.class);
+        // a predicate is always evaluated as a java object (without changing the output media type of this expression)
+        Boolean answer = doEvaluate(exchange, Boolean.class, MediaTypes.APPLICATION_JAVA);
+        return answer != null && answer;
+    }
+
+    @Override
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        return doEvaluate(exchange, type, outputMediaType);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <T> T evaluate(Exchange exchange, Class<T> type) {
+    private <T> T doEvaluate(Exchange exchange, Class<T> type, MediaType outMediaType) {
         try {
             // pass exchange to CML lib using thread as context
             CML.getInstance().getExchange().set(exchange);
 
-            Document<?> result = doEvaluate(exchange);
+            Document<?> result = doEvaluate(exchange, outMediaType);
             if (!type.equals(Object.class)) {
                 return ExchangeHelper.convertToType(exchange, type, result.getContent());
+            } else if (resultType == null && result.getContent() == null) {
+                // a null result is a null value (not a document without content)
+                return null;
             } else if (resultType == null || resultType.equals(Document.class)) {
                 return (T) result;
             } else {
@@ -104,7 +115,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         }
     }
 
-    private Document<?> doEvaluate(Exchange exchange) {
+    private Document<?> doEvaluate(Exchange exchange, MediaType outMediaType) {
         MediaType bodyMT = bodyMediaType;
         if (bodyMT == null && !expression.startsWith(Header.DATASONNET_HEADER)) {
             //Try to auto-detect input mime type if it was not explicitly set
@@ -122,11 +133,13 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         }
         if (doc == null) {
             String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, payload);
-            if (exchange.getMessage().getBody() == null || "".equals(text)) {
+            if (payload == null || "".equals(text)) {
                 //Empty body, force type to be application/java
                 doc = new DefaultDocument<>("", MediaTypes.APPLICATION_JAVA);
             } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMT) || bodyMT == null) {
-                doc = new DefaultDocument<>(payload);
+                // a stream is read as text, as a stream is not a java object to map
+                boolean stream = payload instanceof InputStream || payload instanceof Reader || payload instanceof StreamCache;
+                doc = new DefaultDocument<>(stream ? text : payload);
             } else {
                 // force using string value
                 doc = new DefaultDocument<>(text, bodyMT);
@@ -148,7 +161,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
             return builder.build();
         });
 
-        MediaType outMT = outputMediaType;
+        MediaType outMT = outMediaType;
         if (outMT == null) {
             //Try to auto-detect output mime type if it was not explicitly set
             String typeHeader = exchange.getProperty(DatasonnetConstants.OUTPUT_MEDIATYPE,

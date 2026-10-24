@@ -16,9 +16,16 @@
  */
 package org.apache.camel.language.python;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Message;
 import org.apache.camel.support.ExpressionSupport;
@@ -85,16 +92,51 @@ public class PythonExpression extends ExpressionSupport {
             compiler.set("properties", properties);
 
             PyObject out = compiler.eval(compiledExpression);
-            if (out != null) {
-                String value = out.toString();
+            Object value = toJava(out);
+            if (value != null) {
                 return exchange.getContext().getTypeConverter().convertTo(type, value);
             }
         } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(expressionString, e);
+            // the script compiled in the constructor, so this is an error while it runs
+            throw new ExpressionEvaluationException(this, exchange, e);
         } finally {
             compiler.cleanup();
         }
         return null;
+    }
+
+    /**
+     * The Java value of what a script returns: None is null, a Python string, number or boolean is the Java String,
+     * number or Boolean, and a Java object bound to the script (such as the body) is that object. A dict, list, tuple
+     * or set is copied into a LinkedHashMap, ArrayList or LinkedHashSet of Java values, as the Jython collections are
+     * live views that give their Python text from toString() and keep nested Python collections.
+     */
+    static Object toJava(Object value) {
+        if (!(value instanceof PyObject py)) {
+            return value;
+        }
+        Object answer = py.__tojava__(Object.class);
+        if (!(answer instanceof PyObject)) {
+            // None, a Python string, number or boolean, or a Java object
+            return answer;
+        }
+        if (answer instanceof Map<?, ?> map) {
+            Map<Object, Object> copy = new LinkedHashMap<>();
+            map.forEach((k, v) -> copy.put(toJava(k), toJava(v)));
+            return copy;
+        } else if (answer instanceof List<?> list) {
+            return copyInto(list, new ArrayList<>(list.size()));
+        } else if (answer instanceof Set<?> set) {
+            return copyInto(set, new LinkedHashSet<>());
+        }
+        return answer;
+    }
+
+    private static <C extends Collection<Object>> C copyInto(Collection<?> source, C target) {
+        for (Object element : source) {
+            target.add(toJava(element));
+        }
+        return target;
     }
 
     public Class<?> getType() {
