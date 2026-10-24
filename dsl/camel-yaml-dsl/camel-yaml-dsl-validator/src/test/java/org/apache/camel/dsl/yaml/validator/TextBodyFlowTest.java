@@ -1135,6 +1135,58 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfCloudMessaging() {
+        // the event hubs consumer gives bytes and the queue consumer a stream, so a field read needs an unmarshal;
+        // google-pubsub sends text or bytes, so parsed data must be marshalled first, while aws2-kinesis sends a List
+        // as a batch of records
+        String yaml = """
+                - route:
+                    id: events
+                    from:
+                      uri: azure-eventhubs:namespace/orders
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: queue
+                    from:
+                      uri: azure-storage-queue:account/orders
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: publish
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: google-pubsub:project:orders
+                - route:
+                    id: batch
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '[1, 2]'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-kinesis:orders
+                """;
+        assertThat(lines(yaml)).hasSize(3).anySatisfy(m -> assertThat(m)
+                .contains("route events: simple reads a field of the body (${body[id]})")
+                .contains("the azure-eventhubs consumer gives it as bytes"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route queue: simple reads a field of the body (${body[id]})")
+                        .contains("the azure-storage-queue consumer gives it as a stream"))
+                .anySatisfy(m -> assertThat(m).contains("to: google-pubsub needs the body as text or bytes"));
+    }
+
+    @Test
     public void testOneReportForAStepThatFails() {
         // the first write fails at runtime, so the second does not run with this body
         String yaml = """
