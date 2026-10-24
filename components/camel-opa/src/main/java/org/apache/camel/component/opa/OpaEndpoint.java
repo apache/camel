@@ -24,6 +24,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,16 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "opa", title = "OPA",
              syntax = "opa:policyPath", producerOnly = true, category = { Category.SECURITY },
              headersClass = OpaConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "batch", value = "true", carriers = Carrier.LIST),
+                                  description = "Not read unless includeBody=true: then a String, number, boolean, Map or"
+                                                + " List goes into the input document as it is, and another body as its"
+                                                + " string form (a POJO as its toString). With batch=true a List, one input"
+                                                + " document per element: another body fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body is kept: the verdict is in the CamelOpaDecisionAllow header and"
+                                                 + " the decision document in CamelOpaDecision, or with batch=true a List"
+                                                 + " of Boolean per element in CamelOpaBatchDecision"))
 public class OpaEndpoint extends DefaultEndpoint {
 
     static final String WASM_MODE = "wasm";

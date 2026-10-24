@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierProcessor;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,17 @@ import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.S
 @UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_VERIFIER, title = "XML Security Verify",
              syntax = "xmlsecurity-verify:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
              remote = false, headersClass = XmlSignatureConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml",
+                                  description = "The signed XML document: text, bytes, a stream, a file or a DOM Document. A"
+                                                + " document without a Signature element, a body that is not XML or no body"
+                                                + " fails"),
+           producerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", dependsOn = "xmlSignature2Message",
+                                   description = "The verified content as bytes, in the outputXmlEncoding when set: by"
+                                                 + " default the document without its Signature for an enveloped or detached"
+                                                 + " signature, and the content of the Object for an enveloping one, which is"
+                                                 + " the plain text when it was signed with plainText; outputNodeSearchType"
+                                                 + " picks another node. A signature that does not verify fails the exchange"))
 public class XmlVerifierEndpoint extends DefaultEndpoint {
 
     @UriPath

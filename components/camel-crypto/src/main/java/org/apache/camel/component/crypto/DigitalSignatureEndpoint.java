@@ -28,6 +28,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.crypto.processor.SigningProcessor;
 import org.apache.camel.component.crypto.processor.VerifyingProcessor;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -38,6 +41,15 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.3.0", scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name",
              remote = false, producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
              headersClass = DigitalSignatureConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
+                                  description = "The payload to sign or verify, read as a stream: text, bytes, a stream or a"
+                                                + " file; no body is an empty payload. A Map, a POJO or a number fails: marshal"
+                                                + " it first. Without stream caching a stream body is used up. The signature"
+                                                + " is not in the body: sign sets it, Base64 encoded, in the"
+                                                + " CamelDigitalSignature header (signatureHeaderName), which verify reads"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body is unchanged: a signature that does not verify fails the exchange"
+                                                 + " with a SignatureException"))
 public class DigitalSignatureEndpoint extends DefaultEndpoint {
     @UriParam
     private DigitalSignatureConfiguration configuration;

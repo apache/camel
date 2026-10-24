@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerProcessor;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,20 @@ import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.S
 @UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_SIGN, title = "XML Security Sign",
              syntax = "xmlsecurity-sign:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
              remote = false, headersClass = XmlSignatureConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml",
+                                  byOption = @BodyType.When(option = "plainText", value = "true",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "The XML document to sign: text, bytes, a stream, a file or a DOM Document."
+                                                + " A Map, a POJO that is not XML or no body fails: marshal it first. With"
+                                                + " plainText (or the CamelXmlSignatureMessageIsPlainText header) the body is"
+                                                + " any text, which an enveloping signature wraps"),
+           producerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "xml",
+                                   description = "The signed XML document as bytes, in the outputXmlEncoding when set: the"
+                                                 + " document with the signature for enveloped and detached, or the Signature"
+                                                 + " element with the payload inside for enveloping"))
 public class XmlSignerEndpoint extends DefaultEndpoint {
 
     @UriPath

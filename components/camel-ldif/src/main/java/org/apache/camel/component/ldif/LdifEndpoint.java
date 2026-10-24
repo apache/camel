@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -31,6 +34,13 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true,
              category = { Category.DATABASE, Category.SECURITY })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The LDIF text, starting with version: 1, or bytes, a stream or a file of it."
+                                                + " With allowUrlBody, a text that is not LDIF is read as the URL of the LDIF"
+                                                + " file; otherwise it fails, as does a Map or a POJO"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.NULL },
+                                   description = "A List of one status String per LDIF entry: success, or the error message from"
+                                                 + " the server, which can be empty. No body or an empty body gives null"))
 public class LdifEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)

@@ -41,6 +41,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -54,6 +57,24 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "openfeature", title = "OpenFeature",
              syntax = "openfeature:domain/evaluationType",
              producerOnly = true, category = { Category.CLOUD }, headersClass = OpenFeatureConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not read: the flag key, the targeting key and the context come from the"
+                                                + " options and the CamelOpenFeature headers. With contextFromBody, a Map body"
+                                                + " is the evaluation context, and any other body is ignored"),
+           producerOut = @BodyType(value = { Carrier.VALUE, Carrier.TEXT }, dependsOn = "resultProperty",
+                                   byOption = {
+                                           @BodyType.When(option = "evaluationType", value = "boolean",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "evaluationType", value = "isEnabled",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "evaluationType", value = "variant",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String") },
+                                   description = "The value of the flag: a Boolean for a boolean evaluation, which is the"
+                                                 + " default when defaultValue is true or false, or else a String; the"
+                                                 + " defaultValue when the flag is missing or of another type. The"
+                                                 + " CamelOpenFeatureEvaluationType header overrides the evaluation type. With"
+                                                 + " resultProperty the value goes to that exchange property and the body is"
+                                                 + " unchanged"))
 public class OpenFeatureEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenFeatureEndpoint.class);
