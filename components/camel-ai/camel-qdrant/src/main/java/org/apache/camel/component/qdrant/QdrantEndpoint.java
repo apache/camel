@@ -25,6 +25,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -46,6 +49,21 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              },
              headersClass = QdrantHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL },
+                                  description = "By the action in the CamelQdrantAction header: a VectorParams for"
+                                                + " CREATE_COLLECTION, a PointStruct or a List of them for UPSERT, a PointId"
+                                                + " or a List of them for RETRIEVE, a PointsSelector, PointId, Filter or"
+                                                + " Condition for DELETE, and the query vector as a List of Float, a float"
+                                                + " array or a PointStruct for SIMILARITY_SEARCH. DELETE_COLLECTION and"
+                                                + " COLLECTION_INFO do not read the body. Another body fails, such as a"
+                                                + " number as the id (use PointIdFactory.id) or a List of Double. The"
+                                                + " qdrant:embeddings data type transformer builds the PointStruct from the"
+                                                + " output of langchain4j-embeddings"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.UNCHANGED },
+                                   description = "By the action: a List of RetrievedPoint for RETRIEVE, a List of"
+                                                 + " ScoredPoint for SIMILARITY_SEARCH and a CollectionInfo for"
+                                                 + " COLLECTION_INFO. The other actions keep the body, UPSERT and DELETE with"
+                                                 + " the operation id and status in headers"))
 public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

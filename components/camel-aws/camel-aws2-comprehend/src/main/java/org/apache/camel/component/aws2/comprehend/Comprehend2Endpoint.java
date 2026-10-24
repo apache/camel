@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.comprehend.client.Comprehend2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,27 @@ import software.amazon.awssdk.services.comprehend.ComprehendClient;
  */
 @UriEndpoint(firstVersion = "4.18.0", scheme = "aws2-comprehend", title = "AWS Comprehend", syntax = "aws2-comprehend:label",
              producerOnly = true, category = { Category.CLOUD, Category.AI }, headersClass = Comprehend2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The text to analyze, for every operation: bytes, a stream or a file are read"
+                                                + " as text, a Map or a POJO is analyzed as its toString(), so take the text"
+                                                + " out of it first, and no body fails. With pojoRequest=true the request of"
+                                                + " the AWS SDK for the operation, such as a DetectSentimentRequest: another"
+                                                + " body fails"),
+           producerOut = @BodyType(value = Carrier.LIST,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "detectSentiment",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.comprehend.model.DetectSentimentResponse"),
+                                           @BodyType.When(option = "operation", value = "classifyDocument",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.comprehend.model.ClassifyDocumentResponse") },
+                                   description = "A List of what is found: the languages for detectDominantLanguage, the"
+                                                 + " default, with the first one and its score in headers, and the entities,"
+                                                 + " key phrases, syntax tokens, PII entities or toxic labels of the other"
+                                                 + " operations. The DetectSentimentResponse of the AWS SDK for"
+                                                 + " detectSentiment, with the sentiment and its scores in headers, and the"
+                                                 + " ClassifyDocumentResponse for classifyDocument. The text is not kept: store"
+                                                 + " it in a variable to analyze it again"))
 public class Comprehend2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private ComprehendClient comprehendClient;

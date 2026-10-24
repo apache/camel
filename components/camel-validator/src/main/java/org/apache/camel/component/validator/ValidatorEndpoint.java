@@ -28,6 +28,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,6 +47,17 @@ import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
 @ManagedResource(description = "Managed ValidatorEndpoint")
 @UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri",
              remote = false, producerOnly = true, category = { Category.CORE, Category.VALIDATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml", dependsOn = "headerName",
+                                  byOption = @BodyType.When(option = "failOnNullBody", value = "false",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE, Carrier.POJO }),
+                                  description = "The XML to validate: text, bytes, a stream, a file, a DOM or another"
+                                                + " javax.xml.transform.Source. A Map, a List or no body fails; with headerName"
+                                                + " the header is validated instead"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: XML that is not valid fails with a SchemaValidationException"))
 public class ValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"

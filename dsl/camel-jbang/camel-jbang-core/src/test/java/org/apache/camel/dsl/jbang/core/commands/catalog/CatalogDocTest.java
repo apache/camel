@@ -193,6 +193,28 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    public void shouldPrintTheMessageBody() throws Exception {
+        // CAMEL-24961: the body at each side, as the documentation page shows it
+        CatalogDoc command = createCommand("file", false);
+        Assertions.assertEquals(0, command.doCall());
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.contains("Message body (with the default options"), output);
+        Assertions.assertTrue(output.contains("Producer input"), output);
+        Assertions.assertTrue(output.contains("text, bytes, stream or file"), output);
+
+        printer = new StringPrinter();
+        command = createCommand("jackson", false);
+        Assertions.assertEquals(0, command.doCall());
+        Assertions.assertTrue(printer.getOutput().contains("Unmarshal output"), printer.getOutput());
+
+        // a component whose body types are not in the catalog has no such table
+        printer = new StringPrinter();
+        command = createCommand("weather", false);
+        Assertions.assertEquals(0, command.doCall());
+        Assertions.assertFalse(printer.getOutput().contains("Message body"), printer.getOutput());
+    }
+
+    @Test
     public void shouldFilterTheOptions() throws Exception {
         CatalogDoc command = createCommand("timer", false);
         command.filter = "delay";

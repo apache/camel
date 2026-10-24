@@ -15,6 +15,10 @@
     "modelName": "grok",
     "modelJavaType": "org.apache.camel.model.dataformat.GrokDataFormat"
   },
+  "bodyTypes": {
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text", "description": "Lines of text, such as a log file: each line is matched with the pattern" },
+    "unmarshalOut": { "carriers": [ "map", "list", "null" ], "description": "A Map of the captures for one match, a List of such Maps for several, or null when no line matches. The Maps cannot be modified" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "pattern": { "index": 1, "kind": "attribute", "displayName": "Pattern", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The grok pattern to match lines of input." },

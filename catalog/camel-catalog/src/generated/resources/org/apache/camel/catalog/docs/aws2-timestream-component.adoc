@@ -226,8 +226,8 @@ YAML::
 === Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
-In AWS Timestream there are multiple operations you can submit, as an example for Create state machine
- request, you can do something like:
+In AWS Timestream there are multiple operations you can submit, as an example for a create database
+request, you can do something like:
 
 * Write Operation
 ** createDatabase: this operation will create a timestream database
@@ -236,7 +236,7 @@ In AWS Timestream there are multiple operations you can submit, as an example fo
 [source,java]
 ----
 from("direct:start")
-  .setBody(CreateDatabaseRequest.builder().database(Database.builder().databaseName("testDb").kmsKeyId("testKmsKey").build()).build())
+  .setBody(CreateDatabaseRequest.builder().databaseName("testDb").kmsKeyId("testKmsKey").build())
   .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createDatabase&pojoRequest=true")
 ----
 

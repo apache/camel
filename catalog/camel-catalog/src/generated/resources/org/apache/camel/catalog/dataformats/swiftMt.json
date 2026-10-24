@@ -15,6 +15,12 @@
     "modelName": "swiftMt",
     "modelJavaType": "org.apache.camel.model.dataformat.SwiftMtDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo" ], "javaType": "com.prowidesoftware.swift.model.mt.AbstractMT", "byOption": [ { "option": "writeInJson", "value": "true", "carriers": [ "pojo" ], "javaType": "com.prowidesoftware.JsonSerializable" } ], "description": "A Prowide MT message, such as an MT103, as unmarshal gives. The body is not converted: MT text fails" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "The MT message in FIN format, or JSON with writeInJson, in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "An MT message in FIN format" },
+    "unmarshalOut": { "carriers": [ "pojo", "null" ], "javaType": "com.prowidesoftware.swift.model.mt.AbstractMT", "description": "The Prowide class of the message type, such as MT103; null when the type is not known" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "writeInJson": { "index": 1, "kind": "attribute", "displayName": "Write In Json", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to marshal messages in JSON format." }
