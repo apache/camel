@@ -155,6 +155,14 @@ class QuickjsSerializationTest {
     }
 
     @Test
+    void dataViewResultIsListOfItsBytes() {
+        Exchange exchange = new DefaultExchange(context);
+        assertThat(language().createExpression("new DataView(new Uint8Array([1, 2, 3, 4]).buffer, 1, 2)")
+                .evaluate(exchange, Object.class))
+                .isEqualTo(List.of(2, 3));
+    }
+
+    @Test
     void nestedSetMapAndTypedArrayAreConverted() {
         Exchange exchange = new DefaultExchange(context);
         Object result = language().createExpression(
