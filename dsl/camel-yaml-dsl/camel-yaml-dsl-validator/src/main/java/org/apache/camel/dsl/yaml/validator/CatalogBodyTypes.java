@@ -249,6 +249,15 @@ final class CatalogBodyTypes {
                 return null;
             }
         }
+        for (String option : side.getDependsOn()) {
+            String value = set.get(option);
+            if (value != null && side.getByOption().stream()
+                    .noneMatch(w -> w.getOption().equals(option) && value.equalsIgnoreCase(w.getValue()))) {
+                // the body depends on this option, and no option value of the side says the body for its value: the
+                // value another option names does not hold then, such as output=bytes with a resultHandlerFactory
+                return null;
+            }
+        }
         Answer matched = null;
         for (OptionBodyTypeModel when : side.getByOption()) {
             String value = set.get(when.getOption());
