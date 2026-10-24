@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -26,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -42,9 +41,10 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
 
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
-    // assume writing to 100 different files concurrently at most for the same
-    // file producer
-    private final Map<String, Lock> locks = LRUCacheFactory.newLRUCache(100);
+    // one lock per file name that is being written, so two exchanges do not write the same file at the same time; a
+    // lock is kept while an exchange holds or waits for it, and removed by the last one, so it is never replaced by a
+    // new lock while it is in use
+    private final Map<String, FileLock> locks = new ConcurrentHashMap<>();
 
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
@@ -82,17 +82,13 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         // use lock for same file name to avoid concurrent writes to the same
         // file
         // for example when you concurrently append to the same file
-        Lock lock = locks.computeIfAbsent(target, f -> new ReentrantLock());
-
-        lock.lock();
+        FileLock lock = acquireLock(target);
         try {
             processExchange(exchange, target);
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
-            // do not remove as the locks cache has an upper bound
-            // this ensure the locks is appropriate reused
-            lock.unlock();
+            releaseLock(target, lock);
             // and remove the write file name header as we only want to use it
             // once (by design)
             exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
@@ -513,16 +509,29 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         return answer;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        ServiceHelper.startService(locks);
-        super.doStart();
+    private FileLock acquireLock(String target) {
+        // count the user before taking the lock, so the lock stays in the map while this exchange waits for it
+        FileLock lock = locks.compute(target, (k, v) -> {
+            FileLock answer = v != null ? v : new FileLock();
+            answer.users++;
+            return answer;
+        });
+        lock.lock.lock();
+        return lock;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        ServiceHelper.stopService(locks);
+    private void releaseLock(String target, FileLock lock) {
+        lock.lock.unlock();
+        locks.computeIfPresent(target, (k, v) -> {
+            v.users--;
+            return v.users == 0 ? null : v;
+        });
+    }
+
+    private static final class FileLock {
+        private final Lock lock = new ReentrantLock();
+        // guarded by the map entry (compute / computeIfPresent)
+        private int users;
     }
 
 }
