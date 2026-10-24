@@ -48,15 +48,17 @@ import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
                                    javaType = "software.amazon.awssdk.services.s3vectors.model.QueryOutputVector",
                                    description = "One message per vector that the similarity search of consumerQueryVector"
                                                  + " finds and that was not sent before, as a QueryOutputVector of the AWS SDK"
-                                                 + " with its key only, also in the CamelAwsS3VectorsVectorId header"),
+                                                 + " with its key, its metadata and its distance, the key also in the"
+                                                 + " CamelAwsS3VectorsVectorId header and the distance in the"
+                                                 + " CamelAwsS3VectorsDistance header"),
            producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The vector of putVectors and queryVectors, unless the"
                                                 + " CamelAwsS3VectorsVectorData or CamelAwsS3VectorsQueryVector header has it:"
                                                 + " one vector as a List of numbers, a float[] or a double[]. Text such as a"
                                                 + " JSON array fails, so unmarshal it first. The keys of getVectors and"
-                                                + " deleteVectors, unless the CamelAwsS3VectorsVectorId header has them: a"
-                                                + " String, a String[] or a List of Strings. The other operations do not use"
-                                                + " the body"),
+                                                + " deleteVectors: a String, a String[] or a List of Strings. When the body"
+                                                + " holds no keys, they come from the CamelAwsS3VectorsVectorId header. The"
+                                                + " other operations do not use the body"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "queryVectors", carriers = Carrier.LIST,
@@ -73,8 +75,8 @@ import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
                                                  + " of putVectors, with the key of the vector in the CamelAwsS3VectorsVectorId"
                                                  + " header. A List for queryVectors, getVectors, listVectorBuckets and"
                                                  + " listVectorIndexes, the last two the first page only. The vectors of"
-                                                 + " queryVectors and getVectors hold their keys only: the distance, the data"
-                                                 + " and the metadata are not asked for"))
+                                                 + " queryVectors hold their keys, their metadata and their distance, and the"
+                                                 + " vectors of getVectors their keys, their data and their metadata"))
 public class AWS2S3VectorsEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3VectorsEndpoint.class);

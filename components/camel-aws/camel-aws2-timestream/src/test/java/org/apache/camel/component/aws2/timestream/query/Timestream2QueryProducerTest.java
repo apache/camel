@@ -171,6 +171,15 @@ public class Timestream2QueryProducerTest extends CamelTestSupport {
     }
 
     @Test
+    public void timestreamDescribeScheduledQuerySendsArnFromHeader() {
+        template.sendBodyAndHeader("direct:describeScheduledQuery", null, Timestream2Constants.SCHEDULED_QUERY_ARN,
+                "arn:aws:timestream:eu-west-1:123456789012:scheduled-query/my-query");
+
+        assertEquals("arn:aws:timestream:eu-west-1:123456789012:scheduled-query/my-query",
+                clientMock.getLastDescribeScheduledQueryRequest().scheduledQueryArn());
+    }
+
+    @Test
     public void timestreamDescribeScheduledQueryTest() throws Exception {
 
         mock.expectedMessageCount(1);

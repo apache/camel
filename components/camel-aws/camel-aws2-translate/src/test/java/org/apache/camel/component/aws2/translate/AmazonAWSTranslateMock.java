@@ -23,8 +23,12 @@ import software.amazon.awssdk.services.translate.model.TranslateTextResponse;
 
 public class AmazonAWSTranslateMock implements TranslateClient {
 
+    // the last request received
+    TranslateTextRequest lastRequest;
+
     @Override
     public TranslateTextResponse translateText(TranslateTextRequest request) {
+        lastRequest = request;
         TranslateTextResponse result = TranslateTextResponse.builder().translatedText("Hello").build();
         return result;
     }

@@ -26,22 +26,27 @@ public interface SecurityHubConstants {
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsSecurityHubOperation";
 
-    @Metadata(description = "The list of findings to import", javaType = "List<AwsSecurityFinding>")
+    @Metadata(description = "The findings to import, as a List of AwsSecurityFinding. When not set, the findings are taken from the body: a Collection or an array of AwsSecurityFinding, or one AwsSecurityFinding.",
+              javaType = "List<AwsSecurityFinding>")
     String FINDINGS = "CamelAwsSecurityHubFindings";
 
     @Metadata(description = "The finding identifiers for batch update", javaType = "List<AwsSecurityFindingIdentifier>")
     String FINDING_IDENTIFIERS = "CamelAwsSecurityHubFindingIdentifiers";
 
-    @Metadata(description = "The filters to apply when retrieving findings", javaType = "AwsSecurityFindingFilters")
+    @Metadata(description = "The filters to apply when retrieving findings. It must be an AwsSecurityFindingFilters object; a value of another type, such as JSON text, fails the exchange.",
+              javaType = "AwsSecurityFindingFilters")
     String FILTERS = "CamelAwsSecurityHubFilters";
 
-    @Metadata(description = "The note to add to findings during update", javaType = "NoteUpdate")
+    @Metadata(description = "The note to add to findings during update. It must be a NoteUpdate object; a value of another type fails the exchange.",
+              javaType = "NoteUpdate")
     String NOTE = "CamelAwsSecurityHubNote";
 
-    @Metadata(description = "The severity to set on findings during update", javaType = "SeverityUpdate")
+    @Metadata(description = "The severity to set on findings during update. It must be a SeverityUpdate object; a value of another type fails the exchange.",
+              javaType = "SeverityUpdate")
     String SEVERITY = "CamelAwsSecurityHubSeverity";
 
-    @Metadata(description = "The workflow status to set on findings", javaType = "WorkflowUpdate")
+    @Metadata(description = "The workflow status to set on findings. It must be a WorkflowUpdate object; a value of another type fails the exchange.",
+              javaType = "WorkflowUpdate")
     String WORKFLOW = "CamelAwsSecurityHubWorkflow";
 
     @Metadata(description = "The verification state to set on findings", javaType = "String")
@@ -64,7 +69,8 @@ public interface SecurityHubConstants {
 
     // Pagination constants
     @Metadata(label = "getFindings listEnabledProductsForImport getFindingHistory",
-              description = "The token for the next set of results", javaType = "String")
+              description = "The token for the next set of results. It is both an input and an output: the operation sends it and then sets it to the token of the response, so remove it before calling a different list operation in the same route.",
+              javaType = "String")
     String NEXT_TOKEN = "CamelAwsSecurityHubNextToken";
 
     @Metadata(label = "getFindings",
@@ -73,7 +79,8 @@ public interface SecurityHubConstants {
 
     // Response metadata
     @Metadata(label = "batchImportFindings",
-              description = "The count of findings that failed to import", javaType = "Integer")
+              description = "The count of findings that failed to import. When it is more than zero, the exchange fails with an exception naming the failed findings.",
+              javaType = "Integer")
     String FAILED_COUNT = "CamelAwsSecurityHubFailedCount";
 
     @Metadata(label = "batchImportFindings",

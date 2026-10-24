@@ -170,13 +170,13 @@ public interface Polly2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The audio output format.
+         * The audio output format. When neither this option nor the
+         * CamelAwsPollyOutputFormat header is set, MP3 is used.
          * 
          * The option is a:
          * <code>software.amazon.awssdk.services.polly.model.OutputFormat</code>
          * type.
          * 
-         * Default: MP3
          * Group: producer
          * 
          * @param outputFormat the value to set
@@ -187,13 +187,13 @@ public interface Polly2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The audio output format.
+         * The audio output format. When neither this option nor the
+         * CamelAwsPollyOutputFormat header is set, MP3 is used.
          * 
          * The option will be converted to a
          * <code>software.amazon.awssdk.services.polly.model.OutputFormat</code>
          * type.
          * 
-         * Default: MP3
          * Group: producer
          * 
          * @param outputFormat the value to set
@@ -353,13 +353,13 @@ public interface Polly2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The type of text input (text or ssml).
+         * The type of text input (text or ssml). When neither this option nor
+         * the CamelAwsPollyTextType header is set, TEXT is used.
          * 
          * The option is a:
          * <code>software.amazon.awssdk.services.polly.model.TextType</code>
          * type.
          * 
-         * Default: TEXT
          * Group: producer
          * 
          * @param textType the value to set
@@ -370,13 +370,13 @@ public interface Polly2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The type of text input (text or ssml).
+         * The type of text input (text or ssml). When neither this option nor
+         * the CamelAwsPollyTextType header is set, TEXT is used.
          * 
          * The option will be converted to a
          * <code>software.amazon.awssdk.services.polly.model.TextType</code>
          * type.
          * 
-         * Default: TEXT
          * Group: producer
          * 
          * @param textType the value to set
@@ -1049,6 +1049,23 @@ public interface Polly2EndpointBuilderFactory {
          */
         public String awsPollyRequestCharacters() {
             return "CamelAwsPollyRequestCharacters";
+        }
+        /**
+         * The token of the next page for the describeVoices, listLexicons and
+         * listSpeechSynthesisTasks operations. It is in and out: when set, it
+         * is sent as the next token of the request, and after the call it holds
+         * the next token of the response, or it is removed when the response
+         * has none, which is the last page. Remove it before calling a
+         * different list operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsPollyNextToken}.
+         */
+        public String awsPollyNextToken() {
+            return "CamelAwsPollyNextToken";
         }
     }
     static Polly2EndpointBuilder endpointBuilder(String componentName, String path) {

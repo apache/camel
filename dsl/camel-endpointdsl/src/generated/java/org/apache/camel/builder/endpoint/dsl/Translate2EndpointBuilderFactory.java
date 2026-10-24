@@ -45,7 +45,9 @@ public interface Translate2EndpointBuilderFactory {
         }
 
         /**
-         * Being able to autodetect the source language.
+         * Being able to autodetect the source language. When enabled, the
+         * source language is auto, and the sourceLanguage option and the
+         * CamelAwsTranslateSourceLanguage header are not used.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -60,7 +62,9 @@ public interface Translate2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Being able to autodetect the source language.
+         * Being able to autodetect the source language. When enabled, the
+         * source language is auto, and the sourceLanguage option and the
+         * CamelAwsTranslateSourceLanguage header are not used.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -188,7 +192,9 @@ public interface Translate2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Source language to use.
+         * Source language to use. When not set, the
+         * CamelAwsTranslateSourceLanguage header is used. It is not used when
+         * autodetectSourceLanguage is enabled.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -202,7 +208,8 @@ public interface Translate2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Target language to use.
+         * Target language to use. When not set, the
+         * CamelAwsTranslateTargetLanguage header is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

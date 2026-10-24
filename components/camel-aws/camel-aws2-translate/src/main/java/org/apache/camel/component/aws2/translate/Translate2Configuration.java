@@ -179,7 +179,8 @@ public class Translate2Configuration implements Cloneable, AwsCommonConfiguratio
     }
 
     /**
-     * Being able to autodetect the source language
+     * Being able to autodetect the source language. When enabled, the source language is auto, and the sourceLanguage
+     * option and the CamelAwsTranslateSourceLanguage header are not used.
      */
     public void setAutodetectSourceLanguage(boolean autodetectSourceLanguage) {
         this.autodetectSourceLanguage = autodetectSourceLanguage;
@@ -190,7 +191,8 @@ public class Translate2Configuration implements Cloneable, AwsCommonConfiguratio
     }
 
     /**
-     * Source language to use
+     * Source language to use. When not set, the CamelAwsTranslateSourceLanguage header is used. It is not used when
+     * autodetectSourceLanguage is enabled.
      */
     public void setSourceLanguage(String sourceLanguage) {
         this.sourceLanguage = sourceLanguage;
@@ -201,7 +203,7 @@ public class Translate2Configuration implements Cloneable, AwsCommonConfiguratio
     }
 
     /**
-     * Target language to use
+     * Target language to use. When not set, the CamelAwsTranslateTargetLanguage header is used.
      */
     public void setTargetLanguage(String targetLanguage) {
         this.targetLanguage = targetLanguage;

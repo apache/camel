@@ -48,6 +48,9 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
     // Event ids already delivered at exactly lastTime. startTime is inclusive, so these events are
     // returned again on the next poll and must be filtered to avoid duplicate delivery.
     private final Set<String> lastProcessedEventIds = new HashSet<>();
+    // Ids of the delivered events that have no event time. They cannot move the cursor, so they are skipped by id
+    // while the lookup keeps returning them.
+    private final Set<String> undatedEventIds = new HashSet<>();
 
     // Late-event lookup (lookBackWindow > 0): every lookBackInterval the events of [now - lookBackWindow, lastTime]
     // are looked up again, one page per poll, and the ones not routed yet are routed. CloudTrail can make an event
@@ -125,15 +128,22 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
         Instant newest = lastTime;
         Set<String> newestEventIds = new HashSet<>();
         Queue<Exchange> exchanges = new ArrayDeque<>();
+        Set<String> seenUndatedEventIds = new HashSet<>();
         for (Event event : events) {
-            if (lastProcessedEventIds.contains(event.eventId()) || routedEventIds.containsKey(event.eventId())) {
+            Instant eventTime = event.eventTime();
+            if (eventTime == null) {
+                seenUndatedEventIds.add(event.eventId());
+            }
+            if (lastProcessedEventIds.contains(event.eventId()) || routedEventIds.containsKey(event.eventId())
+                    || undatedEventIds.contains(event.eventId())) {
                 continue;
             }
             exchanges.add(createExchange(event));
             rememberRouted(event);
 
-            Instant eventTime = event.eventTime();
-            if (newest == null || eventTime.isAfter(newest)) {
+            if (eventTime == null) {
+                undatedEventIds.add(event.eventId());
+            } else if (newest == null || eventTime.isAfter(newest)) {
                 newest = eventTime;
                 newestEventIds.clear();
                 newestEventIds.add(event.eventId());
@@ -149,6 +159,8 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
         lastTime = newest;
         lastProcessedEventIds.clear();
         lastProcessedEventIds.addAll(newestEventIds);
+        // an event without a time that the lookup no longer returns does not need to be skipped anymore
+        undatedEventIds.retainAll(seenUndatedEventIds);
 
         if (getEndpoint().getConfiguration().getLookBackWindow() > 0) {
             lookBackPage(attributes, exchanges);
@@ -197,10 +209,11 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
                 return;
             }
             for (Event event : response.events()) {
-                if (!lastProcessedEventIds.contains(event.eventId()) && !routedEventIds.containsKey(event.eventId())) {
+                if (!lastProcessedEventIds.contains(event.eventId()) && !routedEventIds.containsKey(event.eventId())
+                        && !undatedEventIds.contains(event.eventId())) {
                     exchanges.add(createExchange(event));
                     rememberRouted(event);
-                    if (event.eventTime().equals(lastTime)) {
+                    if (lastTime.equals(event.eventTime())) {
                         // the normal lookup starts at lastTime (inclusive) and returns it again
                         lastProcessedEventIds.add(event.eventId());
                     }
@@ -223,7 +236,8 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     private void rememberRouted(Event event) {
         if (getEndpoint().getConfiguration().getLookBackWindow() > 0) {
-            routedEventIds.put(event.eventId(), event.eventTime());
+            // an event without a time is kept as long as an event at the cursor
+            routedEventIds.put(event.eventId(), event.eventTime() != null ? event.eventTime() : lastTime);
         }
     }
 
@@ -266,7 +280,8 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     protected Exchange createExchange(Event event) {
         Exchange exchange = createExchange(true);
-        exchange.getMessage().setBody(event.cloudTrailEvent().getBytes(StandardCharsets.UTF_8));
+        String record = event.cloudTrailEvent();
+        exchange.getMessage().setBody(record != null ? record.getBytes(StandardCharsets.UTF_8) : null);
         exchange.getMessage().setHeader(CloudtrailConstants.EVENT_ID, event.eventId());
         exchange.getMessage().setHeader(CloudtrailConstants.EVENT_NAME, event.eventName());
         exchange.getMessage().setHeader(CloudtrailConstants.EVENT_SOURCE, event.eventSource());

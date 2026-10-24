@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.aws.securityhub;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -51,6 +55,7 @@ import software.amazon.awssdk.services.securityhub.model.GetFindingHistoryReques
 import software.amazon.awssdk.services.securityhub.model.GetFindingHistoryResponse;
 import software.amazon.awssdk.services.securityhub.model.GetFindingsRequest;
 import software.amazon.awssdk.services.securityhub.model.GetFindingsResponse;
+import software.amazon.awssdk.services.securityhub.model.ImportFindingsError;
 import software.amazon.awssdk.services.securityhub.model.ListEnabledProductsForImportRequest;
 import software.amazon.awssdk.services.securityhub.model.ListEnabledProductsForImportResponse;
 import software.amazon.awssdk.services.securityhub.model.NoteUpdate;
@@ -137,12 +142,9 @@ public class SecurityHubProducer extends DefaultProducer {
                             = exchange.getIn().getHeader(SecurityHubConstants.FINDINGS, List.class);
                     if (findings == null || findings.isEmpty()) {
                         // Try to get findings from body
-                        Object body = exchange.getIn().getBody();
-                        if (body instanceof List list) {
-                            findings = (List<AwsSecurityFinding>) list;
-                        } else if (body instanceof AwsSecurityFinding asf) {
-                            findings = List.of(asf);
-                        }
+                        findings = toFindings(exchange.getIn().getBody());
+                    } else {
+                        findings = toFindings(findings);
                     }
                     if (findings == null || findings.isEmpty()) {
                         throw new IllegalArgumentException("At least one finding must be specified");
@@ -154,7 +156,59 @@ public class SecurityHubProducer extends DefaultProducer {
                 (BatchImportFindingsResponse response, Message message) -> {
                     message.setHeader(SecurityHubConstants.FAILED_COUNT, response.failedCount());
                     message.setHeader(SecurityHubConstants.SUCCESS_COUNT, response.successCount());
+                    if (response.failedCount() != null && response.failedCount() > 0) {
+                        throw new IllegalStateException(
+                                "Security Hub did not import " + response.failedCount() + " finding(s): "
+                                                        + describeFailedFindings(response.failedFindings()));
+                    }
                 });
+    }
+
+    /**
+     * The findings to import: a Collection or an array of AwsSecurityFinding, or one AwsSecurityFinding.
+     */
+    private static List<AwsSecurityFinding> toFindings(Object value) {
+        Collection<?> elements;
+        if (value instanceof AwsSecurityFinding finding) {
+            return List.of(finding);
+        } else if (value instanceof Collection<?> collection) {
+            elements = collection;
+        } else if (value instanceof Object[] array) {
+            elements = Arrays.asList(array);
+        } else {
+            return null;
+        }
+        List<AwsSecurityFinding> findings = new ArrayList<>(elements.size());
+        for (Object element : elements) {
+            if (element instanceof AwsSecurityFinding finding) {
+                findings.add(finding);
+            } else {
+                throw new IllegalArgumentException(
+                        "The findings to import must be of type " + AwsSecurityFinding.class.getName() + " but one was "
+                                                   + (element != null ? element.getClass().getName() : "null"));
+            }
+        }
+        return findings;
+    }
+
+    private static String describeFailedFindings(List<ImportFindingsError> errors) {
+        return errors.stream()
+                .map(e -> e.id() + " (" + e.errorCode() + ": " + e.errorMessage() + ")")
+                .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Gets a header that must be of the given type, as there is no type converter for the AWS SDK model classes.
+     */
+    private static <T> T getTypedHeader(Exchange exchange, String name, Class<T> type) {
+        Object value = exchange.getIn().getHeader(name);
+        if (value == null || type.isInstance(value)) {
+            return type.cast(value);
+        }
+        throw new IllegalArgumentException(
+                "The header " + name + " must be of type " + type.getName() + " but was " + value.getClass().getName()
+                                           + ". Set it to a " + type.getSimpleName()
+                                           + ", or use pojoRequest=true with the request object in the body.");
     }
 
     private void getFindings(SecurityHubClient securityHubClient, Exchange exchange) throws InvalidPayloadException {
@@ -165,7 +219,7 @@ public class SecurityHubProducer extends DefaultProducer {
                 () -> {
                     GetFindingsRequest.Builder builder = GetFindingsRequest.builder();
                     AwsSecurityFindingFilters filters
-                            = exchange.getIn().getHeader(SecurityHubConstants.FILTERS, AwsSecurityFindingFilters.class);
+                            = getTypedHeader(exchange, SecurityHubConstants.FILTERS, AwsSecurityFindingFilters.class);
                     if (filters != null) {
                         builder.filters(filters);
                     }
@@ -201,17 +255,17 @@ public class SecurityHubProducer extends DefaultProducer {
                     }
                     builder.findingIdentifiers(findingIdentifiers);
 
-                    NoteUpdate note = exchange.getIn().getHeader(SecurityHubConstants.NOTE, NoteUpdate.class);
+                    NoteUpdate note = getTypedHeader(exchange, SecurityHubConstants.NOTE, NoteUpdate.class);
                     if (note != null) {
                         builder.note(note);
                     }
 
-                    SeverityUpdate severity = exchange.getIn().getHeader(SecurityHubConstants.SEVERITY, SeverityUpdate.class);
+                    SeverityUpdate severity = getTypedHeader(exchange, SecurityHubConstants.SEVERITY, SeverityUpdate.class);
                     if (severity != null) {
                         builder.severity(severity);
                     }
 
-                    WorkflowUpdate workflow = exchange.getIn().getHeader(SecurityHubConstants.WORKFLOW, WorkflowUpdate.class);
+                    WorkflowUpdate workflow = getTypedHeader(exchange, SecurityHubConstants.WORKFLOW, WorkflowUpdate.class);
                     if (workflow != null) {
                         builder.workflow(workflow);
                     }

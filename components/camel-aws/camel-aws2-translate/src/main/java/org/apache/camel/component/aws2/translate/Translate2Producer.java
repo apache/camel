@@ -107,36 +107,33 @@ public class Translate2Producer extends DefaultProducer {
             }
         } else {
             Builder request = TranslateTextRequest.builder();
-            if (!getConfiguration().isAutodetectSourceLanguage()) {
-                if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage())
-                        && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
-                    String source = exchange.getIn().getHeader(Translate2Constants.SOURCE_LANGUAGE, String.class);
-                    String target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
-                    if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                        throw new IllegalArgumentException(
-                                "Source and target language must be specified as headers or endpoint options");
-                    }
-                    request.sourceLanguageCode(source);
-                    request.targetLanguageCode(target);
-                } else {
-                    request.sourceLanguageCode(getConfiguration().getSourceLanguage());
-                    request.targetLanguageCode(getConfiguration().getTargetLanguage());
-                }
+            // Each language - endpoint option first, then header
+            String source;
+            if (getConfiguration().isAutodetectSourceLanguage()) {
+                source = "auto";
             } else {
-                String source = "auto";
-                if (ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
-                    String target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
-                    if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                        throw new IllegalArgumentException(
-                                "Target language must be specified when autodetection of source language is enabled");
-                    }
-                    request.sourceLanguageCode(source);
-                    request.targetLanguageCode(target);
-                } else {
-                    request.sourceLanguageCode(source);
-                    request.targetLanguageCode(getConfiguration().getTargetLanguage());
+                source = getConfiguration().getSourceLanguage();
+                if (ObjectHelper.isEmpty(source)) {
+                    source = exchange.getIn().getHeader(Translate2Constants.SOURCE_LANGUAGE, String.class);
+                }
+                if (ObjectHelper.isEmpty(source)) {
+                    throw new IllegalArgumentException(
+                            "The source language is missing: set the sourceLanguage option or the "
+                                                       + Translate2Constants.SOURCE_LANGUAGE
+                                                       + " header, or enable the autodetectSourceLanguage option");
                 }
             }
+            String target = getConfiguration().getTargetLanguage();
+            if (ObjectHelper.isEmpty(target)) {
+                target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
+            }
+            if (ObjectHelper.isEmpty(target)) {
+                throw new IllegalArgumentException(
+                        "The target language is missing: set the targetLanguage option or the "
+                                                   + Translate2Constants.TARGET_LANGUAGE + " header");
+            }
+            request.sourceLanguageCode(source);
+            request.targetLanguageCode(target);
             if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class))) {
                 Collection<String> terminologies
                         = exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class);

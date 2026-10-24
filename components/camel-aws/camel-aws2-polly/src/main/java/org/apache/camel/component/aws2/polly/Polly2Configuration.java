@@ -57,10 +57,12 @@ public class Polly2Configuration implements Cloneable, AwsCommonConfiguration {
     private String region;
     @UriParam(description = "The voice ID to use for synthesis")
     private VoiceId voiceId;
-    @UriParam(description = "The audio output format", defaultValue = "MP3")
-    private OutputFormat outputFormat = OutputFormat.MP3;
-    @UriParam(description = "The type of text input (text or ssml)", defaultValue = "TEXT")
-    private TextType textType = TextType.TEXT;
+    @UriParam(description = "The audio output format. When neither this option nor the CamelAwsPollyOutputFormat header"
+                            + " is set, MP3 is used.")
+    private OutputFormat outputFormat;
+    @UriParam(description = "The type of text input (text or ssml). When neither this option nor the CamelAwsPollyTextType"
+                            + " header is set, TEXT is used.")
+    private TextType textType;
     @UriParam(description = "The engine to use for synthesis (standard, neural, long-form, generative)")
     private Engine engine;
     @UriParam(description = "The sample rate in Hz for the audio output")
@@ -214,7 +216,8 @@ public class Polly2Configuration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * The audio format in which the resulting stream will be encoded
+     * The audio format in which the resulting stream will be encoded. When neither this option nor the
+     * CamelAwsPollyOutputFormat header is set, MP3 is used.
      */
     public void setOutputFormat(OutputFormat outputFormat) {
         this.outputFormat = outputFormat;
@@ -225,7 +228,8 @@ public class Polly2Configuration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * Specifies whether the input text is plain text or SSML
+     * Specifies whether the input text is plain text or SSML. When neither this option nor the CamelAwsPollyTextType
+     * header is set, TEXT is used.
      */
     public void setTextType(TextType textType) {
         this.textType = textType;
