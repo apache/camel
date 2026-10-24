@@ -20,11 +20,11 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
+import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.PersonService;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,21 +32,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
 @ExtendWith(SpringExtension.class)
 public class Camel1145RouteTest {
     private static int port;
 
-    public static int portNotAvailableHandler(boolean allocated) {
-        assumeTrue(allocated);
-        return -1;
-    }
-
     @BeforeAll
     public static void getPort() {
-        port = AvailablePortFinder.getSpecificPort(9000, false, Camel1145RouteTest::portNotAvailableHandler);
+        port = CXFTestSupport.getPort1();
     }
 
     @Test

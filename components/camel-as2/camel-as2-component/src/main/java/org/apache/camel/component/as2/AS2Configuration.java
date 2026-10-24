@@ -661,7 +661,9 @@ public class AS2Configuration {
 
     /**
      * The user-name that is used by the server for basic authentication when it sends an async MDN. If options for
-     * basic authentication and bearer authentication are both set then basic authentication takes precedence.
+     * basic authentication and bearer authentication are both set then basic authentication takes precedence. The
+     * option applies to the consumer endpoint it is set on: consumers sharing a serverPortNumber each send their async
+     * MDNs with their own values.
      */
     public void setMdnUserName(String mdnUserName) {
         this.mdnUserName = mdnUserName;
@@ -672,7 +674,8 @@ public class AS2Configuration {
     }
 
     /**
-     * The password that is used by the server for basic authentication when it sends an async MDN.
+     * The password that is used by the server for basic authentication when it sends an async MDN. The option applies
+     * to the consumer endpoint it is set on, like mdnUserName.
      */
     public void setMdnPassword(String mdnPassword) {
         this.mdnPassword = mdnPassword;
@@ -683,7 +686,8 @@ public class AS2Configuration {
     }
 
     /**
-     * The access token that is used by the server when it sends an async MDN.
+     * The access token that is used by the server when it sends an async MDN. The option applies to the consumer
+     * endpoint it is set on, like mdnUserName.
      */
     public void setMdnAccessToken(String accessToken) {
         this.mdnAccessToken = accessToken;
@@ -700,6 +704,9 @@ public class AS2Configuration {
      * When set, an asynchronous MDN whose delivery address names a host outside the list is refused, and the configured
      * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on the list. When not set, the MDN is still
      * delivered to the sender-supplied address but no credentials are attached.
+     *
+     * The option applies to the consumer endpoint it is set on: consumers sharing a serverPortNumber each apply their
+     * own list.
      */
     public void setAsyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
         this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;

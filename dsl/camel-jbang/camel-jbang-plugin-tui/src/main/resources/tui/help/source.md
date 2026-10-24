@@ -31,6 +31,10 @@ explorer on the left and a source viewer on the right.
 - The problems of a Camel file are marked as soon as it opens: a red ✗ on
   their lines and the count in the title; the panel at the bottom says the
   problem of the selected line, and **F9** goes to the next one
+- A note, something that works but is not right, is a yellow ⚠ instead, counted
+  apart as `notes`, and does not keep the file from being saved: a `direct:` or
+  `seda:` endpoint no route of the project consumes, a dependency a Kamelet does
+  not use
 - **u** — usages: the routes that consume from the endpoint of the line and the
   steps that send to it (direct:, seda:...), across the project; **Enter** goes there
 - **/** — search in source
@@ -46,6 +50,21 @@ processors on each line do: the exchanges they handled (`79`), how many failed
 (`✗10`, in red), and the mean time when it is 1 ms or more. The column keeps
 its width, so the code does not move as the numbers grow. The source reads as
 a heat map of the route: where messages go, where they fail.
+
+## Running as Saved
+The bottom border of the source says whether the integration runs the routes
+of the file as it is saved:
+- `● running as saved` — the integration loaded the file after it was saved
+- `○ reloading...` — saved a moment ago, and the integration reloads on save (`--dev`)
+- `○ not running yet` — saved after the integration loaded it: restart an
+  integration that runs without `--dev`, or see the log of one that did not
+  reload the file
+- `⚠ the reload failed` — the integration runs what it ran before the reload,
+  until a reload succeeds
+
+It compares when the file was saved with when the integration loaded the
+routes it has from it, and shows nothing for a file it has no route from.
+Edits not saved yet are not part of it: the title marks them with `*`.
 
 ## Edit Mode (Shortcuts)
 - **Ctrl+Z** — undo

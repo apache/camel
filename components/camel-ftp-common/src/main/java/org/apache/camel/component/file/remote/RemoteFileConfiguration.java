@@ -418,7 +418,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * before the next poll, and connects again if the noop fails. If the server closes idle connections and the delay
      * between polls is longer than its idle timeout, every other poll then fails, so keep this option on for such a
      * consumer. For sftp and mina-sftp the client notices a closed connection, but not one that dropped silently. For
-     * sftp the noop is a keep-alive message that does not wait for a reply.
+     * sftp the noop is a keep-alive message that does not wait for a reply, so it does not find such a connection
+     * either. For mina-sftp such a connection is then found by the next poll, which fails before the consumer connects
+     * again. Set serverAliveInterval to let the client close such a connection itself.
      */
     public void setSendNoop(boolean sendNoop) {
         this.sendNoop = sendNoop;

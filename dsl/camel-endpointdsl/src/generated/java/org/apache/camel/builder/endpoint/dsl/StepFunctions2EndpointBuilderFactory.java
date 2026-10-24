@@ -45,8 +45,7 @@ public interface StepFunctions2EndpointBuilderFactory {
         }
 
         /**
-         * The operation to perform. It can be listFunctions, getFunction,
-         * createFunction, deleteFunction or invokeFunction.
+         * The operation to perform.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.stepfunctions.StepFunctions2Operations</code> type.
@@ -62,8 +61,7 @@ public interface StepFunctions2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform. It can be listFunctions, getFunction,
-         * createFunction, deleteFunction or invokeFunction.
+         * The operation to perform.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.stepfunctions.StepFunctions2Operations</code> type.
@@ -711,7 +709,7 @@ public interface StepFunctions2EndpointBuilderFactory {
             return "CamelAwsStepFunctionsActivityArn";
         }
         /**
-         * The limit number of results while listing state machines.
+         * The limit number of results while listing activities.
          * 
          * The option is a: {@code Integer} type.
          * 

@@ -868,7 +868,10 @@ public class MailConfiguration implements Cloneable {
     /**
      * Will mark the jakarta.mail.Message as peeked before processing the mail message. This applies to IMAPMessage
      * messages types only. By using peek, the mail will not be eagerly marked as SEEN on the mail server, which allows
-     * us to roll back the mail message if there is a processing error in Camel.
+     * us to roll back the mail message if there is a processing error in Camel. With peek=false the server marks a mail
+     * as SEEN once its content is read, which happens for every mail of a poll when it is retrieved (with the default
+     * mapMailMessage=true): a mail of the poll that is not routed (the consumer is stopping, routing an earlier mail of
+     * the poll failed, or the folder had to be opened again) is then not polled again with unseen=true.
      */
     public void setPeek(boolean peek) {
         this.peek = peek;

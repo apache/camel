@@ -24,9 +24,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
+import org.apache.camel.component.hazelcast.listener.CamelReliableMessageListener;
 
 public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
 
+    private final boolean reliable;
     private ITopic<Object> topic;
 
     private UUID listener;
@@ -34,6 +36,7 @@ public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
     public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
                                   boolean reliable) {
         super(hazelcastInstance, endpoint, processor, cacheName);
+        this.reliable = reliable;
         if (!reliable) {
             topic = hazelcastInstance.getTopic(cacheName);
         } else {
@@ -45,7 +48,10 @@ public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        listener = topic.addMessageListener(new CamelMessageListener(this, cacheName));
+        // a reliable topic removes a listener that lost messages, unless it is loss tolerant
+        listener = topic.addMessageListener(reliable
+                ? new CamelReliableMessageListener(this, cacheName, hazelcastInstance)
+                : new CamelMessageListener(this, cacheName));
     }
 
     @Override
