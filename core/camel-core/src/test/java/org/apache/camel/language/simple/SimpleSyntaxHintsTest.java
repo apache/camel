@@ -268,8 +268,8 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         // the lookup by a field first: given [0] first, models took the first element
         assertThat(e.getMessage()).contains("(a List has no method or key orderId: to pick the element whose orderId"
                                             + " has a given value, use jsonpath: \"$[?(@.orderId == '${header.orderId}')]\""
-                                            + " with resultType java.util.Map (the element, or null when none matches);"
-                                            + " [0].orderId reads the first element; or split it)");
+                                            + " with resultType java.util.Map (the element, or null when none or several"
+                                            + " match); [0].orderId reads the first element; or split it)");
     }
 
     @Test

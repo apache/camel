@@ -593,11 +593,18 @@ public class BeanExpression implements Expression, Predicate {
         String type = bean instanceof List ? "a List" : bean instanceof Object[] ? "an array" : "a Collection";
         boolean field = methodName != null && FIELD_NAME.matcher(methodName).matches();
         String name = field ? methodName : "field";
-        // the lookup by a field first: given [0] first, models wrote ${body[0].orderId} and took the first element
-        return " (" + type + " has no " + (field ? "method or key " + methodName : "such method")
-               + ": to pick the element whose " + name + " has a given value, use jsonpath: \"$[?(@." + name
-               + " == '${header." + name + "}')]\" with resultType java.util.Map (the element, or null when none"
-               + " matches); [0]." + name + " reads the first element; or split it)";
+        return " (" + type + " has no " + (field ? "method or key " + methodName : "such method") + ": "
+               + pickElementHint(name, "[0]." + name) + ")";
+    }
+
+    /**
+     * How to pick an element of a list by a field, and then the first element: given [0] first, models wrote
+     * ${body[0].orderId} and took the first element.
+     */
+    private static String pickElementHint(String name, String first) {
+        return "to pick the element whose " + name + " has a given value, use jsonpath: \"$[?(@." + name + " == '${header."
+               + name + "}')]\" with resultType java.util.Map (the element, or null when none or several match); " + first
+               + " reads the first element; or split it";
     }
 
     private static final Pattern FIELD_NAME = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
@@ -812,7 +819,8 @@ public class BeanExpression implements Expression, Predicate {
         }
         if (value instanceof Collection || value instanceof Object[]) {
             String type = value instanceof List ? "a List" : value instanceof Object[] ? "an array" : "a Collection";
-            return " (" + type + " has no keys: pick an element first, such as [0][" + key + "], or split it)";
+            String name = FIELD_NAME.matcher(key).matches() ? key : "field";
+            return " (" + type + " has no keys: " + pickElementHint(name, "[0][" + key + "]") + ")";
         }
         return "";
     }
