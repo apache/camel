@@ -26,6 +26,9 @@ import groovy.json.JsonOutput;
 import groovy.json.JsonSlurper;
 import groovy.util.Node;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -33,6 +36,16 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 @Dataformat("groovyJson")
+@BodyTypes(marshalIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP,
+        Carrier.LIST, Carrier.POJO },
+                                 description = "A Map, a List, a Groovy Node or a Jackson JsonNode to write as JSON. Text,"
+                                               + " bytes, a stream or a file is written as it is"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
+                                  description = "The JSON in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    description = "A Map (Groovy LazyMap) for a JSON object, a List (ArrayList) for an array"))
 public class GroovyJSonlDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private boolean prettyPrint = true;

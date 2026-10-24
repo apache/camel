@@ -15,6 +15,12 @@
     "modelName": "mimeMultipart",
     "modelJavaType": "org.apache.camel.model.dataformat.MimeMultipartDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The body of the first part, of the content type in the Content-Type header (application\/octet-stream when not set); the attachments of the message are the other parts" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "The MIME multipart in the stream cache, or a byte array when stream caching is off, with its MIME headers as Camel headers unless headersInline is true. Without attachments the body is written as it is, unless multipartWithoutAttachment or headersInline is true" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "A MIME multipart, with its Content-Type (multipart\/*) and MIME-Version as Camel headers, as marshal leaves them; with headersInline, the MIME headers are at the start of the body" },
+    "unmarshalOut": { "carriers": [ "stream", "unchanged" ], "description": "The first part, decoded, as a stream, with the other parts as attachments and its Content-Type as a header. A body that is not a multipart stays as it was: without headersInline, one without a multipart Content-Type header" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "multipartSubType": { "index": 1, "kind": "attribute", "displayName": "Multipart Sub Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "mixed", "description": "Specify the subtype of the MIME Multipart." },

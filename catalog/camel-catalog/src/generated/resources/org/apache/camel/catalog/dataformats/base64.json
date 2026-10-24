@@ -15,6 +15,12 @@
     "modelName": "base64",
     "modelJavaType": "org.apache.camel.model.dataformat.Base64DataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The bytes to encode: text in the charset of the exchange, bytes, a stream or a file" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "text", "description": "The Base64 text in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text" },
+    "unmarshalOut": { "carriers": [ "stream" ], "description": "The decoded bytes in the stream cache, or a byte array when stream caching is off" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "lineLength": { "index": 1, "kind": "attribute", "displayName": "Line Length", "group": "common", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 76, "description": "To specific a maximum line length for the encoded data. By default 76 is used." },

@@ -15,6 +15,12 @@
     "modelName": "bindy",
     "modelJavaType": "org.apache.camel.model.dataformat.BindyDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo", "list" ], "description": "An object of the classType class, or a List (or an Iterator) of them; a Map of the model class names to the objects is one message. Other bodies, such as a Map of field values or a String, fail" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "text", "description": "The key-value pair messages, one per line, in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text" },
+    "unmarshalOut": { "carriers": [ "pojo", "list" ], "byOption": [ { "option": "unwrapSingleInstance", "value": "false", "carriers": [ "list" ] } ], "description": "An object of the classType class when there is one message (one per line), otherwise a List of them" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "type": { "index": 1, "kind": "attribute", "displayName": "Type", "group": "common", "required": true, "type": "enum", "javaType": "org.apache.camel.model.dataformat.BindyType", "enum": [ "Csv", "Fixed", "KeyValue" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "KeyValue", "description": "Whether to use Csv, Fixed, or KeyValue." },

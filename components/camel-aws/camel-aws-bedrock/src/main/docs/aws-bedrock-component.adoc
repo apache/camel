@@ -99,7 +99,7 @@ Two streaming modes are supported:
 
 *Complete Mode (default)*: Accumulates all chunks and returns the complete response as a single message. This is the simplest mode and behaves similarly to non-streaming operations, but with lower time-to-first-token.
 
-*Chunks Mode*: Emits each chunk as it arrives in a List. Useful for reactive streaming pipelines or when you need to process chunks individually.
+*Chunks Mode*: Returns the chunks as a List in a single message, once the model has finished. Useful when you need to process chunks individually, for example with a split.
 
 ==== Streaming Configuration Options
 

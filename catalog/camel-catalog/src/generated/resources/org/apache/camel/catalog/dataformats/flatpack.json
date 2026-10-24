@@ -15,6 +15,12 @@
     "modelName": "flatpack",
     "modelJavaType": "org.apache.camel.model.dataformat.FlatpackDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "list", "map" ], "description": "The rows as a List of Maps, such as the DataSetList unmarshal gives, or a single Map as one row. Other bodies fail. Without a definition, the keys of the first Map name the columns" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "text", "description": "The records in the stream cache, or a byte array when stream caching is off. An empty List writes nothing" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text" },
+    "unmarshalOut": { "carriers": [ "list" ], "javaType": "org.apache.camel.component.flatpack.DataSetList", "description": "A DataSetList: a List of the rows, each a HashMap of the column names and the values, which does not keep the column order" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "definition": { "index": 1, "kind": "attribute", "displayName": "Definition", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap." },

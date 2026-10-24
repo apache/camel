@@ -96,11 +96,12 @@ in the Camel dataformat.
 
 === A body that is already JSON
 
-A body that already is the JSON text is written as it is, not serialized as a Java object: a file, an `InputStream`,
-a `byte[]`, and a `String` whose text is a JSON object or array (it starts with `{` and ends with `}`, or `[` and
-`]`). So `marshal: json` after reading a JSON file, or after building the JSON with a template or a Simple
-expression, sends that JSON unchanged. Any other `String` is written as a JSON string, and POJOs, maps and lists are
-marshalled as usual. All the JSON data formats of Camel do the same.
+A body that already is the JSON text is written as it is, not serialized as a Java object: a file from a consumer
+such as file or ftp, an `InputStream`, a `byte[]`, and a `String` whose text is a JSON object or array (it starts
+with `{` and ends with `}`, or `[` and `]`). So `marshal: json` after reading a JSON file, or after building the
+JSON with a template or a Simple expression, sends that JSON unchanged. Any other `String` is written as a JSON
+string, and POJOs, maps and lists are marshalled as usual. The Jackson, Gson, Jsonb and Fastjson JSON data formats
+do the same.
 
 === Using custom ObjectMapper
 

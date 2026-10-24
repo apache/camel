@@ -41,6 +41,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -51,6 +54,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Dataformat("cbor")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                 description = "A Map, a List or a POJO to write as CBOR. A String or bytes are written as one"
+                                               + " CBOR text or byte string, not as they are"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The CBOR data in the stream cache, or a byte array when stream caching is"
+                                                + " off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "CBOR data. A String fails"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" },
+                                    byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
+                                    description = "A Map (LinkedHashMap) for a CBOR map, a List (ArrayList) for an array;"
+                                                  + " an object of the class unmarshalType names"))
 public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CBORDataFormat.class);

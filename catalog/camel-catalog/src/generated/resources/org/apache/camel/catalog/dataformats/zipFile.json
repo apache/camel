@@ -15,6 +15,12 @@
     "modelName": "zipFile",
     "modelJavaType": "org.apache.camel.model.dataformat.ZipFileDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The content of the one entry: text in the charset of the exchange, bytes, a stream or a file. The entry name is the file name of the CamelFileName header (its whole path with preservePathElements), or the message id" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "binary", "description": "The zip file in the stream cache, or a byte array when stream caching is off. The CamelFileName header is the entry name with .zip" },
+    "unmarshalIn": { "carriers": [ "bytes", "stream", "file" ], "format": "binary", "description": "A zip file with one entry, or with several when usingIterator" },
+    "unmarshalOut": { "carriers": [ "stream" ], "byOption": [ { "option": "usingIterator", "value": "true", "carriers": [ "iterator" ], "javaType": "org.apache.camel.dataformat.zipfile.ZipIterator" } ], "description": "The content of the one file in the stream cache, or a byte array when stream caching is off; folder entries are skipped, and a zip with more files fails. With usingIterator, an Iterator for the split EIP: of messages with the content of one file each, in a stream cache" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "usingIterator": { "index": 1, "kind": "attribute", "displayName": "Using Iterator", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the zip file has more than one entry, the setting this option to true, allows working with the splitter EIP, to split the data using an iterator in a streaming mode." },

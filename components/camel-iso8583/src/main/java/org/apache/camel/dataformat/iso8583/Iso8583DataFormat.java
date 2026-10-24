@@ -28,6 +28,9 @@ import com.solab.iso8583.parse.ConfigParser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -41,6 +44,16 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 @Dataformat("iso8583")
 @Metadata(firstVersion = "4.14.0", title = "ISO-8583")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO, javaType = "com.solab.iso8583.IsoMessage",
+                                 description = "A j8583 IsoMessage, such as unmarshal gives. A Map is not converted"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The ISO-8583 message in the stream cache, or a byte array when stream caching"
+                                                + " is off: ASCII or binary, as the j8583 configuration says"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                   description = "An ISO-8583 message of the ISO-Type in the CamelIso8583IsoType header, or"
+                                                 + " else the isoType option: unmarshal fails without either"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "com.solab.iso8583.IsoMessage",
+                                    description = "A j8583 IsoMessage: getAt(n) gives field n"))
 public class Iso8583DataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String DEFAULT_CONFIG_FILE = "j8583-config.xml";

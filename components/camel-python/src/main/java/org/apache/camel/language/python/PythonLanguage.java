@@ -23,6 +23,9 @@ import java.util.Map;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
@@ -32,6 +35,12 @@ import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
 @Language("python")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, in the variable body: a String is a Python unicode"
+                                                  + " string, and other Java objects keep their methods"),
+           expressionOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "resultType",
+                                     description = "The Python text, str(), of what the script returns: a dict as its Python"
+                                                   + " text, and None as the text None"))
 public class PythonLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     private final Map<String, PyCode> compiledScriptsCache;

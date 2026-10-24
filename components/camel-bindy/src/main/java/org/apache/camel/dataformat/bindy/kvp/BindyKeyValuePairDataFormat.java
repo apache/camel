@@ -37,6 +37,9 @@ import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.WrappedException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -48,6 +51,19 @@ import org.slf4j.LoggerFactory;
  * Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
  */
 @Dataformat("bindyKvp")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                 description = "An object of the classType class, or a List (or an Iterator) of them; a Map of"
+                                               + " the model class names to the objects is one message. Other bodies, such as"
+                                               + " a Map of field values or a String, fail"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The key-value pair messages, one per line, in the stream cache, or a byte"
+                                                + " array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                    byOption = @BodyType.When(option = "unwrapSingleInstance", value = "false",
+                                                              carriers = Carrier.LIST),
+                                    description = "An object of the classType class when there is one message (one per"
+                                                  + " line), otherwise a List of them"))
 public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairDataFormat.class);

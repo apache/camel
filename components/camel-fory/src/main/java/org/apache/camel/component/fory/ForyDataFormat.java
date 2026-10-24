@@ -21,6 +21,9 @@ import java.io.*;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -37,6 +40,18 @@ import org.apache.fory.io.ForyInputStream;
  */
 @Dataformat("fory")
 @Metadata(firstVersion = "4.9.0", title = "Fory")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                 description = "An object of the unmarshalType class, or a List, a Map or another type Fory"
+                                               + " registers itself; another class only with requireClassRegistration false."
+                                               + " A String or bytes are serialized as objects, not written as they are"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The Fory binary data in the stream cache, or a byte array when stream caching"
+                                                + " is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "Fory binary data, as marshal writes it"),
+           unmarshalOut = @BodyType(value = Carrier.UNKNOWN,
+                                    description = "The object marshal wrote, of the class in the data: unmarshalType only"
+                                                  + " registers a class and does not convert the result"))
 public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;

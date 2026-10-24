@@ -27,6 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
@@ -80,6 +83,11 @@ import org.apache.camel.support.TypedLanguageSupport;
  * </p>
  */
 @Language("jactl")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, in the variable body. Without host access a script uses"
+                                                  + " text, a number, bytes, a Map or a List, not the methods of other objects:"
+                                                  + " JSON text is not parsed"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the script returns"))
 public class JactlLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     // Create a globals variable for use during compilation.

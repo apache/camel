@@ -29,6 +29,9 @@ import java.util.Iterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -48,6 +51,24 @@ import static org.apache.camel.Exchange.FILE_NAME;
  * Tar file data format. Based on ZipFileDataFormat from camel-zipfile component
  */
 @Dataformat("tarFile")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The content of the one entry: text, bytes, a stream or a file. The entry size"
+                                               + " is taken from the content, not from the CamelFileLength header"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The tar file, not compressed, in the stream cache, or a byte array when"
+                                                + " stream caching is off. The CamelFileName header is the entry name with"
+                                                + " .tar"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "A tar file with one entry, or with several when usingIterator. A .tar.gz"
+                                                 + " is unmarshalled with gzipDeflater first"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM,
+                                    byOption = @BodyType.When(option = "usingIterator", value = "true",
+                                                              carriers = Carrier.ITERATOR,
+                                                              javaType = "org.apache.camel.dataformat.tarfile.TarIterator"),
+                                    description = "The content of the one file in the stream cache, or a byte array when"
+                                                  + " stream caching is off; folder entries are skipped, and a tar with more"
+                                                  + " files fails. With usingIterator, an Iterator for the split EIP: of"
+                                                  + " messages with the content of one file each, in a stream cache"))
 public class TarFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     /**
      * The default maximum decompressed size (in bytes), which corresponds to 1G.

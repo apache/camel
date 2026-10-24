@@ -15,6 +15,12 @@
     "modelName": "xmlSecurity",
     "modelJavaType": "org.apache.camel.model.dataformat.XMLSecurityDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "description": "The XML: text, bytes, a stream, a file, a DOM Document, a DOMSource or a StreamSource" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "xml", "description": "The XML with EncryptedData elements, in the stream cache, or a byte array when stream caching is off. Without secureTag the whole document is encrypted; with it the elements it selects, or their content when secureTagContents is true" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "description": "The XML with EncryptedData elements: text, bytes, a stream, a file, a DOM Document, a DOMSource or a StreamSource" },
+    "unmarshalOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "format": "xml", "description": "The decrypted XML document, as a byte array" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "xmlCipherAlgorithm": { "index": 1, "kind": "attribute", "displayName": "Xml Cipher Algorithm", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "AES_256_GCM", "description": "The cipher algorithm to be used for encryption\/decryption of the XML message content." },

@@ -35,6 +35,9 @@ import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.UnicodeHelper;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -46,6 +49,22 @@ import org.slf4j.LoggerFactory;
  * Marshal and unmarshal between POJOs and fixed field length format using Camel Bindy
  */
 @Dataformat("bindyFixed")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                 description = "An object of the classType class, or a List (or an Iterator) of them; a Map of"
+                                               + " the model class names to the objects is one record. Other bodies, such as"
+                                               + " a Map of field values or a String, fail. The headers"
+                                               + " CamelBindyFixedLengthHeader and CamelBindyFixedLengthFooter add the header"
+                                               + " and footer records"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The fixed-length records in the stream cache, or a byte array when stream"
+                                                + " caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                    byOption = @BodyType.When(option = "unwrapSingleInstance", value = "false",
+                                                              carriers = Carrier.LIST),
+                                    description = "An object of the classType class when there is one record, otherwise a"
+                                                  + " List of them. The header and footer records go to the headers"
+                                                  + " CamelBindyFixedLengthHeader and CamelBindyFixedLengthFooter"))
 public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     public static final String CAMEL_BINDY_FIXED_LENGTH_HEADER = "CamelBindyFixedLengthHeader";

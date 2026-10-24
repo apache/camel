@@ -35,6 +35,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -50,6 +53,17 @@ import org.apache.camel.util.IOHelper;
  */
 @Dataformat("toon")
 @Metadata(firstVersion = "4.23.0", title = "TOON")
+@BodyTypes(marshalIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP,
+        Carrier.LIST, Carrier.POJO },
+                                 description = "A Map, a List, a POJO or a value to write as TOON. A String, bytes, a stream or"
+                                               + " a file must be JSON text, read in the charset of the exchange"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The TOON in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    description = "A Map (LinkedHashMap) for an object, a List for an array; a document that is"
+                                                  + " a single value gives that value"))
 public class ToonDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

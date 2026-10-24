@@ -34,6 +34,9 @@ import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
 import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -52,6 +55,15 @@ import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRA
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "schematron", title = "Schematron", syntax = "schematron:path",
              remote = false, producerOnly = true, category = { Category.VALIDATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml",
+                                  description = "The XML to validate: text, bytes, a stream, a file, a DOM or another"
+                                                + " javax.xml.transform.Source. A Map or another POJO is read as its"
+                                                + " toString(): marshal it first; no body fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: the CamelSchematronValidationStatus header is SUCCESS or FAILED,"
+                                                 + " and CamelSchematronValidationReport holds the SVRL report. With abort, a"
+                                                 + " failed assert throws a SchematronValidationException"))
 public class SchematronEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SchematronEndpoint.class);

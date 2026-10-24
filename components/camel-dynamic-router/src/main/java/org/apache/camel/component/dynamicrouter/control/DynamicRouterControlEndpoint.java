@@ -28,6 +28,9 @@ import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlProd
 import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlService.DynamicRouterControlServiceFactory;
 import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterComponent;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -59,6 +62,26 @@ import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterCons
              remote = false,
              headersClass = DynamicRouterControlConstants.class,
              category = { Category.MESSAGING })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "A DynamicRouterControlMessage, or the subscription in the options or the"
+                                                + " headers. For subscribe and update without a predicate or a predicateBean,"
+                                                + " the body must be the Predicate"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "controlAction", value = "subscribe",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                           @BodyType.When(option = "controlAction", value = "update", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "controlAction", value = "unsubscribe",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "controlAction", value = "list", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "controlAction", value = "statistics",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String") },
+                                   description = "By the action: the id of the subscription for subscribe and update, true"
+                                                 + " when unsubscribe removed it, and the subscriptions or their statistics as"
+                                                 + " text for list and statistics. The CamelDynamicRouterControlAction header"
+                                                 + " overrides the action"))
 public class DynamicRouterControlEndpoint extends DefaultEndpoint {
 
     static final String URI_CONTROL_ACTIONS = CONTROL_ACTION_SUBSCRIBE + "," + CONTROL_ACTION_UNSUBSCRIBE + "," +

@@ -9,10 +9,11 @@
 
 *Since Camel {since}*
 
-The Tar File Data Format is a message compression
-and decompression format. Messages can be marshalled (compressed) to
-Tar Files containing a single entry, and Tar Files containing a single
-entry can be unmarshalled (decompressed) to the original file contents.
+The Tar File Data Format is a message archiving format. Messages can be
+marshalled to Tar Files containing a single entry, and Tar Files containing a
+single entry can be unmarshalled to the original file contents. The Tar File
+is not compressed: for a `.tar.gz`, marshal it with the
+xref:dataformats:gzipDeflater-dataformat.adoc[gzipDeflater] data format as well.
 
 There is also an aggregation strategy that can
 aggregate multiple messages into a single Tar File.
@@ -27,9 +28,8 @@ include::partial$dataformat-options.adoc[]
 
 == Marshal
 
-In this example, we marshal a regular text/XML payload to a compressed
-payload using Tar File compression, and send it to an ActiveMQ queue
-called MY_QUEUE.
+In this example, we marshal a regular text/XML payload to a Tar File
+payload, and send it to an ActiveMQ queue called MY_QUEUE.
 
 [tabs]
 ====
@@ -74,7 +74,7 @@ The name of the Tar entry inside the created Tar File is based on the
 incoming `CamelFileName` message header, which is the standard message
 header used by the file component. Additionally, the
 outgoing `CamelFileName` message header is automatically set to the
-value of the incoming `CamelFileName` message header, with the ".tar"
+file name of the incoming `CamelFileName` message header, without its path, with the ".tar"
 suffix. So, for example, if the following route finds a file named
 "test.txt" in the input directory, the output will be a Tar File named
 "test.txt.tar" containing a single Tar entry named "test.txt":

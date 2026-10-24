@@ -15,6 +15,12 @@
     "modelName": "groovyJson",
     "modelJavaType": "org.apache.camel.model.dataformat.GroovyJSonDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file", "map", "list", "pojo" ], "description": "A Map, a List, a Groovy Node or a Jackson JsonNode to write as JSON. Text, bytes, a stream or a file is written as it is" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "json", "description": "The JSON in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "json" },
+    "unmarshalOut": { "carriers": [ "map", "list" ], "description": "A Map (Groovy LazyMap) for a JSON object, a List (ArrayList) for an array" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "prettyPrint": { "index": 1, "kind": "attribute", "displayName": "Pretty Print", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to pretty print output nicely formatted." }

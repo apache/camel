@@ -26,6 +26,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -47,6 +50,17 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              },
              headersClass = MilvusHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.POJO,
+                                  description = "The request of the Milvus SDK for the action in the CamelMilvusAction"
+                                                + " header: a CreateCollectionParam, CreateIndexParam, InsertParam,"
+                                                + " UpsertParam, SearchSimpleParam, QueryParam or DeleteParam. Another body"
+                                                + " fails, a vector as a List too: the milvus:embeddings data type"
+                                                + " transformer builds the InsertParam or UpsertParam from the output of"
+                                                + " langchain4j-embeddings"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The result of the Milvus SDK for the action: an RpcStatus for"
+                                                 + " CREATE_COLLECTION and CREATE_INDEX, a MutationResult for INSERT, UPSERT"
+                                                 + " and DELETE, a SearchResponse for SEARCH and a QueryResults for QUERY"))
 public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

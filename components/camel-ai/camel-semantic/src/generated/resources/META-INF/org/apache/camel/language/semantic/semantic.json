@@ -15,6 +15,10 @@
     "modelName": "language",
     "modelJavaType": "org.apache.camel.model.language.LanguageExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "map", "list", "bytes", "stream" ], "description": "The state, the body unless the declaration selects another: text, a Map or a List, and bytes, a stream or Base64 text only with an image Content-Type. Another body fails: select ${bodyAs(String)}" },
+    "expressionOut": { "carriers": [ "value", "text", "list", "map" ], "description": "What the operation of the expert gives: a Boolean, a category as text, a score or a Set of labels, and with refs: a Map of the results by name" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "language": { "index": 1, "kind": "attribute", "displayName": "Language", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the language to use." },

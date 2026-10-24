@@ -26,6 +26,9 @@ import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,28 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri",
              remote = false, category = { Category.TRANSFORMATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml", dependsOn = "source",
+                                  description = "The XML to query: text, bytes, a stream, a file, a DOM or another"
+                                                + " javax.xml.transform.Source. A Map or no body fails"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.Document", dependsOn = "resultType",
+                                   byOption = {
+                                           @BodyType.When(option = "resultsFormat", value = "Bytes", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "resultsFormat", value = "BytesSource",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.apache.camel.util.xml.BytesSource"),
+                                           @BodyType.When(option = "resultsFormat", value = "DOMSource",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                           @BodyType.When(option = "resultsFormat", value = "List", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "resultsFormat", value = "String", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "resultsFormat", value = "StringSource",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.apache.camel.util.xml.StringSource") },
+                                   description = "The result of the query as a DOM Document. A query that gives text, a number"
+                                                 + " or more than one element fails with the default DOM: set resultsFormat to"
+                                                 + " String or List"))
 public class XQueryEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
