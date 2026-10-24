@@ -1605,6 +1605,133 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfAwsServices() {
+        // ses, the secret of createSecret, the payload of invokeFunction and the detail of putEvent are text, and the
+        // zip of createFunction is bytes, a stream or a file; getSecret and invokeFunction give text, and so does the
+        // eventbridge consumer; aws2-ddb keeps the body, aws2-iam does not use it, and a ddb stream record is a POJO
+        String yaml = """
+                - route:
+                    id: mail
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-ses:from@example.com?to=to@example.com
+                - route:
+                    id: secret
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws-secrets-manager:vault?operation=createSecret
+                - route:
+                    id: invoke
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-lambda:greet?operation=invokeFunction
+                - route:
+                    id: deploy
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-lambda:greet?operation=createFunction
+                - route:
+                    id: event
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-eventbridge:default?operation=putEvent
+                - route:
+                    id: lookup
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: aws-secrets-manager:vault?operation=getSecret
+                        - setHeader:
+                            name: user
+                            simple: ${body[user]}
+                - route:
+                    id: answer
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"name": "Camel"}'
+                        - to: aws2-lambda:greet?operation=invokeFunction
+                        - setHeader:
+                            name: hello
+                            simple: ${body[Hello]}
+                - route:
+                    id: events
+                    from:
+                      uri: aws2-eventbridge:default?ruleName=orders
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: table
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-ddb:orders?operation=PutItem
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: users
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-iam:iam?operation=listUsers
+                - route:
+                    id: records
+                    from:
+                      uri: aws2-ddbstream:orders
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                """;
+        assertThat(lines(yaml)).hasSize(8)
+                .anySatisfy(m -> assertThat(m).contains("route mail: to: aws2-ses needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route secret: to: aws-secrets-manager needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route invoke: to: aws2-lambda needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route deploy: to: aws2-lambda needs the body as bytes"))
+                .anySatisfy(m -> assertThat(m).contains("route event: to: aws2-eventbridge needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route lookup: simple reads a field of the body (${body[user]})"))
+                .anySatisfy(m -> assertThat(m).contains("route answer: simple reads a field of the body (${body[Hello]})"))
+                .anySatisfy(m -> assertThat(m).contains("route events: simple reads a field of the body (${body[id]})"));
+    }
+
+    @Test
     public void testAnOptionValueInAnotherStyleOfTheEnum() {
         // the catalog and the enum type converter take convert-to-json and convertToJson as CONVERT_TO_JSON, so after
         // docling the body is the document of that operation, and not the text of the default operation
