@@ -35,6 +35,9 @@ import org.apache.camel.component.bean.MethodInfo;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ScriptingLanguage;
@@ -57,6 +60,9 @@ import org.apache.camel.util.URISupport;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The first parameter of the method gets the body, converted to its type"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the method returns; null for a void method"))
 public class BeanLanguage extends TypedLanguageSupport implements ScriptingLanguage, PropertyConfigurer, StaticService {
     public static final String LANGUAGE = "bean";
 

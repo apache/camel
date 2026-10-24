@@ -30,6 +30,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
@@ -60,6 +63,18 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
              category = { Category.API }, producerOnly = true, lenientProperties = true)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = { "query", "queryFile", "queryHeader" },
+                                  description = "The query, when none of query, queryFile and queryHeader is set: text, or"
+                                                + " bytes, a stream or a file of it; another body, such as a Map, fails. With"
+                                                + " one of them the body is not sent, except that a Map body, such as an"
+                                                + " org.apache.camel.util.json.JsonObject, is the variables when neither"
+                                                + " variables nor variablesHeader is set"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
+                                   description = "The response as text, the JSON with the data and errors of GraphQL: unmarshal"
+                                                 + " it to read them. Errors in the response do not fail the exchange; a status"
+                                                 + " outside 2xx does, unless throwExceptionOnFailure=false, which keeps the"
+                                                 + " response as text. null for a response without a body"))
 public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphqlEndpoint.class);
@@ -92,7 +107,8 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam(label = "advanced")
     private HttpClient httpClient;
     @UriParam(label = "producer", defaultValue = "true",
-              description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.")
+              description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the"
+                            + " remote server. This allows you to get all responses regardless of the HTTP status code.")
     private boolean throwExceptionOnFailure = true;
     @UriParam(label = "common,advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")

@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.kms.client.KMS2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,15 @@ import software.amazon.awssdk.services.kms.KmsClient;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-kms", title = "AWS Key Management Service (KMS)",
              syntax = "aws2-kms:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = KMS2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: the key id and the other inputs come from headers, such as"
+                                                + " CamelAwsKMSKeyId. With pojoRequest=true the request of the AWS SDK for the"
+                                                + " operation, such as a ListKeysRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the CreateKeyResponse"
+                                                 + " of createKey, which puts the id, the ARN and the state of the key in"
+                                                 + " headers too"))
 public class KMS2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private KmsClient kmsClient;

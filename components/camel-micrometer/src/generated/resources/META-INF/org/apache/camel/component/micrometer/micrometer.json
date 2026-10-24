@@ -37,6 +37,10 @@
     "CamelMetricsDescription": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override description value in URI", "constantName": "org.apache.camel.component.micrometer.MicrometerConstants#HEADER_METRIC_DESCRIPTION" },
     "CamelMetricsTags": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.lang.Iterable<Tag>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "To augment meter tags defined as URI parameters", "constantName": "org.apache.camel.component.micrometer.MicrometerConstants#HEADER_METRIC_TAGS" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "Not used, unless an option such as increment, decrement or value is a simple expression that reads it, which must then give a number. The CamelMetrics headers override the options" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged; the CamelMetrics headers are removed" }
+  },
   "properties": {
     "metricsType": { "index": 0, "kind": "path", "displayName": "Metrics Type", "group": "producer", "label": "", "required": false, "type": "enum", "javaType": "io.micrometer.core.instrument.Meter.Type", "enum": [ "counter", "summary", "timer" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "counter", "description": "Type of metrics" },
     "metricsName": { "index": 1, "kind": "path", "displayName": "Metrics Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportSimpleExpression": true, "description": "Name of metrics" },

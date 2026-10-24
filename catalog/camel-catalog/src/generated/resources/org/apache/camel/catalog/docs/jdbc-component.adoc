@@ -54,11 +54,15 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Result
 
-By default, the result is returned in the OUT body as an
-`ArrayList<HashMap<String, Object>>`. The `List` object contains the
+By default, the result of a select is returned in the OUT body as an
+`ArrayList<LinkedHashMap<String, Object>>`. The `List` object contains the
 list of rows and the `Map` objects contain each row with the `String`
 key as the column name. You can use the option `outputType` to control
-the result.
+the result: `SelectOne` gives the `Map` of the one row, the value of its
+column when it has one column, or `null` when there is no row, and
+`StreamList` gives an `Iterator` of the rows, which can be read once.
+A statement that is not a select leaves the body as it is, with the count
+in the `CamelJdbcUpdateCount` header.
 
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.

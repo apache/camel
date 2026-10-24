@@ -171,7 +171,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "text", "null" ], "dependsOn": [ "valueDeserializer" ], "byOption": [ { "option": "valueDeserializer", "value": "org.apache.kafka.common.serialization.ByteArrayDeserializer", "carriers": [ "bytes", "null" ], "javaType": "byte[]" }, { "option": "batching", "value": "true", "carriers": [ "list" ] } ], "description": "The value of the record: a String with the default valueDeserializer (StringDeserializer), null for a tombstone. With batching, a List of the exchanges of the records" },
-    "producerIn": { "carriers": [ "any" ], "dependsOn": [ "valueSerializer" ], "description": "The value of the record, converted for the valueSerializer: text with the default StringSerializer, so a Map or a POJO is sent as its toString(): marshal it first. With useIterator, an Iterable or an Iterator is sent as one record per element" },
+    "producerIn": { "carriers": [ "any" ], "dependsOn": [ "valueSerializer" ], "description": "The value of the record, converted for the valueSerializer: text with the default StringSerializer, so a Map or a POJO is sent as its toString(): marshal it first. With useIterator, an Iterable or an Iterator is sent as one record per element, but a Jackson JSON node only when it is an array: an object node is one record" },
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {

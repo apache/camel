@@ -17,7 +17,7 @@ DNSJava. The component is a thin layer on top of
 http://www.xbill.org/dnsjava/[DNSJava].
 The component offers the following operations:
 
-* `ip`: to resolve a domain by its ip
+* `ip`: to resolve a domain to its ip
 * `lookup`: to lookup information about the domain
 * `dig`: to run DNS queries
 * `wikipedia` (deprecated): to query the Wikipedia over DNS service, which is no longer available
@@ -98,7 +98,7 @@ YAML::
 This looks up a domain's IP. For example, _www.example.com_ resolves to
 192.0.32.10.
 
-The IP address to lookup must be provided in the header with key `"CamelDnsDomain"`.
+The domain to resolve must be provided in the header with key `"CamelDnsDomain"`.
 
 === DNS lookup
 
@@ -136,7 +136,7 @@ YAML::
 ----
 ====
 
-This returns a set of DNS records associated with a domain. +
+This returns the DNS records associated with a domain, as an array of `org.xbill.DNS.Record`. +
  The name to lookup must be provided in the header with key
 `"CamelDnsName"`.
 

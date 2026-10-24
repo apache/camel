@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,17 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "azure-servicebus:topicOrQueueName", category = {
                      Category.CLOUD, Category.MESSAGING },
              headersClass = ServiceBusConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.azure.core.util.BinaryData",
+                                   description = "The payload of the Service Bus message as an Azure BinaryData, which"
+                                                 + " converts to a String but not to bytes or a stream: convert it to a"
+                                                 + " String before an unmarshal, a file or another producer"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.LIST },
+                                  description = "Sent as text by default: bytes, a stream or a file are read as text, so"
+                                                + " binary content needs binary=true. A BinaryData, as the consumer gives it, is"
+                                                + " sent as it is, and a Map or a POJO is sent as its toString(): marshal it"
+                                                + " first. A List is sent as one message per element"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, also after scheduleMessages"))
 public class ServiceBusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

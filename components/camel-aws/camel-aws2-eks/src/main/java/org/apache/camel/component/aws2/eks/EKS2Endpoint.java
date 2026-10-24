@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,16 @@ import software.amazon.awssdk.services.eks.EksClient;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS Elastic Kubernetes Service (EKS)",
              syntax = "aws2-eks:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = EKS2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: the operations take their input from headers, such as the name of"
+                                                + " the cluster in CamelAwsEKSClusterName. With pojoRequest=true the request of"
+                                                + " the AWS SDK for the operation, such as a ListClustersRequest: another body"
+                                                + " fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " ListClustersResponse of listClusters, with the token of the next page in a"
+                                                 + " header"))
 public class EKS2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private EksClient eksClient;

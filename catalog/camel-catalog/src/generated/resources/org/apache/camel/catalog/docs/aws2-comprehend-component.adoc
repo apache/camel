@@ -641,10 +641,13 @@ Analyze customer feedback for sentiment and key topics:
 ----
 from("kafka:customer-feedback")
     .log("Processing feedback: ${body}")
+    // Keep the text, as each operation replaces the body with its result
+    .setVariable("feedback", body())
     // Analyze sentiment
     .to("aws2-comprehend://test?operation=detectSentiment&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
     .setHeader("sentiment", simple("${header.CamelAwsComprehendDetectedSentiment}"))
-    // Extract key phrases
+    // Restore the text and extract key phrases
+    .setBody(variable("feedback"))
     .to("aws2-comprehend://test?operation=detectKeyPhrases&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
     .setHeader("keyPhrases", body())
     .log("Sentiment: ${header.sentiment}, Key topics: ${header.keyPhrases}")

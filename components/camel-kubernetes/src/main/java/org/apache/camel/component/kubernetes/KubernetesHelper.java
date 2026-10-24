@@ -105,6 +105,35 @@ public final class KubernetesHelper {
     static final long WATCH_AGAIN_MAX_DELAY_MILLIS = 30000;
 
     /**
+     * Creates the first watch of a consumer on its executor. If it fails (the API server cannot be reached, answers 403
+     * because the RBAC rules of the service account are not there yet, ...), it is tried again as in
+     * {@link #watchAgain(ServiceSupport, ExecutorService, Runnable)}, until it succeeds or the consumer is stopped.
+     *
+     * @param consumer the consumer of the watch
+     * @param executor the executor of the consumer
+     * @param task     the task that creates the watch of the consumer
+     */
+    public static void watch(ServiceSupport consumer, ExecutorService executor, Runnable task) {
+        executor.submit(() -> {
+            if (!consumer.isRunAllowed()) {
+                return;
+            }
+            try {
+                task.run();
+            } catch (Exception e) {
+                if (Thread.currentThread().isInterrupted() || !consumer.isRunAllowed()) {
+                    LOG.debug("Failed to watch for {} as it is stopping", consumer, e);
+                    return;
+                }
+                // tried again until it succeeds: one line per attempt, the stack trace at DEBUG
+                LOG.warn("Failed to watch for {}, trying again in {} ms: {}", consumer, WATCH_AGAIN_DELAY_MILLIS, e.toString());
+                LOG.debug("Failed to watch for {}", consumer, e);
+                watchAgain(consumer, executor, task, WATCH_AGAIN_DELAY_MILLIS);
+            }
+        });
+    }
+
+    /**
      * Watches again when the Kubernetes client closed the watch of a consumer with an error. The client reconnects a
      * watch by itself after transient errors, and only closes it with an exception when it gives up: when the API
      * server answers 410 Gone because the resource version of the watch is too old (which happens to long-running
@@ -149,7 +178,8 @@ public final class KubernetesHelper {
                     }
                     long nextDelayMillis = Math.min(delayMillis * 2, WATCH_AGAIN_MAX_DELAY_MILLIS);
                     LOG.warn("Failed to watch again for {}, trying again in {} ms: {}", consumer, nextDelayMillis,
-                            e.getMessage(), e);
+                            e.toString());
+                    LOG.debug("Failed to watch again for {}", consumer, e);
                     watchAgain(consumer, executor, task, nextDelayMillis);
                 }
             });

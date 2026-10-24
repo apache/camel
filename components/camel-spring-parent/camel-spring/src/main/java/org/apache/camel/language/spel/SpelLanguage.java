@@ -19,6 +19,9 @@ package org.apache.camel.language.spel;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.util.RegistryBeanResolver;
@@ -32,6 +35,10 @@ import org.springframework.expression.BeanResolver;
  * A Spring Expression {@link org.apache.camel.spi.Language} plugin
  */
 @Language("spel")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, in body, request.body or message.body"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "What the expression returns, and text when text surrounds the #{ } parts"))
 public class SpelLanguage extends TypedLanguageSupport implements StaticService {
 
     private BeanResolver beanResolver;

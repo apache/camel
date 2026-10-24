@@ -23,6 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -40,6 +43,26 @@ import org.snmp4j.security.SecurityLevel;
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port",
              category = { Category.MONITORING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "xml",
+                                   description = "The variable bindings of the response of a poll or of a trap as XML text: an"
+                                                 + " snmp element with an entry of an oid and a value for each, and the"
+                                                 + " community of a trap in the securityName header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "type", value = "TRAP", carriers = Carrier.POJO,
+                                                            javaType = "org.snmp4j.PDU"),
+                                  description = "Not used by a POLL or GET_NEXT, which requests the oids. A TRAP sends the"
+                                                + " body, which must be a PDU of SNMP4J for the snmpVersion: a PDUv1 for 0, the"
+                                                + " default, a PDU for 1 and a ScopedPDU for 3. Another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.component.snmp.SnmpMessage",
+                                   byOption = {
+                                           @BodyType.When(option = "type", value = "GET_NEXT", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<"
+                                                                     + "org.apache.camel.component.snmp.SnmpMessage>"),
+                                           @BodyType.When(option = "type", value = "TRAP", carriers = Carrier.UNCHANGED) },
+                                   description = "The response of a POLL, or of a producer without type, as an SnmpMessage, a"
+                                                 + " Camel message as the body, whose own body is the XML text of the consumer;"
+                                                 + " it converts to that text. A List of them, one per step of the walk, for"
+                                                 + " GET_NEXT. A TRAP leaves the body unchanged"))
 public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
     public static final String DEFAULT_COMMUNITY = "public";

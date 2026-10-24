@@ -133,7 +133,7 @@ public @interface BodyType {
         ANY("any"),
         /**
          * The body depends on what the other system sends, or on a class the user configures: tooling must not guess
-         * it.
+         * it. For the body after a step only: the bodies a step needs are ANY then.
          */
         UNKNOWN("unknown");
 

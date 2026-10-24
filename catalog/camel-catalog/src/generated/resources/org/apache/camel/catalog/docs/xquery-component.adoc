@@ -165,7 +165,7 @@ Notice how we can reuse the namespace prefixes, *foo* in this case, in
 the XPath expression for easier namespace-based XQuery expressions!
 
 When you use functions in your XQuery expression, you need an explicit
-type conversion which is done in the xml configuration via the *@type*
+type conversion which is done in the xml configuration via the *resultType*
 attribute:
 
 [source,xml]

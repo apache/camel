@@ -121,14 +121,15 @@ YAML::
 
 |pullRequest |polling |`org.kohsuke.github.GHPullRequest`
 
-|pullRequestComment |polling |`org.kohsuke.github.GHPullRequestReviewComment`
+|pullRequestComment |polling |`org.kohsuke.github.GHIssueComment`
 
 |tag |polling |`org.kohsuke.github.GHTag`
 
 |commit |polling |`org.kohsuke.github.GHCommit` or `String` with commit message and headers with some metadata.
 This can be configured by the `commitMessageAsBody` option.
 
-|event |polling |`org.kohsuke.github.GHEventInfo`
+|event |polling |`String` with the type of the event, such as `PUSH`, and the `org.kohsuke.github.GHEventInfo` in the
+`CamelGitHubEventPayload` header
 |=======================================================================
 
 === Producer Endpoints
@@ -147,7 +148,8 @@ pull request discussion is assumed.
 
 |createIssue |String (issue body text) | - `CamelGitHubIssueTitle` (String) (REQUIRED): Issue Title.
 
-|pullRequestState |none | - `CamelGitHubPullRequest` (integer) (REQUIRED): Pull request number.
+|pullRequestState |String (description of the status) | - `CamelGitHubPullRequestHeadCommitSha` (String) (REQUIRED): The sha
+of the commit to set the status on.
 Sets the commit status on a pull request.
 
 |pullRequestFiles |none | - `CamelGitHubPullRequest` (integer) (REQUIRED): Pull request number.

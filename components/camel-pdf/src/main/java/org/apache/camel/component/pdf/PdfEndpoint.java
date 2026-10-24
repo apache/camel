@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -31,6 +34,25 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true,
              remote = false, category = { Category.DOCUMENT, Category.TRANSFORMATION },
              headersClass = PdfHeaderConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "extractText",
+                                                         carriers = {
+                                                                 Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "merge", carriers = Carrier.ANY) },
+                                  description = "The text to write for create and append, which takes the document from the"
+                                                + " CamelPdfDocument header; a Map or a POJO is written as its toString:"
+                                                + " marshal it first. extractText reads a PDF from bytes, such as the"
+                                                + " ByteArrayOutputStream of create, a stream, a file or a PDDocument, not from"
+                                                + " text; another body, or none, fails. merge takes the files from the"
+                                                + " CamelPdfFilesToMerge header"),
+           producerOut = @BodyType(value = Carrier.BYTES, javaType = "java.io.ByteArrayOutputStream",
+                                   byOption = @BodyType.When(option = "operation", value = "extractText",
+                                                             carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                   description = "The PDF of create, append and merge as bytes, in a ByteArrayOutputStream,"
+                                                 + " which extractText reads as it is. The text of the document for"
+                                                 + " extractText"))
 public class PdfEndpoint extends DefaultEndpoint {
 
     @UriParam

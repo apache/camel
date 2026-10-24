@@ -15,6 +15,12 @@
     "modelName": "ocsf",
     "modelJavaType": "org.apache.camel.model.dataformat.OcsfDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "map", "list", "pojo" ], "description": "An OCSF event such as a DetectionFinding, a Map or a List to write as JSON. A String is written as one JSON string and bytes as Base64, not as they are" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "json", "description": "The JSON in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "json" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "javaType": "org.apache.camel.dataformat.ocsf.model.OcsfEvent", "dependsOn": [ "unmarshalType", "collectionType", "allowUnmarshallType" ], "byOption": [ { "option": "useList", "value": "true", "carriers": [ "list" ] } ], "description": "The base OcsfEvent; an object of the class unmarshalType names, such as DetectionFinding" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "objectMapper": { "index": 1, "kind": "attribute", "displayName": "Object Mapper", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Lookup and use the existing ObjectMapper with the given id when using Jackson." },

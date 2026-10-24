@@ -29,6 +29,9 @@
     "delay": { "index": 2, "kind": "property", "displayName": "Delay", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1000, "description": "The number of milliseconds to wait before triggering. Use 0 or negative to fire as soon as possible. The default value is 1000." },
     "languages": { "index": 3, "kind": "property", "displayName": "Languages", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether Camel languages are supported such as simple,groovy." }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "null" ], "dependsOn": [ "body" ], "description": "No body without the body option. The body option gives its text, the text of a file:, classpath: or http: resource, a Boolean for true or false, a number for a whole number, or with language:NAME: the result of the expression" }
+  },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The logical name" },
     "body": { "index": 1, "kind": "parameter", "displayName": "Body", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "The data to use as message body. You can externalize the data by using file: or classpath: as prefix and specify the location of the file." },

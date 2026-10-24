@@ -39,7 +39,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 If the `query`, `queryFile` and `queryHeader` parameters are not set, the body is the query: it must be text, bytes, a stream or a file, and another body (such as a `Map`) fails with an `InvalidPayloadException`.
 Otherwise, if the `variables` and `variablesHeader` parameters are not set and the body is a `Map` (such as a `JsonObject`), Camel will use it for the operation's variables.
-Camel will store the GraphQL response from the external server on the message body.
+Camel will store the GraphQL response from the external server on the message body, as a `String` of the JSON
+response, with the `data` and `errors` of GraphQL: errors in the response do not fail the exchange.
 
 == HTTP Headers
 

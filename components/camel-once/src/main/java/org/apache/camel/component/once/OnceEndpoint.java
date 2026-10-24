@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,11 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "once", title = "Once", syntax = "once:name", consumerOnly = true,
              remote = false, category = { Category.CORE, Category.SCHEDULING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL, dependsOn = "body",
+                                   description = "No body without the body option. The body option gives its text, the text of"
+                                                 + " a file:, classpath: or http: resource, a Boolean for true or false, a"
+                                                 + " number for a whole number, or with language:NAME: the result of the"
+                                                 + " expression"))
 public class OnceEndpoint extends DefaultEndpoint {
 
     @UriPath

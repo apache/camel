@@ -30,6 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,109 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service",
              syntax = "azure-storage-blob:accountName/containerName", category = { Category.CLOUD, Category.FILE },
              headersClass = BlobConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.FILE },
+                                   description = "The content of the blob, one message per blob: a stream that reads it, or"
+                                                 + " with fileDir the java.io.File it is downloaded to"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "uploadBlockBlob",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "commitAppendBlob",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "uploadPageBlob",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "stageBlockBlobList",
+                                                         carriers = { Carrier.LIST, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "commitBlobBlockList",
+                                                         carriers = { Carrier.LIST, Carrier.POJO }) },
+                                  description = "The content to upload for uploadBlockBlob, commitAppendBlob and uploadPageBlob:"
+                                                + " text, bytes, a stream or a file; a Map or a List fails: marshal it first. A"
+                                                + " List of BlobBlock for stageBlockBlobList, and of Block for"
+                                                + " commitBlobBlockList. getBlob writes into an OutputStream body. The other"
+                                                + " operations do not use the body, or take their value from a header first: the"
+                                                + " file of uploadBlockBlobChunked, the tags, the tag filter, the legal hold, the"
+                                                + " tier and the policy"),
+           producerOut = @BodyType(value = Carrier.LIST,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getBlob", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "downloadBlobToFile",
+                                                          carriers = Carrier.FILE,
+                                                          javaType = "java.io.File"),
+                                           @BodyType.When(option = "operation", value = "getBlobTags", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, String>"),
+                                           @BodyType.When(option = "operation", value = "getPageBlobRanges",
+                                                          carriers = Carrier.ITERATOR,
+                                                          javaType = "com.azure.core.http.rest.PagedIterable<com.azure.storage.blob.models.PageRangeItem>"),
+                                           @BodyType.When(option = "operation", value = "getBlobBlockList",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.azure.storage.blob.models.BlockList"),
+                                           @BodyType.When(option = "operation", value = "setBlobImmutabilityPolicy",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.azure.storage.blob.models.BlobImmutabilityPolicy"),
+                                           @BodyType.When(option = "operation", value = "setBlobTier", carriers = Carrier.POJO,
+                                                          javaType = "com.azure.storage.blob.models.AccessTier"),
+                                           @BodyType.When(option = "operation", value = "copyBlob", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "createBlobSnapshot",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "setBlobLegalHold",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "createBlobContainer",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deleteBlobContainer",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deleteBlob", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "downloadLink",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "uploadBlockBlob",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "uploadBlockBlobChunked",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "stageBlockBlobList",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "commitBlobBlockList",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "createAppendBlob",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "commitAppendBlob",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "createPageBlob",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "uploadPageBlob",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "resizePageBlob",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "clearPageBlob",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "setBlobTags", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "undeleteBlob",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "A List of the items of the SDK for listBlobContainers, the default,"
+                                                 + " findBlobsByTags, listBlobs, listBlobVersions and getChangeFeed. A stream of"
+                                                 + " the content for getBlob, or the OutputStream body it wrote into; the"
+                                                 + " java.io.File for downloadBlobToFile; true for the operations that create,"
+                                                 + " upload, set or delete, with their results in headers, such as the link of"
+                                                 + " downloadLink"))
 public class BlobEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
