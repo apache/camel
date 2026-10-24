@@ -50,20 +50,46 @@ import org.apache.camel.support.DefaultEndpoint;
              },
              headersClass = QdrantHeaders.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL },
-                                  description = "By the action in the CamelQdrantAction header: a VectorParams for"
-                                                + " CREATE_COLLECTION, a PointStruct or a List of them for UPSERT, a PointId"
-                                                + " or a List of them for RETRIEVE, a PointsSelector, PointId, Filter or"
-                                                + " Condition for DELETE, and the query vector as a List of Float, a float"
-                                                + " array or a PointStruct for SIMILARITY_SEARCH. DELETE_COLLECTION and"
-                                                + " COLLECTION_INFO do not read the body. Another body fails, such as a"
-                                                + " number as the id (use PointIdFactory.id) or a List of Double. The"
-                                                + " qdrant:embeddings data type transformer builds the PointStruct from the"
-                                                + " output of langchain4j-embeddings"),
+                                  byOption = {
+                                          @BodyType.When(option = "action", value = "CREATE_COLLECTION",
+                                                         carriers = Carrier.POJO,
+                                                         javaType = "io.qdrant.client.grpc.Collections.VectorParams"),
+                                          @BodyType.When(option = "action", value = "DELETE_COLLECTION",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "UPSERT",
+                                                         carriers = { Carrier.POJO, Carrier.LIST }),
+                                          @BodyType.When(option = "action", value = "RETRIEVE",
+                                                         carriers = { Carrier.POJO, Carrier.LIST }),
+                                          @BodyType.When(option = "action", value = "DELETE", carriers = Carrier.POJO),
+                                          @BodyType.When(option = "action", value = "SIMILARITY_SEARCH",
+                                                         carriers = { Carrier.LIST, Carrier.POJO }),
+                                          @BodyType.When(option = "action", value = "COLLECTION_INFO",
+                                                         carriers = Carrier.ANY) },
+                                  description = "By the action in the action option or the CamelQdrantAction header: a VectorParams for"
+                                                + " CREATE_COLLECTION, a PointStruct or a List of them for UPSERT, a PointId or a List of"
+                                                + " them for RETRIEVE, a PointsSelector, PointId, Filter or Condition for DELETE, and the"
+                                                + " query vector as a List of Float, a float array or a PointStruct for SIMILARITY_SEARCH."
+                                                + " DELETE_COLLECTION and COLLECTION_INFO do not read the body. Another body fails, such as"
+                                                + " a number as the id (use PointIdFactory.id) or a List of Double. The qdrant:embeddings"
+                                                + " data type transformer builds the PointStruct from the output of langchain4j-embeddings"),
            producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.UNCHANGED },
-                                   description = "By the action: a List of RetrievedPoint for RETRIEVE, a List of"
-                                                 + " ScoredPoint for SIMILARITY_SEARCH and a CollectionInfo for"
-                                                 + " COLLECTION_INFO. The other actions keep the body, UPSERT and DELETE with"
-                                                 + " the operation id and status in headers"))
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "CREATE_COLLECTION",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "DELETE_COLLECTION",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "UPSERT", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "RETRIEVE", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.qdrant.client.grpc.Points.RetrievedPoint>"),
+                                           @BodyType.When(option = "action", value = "DELETE", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "SIMILARITY_SEARCH",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.qdrant.client.grpc.Points.ScoredPoint>"),
+                                           @BodyType.When(option = "action", value = "COLLECTION_INFO", carriers = Carrier.POJO,
+                                                          javaType = "io.qdrant.client.grpc.Collections.CollectionInfo") },
+                                   description = "By the action: a List of RetrievedPoint for RETRIEVE, a List of ScoredPoint for"
+                                                 + " SIMILARITY_SEARCH and a CollectionInfo for COLLECTION_INFO. The other actions keep the"
+                                                 + " body, UPSERT and DELETE with the operation id and status in headers"))
 public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

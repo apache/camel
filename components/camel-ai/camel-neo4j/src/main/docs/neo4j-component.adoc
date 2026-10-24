@@ -34,6 +34,9 @@ neo4j:name[?options]
 
 Where *name* is the database name.
 
+The `operation` option of the endpoint, or the `CamelNeo4jOperation` header, selects the operation, such as `neo4j:test?operation=RETRIEVE_NODES`.
+The header, when set, wins over the option, so one endpoint can also run several operations. Without either, the producer fails.
+
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -147,7 +150,7 @@ Exchange result = fluentTemplate.to("neo4j:test?alias=u&label=User&detachRelatio
 
 === The operations in a route
 
-In a route, the `CamelNeo4jOperation` header selects the operation. The first route below creates a node from a JSON body, and the second finds the nodes whose `name` is the message body:
+In a route, the `operation` option or the `CamelNeo4jOperation` header selects the operation. The first route below creates a node from a JSON body, and the second finds the nodes whose `name` is the message body:
 
 [source,yaml]
 ----

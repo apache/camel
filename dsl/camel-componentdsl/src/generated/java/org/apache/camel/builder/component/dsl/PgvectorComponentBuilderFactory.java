@@ -51,6 +51,23 @@ public interface PgvectorComponentBuilderFactory {
     interface PgvectorComponentBuilder extends ComponentBuilder<PgVectorComponent> {
     
         /**
+         * The action to perform. The CamelPgVectorAction header, when set, wins
+         * over this option.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.pgvector.PgVectorAction&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default PgvectorComponentBuilder action(org.apache.camel.component.pgvector.PgVectorAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+    
+        /**
          * The configuration;.
          * 
          * The option is a:
@@ -184,6 +201,7 @@ public interface PgvectorComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "action": getOrCreateConfiguration((PgVectorComponent) component).setAction((org.apache.camel.component.pgvector.PgVectorAction) value); return true;
             case "configuration": ((PgVectorComponent) component).setConfiguration((org.apache.camel.component.pgvector.PgVectorConfiguration) value); return true;
             case "dataSource": getOrCreateConfiguration((PgVectorComponent) component).setDataSource((javax.sql.DataSource) value); return true;
             case "dimension": getOrCreateConfiguration((PgVectorComponent) component).setDimension((int) value); return true;

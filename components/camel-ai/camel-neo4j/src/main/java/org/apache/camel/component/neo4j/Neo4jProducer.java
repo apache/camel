@@ -84,10 +84,14 @@ public class Neo4jProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         final Message in = exchange.getMessage();
-        final Neo4Operation operation = in.getHeader(Neo4jHeaders.OPERATION, Neo4Operation.class);
+        // the header wins over the operation option
+        final Neo4Operation operation = in.getHeader(Neo4jHeaders.OPERATION, getEndpoint().getConfiguration().getOperation(),
+                Neo4Operation.class);
 
         if (operation == null) {
-            throw new NoSuchHeaderException("The operation is a required header", exchange, Neo4jHeaders.OPERATION);
+            throw new NoSuchHeaderException(
+                    "The operation is required: set the operation option or the header", exchange,
+                    Neo4jHeaders.OPERATION);
         }
 
         switch (operation) {

@@ -47,6 +47,8 @@ public class Neo4jConfiguration implements Cloneable {
               security = "secret")
     private String kerberosAuthTicket;
 
+    @UriParam(description = "The operation to perform. The CamelNeo4jOperation header, when set, wins over this option.")
+    private Neo4Operation operation;
     @UriParam
     private String query;
     @UriParam
@@ -73,6 +75,14 @@ public class Neo4jConfiguration implements Cloneable {
     /**
      * URI of the Neo4j server - used for Authentication
      */
+    public Neo4Operation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Neo4Operation operation) {
+        this.operation = operation;
+    }
+
     public String getDatabaseUrl() {
         return databaseUrl;
     }

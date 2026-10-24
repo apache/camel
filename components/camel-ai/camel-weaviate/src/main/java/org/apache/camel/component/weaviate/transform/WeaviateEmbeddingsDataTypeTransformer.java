@@ -48,6 +48,12 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
         Object keyValue = message.getHeader(WeaviateVectorDbHeaders.KEY_VALUE, () -> null);
         TextSegment text = message.getBody(TextSegment.class);
         final WeaviateVectorDbAction action = message.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
+        if (action == null) {
+            // the transformer runs before the endpoint, so it cannot see the action option of the endpoint
+            throw new IllegalStateException(
+                    "The weaviate:embeddings transformer needs the " + WeaviateVectorDbHeaders.ACTION
+                                            + " header, CREATE, UPDATE_BY_ID or QUERY: it does not see the action option of the endpoint");
+        }
         switch (action) {
             case CREATE ->
                 createEmbeddingOperation(message, embedding, textFieldName, text, collectionName, keyValue,

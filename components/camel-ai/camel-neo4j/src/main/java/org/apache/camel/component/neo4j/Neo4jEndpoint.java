@@ -50,20 +50,60 @@ import org.neo4j.driver.GraphDatabase;
              },
              headersClass = Neo4jHeaders.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
-                                  description = "What the operation of the CamelNeo4jOperation header needs: CREATE_NODE the"
-                                                + " properties of the node as a Map or as JSON text (bytes, a stream, a POJO or"
-                                                + " no body fail); the two Cypher operations the query as text (bytes or a"
-                                                + " stream are read as text); CREATE_VECTOR a Neo4jEmbedding, or the text with"
-                                                + " the float[] vector in the CamelLangChain4jEmbeddingsVector header;"
-                                                + " VECTOR_SIMILARITY_SEARCH a Neo4jEmbedding, a float[] or a List of Float."
-                                                + " The other operations do not use the body"),
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "CREATE_NODE",
+                                                         carriers = { Carrier.MAP, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation",
+                                                         value = "RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY",
+                                                         carriers = Carrier.TEXT),
+                                          @BodyType.When(option = "operation", value = "ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY",
+                                                         carriers = Carrier.TEXT),
+                                          @BodyType.When(option = "operation", value = "CREATE_VECTOR",
+                                                         carriers = { Carrier.POJO, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "VECTOR_SIMILARITY_SEARCH",
+                                                         carriers = { Carrier.POJO, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "DELETE_NODE", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "RETRIEVE_NODES",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "CREATE_VECTOR_INDEX",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "DROP_VECTOR_INDEX",
+                                                         carriers = Carrier.ANY) },
+                                  description = "What the operation of the operation option or the CamelNeo4jOperation header needs:"
+                                                + " CREATE_NODE the properties of the node as a Map or as JSON text (bytes, a stream, a POJO"
+                                                + " or no body fail); the two Cypher operations the query as text (bytes or a stream are"
+                                                + " read as text); CREATE_VECTOR a Neo4jEmbedding, or the text with the float[] vector in"
+                                                + " the CamelLangChain4jEmbeddingsVector header; VECTOR_SIMILARITY_SEARCH a Neo4jEmbedding,"
+                                                + " a float[] or a List of Float. The other operations do not use the body"),
            producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
-                                   description = "RETRIEVE_NODES, RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and"
-                                                 + " VECTOR_SIMILARITY_SEARCH give a List of Maps, the properties of each node"
-                                                 + " found (empty when none; the first column a Cypher query returns must be a"
-                                                 + " node), with the Records of the driver in the"
-                                                 + " CamelNeo4jQueryResultListNeo4jNodes header. The other operations leave the"
-                                                 + " body unchanged, with the counts in the CamelNeo4jQueryResult headers"))
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "RETRIEVE_NODES",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "operation",
+                                                          value = "RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "operation", value = "VECTOR_SIMILARITY_SEARCH",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "operation", value = "CREATE_NODE",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "DELETE_NODE",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "CREATE_VECTOR_INDEX",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "DROP_VECTOR_INDEX",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "CREATE_VECTOR",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "RETRIEVE_NODES, RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and VECTOR_SIMILARITY_SEARCH"
+                                                 + " give a List of Maps, the properties of each node found (empty when none; the first"
+                                                 + " column a Cypher query returns must be a node), with the Records of the driver in the"
+                                                 + " CamelNeo4jQueryResultListNeo4jNodes header. The other operations leave the body"
+                                                 + " unchanged, with the counts in the CamelNeo4jQueryResult headers"))
 public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

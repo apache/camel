@@ -45,6 +45,38 @@ public interface MilvusEndpointBuilderFactory {
         }
 
         /**
+         * The action to perform. The CamelMilvusAction header, when set, wins
+         * over this option.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.milvus.MilvusAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder action(org.apache.camel.component.milvus.MilvusAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
+         * The action to perform. The CamelMilvusAction header, when set, wins
+         * over this option.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.milvus.MilvusAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder action(String action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
          * The host to connect to.
          * 
          * The option is a: <code>java.lang.String</code> type.

@@ -33,7 +33,7 @@ configuration, or autowired from the registry.
 
 == Actions
 
-The following actions are supported via the `CamelPgVectorAction` header:
+The `action` option of the endpoint, such as `pgvector:myTable?action=SIMILARITY_SEARCH`, or the `CamelPgVectorAction` header selects the action; the header, when set, wins over the option. Without either, the producer fails. The following actions are supported:
 
 - `CREATE_TABLE` - Creates the pgvector extension and a table with columns: id, text_content, metadata, embedding
 - `CREATE_INDEX` - Creates an HNSW index on the embedding column for faster approximate nearest neighbor search. The index uses the distance type configured on the endpoint (default: COSINE)

@@ -23,6 +23,7 @@ public class MilvusEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MilvusEndpoint target = (MilvusEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.getConfiguration().setAction(property(camelContext, org.apache.camel.component.milvus.MilvusAction.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -36,6 +37,7 @@ public class MilvusEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.milvus.MilvusAction.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -50,6 +52,7 @@ public class MilvusEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MilvusEndpoint target = (MilvusEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return target.getConfiguration().getAction();
         case "host": return target.getConfiguration().getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

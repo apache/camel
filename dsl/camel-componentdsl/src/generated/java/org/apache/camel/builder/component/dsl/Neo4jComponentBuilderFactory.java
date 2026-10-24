@@ -202,6 +202,23 @@ public interface Neo4jComponentBuilderFactory {
         }
     
         /**
+         * The operation to perform. The CamelNeo4jOperation header, when set,
+         * wins over this option.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.neo4j.Neo4Operation&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Neo4jComponentBuilder operation(org.apache.camel.component.neo4j.Neo4Operation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+    
+        /**
          * Cypher Query.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -391,6 +408,7 @@ public interface Neo4jComponentBuilderFactory {
             case "lazyStartProducer": ((Neo4jComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxResults": getOrCreateConfiguration((Neo4jComponent) component).setMaxResults((int) value); return true;
             case "minScore": getOrCreateConfiguration((Neo4jComponent) component).setMinScore((double) value); return true;
+            case "operation": getOrCreateConfiguration((Neo4jComponent) component).setOperation((org.apache.camel.component.neo4j.Neo4Operation) value); return true;
             case "query": getOrCreateConfiguration((Neo4jComponent) component).setQuery((java.lang.String) value); return true;
             case "similarityFunction": getOrCreateConfiguration((Neo4jComponent) component).setSimilarityFunction((org.apache.camel.component.neo4j.Neo4jSimilarityFunction) value); return true;
             case "vectorIndexName": getOrCreateConfiguration((Neo4jComponent) component).setVectorIndexName((java.lang.String) value); return true;

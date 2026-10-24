@@ -61,11 +61,15 @@ public class MilvusProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final MilvusAction action = in.getHeader(MilvusHeaders.ACTION, MilvusAction.class);
+        // the header wins over the action option
+        final MilvusAction action = in.getHeader(MilvusHeaders.ACTION, getEndpoint().getConfiguration().getAction(),
+                MilvusAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, MilvusHeaders.ACTION);
+                throw new NoSuchHeaderException(
+                        "The action is required: set the action option or the header", exchange,
+                        MilvusHeaders.ACTION);
             }
 
             switch (action) {

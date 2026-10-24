@@ -51,6 +51,23 @@ public interface QdrantComponentBuilderFactory {
     interface QdrantComponentBuilder extends ComponentBuilder<QdrantComponent> {
     
         /**
+         * The action to perform. The CamelQdrantAction header, when set, wins
+         * over this option.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.qdrant.QdrantAction&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default QdrantComponentBuilder action(org.apache.camel.component.qdrant.QdrantAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+    
+        /**
          * The configuration;.
          * 
          * The option is a:
@@ -248,6 +265,7 @@ public interface QdrantComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "action": getOrCreateConfiguration((QdrantComponent) component).setAction((org.apache.camel.component.qdrant.QdrantAction) value); return true;
             case "configuration": ((QdrantComponent) component).setConfiguration((org.apache.camel.component.qdrant.QdrantConfiguration) value); return true;
             case "host": getOrCreateConfiguration((QdrantComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((QdrantComponent) component).setLazyStartProducer((boolean) value); return true;

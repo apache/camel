@@ -27,6 +27,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class MilvusConfiguration implements Cloneable {
 
+    @UriParam
+    private MilvusAction action;
+
     @Metadata(defaultValue = "localhost")
     @UriParam
     private String host = "localhost";
@@ -44,6 +47,17 @@ public class MilvusConfiguration implements Cloneable {
 
     @Metadata(autowired = true)
     private MilvusClient client;
+
+    public MilvusAction getAction() {
+        return action;
+    }
+
+    /**
+     * The action to perform. The CamelMilvusAction header, when set, wins over this option.
+     */
+    public void setAction(MilvusAction action) {
+        this.action = action;
+    }
 
     public String getHost() {
         return host;

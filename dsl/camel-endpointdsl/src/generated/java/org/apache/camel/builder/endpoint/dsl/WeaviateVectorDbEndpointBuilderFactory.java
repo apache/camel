@@ -45,6 +45,38 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
         }
 
         /**
+         * The action to perform. The CamelWeaviateAction header, when set, wins
+         * over this option.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.weaviate.WeaviateVectorDbAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default WeaviateVectorDbEndpointBuilder action(org.apache.camel.component.weaviate.WeaviateVectorDbAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
+         * The action to perform. The CamelWeaviateAction header, when set, wins
+         * over this option.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.weaviate.WeaviateVectorDbAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default WeaviateVectorDbEndpointBuilder action(String action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
          * API Key to authenticate to weaviate with.
          * 
          * The option is a: <code>java.lang.String</code> type.
