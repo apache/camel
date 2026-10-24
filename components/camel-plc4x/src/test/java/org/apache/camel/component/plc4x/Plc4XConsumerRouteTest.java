@@ -21,20 +21,22 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.config.Property;
+import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.types.PlcResponseCode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -46,7 +48,14 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
     private static final String PLC = "plc4x:mock:10.10.10.1/1/1?autoReconnect=true";
     private static final String TRIGGERED = PLC + "&trigger=TRIG&period=100&tag.temperature=TEMP&tag.pressure=PRES";
     private static final String UNTRIGGERED = PLC + "&tag.temperature=TEMP&tag.pressure=PRES";
-    private static final String REFUSED = PLC + "&trigger=TRIG&period=50&tag.temperature=TEMP&tag.pressure=PRES";
+    private static final String REPORTED = PLC + "&trigger=TRIG&period=50&tag.temperature=TEMP&tag.pressure=PRES"
+                                           + "&exceptionHandler=#pollFailures";
+    private static final String WITHOUT_AUTO_RECONNECT
+            = "plc4x:mock:10.10.10.1/1/1?trigger=TRIG&period=50&tag.temperature=TEMP";
+    private static final String RESERVED_TAG_NAME = PLC + "&trigger=TRIG&period=50&tag.TRIGGER_VAR=TEMP";
+    private static final String WITHOUT_PERIOD = PLC + "&trigger=TRIG&tag.temperature=TEMP";
+
+    private final PollFailures pollFailures = new PollFailures();
 
     @BeforeEach
     void resetMockDriver() {
@@ -137,29 +146,121 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void aRefusedConnectionNeitherFailsTheRouteStartNorFloodsTheLog() throws Exception {
+    public void deliversTheDataTagsOfTheReadThatSawTheEdge() throws Exception {
+        MockDriver.programRead("TRIG", false, true, false, true);
+        MockDriver.programRead("TEMP", 21, 22, 23, 24);
+        MockDriver.programRead("PRES", 1011, 1012, 1013, 1014);
+        MockEndpoint result = getMockEndpoint("mock:triggered");
+        result.expectedMessageCount(2);
+        result.setAssertPeriod(1000);
+
+        context.getRouteController().startRoute("triggered");
+
+        result.assertIsSatisfied(10000);
+        assertEquals(List.of(Map.of("temperature", 22, "pressure", 1012), Map.of("temperature", 24, "pressure", 1014)),
+                result.getExchanges().stream().map(exchange -> exchange.getIn().getBody()).toList());
+    }
+
+    @Test
+    public void reportsEachFailedPollAndResumesWhenThePlcReturns() throws Exception {
         MockDriver.programRead("TRIG", false, true);
         MockDriver.programRead("TEMP", 21);
         MockDriver.programRead("PRES", 1013);
         MockDriver.refuseConnections();
-        MockEndpoint result = getMockEndpoint("mock:refused");
-        result.expectedMessageCount(0);
+        MockEndpoint result = getMockEndpoint("mock:reported");
+        result.expectedMessageCount(1);
         result.setAssertPeriod(1000);
-        WarningCapture warnings = new WarningCapture();
 
-        try {
-            warnings.attach();
-            context.getRouteController().startRoute("refused");
-            assertTrue(context.getRouteController().getRouteStatus("refused").isStarted());
-            // the connection set up on start and at least one connection for reading the trigger were refused
-            await().atMost(10, TimeUnit.SECONDS).until(() -> MockDriver.refusedConnections() >= 2);
-            result.assertIsSatisfied();
-        } finally {
-            warnings.detach();
-        }
+        context.getRouteController().startRoute("reported");
+        assertTrue(context.getRouteController().getRouteStatus("reported").isStarted());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> pollFailures.count() >= 3);
+        assertEquals(0, result.getReceivedCounter(), "nothing is delivered while the PLC refuses connections");
 
-        // more than 40 periods of 50 ms have elapsed; a warning per period would be a flood
-        assertTrue(warnings.messages().size() <= 5, () -> "Too many warnings: " + warnings.messages());
+        MockDriver.acceptConnections();
+
+        result.assertIsSatisfied(10000);
+        assertTrue(pollFailures.causes().stream().allMatch(PlcConnectionException.class::isInstance),
+                () -> "Unexpected causes: " + pollFailures.causes());
+    }
+
+    @Test
+    public void aFailedPollForgetsTheTriggerSoAStillTrueTriggerEmitsAgain() throws Exception {
+        MockDriver.programRead("TRIG", true, true, MockDriver.failedRead(), true, true);
+        MockDriver.programRead("TEMP", 21);
+        MockDriver.programRead("PRES", 1013);
+        MockEndpoint result = getMockEndpoint("mock:reported");
+        result.expectedMessageCount(2);
+        result.setAssertPeriod(1000);
+
+        context.getRouteController().startRoute("reported");
+
+        result.assertIsSatisfied(10000);
+        assertEquals(1, pollFailures.count());
+    }
+
+    @Test
+    public void aTagReadWithAnErrorCodeFailsThePoll() throws Exception {
+        MockDriver.programRead("TRIG", false, true, true);
+        MockDriver.programRead("TEMP", 21, MockDriver.responseCode(PlcResponseCode.NOT_FOUND), 23);
+        MockDriver.programRead("PRES", 1013);
+        MockEndpoint result = getMockEndpoint("mock:reported");
+        result.expectedMessageCount(1);
+        result.setAssertPeriod(1000);
+
+        context.getRouteController().startRoute("reported");
+
+        result.assertIsSatisfied(10000);
+        assertEquals(Map.of("temperature", 23, "pressure", 1013), result.getExchanges().get(0).getIn().getBody());
+        assertEquals(1, pollFailures.count());
+        assertTrue(pollFailures.causes().get(0).getMessage().contains("NOT_FOUND"),
+                () -> "Unexpected cause: " + pollFailures.causes().get(0));
+    }
+
+    @Test
+    public void aReadThatCompletesWhileTheRouteStopsIsNotDelivered() throws Exception {
+        MockDriver.programRead("TRIG", true);
+        MockDriver.programRead("TEMP", 21);
+        MockDriver.programRead("PRES", 1013);
+        MockDriver.holdReads();
+        MockEndpoint result = getMockEndpoint("mock:reported");
+        result.expectedMessageCount(0);
+
+        context.getRouteController().startRoute("reported");
+        MockDriver.awaitHeldRead();
+        context.getRouteController().stopRoute("reported");
+        MockDriver.releaseReads();
+
+        // with no message expected, the mock endpoint waits the whole time before it is satisfied
+        result.assertIsSatisfied(1000);
+        assertEquals(0, pollFailures.count(), () -> "Unexpected failures: " + pollFailures.causes());
+    }
+
+    @Test
+    public void aRefusedConnectionFailsTheRouteStartWithoutAutoReconnect() {
+        MockDriver.refuseConnections();
+
+        Exception e = assertThrows(Exception.class,
+                () -> context.getRouteController().startRoute("withoutAutoReconnect"));
+
+        assertNotNull(causeOfType(e, PlcConnectionException.class), () -> "No PlcConnectionException in " + e);
+    }
+
+    @Test
+    public void aTagNamedLikeTheTriggerFailsTheRouteStart() {
+        Exception e = assertThrows(Exception.class, () -> context.getRouteController().startRoute("reservedTagName"));
+
+        Throwable cause = causeOfType(e, IllegalArgumentException.class);
+        assertNotNull(cause, () -> "No IllegalArgumentException in " + e);
+        assertTrue(cause.getMessage().contains(Constants.TRIGGER), cause::getMessage);
+    }
+
+    @Test
+    public void aTriggerWithoutAPeriodFailsTheRouteStart() {
+        Exception e = assertThrows(Exception.class, () -> context.getRouteController().startRoute("withoutPeriod"));
+
+        Throwable cause = causeOfType(e, IllegalArgumentException.class);
+        assertNotNull(cause, () -> "No IllegalArgumentException in " + e);
+        assertTrue(cause.getMessage().contains("period"), cause::getMessage);
     }
 
     @Override
@@ -169,47 +270,57 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
             public void configure() {
                 from(TRIGGERED).routeId("triggered").autoStartup(false).to("mock:triggered");
                 from(UNTRIGGERED).routeId("untriggered").autoStartup(false).to("mock:untriggered");
-                from(REFUSED).routeId("refused").autoStartup(false).to("mock:refused");
+                from(REPORTED).routeId("reported").autoStartup(false).to("mock:reported");
+                from(WITHOUT_AUTO_RECONNECT).routeId("withoutAutoReconnect").autoStartup(false)
+                        .to("mock:withoutAutoReconnect");
+                from(RESERVED_TAG_NAME).routeId("reservedTagName").autoStartup(false).to("mock:reservedTagName");
+                from(WITHOUT_PERIOD).routeId("withoutPeriod").autoStartup(false).to("mock:withoutPeriod");
             }
         };
     }
 
+    @Override
+    protected void bindToRegistry(Registry registry) {
+        registry.bind("pollFailures", pollFailures);
+    }
+
+    private static Throwable causeOfType(Throwable exception, Class<? extends Throwable> type) {
+        Throwable cause = exception;
+        while (cause != null && !type.isInstance(cause)) {
+            cause = cause.getCause();
+        }
+        return cause;
+    }
+
     /**
-     * Captures WARN and ERROR events of the component and PLC4X loggers.
+     * Collects the failures the consumer reports to its exception handler.
      */
-    private static final class WarningCapture extends AbstractAppender {
+    private static final class PollFailures implements ExceptionHandler {
 
-        private final List<String> messages = new CopyOnWriteArrayList<>();
+        private final List<Throwable> causes = new CopyOnWriteArrayList<>();
 
-        WarningCapture() {
-            super("plc4x-warnings", null, null, true, Property.EMPTY_ARRAY);
+        @Override
+        public void handleException(Throwable exception) {
+            causes.add(exception);
         }
 
         @Override
-        public void append(LogEvent event) {
-            String logger = event.getLoggerName();
-            if (event.getLevel().isMoreSpecificThan(Level.WARN)
-                    && (logger.startsWith("org.apache.camel.component.plc4x") || logger.startsWith("org.apache.plc4x"))) {
-                messages.add(event.getLevel() + " " + logger + " " + event.getMessage().getFormattedMessage());
-            }
+        public void handleException(String message, Throwable exception) {
+            causes.add(exception);
         }
 
-        void attach() {
-            start();
-            LoggerContext loggerContext = LoggerContext.getContext(false);
-            loggerContext.getConfiguration().getRootLogger().addAppender(this, Level.WARN, null);
-            loggerContext.updateLoggers();
+        @Override
+        public void handleException(String message, Exchange exchange, Throwable exception) {
+            causes.add(exception);
         }
 
-        void detach() {
-            LoggerContext loggerContext = LoggerContext.getContext(false);
-            loggerContext.getConfiguration().getRootLogger().removeAppender(getName());
-            loggerContext.updateLoggers();
-            stop();
+        int count() {
+            return causes.size();
         }
 
-        List<String> messages() {
-            return messages;
+        List<Throwable> causes() {
+            return causes;
         }
     }
+
 }

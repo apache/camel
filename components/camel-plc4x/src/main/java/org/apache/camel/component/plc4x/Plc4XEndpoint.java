@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.plc4x;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -36,6 +37,7 @@ import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
+import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,7 +189,8 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Plc4XConsumer consumer = new Plc4XConsumer(this, processor);
+        Consumer consumer = trigger == null
+                ? new Plc4XConsumer(this, processor) : new Plc4XTriggeredConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }
@@ -201,7 +204,18 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      * Build a {@link PlcReadRequest} using the tags specified in the endpoint.
      */
     public PlcReadRequest buildPlcReadRequest() {
+        return buildPlcReadRequest(Map.of());
+    }
+
+    /**
+     * Build a {@link PlcReadRequest} using the given tags and the tags specified in the endpoint.
+     *
+     * @param  additionalTags tag addresses by name to read in addition to the tags of the endpoint
+     * @return                {@link PlcReadRequest}
+     */
+    PlcReadRequest buildPlcReadRequest(Map<String, String> additionalTags) {
         PlcReadRequest.Builder builder = connection.readRequestBuilder();
+        additionalTags.forEach(builder::addTagAddress);
         if (tags != null) {
             for (Map.Entry<String, String> tag : tags.entrySet()) {
                 try {
@@ -213,6 +227,17 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
             }
         }
         return builder.build();
+    }
+
+    /**
+     * @return the values of a read response by tag name
+     */
+    static Map<String, Object> tagValues(PlcReadResponse response) {
+        Map<String, Object> values = new HashMap<>();
+        for (String tag : response.getTagNames()) {
+            values.put(tag, response.getObject(tag));
+        }
+        return values;
     }
 
     /**
