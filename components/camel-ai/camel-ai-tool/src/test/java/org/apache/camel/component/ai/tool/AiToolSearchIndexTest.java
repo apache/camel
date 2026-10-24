@@ -18,6 +18,7 @@ package org.apache.camel.component.ai.tool;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 
@@ -142,6 +143,60 @@ public class AiToolSearchIndexTest {
         assertThat(AiToolSearch.resultMessage(List.of())).isEqualTo("No matching tools found");
         assertThat(AiToolSearch.resultMessage(List.of("invoice", "weather")))
                 .isEqualTo("Tools found: invoice, weather");
+    }
+
+    @Test
+    public void sessionsDoNotRetainEmptyEntriesAndCanBeInvalidated() {
+        AiToolSearchSessions sessions = new AiToolSearchSessions(10, TimeUnit.MINUTES.toMillis(30));
+
+        AiToolSearchSession empty = sessions.session("empty");
+        assertThat(empty.discoveredNames()).isEmpty();
+        assertThat(sessions.size()).isZero();
+
+        sessions.session("one").remember(List.of("invoice"));
+        assertThat(sessions.size()).isEqualTo(1);
+        assertThat(sessions.session("one").discoveredNames()).containsExactly("invoice");
+
+        assertThat(sessions.remove("one")).isTrue();
+        assertThat(sessions.remove("one")).isFalse();
+        assertThat(sessions.session("one").discoveredNames()).isEmpty();
+        assertThat(sessions.size()).isZero();
+
+        sessions.session("two").remember(List.of("weather"));
+        sessions.clear();
+        assertThat(sessions.size()).isZero();
+        assertThat(sessions.session("two").discoveredNames()).isEmpty();
+    }
+
+    @Test
+    public void sessionsExpireAfterInactivity() throws InterruptedException {
+        AiToolSearchSessions sessions = new AiToolSearchSessions(10, 40);
+
+        sessions.session("one").remember(List.of("invoice"));
+        assertThat(sessions.size()).isEqualTo(1);
+
+        Thread.sleep(100);
+
+        assertThat(sessions.session("one").discoveredNames()).isEmpty();
+        assertThat(sessions.size()).isZero();
+    }
+
+    @Test
+    public void sessionsEvictLeastRecentlyUsedEntriesWhenCapacityIsReached() {
+        AiToolSearchSessions sessions = new AiToolSearchSessions(2, TimeUnit.MINUTES.toMillis(30));
+
+        sessions.session("one").remember(List.of("invoice"));
+        sessions.session("two").remember(List.of("weather"));
+
+        // Access "one" so "two" becomes the least-recently-used session.
+        assertThat(sessions.session("one").discoveredNames()).containsExactly("invoice");
+
+        sessions.session("three").remember(List.of("forecast"));
+
+        assertThat(sessions.size()).isEqualTo(2);
+        assertThat(sessions.session("one").discoveredNames()).containsExactly("invoice");
+        assertThat(sessions.session("two").discoveredNames()).isEmpty();
+        assertThat(sessions.session("three").discoveredNames()).containsExactly("forecast");
     }
 
     private static AiToolSearchCandidate candidate(

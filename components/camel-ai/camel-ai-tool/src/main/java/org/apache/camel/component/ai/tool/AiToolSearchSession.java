@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -32,6 +33,20 @@ import java.util.Set;
 public final class AiToolSearchSession {
 
     private final Set<String> discovered = new LinkedHashSet<>();
+    private final AiToolSearchSessions owner;
+    private final String conversationId;
+
+    /**
+     * Creates a standalone session that is not managed by {@link AiToolSearchSessions}.
+     */
+    public AiToolSearchSession() {
+        this(null, null);
+    }
+
+    AiToolSearchSession(AiToolSearchSessions owner, String conversationId) {
+        this.owner = owner;
+        this.conversationId = conversationId;
+    }
 
     /**
      * Remembers tools found by a search. Later names keep their first-seen order.
@@ -40,8 +55,11 @@ public final class AiToolSearchSession {
         if (names == null || names.isEmpty()) {
             return;
         }
-        synchronized (discovered) {
-            discovered.addAll(names);
+
+        if (owner != null) {
+            owner.remember(conversationId, names);
+        } else {
+            rememberLocal(names);
         }
     }
 
@@ -49,15 +67,36 @@ public final class AiToolSearchSession {
      * Names discovered so far, in the order they were first found.
      */
     public List<String> discoveredNames() {
-        synchronized (discovered) {
-            return List.copyOf(discovered);
+        if (owner != null) {
+            return owner.discoveredNames(conversationId);
         }
+        return discoveredNamesLocal();
     }
 
     /**
      * Drops names that are no longer present in the current catalogue.
      */
     public void retainAvailable(Set<String> availableNames) {
+        if (owner != null) {
+            owner.retainAvailable(conversationId, availableNames);
+        } else {
+            retainAvailableLocal(availableNames);
+        }
+    }
+
+    void rememberLocal(Collection<String> names) {
+        synchronized (discovered) {
+            discovered.addAll(names);
+        }
+    }
+
+    List<String> discoveredNamesLocal() {
+        synchronized (discovered) {
+            return List.copyOf(discovered);
+        }
+    }
+
+    void retainAvailableLocal(Set<String> availableNames) {
         synchronized (discovered) {
             if (availableNames == null || availableNames.isEmpty()) {
                 discovered.clear();

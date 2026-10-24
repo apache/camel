@@ -36,6 +36,7 @@ import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
+import org.apache.camel.component.ai.tool.AiToolSearchSession;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -49,6 +50,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
     private Class<?> outputClassResolved;
     private McpToolCallExecutor toolCallExecutor;
+    private final OpenAIToolSearch toolSearch = new OpenAIToolSearch();
 
     public OpenAIResponsesProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -178,37 +180,61 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         OpenAIResponsesSupport.applyHostedMcpTools(paramsBuilder, config.getHostedMcpTools());
         OpenAIResponsesSupport.applyAdditionalBodyProperties(paramsBuilder, config.getAdditionalBodyProperty());
 
-        // the MCP servers and route tools of the endpoint are sent as function tools
-        List<ChatCompletionFunctionTool> tools = getEndpoint().getMcpToolState().tools();
-        tools.forEach(tool -> paramsBuilder.addTool(OpenAIResponsesSupport.toFunctionTool(tool)));
-
-        ResponseCreateParams params;
-        Class<?> responseClass = resolveOutputClass(in, outputClass);
-        if (responseClass != null) {
-            params = paramsBuilder.text(responseClass).build().rawParams();
-        } else {
-            if (ObjectHelper.isNotEmpty(jsonSchema)) {
-                OpenAIResponsesSupport.applyJsonSchemaTextFormat(paramsBuilder, jsonSchema);
-            }
-            params = paramsBuilder.build();
+        // Add tools to the request. Search keeps the catalogue snapshot unchanged and only changes which definitions
+        // are advertised. MCP tools/list still ran when the snapshot was built.
+        List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpToolState().tools();
+        boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
+        boolean toolSearchEnabled = config.isToolSearch();
+        if (toolSearchEnabled) {
+            toolSearch.openSession(exchange, config);
         }
-
-        if (!tools.isEmpty() && config.isAutoToolExecution()) {
-            if (config.isBackground()) {
-                throw new IllegalArgumentException(
-                        "background cannot be combined with automatic tool execution, the tool loop needs each answer. "
-                                                   + "Set autoToolExecution=false to handle the function calls in the route");
+        try {
+            if (toolSearchEnabled) {
+                AiToolSearchSession session = exchange.getProperty(
+                        OpenAIToolSearch.SESSION_PROPERTY, AiToolSearchSession.class);
+                for (ChatCompletionFunctionTool tool : OpenAIToolSearch.select(
+                        config, getEndpoint().getMcpToolState(), session)) {
+                    paramsBuilder.addTool(OpenAIResponsesSupport.toFunctionTool(tool));
+                }
+            } else if (hasMcpTools) {
+                for (ChatCompletionFunctionTool tool : mcpTools) {
+                    paramsBuilder.addTool(OpenAIResponsesSupport.toFunctionTool(tool));
+                }
             }
-            processToolLoop(exchange, config, params, inputSpec.items(), model,
-                    ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
-            return;
-        }
 
-        Response response = createResponse(exchange, model, params);
-        List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
-        // with autoToolExecution=false the route handles the function calls requested by the model
-        Object body = functionCalls.isEmpty() ? OpenAIResponsesSupport.extractAssistantText(response) : functionCalls;
-        finishExchange(exchange, config, response, body);
+            ResponseCreateParams params;
+            Class<?> responseClass = resolveOutputClass(in, outputClass);
+            if (responseClass != null) {
+                params = paramsBuilder.text(responseClass).build().rawParams();
+            } else {
+                if (ObjectHelper.isNotEmpty(jsonSchema)) {
+                    OpenAIResponsesSupport.applyJsonSchemaTextFormat(paramsBuilder, jsonSchema);
+                }
+                params = paramsBuilder.build();
+            }
+
+            // Search installs a synthetic tool even when every real tool is omitted, so the agentic loop still runs.
+            boolean agenticTools = toolSearchEnabled || hasMcpTools;
+            if (agenticTools && config.isAutoToolExecution()) {
+                if (config.isBackground()) {
+                    throw new IllegalArgumentException(
+                            "background cannot be combined with automatic tool execution, the tool loop needs each answer. "
+                                                       + "Set autoToolExecution=false to handle the function calls in the route");
+                }
+                processToolLoop(exchange, config, params, inputSpec.items(), model,
+                        ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
+            } else {
+                Response response = createResponse(exchange, model, params);
+                List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
+                // with autoToolExecution=false the route handles the function calls requested by the model
+                Object body = functionCalls.isEmpty() ? OpenAIResponsesSupport.extractAssistantText(response) : functionCalls;
+                finishExchange(exchange, config, response, body);
+            }
+        } finally {
+            if (toolSearchEnabled) {
+                toolSearch.closeSession(exchange, config);
+            }
+        }
     }
 
     /**
@@ -216,12 +242,12 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
      * the endpoint, and their results are sent back with the conversation so far until the model answers.
      */
     private void processToolLoop(
-            Exchange exchange, OpenAIConfiguration config, ResponseCreateParams params, List<ResponseInputItem> input,
+            Exchange exchange, OpenAIConfiguration config, ResponseCreateParams initialParams, List<ResponseInputItem> input,
             String model, String conversationId)
             throws Exception {
         // a stored conversation keeps every item it receives, so after the first request only the new items are sent,
         // while otherwise each request carries the whole conversation of the exchange
-        boolean storedConversation = params.conversation().isPresent();
+        boolean storedConversation = initialParams.conversation().isPresent();
         List<ResponseInputItem> conversation = new ArrayList<>(input);
         List<ResponseInputItem> requestInput = input;
         List<String> toolCallsLog = new ArrayList<>();
@@ -239,8 +265,35 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 long iterationStartNanos = System.nanoTime();
                 OpenAIAgenticTokenTracker.Snapshot tokensBefore = tokenTracker.snapshot();
 
-                Response response
-                        = createResponse(exchange, model, params.toBuilder().inputOfResponse(requestInput).build());
+                ResponseCreateParams.Builder paramsBuilder = initialParams.toBuilder()
+                        .inputOfResponse(requestInput);
+
+                // Preserve non-function tools and refresh function tools from the current search state.
+                List<com.openai.models.responses.Tool> tools = new ArrayList<>();
+                initialParams.tools().ifPresent(existing -> existing.stream()
+                        .filter(tool -> !tool.isFunction())
+                        .forEach(tools::add));
+                paramsBuilder.tools(tools);
+
+                List<ChatCompletionFunctionTool> selectedTools;
+                if (config.isToolSearch()) {
+                    AiToolSearchSession session = exchange.getProperty(
+                            OpenAIToolSearch.SESSION_PROPERTY, AiToolSearchSession.class);
+                    if (session == null) {
+                        session = toolSearch.openSession(exchange, config);
+                    }
+                    selectedTools = OpenAIToolSearch.select(
+                            config, getEndpoint().getMcpToolState(), session);
+                } else {
+                    selectedTools = getEndpoint().getMcpToolState().tools();
+                }
+
+                for (ChatCompletionFunctionTool tool : selectedTools) {
+                    paramsBuilder.addTool(OpenAIResponsesSupport.toFunctionTool(tool));
+                }
+
+                ResponseCreateParams params = paramsBuilder.build();
+                Response response = createResponse(exchange, model, params);
                 tokenTracker.addUsage(response);
                 tokenTracker.setHeaders(exchange.getMessage());
                 long iterationPromptTokens = tokenTracker.promptTokensSince(tokensBefore);
@@ -274,8 +327,11 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
                 functionCalls.forEach(call -> toolCallsLog.add(call.name()));
                 List<ChatCompletionMessageToolCall> toolCalls = OpenAIResponsesSupport.toChatToolCalls(functionCalls);
-                List<McpToolCallExecutor.ToolResult> results
-                        = toolCallExecutor.execute(toolCalls, exchange, null, conversationId);
+                List<McpToolCallExecutor.ToolResult> results = config.isToolSearch()
+                        ? toolCallExecutor.execute(toolCalls, exchange,
+                                call -> toolSearch.execute(getEndpoint(), call, exchange),
+                                conversationId)
+                        : toolCallExecutor.execute(toolCalls, exchange, null, conversationId);
                 observability.recordIteration(
                         modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
                         results);

@@ -179,7 +179,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             // fail at startup, before any client or MCP session exists, for the options a batch cannot honour
             OpenAIBatchSupport.validateConfiguration(configuration);
         }
-        if (operation == OpenAIOperations.chatCompletion || operation == OpenAIOperations.toolExecution) {
+        if (operation == OpenAIOperations.chatCompletion || operation == OpenAIOperations.toolExecution
+                || operation == OpenAIOperations.responses) {
             OpenAIToolSearch.validateConfiguration(configuration);
         }
         mcpStopped = false;
@@ -192,7 +193,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             initializeMcpServers();
             refreshRouteTools();
             if (configuration.isToolSearch()
-                    && (operation == OpenAIOperations.chatCompletion || operation == OpenAIOperations.toolExecution)) {
+                    && (operation == OpenAIOperations.chatCompletion || operation == OpenAIOperations.toolExecution
+                            || operation == OpenAIOperations.responses)) {
                 OpenAIToolSearch.rejectReservedName(mcpToolState);
             }
         }
