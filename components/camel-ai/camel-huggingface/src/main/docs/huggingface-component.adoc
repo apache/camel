@@ -96,15 +96,15 @@ The component supports the following tasks:
 
 | summarization | String (text to summarize) | String (summary text) | revision, device, minLength, maxTokens, temperature | Summarization-tuned models (e.g., facebook/bart-large-cnn for abstractive summarization, t5-small for translation-like summarization)
 
-| zero-shot-classification | String[] or List<String> [text, label1, label2, ...] | String (best label)| revision, device, multiLabel, autoSelect | NLI-based zero-shot models (e.g., facebook/bart-large-mnli for general zero-shot, joeddav/deberta-v3-large-zeroshot-v1 for multi-label)
+| zero-shot-classification | String[] or List<String> [text, label1, label2, ...] | String (best label), or _ai.djl.modality.Classifications_ with autoSelect=false | revision, device, multiLabel, autoSelect | NLI-based zero-shot models (e.g., facebook/bart-large-mnli for general zero-shot, joeddav/deberta-v3-large-zeroshot-v1 for multi-label)
 
 | sentence-embeddings | String[], List<String> or String (sentences to embed) | float[][] (2D embedding tensor: batch × dimension) | revision, device | Embedding-tuned models (e.g., sentence-transformers/all-MiniLM-L6-v2)
 
 | text-to-image | String (prompt) | byte[] (PNG image bytes) | revision, device | Diffusion-based generation models (e.g., CompVis/stable-diffusion-v1-4 for general images, runwayml/stable-diffusion-v1-5 for improved quality)
 
-| automatic-speech-recognition | Audio or byte[] (audio bytes) | String (transcribed text) | revision, device | ASR-tuned models (e.g., facebook/wav2vec2-base-960h)
+| automatic-speech-recognition | _ai.djl.modality.audio.Audio_ (the waveform) | String (transcribed text) | revision, device | ASR-tuned models (e.g., facebook/wav2vec2-base-960h)
 
-| text-to-speech | String (text prompt) | _ai.djl.modality.audio_ | revision, device | TTS-tuned models (e.g., facebook/mms-tts-eng for English TTS, microsoft/speecht5_tts for multi-speaker)
+| text-to-speech | String (text prompt) | _ai.djl.modality.audio.Audio_ | revision, device | TTS-tuned models (e.g., facebook/mms-tts-eng for English TTS, microsoft/speecht5_tts for multi-speaker)
 
 | chat | String (user message) | String (LLM response) | revision, device, maxTokens, temperature, systemPrompt, userRole, memoryIdHeader | Instruct-tuned/chat models (e.g., mistralai/Mistral-7B-Instruct-v0.2 for conversational, microsoft/Phi-3-mini-4k-instruct for efficient chat)
 

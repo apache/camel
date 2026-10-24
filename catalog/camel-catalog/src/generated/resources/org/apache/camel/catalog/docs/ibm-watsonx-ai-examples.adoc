@@ -421,7 +421,9 @@ from("direct:embedAndStore")
   // Transform to Qdrant format and upsert
   .setHeader(QdrantHeaders.ACTION, constant(QdrantAction.UPSERT))
   .process(exchange -> {
-      List<Float> embedding = exchange.getMessage().getBody(List.class);
+      // the body is a List with one embedding per input text
+      List<List<Float>> embeddings = exchange.getMessage().getBody(List.class);
+      List<Float> embedding = embeddings.get(0);
       exchange.getMessage().setBody(
           Points.PointStruct.newBuilder()
               .setId(PointIdFactory.id(UUID.randomUUID()))
