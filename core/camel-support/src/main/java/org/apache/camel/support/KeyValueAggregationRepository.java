@@ -109,7 +109,8 @@ public class KeyValueAggregationRepository extends ServiceSupport
      * @param repository   the underlying key-value repository; must not be {@code null}
      * @param recoveryName the name under which the completed exchanges are kept, such as the route id and the id of the
      *                     aggregator; {@code null} keeps them under the default prefix shared by all the adapters
-     *                     without a name
+     *                     without a name. The name should not contain {@code ]:}, as the keys of such a name can start
+     *                     with the prefix of another name (the keys of {@code a]:b} start with the prefix of {@code a})
      * @since              4.24
      */
     public KeyValueAggregationRepository(KeyValueRepository repository, String recoveryName) {

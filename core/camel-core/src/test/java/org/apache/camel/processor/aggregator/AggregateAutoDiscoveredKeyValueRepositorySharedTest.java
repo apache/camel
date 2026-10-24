@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.MemoryKeyValueRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -46,6 +47,12 @@ class AggregateAutoDiscoveredKeyValueRepositorySharedTest extends ContextTestSup
         Registry registry = super.createCamelRegistry();
         registry.bind("kvRepo", kvRepo);
         return registry;
+    }
+
+    @AfterEach
+    void releaseHeldExchange() {
+        // also when the test fails before, so that the held exchange does not keep the shutdown waiting
+        release.countDown();
     }
 
     @Test
