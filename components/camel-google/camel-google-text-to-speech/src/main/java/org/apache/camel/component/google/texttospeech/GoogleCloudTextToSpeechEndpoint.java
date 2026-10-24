@@ -21,6 +21,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,31 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-text-to-speech:operation", category = {
                      Category.CLOUD, Category.AI },
              producerOnly = true, headersClass = GoogleCloudTextToSpeechConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "synthesize",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "listVoices", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO,
+                                                         javaType = "com.google.cloud.texttospeech.v1.SynthesizeSpeechRequest") },
+                                  description = "The text to speak for synthesize: bytes, a stream or a file are read as"
+                                                + " text, a Map or a POJO is spoken as its toString(), so take the text out of"
+                                                + " it first, and no body fails. listVoices does not use the body. With"
+                                                + " pojoRequest=true a SynthesizeSpeechRequest of the Google Cloud SDK, whatever"
+                                                + " the operation: another body fails"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.LIST },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "synthesize", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "operation", value = "listVoices", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.google.cloud.texttospeech.v1.Voice>"),
+                                           @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]") },
+                                   description = "The audio of synthesize as bytes, in the audioEncoding option (MP3 by"
+                                                 + " default), with the SynthesizeSpeechResponse in the"
+                                                 + " CamelGoogleCloudTextToSpeechResponseObject header. The List of the voices"
+                                                 + " for listVoices, of the languageCode option (en-US by default)"))
 public class GoogleCloudTextToSpeechEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

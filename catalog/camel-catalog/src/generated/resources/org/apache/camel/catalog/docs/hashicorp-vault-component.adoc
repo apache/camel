@@ -103,7 +103,8 @@ YAML::
 
 ==== Getting a secret
 
-The message body becomes the data of the secret; the `CamelHashicorpVaultSecretVersion` header reads a given
+The message body becomes a Map with the fields of the secret under `data` and its version details under
+`metadata`, or no body when the secret does not exist; the `CamelHashicorpVaultSecretVersion` header reads a given
 version instead of the latest:
 
 [tabs]

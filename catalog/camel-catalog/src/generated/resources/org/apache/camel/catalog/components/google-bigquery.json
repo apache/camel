@@ -36,6 +36,10 @@
     "CamelGoogleBigQueryInsertId": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "InsertId to use when inserting data", "constantName": "org.apache.camel.component.google.bigquery.GoogleBigQueryConstants#INSERT_ID" },
     "CamelGoogleBigQueryPartitionDecorator": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Partition decorator to indicate partition to use when inserting data", "constantName": "org.apache.camel.component.google.bigquery.GoogleBigQueryConstants#PARTITION_DECORATOR" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "map", "list" ], "description": "The row to insert as a Map of column names to values, or a List of such Maps for one row each; the exchanges of a grouped aggregation are inserted together. Text such as JSON, bytes, a stream, a POJO or no body fails: unmarshal it into a Map first" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "projectId": { "index": 0, "kind": "path", "displayName": "Project Id", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration", "configurationField": "configuration", "description": "Google Cloud Project Id" },
     "datasetId": { "index": 1, "kind": "path", "displayName": "Dataset Id", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration", "configurationField": "configuration", "description": "BigQuery Dataset Id" },

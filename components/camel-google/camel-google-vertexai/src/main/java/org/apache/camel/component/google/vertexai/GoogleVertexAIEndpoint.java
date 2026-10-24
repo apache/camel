@@ -24,6 +24,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,47 @@ import org.slf4j.LoggerFactory;
              syntax = "google-vertexai:projectId:location:modelId",
              category = { Category.AI, Category.CLOUD }, headersClass = GoogleVertexAIConstants.class,
              producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "generateEmbeddings",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "generateMultimodal",
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES }),
+                                          @BodyType.When(option = "operation", value = "rawPredict",
+                                                         carriers = { Carrier.TEXT, Carrier.MAP }),
+                                          @BodyType.When(option = "operation", value = "streamRawPredict",
+                                                         carriers = { Carrier.TEXT, Carrier.MAP }) },
+                                  description = "The prompt for generateText, the default, and the other generate operations,"
+                                                + " unless the CamelGoogleVertexAIPrompt header has it: bytes, a stream or a"
+                                                + " file are read as text, a Map or a POJO is sent as its toString(), and no"
+                                                + " body fails. generateEmbeddings also takes a List of texts. generateMultimodal"
+                                                + " takes the text, or the bytes of an image with the"
+                                                + " CamelGoogleVertexAIMediaMimeType header, only when the"
+                                                + " CamelGoogleVertexAIMediaData and CamelGoogleVertexAIMediaGcsUri headers are"
+                                                + " not set: a stream or a file is not used. rawPredict and streamRawPredict take"
+                                                + " the JSON request as a String or a Map, or a plain text prompt: bytes, a"
+                                                + " stream or a file fail, so convert them to a String first"),
+           producerOut = @BodyType(value = Carrier.TEXT,
+                                   byOption = {
+                                           @BodyType.When(option = "streamOutputMode", value = "chunks",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<String>"),
+                                           @BodyType.When(option = "operation", value = "generateImage",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.google.genai.types.Image>"),
+                                           @BodyType.When(option = "operation", value = "generateEmbeddings",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.List<Float>>") },
+                                   description = "The text the model answers for generateText, the default, and the other"
+                                                 + " generate operations, JSON with jsonMode=true, with the token counts and the"
+                                                 + " finish reason in headers. generateChatStreaming joins the chunks, or gives"
+                                                 + " the List of them with streamOutputMode=chunks. The List of the generated"
+                                                 + " images for generateImage, and one vector of Floats per input text for"
+                                                 + " generateEmbeddings. rawPredict and streamRawPredict give the JSON the model"
+                                                 + " answers, or for publisher anthropic the text of Claude with the JSON in the"
+                                                 + " CamelGoogleVertexAIRawResponse header"))
 public class GoogleVertexAIEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleVertexAIEndpoint.class);

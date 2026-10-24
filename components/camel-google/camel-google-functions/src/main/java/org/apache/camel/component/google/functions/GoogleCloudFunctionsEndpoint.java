@@ -21,6 +21,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,41 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-functions:functionName", category = {
                      Category.CLOUD },
              producerOnly = true, headersClass = GoogleCloudFunctionsConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }, dependsOn = "operation",
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true",
+                                                            carriers = Carrier.POJO),
+                                  description = "The data to call the function with, for callFunction (the default),"
+                                                + " converted to text: a Map or a POJO is sent as its toString(), so marshal"
+                                                + " it first, and no body fails. The other operations take their input from"
+                                                + " options and headers. With pojoRequest=true the request object of the"
+                                                + " operation, such as a CallFunctionRequest"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listFunctions",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.google.cloud.functions.v1.CloudFunction>"),
+                                           @BodyType.When(option = "operation", value = "getFunction",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.google.cloud.functions.v1.CloudFunction"),
+                                           @BodyType.When(option = "operation", value = "createFunction",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.google.cloud.functions.v1.CloudFunction"),
+                                           @BodyType.When(option = "operation", value = "updateFunction",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.google.cloud.functions.v1.CloudFunction"),
+                                           @BodyType.When(option = "operation", value = "deleteFunction",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.google.protobuf.Empty"),
+                                           @BodyType.When(option = "operation", value = "generateDownloadUrl",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "generateUploadUrl",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String") },
+                                   description = "The result of the function as text for callFunction, with the whole"
+                                                 + " CallFunctionResponse, which has the error of a failed call, in the"
+                                                 + " CamelGoogleCloudFunctionsResponseObject header. By the operation: a"
+                                                 + " List of CloudFunction for listFunctions, the CloudFunction for"
+                                                 + " getFunction, createFunction and updateFunction, Empty for"
+                                                 + " deleteFunction and the signed URL as text for the URL operations"))
 public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

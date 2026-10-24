@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,37 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "4.19.0", scheme = "google-firestore", title = "Google Firestore",
              syntax = "google-firestore:collectionName",
              category = { Category.CLOUD, Category.DATABASE }, headersClass = GoogleFirestoreConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.MAP,
+                                   description = "The fields of the document as a Map, one message per document, with its id,"
+                                                 + " path and times in headers, and with realtimeUpdates the change type."
+                                                 + " Numbers are Long or Double, a timestamp a com.google.cloud.Timestamp"),
+           producerIn = @BodyType(value = { Carrier.MAP, Carrier.TEXT }, dependsOn = "operation",
+                                  description = "The fields to write for setDocument (the default), createDocument and"
+                                                + " updateDocument: a Map, or JSON object text, which is parsed into a Map."
+                                                + " Bytes, a stream, a List, a POJO or no body fail: unmarshal it first. The"
+                                                + " other operations take their input from options and headers"),
+           producerOut = @BodyType(value = Carrier.MAP,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getDocumentById",
+                                                          carriers = { Carrier.MAP, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "deleteDocument",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "queryCollection",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "operation", value = "listDocuments",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "operation", value = "listCollections",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.lang.String>") },
+                                   description = "The Map of the fields written for setDocument, createDocument and"
+                                                 + " updateDocument (JSON text is now the parsed Map), with the document id"
+                                                 + " and path in headers. By the operation: the fields of the document or"
+                                                 + " null when it does not exist for getDocumentById, true for"
+                                                 + " deleteDocument, a List of Maps with _id and _path entries for"
+                                                 + " queryCollection and listDocuments, and the collection ids for"
+                                                 + " listCollections"))
 public class GoogleFirestoreEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleFirestoreEndpoint.class);
