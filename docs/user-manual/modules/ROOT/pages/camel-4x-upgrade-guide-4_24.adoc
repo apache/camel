@@ -1249,6 +1249,26 @@ that lists them. Set `camel.management.port` to another port, so that the manage
 and applies them. To keep a single port, remove them and configure the HTTP server instead: for example,
 authentication configured on the HTTP server for `/*` also applies to the management endpoints.
 
+=== camel-xslt-saxon - external resource access is restricted for a Source message body
+
+`XsltSaxonAggregationStrategy` now configures its Saxon `TransformerFactory` the same way the `xslt-saxon`
+endpoint configures the factory it creates: `FEATURE_SECURE_PROCESSING` is enabled and `ACCESS_EXTERNAL_DTD`
+and `ACCESS_EXTERNAL_STYLESHEET` are set to an empty string. Previously the strategy used the Saxon defaults,
+so the same stylesheet ran with different settings depending on whether it was used from the endpoint or from
+the strategy.
+
+In addition, both the strategy and the `xslt-saxon` endpoint now parse a message body that is already a
+`javax.xml.transform.Source` still to be parsed, for example a `StreamSource` or the body after a
+`convertBodyTo(Source.class)`, with a reader that does not resolve references to external resources declared
+in the document. A `DOMSource`, a `StAXSource`, or a `Source` that already carries its own reader is left
+unchanged, and a declaration internal to the document is still applied. The other body types (`String`,
+`byte[]`, `InputStream`) are unaffected, as they already reach the transformer through Camel's StAX/SAX
+conversion.
+
+On the `xslt-saxon` endpoint, set `secureProcessing=false` to restore the previous parsing. A route that needs
+`XsltSaxonAggregationStrategy` to use a different `TransformerFactory` can set its own with
+`setTransformerFactory(...)`.
+
 === camel-ical - each unmarshal parses with its own calendar builder
 
 The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at

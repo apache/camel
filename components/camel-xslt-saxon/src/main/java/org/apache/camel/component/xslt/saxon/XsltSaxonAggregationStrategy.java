@@ -19,6 +19,7 @@ package org.apache.camel.component.xslt.saxon;
 import javax.xml.transform.TransformerFactory;
 
 import net.sf.saxon.TransformerFactoryImpl;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.xslt.XsltAggregationStrategy;
 import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.component.xslt.XsltOutput;
@@ -50,7 +51,14 @@ public class XsltSaxonAggregationStrategy extends XsltAggregationStrategy {
 
     public XsltSaxonAggregationStrategy(String xslFileLocation) {
         super(xslFileLocation);
-        setTransformerFactory(new TransformerFactoryImpl());
+        TransformerFactoryImpl factory = new TransformerFactoryImpl();
+        try {
+            XsltSaxonHelper.configureSecureProcessing(factory, true);
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Cannot configure secure processing on the Saxon TransformerFactory", e);
+        }
+        XsltSaxonHelper.configureExternalAccess(factory);
+        setTransformerFactory(factory);
     }
 
     @Override
