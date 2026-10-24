@@ -51,6 +51,9 @@ import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.mail.MailHeaderFilterStrategy;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.DefaultDataFormat;
@@ -62,6 +65,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Dataformat("mimeMultipart")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The body of the first part, of the content type in the Content-Type header"
+                                               + " (application/octet-stream when not set); the attachments of the message are"
+                                               + " the other parts"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The MIME multipart in the stream cache, or a byte array when stream caching is"
+                                                + " off, with its MIME headers as Camel headers unless headersInline is true."
+                                                + " Without attachments the body is written as it is, unless"
+                                                + " multipartWithoutAttachment or headersInline is true"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                   description = "A MIME multipart, with its Content-Type (multipart/*) and MIME-Version as"
+                                                 + " Camel headers, as marshal leaves them; with headersInline, the MIME"
+                                                 + " headers are at the start of the body"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM,
+                                    byOption = @BodyType.When(option = "headersInline", value = "true",
+                                                              carriers = { Carrier.STREAM, Carrier.UNCHANGED }),
+                                    description = "The first part, decoded, as a stream, with the other parts as attachments"
+                                                  + " and its Content-Type as a header. Without a multipart Content-Type header"
+                                                  + " the body is given back as a stream; with headersInline, a body that is"
+                                                  + " not a multipart stays as it was"))
 public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(MimeMultipartDataFormat.class);
     private static final String MIME_VERSION = "MIME-Version";
