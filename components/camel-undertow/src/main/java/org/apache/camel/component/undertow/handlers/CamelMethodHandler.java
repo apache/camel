@@ -67,6 +67,18 @@ public class CamelMethodHandler implements HttpHandler {
         }
     }
 
+    /**
+     * Whether no handler is set for any method, such as the default handler of a template path that has no static path.
+     */
+    public boolean isEmpty() {
+        for (MethodEntry entry : methodMap.values()) {
+            if (entry.handler != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public HttpHandler add(String methods, HttpHandler handler) {
         HttpHandler result = null;
         methodMapLock.lock(); // we lock to get a reliable sum of refCounts in remove(String)
