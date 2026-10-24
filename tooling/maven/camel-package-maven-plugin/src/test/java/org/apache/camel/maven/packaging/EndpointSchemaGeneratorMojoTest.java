@@ -233,7 +233,8 @@ class EndpointSchemaGeneratorMojoTest {
     @Test
     void testEndpointWithBodyTypes() throws Exception {
         // CAMEL-24961: the body a step needs and the body it leaves, in the order of the annotation
-        addEndpointOptions("resultHandlerFactory", "output");
+        addEndpointOptions("resultHandlerFactory");
+        addEnumOption("output", "string", "bytes");
         mojo.addBodyTypes(model, SomeEndpointWithBodyTypes.class);
         assertEquals(List.of(BodyTypeModel.CONSUMER_OUT, BodyTypeModel.PRODUCER_IN, BodyTypeModel.PRODUCER_OUT),
                 List.copyOf(model.getBodyTypes().keySet()));
@@ -278,9 +279,10 @@ class EndpointSchemaGeneratorMojoTest {
             SomeEndpointWithBadBodyTypes.DataFormatSide.class, SomeEndpointWithBadBodyTypes.ProducerSideOfConsumer.class,
             SomeEndpointWithBadBodyTypes.UnchangedInput.class, SomeEndpointWithBadBodyTypes.AnyOutput.class,
             SomeEndpointWithBadBodyTypes.UnknownWithOthers.class, SomeEndpointWithBadBodyTypes.NoCarriers.class,
-            SomeEndpointWithBadBodyTypes.UnknownOption.class, SomeEndpointWithBadBodyTypes.OptionValueWithoutCarriers.class })
+            SomeEndpointWithBadBodyTypes.UnknownOption.class, SomeEndpointWithBadBodyTypes.OptionValueWithoutCarriers.class,
+            SomeEndpointWithBadBodyTypes.ValueTheOptionDoesNotHave.class })
     void testEndpointWithBadBodyTypes(Class<?> clazz) {
-        addEndpointOptions("output");
+        addEnumOption("output", "string", "bytes");
         model.setConsumerOnly(clazz.getAnnotation(UriEndpoint.class).consumerOnly());
         MojoExecutionException e = assertThrows(MojoExecutionException.class, () -> mojo.addBodyTypes(model, clazz));
         assertTrue(e.getMessage().startsWith(clazz.getName() + ": the @BodyTypes "), e.getMessage());
@@ -293,5 +295,13 @@ class EndpointSchemaGeneratorMojoTest {
             option.setName(name);
             model.addEndpointOption(option);
         }
+    }
+
+    private void addEnumOption(String name, String... values) {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setName(name);
+        option.setType("enum");
+        option.setEnums(List.of(values));
+        model.addEndpointOption(option);
     }
 }

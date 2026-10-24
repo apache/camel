@@ -191,7 +191,42 @@ final class CatalogBodyTypes {
         String text = node != null && node.isTextual() ? node.asText()
                 : node != null && node.isObject() && node.has("uri") ? node.get("uri").asText() : null;
         set.putAll(query(text));
+        readPath(uri, model, set, configurable);
         return answer(model.getBodyType(side), set, configurable);
+    }
+
+    /**
+     * Adds the options in the path of an endpoint uri, as the syntax of its component names them: the operation of
+     * openai:embeddings. A path the catalog cannot read says nothing about them, as an option the component may set.
+     */
+    private void readPath(String uri, ComponentModel model, Map<String, String> set, Set<String> configurable) {
+        if (uri == null || model.getEndpointPathOptions().isEmpty()) {
+            return;
+        }
+        // the query is read on its own, and may hold what the parser of the catalog does not take, such as a space
+        int q = uri.indexOf('?');
+        String path = q < 0 ? uri : uri.substring(0, q);
+        Optional<Map<String, String>> properties = endpointProperties(catalog, path);
+        if (properties.isEmpty() && fallback != null) {
+            properties = endpointProperties(fallback, path);
+        }
+        for (BaseOptionModel option : model.getEndpointPathOptions()) {
+            String name = option.getName();
+            if (properties.isEmpty()) {
+                configurable.add(name);
+            } else if (properties.get().containsKey(name)) {
+                set.putIfAbsent(name, properties.get().get(name));
+            }
+        }
+    }
+
+    private static Optional<Map<String, String>> endpointProperties(CamelCatalog catalog, String uri) {
+        try {
+            return Optional.ofNullable(catalog.endpointProperties(uri));
+        } catch (Exception e) {
+            // not an endpoint the catalog can read, such as one of a component it does not have
+            return Optional.empty();
+        }
     }
 
     /**

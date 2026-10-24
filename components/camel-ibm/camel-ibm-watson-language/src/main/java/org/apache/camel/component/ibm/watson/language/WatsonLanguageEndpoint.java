@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -35,6 +38,17 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.16.0", scheme = "ibm-watson-language", title = "IBM Watson Language",
              syntax = "ibm-watson-language:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = WatsonLanguageConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The text to analyze for analyzeText, or the URL of the page for"
+                                                + " analyzeUrl, read as text, unless the CamelIBMWatsonLanguageText or"
+                                                + " CamelIBMWatsonLanguageUrl header gives it. Without the header, no body or"
+                                                + " a blank one fails, and a Map or a POJO is analyzed as its toString():"
+                                                + " marshal it first"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "com.ibm.watson.natural_language_understanding.v1.model.AnalysisResults",
+                                   description = "The results of the features enabled (sentiment, entities, keywords and so"
+                                                 + " on), with the sentiment score and label and the language in headers too."
+                                                 + " Converted to text, it is the JSON of the results"))
 public class WatsonLanguageEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name")

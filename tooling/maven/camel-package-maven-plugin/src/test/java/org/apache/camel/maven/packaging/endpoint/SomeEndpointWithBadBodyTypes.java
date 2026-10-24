@@ -69,4 +69,10 @@ public final class SomeEndpointWithBadBodyTypes {
                                        byOption = @BodyType.When(option = "output", value = "bytes", carriers = {})))
     public static class OptionValueWithoutCarriers {
     }
+
+    @UriEndpoint(scheme = "some", syntax = "some", title = "some")
+    @BodyTypes(producerOut = @BodyType(value = Carrier.TEXT,
+                                       byOption = @BodyType.When(option = "output", value = "DOM", carriers = Carrier.POJO)))
+    public static class ValueTheOptionDoesNotHave {
+    }
 }

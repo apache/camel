@@ -1038,6 +1038,50 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheOptionsInThePathOfTheEndpoint() {
+        // the operation of openai is in the path: the answer of chat-completion is text, also when it is asked for as
+        // JSON, embeddings gives a List, and an operation only known when the route runs says nothing
+        String yaml = """
+                - route:
+                    id: city
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: Name a city in Denmark
+                        - to: openai:chat-completion?jsonSchema=resource:classpath:city.json
+                        - setHeader:
+                            name: city
+                            simple: ${body[name]}
+                - route:
+                    id: vector
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: Apache Camel
+                        - to: llm:embeddings
+                        - setHeader:
+                            name: first
+                            simple: ${body[0]}
+                - route:
+                    id: dynamic
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: Apache Camel
+                        - toD: openai:${header.operation}
+                        - setHeader:
+                            name: first
+                            simple: ${body[0]}
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .contains("route city: simple reads a field of the body (${body[name]})")
+                .contains("to: openai:chat-completion returns it as text: unmarshal it first"));
+    }
+
+    @Test
     public void testOneReportForAStepThatFails() {
         // the first write fails at runtime, so the second does not run with this body
         String yaml = """
