@@ -39,6 +39,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -108,10 +109,8 @@ class FileProducerSameFileLockTest {
         FutureTask<Exchange> second = new FutureTask<>(() -> send("same.txt", "BBBB"));
         Thread secondWriter = new Thread(second, "second-writer");
         secondWriter.start();
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
-        while (!second.isDone() && LockSupport.getBlocker(secondWriter) == null && System.nanoTime() < deadline) {
-            Thread.onSpinWait();
-        }
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> second.isDone() || LockSupport.getBlocker(secondWriter) != null);
         boolean secondDoneWhileFirstWriting = second.isDone();
         assertTrue(secondDoneWhileFirstWriting || LockSupport.getBlocker(secondWriter) != null,
                 "the second write of same.txt neither waits nor completes");

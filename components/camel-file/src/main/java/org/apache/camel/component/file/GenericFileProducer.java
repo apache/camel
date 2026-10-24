@@ -522,7 +522,10 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
 
     private void releaseLock(String target, FileLock lock) {
         lock.lock.unlock();
-        locks.computeIfPresent(target, (k, v) -> --v.users == 0 ? null : v);
+        locks.computeIfPresent(target, (k, v) -> {
+            v.users--;
+            return v.users == 0 ? null : v;
+        });
     }
 
     private static final class FileLock {
