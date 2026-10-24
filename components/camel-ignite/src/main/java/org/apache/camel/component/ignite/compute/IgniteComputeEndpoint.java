@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
 import org.apache.camel.component.ignite.IgniteConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,25 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_COMPUTE;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_COMPUTE, title = "Ignite Compute", syntax = "ignite-compute:endpointId",
              category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.LIST }, dependsOn = "taskName",
+                                  description = "The job to run on the cluster, by executionType: an IgniteCallable for CALL"
+                                                + " and AFFINITY_CALL, an IgniteRunnable for RUN and AFFINITY_RUN, a Collection"
+                                                + " of them for CALL and RUN, an IgniteCallable, IgniteRunnable or"
+                                                + " IgniteClosure for BROADCAST, an IgniteClosure for APPLY, and a ComputeTask or"
+                                                + " its Class for EXECUTE. Its parameters are in the CamelIgniteComputeParameters"
+                                                + " header. With taskName, EXECUTE runs that task with the body as its"
+                                                + " argument. Text or no body fails"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "executionType", value = "RUN", carriers = Carrier.NULL),
+                                           @BodyType.When(option = "executionType", value = "AFFINITY_RUN",
+                                                          carriers = Carrier.NULL),
+                                           @BodyType.When(option = "executionType", value = "BROADCAST",
+                                                          carriers = { Carrier.LIST, Carrier.NULL }) },
+                                   description = "The result of the job. A Collection of callables, a broadcast and an APPLY"
+                                                 + " of a Collection of parameters give a Collection of the results, unless an"
+                                                 + " IgniteReducer in the CamelIgniteComputeReducer header reduces them. RUN,"
+                                                 + " AFFINITY_RUN and a broadcast IgniteRunnable leave no body"))
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
