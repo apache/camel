@@ -48,6 +48,10 @@
     "CamelAlibabaSlsRequestId": { "index": 15, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Alibaba Cloud request id", "constantName": "org.apache.camel.component.alibaba.sls.constants.AlibabaSlsHeaders#REQUEST_ID" },
     "CamelAlibabaSlsStatusCode": { "index": 16, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "HTTP status code from SLS response", "constantName": "org.apache.camel.component.alibaba.sls.constants.AlibabaSlsHeaders#STATUS_CODE" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "operation", "value": "putLogs", "carriers": [ "pojo" ] } ], "description": "The logs to write for putLogs: a LogGroup or a PutLogsRequest of the SLS SDK, any other body fails. getLogs and listLogStores do not read the body, they take their input from options and headers" },
+    "producerOut": { "carriers": [ "map" ], "description": "A Map of the response with its statusCode and headers. For getLogs the GetLogsResponseBody of the SLS SDK is under body, for listLogStores the names under logstores with count and total" }
+  },
   "properties": {
     "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "producer", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "putLogs", "getLogs", "listLogStores" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation to perform" },
     "endpoint": { "index": 1, "kind": "parameter", "displayName": "Endpoint", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "SLS endpoint URL (e.g. cn-hangzhou.log.aliyuncs.com). Carries higher precedence than region based client initialization" },

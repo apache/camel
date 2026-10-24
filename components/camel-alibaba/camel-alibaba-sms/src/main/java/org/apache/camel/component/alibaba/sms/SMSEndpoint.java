@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.sms.constants.SMSHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,13 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-sms", title = "Alibaba Short Message Service (SMS)",
              syntax = "alibaba-sms:operation", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = SMSHeaders.class, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: sendSms takes the phone numbers, sign name, template code and"
+                                                + " template parameters from options or headers, such as"
+                                                + " CamelAlibabaSmsTemplateParam"),
+           producerOut = @BodyType(value = Carrier.MAP,
+                                   description = "A Map of the response: the statusCode, and the code, message, bizId and"
+                                                 + " requestId the service returns"))
 public class SMSEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",

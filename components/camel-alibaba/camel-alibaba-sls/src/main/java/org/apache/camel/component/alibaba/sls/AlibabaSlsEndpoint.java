@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.sls.constants.AlibabaSlsHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,15 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-sls", title = "Alibaba Simple Log Service (SLS)",
              syntax = "alibaba-sls:operation", category = { Category.CLOUD, Category.MONITORING },
              headersClass = AlibabaSlsHeaders.class, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "putLogs", carriers = Carrier.POJO),
+                                  description = "The logs to write for putLogs: a LogGroup or a PutLogsRequest of the SLS"
+                                                + " SDK, any other body fails. getLogs and listLogStores do not read the"
+                                                + " body, they take their input from options and headers"),
+           producerOut = @BodyType(value = Carrier.MAP,
+                                   description = "A Map of the response with its statusCode and headers. For getLogs the"
+                                                 + " GetLogsResponseBody of the SLS SDK is under body, for listLogStores"
+                                                 + " the names under logstores with count and total"))
 public class AlibabaSlsEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",
