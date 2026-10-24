@@ -625,6 +625,7 @@ public class NatsConsumer extends DefaultConsumer {
                         return;
                     }
                 }
+                // no message in flight: close now (outside the lock, as the close may block)
                 close.run();
             }
 
