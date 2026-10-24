@@ -970,8 +970,8 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheOptionsTheBodyDependsOn() {
-        // xslt with output DOM gives a Document, an unmarshal with useList a List, gson is not known, and with download
-        // false the ftp consumer gives no body
+        // xslt with output DOM gives a Document, an unmarshal with useList a List, gson with an unmarshalType an object
+        // of that class, and with download false the ftp consumer gives no body
         String yaml = """
                 - route:
                     from:
@@ -987,6 +987,7 @@ public class TextBodyFlowTest {
                         - unmarshal:
                             json:
                               library: Gson
+                              unmarshalType: com.acme.Order
                         - to: file:out
                 - route:
                     from:
@@ -1105,6 +1106,54 @@ public class TextBodyFlowTest {
                 .anySatisfy(m -> assertThat(m).contains("route template: simple reads a field of the body (${body[id]})"))
                 .anySatisfy(m -> assertThat(m)
                         .contains("route jolt: to: file needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
+    public void testTheBodyOfTextDataFormats() {
+        // json with Gson and univocityCsv parse the text into a Map or a List, which the file producer cannot write;
+        // univocityCsv with lazyLoad gives an iterator, and jaxb an object of a class, which say nothing
+        String yaml = """
+                - route:
+                    id: gson
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            json:
+                              library: Gson
+                        - to: file:out
+                - route:
+                    id: rows
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            univocityCsv: {}
+                        - to: file:out
+                - route:
+                    id: lazy
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            univocityCsv:
+                              lazyLoad: true
+                        - to: file:out
+                - route:
+                    id: jaxb
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            jaxb:
+                              contextPath: com.acme.model
+                        - to: file:out
+                """;
+        assertThat(lines(yaml)).hasSize(2)
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route gson: to: file needs the body as text, bytes, a stream or a file"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route rows: to: file needs the body as text, bytes, a stream or a file"));
     }
 
     @Test
