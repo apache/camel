@@ -26,6 +26,9 @@ import org.apache.camel.component.milo.MiloConstants;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
 import org.apache.camel.component.milo.client.MiloClientConnection;
 import org.apache.camel.component.milo.client.MiloClientConnectionManager;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -45,6 +48,13 @@ import static org.apache.camel.component.milo.MiloConstants.SCHEME_BROWSE;
  */
 @UriEndpoint(firstVersion = "3.15.0", scheme = SCHEME_BROWSE, syntax = "milo-browse:endpointUri", title = "OPC UA Browser",
              category = { Category.IOT }, producerOnly = true, headersClass = MiloConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not read: the nodes to browse are the node IDs of the"
+                                                + " CamelMiloNodeIds header, or else the node option"),
+           producerOut = @BodyType(value = Carrier.MAP,
+                                   description = "A Map of the browsed ExpandedNodeId to its Milo BrowseResult; the node IDs"
+                                                 + " found are also in the CamelMiloNodeIds header, as a List of Strings for"
+                                                 + " the milo-client producer"))
 public class MiloBrowseEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MiloBrowseEndpoint.class);
