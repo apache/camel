@@ -33,6 +33,10 @@ import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.extractYamlV
 public final class JsonPathChecks {
 
     private static final Pattern COMPARISON = Pattern.compile(" (==|!=|<=|>=|<|>|=~|in|nin|size|empty) ");
+    // an index after a filter: $[?(@.orderId == 'ORD-1')][0]
+    private static final Pattern INDEX_AFTER_FILTER = Pattern.compile("\\[\\?\\(.*\\)]\\s*\\[\\s*-?\\d+\\s*]");
+    private static final String ONE_ELEMENT = "set resultType: java.util.Map (the element when one matches, null when"
+                                              + " none does)";
 
     private JsonPathChecks() {
     }
@@ -67,7 +71,15 @@ public final class JsonPathChecks {
                     break;
                 }
             }
-            if (text == null || text.isEmpty() || text.contains("[?(") || !COMPARISON.matcher(text).find()) {
+            if (text == null || text.isEmpty()) {
+                continue;
+            }
+            String filter = filterProblem(text);
+            if (filter != null) {
+                errors.add("Line " + lineNum + ": " + filter);
+                continue;
+            }
+            if (text.contains("[?(") || !COMPARISON.matcher(text).find()) {
                 continue;
             }
             if (SimpleChecks.isPredicate(catalog, lines, i, countLeadingSpaces(line))) {
@@ -85,5 +97,52 @@ public final class JsonPathChecks {
                        + " is read as $[?(@." + left + rest + ")]");
         }
         return errors;
+    }
+
+    /**
+     * What is wrong around the filter of a path that should give the one element it matches. Jayway applies an index
+     * after a filter to each element the filter matched, so $[?(@.orderId == 'ORD-1')][0] gives an empty list; and
+     * &amp;&amp; or || outside the filter is no JsonPath (500 in a REST route). The one element comes with resultType
+     * java.util.Map: a single match is the element, and no match null.
+     */
+    static String filterProblem(String text) {
+        if (!text.contains("[?(")) {
+            return null;
+        }
+        if (INDEX_AFTER_FILTER.matcher(text).find()) {
+            return "an index after a filter gives an empty list in JsonPath ([?(...)][0] applies the index to each element"
+                   + " the filter matched): to get the one element, leave the index out and " + ONE_ELEMENT;
+        }
+        String outside = outsideFilters(text);
+        if (outside.contains("&&") || outside.contains("||")) {
+            return "&& and || work inside a filter only, such as $[?(@.status == 'paid' && @.qty > 0)]; to test whether"
+                   + " a filter matched, " + ONE_ELEMENT + ", and check ${body} == null in a choice";
+        }
+        return null;
+    }
+
+    // the text with each filter [?(...)] taken out
+    private static String outsideFilters(String text) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < text.length()) {
+            if (text.startsWith("[?(", i)) {
+                int depth = 0;
+                int j = i + 2;
+                for (; j < text.length(); j++) {
+                    char c = text.charAt(j);
+                    if (c == '(') {
+                        depth++;
+                    } else if (c == ')' && --depth == 0) {
+                        break;
+                    }
+                }
+                // past the closing )]
+                i = Math.min(text.length(), j + 2);
+            } else {
+                sb.append(text.charAt(i++));
+            }
+        }
+        return sb.toString();
     }
 }

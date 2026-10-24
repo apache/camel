@@ -626,7 +626,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific key for producer operations.
+         * Set a specific key for producer operations. When set, it takes
+         * precedence over the CamelInfinispanKey header.
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
@@ -640,7 +641,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific key for producer operations.
+         * Set a specific key for producer operations. When set, it takes
+         * precedence over the CamelInfinispanKey header.
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 

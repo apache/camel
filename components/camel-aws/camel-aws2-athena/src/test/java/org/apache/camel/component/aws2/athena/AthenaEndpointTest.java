@@ -61,6 +61,7 @@ public class AthenaEndpointTest {
                                                                                          + "&outputType=SelectList"
                                                                                          + "&clientRequestToken=crt"
                                                                                          + "&queryString=select"
+                                                                                         + "&useMessageBodyForSql=true"
                                                                                          + "&encryptionOption=SSE_S3"
                                                                                          + "&kmsKey=key"
                                                                                          + "&waitTimeout=1"
@@ -85,6 +86,7 @@ public class AthenaEndpointTest {
         assertEquals(Athena2OutputType.SelectList, configuration.getOutputType());
         assertEquals("crt", configuration.getClientRequestToken());
         assertEquals("select", configuration.getQueryString());
+        assertEquals(true, configuration.isUseMessageBodyForSql());
         assertEquals(EncryptionOption.SSE_S3, configuration.getEncryptionOption());
         assertEquals("key", configuration.getKmsKey());
         assertEquals(1, configuration.getWaitTimeout());
@@ -112,6 +114,7 @@ public class AthenaEndpointTest {
         assertEquals(Athena2OutputType.StreamList, configuration.getOutputType());
         assertNull(configuration.getClientRequestToken());
         assertNull(configuration.getQueryString());
+        assertEquals(false, configuration.isUseMessageBodyForSql());
         assertNull(configuration.getEncryptionOption());
         assertNull(configuration.getKmsKey());
         assertEquals(0, configuration.getWaitTimeout());

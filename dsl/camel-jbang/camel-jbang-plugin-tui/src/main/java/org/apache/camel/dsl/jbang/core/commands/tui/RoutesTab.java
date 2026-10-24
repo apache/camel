@@ -451,7 +451,7 @@ class RoutesTab extends AbstractDiagramTab {
                     : Style.EMPTY;
 
             routeRows.add(Row.from(
-                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
+                    Cell.from(routeIdLine(route, 24)),
                     routeFromCell(route, aiDescriptions, Integer.MAX_VALUE),
                     rightCell(route.total > 0 ? formatDurationMs(route.meanTime) : "", 8,
                             topTimeStyle(route.meanTime)),
@@ -600,7 +600,7 @@ class RoutesTab extends AbstractDiagramTab {
 
             List<Cell> cells = new ArrayList<>(
                     List.of(
-                            Cell.from(Span.styled(TuiHelper.truncate(route.routeId, 24), Style.EMPTY.fg(Theme.accent()))),
+                            Cell.from(routeIdLine(route, 24)),
                             routeFromCell(route, aiDescriptions, fromWidth),
                             Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                             rightCell(formatThroughput(route.throughput), 8),
@@ -679,6 +679,23 @@ class RoutesTab extends AbstractDiagramTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Routes ").build())
                 .build();
+    }
+
+    /**
+     * The route id, and the revision dimmed after it when the route was added again changed in this run, such as by a
+     * reload (CAMEL-25771): "orders (rev 3)" runs the third version of its route since the start. The id is cut to
+     * leave room for the revision.
+     */
+    static Line routeIdLine(RouteInfo route, int width) {
+        String id = route.routeId != null ? route.routeId : "";
+        Style idStyle = Style.EMPTY.fg(Theme.accent());
+        if (route.revision <= 1) {
+            return Line.from(Span.styled(TuiHelper.truncate(id, width), idStyle));
+        }
+        String rev = " (rev " + route.revision + ")";
+        return Line.from(
+                Span.styled(TuiHelper.truncate(id, Math.max(4, width - CharWidth.of(rev))), idStyle),
+                Span.styled(rev, Style.EMPTY.dim()));
     }
 
     /**
@@ -1402,6 +1419,11 @@ class RoutesTab extends AbstractDiagramTab {
             }
             if (ri.group != null) {
                 row.put("group", ri.group);
+            }
+            // the route as written, to compare with its source or an earlier run, and its changes in this run
+            if (ri.checksum != null) {
+                row.put("checksum", ri.checksum);
+                row.put("revision", ri.revision);
             }
             rows.add(row);
         }

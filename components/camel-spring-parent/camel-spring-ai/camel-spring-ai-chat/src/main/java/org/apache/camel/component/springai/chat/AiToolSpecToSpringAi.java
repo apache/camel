@@ -46,7 +46,8 @@ final class AiToolSpecToSpringAi {
             // exchange property) reaches the tool route; this is not a pooled consumer exchange, so it is not released
             // here (CAMEL-24832)
             Exchange toolExchange = AiToolExecutor.createToolExchange(callingExchange);
-            AiToolResult result = AiToolExecutor.execute(spec, args, toolExchange);
+            String conversationId = callingExchange.getMessage().getHeader(SpringAiChatConstants.CONVERSATION_ID, String.class);
+            AiToolResult result = AiToolExecutor.execute(spec, args, toolExchange, null, conversationId);
             if (result instanceof AiToolResult.Success success) {
                 return success.value();
             } else if (result instanceof AiToolResult.ArgumentError argErr) {

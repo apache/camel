@@ -71,7 +71,19 @@ public class HiveMQSendDynamicAware extends SendDynamicAwareSupport {
 
     @Override
     public Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
-        return null;
+        if (exchange.getMessage().getHeader(HiveMQConstants.OVERRIDE_TOPIC) != null) {
+            // the topic header was set before toD, so it is not ours to remove
+            return null;
+        }
+
+        // remove the topic header the pre processor has set, so a later send of the same exchange
+        // (another toD, a loop) is not published to this topic
+        return new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getMessage().removeHeader(HiveMQConstants.OVERRIDE_TOPIC);
+            }
+        };
     }
 
     private String parseTopicName(String uri) {

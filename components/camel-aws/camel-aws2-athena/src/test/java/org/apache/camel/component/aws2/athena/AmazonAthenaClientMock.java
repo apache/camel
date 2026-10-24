@@ -45,6 +45,15 @@ public class AmazonAthenaClientMock implements AthenaClient {
 
     private Queue<String> startQueryExecutionResults = new LinkedList<>();
     private Queue<QueryExecution> getQueryExecutionResults = new LinkedList<>();
+    private volatile StartQueryExecutionRequest lastStartQueryExecutionRequest;
+
+    /**
+     * The request of the last call to {@link #startQueryExecution(StartQueryExecutionRequest)}, or null if it was not
+     * called.
+     */
+    public StartQueryExecutionRequest getLastStartQueryExecutionRequest() {
+        return lastStartQueryExecutionRequest;
+    }
 
     /**
      * Optionally provide a FIFO queue of results in the order they should be returned for each call to
@@ -104,6 +113,7 @@ public class AmazonAthenaClientMock implements AthenaClient {
     @Override
     public StartQueryExecutionResponse startQueryExecution(StartQueryExecutionRequest startQueryExecutionRequest)
             throws SdkException {
+        lastStartQueryExecutionRequest = startQueryExecutionRequest;
         String defaultResult = "11111111-1111-1111-1111-111111111111";
         String result = startQueryExecutionResults.isEmpty() ? defaultResult : startQueryExecutionResults.poll();
 

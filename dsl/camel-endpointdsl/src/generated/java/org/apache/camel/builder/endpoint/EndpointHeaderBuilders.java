@@ -80,6 +80,20 @@ public class EndpointHeaderBuilders {
         return ActiveMQ6EndpointBuilderFactory.ActiveMQ6HeaderNameBuilder.INSTANCE;
     }
     /**
+     * AI Tool (camel-ai-tool)
+     * Framework-agnostic consumer endpoint that registers a Camel route as an
+     * LLM tool in the shared AiToolRegistry.
+     * 
+     * Category: ai
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-ai-tool
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static AiToolEndpointBuilderFactory.AiToolHeaderNameBuilder aiTool() {
+        return AiToolEndpointBuilderFactory.AiToolHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Alibaba EventBridge (camel-alibaba-eventbridge)
      * Publish events to Alibaba Cloud EventBridge.
      * 

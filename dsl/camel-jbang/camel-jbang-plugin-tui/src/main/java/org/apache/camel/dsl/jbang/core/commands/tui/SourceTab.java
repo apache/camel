@@ -76,6 +76,7 @@ class SourceTab extends AbstractTab {
     private final ScrollbarState listScrollState = new ScrollbarState();
     private List<FilesBrowser.FileEntry> entries = Collections.emptyList();
     private final SourceViewer sourceViewer = new SourceViewer();
+    private final SourceRunState.Tracker runState = new SourceRunState.Tracker();
     private boolean focusOnViewer;
 
     private int leftPanelWidth = -1;
@@ -84,6 +85,11 @@ class SourceTab extends AbstractTab {
     private Rect rightArea;
 
     private final SourceEditAssist assist = new SourceEditAssist(ctx);
+    private final ConsumedEndpoints consumedEndpoints = new ConsumedEndpoints(ctx.backgroundExecutor, r -> {
+        if (ctx.runner != null) {
+            ctx.runner.runOnRenderThread(r);
+        }
+    });
 
     SourceEditAssist editAssist() {
         return assist;
@@ -216,10 +222,18 @@ class SourceTab extends AbstractTab {
             lastSeenPid = ctx.selectedPid;
             refreshFiles();
         }
+        // the run state of the file shown, now rather than at the next refresh, which shows the previous one till then
+        ctx.backgroundExecutor.execute(() -> runState.refresh(ctx.findSelectedIntegration()));
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        runState.refresh(ctx.findSelectedIntegration());
     }
 
     @Override
     public void onIntegrationChanged() {
+        runState.reset();
         lastSeenPid = ctx.selectedPid;
         rootDir = null;
         assist.setRootDir(null);
@@ -565,6 +579,10 @@ class SourceTab extends AbstractTab {
         json.put("totalFiles", entries.size());
         json.put("focusOnViewer", focusOnViewer);
         json.put("viewerOpen", sourceViewer.isVisible());
+        // whether the integration runs the file open in the editor as it is saved, so an agent can tell its edit runs
+        // (computed now: tui_get_table may read this tab while another one is on screen, which it does not refresh)
+        runState.refresh(ctx.findSelectedIntegration());
+        runState.addTo(json);
         return json;
     }
 
@@ -903,15 +921,24 @@ class SourceTab extends AbstractTab {
         }
     }
 
+    /** The direct: and seda: endpoints the file sends to and no route of the project consumes, as notes. */
+    private List<String> consumerNotes(Path filePath, String content) {
+        return consumedEndpoints.notes(filePath, rootDir, content, assist.validationCatalog(), assist.javaSources(),
+                () -> sourceViewer.recheck(filePath));
+    }
+
     /**
      * Points the viewer's quick-doc, autocomplete, validation and deprecation hooks at the providers matching the file
      * type (Camel YAML, other Camel source, properties, or none).
      */
     private void configureEditAssist(Path filePath) {
+        consumedEndpoints.expire();
         // the Camel checks of a Java or XML DSL route file (CAMEL-25208); YAML has its own
         boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
                 && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
+        // a direct: or seda: endpoint no route consumes is a note (CAMEL-24955); a YAML file sets its notes below
+        sourceViewer.setNotes(routeFile ? content -> consumerNotes(filePath, content) : null);
         sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
         SourceCompletion completion = sourceViewer.completion();
@@ -945,7 +972,9 @@ class SourceTab extends AbstractTab {
                         name.toLowerCase(Locale.ROOT), content, assist.validateYamlSimple(content)));
                 // the shape of a Kamelet file and the kamelet: endpoints of a route (CAMEL-25411)
                 sourceViewer.setKameletValidator(content -> SourceEditAssist.validateKamelets(filePath, content));
-                sourceViewer.setKameletNotes(content -> SourceEditAssist.kameletNotes(filePath, content));
+                // the notes: a Kamelet's unused dependency, a direct: or seda: endpoint no route consumes (CAMEL-24955)
+                sourceViewer.setNotes(content -> SourceEditAssist.isKameletFile(filePath)
+                        ? SourceEditAssist.kameletNotes(filePath, content) : consumerNotes(filePath, content));
                 completion.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {
@@ -1178,7 +1207,11 @@ class SourceTab extends AbstractTab {
             sourceViewer.setBorderStyle(sourceBorderStyle);
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
+            // whether the integration runs the file shown as it is saved, in the view and in the editor (CAMEL-25771)
+            runState.shown(sourceViewer.getCurrentFilePath());
+            runState.render(frame, area);
         } else {
+            runState.shown(null);
             List<Line> lines = emptySourceLines(routeIndex, rootDir);
 
             frame.renderWidget(

@@ -21,9 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AfterPropertiesConfigured;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.BodyType;
@@ -199,6 +201,15 @@ public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesC
             this.kameletProperties.clear();
             this.kameletProperties.putAll(kameletProperties);
         }
+    }
+
+    /**
+     * The callback the producer calls when the Kamelet is done with the exchange, and the calling route continues. The
+     * default is the given callback. An endpoint that removes the route it created when it is shut down uses it to know
+     * the exchange whose call is completing when it is shut down (as toD does inside this callback).
+     */
+    AsyncCallback completingCallback(Exchange exchange, AsyncCallback callback) {
+        return callback;
     }
 
     @Override
