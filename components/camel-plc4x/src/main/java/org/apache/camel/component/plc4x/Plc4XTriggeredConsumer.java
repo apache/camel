@@ -17,8 +17,10 @@
 package org.apache.camel.component.plc4x;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -85,7 +87,7 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
             // the consumer stopped while the read was in progress
             return 0;
         }
-        boolean triggered = Boolean.TRUE.equals(response.getObject(Constants.TRIGGER));
+        boolean triggered = (Boolean) response.getObject(Constants.TRIGGER);
         boolean risingEdge = triggered && !Boolean.TRUE.equals(lastTrigger);
         lastTrigger = triggered;
         if (!risingEdge) {
@@ -110,24 +112,37 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Reads the trigger and the tags in one request; fails unless every tag was read.
+     * Reads the trigger and the tags in one request; fails unless every tag was read and the trigger is a boolean.
      */
     private PlcReadResponse read() throws Exception {
         plc4XEndpoint.reconnectIfNeeded();
         if (plc4XEndpoint.connection == null) {
             throw new PlcConnectionException("Cannot establish connection");
         }
+        CompletableFuture<? extends PlcReadResponse> future
+                = plc4XEndpoint.buildPlcReadRequest(Map.of(Constants.TRIGGER, trigger)).execute();
         PlcReadResponse response;
         try {
-            response = plc4XEndpoint.buildPlcReadRequest(Map.of(Constants.TRIGGER, trigger)).execute().get();
+            response = future.get(Plc4XEndpoint.REQUEST_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             throw e.getCause() instanceof Exception cause ? cause : e;
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new TimeoutException(
+                    "No response to the read of the trigger " + trigger + " within "
+                                       + Plc4XEndpoint.REQUEST_TIMEOUT_MILLIS + " millis");
         }
         for (String tag : response.getTagNames()) {
             PlcResponseCode code = response.getResponseCode(tag);
             if (code != PlcResponseCode.OK) {
                 throw new PlcException("Reading the tag " + tag + " failed with response code " + code);
             }
+        }
+        Object value = response.getObject(Constants.TRIGGER);
+        if (!(value instanceof Boolean)) {
+            throw new PlcException(
+                    "The trigger " + trigger + " must read as a Boolean, but read "
+                                   + (value == null ? "no value" : "a " + value.getClass().getName()));
         }
         return response;
     }

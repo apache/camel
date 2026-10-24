@@ -54,6 +54,9 @@ import org.slf4j.LoggerFactory;
 public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
 
+    // how long the producer and the triggered consumer wait for the PLC to answer a request
+    static final long REQUEST_TIMEOUT_MILLIS = 5000;
+
     protected DefaultPlcDriverManager plcDriverManager;
     protected volatile PlcConnection connection;
 

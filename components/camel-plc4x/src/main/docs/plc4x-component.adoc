@@ -98,8 +98,10 @@ with `trigger` and must be positive. On a rising edge of the trigger, from `fals
 as the trigger. The trigger tag is not part of the body; it is read under the reserved name `TRIGGER_VAR`, which no tag
 may use. While the trigger stays `true`, no further exchange is delivered.
 
-A poll that fails, for example because a tag cannot be read or the PLC cannot be reached, is reported to the exception
-handler of the consumer (or to the error handler of the route with `bridgeErrorHandler=true`), and polling continues.
+A poll that fails, for example because a tag cannot be read, the PLC cannot be reached or does not answer within five
+seconds, or the trigger reads as a value that is not a boolean (such as a number or an array), is reported to the
+exception handler of the consumer (or to the error handler of the route with `bridgeErrorHandler=true`), and polling
+continues.
 The trigger value read before the failure is forgotten, so a trigger that is `true` at the first successful poll after
 a failure counts as a rising edge. Automatic recovery after a lost connection needs `autoReconnect=true`: a poll then
 replaces a lost connection with a new one. With the default `autoReconnect=false`, the endpoint stops on the first lost
