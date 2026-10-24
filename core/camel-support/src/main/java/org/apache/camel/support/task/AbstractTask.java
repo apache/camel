@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support.task;
 
+import org.apache.camel.util.TimeSource;
+
 abstract class AbstractTask implements Task {
 
     static final long NEVER = -1L;
@@ -63,7 +65,7 @@ abstract class AbstractTask implements Task {
     @Override
     public long getCurrentElapsedTime() {
         if (firstAttemptTime > 0) {
-            return System.currentTimeMillis() - firstAttemptTime;
+            return TimeSource.currentTimeMillis() - firstAttemptTime;
         }
         return NEVER;
     }

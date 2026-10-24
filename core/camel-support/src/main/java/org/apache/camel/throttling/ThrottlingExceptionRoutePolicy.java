@@ -36,6 +36,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,7 +204,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             if (hasFailed(exchange)) {
                 // record the failure
                 failures.incrementAndGet();
-                lastFailure = System.currentTimeMillis();
+                lastFailure = TimeSource.currentTimeMillis();
             } else {
                 success.incrementAndGet();
             }
@@ -269,7 +270,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             }
         } else if (state.get() == STATE_OPEN) {
             if (!keepOpenBool.get()) {
-                long elapsedTimeSinceOpened = System.currentTimeMillis() - openedAt;
+                long elapsedTimeSinceOpened = TimeSource.currentTimeMillis() - openedAt;
                 if (halfOpenAfter <= elapsedTimeSinceOpened) {
                     LOG.debug("Checking an open circuit...");
                     if (halfOpenHandler != null) {
@@ -301,7 +302,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         logState();
         // failures exceed the threshold
         // AND the last of those failures occurred within window
-        if (failures.get() >= failureThreshold && lastFailure >= System.currentTimeMillis() - failureWindow) {
+        if (failures.get() >= failureThreshold && lastFailure >= TimeSource.currentTimeMillis() - failureWindow) {
             output = true;
         }
 
@@ -316,7 +317,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             }
             suspendOrStopConsumer(route.getConsumer());
             state.set(STATE_OPEN);
-            openedAt = System.currentTimeMillis();
+            openedAt = TimeSource.currentTimeMillis();
             this.addHalfOpenTimer(route);
             logState();
         } catch (Exception e) {
@@ -336,7 +337,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             lock.lock();
             suspendOrStopConsumer(route.getConsumer());
             state.set(STATE_OPEN);
-            openedAt = System.currentTimeMillis();
+            openedAt = TimeSource.currentTimeMillis();
             this.addHalfOpenTimer(route);
             logState();
         } catch (Exception e) {
@@ -414,7 +415,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         String routeState = getStateAsString();
         if (failures.get() > 0) {
             return String.format("State %s, failures %d, last failure %d ms ago", routeState, failures.get(),
-                    System.currentTimeMillis() - lastFailure);
+                    TimeSource.currentTimeMillis() - lastFailure);
         } else {
             return String.format("State %s, failures %d", routeState, failures.get());
         }

@@ -35,6 +35,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.RouteStoppingException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +130,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                     long start = 0;
                     long elapsed = 0;
                     if (LOG.isTraceEnabled()) {
-                        start = System.currentTimeMillis();
+                        start = TimeSource.currentTimeMillis();
                     }
                     permit = throttlingState.take();
                     while (throttlingState.isRemoved()) {
@@ -138,7 +139,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                         permit = throttlingState.take();
                     }
                     if (LOG.isTraceEnabled()) {
-                        elapsed = System.currentTimeMillis() - start;
+                        elapsed = TimeSource.currentTimeMillis() - start;
                     }
                     throttlingState.enqueue(permit, exchange);
 
@@ -161,7 +162,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
 
                 if (state == State.ASYNC) {
                     if (LOG.isTraceEnabled()) {
-                        long queuedTime = System.currentTimeMillis() - queuedStart;
+                        long queuedTime = TimeSource.currentTimeMillis() - queuedStart;
                         LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}",
                                 queuedTime, exchange.getExchangeId());
                     }
@@ -192,7 +193,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
         try {
             if (LOG.isTraceEnabled()) {
-                exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, System.nanoTime());
+                exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, TimeSource.nanoTime());
             }
             exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC);
             ThrottlePermit next = throttlingState.peek();
@@ -413,12 +414,12 @@ public class TotalRequestsThrottler extends AbstractThrottler {
         }
 
         public void setDelayMs(final long delayMs) {
-            this.scheduledTime = System.currentTimeMillis() + delayMs;
+            this.scheduledTime = TimeSource.currentTimeMillis() + delayMs;
         }
 
         @Override
         public long getDelay(final TimeUnit unit) {
-            return unit.convert(scheduledTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+            return unit.convert(scheduledTime - TimeSource.currentTimeMillis(), TimeUnit.MILLISECONDS);
         }
 
         @Override

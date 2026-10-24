@@ -30,6 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -268,7 +269,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     }
 
     protected long currentTime() {
-        return System.currentTimeMillis();
+        return TimeSource.currentTimeMillis();
     }
 
     @Override
