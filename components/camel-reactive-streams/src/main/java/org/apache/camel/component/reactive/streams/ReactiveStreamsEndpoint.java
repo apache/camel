@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -34,6 +37,18 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams",
              syntax = "reactive-streams:stream",
              remote = false, category = { Category.MESSAGING }, headersClass = ReactiveStreamsConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The item the publisher emits, as it is (an Exchange it emits is routed"
+                                                 + " as it is). With forwardOnComplete, the end of the stream comes as an"
+                                                 + " exchange without a body; with forwardOnError, the error as a"
+                                                 + " Throwable body. The CamelReactiveStreamsEventType header says which"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     description = "A caller of toStream or to() gets the exchange the route ends with,"
+                                                   + " or its body converted to the type it asks for"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The exchange is handed to the subscribers of the stream as it is; a"
+                                                + " subscriber that asks for a type gets the body converted to it"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED))
 @ManagedResource(description = "Managed ReactiveStreamsEndpoint")
 public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 

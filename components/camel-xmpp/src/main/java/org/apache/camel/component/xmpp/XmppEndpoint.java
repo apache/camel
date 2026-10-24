@@ -27,6 +27,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -62,6 +65,22 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "1.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant",
              alternativeSyntax = "xmpp:user:password@host:port/participant",
              category = { Category.CHAT, Category.MESSAGING }, headersClass = XmppConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.POJO },
+                                   byOption = @BodyType.When(option = "doc", value = "true", carriers = Carrier.POJO,
+                                                             javaType = "org.jivesoftware.smack.packet.Message"),
+                                   description = "The text of the chat message; the Smack Message when it has no body"
+                                                 + " text, such as a pubsub notification. With doc, the Smack Message. The"
+                                                 + " subject, thread and sender are in the CamelXmpp* headers"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "doc", value = "true", carriers = Carrier.POJO),
+                                          @BodyType.When(option = "pubsub", value = "true", carriers = Carrier.POJO,
+                                                         javaType = "org.jivesoftware.smackx.pubsub.packet.PubSub") },
+                                  description = "The body is converted to text and sent as the chat message (a Map or a"
+                                                + " POJO as its toString); the headers become message properties. Without a"
+                                                + " room, doc sends a Smack Stanza (or an array of them) and pubsub a Smack"
+                                                + " PubSub packet as they are; another body fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED))
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
