@@ -252,6 +252,23 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
     }
 
     @Test
+    public void aTriggerThatIsNotABooleanFailsThePoll() throws Exception {
+        MockDriver.programRead("TRIG", 1, true);
+        MockDriver.programRead("TEMP", 21);
+        MockDriver.programRead("PRES", 1013);
+        MockEndpoint result = getMockEndpoint("mock:reported");
+        result.expectedMessageCount(1);
+        result.setAssertPeriod(1000);
+
+        context.getRouteController().startRoute("reported");
+
+        result.assertIsSatisfied(10000);
+        assertEquals(1, pollFailures.count(), () -> "Unexpected failures: " + pollFailures.causes());
+        String message = pollFailures.causes().get(0).getMessage();
+        assertTrue(message.contains("TRIG") && message.contains(Integer.class.getName()), message);
+    }
+
+    @Test
     public void aReadThatCompletesWhileTheRouteStopsIsNotDelivered() throws Exception {
         MockDriver.programRead("TRIG", true);
         MockDriver.programRead("TEMP", 21);
