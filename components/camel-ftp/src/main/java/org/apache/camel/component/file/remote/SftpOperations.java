@@ -79,7 +79,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * <p/>
  * The JSCH session and channel are not thread-safe so we need to synchronize access to using this operation.
  */
-public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
+public class SftpOperations implements RemoteFileOperations<SftpRemoteFile>, SftpSymbolicLinkOperations {
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private static final int OK_STATUS = 0;
@@ -934,6 +934,42 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     .toArray(SftpRemoteFileJCraft[]::new);
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public String getHomeDirectory() throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return channel.getHome();
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot get the home directory", e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isSymbolicLink(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return channel.lstat(path).isLink();
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot get the attributes of: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public String readSymbolicLink(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return channel.readlink(path);
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot read the symbolic link: " + path, e);
         } finally {
             lock.unlock();
         }

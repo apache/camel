@@ -51,6 +51,11 @@ public class MinaSftpRemoteFile implements SftpRemoteFile<SftpClient.DirEntry> {
     }
 
     @Override
+    public boolean isSymbolicLink() {
+        return entry.getAttributes().isSymbolicLink();
+    }
+
+    @Override
     public long getFileLength() {
         return entry.getAttributes().getSize();
     }
