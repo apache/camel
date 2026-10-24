@@ -80,8 +80,18 @@ import org.graalvm.polyglot.Value;
                                                   + " created with createWithHostAccess()"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
                                      description = "What the script returns: a dict as a Map, a list or a tuple as a List, a set"
-                                                   + " as a Set, bytes as a List of numbers, and None as null"))
+                                                   + " as a Set, bytes as bytes, and None as null. A function fails"))
 public class Python3Language extends TypedLanguageSupport implements ScriptingLanguage, Service {
+
+    static final String FUNCTION_RESULT
+            = "The script returned a function, which cannot be used after the script ends: return a value instead";
+
+    /**
+     * The built-in Python types of functions and methods: a def or lambda, a bound method, a built-in function or bound
+     * built-in method, and the method wrappers of built-in types.
+     */
+    private static final Set<String> PYTHON_FUNCTION_TYPES
+            = Set.of("function", "method", "builtin_function_or_method", "method-wrapper", "method_descriptor");
 
     private final HostAccess hostAccess;
     /**
@@ -265,6 +275,10 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
      */
     @SuppressWarnings("unchecked")
     static <T> T convert(Value value, Class<T> resultType, CamelContext camelContext, Exchange exchange) {
+        if (isPythonFunction(value)) {
+            // the function is tied to the per-evaluation Context, which is closed as soon as the script ends
+            throw new ExpressionEvaluationException(null, FUNCTION_RESULT, exchange, null);
+        }
         Object obj = materialize(value, new HashMap<>());
         if (resultType == null || resultType == Object.class) {
             return (T) obj;
@@ -287,8 +301,9 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
     /**
      * Copies guest values into ordinary Java types so the result remains usable after {@link Context#close()}.
      * <p>
-     * Python lists and tuples become {@link List}, dicts become {@link Map}, and sets become {@link Set}. Nested values
-     * are copied recursively. Other guest objects (including custom types) are left as {@link Value#as(Class)
+     * Python lists and tuples become {@link List}, dicts become {@link Map}, sets become {@link Set}, and bytes,
+     * bytearray and memoryview (any value with buffer elements) become {@code byte[]}. Nested values are copied
+     * recursively. Other guest objects (including custom types) are left as {@link Value#as(Class)
      * value.as(Object.class)}.
      * <p>
      * GraalPy returns the {@code __main__} module (not {@link Value#isNull()}) for {@code None}, {@code pass}, and
@@ -325,6 +340,11 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
         }
         if (isMainModule(value)) {
             return null;
+        }
+        if (value.hasBufferElements()) {
+            byte[] bytes = new byte[Math.toIntExact(value.getBufferSize())];
+            value.readBuffer(0, bytes, 0, bytes.length);
+            return bytes;
         }
         if (isPythonSet(value)) {
             Set<Object> set = new LinkedHashSet<>();
@@ -374,6 +394,30 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
 
     private static boolean isPythonTuple(Value value) {
         return isPythonType(value, "tuple");
+    }
+
+    /**
+     * Whether the value is a Python function or method. {@link Value#canExecute()} alone also matches a Java host
+     * object, a class and an instance of a class with {@code __call__}, which are data; so the type must also be one of
+     * the built-in function types (a class of the script, even one named {@code function}, has another module).
+     */
+    private static boolean isPythonFunction(Value value) {
+        if (value == null || !value.canExecute() || value.isHostObject() || value.isMetaObject()) {
+            return false;
+        }
+        Value meta = value.getMetaObject();
+        if (meta == null || !meta.isMetaObject()) {
+            return false;
+        }
+        try {
+            if (!PYTHON_FUNCTION_TYPES.contains(meta.getMetaSimpleName())) {
+                return false;
+            }
+            Value module = meta.getMember("__module__");
+            return module != null && module.isString() && "builtins".equals(module.asString());
+        } catch (UnsupportedOperationException e) {
+            return false;
+        }
     }
 
     private static boolean isPythonType(Value value, String simpleName) {
