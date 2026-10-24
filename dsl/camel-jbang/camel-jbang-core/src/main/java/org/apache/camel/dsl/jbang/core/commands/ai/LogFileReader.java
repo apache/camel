@@ -48,7 +48,7 @@ public final class LogFileReader {
             "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
                                                                + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
                                                                + "\\d+\\s+---\\s+"
-                                                               + "\\[([^]]*)]\\s+"
+                                                               + "\\[((?:[^\\[\\]]|\\[[^\\]]*])*)]\\s+"
                                                                + "(\\S+)\\s*:\\s*(.*)$");
 
     private static final Pattern ANSI = Pattern.compile("\\u001b\\[[;\\d]*[ -/]*[@-~]");

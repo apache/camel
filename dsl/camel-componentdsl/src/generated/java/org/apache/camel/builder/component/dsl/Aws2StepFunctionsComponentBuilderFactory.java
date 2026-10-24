@@ -92,8 +92,7 @@ public interface Aws2StepFunctionsComponentBuilderFactory {
         }
     
         /**
-         * The operation to perform. It can be listFunctions, getFunction,
-         * createFunction, deleteFunction or invokeFunction.
+         * The operation to perform.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.stepfunctions.StepFunctions2Operations&lt;/code&gt; type.

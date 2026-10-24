@@ -21,10 +21,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 import org.apache.camel.test.infra.ftp.services.embedded.EmbeddedConfiguration;
 import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
 import org.apache.ftpserver.FtpServerFactory;
@@ -43,13 +45,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * The consumer counterpart of {@link FtpProducerSendNoopFalseIT}: with sendNoop=false the consumer does not send a NOOP
  * command before each poll, and stays logged in between polls, and it connects again after the server has closed the
- * connection.
+ * connection, also with a poll strategy that does not disconnect.
  */
 public class FtpConsumerSendNoopFalseIT extends BaseServerTestSupport {
 
     private final AtomicInteger noops = new AtomicInteger();
     private final AtomicInteger logins = new AtomicInteger();
     private final AtomicInteger retrieves = new AtomicInteger();
+    private final AtomicInteger pwds = new AtomicInteger();
+
+    // a poll strategy that does not disconnect when a poll fails, unlike the default one of the ftp consumer
+    @BindToRegistry("myPollStrategy")
+    private final DefaultPollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
 
     @RegisterExtension
     public FtpEmbeddedService service = new FtpEmbeddedService() {
@@ -67,6 +74,8 @@ public class FtpConsumerSendNoopFalseIT extends BaseServerTestSupport {
                         logins.incrementAndGet();
                     } else if ("RETR".equalsIgnoreCase(request.getCommand())) {
                         retrieves.incrementAndGet();
+                    } else if ("PWD".equalsIgnoreCase(request.getCommand())) {
+                        pwds.incrementAndGet();
                     }
                     return super.beforeCommand(session, request);
                 }
@@ -143,6 +152,36 @@ public class FtpConsumerSendNoopFalseIT extends BaseServerTestSupport {
         assertEquals(2, logins.get(), "The consumer should connect again after the server closed the connection");
     }
 
+    @Test
+    public void testSendNoopFalseConnectsAgainAfterServerClosedConnectionWithCustomPollStrategy() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("one");
+
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/pollstrategy", "one", Exchange.FILE_NAME,
+                "hello.txt");
+        context.getRouteController().startRoute("recoverPollStrategy");
+
+        MockEndpoint.assertIsSatisfied(context);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> !service.ftpFile("pollstrategy/hello.txt").toFile().exists());
+        // and the consumer has polled again, as each poll starts with a PWD command (stepwise=true)
+        int pwdsAfterDelete = pwds.get();
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> pwds.get() > pwdsAfterDelete + 1);
+
+        // the server closes the connection between polls. The client does not notice, so the first command of the next
+        // poll fails, and the failure is thrown out of the poll to a poll strategy that does not disconnect
+        service.disconnectAllSessions();
+
+        mock.reset();
+        mock.expectedBodiesReceived("two");
+
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/pollstrategy", "two", Exchange.FILE_NAME,
+                "hello.txt");
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertEquals(2, logins.get(), "The consumer should connect again after the server closed the connection");
+    }
+
     private void consumeFileAndPollAgain(String routeId) throws Exception {
         template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/sendnoop", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
@@ -173,6 +212,11 @@ public class FtpConsumerSendNoopFalseIT extends BaseServerTestSupport {
 
                 from(getRecoverUrl() + "&ignoreFileNotFoundOrPermissionError=true")
                         .routeId("recoverIgnoreFileNotFound").autoStartup(false)
+                        .convertBodyTo(String.class).to("mock:result");
+
+                from("ftp://admin@localhost:{{ftp.server.port}}/pollstrategy?password=admin&delete=true&delay=100"
+                     + "&sendNoop=false&pollStrategy=#myPollStrategy")
+                        .routeId("recoverPollStrategy").autoStartup(false)
                         .convertBodyTo(String.class).to("mock:result");
             }
         };
