@@ -30,6 +30,9 @@
   "headers": {
     "CamelRssFeed": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The entire SyncFeed object.", "constantName": "org.apache.camel.component.rss.RssConstants#RSS_FEED" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "com.rometools.rome.feed.synd.SyndFeed", "description": "A ROME SyndFeed: with splitEntries (the default) a copy of the feed with the one entry in its entries, with splitEntries=false the whole feed with all its entries. The CamelRssFeed header carries the whole feed unless feedHeader=false" }
+  },
   "properties": {
     "feedUri": { "index": 0, "kind": "path", "displayName": "Feed Uri", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The URI to the feed to poll." },
     "sendEmptyMessageWhenIdle": { "index": 1, "kind": "parameter", "displayName": "Send Empty Message When Idle", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead." },

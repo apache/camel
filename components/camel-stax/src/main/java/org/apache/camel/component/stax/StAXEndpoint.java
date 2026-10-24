@@ -21,6 +21,9 @@ import org.xml.sax.ContentHandler;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -32,6 +35,13 @@ import org.apache.camel.support.ProcessorEndpoint;
  */
 @UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.STREAM, Carrier.FILE, Carrier.POJO }, format = "xml",
+                                  description = "The XML to parse: text, a stream, a file or a javax.xml.transform.Source."
+                                                + " Bytes, a DOM Document, a Map or no body fail: convert bytes to a String"
+                                                + " first"),
+           producerOut = @BodyType(value = Carrier.POJO, dependsOn = "contentHandlerClass",
+                                   description = "The ContentHandler after the parse: a new instance of contentHandlerClass"
+                                                 + " per message, or the one bean of a #bean reference"))
 public class StAXEndpoint extends ProcessorEndpoint {
 
     @UriPath

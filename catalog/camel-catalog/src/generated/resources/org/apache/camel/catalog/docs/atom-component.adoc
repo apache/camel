@@ -51,20 +51,20 @@ include::partial$component-endpoint-headers.adoc[]
 
 Camel will set the In body on the returned `Exchange` with the entries.
 Depending on the `splitEntries` flag Camel will either return one
-`Entry` or a `List<Entry>`.
+entry (a `com.apptasticsoftware.rssreader.Item`) or a `List<Item>`.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Value |Behavior
 |`splitEntries` |`true` |Only a single entry from the currently being processed feed is set:
-`exchange.in.body(Entry)`
+`exchange.in.body(Item)`
 
 |`splitEntries` |`false` |The entire list of entries from the feed is set:
-`exchange.in.body(List<Entry>)`
+`exchange.in.body(List<Item>)`
 |=======================================================================
 
-Camel can set the `Feed` object on the In header (see `feedHeader`
-option to disable this):
+Camel sets the `List<Item>` of all the entries of the feed on the `CamelAtomFeed` header (see the `feedHeader`
+option to disable this).
 
 == Usage
 

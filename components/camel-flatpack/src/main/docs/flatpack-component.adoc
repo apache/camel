@@ -50,8 +50,8 @@ configuration.
 
 === Message Body
 
-The component delivers the data in the IN message as a
-`org.apache.camel.component.flatpack.DataSetList` object that has
+The component delivers the data in the IN message as a Flatpack
+`net.sf.flatpack.DataSet` object that has
 converters for `java.util.Map` or `java.util.List`. +
  Usually you want the `Map` if you process one row at a time
 (`splitRows=true`). Use `List` for the entire content
@@ -68,16 +68,9 @@ For example, to get the firstname from the sample below:
   String firstName = row.get("FIRSTNAME");
 ----
 
-However, you can also always get it as a `List` (even for
-`splitRows=true`). The same example:
-
-._Java-only: accessing row data as a List from the exchange body_
-[source,java]
-----
-  List data = exchange.getIn().getBody(List.class);
-  Map row = (Map)data.get(0);
-  String firstName = row.get("FIRSTNAME");
-----
+With `splitRows=true`, every message shares the same `DataSet`, positioned at its row.
+Convert the body to a `Map` before any asynchronous step (such as `seda` or `wireTap`), as the next row moves the `DataSet`.
+Do not convert it to a `List`: that reads all the rows and the remaining rows are then not sent.
 
 === Header and Trailer records
 

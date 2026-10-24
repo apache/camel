@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,18 @@ import org.robotframework.RobotFramework;
              syntax = "robotframework:resourceUri", category = { Category.TESTING },
              remote = false, headersClass = RobotFrameworkCamelConstants.class)
 @Metadata(excludeProperties = "contentCache")
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
+                                   description = "No body: each poll runs the test, and the outcome is in the"
+                                                 + " CamelRobotReturnCode header (0 when all tests pass)"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The test gets the body converted to a String as the body variable, and the"
+                                                + " headers and exchange properties as headers.name and properties.name; a"
+                                                + " null body or header value fails the exchange"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body is left as it is. The CamelRobotReturnCode header has the return"
+                                                 + " code of the run (0 when all tests pass, non-zero"
+                                                 + " otherwise), and CamelRobotVariables the variables passed to it; a failed"
+                                                 + " test does not fail the exchange"))
 public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
     @UriParam

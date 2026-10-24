@@ -96,7 +96,7 @@ Where `MyFooDto` is a POJO that MapStruct is able to convert to/from.
 
 The same conversion can be a step of the route with the `mapstruct` endpoint, whose path is the fully qualified
 class name of the POJO to convert the message body to. This makes the mapping visible in the route, and with
-`mandatory=false` a body that no mapper can convert passes through unchanged instead of failing:
+`mandatory=false` a body that no mapper can convert becomes null (no body) instead of failing:
 
 [tabs]
 ====

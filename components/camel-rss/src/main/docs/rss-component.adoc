@@ -51,7 +51,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 Camel initializes the In body on the Exchange with a ROME `SyndFeed`.
 Depending on the value of the `splitEntries` flag, Camel returns either
-a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
+a `SyndFeed` with one `SyndEntry` or the whole `SyndFeed` with all its `SyndEntrys`.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

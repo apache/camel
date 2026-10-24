@@ -35,6 +35,9 @@ import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.component.smb.strategy.SmbProcessStrategyFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -54,6 +57,21 @@ import org.slf4j.LoggerFactory;
                               + "directoryMustExist,extendedAttributes,probeContentType,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,"
                               + "synchronous")
+@BodyTypes(consumerOut = @BodyType(value = Carrier.FILE, dependsOn = "preMove",
+                                   byOption = {
+                                           @BodyType.When(option = "streamDownload", value = "true", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "download", value = "false", carriers = Carrier.NULL) },
+                                   description = "The file as read: an SmbFile, which converts to text, bytes or a stream; a"
+                                                 + " stream with streamDownload; with preMove its content, a byte array (a stream with"
+                                                 + " streamDownload)"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "allowNullBody", value = "true",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE }),
+                                  description = "What converts to an InputStream: text, bytes, a stream or a file. A Map or"
+                                                + " a List fails: marshal it first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformation> implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbEndpoint.class);
