@@ -68,11 +68,12 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
                                                  + " with stringBundle gives the response as text"),
            producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
                                   description = "The body is used only when inBody names the argument of the method it is,"
-                                                + " and then passed as it is, without type conversion: resourceAsString,"
-                                                + " stringBundle and url take text (convertBodyTo String first), and resource,"
-                                                + " bundle and resources a HAPI FHIR object or a List of them (unmarshal with"
-                                                + " fhirJson or fhirXml first). Without inBody the arguments come from the"
-                                                + " options and the CamelFhir. headers"),
+                                                + " and then converted to the type of that argument: resourceAsString,"
+                                                + " stringBundle and url take text, which a byte array, a stream or a file"
+                                                + " converts to, and resource, bundle and resources a HAPI FHIR object or a"
+                                                + " List of them (unmarshal with fhirJson or fhirXml first). A body that cannot"
+                                                + " be converted fails the exchange before the call. Without inBody the"
+                                                + " arguments come from the options and the CamelFhir. headers"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = @BodyType.When(option = "apiName", value = "TRANSACTION",
                                                              carriers = { Carrier.POJO, Carrier.TEXT, Carrier.LIST }),

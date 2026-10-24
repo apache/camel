@@ -25,7 +25,7 @@ public class ConsulPreparedQueryProducerInvokeOnHeaderFactory implements InvokeO
         case "EXECUTE": target.execute(exchange.getMessage()); return null;
         case "get":
         case "GET": target.get(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 
