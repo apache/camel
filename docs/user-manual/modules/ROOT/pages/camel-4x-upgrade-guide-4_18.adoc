@@ -450,6 +450,15 @@ the arguments of the call, as in `Error invoking resourceById with [password, re
 username]: ...`, and no longer shows their values. The arguments hold the options of the endpoint, such as a password or
 a token, and the message data. The debug log of the call masks the values of the sensitive options.
 
+=== camel-solr - the operation of the header or the endpoint wins over the type of the body
+
+The solr producer now runs the operation of the `CamelSolrOperation` header, or else of the `operation` option, whatever
+the body is. Before, the type of the body came first: a Map, a file or a collection that is not all Strings ran an
+insert, and a collection of Strings ran a delete by id, even when the header or the option named another operation. The
+body decides only when neither is set, and a body that is a request of SolrJ, such as a `SolrQuery` or an
+`UpdateRequest`, still runs its own operation. The `CamelSolrQueryString` header makes a search only when no operation
+is set, and a `CamelSolrOperation` header with a value that is not an operation now fails.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs

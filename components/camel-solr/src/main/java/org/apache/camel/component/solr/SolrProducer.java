@@ -18,6 +18,7 @@ package org.apache.camel.component.solr;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -168,48 +169,43 @@ public class SolrProducer extends DefaultAsyncProducer {
     }
 
     private SolrOperation resolveSolrOperation(Exchange exchange, boolean hasSolrParams) {
-        // Operation can be driven by either (in order of preference):
-        // a. If the body is a specific class (SolrQuery, QueryRequest, UpdateRequest, SolrInputDocument(=Map)).
-        // b. If the body is not one of the specific classes, the operation is set by the
-        // header if it exists.
-        // c. If neither the operation can not be derived from the body or
-        // header, the configuration is used.
-        // In the event we can't discover the operation from a, b or c we throw
-        // an error.
+        // The operation is, in this order:
+        // a. the operation of a body that is a request of SolrJ, which the route builds (SolrPing, SolrQuery,
+        // QueryRequest, UpdateRequest), or none for another SolrRequest, which is sent as it is;
+        // b. the operation of the header, or else of the configuration;
+        // c. derived from the body, when neither is set: the query string header searches, a Map or a file inserts, and
+        // a collection inserts, or deletes by id when it holds strings. The body is the data of the message, so it never
+        // changes the operation that the header or the configuration names.
+        // In the event we can't discover the operation from a, b or c we throw an error.
 
-        Object body = exchange.getMessage().getBody();
+        Message message = exchange.getMessage();
+        Object body = message.getBody();
         if (ObjectHelper.isNotEmpty(body)) {
             LOG.debug("Operation request body: {}", body);
         }
         if (body instanceof SolrPing) {
             return SolrOperation.PING;
         }
-        if (body instanceof SolrQuery
-                || body instanceof QueryRequest
-                || exchange.getMessage().getHeader(SolrConstants.PARAM_QUERY_STRING) != null) {
+        if (body instanceof SolrQuery || body instanceof QueryRequest) {
             return SolrOperation.SEARCH;
         }
-        if (body instanceof Map
-                || body instanceof WrappedFile
-                || body instanceof File
-                || body instanceof UpdateRequest) {
+        if (body instanceof UpdateRequest) {
             return SolrOperation.INSERT;
         }
+        // SolrPing, QueryRequest and UpdateRequest are SolrRequests too: any other SolrRequest is sent as it is
         if (body instanceof SolrRequest) {
             return null;
         }
-        // collection: if strings then delete else insert
-        if (body instanceof Collection<?> collection) {
-            return SolrUtils.isCollectionOfType(collection, String.class)
-                    ? SolrOperation.DELETE
-                    : SolrOperation.INSERT;
-        }
 
-        SolrOperation operation;
-        String actionString = exchange.getMessage().getHeader(SolrConstants.PARAM_OPERATION, String.class);
+        String actionString = message.getHeader(SolrConstants.PARAM_OPERATION, String.class);
         if (ObjectHelper.isNotEmpty(actionString)) {
-            operation = SolrOperation.getSolrOperationFrom(actionString);
-            if (operation != null && !operation.name().equalsIgnoreCase(actionString)) {
+            SolrOperation operation = SolrOperation.getSolrOperationFrom(actionString);
+            if (operation == null) {
+                throw new IllegalArgumentException(
+                        "Unknown " + SolrConstants.PARAM_OPERATION + " " + actionString + ": use one of "
+                                                   + Arrays.toString(SolrOperation.values()));
+            }
+            if (!operation.name().equalsIgnoreCase(actionString)) {
                 LOG.warn(operation.createFutureDeprecationMessage(actionString,
                         operation.getActionParameter(actionString)));
             }
@@ -217,9 +213,23 @@ public class SolrProducer extends DefaultAsyncProducer {
             return operation;
         }
         if (configuration.getOperation() != null) {
-            operation = configuration.getOperation();
-            LOG.debug("Operation obtained from config: {}", operation);
-            return operation;
+            LOG.debug("Operation obtained from config: {}", configuration.getOperation());
+            return configuration.getOperation();
+        }
+
+        if (message.getHeader(SolrConstants.PARAM_QUERY_STRING) != null) {
+            return SolrOperation.SEARCH;
+        }
+        if (body instanceof Map
+                || body instanceof WrappedFile
+                || body instanceof File) {
+            return SolrOperation.INSERT;
+        }
+        // collection: if strings then delete else insert
+        if (body instanceof Collection<?> collection) {
+            return SolrUtils.isCollectionOfType(collection, String.class)
+                    ? SolrOperation.DELETE
+                    : SolrOperation.INSERT;
         }
         // when "invalid" body with solr params (e.g. commit),
         // assume insert request and allow processing without "body"
