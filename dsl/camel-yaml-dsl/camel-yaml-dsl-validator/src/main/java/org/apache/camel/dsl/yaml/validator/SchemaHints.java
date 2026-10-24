@@ -156,6 +156,23 @@ final class SchemaHints {
         return value != null && value.isValueNode() && !value.isNull() ? value.asText() : fallback;
     }
 
+    /**
+     * The language of the error's node that is written in its short form (jsonpath: "$[...]") next to the unknown
+     * property, when that property is one of the language's own options (resultType), or null.
+     */
+    private static String shortFormLanguage(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        if (instance == null || !instance.isObject() || instance.has("expression")) {
+            return null;
+        }
+        for (String language : m.validator().languageKeys()) {
+            if (instance.path(language).isTextual() && m.validator().languageOptions(language).contains(m.unknown())) {
+                return language;
+            }
+        }
+        return null;
+    }
+
     /** The EIP names a model writes for the exchange properties, and the ones Camel has. */
     private static final Map<String, String> EXCHANGE_PROPERTY_EIPS = Map.of(
             "setExchangeProperty", "setProperty", "setExchangeProperties", "setProperties",
@@ -622,6 +639,16 @@ final class SchemaHints {
             unknownProperty(".*/jsonpath", m -> m.unknown().equalsIgnoreCase("jsonPath") || m.unknown().equals("path"),
                     m -> "the JSONPath text goes under expression: (jsonpath: {expression: \"$[?(@.sku == 'X')]\","
                          + " resultType: java.util.List})"),
+            // expression: {jsonpath: "$[...]", resultType: java.util.Map}: an option of the language written next to its
+            // short form, where the node has no such property; it goes under the language, with the text as expression:
+            unknownProperty(null, m -> shortFormLanguage(m) != null,
+                    m -> {
+                        String language = shortFormLanguage(m);
+                        return m.unknown() + " is an option of the " + language + " language: write the language as a"
+                               + " map, with the text under expression: and " + m.unknown() + " next to it (" + language
+                               + ": {expression: " + YamlValidator.yamlQuoted(valueOf(m, language, "...")) + ", "
+                               + m.unknown() + ": " + valueOf(m, m.unknown(), "...") + "})";
+                    }),
             // onException: {maximumRedeliveries: 3}, deadLetterChannel: {retryAttemptedLogLevel: WARN}: an option of
             // the redelivery policy written next to it, where the closest name (level) is not what was meant
             unknownProperty(".*/(onException|" + String.join("|", ROUTE_ERROR_HANDLER_KINDS) + ")",

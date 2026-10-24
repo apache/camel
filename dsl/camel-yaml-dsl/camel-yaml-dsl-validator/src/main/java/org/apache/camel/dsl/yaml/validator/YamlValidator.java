@@ -878,6 +878,34 @@ public class YamlValidator {
         return property + ": \"...\"";
     }
 
+    /** The options of a language (resultType, suppressExceptions...) as the schema lists them, or empty. */
+    Set<String> languageOptions(String language) {
+        // the language's definition is referenced from an anyOf entry of ExpressionDefinition (the entry under its
+        // properties can be an empty placeholder)
+        JsonNode ref = null;
+        for (JsonNode value : model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition")
+                .findValues(language)) {
+            if (value.path("$ref").isTextual()) {
+                ref = value.path("$ref");
+                break;
+            }
+        }
+        JsonNode definition = ref != null ? model.at(ref.asText().substring(1)) : null;
+        Set<String> answer = new LinkedHashSet<>();
+        if (definition == null || definition.isMissingNode()) {
+            return answer;
+        }
+        // the definition is an object, or a oneOf of the short form (a string) and an object
+        List<JsonNode> shapes = new ArrayList<>();
+        shapes.add(definition);
+        definition.path("oneOf").forEach(shapes::add);
+        for (JsonNode shape : shapes) {
+            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+        }
+        answer.remove("expression");
+        return answer;
+    }
+
     /**
      * The EIPs whose expression the runtime needs: the schema leaves it optional for every expression node, and a split
      * written with only delimiter: "," (or a filter, setBody, when... with only options) fails when the route is

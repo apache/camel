@@ -56,7 +56,9 @@ final class HeaderChecks {
      */
     static final Pattern EXCHANGE_CONSTANT_NAME = Pattern.compile("name:\\s*['\"]?Exchange\\.([A-Z][A-Z0-9_]*)");
 
-    static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile("uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*):");
+    // the scheme of a URI (uri: "jms:queue:x"), or the scheme alone (uri: jms, with the rest under parameters:)
+    static final Pattern SCHEME_IN_URI_PATTERN
+            = Pattern.compile("(?m)uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*)(?::|\"?\\s*$)");
 
     /**
      * Names a component sets as exchange properties, not headers; the catalog has no metadata for those, so the ones a
@@ -114,6 +116,44 @@ final class HeaderChecks {
             = "For request-reply over JMS, send with pattern: InOut on the to: and Camel sets JMSReplyTo and waits for the"
               + " reply (the body at the end of the service route); you do not need to set JMSReplyTo or replyTo"
               + " yourself.";
+
+    /**
+     * A reply header of a JMS request-reply named by hand, in any case: JMSReplyTo, replyTo, jmsReplyTo,
+     * camelJmsReplyTo. The names that start with Camel and a capital are left to the header check, which reports them.
+     */
+    private static final Pattern REPLY_HEADER_REF = Pattern.compile(
+            "(?:\\$\\{headers?\\.|headers\\.|headers\\[['\"]|header\\(['\"]|(name):\\s*['\"]?)"
+                                                                    + "((?i:(?:camel)?(?:jms)?replyto))(?![A-Za-z0-9])");
+
+    /** An endpoint of a JMS component, in a URI (jms:queue:x) or as the scheme alone (uri: jms, with parameters). */
+    private static final Pattern JMS_URI = Pattern.compile(
+            "(?m)uri:\\s*['\"]?(?:jms|sjms2?|activemq6?|amqp)(?::|['\"]?\\s*$)");
+
+    /**
+     * Notes for a route that sets or reads a JMS reply header by hand when nothing is sent with InOut (r21 of the
+     * local-model benchmark: a model set JMSReplyTo in the service route and sent the request one way). A note, not an
+     * error: a reply queue set by hand for a reply that another route consumes is a design of its own.
+     */
+    static List<String> replyHeaderNotes(String content) {
+        List<String> notes = new ArrayList<>();
+        if (content == null || !JMS_URI.matcher(content).find() || content.contains("InOut")) {
+            return notes;
+        }
+        String[] lines = content.split("\n", -1);
+        Set<String> seen = new HashSet<>();
+        for (int i = 0; i < lines.length; i++) {
+            Matcher m = REPLY_HEADER_REF.matcher(lines[i]);
+            while (m.find()) {
+                String name = m.group(2);
+                if (name.startsWith("Camel") || (m.group(1) != null && !isHeaderName(lines, i)) || !seen.add(name)) {
+                    continue;
+                }
+                notes.add("Line " + (i + 1) + ": " + name + (m.group(1) != null ? " is set by hand" : " is read")
+                          + ", and no message is sent with pattern: InOut. " + JMS_REQUEST_REPLY_HINT);
+            }
+        }
+        return notes;
+    }
 
     /**
      * What an invented Camel* header is usually reaching for, keyed on a fragment of its name, and the expression that

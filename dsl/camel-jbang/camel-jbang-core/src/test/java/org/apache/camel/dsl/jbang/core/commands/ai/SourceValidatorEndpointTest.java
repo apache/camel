@@ -607,6 +607,71 @@ class SourceValidatorEndpointTest {
                 .doesNotContain("did you mean"));
     }
 
+    /**
+     * A reply header set by hand in a route that sends nothing InOut gets a note, in any case of its name (r21 of the
+     * local-model benchmark: the service route set JMSReplyTo and the request went one way). The endpoints are written
+     * as the scheme alone with parameters, as well as in a URI.
+     */
+    @Test
+    void aJmsReplyHeaderSetByHandGetsANote() {
+        String route = """
+                - route:
+                    id: reserve-order
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationType: queue
+                        destinationName: orders
+                      steps:
+                        - toD:
+                            uri: "jms:queue:stock"
+                        - log:
+                            message: "Stock service answered: ${header.camelJmsReplyTo}"
+                - route:
+                    id: stock-service
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationName: stock
+                      steps:
+                        - setHeader:
+                            name: JMSReplyTo
+                            expression:
+                              simple: "jms:queue:orders"
+                        - setBody:
+                            constant: reserved
+                """;
+        assertThat(HeaderChecks.replyHeaderNotes(route)).containsExactly(
+                "Line 12: camelJmsReplyTo is read, and no message is sent with pattern: InOut. "
+                                                                         + HeaderChecks.JMS_REQUEST_REPLY_HINT,
+                "Line 21: JMSReplyTo is set by hand, and no message is sent with pattern: InOut. "
+                                                                                                                + HeaderChecks.JMS_REQUEST_REPLY_HINT);
+        // with the request sent InOut, the reply is Camel's: no note
+        assertThat(HeaderChecks.replyHeaderNotes(route.replace("uri: \"jms:queue:stock\"",
+                "uri: \"jms:queue:stock\"\n            pattern: InOut"))).isEmpty();
+        // not a JMS route: no note
+        assertThat(HeaderChecks.replyHeaderNotes(route.replace("uri: jms", "uri: seda").replace("jms:queue:", "seda:")))
+                .isEmpty();
+    }
+
+    /** The headers of an endpoint written as the scheme alone (uri: jms, with parameters:) are checked too. */
+    @Test
+    void theHeadersOfAnEndpointWrittenAsTheSchemeAloneAreChecked() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationName: orders
+                      steps:
+                        - log:
+                            message: "${header.CamelJmsDestinationNam}"
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("header CamelJmsDestinationNam is not set by jms")
+                .contains("did you mean CamelJmsDestination, CamelJmsDestinationName?"));
+    }
+
     /** The JMS request-reply hint is for JMS only: the reply headers of other components keep their "did you mean". */
     @Test
     void aReplyHeaderOfAnotherComponentGetsDidYouMean() {
