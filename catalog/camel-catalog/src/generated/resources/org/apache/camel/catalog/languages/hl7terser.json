@@ -15,6 +15,10 @@
     "modelName": "hl7terser",
     "modelJavaType": "org.apache.camel.model.language.Hl7TerserExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "bytes", "pojo" ], "format": "hl7", "dependsOn": [ "source" ], "description": "An HL7 message as text or bytes, in ER7 or XML, a HAPI Message, or a DOM of HL7 XML. A stream or a file fails: convert it to text first" },
+    "expressionOut": { "carriers": [ "text", "null" ], "javaType": "java.lang.String", "dependsOn": [ "resultType" ], "description": "The value of the field as text, null when the field is empty" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

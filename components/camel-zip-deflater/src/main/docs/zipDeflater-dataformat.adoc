@@ -84,9 +84,8 @@ YAML::
 
 In this example, we unmarshal a zipped payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
-the UnZippedMessageProcessor. Note that the compression Level employed
-during marshaling should be identical to the one employed during
-unmarshalling to avoid errors.
+the UnZippedMessageProcessor. Unmarshal reads the data of any
+compression level, so the level of the marshal does not need to be set.
 
 ._Java-only: inline Processor instance_
 [source,java]

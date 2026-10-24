@@ -18,7 +18,9 @@ package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -51,7 +53,10 @@ import org.apache.hc.core5.http.impl.io.HttpRequestExecutor;
 import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.HttpConnectionFactory;
 import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.apache.hc.core5.http.message.BasicHttpRequest;
 import org.apache.hc.core5.http.message.MessageSupport;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
@@ -62,6 +67,7 @@ import org.apache.hc.core5.http.protocol.RequestDate;
 import org.apache.hc.core5.http.protocol.RequestExpectContinue;
 import org.apache.hc.core5.http.protocol.RequestTargetHost;
 import org.apache.hc.core5.http.protocol.RequestUserAgent;
+import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.net.URIAuthority;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
@@ -71,6 +77,8 @@ public class AS2ClientConnection {
     private static final int RETRIEVE_CONNECTION_TIMEOUT_SECONDS = 5;
 
     private HttpHost targetHost;
+    private HttpRoute route;
+    private String proxyAuthorization;
     private HttpProcessor httpProcessor;
     private String as2Version;
     private String userAgent;
@@ -92,6 +100,16 @@ public class AS2ClientConnection {
                                Integer connectionPoolMaxSize, Duration connectionPoolTtl,
                                SSLContext sslContext, HostnameVerifier hostnameVerifier,
                                boolean expectContinue) throws IOException {
+        this(as2Version, userAgent, clientFqdn, targetHostName, targetPortNumber, socketTimeout, connectionTimeout,
+             connectionPoolMaxSize, connectionPoolTtl, sslContext, hostnameVerifier, expectContinue, null, null, null, null);
+    }
+
+    public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName,
+                               Integer targetPortNumber, Duration socketTimeout, Duration connectionTimeout,
+                               Integer connectionPoolMaxSize, Duration connectionPoolTtl,
+                               SSLContext sslContext, HostnameVerifier hostnameVerifier,
+                               boolean expectContinue, String proxyHost, Integer proxyPort,
+                               String proxyAuthUsername, String proxyAuthPassword) throws IOException {
 
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.userAgent = ObjectHelper.notNull(userAgent, "userAgent");
@@ -100,6 +118,21 @@ public class AS2ClientConnection {
                 sslContext != null ? "https" : "http",
                 ObjectHelper.notNull(targetHostName, "targetHostName"),
                 ObjectHelper.notNull(targetPortNumber, "targetPortNumber"));
+        if (proxyHost != null) {
+            // the connection to the proxy itself is plain http, whatever the target scheme: an https target is
+            // reached through a CONNECT tunnel
+            HttpHost proxy = new HttpHost("http", proxyHost, ObjectHelper.notNull(proxyPort, "proxyPort"));
+            this.route = new HttpRoute(targetHost, null, proxy, sslContext != null);
+            if (proxyAuthUsername != null && proxyAuthPassword != null) {
+                this.proxyAuthorization = "Basic " + Base64.getEncoder().encodeToString(
+                        (proxyAuthUsername + ":" + proxyAuthPassword).getBytes(StandardCharsets.UTF_8));
+            } else if (proxyAuthUsername != null || proxyAuthPassword != null) {
+                // one credential alone is a configuration mistake: report it now rather than as a 407 on the first send
+                throw new IllegalArgumentException("proxyAuthUsername and proxyAuthPassword must be set together");
+            }
+        } else {
+            this.route = new HttpRoute(targetHost);
+        }
         ObjectHelper.notNull(socketTimeout, "socketTimeout");
         this.connectionTimeoutMilliseconds = (int) ObjectHelper.notNull(connectionTimeout, "connectionTimeout").toMillis();
         ObjectHelper.notNull(connectionPoolMaxSize, "connectionPoolMaxSize");
@@ -187,8 +220,17 @@ public class AS2ClientConnection {
     public HttpResponse send(ClassicHttpRequest request, HttpCoreContext httpContext)
             throws HttpException, IOException, InterruptedException, ExecutionException, TimeoutException {
 
-        HttpRoute route = new HttpRoute(targetHost);
         request.setAuthority(new URIAuthority(targetHost));
+        if (route.getProxyHost() != null && !route.isTunnelled()) {
+            // a proxy forwarding plain http needs the absolute request-URI, and its credentials on every request
+            request.setScheme(targetHost.getSchemeName());
+            if (request instanceof BasicHttpRequest basicRequest) {
+                basicRequest.setAbsoluteRequestUri(true);
+            }
+            if (proxyAuthorization != null) {
+                request.setHeader(HttpHeaders.PROXY_AUTHORIZATION, proxyAuthorization);
+            }
+        }
         LeaseRequest leaseRequest = connectionPoolManager.lease(UUID.randomUUID().toString(), route, null);
 
         ConnectionEndpoint endpoint = null;
@@ -196,7 +238,18 @@ public class AS2ClientConnection {
         try {
             endpoint = leaseRequest.get(Timeout.ofSeconds(RETRIEVE_CONNECTION_TIMEOUT_SECONDS));
             if (!endpoint.isConnected()) {
-                connectionPoolManager.connect(endpoint, TimeValue.ofMilliseconds(connectionTimeoutMilliseconds), httpContext);
+                try {
+                    connectionPoolManager.connect(endpoint, TimeValue.ofMilliseconds(connectionTimeoutMilliseconds),
+                            httpContext);
+                    if (route.isTunnelled()) {
+                        createTunnel(endpoint);
+                        connectionPoolManager.upgrade(endpoint, httpContext);
+                    }
+                } catch (IOException | HttpException | RuntimeException e) {
+                    // a connection without its tunnel or its TLS layer must not go back to the pool
+                    endpoint.close(CloseMode.IMMEDIATE);
+                    throw e;
+                }
             }
             // Execute Request
             ConnectionEndpoint.RequestExecutor requestExecutor = new ConnectionEndpoint.RequestExecutor() {
@@ -211,6 +264,15 @@ public class AS2ClientConnection {
                 }
             };
             response = endpoint.execute(UUID.randomUUID().toString(), request, requestExecutor, httpContext);
+            if (route.getProxyHost() != null && !route.isTunnelled()
+                    && response.getCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
+                // the proxy may keep the connection open with the body of its 407 unread: it must not be reused
+                endpoint.close(CloseMode.IMMEDIATE);
+                // only the proxy answers 407: the message has not reached the AS2 partner
+                throw new HttpException(
+                        "Proxy " + route.getProxyHost().toHostString() + " refused to forward the request to "
+                                        + targetHost.toHostString() + ": " + new StatusLine(response));
+            }
         } finally {
             if (endpoint != null) {
                 // a null keep-alive makes the pool close the connection: a zero or negative one keeps it with no expiry
@@ -231,9 +293,38 @@ public class AS2ClientConnection {
         return response;
     }
 
+    /**
+     * Asks the proxy to open a tunnel to the target. The proxy credentials go on the CONNECT request only, so they are
+     * never seen by the AS2 partner at the other end of the tunnel.
+     */
+    private void createTunnel(ConnectionEndpoint endpoint) throws IOException, HttpException {
+        ClassicHttpRequest connect = new BasicClassicHttpRequest(Method.CONNECT, targetHost, targetHost.toHostString());
+        connect.setVersion(HttpVersion.HTTP_1_1);
+        connect.setHeader(HttpHeaders.HOST, targetHost.toHostString());
+        connect.setHeader(HttpHeaders.USER_AGENT, userAgent);
+        if (proxyAuthorization != null) {
+            connect.setHeader(HttpHeaders.PROXY_AUTHORIZATION, proxyAuthorization);
+        }
+        // a separate context, so the caller's context keeps the AS2 request and response
+        ClassicHttpResponse response = endpoint.execute(UUID.randomUUID().toString(), connect,
+                (request, conn, context) -> new HttpRequestExecutor().execute(request, conn, context),
+                HttpCoreContext.create());
+        int status = response.getCode();
+        if (status < HttpStatus.SC_SUCCESS || status >= HttpStatus.SC_REDIRECTION) {
+            throw new HttpException(
+                    "Proxy " + route.getProxyHost().toHostString() + " refused to open a tunnel to "
+                                    + targetHost.toHostString() + ": " + new StatusLine(response));
+        }
+    }
+
     private HttpConnection createTestConnection(
             SSLContext sslContext, HttpConnectionFactory<ManagedHttpClientConnection> connFactory)
             throws IOException {
+        HttpHost proxy = route.getProxyHost();
+        if (proxy != null) {
+            // the target is only reached through the proxy once a request is sent, so check the proxy can be reached
+            return connFactory.createConnection(new Socket(proxy.getHostName(), proxy.getPort()));
+        }
         if (sslContext == null) {
             return connFactory.createConnection(new Socket(targetHost.getHostName(), targetHost.getPort()));
         } else {

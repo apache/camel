@@ -18,6 +18,9 @@ package org.apache.camel.component.aws2.stepfunctions;
 
 import org.apache.camel.*;
 import org.apache.camel.component.aws2.stepfunctions.client.StepFunctions2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,6 +35,19 @@ import software.amazon.awssdk.services.sfn.SfnClient;
              syntax = "aws2-step-functions:label",
              producerOnly = true, category = { Category.CLOUD, Category.SERVERLESS },
              headersClass = StepFunctions2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: the operations take their input from headers, such as the input of"
+                                                + " startExecution and startSyncExecution in the"
+                                                + " CamelAwsStepFunctionsExecutionInput header as JSON text: marshal a Map or a"
+                                                + " POJO first. With pojoRequest=true the request of the AWS SDK for the"
+                                                + " operation, such as a StartExecutionRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " StartExecutionResponse of startExecution with the ARN of the execution."
+                                                 + " startSyncExecution gives a StartSyncExecutionResponse whose output is the"
+                                                 + " JSON that the execution returns, as text: a failed execution does not fail"
+                                                 + " the exchange, so check its status"))
 public class StepFunctions2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SfnClient awsSfnClient;

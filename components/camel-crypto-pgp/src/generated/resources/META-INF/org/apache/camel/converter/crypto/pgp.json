@@ -15,6 +15,12 @@
     "modelName": "pgp",
     "modelJavaType": "org.apache.camel.model.dataformat.PGPDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The data to encrypt: text in the charset of the exchange, bytes, a stream or a file" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "The PGP message in the stream cache, or a byte array when stream caching is off: binary, or ASCII armored text when armored is true" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "A PGP message, binary or ASCII armored: the armor is detected, whatever armored is set to" },
+    "unmarshalOut": { "carriers": [ "stream" ], "description": "The decrypted data in the stream cache, or a byte array when stream caching is off" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "keyUserid": { "index": 1, "kind": "attribute", "displayName": "Key Userid", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID." },

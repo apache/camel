@@ -25,6 +25,9 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.openfeature.OpenFeatureConstants;
 import org.apache.camel.component.openfeature.OpenFeatureEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
@@ -35,6 +38,12 @@ import org.apache.camel.support.LanguageSupport;
 @Language(value = "openfeature", modelName = "language")
 @Metadata(title = "OpenFeature", description = "Evaluate a feature flag as a boolean predicate",
           label = "language,cloud", firstVersion = "4.23.0")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "Not read: the expression is the flag key, and the targeting key and the"
+                                                  + " context come from headers"),
+           expressionOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                     description = "The string value of the flag, or the defaultValue of the endpoint when the"
+                                                   + " flag is not a string flag or is missing"))
 public class OpenFeatureLanguage extends LanguageSupport {
 
     private String endpoint = "openfeature:flags";

@@ -56,6 +56,10 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("ExchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("ExpectContinue", boolean.class);
         map.put("LazyStartProducer", boolean.class);
+        map.put("ProxyAuthPassword", java.lang.String.class);
+        map.put("ProxyAuthUsername", java.lang.String.class);
+        map.put("ProxyHost", java.lang.String.class);
+        map.put("ProxyPort", java.lang.Integer.class);
         map.put("AccessToken", java.lang.String.class);
         map.put("AsyncMdnAllowedHosts", java.lang.String.class);
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
@@ -145,6 +149,14 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mdnusername":
         case "mdnUserName": target.getConfiguration().setMdnUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": target.getConfiguration().setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthusername":
+        case "proxyAuthUsername": target.getConfiguration().setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": target.getConfiguration().setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
@@ -253,6 +265,14 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mdnusername":
         case "mdnUserName": return java.lang.String.class;
         case "password": return java.lang.String.class;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return java.lang.String.class;
+        case "proxyauthusername":
+        case "proxyAuthUsername": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return java.lang.String.class;
         case "requesturi":
@@ -357,6 +377,14 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mdnusername":
         case "mdnUserName": return target.getConfiguration().getMdnUserName();
         case "password": return target.getConfiguration().getPassword();
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return target.getConfiguration().getProxyAuthPassword();
+        case "proxyauthusername":
+        case "proxyAuthUsername": return target.getConfiguration().getProxyAuthUsername();
+        case "proxyhost":
+        case "proxyHost": return target.getConfiguration().getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return target.getConfiguration().getReceiptDeliveryOption();
         case "requesturi":
