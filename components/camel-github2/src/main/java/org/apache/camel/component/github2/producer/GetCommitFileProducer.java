@@ -93,6 +93,7 @@ public class GetCommitFileProducer extends AbstractGitHub2Producer {
         exchange.getMessage().setBody(content);
     }
 
+    @SuppressWarnings("deprecation")
     private byte[] readContent(GHContent file) throws IOException {
         if ("base64".equals(file.getEncoding())) {
             // GitHub wraps the lines of the base64 content
