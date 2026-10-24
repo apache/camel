@@ -24,6 +24,9 @@ import java.lang.reflect.Method;
 
 import com.beanit.asn1bean.ber.ReverseByteArrayOutputStream;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -34,6 +37,24 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
 
 @Dataformat("asn1")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, dependsOn = "unmarshalType",
+                                 byOption = @BodyType.When(option = "usingIterator", value = "true",
+                                                           carriers = { Carrier.BYTES, Carrier.POJO }),
+                                 description = "BER-encoded data, written as it is. With usingIterator, a byte array or a"
+                                               + " Bouncy Castle ASN1Primitive, and with unmarshalType as well an object of a"
+                                               + " class the asn1bean compiler generated"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The BER-encoded data in the stream cache, or a byte array when stream caching"
+                                                + " is off. With usingIterator, and no unmarshalType, nothing is written for a"
+                                                + " body that is neither a byte array nor an ASN1Primitive"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "BER-encoded data: one record, or several one after the other"),
+           unmarshalOut = @BodyType(value = Carrier.BYTES,
+                                    byOption = @BodyType.When(option = "usingIterator", value = "true",
+                                                              carriers = Carrier.ITERATOR),
+                                    description = "The records, encoded again, in one byte array. With usingIterator, an"
+                                                  + " Iterator for the split EIP: of messages with the bytes of one record"
+                                                  + " each, or of objects of the class unmarshalType names"))
 public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private boolean usingIterator;

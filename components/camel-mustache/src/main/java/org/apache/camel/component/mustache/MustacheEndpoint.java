@@ -31,6 +31,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -45,6 +48,16 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEM
 @UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri",
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
              headersClass = MustacheConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The template gets the body as body, as it is: text, or a Map, a List or a"
+                                                + " POJO to read from; convert bytes or a stream to a String first. The"
+                                                + " template is the resource, or the CamelMustacheTemplate or"
+                                                + " CamelMustacheResourceUri header with allowTemplateFromHeader=true, and"
+                                                + " never the body"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The text the template writes, also when it is JSON: unmarshal it to read its"
+                                                 + " fields. Values in double braces are HTML-escaped, in triple braces as they"
+                                                 + " are. The headers are kept"))
 public class MustacheEndpoint extends ResourceEndpoint {
 
     private MustacheFactory mustacheFactory;

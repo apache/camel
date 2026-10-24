@@ -18,6 +18,9 @@ package org.apache.camel.language.header;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
@@ -27,6 +30,9 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * A language for header expressions.
  */
 @Language("header")
+@BodyTypes(expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "The value of the header as it is, null when there is none. A missing header"
+                                                   + " falls back to the exchange property of that name"))
 public class HeaderLanguage extends LanguageSupport {
 
     public static Expression header(String headerName) {

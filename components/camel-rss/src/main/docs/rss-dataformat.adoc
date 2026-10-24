@@ -12,8 +12,8 @@
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.
 
-* marshal = from ROME `SyndFeed` to XML `String`
-* unmarshal = from XML `String` to ROME `SyndFeed`
+* marshal = from ROME `SyndFeed` (or the XML text of a feed) to XML
+* unmarshal = from XML (text, bytes, a stream or a file) to ROME `SyndFeed`
 
 A route using this would look something like this:
 
@@ -42,8 +42,8 @@ include::partial$dataformat-options.adoc[]
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.
 
-* marshal = from ROME `SyndFeed` to XML `String`
-* unmarshal = from XML `String` to ROME `SyndFeed`
+* marshal = from ROME `SyndFeed` (or the XML text of a feed) to XML
+* unmarshal = from XML (text, bytes, a stream or a file) to ROME `SyndFeed`
 
 A route using the RSS dataformat will look like this:
 

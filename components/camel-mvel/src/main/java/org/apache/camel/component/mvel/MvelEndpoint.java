@@ -24,6 +24,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -39,6 +42,13 @@ import org.mvel2.templates.TemplateRuntime;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION, Category.SCRIPT }, headersClass = MvelConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The template gets the body as body, as it is: no body prints as null, and"
+                                                + " bytes or a stream are not read as text. The template is the resource, or"
+                                                + " the CamelMvelTemplate header with allowTemplateFromHeader=true, never the"
+                                                + " body"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The text the template writes. The headers are kept"))
 public class MvelEndpoint extends ResourceEndpoint {
 
     @UriParam

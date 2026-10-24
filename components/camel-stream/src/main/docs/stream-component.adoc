@@ -58,12 +58,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Message content
 
-The Stream component supports either `String` or `byte[]` for writing
-to streams. Just add either `String` or `byte[]` content to the
-`message.in.body`. Messages sent to the *stream:* producer in binary
-mode are not followed by the newline character (as opposed to the
-`String` messages). Message with `null` body will not be appended to the
-output stream. +
+The Stream component writes text, bytes, a stream or a file: text in the
+`encoding`, and the others as bytes, each followed by a new line unless
+`appendNewLine` is `false`. A message with a `null` body writes nothing.
+Another body, such as a `Map`, is written as its `toString()`, so marshal it
+first. +
  The special `stream:header` URI is used for custom output streams. Just
 add a `java.io.OutputStream` object to `message.in.header` in the key
 `stream`. +

@@ -227,7 +227,7 @@ Java::
 +
 [source,java]
 ----
-from("once:foo?body=file.data.json&delay=-1").to("bean:myBean?method=someMethodName");
+from("once:foo?body=file:data.json&delay=-1").to("bean:myBean?method=someMethodName");
 ----
 
 XML::
@@ -235,7 +235,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="once:foo?body=file.data.json&amp;delay=-1"/>
+  <from uri="once:foo?body=file:data.json&amp;delay=-1"/>
   <to uri="bean:myBean?method=someMethodName"/>
 </route>
 ----
@@ -248,7 +248,7 @@ YAML::
     from:
       uri: once:foo
       parameters:
-        body: file.data.json
+        body: file:data.json
         delay: -1
       steps:
         - to:

@@ -18,9 +18,10 @@ package org.apache.camel.maven.packaging;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,8 +29,10 @@ import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.util.Strings;
 
 /**
  * Carries the {@link BodyTypes} of a component, data format or language into its model, which the catalog JSON is
@@ -50,8 +53,8 @@ final class BodyTypesHelper {
      * @param  bodyTypes                the annotation, null when the class has none
      * @param  owner                    the class with the annotation, for the error message
      * @throws IllegalArgumentException when a side does not fit the model: a data format side on a component, a
-     *                                  producer side on a consumer-only component, unchanged on what a step needs or
-     *                                  any on what it leaves
+     *                                  producer side on a consumer-only component, unchanged on what a step needs, any
+     *                                  on what it leaves, or a value an option cannot have
      */
     static void addBodyTypes(BaseModel<?> model, BodyTypes bodyTypes, Class<?> owner) {
         if (bodyTypes == null) {
@@ -70,7 +73,7 @@ final class BodyTypesHelper {
         sides.put(BodyTypeModel.EXPRESSION_OUT, bodyTypes.expressionOut());
 
         Set<String> allowed = allowedSides(model);
-        Set<String> options = optionNames(model);
+        Map<String, BaseOptionModel> options = options(model);
         for (Map.Entry<String, BodyType> entry : sides.entrySet()) {
             String side = entry.getKey();
             BodyType bodyType = entry.getValue();
@@ -93,6 +96,7 @@ final class BodyTypesHelper {
             }
             for (BodyType.When when : bodyType.byOption()) {
                 checkOption(owner, side, when.option(), options);
+                checkValue(owner, side, when, options.get(when.option()));
                 check(owner, side + " " + when.option() + "=" + when.value(), when.carriers());
             }
             model.getBodyTypes().put(side, asModel(bodyType));
@@ -118,28 +122,57 @@ final class BodyTypesHelper {
         };
     }
 
-    /** The options of the model, which the body types can depend on. */
-    private static Set<String> optionNames(BaseModel<?> model) {
-        Set<String> names = new HashSet<>();
-        model.getOptions().forEach(o -> names.add(o.getName()));
+    /** The options of the model by name, which the body types can depend on. */
+    private static Map<String, BaseOptionModel> options(BaseModel<?> model) {
+        Map<String, BaseOptionModel> answer = new HashMap<>();
+        model.getOptions().forEach(o -> answer.put(o.getName(), o));
         if (model instanceof ComponentModel component) {
-            component.getComponentOptions().forEach(o -> names.add(o.getName()));
-            component.getEndpointOptions().forEach(o -> names.add(o.getName()));
+            component.getComponentOptions().forEach(o -> answer.put(o.getName(), o));
+            component.getEndpointOptions().forEach(o -> answer.put(o.getName(), o));
         }
-        return names;
+        return answer;
     }
 
-    private static void checkOption(Class<?> owner, String side, String option, Set<String> options) {
-        if (!options.contains(option)) {
+    private static void checkOption(Class<?> owner, String side, String option, Map<String, BaseOptionModel> options) {
+        if (!options.containsKey(option)) {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " depends on " + option + ", which is not an option");
         }
     }
 
     /**
+     * A body for a value the option cannot have would never hold: the value is one of an enum, or true or false for a
+     * boolean, in any case and in any style of an enum constant, as tooling compares it with what the endpoint sets.
+     */
+    private static void checkValue(Class<?> owner, String side, BodyType.When when, BaseOptionModel option) {
+        List<String> values = option.getEnums() != null && !option.getEnums().isEmpty()
+                ? option.getEnums()
+                : "boolean".equals(option.getType()) ? List.of("true", "false") : List.of();
+        if (!values.isEmpty() && values.stream().noneMatch(v -> isSameValue(v, when.value()))) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " has " + when.option() + "=" + when.value()
+                                               + ", which is not a value of the option: " + String.join(", ", values));
+        }
+    }
+
+    /**
+     * Whether two values of an option are one value as Camel takes it: in any case, and in any style of an enum
+     * constant, so convert-to-json and convertToJson are CONVERT_TO_JSON, as for the catalog and the enum type
+     * converter (StringHelper.asEnumConstantValue in camel-util, which this plugin does not depend on).
+     */
+    private static boolean isSameValue(String value, String other) {
+        return value.equalsIgnoreCase(other) || asEnumConstant(value).equals(asEnumConstant(other));
+    }
+
+    private static String asEnumConstant(String value) {
+        return Strings.camelCaseToDash(value).replaceAll("-+", "-").replace('-', '_').toUpperCase(Locale.ENGLISH);
+    }
+
+    /**
      * A body has a carrier: an option value without one would say nothing. UNCHANGED is for the body after a step, such
-     * as a sql query that leaves it unchanged unless it is a select. ANY is for the bodies a step needs. ANY and
-     * UNKNOWN stand alone.
+     * as a sql query that leaves it unchanged unless it is a select. ANY is for the bodies a step needs, and UNKNOWN
+     * for the body after a step, so the bodies a step needs have one word for "whatever the body is". ANY and UNKNOWN
+     * stand alone.
      */
     private static void check(Class<?> owner, String side, Carrier[] carriers) {
         if (carriers.length == 0) {
@@ -150,6 +183,10 @@ final class BodyTypesHelper {
         if (in && list.contains(Carrier.UNCHANGED)) {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " is what a step needs, which cannot be unchanged");
+        }
+        if (in && list.contains(Carrier.UNKNOWN)) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " is what a step needs, which is any, not unknown");
         }
         if (!in && list.contains(Carrier.ANY)) {
             throw new IllegalArgumentException(

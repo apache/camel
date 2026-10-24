@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -31,6 +34,10 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "saga", title = "Saga", syntax = "saga:action", producerOnly = true,
              category = { Category.CLUSTERING }, headersClass = SagaConstants.class)
+@BodyTypes(producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: the saga service calls the completion or compensation endpoints"
+                                                 + " with messages of its own"))
 public class SagaEndpoint extends DefaultEndpoint {
 
     public enum SagaEndpointAction {

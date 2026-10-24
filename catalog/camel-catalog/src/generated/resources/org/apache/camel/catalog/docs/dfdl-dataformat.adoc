@@ -64,7 +64,7 @@ YAML::
 ====
 
 === Marshal (XML to fixed format)
-Below is an example of using the DFDL Data Format to unmarshal an EDI message into an XML DOM Document:
+Below is an example of using the DFDL Data Format to marshal XML (a DOM Document, or XML text) into an EDI message:
 
 [tabs]
 ====

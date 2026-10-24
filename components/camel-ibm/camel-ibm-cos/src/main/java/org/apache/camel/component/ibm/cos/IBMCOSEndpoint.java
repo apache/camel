@@ -30,6 +30,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
@@ -49,6 +52,37 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "4.16.0", scheme = "ibm-cos", title = "IBM Cloud Object Storage",
              syntax = "ibm-cos:bucketName", category = { Category.CLOUD, Category.FILE },
              headersClass = IBMCOSConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.STREAM,
+                                   byOption = @BodyType.When(option = "includeBody", value = "false", carriers = Carrier.NULL),
+                                   description = "The content of the object as a stream, one message per object, with its key"
+                                                 + " and metadata in headers. No body with includeBody=false"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "operation",
+                                  byOption = @BodyType.When(option = "operation", value = "putObject",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "The content to upload with putObject, the default: text, bytes, a stream or a"
+                                                + " file. A Map, a List or no body fails: marshal it first. The other"
+                                                + " operations take their input from headers"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getObject", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "getObjectRange",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "listObjects", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.ibm.cloud.objectstorage.services.s3.model.S3ObjectSummary>"),
+                                           @BodyType.When(option = "operation", value = "listBuckets", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.ibm.cloud.objectstorage.services.s3.model.Bucket>"),
+                                           @BodyType.When(option = "operation", value = "deleteObjects",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "headBucket", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "Unchanged after putObject (with the ETag in a header), copyObject,"
+                                                 + " deleteObject, createBucket and deleteBucket. getObject and getObjectRange"
+                                                 + " give the content as a stream, listObjects a List of the first page of"
+                                                 + " objects, listBuckets a List of Bucket, deleteObjects a List of the deleted"
+                                                 + " objects and headBucket whether the bucket exists"))
 public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(IBMCOSEndpoint.class);

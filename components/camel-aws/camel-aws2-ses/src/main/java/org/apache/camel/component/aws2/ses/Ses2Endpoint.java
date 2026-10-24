@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.ses.client.Ses2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,13 @@ import software.amazon.awssdk.services.ses.SesClient;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS Simple Email Service (SES)", syntax = "aws2-ses:from",
              producerOnly = true, category = { Category.CLOUD, Category.MAIL }, headersClass = Ses2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The text of the mail, or its HTML with the CamelAwsSesHtmlEmail header set to"
+                                                + " true: bytes, a stream or a file are read as text, and a Map or a POJO is"
+                                                + " sent as its toString(), so marshal it first. A jakarta.mail Message is sent"
+                                                + " as a raw mail as it is"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, with the id of the mail in the CamelAwsSesMessageId header"))
 public class Ses2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SesClient sesClient;

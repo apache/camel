@@ -57,6 +57,9 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -73,6 +76,23 @@ import org.slf4j.LoggerFactory;
  * and from XML
  */
 @Dataformat("jaxb")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                 dependsOn = "partNamespace",
+                                 byOption = @BodyType.When(option = "mustBeJAXBElement", value = "true",
+                                                           carriers = Carrier.POJO),
+                                 description = "A JAXB object: a class with @XmlRootElement, a JAXBElement, or a class the"
+                                               + " ObjectFactory makes an element of. Text, bytes, a stream or a file is"
+                                               + " written as it is, as XML already, unless mustBeJAXBElement is true"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "xml",
+                                  description = "The XML in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                   format = "xml",
+                                   description = "The XML: text, bytes, a stream, a file, a DOM Document, a DOMSource or a"
+                                                 + " StreamSource"),
+           unmarshalOut = @BodyType(value = Carrier.POJO,
+                                    description = "The object of the root element, of a JAXB class of contextPath, or of"
+                                                  + " partClass when set; a JAXBElement, where JAXB gives one, when"
+                                                  + " ignoreJAXBElement is false"))
 public class JaxbDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

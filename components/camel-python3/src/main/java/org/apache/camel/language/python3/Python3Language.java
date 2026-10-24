@@ -36,6 +36,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
@@ -71,6 +74,13 @@ import org.graalvm.polyglot.Value;
  * </pre>
  */
 @Language("python3")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, in the variable body: a Map, a List or an array can be"
+                                                  + " indexed, and other Java objects have no methods unless the language is"
+                                                  + " created with createWithHostAccess()"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "What the script returns: a dict as a Map, a list or a tuple as a List, a set"
+                                                   + " as a Set, bytes as a List of numbers, and None as null"))
 public class Python3Language extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     private final HostAccess hostAccess;

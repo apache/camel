@@ -36,6 +36,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -48,6 +51,21 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION }, headersClass = JoltConstants.class)
 @Metadata(excludeProperties = "allowContextMapAll")
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.MAP, Carrier.LIST, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+        Carrier.FILE }, format = "json",
+                                  byOption = @BodyType.When(option = "inputType", value = "JsonString",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "Parsed JSON (a Map or a List), or JSON as text, bytes, a stream or a file,"
+                                                + " which is parsed. Text that does not start with { or [ reaches the spec as"
+                                                + " it is. With inputType=JsonString the body is always parsed as JSON"),
+           producerOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, format = "json",
+                                   byOption = @BodyType.When(option = "outputType", value = "JsonString",
+                                                             carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                   description = "The JSON the spec makes: a Map for an object, a List for an array; JSON text"
+                                                 + " with outputType=JsonString"))
 public class JoltEndpoint extends ResourceEndpoint {
 
     private JoltTransform transform;

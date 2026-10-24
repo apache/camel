@@ -97,7 +97,7 @@ executable via its standard input (`stdin`).
 After execution,
 http://camel.apache.org/exchange.html[the message body] is the result of
 the execution.
-That is, an `org.apache.camel.components.exec.ExecResult` instance containing the
+That is, an `org.apache.camel.component.exec.ExecResult` instance containing the
 `stdout`, `stderr`, _exit value_, and the _out file_.
 
 This component supports the following `ExecResult` http://camel.apache.org/type-converter.html[type converters]
@@ -307,7 +307,7 @@ Java::
 +
 [source,java]
 ----
-// When outFile is specified, the body is the content of that file (as InputStream)
+// When outFile is specified, the ExecResult in the body converts to the content of that file
 from("direct:exec")
     .to("exec:ant.bat?args=-f CamelExecBuildFile.xml -l CamelExecOutFile.txt&outFile=CamelExecOutFile.txt")
     .to("log:result");
@@ -317,7 +317,7 @@ XML::
 +
 [source,xml]
 ----
-<!-- When outFile is specified, the body is the content of that file (as InputStream) -->
+<!-- When outFile is specified, the ExecResult in the body converts to the content of that file -->
 <route>
   <from uri="direct:exec"/>
   <to uri="exec:ant.bat?args=-f CamelExecBuildFile.xml -l CamelExecOutFile.txt&amp;outFile=CamelExecOutFile.txt"/>
@@ -329,7 +329,7 @@ YAML::
 +
 [source,yaml]
 ----
-# When outFile is specified, the body is the content of that file (as InputStream)
+# When outFile is specified, the ExecResult in the body converts to the content of that file
 - route:
     from:
       uri: direct:exec

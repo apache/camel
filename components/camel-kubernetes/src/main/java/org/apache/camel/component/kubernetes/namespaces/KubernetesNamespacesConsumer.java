@@ -59,7 +59,7 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         nsWatcher = new NamespacesConsumerTask();
-        executor.submit(nsWatcher);
+        KubernetesHelper.watch(this, executor, nsWatcher);
     }
 
     @Override

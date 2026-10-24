@@ -25,6 +25,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
@@ -38,6 +41,13 @@ import org.apache.camel.spi.UriEndpoint;
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "stub", title = "Stub", syntax = "stub:name",
              remote = false, internal = true, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNCHANGED, description = "The body the producer sent"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "Unchanged when no route consumes from the stub endpoint (it keeps the latest"
+                                                 + " size messages and drops the oldest), or for a message that expects no reply"
+                                                 + " (InOnly). A message that expects one (InOut) waits for the body the stub"
+                                                 + " route ends with"))
 public class StubEndpoint extends SedaEndpoint {
 
     public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {

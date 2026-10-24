@@ -23,6 +23,9 @@ import java.nio.charset.StandardCharsets;
 import com.prowidesoftware.JsonSerializable;
 import com.prowidesoftware.swift.model.mt.AbstractMT;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -35,6 +38,20 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 @Dataformat("swiftMt")
 @Metadata(firstVersion = "3.20.0", title = "SWIFT MT")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO, javaType = "com.prowidesoftware.swift.model.mt.AbstractMT",
+                                 byOption = @BodyType.When(option = "writeInJson", value = "true", carriers = Carrier.POJO,
+                                                           javaType = "com.prowidesoftware.JsonSerializable"),
+                                 description = "A Prowide MT message, such as an MT103, as unmarshal gives. The body is not"
+                                               + " converted: MT text fails"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The MT message in FIN format, or JSON with writeInJson, in the stream cache,"
+                                                + " or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                   description = "An MT message in FIN format"),
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                    javaType = "com.prowidesoftware.swift.model.mt.AbstractMT",
+                                    description = "The Prowide class of the message type, such as MT103; null when the type is"
+                                                  + " not known"))
 public class SwiftMtDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     /**
