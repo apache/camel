@@ -48,11 +48,15 @@ public class PgVectorProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final PgVectorAction action = in.getHeader(PgVectorHeaders.ACTION, PgVectorAction.class);
+        // the header wins over the action option
+        final PgVectorAction action = in.getHeader(PgVectorHeaders.ACTION, getEndpoint().getConfiguration().getAction(),
+                PgVectorAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, PgVectorHeaders.ACTION);
+                throw new NoSuchHeaderException(
+                        "The action is required: set the action option or the header", exchange,
+                        PgVectorHeaders.ACTION);
             }
 
             switch (action) {

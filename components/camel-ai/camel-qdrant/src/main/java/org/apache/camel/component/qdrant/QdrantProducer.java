@@ -79,11 +79,15 @@ public class QdrantProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         final Message in = exchange.getMessage();
-        final QdrantAction action = in.getHeader(QdrantHeaders.ACTION, QdrantAction.class);
+        // the header wins over the action option
+        final QdrantAction action = in.getHeader(QdrantHeaders.ACTION, getEndpoint().getConfiguration().getAction(),
+                QdrantAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, QdrantHeaders.ACTION);
+                throw new NoSuchHeaderException(
+                        "The action is required: set the action option or the header", exchange,
+                        QdrantHeaders.ACTION);
             }
 
             return switch (action) {

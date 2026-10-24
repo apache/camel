@@ -24,6 +24,9 @@ qdrant:collection[?options]
 
 Where *collection* represents a named set of points (vectors with a payload) defined in your database.
 
+The `action` option of the endpoint, or the `CamelQdrantAction` header, selects the action, such as `qdrant:myCollection?action=SIMILARITY_SEARCH`.
+The header, when set, wins over the option, so one endpoint can also run several actions. Without either, the producer fails.
+
 
 // component options: START
 include::partial$component-configure-options.adoc[]
