@@ -60,7 +60,8 @@ override the API call. See xref:manual::security-model.adoc[the Camel security m
 == Usage
 
 An `as2://server/listen` consumer receives AS2 messages on `serverPortNumber`, for the request URIs that match
-`requestUriPattern`. An `as2://client/send` producer sends the message body (`inBody: ediMessage`) to
+`requestUriPattern`. When its route fails, the partner gets an HTTP 500 that only says the message could not be
+processed; set `muteException=false` to send the message of the exception too. An `as2://client/send` producer sends the message body (`inBody: ediMessage`) to
 `targetHostname` and `targetPortNumber`. The following routes send a plain EDIFACT message from one to the other:
 
 [source,yaml]

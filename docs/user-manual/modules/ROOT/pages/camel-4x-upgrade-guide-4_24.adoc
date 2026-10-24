@@ -3456,3 +3456,10 @@ The `httpMethod` option of the endpoint now wins over the `CamelHttpMethod` head
 camel-http. Before, the header overrode the option, so a route that received a request through an HTTP consumer, which
 sets the header to the method of that request, sent it on with that method instead of the method of the endpoint. To
 let the header choose the method, do not set `httpMethod` on the endpoint.
+
+=== camel-as2 - the response to a failed route does not carry the message of the exception
+
+The server/listen and receipt/receive consumers have the new `muteException` option, `true` by default: when the
+route fails, the HTTP 500 that the partner gets says only that the message (or the receipt) could not be processed.
+Before, its body was the message of the exception of the route. Set `muteException=false` to send the message of the
+exception as before.

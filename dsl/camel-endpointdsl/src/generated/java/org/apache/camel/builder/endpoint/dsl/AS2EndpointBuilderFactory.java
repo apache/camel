@@ -611,6 +611,42 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side
+         * (server listen or receipt receive), the HTTP response only says that
+         * the message or the receipt could not be processed, and not the
+         * message of the exception.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side
+         * (server listen or receipt receive), the HTTP response only says that
+         * the message or the receipt could not be processed, and not the
+         * message of the exception.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * The access token that is used by the client for bearer
          * authentication.
          * 
