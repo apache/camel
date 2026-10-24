@@ -61,8 +61,10 @@ public class Athena2Configuration implements Cloneable, AwsCommonConfiguration {
     @UriParam(label = "advanced",
               description = "A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this.")
     private String clientRequestToken;
-    @UriParam(description = "The SQL query to run. Except for simple queries, prefer setting this as the body of the "
-                            + "Exchange or as a header using Athena2Constants.QUERY_STRING to avoid having to deal with URL encoding issues.")
+    @UriParam(description = "The SQL query to run. The CamelAwsAthenaQueryString header takes precedence over this option,"
+                            + " and the message body is used as the query only when neither the header nor this option is set."
+                            + " Except for simple queries, prefer setting the query in the header or as the body of the Exchange"
+                            + " to avoid having to deal with URL encoding issues.")
     private String queryString;
     @UriParam(label = "security",
               description = "The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS.")
@@ -364,8 +366,10 @@ public class Athena2Configuration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * The SQL query to run. Except for simple queries, prefer setting this as the {@code body} of the Exchange or as a
-     * header using {@link Athena2Constants#QUERY_STRING} to avoid having to deal with URL encoding issues.
+     * The SQL query to run. The {@link Athena2Constants#QUERY_STRING} header takes precedence over this option, and the
+     * message body is used as the query only when neither the header nor this option is set. Except for simple queries,
+     * prefer setting the query in the header or as the {@code body} of the Exchange to avoid having to deal with URL
+     * encoding issues.
      */
     public void setQueryString(String queryString) {
         this.queryString = queryString;
