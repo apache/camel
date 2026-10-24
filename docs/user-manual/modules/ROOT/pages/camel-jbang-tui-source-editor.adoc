@@ -90,6 +90,13 @@ panel at the bottom says what is wrong with the line the cursor is on. A note, s
 counted apart in the title as `notes`. A note does not keep the file from being saved. They are checked again as you type, and *F9*
 jumps to the next problem.
 
+A route that sends to a `direct` or `seda` endpoint no route consumes gets a note on that line, such as
+`to: direct:cheese` while no route has `from: direct:cheese`. This works for YAML, Java and XML routes, and the routes
+of the other YAML, Java and XML files of the project count too. They are read in the background each time a file
+opens, and again while you type once the last read is a few seconds old. It is a note rather than an error, as the
+route that consumes it is often the next one you write. The check says nothing when the other files cannot tell, such as a route whose input is a property
+placeholder or a route template, or a project with more files than the check reads.
+
 image::jbang/camel-tui-source-problems.png[A misspelled seda option marked while typing]
 
 === Saving
