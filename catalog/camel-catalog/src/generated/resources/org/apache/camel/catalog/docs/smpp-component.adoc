@@ -114,6 +114,9 @@ corresponding alphabet. When deciding which alphabet to use in the byte
 array, the Camel SMPP component does not consider the data coding value
 (header or configuration), it only considers the specified alphabet
 (from either the header or endpoint parameter).
+The exception is an 8-bit data coding or alphabet in a header: the body is
+then sent as the bytes it converts to, as they are. The same values in the
+endpoint parameters do not do this, so a byte array body is read as text first.
 
 If some characters in the String cannot be represented in the chosen
 alphabet, they may be replaced by the question mark (`?`) symbol.
@@ -121,8 +124,10 @@ Users of the API may want to consider checking if their message body can be
 converted to ISO-8859-1 before passing it to the component and if not,
 setting the alphabet header to request UCS-2 encoding.
 If the alphabet
-and data coding options are not specified at all, then the component may
-try to detect the required encoding and set the data coding for you.
+and data coding options are not specified at all, the component does not
+detect the required encoding or set the data coding for you: the text is
+encoded for the SMSC default alphabet (`0`), in the `encoding` of the endpoint,
+ISO-8859-1 by default.
 
 The list of alphabet codes is specified in the SMPP specification v3.4,
 section 5.2.19.  One notable limitation of the SMPP specification is
@@ -145,8 +150,10 @@ is completed automatically.
 
 If the GSM 3.38 alphabet is used, the component will pack up to 160
 characters into the 140-byte message body.
-If an 8-bit character set is used (e.g., ISO-8859-1 for Western Europe), then 140 characters will be
-allowed within the 140-byte message body.
+If the 8-bit alphabet (`4`) is used, then 140 bytes will be
+allowed within the 140-byte message body. Text in an 8-bit character set
+(e.g., ISO-8859-1 for Western Europe) is split by 140 bytes only with that
+alphabet; with the default alphabet, it is split by 160 characters.
 If 16 bit UCS-2 encoding is
  used, then just 70 characters fit into each 140-byte message.
 
