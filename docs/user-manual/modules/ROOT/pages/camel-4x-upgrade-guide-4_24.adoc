@@ -3463,3 +3463,11 @@ The server/listen and receipt/receive consumers have the new `muteException` opt
 route fails, the HTTP 500 that the partner gets says only that the message (or the receipt) could not be processed.
 Before, its body was the message of the exception of the route. Set `muteException=false` to send the message of the
 exception as before.
+
+=== camel-whatsapp - the component is no longer marked producer only
+
+The whatsapp component receives events in webhook mode (`webhook:whatsapp:...`), so its metadata no longer marks it as
+producer only, and the catalog now describes the body that the webhook route gets. Tools that read the catalog, such as
+the YAML DSL validator and the Endpoint DSL, now accept a whatsapp endpoint as a consumer, and the Endpoint DSL builder
+of whatsapp gets the consumer options `bridgeErrorHandler`, `exceptionHandler` and `exchangePattern`. A whatsapp
+endpoint used directly in `from` still fails at startup: wrap it with the webhook component, as before.
