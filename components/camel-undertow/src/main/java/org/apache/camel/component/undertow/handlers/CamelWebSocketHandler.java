@@ -215,6 +215,7 @@ public class CamelWebSocketHandler implements HttpHandler {
             return;
         }
         Set<String> authenticatedEndpoints = new HashSet<>();
+        Set<String> oauthEndpoints = new HashSet<>();
         Map<String, Object> headers = new HashMap<>();
         for (UndertowEndpoint endpoint : path.endpoints) {
             OAuthHttpSecuritySupport oauthHttpSecurity = endpoint.getOauthHttpSecurity();
@@ -226,6 +227,7 @@ public class CamelWebSocketHandler implements HttpHandler {
                     return;
                 }
                 exchange.putAttachment(OAUTH_TOKEN_VALIDATION_RESULT_ATTACHMENT, validation.getValidationResult());
+                oauthEndpoints.add(endpoint.getEndpointUri());
             }
             if (endpoint.requiresAuthentication()) {
                 int statusCode = endpoint.authenticate(exchange);
@@ -243,9 +245,9 @@ public class CamelWebSocketHandler implements HttpHandler {
                 authenticatedEndpoints.add(endpoint.getEndpointUri());
             }
         }
-        if (!authenticatedEndpoints.isEmpty()) {
+        if (!authenticatedEndpoints.isEmpty() || !oauthEndpoints.isEmpty()) {
             exchange.putAttachment(HANDSHAKE_RESULT_ATTACHMENT,
-                    new HandshakeResult(authenticatedEndpoints, headers));
+                    new HandshakeResult(authenticatedEndpoints, oauthEndpoints, headers, path.consumer));
         }
         this.delegate.handleRequest(exchange);
     }
@@ -297,17 +299,32 @@ public class CamelWebSocketHandler implements HttpHandler {
     }
 
     private static boolean isAuthenticated(WebSocketChannel channel, UndertowEndpoint endpoint, boolean consumer) {
-        if (endpoint.getOauthHttpSecurity() != null && (channel == null
-                || !(channel.getAttribute(
-                        OAuthHttpSecuritySupport.OAUTH_TOKEN_VALIDATION_RESULT) instanceof OAuthTokenValidationResult))) {
+        if (endpoint.getOauthHttpSecurity() != null && !isOAuthValidated(channel, endpoint)) {
             return false;
         }
         if (requiresHandshakeResult(endpoint, consumer)) {
-            return channel != null
-                    && channel.getAttribute(HANDSHAKE_RESULT) instanceof HandshakeResult result
-                    && result.endpointUris.contains(endpoint.getEndpointUri());
+            if (channel == null
+                    || !(channel.getAttribute(HANDSHAKE_RESULT) instanceof HandshakeResult result)
+                    || !result.endpointUris.contains(endpoint.getEndpointUri())) {
+                return false;
+            }
+            // the custom handlers run only during a consumer-mode handshake, so a result recorded while only
+            // producers served the path does not account for them
+            return !consumer || endpoint.getHandlers() == null || result.consumer;
         }
         return true;
+    }
+
+    /**
+     * Whether the handshake of the given channel was validated by the OAuth profile of the given endpoint. A validation
+     * by another endpoint of the path, such as an earlier consumer with another profile, does not count.
+     */
+    private static boolean isOAuthValidated(WebSocketChannel channel, UndertowEndpoint endpoint) {
+        return channel != null
+                && channel.getAttribute(
+                        OAuthHttpSecuritySupport.OAUTH_TOKEN_VALIDATION_RESULT) instanceof OAuthTokenValidationResult
+                && channel.getAttribute(HANDSHAKE_RESULT) instanceof HandshakeResult result
+                && result.oauthEndpointUris.contains(endpoint.getEndpointUri());
     }
 
     /**
@@ -403,10 +420,28 @@ public class CamelWebSocketHandler implements HttpHandler {
                         = new ConsumerHandlers(
                                 consumer.getEndpoint(), consumerHandler != null ? consumerHandler : upgradeHandler);
                 producerEndpoints.forEach(this::warnIfProducerSettingsUnused);
+                closePeersThatNoLongerPassChecks();
             }
         } finally {
             consumerLock.unlock();
         }
+    }
+
+    /**
+     * Closes the already-open peers whose handshake did not pass the security checks that now apply to the path. A
+     * connection accepted while only a producer served the path ran the producer checks but not the custom handlers a
+     * consumer configures, so once that consumer is set such a peer no longer passes the path checks. It is closed
+     * right away rather than only when it next sends a message, so that a receive-only client is told to reconnect
+     * instead of silently receiving nothing. {@link #send} filters the same peers out of the meantime.
+     */
+    private void closePeersThatNoLongerPassChecks() {
+        PathSecurity path = pathSecurity();
+        delegate.getPeerConnections().stream()
+                .filter(peer -> !isAuthenticated(peer, path))
+                .forEach(peer -> {
+                    LOG.warn("Closing WebSocket channel whose handshake did not pass the security checks of the consumer");
+                    WebSockets.sendClose(CloseMessage.MSG_VIOLATES_POLICY, "Authentication required", peer, null);
+                });
     }
 
     /**
@@ -662,16 +697,22 @@ public class CamelWebSocketHandler implements HttpHandler {
     }
 
     /**
-     * The endpoints whose security provider, allowed roles and custom handlers a handshake passed, and the headers that
-     * the providers added.
+     * The endpoints whose security provider, allowed roles and custom handlers a handshake passed, the endpoints whose
+     * OAuth profile validated it, and the headers that the providers added. {@code consumer} records whether the
+     * handshake ran in consumer mode: only then were the consumer-only custom handlers part of the checks.
      */
     private static final class HandshakeResult {
         private final Set<String> endpointUris;
+        private final Set<String> oauthEndpointUris;
         private final Map<String, Object> headers;
+        private final boolean consumer;
 
-        private HandshakeResult(Set<String> endpointUris, Map<String, Object> headers) {
+        private HandshakeResult(Set<String> endpointUris, Set<String> oauthEndpointUris, Map<String, Object> headers,
+                                boolean consumer) {
             this.endpointUris = Collections.unmodifiableSet(endpointUris);
+            this.oauthEndpointUris = Collections.unmodifiableSet(oauthEndpointUris);
             this.headers = Collections.unmodifiableMap(headers);
+            this.consumer = consumer;
         }
     }
 

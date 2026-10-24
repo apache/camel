@@ -984,6 +984,22 @@ public class BeanInfo {
     }
 
     /**
+     * Whether a method of this name is never a candidate for Camel Bean Binding, such as equals and the other methods
+     * of java.lang.Object. getClass is one too, but an OGNL call of it is invoked on its own.
+     *
+     * @param  name the name of the method
+     * @return      true if the name is excluded from Camel Bean Binding
+     */
+    public static boolean isExcludedMethodName(String name) {
+        for (String s : EXCLUDED_METHOD_NAMES) {
+            if (s.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Validates whether the given method is a valid candidate for Camel Bean Binding.
      *
      * @param  clazz  the class
@@ -993,10 +1009,8 @@ public class BeanInfo {
     protected boolean isValidMethod(Class<?> clazz, Method method) {
         // method name must not be in the excluded list
         String name = method.getName();
-        for (String s : EXCLUDED_METHOD_NAMES) {
-            if (name.equals(s)) {
-                return false;
-            }
+        if (isExcludedMethodName(name)) {
+            return false;
         }
 
         // special for Object where clone is not allowed to be called directly

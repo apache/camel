@@ -178,6 +178,14 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     return consumerGroupDetails;
                 });
 
+        joinConsumerGroup(client);
+    }
+
+    /**
+     * Makes the client a member of the consumer group. The membership belongs to the connection of the client, so each
+     * client the consumer polls with must join.
+     */
+    public void joinConsumerGroup(IggyBaseClient client) {
         client.consumerGroups().joinConsumerGroup(
                 StreamId.of(getConfiguration().getStreamName()),
                 TopicId.of(getTopicName()),

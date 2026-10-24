@@ -92,6 +92,34 @@ class CamelRouteStatusTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void checksumShowsTheChecksumAndRevisionOfEachRoute() throws Exception {
+        JsonObject changed = route("route1", "timer:tick", "Started", stats(12, 1, 2, 25));
+        changed.put("checksum", "0a1b2c3d4e5f");
+        changed.put("revision", 2);
+        writeStatusFile(TEST_PID, integration("myApp", changed,
+                route("route2", "timer:tock", "Started", stats(0, 0, 0, -1))));
+
+        assertThat(call(command())).isZero();
+        assertThat(printer.getOutput()).doesNotContain("CHECKSUM", "0a1b2c3d4e5f");
+
+        printer = new StringPrinter();
+        assertThat(call(command("--checksum"))).isZero();
+        String[] lines = printer.getOutput().split(System.lineSeparator());
+        assertThat(lines[0]).contains("CHECKSUM", "REV");
+        assertThat(lines[1]).contains("route1", "0a1b2c3d4e5f", " 2 ");
+
+        // the JSON has them whether asked for or not; a route of an older Camel has none
+        printer = new StringPrinter();
+        assertThat(call(command("--json"))).isZero();
+        JsonArray routes = Jsoner.deserialize(printer.getOutput(), (JsonArray) null);
+        JsonObject first = routes.getMap(0);
+        JsonObject second = routes.getMap(1);
+        assertThat(first.getString("checksum")).isEqualTo("0a1b2c3d4e5f");
+        assertThat(first.getInteger("revision")).isEqualTo(2);
+        assertThat(second.get("revision")).isNull();
+    }
+
+    @Test
     void jsonWithoutRoutesIsAnEmptyArray() throws Exception {
         writeStatusFile(TEST_PID, integration("myApp"));
 

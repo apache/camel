@@ -168,6 +168,16 @@ the password of the key store.
 does not declare. Before, the asynchronous consumer sent the message of the exception. An exception declared in the
 IDL is still sent as it is. Set `muteException=false` to send the exception as before.
 
+=== camel-netty - errors sent to the client
+
+A new `muteException` consumer option, enabled by default, makes a consumer with `sync=true` write a generic exception
+(`java.lang.Exception` with the message `Exchange processing failed` and no stack trace) back to the client when the
+exchange failed, instead of the exception of the route. With `textline=true` the client now receives the line
+`java.lang.Exception: Exchange processing failed`, where it used to receive the class name and the message of the
+exception of the route. With an encoder that accepts any object, the serialised exception no longer carries the class,
+message, cause or stack trace of the exception of the route. Set `muteException=false` to write the exception as before.
+`transferExchange=true` is not affected.
+
 === camel-oauth - the bearer token processor is stateless and reads the HTTP request headers
 
 `OAuthBearerTokenProcessor` no longer creates or updates the OAuth session, and no longer sets the
@@ -402,6 +412,29 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 `variableReceive`, which leaves the body as it was. To keep the body empty, the message is replaced by a plain message
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
+
+=== camel-pubnub - the producer uses its configured channel
+
+The pubnub producer no longer reads the `CamelPubNubChannel` header. This header is set by the pubnub consumer to the
+channel a message was received on, and the producer used it instead of the channel configured on its endpoint, so a
+route from one pubnub endpoint to another sent each message back to the channel it came from. The producer now uses the
+channel of its endpoint, for every operation. To choose a different channel for a message, set the new
+`CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
+the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
+
+=== camel-pqc - message bodies are signed and verified over their bytes
+
+The `sign` and `verify` operations now sign and verify the message body over its bytes for every body type that has a
+well-defined binary form. A `byte[]` or `InputStream` body, a `java.io.File` or `java.nio.file.Path` body, and a file
+from a file consumer (a `GenericFile` body), are read as bytes. A `String` (or any `CharSequence`) body is encoded as
+UTF-8, and any other body that has a binary type converter (for example a `java.nio.ByteBuffer`, a
+`java.io.ByteArrayOutputStream`, a Netty `ByteBuf` or a Vert.x `Buffer`) is signed over those bytes.
+
+A body with no binary representation (for example a `Map` or a POJO) is no longer signed over its `toString()`: it is
+now rejected with an `InvalidPayloadException`. Convert such a body to a `String`, `byte[]` or other binary type
+earlier in the route.
+
+Signatures created by earlier versions may not verify and need to be created again.
 
 == Upgrading from 4.18.4 to 4.18.5
 
@@ -1647,12 +1680,15 @@ Swift (`SwiftConstants`):
 |===
 
 `SwiftConstants.CONTAINER_METADATA_PREFIX`, `SwiftConstants.VERSIONS_LOCATION`,
-`SwiftConstants.CONTAINER_READ`, and `SwiftConstants.CONTAINER_WRITE`
-intentionally keep their previous values (`X-Container-Meta-`,
-`X-Versions-Location`, `X-Container-Read`, `X-Container-Write`) because they
-are part of the Swift HTTP protocol contract used by openstack4j to forward
-container metadata and ACLs to the Swift backend. Renaming them would break
-interoperability with the Swift API.
+`SwiftConstants.CONTAINER_READ`, and `SwiftConstants.CONTAINER_WRITE` keep
+their previous values (`X-Container-Meta-`, `X-Versions-Location`,
+`X-Container-Read`, `X-Container-Write`) in this release.
+
+NOTE: These four constants have since been renamed to follow the Camel naming
+convention; see CAMEL-25895 for the releases that carry the change. They are
+Exchange header keys only: openstack4j builds the `X-Container-*` wire headers
+itself from `CreateUpdateContainerOptions`, so the Camel header name never
+reaches Swift.
 
 Routes that reference the constants symbolically (for example
 `setHeader(OpenstackConstants.OPERATION, ...)`) continue to work without
