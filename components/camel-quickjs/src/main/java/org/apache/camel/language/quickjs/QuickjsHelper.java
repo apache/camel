@@ -160,10 +160,11 @@ final class QuickjsHelper {
     /**
      * JavaScript that prepares the script result for the JSON hand-over to Java, where a {@code Set} or a {@code Map}
      * would become an empty object and a typed array an object of index to value: a {@code Set} becomes an array, a
-     * {@code Map} an object (its keys as strings), and a typed array or an {@code ArrayBuffer} an array of numbers,
-     * also when nested in objects and arrays. A primitive is returned after one type check, and an object or array is
-     * only copied when something in it is converted. A value with {@code toJSON} (such as a {@code Date}) and a cyclic
-     * reference are left to JSON as before. The built-ins are captured once so a script cannot replace them.
+     * {@code Map} an object (its keys as strings), a typed array or an {@code ArrayBuffer} an array of numbers, and a
+     * {@code DataView} an array of its bytes, also when nested in objects and arrays. A primitive is returned after one
+     * type check, and an object or array is only copied when something in it is converted. A value with {@code toJSON}
+     * (such as a {@code Date}) and a cyclic reference are left to JSON as before. The built-ins are captured once so a
+     * script cannot replace them.
      */
     private static final String RESULT_CONVERTER = """
             const __camelResult = (() => {
@@ -188,7 +189,7 @@ final class QuickjsHelper {
                   return from(new Uint8ArrayType(v));
                 }
                 if (isView(v)) {
-                  return v instanceof DataViewType ? v : from(v);
+                  return v instanceof DataViewType ? from(new Uint8ArrayType(v.buffer, v.byteOffset, v.byteLength)) : from(v);
                 }
                 const element = x => isObject(x) ? convert(x, path) : x;
                 path.push(v);

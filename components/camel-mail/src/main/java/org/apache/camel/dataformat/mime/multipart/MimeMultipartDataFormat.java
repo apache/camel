@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.mime.multipart;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -297,7 +298,10 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
 
     private Object unmarshalWithInlineHeaders(Exchange exchange, InputStream stream)
             throws IOException, MessagingException {
-        MimeBodyPart mimeMessage = new MimeBodyPart(stream);
+        // The MIME header parser marks and resets a stream that supports mark (after every CR of the headers), and
+        // uses a ByteArrayInputStream as it is. The stream may be the message body (an in-memory stream cache), which
+        // goes back to its last mark when it is reset to be read again, so give the parser a stream of its own to mark.
+        MimeBodyPart mimeMessage = new MimeBodyPart(new BufferedInputStream(stream));
         Message camelMessage = exchange.getMessage();
         MessageHelper.copyHeaders(exchange.getIn(), camelMessage, true);
         copyNonStandardHeaders(mimeMessage, camelMessage);
