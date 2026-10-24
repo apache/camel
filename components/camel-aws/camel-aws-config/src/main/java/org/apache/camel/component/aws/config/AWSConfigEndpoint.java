@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.config.client.AWSConfigClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,19 @@ import software.amazon.awssdk.services.config.ConfigClient;
 @UriEndpoint(firstVersion = "4.3.0", scheme = "aws-config", title = "AWS Config Service",
              syntax = "aws-config:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = AWSConfigConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: the operations take their input from headers, such as the rule of"
+                                                + " putConfigRule in CamelAwsConfigRuleName, CamelAwsConfigRuleSource and"
+                                                + " CamelAwsConfigRuleSourceIdentifier, and the template of putConformancePack"
+                                                + " in CamelAwsConfigConformacePackTemplateBody. With pojoRequest=true the"
+                                                + " request of the AWS SDK for the operation, such as a PutConfigRuleRequest:"
+                                                + " another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " DescribeComplianceByConfigRuleResponse of describeRuleCompliance, or the"
+                                                 + " PutConformancePackResponse with the ARN of the pack. putConfigRule,"
+                                                 + " removeConfigRule and removeConformancePack give an empty response"))
 public class AWSConfigEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private ConfigClient configClient;

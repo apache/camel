@@ -28,6 +28,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -49,6 +52,10 @@ import org.apache.camel.support.DefaultEndpoint;
              consumerOnly = true, remote = false, internal = true,
              category = { Category.CORE, Category.MONITORING },
              headersClass = CamelEventConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.spi.CamelEvent",
+                                   dependsOn = "batchSize",
+                                   description = "The event, such as a RouteStartedEvent or an ExchangeCompletedEvent. With a"
+                                                 + " batchSize above 1, a List of the events"))
 public class CamelEventEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Comma-separated list of event types to subscribe to."

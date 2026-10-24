@@ -15,6 +15,12 @@
     "modelName": "soap",
     "modelJavaType": "org.apache.camel.model.dataformat.SoapDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo" ], "dependsOn": [ "elementNameStrategy" ], "description": "A JAXB object whose class has @XmlType with a name, written as the one element of the SOAP body; text fails. When the exchange has a caught exception (onException, doCatch), a SOAP fault of it is written instead" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "xml", "description": "The SOAP envelope in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "description": "A SOAP envelope of the version: text, bytes, a stream, a file, a DOM Document, a DOMSource or a StreamSource" },
+    "unmarshalOut": { "carriers": [ "pojo", "null" ], "description": "The JAXB object of the first element of the SOAP body, with the SOAP headers in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header. No body when the SOAP body is empty or a fault, which becomes the exception of the exchange" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "contextPath": { "index": 1, "kind": "attribute", "displayName": "Context Path", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Package name where your JAXB classes are located." },

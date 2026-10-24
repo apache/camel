@@ -31,6 +31,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.dataweave.DataWeaveConversionException;
 import org.apache.camel.component.dataweave.DataWeaveConverter;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -38,6 +41,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("datasonnet")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY, dependsOn = { "bodyMediaType", "source" },
+                                    description = "The body as it is, in the variable body. JSON, XML or CSV text is read in"
+                                                  + " that format only with bodyMediaType or a Content-Type header, and a"
+                                                  + " stream needs one of them"),
+           expressionOut = @BodyType(value = Carrier.POJO, javaType = "com.datasonnet.document.Document",
+                                     dependsOn = { "resultType", "outputMediaType" },
+                                     description = "A Document with the result: a Java object, or text in outputMediaType"
+                                                   + " when it is set. With resultType, the result converted to that type"))
 public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DatasonnetLanguage.class);
     private final Map<String, String> classpathImports;

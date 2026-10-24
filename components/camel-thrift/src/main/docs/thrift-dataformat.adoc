@@ -28,7 +28,8 @@ include::partial$dataformat-options.adoc[]
 
 It's possible to parse JSON message to convert it to the Thrift format and serialize it back using native util converter.
 To use this option, set contentTypeFormat value to 'json' or call thrift with second parameter.
-If the default instance is not specified, always use the native binary Thrift format.
+Unmarshal needs the default instance (`instanceClass`) in the binary and json formats; marshal writes the given Thrift
+object in any of them.
 The simple JSON format is write-only (marshal) and produces a simple output format suitable for parsing by scripting languages.
 The sample code shows below:
 

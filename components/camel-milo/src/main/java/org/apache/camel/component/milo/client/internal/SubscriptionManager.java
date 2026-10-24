@@ -343,7 +343,12 @@ public class SubscriptionManager {
     }
 
     private class Connected {
-        private OpcUaClient client;
+        /**
+         * The client, which is kept after the connection is disposed: a producer reads the connection without
+         * {@code lock}, so it can still send a request on a connection that is disposed, which the client then fails
+         * with the status of its closed session
+         */
+        private final OpcUaClient client;
         private final OpcUaSubscription manager;
         private final SubscriptionListenerImpl listener;
         private final long generation;
@@ -517,16 +522,18 @@ public class SubscriptionManager {
 
         /**
          * Schedules the next attempt to create the refused nodes again, unless there is none or one is scheduled. The
-         * timer runs on the reconnect thread, the attempt, which blocks until the server answers, on the executor of
-         * the connection, so that a slow attempt does not hold up a reconnect.
+         * attempt blocks until the server answers, so it runs on the reconnect thread, not on the executor of the
+         * connection, whose threads complete the requests of the producers: with one processor that executor has a
+         * single thread, and the outcome of every request would wait for the attempt. A rebuild of the connection does
+         * not wait for the reconnect thread longer than it waits for the attempt anyway: it needs {@code lock}, which
+         * the attempt holds until the server answers.
          */
         private void scheduleRetry() {
             if (this.refused.isEmpty() || this.retryJob != null || SubscriptionManager.this.disposed) {
                 return;
             }
             this.retryJob = SubscriptionManager.this.reconnectExecutor.schedule(
-                    () -> SubscriptionManager.this.executor.execute(() -> retryRefused(this)),
-                    SubscriptionManager.this.reconnectTimeout, TimeUnit.MILLISECONDS);
+                    () -> retryRefused(this), SubscriptionManager.this.reconnectTimeout, TimeUnit.MILLISECONDS);
         }
 
         /**
@@ -623,16 +630,15 @@ public class SubscriptionManager {
         }
 
         public void dispose() {
+            if (this.listener.closed) {
+                return;
+            }
             // the session closed by the disconnect is no loss of communication
             this.listener.closed = true;
-            if (this.client != null) {
-                try {
-                    this.client.disconnect();
-                    this.client = null;
-                } catch (final UaException e) {
-                    LOG.warn("Failed to disconnect client", e);
-                }
-
+            try {
+                this.client.disconnect();
+            } catch (final UaException e) {
+                LOG.warn("Failed to disconnect client", e);
             }
         }
 
@@ -972,7 +978,8 @@ public class SubscriptionManager {
     private final Lock lock = new ReentrantLock();
 
     /**
-     * The current connection, written under {@code lock} and read by the monitoring state without it
+     * The current connection, written under {@code lock} and read by the producers, {@link #getOpcUaClient()} and the
+     * monitoring state without it
      */
     private volatile Connected connected;
     private volatile Throwable lastConnectFailure;
@@ -1003,12 +1010,9 @@ public class SubscriptionManager {
      * @return the active client, or {@code null} if there is no current connection
      */
     public OpcUaClient getOpcUaClient() {
-        lock.lock();
-        try {
-            return this.connected != null ? this.connected.client : null;
-        } finally {
-            lock.unlock();
-        }
+        // read without lock, which a service call holds until the server answers
+        final Connected connected = this.connected;
+        return connected != null ? connected.client : null;
     }
 
     /**
@@ -1079,8 +1083,8 @@ public class SubscriptionManager {
      * subscriptions.
      * <p>
      * The delete neither blocks nor holds {@code lock}: a request sent before the connection was lost only fails once
-     * the client notices the loss, and holding {@code lock} until then would hold up the producers and
-     * {@link #getOpcUaClient()} as well.
+     * the client notices the loss, and holding {@code lock} until then would hold up the consumers that start or stop
+     * as well.
      */
     private void recoverSubscription(final OpcUaSubscription subscription, final SubscriptionListenerImpl listener) {
         subscription.deleteAsync().whenCompleteAsync((unit, e) -> {
@@ -1156,10 +1160,11 @@ public class SubscriptionManager {
      * failure is the status of the nodes until the next attempt.
      * <p>
      * Like the registration of a consumer, the attempt holds {@code lock} until the server answers, so that a consumer
-     * that stops or a subscription that is recreated in the meantime cannot interleave with it, and the producers and
-     * {@link #getOpcUaClient()} wait for it. The wait is bounded: the attempt is only sent while the session is active,
-     * a call in flight when the connection drops silently fails once the keep-alive of the client declares the session
-     * lost, and a call that the server does not answer fails after the request timeout.
+     * that stops or a subscription that is recreated in the meantime cannot interleave with it, and a consumer that
+     * starts or stops waits for it; the producers and {@link #getOpcUaClient()} do not. The wait is bounded: the
+     * attempt is only sent while the session is active, a call in flight when the connection drops silently fails once
+     * the keep-alive of the client declares the session lost, and a call that the server does not answer fails after
+     * the request timeout.
      */
     private void retryRefused(final Connected connected) {
         lock.lock();
@@ -1270,14 +1275,17 @@ public class SubscriptionManager {
     private void handleConnectionFailure(final Throwable e) {
         lock.lock();
         try {
-            if (this.connected != null) {
-                // the nodes lose their communication with the connection, after the values it still delivers
-                reportLoss(this.connected.manager, this.connected.generation, this.subscriptions);
-                this.connected.cancelRetry();
-                this.connected.dispose();
-                this.connected = null;
-            }
+            // set first: a producer that finds no connection while it is torn down fails with this cause
             this.lastConnectFailure = e;
+            final Connected failed = this.connected;
+            if (failed != null) {
+                // the producers and getOpcUaClient() no longer reach the connection that is torn down
+                this.connected = null;
+                // the nodes lose their communication with the connection, after the values it still delivers
+                reportLoss(failed.manager, failed.generation, this.subscriptions);
+                failed.cancelRetry();
+                failed.dispose();
+            }
 
             // log
 
@@ -1498,6 +1506,8 @@ public class SubscriptionManager {
             }
             this.disposed = true;
             connected = this.connected;
+            // the producers and getOpcUaClient() no longer reach the connection that is disposed
+            this.connected = null;
             if (connected != null) {
                 // the next attempt is cancelled under the lock that guards it, the connection is disposed outside of it
                 connected.cancelRetry();
@@ -1702,82 +1712,57 @@ public class SubscriptionManager {
 
     public CompletableFuture<CallMethodResult> call(
             final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Variant[] inputArguments) {
-        lock.lock();
-        try {
-            if (this.connected == null) {
-                return newNotConnectedResult();
-            }
-
-            return this.connected.call(nodeId, methodId, inputArguments).whenCompleteAsync((status, e) -> {
-                // handle outside the lock, running using
-                // whenCompleteAsync (preserves the original exceptional completion)
-                if (e != null) {
-                    handleConnectionFailure(e);
-                }
-            }, this.executor);
-        } finally {
-            lock.unlock();
+        final Connected connected = this.connected;
+        if (connected == null) {
+            return newNotConnectedResult();
         }
+
+        return outcomeOf(connected.call(nodeId, methodId, inputArguments));
     }
 
     public CompletableFuture<?> write(final ExpandedNodeId nodeId, final DataValue value) {
-        lock.lock();
-        try {
-            if (this.connected == null) {
-                return newNotConnectedResult();
-            }
-
-            return this.connected.write(nodeId, value).whenCompleteAsync((status, e) -> {
-                // handle outside the lock, running using
-                // whenCompleteAsync (preserves the original exceptional completion)
-                if (e != null) {
-                    handleConnectionFailure(e);
-                }
-            }, this.executor);
-        } finally {
-            lock.unlock();
+        final Connected connected = this.connected;
+        if (connected == null) {
+            return newNotConnectedResult();
         }
+
+        return outcomeOf(connected.write(nodeId, value));
     }
 
     public CompletableFuture<?> readValues(final List<ExpandedNodeId> nodeIds) {
-        lock.lock();
-        try {
-            if (this.connected == null) {
-                return newNotConnectedResult();
-            }
-
-            return this.connected.readValues(nodeIds).whenCompleteAsync((nodes, e) -> {
-                // handle outside the lock, running using
-                // whenCompleteAsync (preserves the original exceptional completion)
-                if (e != null) {
-                    handleConnectionFailure(e);
-                }
-            }, this.executor);
-        } finally {
-            lock.unlock();
+        final Connected connected = this.connected;
+        if (connected == null) {
+            return newNotConnectedResult();
         }
+
+        return outcomeOf(connected.readValues(nodeIds));
     }
 
     public CompletableFuture<Map<ExpandedNodeId, BrowseResult>> browse(
             List<ExpandedNodeId> expandedNodeIds, BrowseDirection direction, int nodeClasses, int maxDepth, String filter,
             boolean includeSubTypes, int maxNodesPerRequest) {
-        lock.lock();
-        try {
-            if (this.connected == null) {
-                return newNotConnectedResult();
-            }
-
-            return this.connected.browse(expandedNodeIds, direction, nodeClasses, 1, maxDepth,
-                    null != filter ? Pattern.compile(filter) : null, includeSubTypes, maxNodesPerRequest)
-                    .whenCompleteAsync((browseResult, e) -> {
-                        // handle outside the lock, running using
-                        // whenCompleteAsync (preserves the original exceptional completion)
-                        if (e != null) {
-                            handleConnectionFailure(e);
-                        }
-                    }, this.executor);
-        } finally {
-            lock.unlock();
+        final Connected connected = this.connected;
+        if (connected == null) {
+            return newNotConnectedResult();
         }
+
+        return outcomeOf(connected.browse(expandedNodeIds, direction, nodeClasses, 1, maxDepth,
+                null != filter ? Pattern.compile(filter) : null, includeSubTypes, maxNodesPerRequest));
+    }
+
+    /**
+     * The outcome of a producer request, completed on the executor of the connection, so that the route continues there
+     * and not on a thread of Milo, which completes the responses; unlike thenApplyAsync, whenCompleteAsync hands a
+     * failure to the executor too. A request that fails completes with its failure and does not rebuild the connection:
+     * the client recovers a lost session itself, and a session that the server no longer has fails the transfer of the
+     * subscription, which rebuilds the connection.
+     * <p>
+     * The producers read the current connection without {@code lock}, which a service call of the consumers holds until
+     * the server answers, so they do not wait for it. A request on a connection that is disposed meanwhile fails with
+     * the status of its closed session.
+     */
+    private <T> CompletableFuture<T> outcomeOf(final CompletableFuture<T> request) {
+        return request.whenCompleteAsync((result, e) -> {
+        }, this.executor);
     }
 }

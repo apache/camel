@@ -80,6 +80,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usemessagebodyforsql":
+        case "useMessageBodyForSql": target.getConfiguration().setUseMessageBodyForSql(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usesessioncredentials":
@@ -157,6 +159,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
+        case "usemessagebodyforsql":
+        case "useMessageBodyForSql": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
         case "usesessioncredentials":
@@ -230,6 +234,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
+        case "usemessagebodyforsql":
+        case "useMessageBodyForSql": return target.getConfiguration().isUseMessageBodyForSql();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
         case "usesessioncredentials":

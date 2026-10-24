@@ -29,6 +29,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.component.aws2.sns.client.Sns2ClientFactory;
 import org.apache.camel.spi.*;
+import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -52,6 +53,17 @@ import software.amazon.awssdk.services.sns.model.Topic;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS Simple Notification System (SNS)",
              syntax = "aws2-sns:topicNameOrArn", producerOnly = true,
              category = { Category.CLOUD, Category.MESSAGING, Category.MOBILE }, headersClass = Sns2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "batchEnabled", value = "true", carriers = Carrier.LIST),
+                                  description = "The message to publish, as text: bytes, a stream or a file are read as text,"
+                                                + " and a Map or a POJO is sent as its toString(): marshal it first. With"
+                                                + " messageStructure=json, a JSON object with a message per protocol; with"
+                                                + " batchEnabled=true, a List of the PublishBatchRequestEntry of the AWS SDK"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "batchEnabled", value = "true", carriers = Carrier.POJO,
+                                                             javaType = "software.amazon.awssdk.services.sns.model.PublishBatchResponse"),
+                                   description = "Unchanged after a publish, with the id of the message in a header. With"
+                                                 + " batchEnabled=true, the PublishBatchResponse of the AWS SDK"))
 public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Endpoint.class);

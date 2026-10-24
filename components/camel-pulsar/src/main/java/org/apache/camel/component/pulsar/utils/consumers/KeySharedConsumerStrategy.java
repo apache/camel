@@ -17,21 +17,14 @@
 package org.apache.camel.component.pulsar.utils.consumers;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
-import org.apache.camel.component.pulsar.PulsarConfiguration;
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
 import org.apache.pulsar.client.api.Consumer;
-import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.SubscriptionType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KeySharedConsumerStrategy implements ConsumerCreationStrategy {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeySharedConsumerStrategy.class);
 
     private final PulsarConsumer pulsarConsumer;
 
@@ -40,26 +33,7 @@ public class KeySharedConsumerStrategy implements ConsumerCreationStrategy {
     }
 
     @Override
-    public Collection<Consumer<byte[]>> create(final PulsarEndpoint pulsarEndpoint) {
-        return createMultipleConsumers(pulsarEndpoint);
-    }
-
-    private Collection<Consumer<byte[]>> createMultipleConsumers(final PulsarEndpoint pulsarEndpoint) {
-        final Collection<Consumer<byte[]>> consumers = new LinkedList<>();
-        final PulsarConfiguration configuration = pulsarEndpoint.getPulsarConfiguration();
-
-        for (int i = 0; i < configuration.getNumberOfConsumers(); i++) {
-            final String consumerName = configuration.getConsumerNamePrefix() + i;
-            try {
-                ConsumerBuilder<byte[]> builder
-                        = CommonCreationStrategyImpl.getBuilder(consumerName, pulsarEndpoint, pulsarConsumer);
-
-                consumers.add(builder.subscriptionType(SubscriptionType.Key_Shared).subscribe());
-            } catch (PulsarClientException exception) {
-                LOGGER.error("A PulsarClientException occurred when creating Consumer {}, {}", consumerName,
-                        exception.getMessage(), exception);
-            }
-        }
-        return consumers;
+    public Collection<Consumer<byte[]>> create(final PulsarEndpoint pulsarEndpoint) throws PulsarClientException {
+        return CommonCreationStrategyImpl.createMultipleConsumers(pulsarEndpoint, pulsarConsumer, SubscriptionType.Key_Shared);
     }
 }

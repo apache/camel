@@ -66,6 +66,8 @@ The header, `fruit`, is now accessible from the `message.out.headers`.
 
 Camel will provide exchange information in the FreeMarker context (just
 a `Map`). The `Exchange` is transferred as:
+The `body`, `header`, `headers`, `variable`, `variables` and `exception` entries are always
+there; the others only when the endpoint has `allowContextMapAll=true`.
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -112,8 +114,8 @@ reloading is thus enabled. This scenario can be used in development.
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set, then Camel uses this over the endpoint configured
-resource. This allows you to provide a dynamic template at runtime.
+headers is set, and the endpoint has `allowTemplateFromHeader=true`, then Camel uses this
+over the endpoint configured resource. This allows you to provide a dynamic template at runtime.
 
 == Examples
 
@@ -288,7 +290,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader("FreemarkerResourceUri").constant("path/to/my/template.ftl")
+    .setHeader("CamelFreemarkerResourceUri").constant("path/to/my/template.ftl")
     .to("freemarker:dummy?allowTemplateFromHeader=true");
 ----
 
@@ -298,7 +300,7 @@ XML::
 ----
 <route>
   <from uri="direct:in"/>
-  <setHeader name="FreemarkerResourceUri">
+  <setHeader name="CamelFreemarkerResourceUri">
     <constant>path/to/my/template.ftl</constant>
   </setHeader>
   <to uri="freemarker:dummy?allowTemplateFromHeader=true"/>
@@ -314,7 +316,7 @@ YAML::
       uri: direct:in
       steps:
         - setHeader:
-            name: FreemarkerResourceUri
+            name: CamelFreemarkerResourceUri
             expression:
               constant:
                 expression: path/to/my/template.ftl

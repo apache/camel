@@ -95,5 +95,8 @@ YAML::
 It is now possible to get the body as a PD Document by using `PDDocument doc = exchange.getIn().getBody(PDDocument.class);`,
 which saves the trouble of converting the byte-array to a document.
 
+The body after `create`, `append` and `merge` is a `ByteArrayOutputStream` with the PDF, which does not convert to a
+`PDDocument`: convert it to `byte[]` before `extractText`.
+
 NOTE: this only works for unprotected PDF files. For password-protected, the files still need to be converted
 manually.

@@ -28,6 +28,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -40,6 +43,15 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri",
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
              headersClass = FreemarkerConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The template gets the body as body, as it is: text, or a Map, a List or a"
+                                                + " POJO to read from; convert bytes or a stream to a String first, and no"
+                                                + " body fails ${body} unless it is written ${body!}. The template is the"
+                                                + " resource, or the CamelFreemarkerTemplate or CamelFreemarkerResourceUri"
+                                                + " header with allowTemplateFromHeader=true, and never the body"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The text the template writes, also when it is JSON or XML: unmarshal it to"
+                                                 + " read its fields. The headers are kept"))
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")

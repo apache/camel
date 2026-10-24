@@ -81,8 +81,8 @@ This section lists all available operations, along with their header information
 ** `CamelInfinispanLifespanTimeUnit`
 ** `CamelInfinispanMaxIdleTime`
 ** `CamelInfinispanMaxIdleTimeUnit`
-* *Result Header*:
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Put All Operations
 [cols="40%,60%a", options="header"]
@@ -120,8 +120,8 @@ This section lists all available operations, along with their header information
 
 * *Required Headers*
 ** `CamelInfinispanKey`
-* *Result Header*
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Contains Value Operation
 [cols="40%,60%a", options="header"]
@@ -146,8 +146,8 @@ This section lists all available operations, along with their header information
 ** `CamelInfinispanKey`
 * *Optional Headers*:
 ** `CamelInfinispanValue`
-* *Result Header*:
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Replace Operations
 [cols="40%,60%a", options="header"]
@@ -166,8 +166,8 @@ This section lists all available operations, along with their header information
 ** `CamelInfinispanLifespanTimeUnit`
 ** `CamelInfinispanMaxIdleTime`
 ** `CamelInfinispanMaxIdleTimeUnit`
-* *Result Header*:
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Clear Operations
 [cols="40%,60%a", options="header"]
@@ -184,8 +184,8 @@ This section lists all available operations, along with their header information
 | `InfinispanOperation.SIZE` | Returns the number of entries in the cache
 |===
 
-* *Result Header*
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Stats Operation
 [cols="40%,60%a", options="header"]
@@ -194,8 +194,8 @@ This section lists all available operations, along with their header information
 | `InfinispanOperation.STATS` | Returns statistics about the cache
 |===
 
-* *Result Header*:
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 .Query Operation
 [cols="40%,60%a", options="header"]
@@ -206,8 +206,8 @@ This section lists all available operations, along with their header information
 
 * *Required Headers*:
 ** `CamelInfinispanQueryBuilder`
-* *Result Header*:
-** `CamelInfinispanOperationResult`
+* *Result*:
+** the message body, or the header named by the `resultHeader` option
 
 [NOTE]
 ====
@@ -244,11 +244,13 @@ from("infinispan-embedded:source")
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT) // <1>
     .setHeader(InfinispanConstants.KEY).constant("123") // <2>
-    .to("infinispan-embedded:myCacheName?cacheContainer=#cacheContainer"); // <3>
+    .setHeader(InfinispanConstants.VALUE).constant("Hello") // <3>
+    .to("infinispan-embedded:myCacheName?cacheContainer=#cacheContainer"); // <4>
 ----
 <1> Set the operation to perform
 <2> Set the key used to identify the element in the cache
-<3> Use the configured cache manager `cacheContainer` from the registry to put an element to the cache named `myCacheName`
+<3> Set the value to store: the message body is not used
+<4> Use the configured cache manager `cacheContainer` from the registry to put an element to the cache named `myCacheName`
 --
 +
 It is possible to configure the lifetime and/or the idle time before the entry expires and gets evicted from the cache, as example:

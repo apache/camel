@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb.gridfs;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -75,6 +76,8 @@ class GridFsConsumerTimestampTest {
 
     private final List<GridFSFile> stored = new CopyOnWriteArrayList<>();
     private final List<String> routed = new CopyOnWriteArrayList<>();
+    // the ids of the files whose content was routed
+    private final List<BsonValue> routedIds = new CopyOnWriteArrayList<>();
     private final List<Date> persisted = new CopyOnWriteArrayList<>();
     // the ids of the files that the consumer has marked with its file attribute
     private final Set<BsonValue> marked = ConcurrentHashMap.newKeySet();
@@ -116,12 +119,15 @@ class GridFsConsumerTimestampTest {
             polls.countDown();
             return iterableOf(found);
         });
+        // as MongoDB: by file name, the newest revision of the files with that name; by id, that file
         when(bucket.openDownloadStream(anyString())).thenAnswer(invocation -> {
             String name = invocation.getArgument(0);
-            GridFSDownloadStream stream = mock(GridFSDownloadStream.class);
-            when(stream.getGridFSFile())
-                    .thenReturn(stored.stream().filter(f -> f.getFilename().equals(name)).findFirst().orElseThrow());
-            return stream;
+            return downloadStreamOf(stored.stream().filter(f -> f.getFilename().equals(name))
+                    .max(Comparator.comparing(GridFSFile::getUploadDate)).orElseThrow());
+        });
+        when(bucket.openDownloadStream(any(BsonValue.class))).thenAnswer(invocation -> {
+            BsonValue id = invocation.getArgument(0);
+            return downloadStreamOf(stored.stream().filter(f -> f.getId().equals(id)).findFirst().orElseThrow());
         });
         // the consumer marks a file before it routes it: only a file that is not marked yet is returned
         when(files.findOneAndUpdate(any(Bson.class), any(Bson.class), any(FindOneAndUpdateOptions.class)))
@@ -174,6 +180,23 @@ class GridFsConsumerTimestampTest {
 
         assertEquals(List.of("first"), routed, "three polls saw the file, it must be routed by the first of them only");
         assertEquals(List.of(first.getUploadDate()), persisted, "the timestamp is stored when it moves, not at every poll");
+    }
+
+    @ParameterizedTest
+    @EnumSource(QueryStrategy.class)
+    void filesWithTheSameNameAreEachRoutedWithTheirOwnContent(QueryStrategy strategy) throws Exception {
+        startConsumer(strategy);
+
+        // two revisions of a file name, both new for the same poll (uploaded within one delay, or while the
+        // consumer was stopped): GridFS keeps both, and each is a file of its own
+        GridFSFile first = file("report.csv", 60);
+        GridFSFile second = file("report.csv", 61);
+        stored.add(first);
+        stored.add(second);
+        awaitFullPolls(2);
+
+        assertEquals(List.of(first.getId(), second.getId()), routedIds,
+                "each file found by the poll must be routed with its own content, not with the newest file of that name");
     }
 
     @Test
@@ -304,8 +327,11 @@ class GridFsConsumerTimestampTest {
         endpoint.setInitialDelay(1);
         endpoint.setDelay(delay);
 
-        Processor processor = exchange -> routed.add(exchange.getMessage().getBody(GridFSDownloadStream.class)
-                .getGridFSFile().getFilename());
+        Processor processor = exchange -> {
+            GridFSFile file = exchange.getMessage().getBody(GridFSDownloadStream.class).getGridFSFile();
+            routed.add(file.getFilename());
+            routedIds.add(file.getId());
+        };
         consumer = new GridFsConsumer(endpoint, processor);
         consumer.setExceptionHandler(new ExceptionHandler() {
             @Override
@@ -334,6 +360,12 @@ class GridFsConsumerTimestampTest {
         CountDownLatch latch = new CountDownLatch(count + 1);
         polls = latch;
         assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "the consumer did not poll " + (count + 1) + " times");
+    }
+
+    private static GridFSDownloadStream downloadStreamOf(GridFSFile file) {
+        GridFSDownloadStream stream = mock(GridFSDownloadStream.class);
+        when(stream.getGridFSFile()).thenReturn(file);
+        return stream;
     }
 
     /**

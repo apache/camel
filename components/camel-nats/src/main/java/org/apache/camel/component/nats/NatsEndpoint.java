@@ -31,6 +31,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -45,6 +48,31 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = { Category.MESSAGING },
              headersClass = NatsConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The payload of the NATS message as a byte array, empty for a message"
+                                                 + " without one: convert or unmarshal it"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     byOption = @BodyType.When(option = "exchangePattern", value = "InOut",
+                                                               carriers = {
+                                                                       Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                       Carrier.FILE }),
+                                     description = "Only with exchangePattern=InOut is a message with a reply subject"
+                                                   + " answered, with the body the route ends with: text, bytes, a stream or a"
+                                                   + " file. A Map, a POJO or no body sends no reply, and the requester"
+                                                   + " times out"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "What converts to a byte array: text, bytes, a stream or a file. A Map or a"
+                                                + " POJO is sent as its toString(), and a List or no body fails: marshal it"
+                                                + " first"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "exchangePattern", value = "InOnly",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "exchangePattern", value = "InOut",
+                                                          carriers = Carrier.BYTES, javaType = "byte[]") },
+                                   description = "Unchanged for a message that expects no reply (InOnly). A message that"
+                                                 + " expects one (InOut) waits for the reply, up to requestTimeout, and gets"
+                                                 + " its payload as a byte array"))
 public class NatsEndpoint extends DefaultEndpoint
         implements MultipleConsumersSupport, HeaderFilterStrategyAware, EndpointServiceLocation {
 
