@@ -81,8 +81,9 @@ import org.elasticsearch.client.RestClient;
                                    description = "The id of the document as text for INDEX_OR_UPDATE. GET_BY_ID gives the"
                                                  + " source of the document as JSON text, and SEARCH a JSON array of the"
                                                  + " sources of the hits as text: unmarshal them to read their fields. DELETE,"
-                                                 + " CREATE_INDEX and DELETE_INDEX give true; a missing id or index, or an"
-                                                 + " index that is already there, fails with the error of the server"))
+                                                 + " CREATE_INDEX and DELETE_INDEX give true. A missing id or index, or an"
+                                                 + " index that is already there, fails with the error of the server: a"
+                                                 + " GET_BY_ID of a missing id fails with 404 rather than giving null"))
 public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
