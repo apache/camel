@@ -70,7 +70,8 @@ public final class CatalogDocs {
     static final String BODY_TYPES_HINT = "the body with the default options: consumerOut is what a from: gives the"
                                           + " route, consumerReply what it can reply with, producerIn what a to: can"
                                           + " send, producerOut the body after the to: (and so on for marshal, unmarshal"
-                                          + " and expression); a side not listed is not known";
+                                          + " and expression); for an EIP, eipIn what it needs, eipOut the body after it"
+                                          + " and eipSteps what its own steps start with; a side not listed is not known";
 
     /**
      * The rules a small model gets wrong most: functions live inside the placeholder, operators between placeholders.
@@ -1653,7 +1654,8 @@ public final class CatalogDocs {
         JsonObject answer = new JsonObject();
         for (Map.Entry<String, BodyTypeModel> entry : bodyTypes.entrySet()) {
             BodyTypeModel side = entry.getValue();
-            StringBuilder line = new StringBuilder(carriers(side.getCarriers(), side.getJavaType()));
+            StringBuilder line = new StringBuilder(
+                    side.getFrom() != null ? from(side.getFrom()) : carriers(side.getCarriers(), side.getJavaType()));
             if (side.getFormat() != null) {
                 line.append(", as ").append(side.getFormat());
             }
@@ -1674,6 +1676,23 @@ public final class CatalogDocs {
             answer.put(entry.getKey(), line.toString());
         }
         return answer;
+    }
+
+    /** The body of an EIP that is the body of another model: the side of the model it comes from (CAMEL-25928). */
+    private static String from(String side) {
+        return switch (side) {
+            case BodyTypeModel.EXPRESSION_IN -> "what its expression reads";
+            case BodyTypeModel.EXPRESSION_OUT -> "the result of its expression";
+            case BodyTypeModel.MARSHAL_IN -> "what its data format marshals";
+            case BodyTypeModel.MARSHAL_OUT -> "what its data format marshals to";
+            case BodyTypeModel.UNMARSHAL_IN -> "what its data format unmarshals";
+            case BodyTypeModel.UNMARSHAL_OUT -> "what its data format unmarshals to";
+            case BodyTypeModel.PRODUCER_IN -> "what the producer of its endpoint sends";
+            case BodyTypeModel.PRODUCER_OUT -> "what the producer of its endpoint leaves";
+            case BodyTypeModel.CONSUMER_OUT -> "what the consumer of its endpoint receives";
+            case BodyTypeModel.FROM_STEPS -> "what its steps end with";
+            default -> "the " + side + " of another model";
+        };
     }
 
     private static String carriers(List<String> carriers, String javaType) {

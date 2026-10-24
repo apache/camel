@@ -64,6 +64,16 @@ public @interface BodyType {
     When[] byOption() default {};
 
     /**
+     * The side of another model the body comes from, for an EIP that works with one, such as {@code marshalOut} for
+     * marshal, whose body is what its data format leaves. The side names the model: {@code expressionIn} and
+     * {@code expressionOut} the language of the EIP's expression, {@code marshalIn}, {@code marshalOut},
+     * {@code unmarshalIn} and {@code unmarshalOut} its data format, {@code producerIn} and {@code producerOut} its
+     * endpoint as a producer, and {@code consumerOut} its endpoint as a consumer. {@code steps} is the body the steps
+     * of the EIP end with, such as for a filter. A side with this needs no carriers.
+     */
+    String from() default "";
+
+    /**
      * What to know about the body, in a sentence for the documentation and the tools.
      */
     String description() default "";

@@ -18,5 +18,8 @@
     "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
     "fromType": { "index": 4, "kind": "attribute", "displayName": "From Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The source data type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass'). If not specified, the current message body type is used." },
     "toType": { "index": 5, "kind": "attribute", "displayName": "To Type", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The target data type URN in the format 'scheme:name' (e.g. 'json:JsonOrder') that the message body should be transformed into." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unknown" ], "description": "What the data type transformer makes" }
   }
 }

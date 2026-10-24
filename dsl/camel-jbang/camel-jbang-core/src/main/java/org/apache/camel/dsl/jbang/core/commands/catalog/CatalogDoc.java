@@ -127,17 +127,20 @@ public class CatalogDoc extends CamelCommand {
     boolean jsonOutput;
 
     /** The sides of the body types, as the documentation pages name them. */
-    private static final Map<String, String> BODY_SIDES = Map.of(
-            BodyTypeModel.CONSUMER_OUT, "Consumer",
-            BodyTypeModel.CONSUMER_REPLY, "Consumer reply",
-            BodyTypeModel.PRODUCER_IN, "Producer input",
-            BodyTypeModel.PRODUCER_OUT, "Producer output",
-            BodyTypeModel.MARSHAL_IN, "Marshal input",
-            BodyTypeModel.MARSHAL_OUT, "Marshal output",
-            BodyTypeModel.UNMARSHAL_IN, "Unmarshal input",
-            BodyTypeModel.UNMARSHAL_OUT, "Unmarshal output",
-            BodyTypeModel.EXPRESSION_IN, "Expression input",
-            BodyTypeModel.EXPRESSION_OUT, "Expression result");
+    private static final Map<String, String> BODY_SIDES = Map.ofEntries(
+            Map.entry(BodyTypeModel.CONSUMER_OUT, "Consumer"),
+            Map.entry(BodyTypeModel.CONSUMER_REPLY, "Consumer reply"),
+            Map.entry(BodyTypeModel.PRODUCER_IN, "Producer input"),
+            Map.entry(BodyTypeModel.PRODUCER_OUT, "Producer output"),
+            Map.entry(BodyTypeModel.MARSHAL_IN, "Marshal input"),
+            Map.entry(BodyTypeModel.MARSHAL_OUT, "Marshal output"),
+            Map.entry(BodyTypeModel.UNMARSHAL_IN, "Unmarshal input"),
+            Map.entry(BodyTypeModel.UNMARSHAL_OUT, "Unmarshal output"),
+            Map.entry(BodyTypeModel.EXPRESSION_IN, "Expression input"),
+            Map.entry(BodyTypeModel.EXPRESSION_OUT, "Expression result"),
+            Map.entry(BodyTypeModel.EIP_IN, "EIP input"),
+            Map.entry(BodyTypeModel.EIP_OUT, "EIP output"),
+            Map.entry(BodyTypeModel.EIP_STEPS, "Steps"));
 
     CamelCatalog catalog;
 
@@ -774,6 +777,7 @@ public class CatalogDoc extends CamelCommand {
         }
         printer().println(optionTable(filtered));
         printer().println("");
+        printBodyTypes(em.getBodyTypes());
 
         if (link != null) {
             printer().println(link);

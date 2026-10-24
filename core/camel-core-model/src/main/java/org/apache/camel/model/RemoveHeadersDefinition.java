@@ -22,6 +22,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -33,6 +36,8 @@ import org.apache.camel.spi.annotations.DslArg;
                         + " Useful for stripping internal Camel headers before sending to external systems.")
 @XmlRootElement(name = "removeHeaders")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Removes headers: the body stays as it was"))
 public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDefinition> {
 
     // in XML we cannot use String[] for attributes, so we provide a single

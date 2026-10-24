@@ -164,6 +164,37 @@ class JsonMapperTest {
     }
 
     @Test
+    void testShouldReadAndWriteEipBodyTypes() {
+        // CAMEL-25928: the body after an EIP, its steps, and the side of another model it comes from
+        EipModel model = new EipModel();
+        model.setName("marshal");
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"bodyTypes\""));
+        assertTrue(JsonMapper.generateEipModel(json).getBodyTypes().isEmpty());
+
+        BodyTypeModel out = new BodyTypeModel();
+        out.setFrom("marshalOut");
+        out.setDependsOn(List.of("variableReceive"));
+        BodyTypeModel steps = new BodyTypeModel();
+        steps.setCarriers(List.of("unchanged"));
+        model.getBodyTypes().put(BodyTypeModel.EIP_OUT, out);
+        model.getBodyTypes().put(BodyTypeModel.EIP_STEPS, steps);
+
+        json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"bodyTypes\""), json);
+        assertFalse(json.contains("\"carriers\": []"), json);
+        EipModel model2 = JsonMapper.generateEipModel(json);
+        assertEquals(List.of(BodyTypeModel.EIP_OUT, BodyTypeModel.EIP_STEPS), List.copyOf(model2.getBodyTypes().keySet()));
+
+        BodyTypeModel out2 = model2.getBodyType(BodyTypeModel.EIP_OUT);
+        assertEquals("marshalOut", out2.getFrom());
+        assertTrue(out2.getCarriers().isEmpty());
+        assertFalse(out2.isUnknown());
+        assertEquals(List.of("variableReceive"), out2.getDependsOn());
+        assertTrue(model2.getBodyType(BodyTypeModel.EIP_STEPS).isUnchanged());
+    }
+
+    @Test
     void testShouldWriteBodyTypesOnlyWhenSet() {
         // CAMEL-24961: the body a step needs and the body it leaves
         ComponentModel model = new ComponentModel();

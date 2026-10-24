@@ -25,5 +25,8 @@
     "callerRunsWhenRejected": { "index": 9, "kind": "attribute", "displayName": "Caller Runs When Rejected", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether or not the caller should run the task when it was rejected by the thread pool." },
     "rejectExecution": { "index": 10, "kind": "attribute", "displayName": "Reject Execution", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit." },
     "timePeriodMillis": { "index": 11, "kind": "attribute", "displayName": "Time Period Millis", "group": "common", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the time period during which the maximum request count is valid for." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "description": "Waits when the limit is reached: the body stays as it was" }
   }
 }

@@ -30,6 +30,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -40,6 +43,10 @@ import org.apache.camel.spi.annotations.DslArg;
           description = "Catches specific exceptions within a doTry block, allowing fine-grained exception handling within the route")
 @XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with"),
+           eipSteps = @BodyType(value = Carrier.UNKNOWN,
+                                description = "The body as the step that failed left it"))
 public class CatchDefinition extends OutputDefinition<CatchDefinition> {
 
     @XmlTransient

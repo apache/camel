@@ -29,6 +29,9 @@ import jakarta.xml.bind.annotation.XmlType;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -40,6 +43,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "expression", "correlationExpression" })
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Waits when the limit is reached: the body stays as it was"))
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
 
     @XmlTransient

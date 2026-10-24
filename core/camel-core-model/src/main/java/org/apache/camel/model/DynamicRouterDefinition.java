@@ -26,6 +26,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -37,6 +40,8 @@ import org.apache.camel.spi.Metadata;
                         + " The expression is called after each hop and returns the next endpoint, or null to stop.")
 @XmlRootElement(name = "dynamicRouter")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "What the last endpoint the router chose leaves"))
 public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode {
 
     public static final String DEFAULT_DELIMITER = ",";

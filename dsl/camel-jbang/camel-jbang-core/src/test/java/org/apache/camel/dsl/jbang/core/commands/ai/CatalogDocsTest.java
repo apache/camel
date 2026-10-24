@@ -160,10 +160,21 @@ class CatalogDocsTest {
         assertTrue(((JsonObject) xpath.get("bodyTypes")).getString("expressionOut")
                 .startsWith("pojo (org.w3c.dom.NodeList). The nodes the expression selects. With resultQName=STRING: text"));
 
-        // a model that does not declare them, such as an EIP, has none, rather than a guess
+        // an EIP: the body after it, the body its steps start with, and the side of another model it comes from
         JsonObject split = catalogDoc(Map.of("name", "split", "kind", "eip", "includeOptions", false));
-        assertNull(split.get("bodyTypes"));
-        assertNull(split.get("bodyTypesHint"));
+        JsonObject splitSides = (JsonObject) split.get("bodyTypes");
+        assertTrue(splitSides.getString("eipSteps").startsWith("unknown. Each part of what the expression gives"));
+        assertTrue(splitSides.getString("eipOut").startsWith("unchanged. The body as it was before the split"));
+        assertTrue(splitSides.getString("eipOut").endsWith(". Not known when aggregationStrategy is set"));
+        assertTrue(split.getString("bodyTypesHint").contains("eipOut the body after it"));
+        JsonObject marshal = catalogDoc(Map.of("name", "marshal", "kind", "eip", "includeOptions", false));
+        assertTrue(((JsonObject) marshal.get("bodyTypes")).getString("eipOut")
+                .startsWith("what its data format marshals to. "));
+
+        // a model that does not declare them, such as the batch settings of resequence, has none, rather than a guess
+        JsonObject batchConfig = catalogDoc(Map.of("name", "batchConfig", "kind", "eip", "includeOptions", false));
+        assertNull(batchConfig.get("bodyTypes"));
+        assertNull(batchConfig.get("bodyTypesHint"));
     }
 
     @Test

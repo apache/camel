@@ -73,6 +73,8 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 
@@ -84,6 +86,12 @@ import org.apache.camel.spi.Metadata;
           description = "Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object")
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipIn = @BodyType(from = "unmarshalIn",
+                             dependsOn = "variableSend"),
+           eipOut = @BodyType(from = "unmarshalOut",
+                              dependsOn = "variableReceive",
+                              description = "What the data format reads. With variableReceive the result goes into the"
+                                            + " variable, and the body stays as it was"))
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> implements DataFormatDefinitionAware {
 
     @XmlElements({

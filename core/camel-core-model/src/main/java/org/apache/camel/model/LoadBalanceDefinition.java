@@ -36,6 +36,9 @@ import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -47,6 +50,10 @@ import org.apache.camel.spi.Metadata;
                         + " such as round-robin, random, failover, or weighted")
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What the output the load balancer chose ends with"),
+           eipSteps = @BodyType(value = Carrier.UNCHANGED,
+                                description = "The output the load balancer chooses starts with the body"))
 public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinition> {
     @XmlElements({
             @XmlElement(name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),

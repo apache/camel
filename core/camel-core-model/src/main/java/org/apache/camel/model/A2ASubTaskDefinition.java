@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,6 +36,9 @@ import org.apache.camel.spi.Metadata;
           description = "Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails")
 @XmlRootElement(name = "a2aSubTask")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class A2ASubTaskDefinition extends OutputDefinition<A2ASubTaskDefinition> {
 
     @XmlAttribute

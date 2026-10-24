@@ -40,6 +40,9 @@ import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -52,6 +55,11 @@ import org.apache.camel.spi.annotations.DslArg;
                         + " Messages are grouped into buckets by correlation key and released when a completion condition is met.")
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "The message goes on with its body as it was; the aggregated message goes through"
+                                            + " the steps"),
+           eipSteps = @BodyType(value = Carrier.UNKNOWN,
+                                description = "The aggregated message, as the aggregationStrategy makes it"))
 public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         implements ExecutorServiceAwareDefinition<AggregateDefinition>,
         AggregationStrategyAwareDefinition<AggregateDefinition> {

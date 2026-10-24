@@ -30,6 +30,9 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AggregationStrategyClause;
 import org.apache.camel.builder.ProcessClause;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -41,6 +44,11 @@ import org.apache.camel.spi.Metadata;
                         + " and optionally aggregating their replies")
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              dependsOn = "aggregationStrategy",
+                              description = "What the last output ends with, unless an aggregationStrategy is set"),
+           eipSteps = @BodyType(value = Carrier.UNCHANGED,
+                                description = "Each output gets a copy of the body"))
 public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         implements ExecutorServiceAwareDefinition<MulticastDefinition> {
 

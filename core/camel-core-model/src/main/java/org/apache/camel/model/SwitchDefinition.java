@@ -32,6 +32,9 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsEndpointUri;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /** Routes a message to one fixed endpoint using a literal lookup table. */
@@ -41,6 +44,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "switch")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "selector", "cases", "otherwise" })
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "What the producer of the endpoint the selector chose leaves"))
 public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     @XmlElement(required = true)
     @Metadata(required = true,

@@ -55,5 +55,9 @@
     "CamelAggregationCompleteCurrentGroup": { "index": 4, "kind": "exchangeProperty", "displayName": "Aggregation Complete Current Group", "label": "consumer", "required": false, "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Input property. Set to true to force completing the current group. This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group." },
     "CamelAggregationCompleteAllGroups": { "index": 5, "kind": "exchangeProperty", "displayName": "Aggregation Complete All Groups", "label": "consumer", "required": false, "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Input property. Set to true to force completing all the groups (excluding this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group. This message is considered a signal message only, the message headers\/contents will not be processed otherwise. Instead use CamelAggregationCompleteAllGroupsInclusive if this message should be included in the aggregator." },
     "CamelAggregationCompleteAllGroupsInclusive": { "index": 6, "kind": "exchangeProperty", "displayName": "Aggregation Complete All Groups Inclusive", "label": "consumer", "required": false, "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Input property. Set to true to force completing all the groups (including this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "description": "The message goes on with its body as it was; the aggregated message goes through the steps" },
+    "eipSteps": { "carriers": [ "unknown" ], "description": "The aggregated message, as the aggregationStrategy makes it" }
   }
 }

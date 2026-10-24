@@ -20,5 +20,9 @@
     "when": { "index": 4, "kind": "element", "displayName": "When", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.WhenDefinition>", "oneOf": [ "when" ], "deprecated": false, "autowired": false, "secret": false, "asPredicate": true, "description": "The when clauses (predicates) to evaluate. The first when clause that matches determines which route branch to follow." },
     "otherwise": { "index": 5, "kind": "element", "displayName": "Otherwise", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.model.OtherwiseDefinition", "oneOf": [ "otherwise" ], "deprecated": false, "autowired": false, "secret": false, "description": "The otherwise clause to execute when none of the when predicates matched." },
     "precondition": { "index": 6, "kind": "attribute", "displayName": "Precondition", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If enabled then the choice is evaluated at route initialization time (precondition). Only when predicates with property placeholders or simple expressions using only property placeholders are supported." }
+  },
+  "bodyTypes": {
+    "eipOut": { "from": "steps", "description": "What the steps of the branch that ran end with; the body as it was when no branch ran" },
+    "eipSteps": { "carriers": [ "unchanged" ], "description": "Each branch starts with the body the choice got" }
   }
 }

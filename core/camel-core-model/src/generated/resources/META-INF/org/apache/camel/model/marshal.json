@@ -21,5 +21,9 @@
     "variableSend": { "index": 5, "kind": "attribute", "displayName": "Variable Send", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving." },
     "variableReceive": { "index": 6, "kind": "attribute", "displayName": "Variable Receive", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving." },
     "allowNullBody": { "index": 7, "kind": "attribute", "displayName": "Allow Null Body", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null." }
+  },
+  "bodyTypes": {
+    "eipIn": { "dependsOn": [ "variableSend" ], "from": "marshalIn" },
+    "eipOut": { "dependsOn": [ "variableReceive" ], "from": "marshalOut", "description": "What the data format writes. With variableReceive the result goes into the variable, and the body stays as it was" }
   }
 }

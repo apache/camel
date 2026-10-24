@@ -20,5 +20,8 @@
     "variableReceive": { "index": 4, "kind": "attribute", "displayName": "Variable Receive", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving." },
     "uri": { "index": 5, "kind": "attribute", "displayName": "Uri", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The uri of the endpoint to poll a single message from. The result is stored in the original message body (or in a variable if variableReceive is set)." },
     "timeout": { "index": 6, "kind": "attribute", "displayName": "Timeout", "group": "advanced", "label": "advanced", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "20000", "description": "Timeout in millis when polling from the external service. The default value is 20000 (20 seconds)." }
+  },
+  "bodyTypes": {
+    "eipOut": { "dependsOn": [ "variableReceive" ], "from": "consumerOut", "description": "The message the consumer of the endpoint receives, or null when none came before the timeout. With variableReceive it goes into the variable, and the body stays as it was" }
   }
 }

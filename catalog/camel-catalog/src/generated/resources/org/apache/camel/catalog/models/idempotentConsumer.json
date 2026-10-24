@@ -27,5 +27,9 @@
   },
   "exchangeProperties": {
     "CamelDuplicateMessage": { "index": 0, "kind": "exchangeProperty", "displayName": "Duplicate Message", "label": "producer", "required": false, "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether this exchange is a duplicate detected by the Idempotent Consumer EIP" }
+  },
+  "bodyTypes": {
+    "eipOut": { "from": "steps", "description": "What its steps end with; the body as it was for a duplicate message" },
+    "eipSteps": { "carriers": [ "unchanged" ] }
   }
 }

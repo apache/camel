@@ -33,5 +33,8 @@
   },
   "exchangeProperties": {
     "CamelToEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "To Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
+  },
+  "bodyTypes": {
+    "eipOut": { "dependsOn": [ "aggregationStrategy", "variableReceive" ], "from": "producerOut", "description": "The reply of the endpoint, with the default aggregation strategy. With variableReceive the reply goes into the variable, and the body stays as it was" }
   }
 }

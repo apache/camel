@@ -26,6 +26,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -38,6 +41,9 @@ import org.apache.camel.spi.Metadata;
                         + " The tapped message is sent asynchronously in a separate thread")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Sends a copy of the message to the endpoint: the body of the route stays as it"
+                                            + " was"))
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition
         implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
 

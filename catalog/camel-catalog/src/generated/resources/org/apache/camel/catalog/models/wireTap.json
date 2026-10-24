@@ -32,5 +32,8 @@
   },
   "exchangeProperties": {
     "CamelToEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "To Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "description": "Sends a copy of the message to the endpoint: the body of the route stays as it was" }
   }
 }

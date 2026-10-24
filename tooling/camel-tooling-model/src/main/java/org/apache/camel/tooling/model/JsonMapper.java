@@ -337,6 +337,7 @@ public final class JsonMapper {
                 model.addExchangeProperty(option);
             }
         }
+        model.setBodyTypes(parseBodyTypes(obj.getMap("bodyTypes")));
         return model;
     }
 
@@ -453,6 +454,7 @@ public final class JsonMapper {
         if (!model.getExchangeProperties().isEmpty()) {
             wrapper.put("exchangeProperties", asJsonObject(model.getExchangeProperties()));
         }
+        bodyTypesToJson(model, wrapper);
         return wrapper;
     }
 
@@ -701,7 +703,7 @@ public final class JsonMapper {
         model.setMetadata(mobj.getMapOrDefault("metadata", new JsonObject()));
     }
 
-    /** The body types of a component, data format or language: one object per side (CAMEL-24961). */
+    /** The body types of a component, data format, language or EIP: one object per side (CAMEL-24961). */
     private static Map<String, BodyTypeModel> parseBodyTypes(JsonObject json) {
         Map<String, BodyTypeModel> answer = new LinkedHashMap<>();
         if (json == null) {
@@ -725,6 +727,7 @@ public final class JsonMapper {
                     bodyType.getByOption().add(option);
                 }
             }
+            bodyType.setFrom(side.getString("from"));
             bodyType.setDescription(side.getString("description"));
             answer.put(entry.getKey(), bodyType);
         }
@@ -744,16 +747,18 @@ public final class JsonMapper {
     }
 
     /**
-     * The body types of a component, data format or language as the catalog has them: an object per side, with the
-     * carriers, the Java type, the format, the options it depends on, the body for other option values and the
-     * description (CAMEL-24961).
+     * The body types of a component, data format, language or EIP as the catalog has them: an object per side, with the
+     * carriers, the Java type, the format, the options it depends on, the body for other option values, the side of
+     * another model the body comes from and the description (CAMEL-24961).
      */
     public static JsonObject asJsonObjectBodyTypes(Map<String, BodyTypeModel> bodyTypes) {
         JsonObject json = new JsonObject();
         for (Map.Entry<String, BodyTypeModel> entry : bodyTypes.entrySet()) {
             BodyTypeModel bodyType = entry.getValue();
             JsonObject side = new JsonObject();
-            side.put("carriers", bodyType.getCarriers());
+            if (bodyType.getFrom() == null || !bodyType.getCarriers().isEmpty()) {
+                side.put("carriers", bodyType.getCarriers());
+            }
             side.put("javaType", bodyType.getJavaType());
             side.put("format", bodyType.getFormat());
             if (!bodyType.getDependsOn().isEmpty()) {
@@ -772,6 +777,7 @@ public final class JsonMapper {
                 }
                 side.put("byOption", byOption);
             }
+            side.put("from", bodyType.getFrom());
             side.put("description", bodyType.getDescription());
             side.entrySet().removeIf(e -> e.getValue() == null);
             json.put(entry.getKey(), side);

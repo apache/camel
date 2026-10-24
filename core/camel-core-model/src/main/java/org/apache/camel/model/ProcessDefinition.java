@@ -23,6 +23,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.ObjectHelper;
@@ -34,6 +37,8 @@ import org.apache.camel.util.ObjectHelper;
           description = "Invokes a custom Camel Processor for programmatic message processing in Java")
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "What the processor sets"))
 public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
 
     @XmlTransient

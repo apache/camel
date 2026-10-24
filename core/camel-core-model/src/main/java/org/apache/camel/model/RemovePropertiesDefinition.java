@@ -22,6 +22,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -32,6 +35,8 @@ import org.apache.camel.spi.annotations.DslArg;
           description = "Removes all exchange properties whose names match a given pattern")
 @XmlRootElement(name = "removeProperties")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Removes exchange properties: the body stays as it was"))
 public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropertiesDefinition> {
 
     // in XML we cannot use String[] for attributes, so we provide a single

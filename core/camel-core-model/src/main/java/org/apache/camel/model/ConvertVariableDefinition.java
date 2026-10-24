@@ -22,6 +22,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -32,6 +35,8 @@ import org.apache.camel.spi.annotations.DslArg;
           description = "Converts a variable value to a specified Java type using Camel's built-in type converters")
 @XmlRootElement(name = "convertVariableTo")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Converts a variable: the body stays as it was"))
 public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariableDefinition> {
 
     @XmlTransient
