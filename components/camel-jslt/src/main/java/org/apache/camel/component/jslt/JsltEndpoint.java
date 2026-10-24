@@ -51,6 +51,9 @@ import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -63,6 +66,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION }, headersClass = JsltConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json",
+                                  description = "JSON as text, bytes, a stream, a Reader or a java.io.File, such as the file of"
+                                                + " the file consumer. A Map, a List, a JsonNode or no body fails: marshal"
+                                                + " parsed JSON first"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "json",
+                                   description = "The result as JSON text, pretty printed with prettyPrint=true"))
 public class JsltEndpoint extends ResourceEndpoint {
 
     private static final ObjectMapper OBJECT_MAPPER;

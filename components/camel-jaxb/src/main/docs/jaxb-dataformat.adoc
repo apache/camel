@@ -344,14 +344,15 @@ You can do the same using the XML DSL:
 
 === Marshal data that is already XML
 
-The JAXB marshaller requires that the message body is JAXB compatible,
+The JAXB marshaller marshals a message body that is JAXB compatible,
 e.g., it is a `JAXBElement`, a java instance that has JAXB annotations, or
 extends `JAXBElement`. There can be situations where the message body is
 already in XML, e.g., from a `String` type.
 
-`JaxbDataFormat` has an option named `mustBeJAXBElement` which you can set to `false` to relax this check and
-have the JAXB marshaller only attempt marshalling on `JAXBElement` (`javax.xml.bind.JAXBIntrospector#isElement` returns `true`).
-In those situations, the marshaller will fall back to marshal the message body as-is.
+The option `mustBeJAXBElement` is `false` by default: a message body that is not JAXB compatible
+(`jakarta.xml.bind.JAXBIntrospector#isElement` returns `false`) is then written as-is, as XML already.
+Text, bytes, a stream or a file can be written this way; a `Map` or a `List` fails.
+Set `mustBeJAXBElement` to `true` to fail with an `InvalidPayloadException` instead.
 
 == Dependencies
 

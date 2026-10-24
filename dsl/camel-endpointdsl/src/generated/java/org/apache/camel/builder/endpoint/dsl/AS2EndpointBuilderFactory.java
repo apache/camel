@@ -1750,6 +1750,81 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The password for basic authentication with the HTTP proxy.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthPassword the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyAuthPassword(String proxyAuthPassword) {
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
+            return this;
+        }
+        /**
+         * The user name for basic authentication with the HTTP proxy. The
+         * credentials are sent to the proxy only.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthUsername the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyAuthUsername(String proxyAuthUsername) {
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
+            return this;
+        }
+        /**
+         * The host name of an HTTP proxy the client sends its AS2 messages
+         * through. The connection to the proxy is plain http; when an SSL
+         * context is configured, the AS2 message goes through a CONNECT tunnel
+         * to the target.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The port number of the HTTP proxy.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The port number of the HTTP proxy.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
          * The access token that is used by the client for bearer
          * authentication.
          * 

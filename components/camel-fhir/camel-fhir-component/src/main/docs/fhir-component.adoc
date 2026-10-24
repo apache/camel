@@ -120,3 +120,12 @@ The URI names the API and its method, such as `fhir://read/resourceById`. The pa
         - log:
             message: "Found ${body.total} patients"
 ----
+
+The `inBody` option names the parameter of the method that the message body is, such as `resourceAsString` in the
+first route. The body is converted to the type of that parameter, so a byte array, a stream or a file works for a
+parameter of type String. A body that cannot be converted fails the exchange before the call, with an error that names
+the parameter. Without `inBody` the body is not used.
+
+After the call the message body is the result of the method: a `MethodOutcome` for create, update, patch, delete and
+validate, and a HAPI FHIR model object for the others, such as the `Bundle` of a search or the resource of a read. Marshal
+a resource or a `Bundle` with `fhirJson` or `fhirXml` to get text.

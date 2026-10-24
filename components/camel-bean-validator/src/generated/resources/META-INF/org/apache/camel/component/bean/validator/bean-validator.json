@@ -33,6 +33,10 @@
     "validationProviderResolver": { "index": 6, "kind": "property", "displayName": "Validation Provider Resolver", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "jakarta.validation.ValidationProviderResolver", "deprecated": false, "autowired": false, "secret": false, "description": "To use a a custom ValidationProviderResolver" },
     "validatorFactory": { "index": 7, "kind": "property", "displayName": "Validator Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "jakarta.validation.ValidatorFactory", "deprecated": false, "autowired": true, "secret": false, "description": "To use a custom ValidatorFactory" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "pojo", "list" ], "description": "A POJO with Jakarta Bean Validation constraints, or a List or another Iterable of them, each one validated. Text, a Map or an array has no constraints of its own and passes unchecked; no body fails" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged: a body that breaks a constraint fails with a BeanValidationException" }
+  },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Where label is an arbitrary text value describing the endpoint" },
     "group": { "index": 1, "kind": "parameter", "displayName": "Group", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "jakarta.validation.groups.Default", "description": "To use a custom validation group" },

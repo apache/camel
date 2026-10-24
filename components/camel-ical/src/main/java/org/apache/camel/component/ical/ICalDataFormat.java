@@ -23,6 +23,9 @@ import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -32,6 +35,16 @@ import org.apache.camel.support.service.ServiceSupport;
  * Bridge ICal data format to camel world.
  */
 @Dataformat("ical")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO, javaType = "net.fortuna.ical4j.model.Calendar",
+                                 description = "An ical4j Calendar, such as unmarshal gives. Text is not parsed: unmarshal the"
+                                               + " iCalendar text first"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The iCalendar text in the stream cache, or a byte array when stream caching is"
+                                                + " off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text",
+                                   description = "An iCalendar (.ics) document, which ical4j reads as UTF-8"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "net.fortuna.ical4j.model.Calendar",
+                                    description = "An ical4j Calendar of the document"))
 public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private boolean validating;

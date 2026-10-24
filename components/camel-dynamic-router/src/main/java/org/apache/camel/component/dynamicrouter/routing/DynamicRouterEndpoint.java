@@ -29,6 +29,9 @@ import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterServic
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -55,6 +58,13 @@ import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterCons
              producerOnly = true,
              remote = false,
              category = { Category.MESSAGING, Category.CORE })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The message to route: the predicates of the subscriptions on the channel"
+                                                + " decide where it goes"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the recipient ends with; with allMatch, the one of the last"
+                                                 + " recipient unless an aggregationStrategy is set. When no subscription"
+                                                 + " matches, a text that says so, with the body in the originalBody header"))
 public class DynamicRouterEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterEndpoint.class);

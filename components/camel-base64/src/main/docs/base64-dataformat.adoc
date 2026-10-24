@@ -123,8 +123,8 @@ YAML::
 
 == Unmarshal
 
-In this example, we unmarshal the payload from the JMS queue to a byte[]
-object, before its processed by the `newOrder` processor.
+In this example, we unmarshal the payload from the JMS queue to a stream of
+the decoded bytes, before its processed by the `newOrder` processor.
 
 [tabs]
 ====

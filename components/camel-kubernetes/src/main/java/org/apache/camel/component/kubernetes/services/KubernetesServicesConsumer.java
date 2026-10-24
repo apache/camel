@@ -60,7 +60,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         servicesWatcher = new ServicesConsumerTask();
-        executor.submit(servicesWatcher);
+        KubernetesHelper.watch(this, executor, servicesWatcher);
 
     }
 

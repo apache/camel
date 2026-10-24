@@ -32,13 +32,14 @@ The following Camel related variables are made available:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Variable |Type |Description
-|*this* |Exchange |the Exchange is the root object
+|*this* |RootObject |the root object, whose properties are the variables below
 |context |CamelContext |the CamelContext
 |exchange |Exchange |the Exchange
 |exchangeId |String |the exchange id
 |exception |Throwable |the Exchange exception (if any)
 |request |Message |the message
 |message |Message |the message
+|body |Object |the message body
 |headers |Map |the message headers
 |getHeader(name) |Object |the message header by the given name
 |getHeader(name, type) |Type |the message header by the given name as the given type

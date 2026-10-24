@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.mq.client.MQ2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,16 @@ import software.amazon.awssdk.services.mq.MqClient;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-mq", title = "AWS MQ", syntax = "aws2-mq:label", producerOnly = true,
              category = { Category.CLOUD, Category.MESSAGING }, headersClass = MQ2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: the operations take their input from headers, such as the id of the"
+                                                + " broker in CamelAwsMQBrokerID, and the users of createBroker as a List of"
+                                                + " the User of the AWS SDK. With pojoRequest=true the request of the AWS SDK"
+                                                + " for the operation, such as a ListBrokersRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " ListBrokersResponse of listBrokers, with the token of the next page in a"
+                                                 + " header"))
 public class MQ2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private MqClient mqClient;

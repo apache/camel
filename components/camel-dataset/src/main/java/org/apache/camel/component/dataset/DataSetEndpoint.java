@@ -27,6 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -48,6 +51,14 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
              remote = false, category = { Category.CORE, Category.TESTING }, lenientProperties = true,
              headersClass = DataSetConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the DataSet bean creates for each message: the defaultBody of a"
+                                                 + " SimpleDataSet (the text <hello>world!</hello> unless set), the bodies of a"
+                                                 + " ListDataSet in turn, or the text of a FileDataSet"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Each message is compared with the body the DataSet creates for its index. A"
+                                                + " mismatch fails the assertions of the endpoint, not the message"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
