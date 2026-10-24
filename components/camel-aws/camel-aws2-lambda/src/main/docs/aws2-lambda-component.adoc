@@ -176,7 +176,8 @@ template.send("direct:createFunction", ExchangePattern.InOut, exchange -> {
 
 The code of the function is the zip file of the `CamelAwsLambdaZipFile` header, or the S3 location of the
 `CamelAwsLambdaS3Bucket` and `CamelAwsLambdaS3Key` headers (and optionally `CamelAwsLambdaS3ObjectVersion`).
-When neither is set, the message body is the zip, as bytes, a stream or a file; any other body fails the exchange.
+When neither is set, the message body is the zip, as bytes, a stream or a file. A body that does not convert to bytes
+fails the exchange, and text is sent as its bytes, which AWS rejects as not a zip.
 The `updateFunction` operation takes the code in the same way. The zip file header and the S3 headers cannot be used together,
 and the S3 location needs both the bucket and the key.
 
