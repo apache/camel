@@ -86,7 +86,8 @@ public final class MojoHelper {
                         dir.resolve("camel-azure-storage-datalake"), dir.resolve("camel-azure-cosmosdb"),
                         dir.resolve("camel-azure-storage-queue"), dir.resolve("camel-azure-servicebus"),
                         dir.resolve("camel-azure-key-vault"), dir.resolve("camel-azure-files"),
-                        dir.resolve("camel-azure-schema-registry"), dir.resolve("camel-azure-functions"));
+                        dir.resolve("camel-azure-schema-registry"), dir.resolve("camel-azure-functions"),
+                        dir.resolve("camel-azure-eventgrid"));
             case "camel-google":
                 return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
                         dir.resolve("camel-google-drive"), dir.resolve("camel-google-firestore"),
@@ -147,7 +148,8 @@ public final class MojoHelper {
                         dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"),
                         dir.resolve("camel-aws-bedrock"),
                         dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"),
-                        dir.resolve("camel-aws2-s3-vectors"), dir.resolve("camel-aws-security-hub"));
+                        dir.resolve("camel-aws2-s3-vectors"), dir.resolve("camel-aws-security-hub"),
+                        dir.resolve("camel-aws-parameter-store"));
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),

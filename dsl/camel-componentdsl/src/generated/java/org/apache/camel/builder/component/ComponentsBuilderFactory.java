@@ -377,6 +377,19 @@ public interface ComponentsBuilderFactory {
         return AwsConfigComponentBuilderFactory.awsConfig();
     }
     /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * @return the dsl builder
+     */
+    static AwsParameterStoreComponentBuilderFactory.AwsParameterStoreComponentBuilder awsParameterStore() {
+        return AwsParameterStoreComponentBuilderFactory.awsParameterStore();
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 
@@ -809,6 +822,19 @@ public interface ComponentsBuilderFactory {
      */
     static AzureCosmosdbComponentBuilderFactory.AzureCosmosdbComponentBuilder azureCosmosdb() {
         return AzureCosmosdbComponentBuilderFactory.azureCosmosdb();
+    }
+    /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * @return the dsl builder
+     */
+    static AzureEventgridComponentBuilderFactory.AzureEventgridComponentBuilder azureEventgrid() {
+        return AzureEventgridComponentBuilderFactory.azureEventgrid();
     }
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
