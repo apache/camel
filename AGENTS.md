@@ -505,6 +505,10 @@ format, parser, or anything that handles `@UriParam` security knobs:
   `"insecure:dev"` for risky flags (see the `Annotations` subsection further down).
 - Does the change relax a default? New defaults err toward "denied unless opted in". A relaxed
   default needs an upgrade-guide entry and PMC sign-off.
+- Does the change add a new DSL extension, that is, declarations of a feature written beside the routes in YAML, XML
+  or Java (as camel-semantic's questions are)? That needs a design doc and agreement on the dev list first: it is a
+  project decision, not a component decision. Flag the PR even when it is complete and CI is green. See
+  [`design/dsl-extensions.adoc`](design/dsl-extensions.adoc).
 - Does an authentication or authorization component enforce what its option names claim — issuer
   validation, audience checking, signature verification, every advertised sub-path covered — and
   fail closed when the option or the claim is absent?
