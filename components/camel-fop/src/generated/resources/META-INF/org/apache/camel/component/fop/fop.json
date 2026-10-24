@@ -30,6 +30,10 @@
   "headers": {
     "CamelFop.Output.Format": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The output format", "constantName": "org.apache.camel.component.fop.FopConstants#CAMEL_FOP_OUTPUT_FORMAT" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "xml", "description": "The XSL-FO document to render, as text, bytes, a stream or a file. A DOM Document, a Map or no body fails" },
+    "producerOut": { "carriers": [ "bytes" ], "javaType": "java.io.ByteArrayOutputStream", "description": "The rendered document as bytes, in a ByteArrayOutputStream: PDF, or the outputType, or the format of the CamelFop.Output.Format header" }
+  },
   "properties": {
     "outputType": { "index": 0, "kind": "path", "displayName": "Output Type", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.fop.FopOutputType", "enum": [ "pdf", "ps", "pcl", "png", "jpeg", "svg", "xml", "mif", "rtf", "txt" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The primary output format is PDF but other output formats are also supported." },
     "fopFactory": { "index": 1, "kind": "parameter", "displayName": "Fop Factory", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.fop.apps.FopFactory", "deprecated": false, "autowired": false, "secret": false, "description": "Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory." },

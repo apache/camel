@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.oaipmh.component.model.OAIPMHConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -39,6 +42,16 @@ import org.joda.time.format.ISODateTimeFormat;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", lenientProperties = true,
              category = { Category.SEARCH }, headersClass = OAIPMHConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "xml",
+                                   description = "The XML response of one OAI-PMH request as a String: one message per"
+                                                 + " page, following the resumption tokens until the last page"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not read: the request comes from the options, which the"
+                                                + " CamelOaimph headers override"),
+           producerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List",
+                                   description = "A List of Strings, the XML response of each page of the request until"
+                                                 + " the last; with onlyFirst only the first page, and the token for the next"
+                                                 + " page in the CamelOaimphResumptionToken header"))
 public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private transient URI url;

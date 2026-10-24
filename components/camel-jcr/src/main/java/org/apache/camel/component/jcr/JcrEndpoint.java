@@ -28,6 +28,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -45,6 +48,15 @@ import org.apache.camel.util.StringHelper;
 @UriEndpoint(firstVersion = "1.3.0", scheme = "jcr", title = "JCR", syntax = "jcr:host/base",
              alternativeSyntax = "jcr:username:password@host/base",
              category = { Category.DATABASE, Category.CMS }, headersClass = JcrConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List",
+                                   description = "The JCR events received in one callback: a List of javax.jcr.observation.Event"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Insert (the default) ignores the body and stores the headers as node"
+                                                + " properties; getById (CamelJcrOperation header) reads the node identifier"
+                                                + " from the body as a String"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.UNCHANGED },
+                                   description = "Insert sets the identifier of the node, a String; getById leaves the body"
+                                                 + " and sets the node properties as headers"))
 public class JcrEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private Credentials credentials;

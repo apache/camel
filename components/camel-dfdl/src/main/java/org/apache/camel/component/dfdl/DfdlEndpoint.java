@@ -24,6 +24,9 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.UriEndpoint;
@@ -46,6 +49,20 @@ import org.apache.daffodil.japi.io.InputSourceDataInputStream;
  */
 @UriEndpoint(firstVersion = "4.11.0", scheme = "dfdl", title = "DFDL", syntax = "dfdl:schemaUri", producerOnly = true,
              category = { Category.TRANSFORMATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "parseDirection", value = "UNPARSE",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE, Carrier.POJO }),
+                                  description = "Data in the format the DFDL schema describes, such as an EDI message, to"
+                                                + " parse. UNPARSE takes the XML infoset as text, bytes, a stream, a file or a"
+                                                + " DOM Document. A Map or no body fails"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.Document",
+                                   byOption = @BodyType.When(option = "parseDirection", value = "UNPARSE",
+                                                             carriers = Carrier.BYTES,
+                                                             javaType = "java.io.ByteArrayOutputStream"),
+                                   description = "The XML infoset as a DOM Document. UNPARSE gives the data in the format the"
+                                                 + " DFDL schema describes as bytes, in a ByteArrayOutputStream"))
 public class DfdlEndpoint extends ProcessorEndpoint {
 
     @UriPath
