@@ -30,8 +30,9 @@ The component supports the following:
 * A Camel consumer using a TCP Server
 * A Camel producer using a TCP Client
 
-The MLLP component use `byte[]` payloads, and relies on Camel type
-conversion to convert `byte[]` to other types.
+The MLLP consumer gives the HL7 payload as a `String` by default
+(`stringPayload=true`), or as a `byte[]` with `stringPayload=false`.
+The MLLP producer sends a `String` or a `byte[]` body.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:

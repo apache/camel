@@ -307,9 +307,11 @@ The correlation criteria is defined with a `MessagePredicate` object.
 The following example will treat
 a FIX `ExecutionReport` from the specified session where the transaction
 type is STATUS and the Order ID
-matches our request. The session ID should be for the __requestor__, the
-sender and target CompID fields
-will be reversed when looking for the reply.
+matches our request. The SenderCompID and TargetCompID of the session ID are
+matched as given against the header of the reply, so use the session ID as
+the __replier__ sees it: for a request sent on `FIX.4.2:TRADER->MARKET`, use
+`FIX.4.2:MARKET->TRADER`. The correlation criteria is required for an InOut
+exchange.
 
 ._Java-only: programmatic correlation criteria setup using QuickFIX/J API_
 [source,java]

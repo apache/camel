@@ -29,6 +29,9 @@ import org.apache.camel.component.file.remote.SftpDefaultMoveExistingFileStrateg
 import org.apache.camel.component.file.remote.SftpRemoteFile;
 import org.apache.camel.component.file.remote.mina.strategy.MinaSftpProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +46,20 @@ import org.apache.camel.util.ObjectHelper;
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous")
+@BodyTypes(consumerOut = @BodyType(value = Carrier.FILE, dependsOn = "preMove",
+                                   byOption = {
+                                           @BodyType.When(option = "streamDownload", value = "true", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "download", value = "false", carriers = Carrier.NULL) },
+                                   description = "The file as read: a RemoteFile, which converts to text, bytes or a stream; a"
+                                                 + " stream with streamDownload; with preMove its content, a byte array"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "allowNullBody", value = "true",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE }),
+                                  description = "What converts to an InputStream: text, bytes, a stream or a file. A Map or"
+                                                + " a List fails: marshal it first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class MinaSftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     @UriParam

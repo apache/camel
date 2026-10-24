@@ -343,9 +343,9 @@ YAML::
 ====
 
 In the example above, get takes only one parameter, so `singleParameter`
-is used and `getProcessor` will receive Value class directly in body,
-while `putProcessor` will receive an array of size 2 with `String` key and
-`Value` value filled as array contents.
+is used and `getProcessor` will receive the `Key` directly in the body,
+while `putProcessor` will receive an array of size 2 with the `Key` and the
+`Value` as its contents.
 
 
 === Avro via HTTP SPI
