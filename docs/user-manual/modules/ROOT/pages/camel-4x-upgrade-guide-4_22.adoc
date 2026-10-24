@@ -2069,6 +2069,10 @@ so a downstream reader that expected that type received an incompatible object.
 A route that reads the full embeddings or audio response from `CamelOpenAIResponse` must switch to the
 matching property. The chat-completion and responses operations are unchanged.
 
+=== camel-netty-http - securityConfiguration is copied per endpoint
+
+When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
+
 === camel-jta, camel-spring - a transacted exchange that completes during a graceful shutdown is committed
 
 Since Camel 4.19, a transacted exchange (JTA or Spring transacted routes) that was in flight when a graceful shutdown
