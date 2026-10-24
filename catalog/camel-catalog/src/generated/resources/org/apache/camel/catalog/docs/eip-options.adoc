@@ -14,3 +14,7 @@ The {doctitle} eip supports the following options which are listed below.
 |===
 
 jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.displayName!="Id")]',{cellformats},{requires}]
+
+:body-types-module: eips
+:body-types-intro: The message body at each side of the {doctitle} EIP: _EIP input_ is the body it needs, _EIP output_ the body after it, and _Steps_ the body its own steps start with.
+include::ROOT:partial$body-types.adoc[]
