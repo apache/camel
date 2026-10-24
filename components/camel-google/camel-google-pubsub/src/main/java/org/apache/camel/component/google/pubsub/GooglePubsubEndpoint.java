@@ -30,6 +30,7 @@ import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.component.google.pubsub.serializer.DefaultGooglePubsubSerializer;
 import org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer;
 import org.apache.camel.spi.*;
+import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -43,6 +44,19 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub",
              syntax = "google-pubsub:projectId:destinationName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = GooglePubsubConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The data of the Pub/Sub message as a byte array, with its attributes in"
+                                                 + " headers: convert or unmarshal it"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "serializer",
+                                  description = "Text is sent as UTF-8 and bytes as they are; a List of the exchanges of a"
+                                                + " grouped aggregation is sent as one message per exchange. A body that"
+                                                + " converts to bytes, such as a stream or a file, is sent as its content. Any"
+                                                + " other body goes to the serializer, by default Java serialization, so a Map"
+                                                + " or a POJO is sent as Java-serialized bytes: marshal it first. No body"
+                                                + " fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, with the id of the published message in a header"))
 public class GooglePubsubEndpoint extends DefaultEndpoint
         implements EndpointServiceLocation, HeaderFilterStrategyAware, GoogleCommonConfiguration {
 

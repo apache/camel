@@ -59,7 +59,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         customResourcesWatcher = new CustomResourcesConsumerTask();
-        executor.submit(customResourcesWatcher);
+        KubernetesHelper.watch(this, executor, customResourcesWatcher);
     }
 
     @Override

@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.securityhub.client.SecurityHubClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -41,6 +44,22 @@ import software.amazon.awssdk.services.securityhub.SecurityHubClient;
                      Category.CLOUD,
                      Category.SECURITY },
              headersClass = SecurityHubConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "batchImportFindings, the default, imports the findings of the"
+                                                + " CamelAwsSecurityHubFindings header, or else of the body: a List of the"
+                                                + " AwsSecurityFinding of the AWS SDK, or one AwsSecurityFinding. JSON text, a"
+                                                + " Map, an array or a List of anything else fails. The other operations take"
+                                                + " their input from headers, such as CamelAwsSecurityHubFilters. With"
+                                                + " pojoRequest=true the request of the AWS SDK for the operation, such as a"
+                                                + " GetFindingsRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " BatchImportFindingsResponse of batchImportFindings, with the counts in the"
+                                                 + " CamelAwsSecurityHubSuccessCount and CamelAwsSecurityHubFailedCount"
+                                                 + " headers: a finding that is not imported does not fail the exchange."
+                                                 + " getFindings gives a GetFindingsResponse, with the token of the next page"
+                                                 + " in the CamelAwsSecurityHubNextToken header"))
 public class SecurityHubEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SecurityHubClient securityHubClient;

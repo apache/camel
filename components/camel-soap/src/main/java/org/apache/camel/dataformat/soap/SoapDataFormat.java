@@ -36,6 +36,9 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.slf4j.Logger;
@@ -48,6 +51,22 @@ import static org.apache.camel.dataformat.soap.SoapConstants.SOAP_METHOD_NAME;
  */
 @Dataformat("soap")
 @Metadata(excludeProperties = "library,instanceClass,contentTypeFormat,defaultInstance")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO, dependsOn = "elementNameStrategy",
+                                 description = "A JAXB object whose class has @XmlType with a name, written as the one element"
+                                               + " of the SOAP body; text fails. When the exchange has a caught exception"
+                                               + " (onException, doCatch), a SOAP fault of it is written instead"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "xml",
+                                  description = "The SOAP envelope in the stream cache, or a byte array when stream caching is"
+                                                + " off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                   format = "xml",
+                                   description = "A SOAP envelope of the version: text, bytes, a stream, a file, a DOM"
+                                                 + " Document, a DOMSource or a StreamSource"),
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                    description = "The JAXB object of the first element of the SOAP body, with the SOAP headers"
+                                                  + " in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header."
+                                                  + " No body when the SOAP body is empty or a fault, which becomes the"
+                                                  + " exception of the exchange"))
 public class SoapDataFormat extends JaxbDataFormat {
 
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";

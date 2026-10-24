@@ -23,6 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.cloudtrail.client.CloudtrailClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,11 @@ import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 @UriEndpoint(firstVersion = "3.19.0", scheme = "aws-cloudtrail", title = "AWS CloudTrail", syntax = "aws-cloudtrail:label",
              consumerOnly = true,
              category = { Category.CLOUD, Category.MANAGEMENT, Category.MONITORING }, headersClass = CloudtrailConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "json",
+                                   description = "The CloudTrail record of the event as JSON in a byte array, one message per"
+                                                 + " event, the newest first within a poll, with the id, the name, the source"
+                                                 + " and the user name of the event in headers: unmarshal it to read its"
+                                                 + " fields"))
 public class CloudtrailEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam

@@ -103,8 +103,8 @@ Camel-Minio component provides the following operation on the producer side:
 - `listBuckets`
 - `deleteBucket`
 - `listObjects`
-- `getObject` (this will return a `MinioObject instance)
-- `getObjectRange` (this will return a `MinioObject instance). The former name `getPartialObject` still works, but is deprecated.
+- `getObject` (this will return the content of the object as a stream)
+- `getObjectRange` (this will return the range of the content as a stream). The former name `getPartialObject` still works, but is deprecated.
 - `createDownloadLink` (this will return a Presigned download Url)
 - `createUploadLink` (this will return a Presigned upload url)
 
@@ -450,7 +450,7 @@ YAML::
 ----
 ====
 
-This operation will return a MinioObject instance related to the camelKey object in `mycamelbucket` bucket.
+This operation will return the content of the camelKey object in `mycamelbucket` bucket as a stream.
 
 - `GetObjectRange`: this operation gets a single object range in a specific bucket
 
@@ -514,7 +514,7 @@ YAML::
             uri: mock:result
 ----
 ====
-This operation will return a MinioObject instance related to the camelKey object in `mycamelbucket` bucket, containing bytes from 0 to 9.
+This operation will return the bytes from 0 to 9 of the camelKey object in `mycamelbucket` bucket as a stream.
 
 - `createDownloadLink`: this operation will return a presigned url through which a file can be downloaded using GET method
 

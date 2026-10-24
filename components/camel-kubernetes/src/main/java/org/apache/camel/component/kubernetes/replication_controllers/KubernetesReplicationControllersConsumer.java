@@ -60,7 +60,7 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
 
         executor = getEndpoint().createExecutor(this);
         rcWatcher = new ReplicationControllersConsumerTask();
-        executor.submit(rcWatcher);
+        KubernetesHelper.watch(this, executor, rcWatcher);
     }
 
     @Override

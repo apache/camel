@@ -51,14 +51,15 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Headers
 
-Camel will store a reference to the resource in the message header with
-key, `org.apache.camel.stringtemplate.resource`. The Resource is an
-`org.springframework.core.io.Resource` object.
+Camel sets the uri of the template resource in the message header
+`CamelStringTemplateResourceUri`.
 
 === String Template Context
 
 Camel will provide exchange information in the String Template context (just a
 `Map`). The `Exchange` is transferred as:
+The `body`, `header`, `headers`, `variable`, `variables` and `exception` entries are always
+there; the others only when the endpoint has `allowContextMapAll=true`.
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -92,8 +93,8 @@ This scenario can be used in production when the resource never changes.
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set, then Camel uses this over the endpoint configured
-resource. This allows you to provide a dynamic template at runtime.
+headers is set, and the endpoint has `allowTemplateFromHeader=true`, then Camel uses this
+over the endpoint configured resource. This allows you to provide a dynamic template at runtime.
 
 === StringTemplate Attributes
 

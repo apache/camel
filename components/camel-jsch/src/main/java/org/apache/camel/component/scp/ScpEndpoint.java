@@ -24,6 +24,9 @@ import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +42,16 @@ import org.apache.camel.spi.UriParam;
                               + ",transferLoggingIntervalSeconds,transferLoggingLevel,transferLoggingVerbose,resumeDownload"
                               + ",handleDirectoryParserAbsoluteResult,activePortRange,ftpClient,ftpClientConfig"
                               + ",ftpClientConfigParameters,ftpClientParameters,account,synchronous")
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "allowNullBody", value = "true",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE }),
+                                  description = "The content of the file: text, bytes, a stream or a file, which is read into"
+                                                + " memory first to send its size. A Map or a List fails: marshal it first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, with the name of the remote file in the CamelFileNameProduced"
+                                                 + " header"))
 public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
 
     @UriParam

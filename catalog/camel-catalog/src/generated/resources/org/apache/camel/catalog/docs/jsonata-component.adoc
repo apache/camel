@@ -53,6 +53,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 For example, you could use something like:
 
+The messages of the queue are JSON text, so the examples set `inputType` and `outputType` to `JsonString`: with the default, `Jackson`, the body must be JSON data (a Map, a List or a JsonNode), such as after `unmarshal: json`, and the result is a JsonNode.
+
 [tabs]
 ====
 Java::
@@ -60,7 +62,7 @@ Java::
 [source,java]
 ----
 from("activemq:My.Queue")
-    .to("jsonata:com/acme/MyResponse.json");
+    .to("jsonata:com/acme/MyResponse.json?inputType=JsonString&outputType=JsonString");
 ----
 
 XML::
@@ -69,7 +71,7 @@ XML::
 ----
 <route>
   <from uri="activemq:My.Queue"/>
-  <to uri="jsonata:com/acme/MyResponse.json"/>
+  <to uri="jsonata:com/acme/MyResponse.json?inputType=JsonString&amp;outputType=JsonString"/>
 </route>
 ----
 
@@ -83,6 +85,9 @@ YAML::
       steps:
         - to:
             uri: jsonata:com/acme/MyResponse.json
+            parameters:
+              inputType: JsonString
+              outputType: JsonString
 ----
 ====
 
@@ -95,7 +100,7 @@ Java::
 [source,java]
 ----
 from("activemq:My.Queue")
-    .to("jsonata:file://myfolder/MyResponse.json?contentCache=true")
+    .to("jsonata:file://myfolder/MyResponse.json?contentCache=true&inputType=JsonString&outputType=JsonString")
     .to("activemq:Another.Queue");
 ----
 
@@ -105,7 +110,7 @@ XML::
 ----
 <route>
   <from uri="activemq:My.Queue"/>
-  <to uri="jsonata:file://myfolder/MyResponse.json?contentCache=true"/>
+  <to uri="jsonata:file://myfolder/MyResponse.json?contentCache=true&amp;inputType=JsonString&amp;outputType=JsonString"/>
   <to uri="activemq:Another.Queue"/>
 </route>
 ----
@@ -122,6 +127,8 @@ YAML::
             uri: jsonata:file://myfolder/MyResponse.json
             parameters:
               contentCache: true
+              inputType: JsonString
+              outputType: JsonString
         - to:
             uri: activemq:Another.Queue
 ----
@@ -139,7 +146,7 @@ Java::
 [source,java]
 ----
 from("activemq:My.Queue")
-    .to("jsonata:file://myfolder/MyResponse.json?contentCache=true&frameBinding=#customBindings")
+    .to("jsonata:file://myfolder/MyResponse.json?contentCache=true&inputType=JsonString&outputType=JsonString&frameBinding=#customBindings")
     .to("activemq:Another.Queue");
 ----
 
@@ -149,7 +156,7 @@ XML::
 ----
 <route>
   <from uri="activemq:My.Queue"/>
-  <to uri="jsonata:file://myfolder/MyResponse.json?contentCache=true&amp;frameBinding=#customBindings"/>
+  <to uri="jsonata:file://myfolder/MyResponse.json?contentCache=true&amp;inputType=JsonString&amp;outputType=JsonString&amp;frameBinding=#customBindings"/>
   <to uri="activemq:Another.Queue"/>
 </route>
 ----
@@ -166,6 +173,8 @@ YAML::
             uri: jsonata:file://myfolder/MyResponse.json
             parameters:
               contentCache: true
+              inputType: JsonString
+              outputType: JsonString
               frameBinding: "#customBindings"
         - to:
             uri: activemq:Another.Queue

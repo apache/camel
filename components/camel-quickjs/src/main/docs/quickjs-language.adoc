@@ -142,7 +142,8 @@ Values cross the Java/JavaScript boundary as JSON:
   `headers.MyHeader` and `headers['MyHeader']` both work.
 * `List` and arrays become JavaScript arrays.
 * `byte[]` becomes a Base64 JSON string. `char[]` becomes a JSON string.
-* Other Java types are serialized with Jackson into a JSON object or array snapshot.
+* Other Java types are serialized with Jackson into a JSON snapshot: an object or an array, or a value
+  such as the milliseconds of a `Date`.
   Java methods such as `getAge()` are not callable from JavaScript; use JSON fields
   such as `body.age`.
 * `Exchange`, `Message`, `CamelContext`, `Class`, and `ClassLoader` values are rejected
@@ -159,8 +160,11 @@ the unsupported type.
 
 == Expression and predicate
 
-As an expression, the JavaScript value of the script becomes the Camel result (then converted
-with Camel type converters when a result type is requested).
+As an expression, the JSON value of the script becomes the Camel result (then converted
+with Camel type converters when a result type is requested): an object becomes a `Map` and an
+array a `List`, a `Date` becomes its ISO text, and `undefined`, `NaN` or a function becomes `null`.
+A `Set` or a typed array does not keep its values. In `setBody` and `transform` this result
+replaces a body the script set with `camel.setBody(...)`.
 
 As a predicate (`.when().quickjs(...)` or `.filter().quickjs(...)`), the result is converted to
 boolean with Camel's standard `ObjectHelper.evaluateValuePredicate` rules: a `Boolean` is used
