@@ -24,6 +24,9 @@ import org.apache.camel.component.openstack.keystone.producer.GroupProducer;
 import org.apache.camel.component.openstack.keystone.producer.ProjectProducer;
 import org.apache.camel.component.openstack.keystone.producer.RegionProducer;
 import org.apache.camel.component.openstack.keystone.producer.UserProducer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +42,27 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_KEYSTONE, title = "OpenStack Keystone",
              syntax = "openstack-keystone:host", category = { Category.CONTAINER }, producerOnly = true,
              headersClass = KeystoneConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Read by create and update only: a Region, Domain, Project, User or Group of openstack4j, or "
+                                                + "else the fields from headers such as CamelOpenstackName. The other operations take the ids from "
+                                                + "headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.VALUE, Carrier.NULL, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "create", carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "get",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "getAll", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "update", carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "delete", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "addUserToGroup",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "checkUserGroup",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "removeUserFromGroup",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "The Region, Domain, Project, User or Group of openstack4j created, read or updated (null when "
+                                                 + "get finds none), a List of them for getAll, true or false for checkUserGroup; delete, "
+                                                 + "addUserToGroup and removeUserFromGroup keep the body"))
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "regions,domains,projects,users,groups")

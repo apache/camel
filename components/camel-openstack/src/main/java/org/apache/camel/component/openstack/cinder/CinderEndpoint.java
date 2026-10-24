@@ -21,6 +21,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.openstack.cinder.producer.SnapshotProducer;
 import org.apache.camel.component.openstack.cinder.producer.VolumeProducer;
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,18 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_CINDER, title = "OpenStack Cinder", syntax = "openstack-cinder:host",
              category = { Category.CONTAINER }, producerOnly = true, headersClass = CinderConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Read by create and update only: a Volume or VolumeSnapshot of openstack4j, or else the fields "
+                                                + "from headers such as CamelOpenstackName. The other operations take the id from a header"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL, Carrier.UNCHANGED }, byOption = {
+                   @BodyType.When(option = "operation", value = "create", carriers = Carrier.POJO),
+                   @BodyType.When(option = "operation", value = "get", carriers = { Carrier.POJO, Carrier.NULL }),
+                   @BodyType.When(option = "operation", value = "getAll", carriers = Carrier.LIST),
+                   @BodyType.When(option = "operation", value = "getAllTypes", carriers = Carrier.LIST),
+                   @BodyType.When(option = "operation", value = "update", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "operation", value = "delete", carriers = Carrier.UNCHANGED) },
+                                   description = "The Volume or VolumeSnapshot of openstack4j created or read (null when get finds none), a List "
+                                                 + "of them for getAll and of VolumeType for getAllTypes; update and delete keep the body"))
 public class CinderEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "snapshots,volumes")
