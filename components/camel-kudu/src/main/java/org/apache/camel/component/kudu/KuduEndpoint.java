@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -42,6 +45,24 @@ import org.slf4j.LoggerFactory;
              title = "Kudu", syntax = "kudu:host:port/tableName",
              category = { Category.DATABASE, Category.IOT, Category.CLOUD }, producerOnly = true,
              headersClass = KuduConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.MAP,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "SCAN", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "CREATE_TABLE",
+                                                         carriers = Carrier.ANY) },
+                                  description = "For insert, update, upsert and delete: a Map of the column names and"
+                                                + " their values, one row, each value of the Java type of its column (a"
+                                                + " String for an INT32 column fails); delete uses only the key columns."
+                                                + " Text such as JSON, a List or a POJO fails: unmarshal it into a Map"
+                                                + " first. Scan and create_table do not read the body: they take the"
+                                                + " CamelKuduScan* and the CamelKuduSchema and CamelKuduTableOptions"
+                                                + " headers. The operation must be set"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "operation", value = "SCAN", carriers = Carrier.LIST,
+                                                             javaType = "java.util.List<java.util.Map<String, Object>>"),
+                                   description = "Scan gives a List of the rows, each a Map of the column names and their"
+                                                 + " values, an empty List for no rows. The other operations leave the body"
+                                                 + " unchanged"))
 public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);

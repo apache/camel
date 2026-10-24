@@ -28,6 +28,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
@@ -46,6 +49,15 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgreSQL Event",
              syntax = "pgevent:host:port/database/channel",
              category = { Category.DATABASE }, headersClass = PgEventConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The payload of the notification as a String, empty when it was sent"
+                                                 + " without one; the channel is in the channel header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The payload of the notification, converted to a String: text, or bytes,"
+                                                + " a stream or a file of it; a Map or a POJO is sent as its toString(), so"
+                                                + " marshal it first. PostgreSQL takes a payload of less than 8000 bytes,"
+                                                + " and no body sends an empty payload"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED))
 public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
