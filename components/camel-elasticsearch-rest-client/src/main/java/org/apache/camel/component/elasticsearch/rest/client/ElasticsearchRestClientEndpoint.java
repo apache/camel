@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,6 +39,50 @@ import org.elasticsearch.client.RestClient;
              title = "Elasticsearch Low level Rest Client",
              syntax = "elasticsearch-rest-client:clusterName", producerOnly = true,
              category = { Category.SEARCH }, headersClass = ElasticSearchRestClientConstant.class)
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.NULL },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "INDEX_OR_UPDATE",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "GET_BY_ID",
+                                                         carriers = { Carrier.TEXT, Carrier.VALUE, Carrier.NULL }),
+                                          @BodyType.When(option = "operation", value = "DELETE",
+                                                         carriers = { Carrier.TEXT, Carrier.VALUE, Carrier.NULL }),
+                                          @BodyType.When(option = "operation", value = "SEARCH",
+                                                         carriers = { Carrier.MAP, Carrier.NULL }),
+                                          @BodyType.When(option = "operation", value = "CREATE_INDEX", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "DELETE_INDEX",
+                                                         carriers = Carrier.ANY) },
+                                  description = "By the operation, set by the operation option or the CamelElasticsearchOperation"
+                                                + " header. INDEX_OR_UPDATE sends the body as the JSON document: text, bytes, a"
+                                                + " stream or a file of it; a Map or a POJO is sent as its toString() and"
+                                                + " fails, so marshal it to JSON first. GET_BY_ID and DELETE take the id as"
+                                                + " the body, or from the CamelElasticsearchId header when the body is empty."
+                                                + " SEARCH takes a Map of field names and values to match, or else the JSON"
+                                                + " query of the CamelElasticsearchSearchQuery header; a JSON text body is"
+                                                + " not used, and with neither all documents match. CREATE_INDEX and"
+                                                + " DELETE_INDEX do not use the body: the settings of a new index are in the"
+                                                + " CamelElasticsearchIndexSettings header"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "INDEX_OR_UPDATE",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "GET_BY_ID", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "SEARCH", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "DELETE", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "CREATE_INDEX",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "DELETE_INDEX",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean") },
+                                   description = "The id of the document as text for INDEX_OR_UPDATE. GET_BY_ID gives the"
+                                                 + " source of the document as JSON text, and SEARCH a JSON array of the"
+                                                 + " sources of the hits as text: unmarshal them to read their fields. DELETE,"
+                                                 + " CREATE_INDEX and DELETE_INDEX give true; a missing id or index, or an"
+                                                 + " index that is already there, fails with the error of the server"))
 public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
