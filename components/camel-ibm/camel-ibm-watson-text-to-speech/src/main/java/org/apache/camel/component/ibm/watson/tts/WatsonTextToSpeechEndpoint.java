@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -35,6 +38,29 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.17.0", scheme = "ibm-watson-text-to-speech", title = "IBM Watson Text to Speech",
              syntax = "ibm-watson-text-to-speech:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = WatsonTextToSpeechConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The text to synthesize, or the voice name, custom model ID or word for getVoice,"
+                                                + " getCustomModel and getPronunciation, read as text unless the"
+                                                + " CamelIBMWatsonTTSText, CamelIBMWatsonTTSVoiceName, CamelIBMWatsonTTSModelId or"
+                                                + " CamelIBMWatsonTTSWord header gives it. No body fails, and a Map or a POJO is"
+                                                + " sent as its toString(). listVoices and listCustomModels do not read the body"),
+           producerOut = @BodyType(value = Carrier.STREAM, javaType = "java.io.InputStream",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listVoices", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getVoice", carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watson.text_to_speech.v1.model.Voice"),
+                                           @BodyType.When(option = "operation", value = "listCustomModels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getCustomModel",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watson.text_to_speech.v1.model.CustomModel"),
+                                           @BodyType.When(option = "operation", value = "getPronunciation",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watson.text_to_speech.v1.model.Pronunciation") },
+                                   description = "synthesize gives the audio in the format of accept (audio/wav by default) as the"
+                                                 + " InputStream of the HTTP response, which can be read once: write it to a file"
+                                                 + " or convert it to bytes. listVoices gives a List of Voice and"
+                                                 + " listCustomModels a List of CustomModel of the IBM Watson SDK"))
 public class WatsonTextToSpeechEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name")

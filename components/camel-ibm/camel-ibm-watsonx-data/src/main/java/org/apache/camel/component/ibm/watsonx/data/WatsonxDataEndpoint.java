@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -41,6 +44,23 @@ import org.apache.camel.util.ObjectHelper;
              producerOnly = true,
              category = { Category.CLOUD, Category.DATABASE },
              headersClass = WatsonxDataConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "updateTable",
+                                                            carriers = Carrier.MAP),
+                                  description = "Only updateTable reads the body: the patch of the table as a Map, sent as JSON."
+                                                + " JSON text, bytes or no body fail: unmarshal the JSON to a Map first. The other"
+                                                + " operations take their input from the options and headers"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "deleteCatalog",
+                                                          carriers = Carrier.NULL),
+                                           @BodyType.When(option = "operation", value = "deleteSchema",
+                                                          carriers = Carrier.NULL),
+                                           @BodyType.When(option = "operation", value = "deleteTable",
+                                                          carriers = Carrier.NULL) },
+                                   description = "The response of the IBM watsonx.data SDK, such as a CatalogCollection for"
+                                                 + " listCatalogs or a Table for getTable and updateTable; converted to text, it"
+                                                 + " is its JSON. The delete operations set no body"))
 public class WatsonxDataEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name for the endpoint")

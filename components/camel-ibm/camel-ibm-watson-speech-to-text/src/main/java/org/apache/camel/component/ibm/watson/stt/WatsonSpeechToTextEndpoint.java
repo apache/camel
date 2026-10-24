@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -35,6 +38,34 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.17.0", scheme = "ibm-watson-speech-to-text", title = "IBM Watson Speech to Text",
              syntax = "ibm-watson-speech-to-text:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = WatsonSpeechToTextConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "listModels", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "getModel", carriers = Carrier.TEXT),
+                                          @BodyType.When(option = "operation", value = "listCustomModels",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "getCustomModel",
+                                                         carriers = Carrier.TEXT) },
+                                  description = "The audio to recognize in the format of contentType (audio/wav by default), as"
+                                                + " bytes, a stream or a file, unless the CamelIBMWatsonSTTAudioFile header gives a"
+                                                + " file. No body or a Map fails, and text is sent as its bytes. getModel and"
+                                                + " getCustomModel read the model name or ID as text unless the"
+                                                + " CamelIBMWatsonSTTModelName header gives it"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "com.ibm.watson.speech_to_text.v1.model.SpeechRecognitionResults",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listModels", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getModel", carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watson.speech_to_text.v1.model.SpeechModel"),
+                                           @BodyType.When(option = "operation", value = "listCustomModels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getCustomModel",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watson.speech_to_text.v1.model.LanguageModel") },
+                                   description = "recognize gives the SpeechRecognitionResults of the IBM Watson SDK, with the"
+                                                 + " transcript as text in the CamelIBMWatsonSTTTranscript header. Converted to"
+                                                 + " text, it is the JSON of the results. listModels gives a List of SpeechModel"
+                                                 + " and listCustomModels a List of LanguageModel"))
 public class WatsonSpeechToTextEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name")

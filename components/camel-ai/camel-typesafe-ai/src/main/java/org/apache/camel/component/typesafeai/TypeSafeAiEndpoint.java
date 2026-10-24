@@ -28,6 +28,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +42,17 @@ import org.apache.camel.util.json.JsonObject;
 /** Evaluate text and structured state with the TypeSafe AI decision API. */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "typesafe-ai", title = "TypeSafe AI", syntax = "typesafe-ai:name",
              producerOnly = true, category = { Category.AI })
+@BodyTypes(producerIn = @BodyType(value = Carrier.MAP, dependsOn = { "questions", "questionsResource" },
+                                  description = "The request: a Map with the state and a nonempty questions Map, and"
+                                                + " optionally the model. JSON text is not parsed: unmarshal it first. With"
+                                                + " questions or questionsResource, the state option (the body by default)"
+                                                + " selects the state instead: text, or a Map or a List of JSON values; bytes,"
+                                                + " a stream or a file fail, select ${bodyAs(String)}"),
+           producerOut = @BodyType(value = Carrier.MAP, javaType = "org.apache.camel.util.json.JsonObject", format = "json",
+                                   dependsOn = "resultProperty",
+                                   description = "The response: a JsonObject with the model, the answers keyed by question"
+                                                 + " name and the token usage. With resultProperty, the body is unchanged and"
+                                                 + " the response is in that exchange property"))
 public class TypeSafeAiEndpoint extends DefaultEndpoint {
     private static final int MAX_QUESTIONS_RESOURCE_BYTES = 4 * 1024 * 1024;
 

@@ -30,18 +30,19 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-This component expects a JSON with the following fields:
+This component expects a `ChatScriptMessage`, or its JSON as a String with the following fields:
 
 [source,json]
 ----
 {
   "username": "name here",
   "botname": "name here",
-  "body": "body here"
+  "message": "message here"
 }
 ----
 
-The bot name comes from the endpoint, and the reply is the `reply` field of the message the producer returns.
+The bot name comes from the endpoint, and the reply is the `reply` field of the `ChatScriptMessage` the producer returns
+(`response` in its JSON form).
 The following route sends the message body to the bot `Harry` as the user in the `user` header:
 
 [source,yaml]
@@ -53,7 +54,7 @@ The following route sends the message body to the bot `Harry` as the user in the
         - setBody:
             expression:
               simple:
-                expression: '{"username": "${header.user}", "body": "${body}"}'
+                expression: '{"username": "${header.user}", "message": "${body}"}'
         - to:
             uri: chatscript:localhost:1024/Harry
         - log:

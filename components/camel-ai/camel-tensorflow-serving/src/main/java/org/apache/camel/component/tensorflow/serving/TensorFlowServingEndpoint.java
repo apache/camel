@@ -26,6 +26,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,32 @@ import tensorflow.serving.PredictionServiceGrpc;
 @UriEndpoint(firstVersion = "4.10.0", scheme = "tensorflow-serving", title = "TensorFlow Serving",
              syntax = "tensorflow-serving:api", producerOnly = true,
              category = { Category.AI }, headersClass = TensorFlowServingConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.POJO,
+                                  byOption = {
+                                          @BodyType.When(option = "api", value = "model-status", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "api", value = "model-metadata", carriers = Carrier.ANY) },
+                                  description = "The protobuf request of the api, or its Builder: a PredictRequest for"
+                                                + " predict, a ClassificationRequest or RegressionRequest, or the Input of"
+                                                + " one, for classify and regress. Another body, such as text, JSON or"
+                                                + " bytes, is not read: an empty request is sent and the server rejects it."
+                                                + " model-status and model-metadata need no body, and read a"
+                                                + " GetModelStatusRequest or GetModelMetadataRequest when it is one. The"
+                                                + " model comes from the CamelTensorFlowServingModelName header, or else"
+                                                + " the modelName option"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "api", value = "model-status", carriers = Carrier.POJO,
+                                                          javaType = "tensorflow.serving.GetModelStatus$GetModelStatusResponse"),
+                                           @BodyType.When(option = "api", value = "model-metadata", carriers = Carrier.POJO,
+                                                          javaType = "tensorflow.serving.GetModelMetadata$GetModelMetadataResponse"),
+                                           @BodyType.When(option = "api", value = "classify", carriers = Carrier.POJO,
+                                                          javaType = "tensorflow.serving.Classification$ClassificationResponse"),
+                                           @BodyType.When(option = "api", value = "regress", carriers = Carrier.POJO,
+                                                          javaType = "tensorflow.serving.RegressionOuterClass$RegressionResponse"),
+                                           @BodyType.When(option = "api", value = "predict", carriers = Carrier.POJO,
+                                                          javaType = "tensorflow.serving.Predict$PredictResponse") },
+                                   description = "The protobuf response of the api, such as a PredictResponse with the"
+                                                 + " output tensors by name"))
 public class TensorFlowServingEndpoint extends DefaultEndpoint {
 
     @UriPath(enums = "model-status,model-metadata,classify,regress,predict", description = "The TensorFlow Serving API")
