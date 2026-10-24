@@ -136,8 +136,8 @@ public class RedisClient {
         redisTemplate.opsForValue().multiSet(map);
     }
 
-    public void msetnx(Map<String, Object> map) {
-        redisTemplate.opsForValue().multiSetIfAbsent(map);
+    public Boolean msetnx(Map<String, Object> map) {
+        return redisTemplate.opsForValue().multiSetIfAbsent(map);
     }
 
     public Object getset(String key, Object value) {
@@ -156,17 +156,12 @@ public class RedisClient {
         redisTemplate.opsForValue().set(key, value, offset);
     }
 
-    public void setbit(final String key, final Long offset, final Boolean value) {
-        redisTemplate.execute((RedisCallback<Object>) connection -> {
-            connection.stringCommands().setBit(key.getBytes(), offset, value);
-            return null;
-        });
+    public void setbit(String key, Long offset, Boolean value) {
+        redisTemplate.opsForValue().setBit(key, offset, value);
     }
 
-    public Boolean getbit(final String key, final Long offset) {
-        return redisTemplate.execute((RedisCallback<Boolean>) connection -> {
-            return connection.stringCommands().getBit(key.getBytes(), offset);
-        });
+    public Boolean getbit(String key, Long offset) {
+        return redisTemplate.opsForValue().getBit(key, offset);
     }
 
     public Integer append(String key, String value) {
@@ -410,6 +405,10 @@ public class RedisClient {
 
     public Long zcount(String key, Double min, Double max) {
         return redisTemplate.opsForZSet().count(key, min, max);
+    }
+
+    public Double zscore(String key, Object value) {
+        return redisTemplate.opsForZSet().score(key, value);
     }
 
     public Double zincrby(String key, Object value, Double increment) {

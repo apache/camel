@@ -16,17 +16,25 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.couchbase.client.core.error.InvalidArgumentException;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.codec.RawBinaryTranscoder;
+import com.couchbase.client.java.codec.RawJsonTranscoder;
+import com.couchbase.client.java.codec.Transcoder;
+import com.couchbase.client.java.json.JsonArray;
+import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.MutationResult;
 import com.couchbase.client.java.kv.PersistTo;
 import com.couchbase.client.java.kv.ReplicateTo;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +132,21 @@ public class CouchbaseProducer extends DefaultProducer {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        String operation = endpoint.getOperation();
+        if (!COUCHBASE_PUT.equals(operation) && !COUCHBASE_GET.equals(operation) && !COUCHBASE_DELETE.equals(operation)) {
+            throw unknownOperation(operation);
+        }
+    }
+
+    private static IllegalArgumentException unknownOperation(String operation) {
+        return new IllegalArgumentException(
+                "Unknown operation " + operation + ": use one of " + COUCHBASE_PUT + ", " + COUCHBASE_GET + ", "
+                                            + COUCHBASE_DELETE);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         // Take the collection again on every start. The endpoint owns the cluster and disconnects it when it
@@ -135,7 +158,12 @@ public class CouchbaseProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
-        String id = (headers.containsKey(HEADER_ID)) ? exchange.getIn().getHeader(HEADER_ID, String.class) : endpoint.getId();
+        // the header, else the key option. The header is left on the message, so that a later couchbase endpoint in
+        // the route, such as a CCB_GET after a CCB_PUT, works on the same document
+        String id = exchange.getIn().getHeader(HEADER_ID, String.class);
+        if (id == null) {
+            id = endpoint.getKey();
+        }
 
         int ttl = (headers.containsKey(HEADER_TTL))
                 ? Integer.parseInt(exchange.getIn().getHeader(HEADER_TTL, String.class)) : DEFAULT_TTL;
@@ -143,27 +171,100 @@ public class CouchbaseProducer extends DefaultProducer {
         if (endpoint.isAutoStartIdForInserts()) {
             id = Long.toString(startId.getAndIncrement());
         } else if (id == null) {
-            throw new CouchbaseException(HEADER_ID + " is not specified in message header or endpoint URL.", exchange);
+            throw new CouchbaseException(
+                    "No document id: set the " + HEADER_ID + " header or the key option of the endpoint", exchange);
         }
 
-        if (endpoint.getOperation().equals(COUCHBASE_PUT)) {
-            LOG.trace("Type of operation: PUT");
-            Object obj = exchange.getIn().getBody();
-            Boolean result = CouchbaseCollectionOperation.setDocument(collection, id, ttl, obj, persistTo, replicateTo,
-                    writeQueryTimeout, producerRetryPause);
-            exchange.getMessage().setBody(result);
-        } else if (endpoint.getOperation().equals(COUCHBASE_GET)) {
-            LOG.trace("Type of operation: GET");
-            GetResult result = CouchbaseCollectionOperation.getDocument(collection, id, queryTimeout, producerRetryPause);
-            exchange.getMessage().setBody(result);
-        } else if (endpoint.getOperation().equals(COUCHBASE_DELETE)) {
-            LOG.trace("Type of operation: DELETE");
-            MutationResult result
-                    = CouchbaseCollectionOperation.removeDocument(collection, id, writeQueryTimeout, producerRetryPause);
-            exchange.getMessage().setBody(result.toString());
+        switch (endpoint.getOperation()) {
+            case COUCHBASE_PUT -> {
+                LOG.trace("Type of operation: PUT");
+                Object content = exchange.getIn().getBody();
+                if (content instanceof InputStream || content instanceof StreamCache) {
+                    content = exchange.getIn().getMandatoryBody(byte[].class);
+                }
+                Boolean result = CouchbaseCollectionOperation.setDocument(collection, id, ttl, content,
+                        transcoderFor(content), persistTo, replicateTo, writeQueryTimeout, producerRetryPause);
+                exchange.getMessage().setBody(result);
+            }
+            case COUCHBASE_GET -> {
+                LOG.trace("Type of operation: GET");
+                GetResult result = CouchbaseCollectionOperation.getDocument(collection, id, queryTimeout, producerRetryPause);
+                exchange.getMessage().setBody(result);
+            }
+            case COUCHBASE_DELETE -> {
+                LOG.trace("Type of operation: DELETE");
+                MutationResult result
+                        = CouchbaseCollectionOperation.removeDocument(collection, id, writeQueryTimeout, producerRetryPause);
+                exchange.getMessage().setBody(result.toString());
+            }
+            default -> throw unknownOperation(endpoint.getOperation());
         }
-        // cleanup the cache headers
-        exchange.getIn().removeHeader(HEADER_ID);
+    }
+
+    /**
+     * The transcoder that stores the body of a CCB_PUT, or null for the JSON transcoder of the cluster environment.
+     * <p/>
+     * Text or bytes that hold a JSON object or array are stored as they are, as a JSON document; the JSON transcoder
+     * would store the text as a JSON string, and fails on bytes. Other bytes are stored as a binary document. Any other
+     * body, such as other text, a Map, a List, a JsonObject or a POJO, is serialized to JSON as before.
+     */
+    private static Transcoder transcoderFor(Object content) {
+        if (content instanceof String text) {
+            return isJson(text) ? RawJsonTranscoder.INSTANCE : null;
+        } else if (content instanceof byte[] bytes) {
+            return isJson(bytes) ? RawJsonTranscoder.INSTANCE : RawBinaryTranscoder.INSTANCE;
+        }
+        return null;
+    }
+
+    private static boolean isJson(String text) {
+        String trimmed = text.strip();
+        try {
+            if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+                JsonObject.fromJson(trimmed);
+                return true;
+            } else if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+                JsonArray.fromJson(trimmed);
+                return true;
+            }
+        } catch (InvalidArgumentException e) {
+            // not JSON
+        }
+        return false;
+    }
+
+    private static boolean isJson(byte[] bytes) {
+        int first = 0;
+        int last = bytes.length - 1;
+        while (first <= last && isJsonWhitespace(bytes[first])) {
+            first++;
+        }
+        while (last >= first && isJsonWhitespace(bytes[last])) {
+            last--;
+        }
+        if (first > last) {
+            return false;
+        }
+        boolean object = bytes[first] == '{' && bytes[last] == '}';
+        boolean array = bytes[first] == '[' && bytes[last] == ']';
+        if (!object && !array) {
+            return false;
+        }
+        try {
+            if (object) {
+                JsonObject.fromJson(bytes);
+            } else {
+                JsonArray.fromJson(bytes);
+            }
+            return true;
+        } catch (InvalidArgumentException e) {
+            // not JSON
+            return false;
+        }
+    }
+
+    private static boolean isJsonWhitespace(byte b) {
+        return b == ' ' || b == '\t' || b == '\n' || b == '\r';
     }
 
 }

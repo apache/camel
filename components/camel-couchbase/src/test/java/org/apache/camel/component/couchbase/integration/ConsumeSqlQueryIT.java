@@ -153,7 +153,7 @@ public class ConsumeSqlQueryIT extends CamelTestSupport {
             @Override
             public void configure() {
                 // Explicit SQL++ statement
-                String explicitQuery = "SELECT META().id AS __id, * FROM `" + bucketName + "` LIMIT 10";
+                String explicitQuery = "SELECT META().id AS __id, * FROM `_default` LIMIT 10";
                 from(getConnectionUri() + "&statement=" + explicitQuery)
                         .to("mock:explicit");
 
@@ -162,7 +162,7 @@ public class ConsumeSqlQueryIT extends CamelTestSupport {
                         .to("mock:auto");
 
                 // SQL++ with fullDocument=false — uses raw query result row as body
-                String rawQuery = "SELECT META().id AS __id, * FROM `" + bucketName + "` LIMIT 5";
+                String rawQuery = "SELECT META().id AS __id, * FROM `_default` LIMIT 5";
                 from(getConnectionUri() + "&statement=" + rawQuery + "&fullDocument=false")
                         .to("mock:raw");
             }

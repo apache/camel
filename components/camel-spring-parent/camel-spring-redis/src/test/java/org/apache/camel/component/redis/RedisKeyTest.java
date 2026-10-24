@@ -61,6 +61,24 @@ public class RedisKeyTest extends RedisTestSupport {
     }
 
     @Test
+    public void shouldExecuteDELWithKeysAsString() throws Exception {
+        sendHeaders(
+                RedisConstants.COMMAND, "DEL",
+                RedisConstants.KEYS, "key1, key2");
+
+        verify(redisTemplate).delete(List.of("key1", "key2"));
+    }
+
+    @Test
+    public void shouldExecuteDELWithOneKeyAsString() throws Exception {
+        sendHeaders(
+                RedisConstants.COMMAND, "DEL",
+                RedisConstants.KEYS, "key1");
+
+        verify(redisTemplate).delete(List.of("key1"));
+    }
+
+    @Test
     public void shouldExecuteEXISTS() throws Exception {
         when(redisTemplate.hasKey(anyString())).thenReturn(true);
 

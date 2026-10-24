@@ -23,7 +23,8 @@ public interface RedisConstants {
     String COMMAND = "CamelRedis.Command";
     @Metadata(description = "The key.", javaType = "String")
     String KEY = "CamelRedis.Key";
-    @Metadata(description = "The keys.", javaType = "Collection<String>")
+    @Metadata(description = "The keys: a collection of keys, or a String with one key or several keys separated by comma.",
+              javaType = "Collection<String> or String")
     String KEYS = "CamelRedis.Keys";
     @Metadata(description = "The field.", javaType = "String")
     String FIELD = "CamelRedis.Field";

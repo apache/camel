@@ -74,7 +74,8 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * The key to use.
+         * The id of the document the producer puts, gets or deletes, when the
+         * message has no CamelCouchbaseId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -348,11 +349,14 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * A SQL (N1QL) query statement for consuming documents. When set, the
          * consumer uses SQL queries instead of MapReduce views. The query
-         * should select META().id AS __id to identify documents. Example:
-         * SELECT META().id AS __id, FROM myCollection WHERE type = 'order'
-         * LIMIT 100. If not set and useView is false, a SQL query is
-         * auto-generated from the bucket, scope, collection, limit, skip,
-         * descending, rangeStartKey, and rangeEndKey options.
+         * should select META().id AS __id to identify documents. The query runs
+         * on the scope (the default scope when the scope option is not set), so
+         * a single name in FROM is a collection of that scope; use
+         * bucket.scope.collection for another one. Example: SELECT META().id AS
+         * __id, FROM _default WHERE type = 'order' LIMIT 100. If not set and
+         * useView is false, a SQL query is auto-generated from the bucket,
+         * scope, collection, limit, skip, descending, rangeStartKey, and
+         * rangeEndKey options.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1199,7 +1203,8 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * The key to use.
+         * The id of the document the producer puts, gets or deletes, when the
+         * message has no CamelCouchbaseId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1259,7 +1264,8 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to do.
+         * The operation to do: CCB_PUT stores the message body as the document
+         * (upsert), CCB_GET reads the document and CCB_DEL removes it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1640,7 +1646,8 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * The key to use.
+         * The id of the document the producer puts, gets or deletes, when the
+         * message has no CamelCouchbaseId header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
