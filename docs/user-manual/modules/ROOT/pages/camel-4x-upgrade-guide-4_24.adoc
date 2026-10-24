@@ -3463,3 +3463,9 @@ The server/listen and receipt/receive consumers have the new `muteException` opt
 route fails, the HTTP 500 that the partner gets says only that the message (or the receipt) could not be processed.
 Before, its body was the message of the exception of the route. Set `muteException=false` to send the message of the
 exception as before.
+
+=== camel-file-watch - CamelFileLastModified is the last modified time of the file
+
+The `CamelFileLastModified` header is now the last modified time of the file, as its documentation says.
+Before, it was the time of the event. The header is not set when the file no longer exists, for example for a `DELETE` event.
+The time of the event is in the `CamelMessageTimestamp` header.
