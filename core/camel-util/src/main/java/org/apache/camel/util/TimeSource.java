@@ -30,7 +30,9 @@ import java.time.Instant;
  * The provider is static rather than per {@code CamelContext}, because {@link StopWatch} and the other timers have no
  * context. Event timestamps and the direct clock reads of the debugger, the tracer, management and the developer
  * consoles stay on {@link System}; the durations they measure with {@link StopWatch} or {@code MonotonicClock} follow
- * this class (with the default provider this is the same {@link System#nanoTime()}).
+ * this class (with the default provider this is the same {@link System#nanoTime()}). The created time of
+ * {@code MonotonicClock} follows this class too, so the message history times ({@code MessageHistory.getTime()}) are
+ * virtual in a deterministic simulation test.
  */
 public final class TimeSource {
 

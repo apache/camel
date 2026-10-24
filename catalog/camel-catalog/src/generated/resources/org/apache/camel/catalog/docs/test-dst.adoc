@@ -88,16 +88,18 @@ the synchronous redelivery (`RedeliveryPolicy`, `RedeliveryErrorHandler`), `Fore
 the budgets of both tasks, the wait loop of `DefaultShutdownStrategy`, the synchronous delayer, `MulticastProcessor`,
 `OptimisticLockRetryPolicy`, `DefaultStartupConditionStrategy`, `StopWatch`, `MonotonicClock`, `BackOffTimerTask`,
 `DefaultTimeoutMap`, the clocks of the throttlers and the counters of `ThrottlingExceptionRoutePolicy`. A sleep there is
-a virtual wait on the loop thread, traced with its call site. Two waits of these classes are not virtual (see below):
-the permit queue of `TotalRequestsThrottler` and the half-open timer of `ThrottlingExceptionRoutePolicy`.
+a virtual wait on the loop thread, traced with its call site. Three waits of these classes are not virtual (see below):
+the permit queue of `TotalRequestsThrottler`, the `Semaphore` of `ConcurrentRequestsThrottler` and the half-open timer
+of `ThrottlingExceptionRoutePolicy`. The sleep of the route `delayer` option is not virtual either (see below).
 |===
 
 Event timestamps, the clock of an exchange and the direct clock reads of the debugger, the tracer, management and the
 developer consoles stay on `System`. The durations they measure with `StopWatch` or `MonotonicClock` follow `TimeSource`
-(with the default provider this is the same `System.nanoTime()`). `@DstInstrument(alsoRewrite = ...)` applies the
+(with the default provider this is the same `System.nanoTime()`), and so does the created time of `MonotonicClock`: the
+message history times (`MessageHistory.getTime()`) are virtual in a DST run. `@DstInstrument(alsoRewrite = ...)` applies the
 rewriting of the code under test to classes outside it, for example `org.apache.camel.support.ResetableClock` (the
 clock of an exchange) or a library the component calls. It is not needed for the core classes listed above, except for
-the permit queue of `TotalRequestsThrottler` (see below).
+the permit queue of `TotalRequestsThrottler` and the `Semaphore` of `ConcurrentRequestsThrottler` (see below).
 
 === Escapes and strict mode
 
@@ -124,6 +126,13 @@ core:
   `asyncDelayed()` does not avoid it: a delayed exchange that finds its permit taken by another one waits on the same
   queue. Add `org.apache.camel.processor.TotalRequestsThrottler` to `@DstInstrument(alsoRewrite)`: the permit wait is
   then a virtual wait.
+* `ConcurrentRequestsThrottler` blocks on its `Semaphore` once `maxConcurrentRequests` exchanges are in flight. No task
+  of the run releases a permit while the loop thread waits, so the seed ends on the watchdog. Add
+  `org.apache.camel.processor.ConcurrentRequestsThrottler` to `@DstInstrument(alsoRewrite)`: the `Semaphore` wait is
+  then a virtual wait.
+* The route `delayer` option (`CamelInternalProcessor.DelayerAdvice`) calls `Thread.sleep` directly, not through
+  `TimeSource`: the delay takes real time on the loop thread and the virtual clock does not move. Use the `delay` EIP
+  in a world instead.
 * The half-open check of `ThrottlingExceptionRoutePolicy` runs on a `java.util.Timer` thread, outside the harness. The
   timer fires after `halfOpenAfter` of real time (30 s by default, longer than the watchdog) and its clock read is an
   escape, so a world does not see the circuit half-open in virtual time.
@@ -431,7 +440,9 @@ seed of the in-JVM replay test of the Event Hubs world, default 1).
 * One run per JVM at a time: the active run, and so the virtual clock, is a static field, and every rewritten clock read
   in the JVM sees it, as does Camel core through `TimeSource` while the run is open. A world must therefore not go into
   a module that runs its tests in parallel (`camel.surefire.parallel=true`, as camel-jms and camel-sql do): the other
-  tests in that surefire fork would read the virtual clock while a run is active. The harness enforces this: a second
+  tests in that surefire fork would read the virtual clock while a run is active. For the same reason, a
+  `CamelContext` left running in the same fork by an earlier non-DST test would read the virtual time too and could
+  fail a strict seed; stop it in that test. The harness enforces this: a second
   run while one is open fails, and a DST test refuses to start when JUnit runs tests in parallel. A local world in
   such a module (camel-sjms, for example) can still be run alone, with
   `-Dtest=<the world> -Dcamel.surefire.parallel=false`, but it cannot be committed there: the module's own build would
