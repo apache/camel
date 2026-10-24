@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,6 +39,25 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "state-store:storeName", producerOnly = true,
              category = { Category.CACHE },
              headersClass = StateStoreConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The value to store for put and putIfAbsent, as it is: a stream is stored as"
+                                                + " the stream and shared by the later gets, so convert it to text or bytes"
+                                                + " first. The other operations do not use the body"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "contains", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "keys", carriers = Carrier.LIST,
+                                                          javaType = "java.util.Set<java.lang.String>"),
+                                           @BodyType.When(option = "operation", value = "size", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Integer"),
+                                           @BodyType.When(option = "operation", value = "clear", carriers = Carrier.NULL) },
+                                   description = "By the operation, which the CamelStateStoreOperation header can set: the"
+                                                 + " stored value for get, the previous value for put, the value already there"
+                                                 + " for putIfAbsent and the removed value for delete, each no body when there"
+                                                 + " is none; a Boolean for contains, the Set of the keys for keys, the count"
+                                                 + " for size and no body for clear. The value is the object the backend gives"
+                                                 + " back: the in-memory one the object stored, another may give a copy"))
 public class StateStoreEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the state store")
