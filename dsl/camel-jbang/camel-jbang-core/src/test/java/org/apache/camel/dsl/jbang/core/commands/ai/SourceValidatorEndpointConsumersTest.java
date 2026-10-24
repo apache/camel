@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -267,5 +269,85 @@ class SourceValidatorEndpointConsumersTest {
     @Test
     void withoutADirectoryTheCheckSaysNothing() {
         assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null)).isEmpty();
+    }
+
+    @Test
+    void theEditorGetsTheMessageOnEachLineThatSendsToTheEndpoint() throws Exception {
+        Files.writeString(dir.resolve("other.camel.yaml"), """
+                - route:
+                    from:
+                      uri: direct:other
+                      steps:
+                        - log: other
+                """);
+        Set<String> consumed = EndpointConsumerChecks.consumed(dir, "r.camel.yaml", CATALOG);
+        assertThat(consumed).containsOnly("direct:other");
+        String route = """
+                - route:
+                    id: tick
+                    from:
+                      uri: timer:tick
+                      steps:
+                        # to: direct:cheese, not yet
+                        - to: direct:cheese
+                        - to: direct:cheeseburger
+                        - to: direct://cheese?timeout=1000
+                        - to: direct:other
+                """;
+        List<String> msgs = EndpointConsumerChecks.validateYamlConsumers(route, consumed);
+        assertThat(msgs).hasSize(3);
+        assertThat(msgs.get(0)).startsWith("Line 7: route tick: sends to direct:cheese, and no route consumes it");
+        assertThat(msgs.get(1)).startsWith("Line 9: route tick: sends to direct:cheese, and no route consumes it");
+        assertThat(msgs.get(2)).startsWith("Line 8: route tick: sends to direct:cheeseburger");
+        // consumed in the file itself
+        assertThat(EndpointConsumerChecks.validateYamlConsumers(route + """
+                - route:
+                    from:
+                      uri: direct:cheese
+                      steps:
+                        - log: cheese
+                - route:
+                    from:
+                      uri: direct:cheeseburger
+                      steps:
+                        - log: burger
+                """, consumed)).isEmpty();
+        // the other files not known: nothing is said
+        assertThat(EndpointConsumerChecks.validateYamlConsumers(route, null)).isEmpty();
+    }
+
+    @Test
+    void theEditorGetsTheMessageOfAJavaOrXmlRouteOnItsLine() {
+        String java = """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Tick extends RouteBuilder {
+                    @Override
+                    public void configure() {
+                        from("timer:tick")
+                            .to("direct:cheese")
+                            .to("direct:other");
+                    }
+                }
+                """;
+        Set<String> consumed = Set.of("direct:other");
+        assertThat(EndpointConsumerChecks.validateRouteConsumers("Tick.java", java, CATALOG, Map.of(), consumed))
+                .singleElement().asString()
+                .startsWith("Line 7: sends to direct:cheese, and no route consumes it")
+                .endsWith("add a route with from(\"direct:cheese\"), or correct the name");
+        String xml = """
+                <routes>
+                    <route>
+                        <from uri="timer:tick"/>
+                        <to uri="direct:cheese"/>
+                    </route>
+                </routes>
+                """;
+        assertThat(EndpointConsumerChecks.validateRouteConsumers("tick.camel.xml", xml, CATALOG, Map.of(), consumed))
+                .singleElement().asString().startsWith("Line 4: sends to direct:cheese");
+        // the other files not known, or a file that is not a route source: nothing is said
+        assertThat(EndpointConsumerChecks.validateRouteConsumers("Tick.java", java, CATALOG, Map.of(), null)).isEmpty();
+        assertThat(EndpointConsumerChecks.validateRouteConsumers("pom.xml", "<project/>", CATALOG, Map.of(), consumed))
+                .isEmpty();
     }
 }

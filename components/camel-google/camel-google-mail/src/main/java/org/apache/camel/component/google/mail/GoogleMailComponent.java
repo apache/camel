@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.mail;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.google.api.services.gmail.Gmail;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -32,9 +35,9 @@ public class GoogleMailComponent
     @Metadata
     GoogleMailConfiguration configuration;
     @Metadata(label = "advanced")
-    private Gmail client;
-    @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Gmail client;
 
     public GoogleMailComponent() {
         super(GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
@@ -49,22 +52,44 @@ public class GoogleMailComponent
         return getCamelContext().getTypeConverter().convertTo(GoogleMailApiName.class, apiNameStr);
     }
 
-    public Gmail getClient(GoogleMailConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
+    /**
+     * Gets the client for the configuration of the component, created on first use and kept until the component stops.
+     * It serves callers that have no endpoint, such as the {@code google-mail:update-message-labels} data type
+     * transformer. Endpoints do not use it: each endpoint creates its own client from its own options.
+     */
+    public Gmail getClient() {
+        Gmail answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = getClient(getConfiguration());
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
             }
         }
-        return client;
+        return answer;
+    }
+
+    /**
+     * Creates a client for the given configuration with the client factory of the component. Each endpoint creates its
+     * own client from its own options and keeps it for its lifetime.
+     */
+    public Gmail getClient(GoogleMailConfiguration config) {
+        if (config.getClientId() != null && !config.getClientId().isBlank()
+                && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
+            return getClientFactory().makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+        } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
+            return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
+        }
     }
 
     public GoogleMailClientFactory getClientFactory() {
@@ -104,5 +129,11 @@ public class GoogleMailComponent
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleMailEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        client = null;
+        super.doStop();
     }
 }

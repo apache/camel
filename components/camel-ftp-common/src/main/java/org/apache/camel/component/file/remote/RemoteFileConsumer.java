@@ -284,6 +284,18 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     @Override
+    protected int poll(Exchange dynamic) throws Exception {
+        try {
+            return super.poll(dynamic);
+        } catch (Exception e) {
+            // a failure thrown out of the poll, such as on a connection that the server has closed, goes to the poll
+            // strategy, and only the default poll strategy disconnects
+            sendNoopOnNextPollIfIOFailure(e);
+            throw e;
+        }
+    }
+
+    @Override
     protected void handleException(String message, Exchange exchange, Throwable t) {
         // a failure while retrieving or processing a file is not thrown out of the poll, so the poll strategy does not
         // disconnect

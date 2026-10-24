@@ -79,6 +79,11 @@ component is supposed to support multiple consumption as it's expected
 when it comes to topics, so you are free to have as many consumers as you
 need on the same hazelcast topic.
 
+With `reliable=true`, the consumer listens on a Hazelcast reliable topic, which keeps its messages in a ringbuffer of
+limited capacity (and time to live). A consumer that falls behind by more than that loses the messages that were
+overwritten or expired: it logs a WARN with their number and goes on with the oldest message still in the
+ringbuffer.
+
 [tabs]
 ====
 Java::

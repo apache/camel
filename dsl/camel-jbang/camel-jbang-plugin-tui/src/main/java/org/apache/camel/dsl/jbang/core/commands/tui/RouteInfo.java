@@ -55,5 +55,9 @@ class RouteInfo {
     int variedBodyTypes;
     /** The steps reached with bodies of more than one kind, which need attention (CAMEL-25750). */
     int mixedBodyKinds;
+    /** The checksum of the route as written, the same in every run; null when unknown (CAMEL-25771). */
+    String checksum;
+    /** The revision of the route in this run: 1 when added, one more each time it is added again changed. */
+    int revision;
     final List<ProcessorInfo> processors = new ArrayList<>();
 }

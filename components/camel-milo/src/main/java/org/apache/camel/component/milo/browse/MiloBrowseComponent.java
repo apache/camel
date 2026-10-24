@@ -84,10 +84,10 @@ public class MiloBrowseComponent extends DefaultComponent {
     }
 
     /**
-     * Default reconnect timeout
+     * Default delay in milliseconds between two attempts to connect to the server
      */
     public void setReconnectTimeout(final Long reconnectTimeout) {
-        this.configuration.setRequestTimeout(reconnectTimeout);
+        this.configuration.setReconnectTimeout(reconnectTimeout);
     }
 
     public MiloClientConnectionManager getMiloClientConnectionManager() {

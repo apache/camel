@@ -488,6 +488,60 @@ class AuthoringToolsLenientTest {
                 .contains("message: \"archived\"");
     }
 
+    /**
+     * A line of the file that the snippet from memory does not have stays: the model remembered the cron endpoint
+     * without its name parameter, and the merge dropped name: report (r21 of the local-model benchmark).
+     */
+    @Test
+    void aLineOfTheFileTheSnippetDoesNotHaveStays(@TempDir Path dir) throws IOException {
+        String route = """
+                - route:
+                    id: nightly-report
+                    from:
+                      uri: cron
+                      parameters:
+                        name: report
+                        schedule: "0/10 * * * * ?"
+                      steps:
+                        - log:
+                            message: "Inventory report: 120 T-shirts and 45 mugs in stock"
+                """;
+        Files.writeString(dir.resolve(FILE), route);
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE, """
+                      uri: cron:report
+                      parameters:
+                        schedule: "0/10 * * * * ?"
+                """, """
+                      uri: cron:report
+                      parameters:
+                        schedule: "{{report.schedule}}"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("edited");
+        assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(route.replace("\"0/10 * * * * ?\"",
+                "\"{{report.schedule}}\""));
+    }
+
+    /** A line the model adds between two lines it remembers goes in, and the file's line between them stays. */
+    @Test
+    void aLineAddedBetweenTwoRememberedLinesKeepsTheFilesLineThere(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve(FILE), ROUTE);
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE, """
+                    - unmarshal:
+                        json:
+                    - log:
+                        message: "Invoice ${body[invoiceId]} for ${body[orderId]}"
+                """, """
+                    - unmarshal:
+                        json:
+                          allowUnmarshallType: true
+                    - log:
+                        message: "Invoice ${body[invoiceId]} for ${body[orderId]}"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("edited");
+        String after = Files.readString(dir.resolve(FILE));
+        assertThat(after).contains("library: Jackson").contains("allowUnmarshallType: true");
+    }
+
     @Test
     void aClosestMatchWithAnInvalidResultIsNotFound(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve(FILE), ROUTE);

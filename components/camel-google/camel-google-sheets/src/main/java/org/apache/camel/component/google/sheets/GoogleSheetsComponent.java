@@ -33,8 +33,6 @@ public class GoogleSheetsComponent
     @Metadata
     GoogleSheetsConfiguration configuration;
     @Metadata(label = "advanced")
-    private Sheets client;
-    @Metadata(label = "advanced")
     private GoogleSheetsClientFactory clientFactory;
 
     public GoogleSheetsComponent() {
@@ -50,20 +48,20 @@ public class GoogleSheetsComponent
         return getCamelContext().getTypeConverter().convertTo(GoogleSheetsApiName.class, apiNameStr);
     }
 
+    /**
+     * Creates a client for the given configuration with the client factory of the component. Each endpoint creates its
+     * own client from its own options and keeps it for its lifetime.
+     */
     public Sheets getClient(GoogleSheetsConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else {
-                // Use service account key or fall back to Application Default Credentials
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
-            }
+        if (config.getClientId() != null && !config.getClientId().isBlank()
+                && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
+            return getClientFactory().makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
         }
-        return client;
+        // Use service account key or fall back to Application Default Credentials
+        return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
     }
 
     public GoogleSheetsClientFactory getClientFactory() {

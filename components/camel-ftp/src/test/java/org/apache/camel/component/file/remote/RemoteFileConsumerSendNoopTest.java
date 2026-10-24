@@ -20,12 +20,14 @@ import java.io.IOException;
 import java.net.SocketException;
 
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPFile;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -38,8 +40,9 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for the connection check that {@link RemoteFileConsumer#connectIfNecessary()} does before each poll: by
  * default it sends a noop, and with sendNoop=false it only checks the connection state of the client. With
- * sendNoop=false the consumer sends a noop before the next poll after an I/O failure, also when the ftp consumer
- * ignores the failure as a file that does not exist, unless it disconnects before that poll.
+ * sendNoop=false the consumer sends a noop before the next poll after an I/O failure, whether the failure is thrown out
+ * of the poll or happens while processing a file, also when the ftp consumer ignores the failure as a file that does
+ * not exist, unless it disconnects before that poll.
  */
 class RemoteFileConsumerSendNoopTest extends CamelTestSupport {
 
@@ -52,13 +55,13 @@ class RemoteFileConsumerSendNoopTest extends CamelTestSupport {
             RemoteFileOperations<SftpRemoteFile> sftpOperations = mock(RemoteFileOperations.class);
             operations = sftpOperations;
             return new SftpConsumer(sftpEndpoint, exchange -> {
-            }, sftpOperations, null);
+            }, sftpOperations, mock(GenericFileProcessStrategy.class));
         }
         // the ftp consumer (also used by ftps) needs the ftp specific operations
         FtpOperations ftpOperations = mock(FtpOperations.class);
         operations = ftpOperations;
         return new FtpConsumer((RemoteFileEndpoint<FTPFile>) endpoint, exchange -> {
-        }, ftpOperations, null);
+        }, ftpOperations, mock(GenericFileProcessStrategy.class));
     }
 
     /**
@@ -136,6 +139,47 @@ class RemoteFileConsumerSendNoopTest extends CamelTestSupport {
         verify(operations, times(1)).sendNoop();
         verify(operations, times(1)).isConnected();
         verify(operations, times(1)).connect(any(), any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ftp", "ftps", "sftp" })
+    void testSendNoopFalseSendsNoopAfterPollFailure(String scheme) {
+        RemoteFileConsumer<?> consumer = createLoggedInConsumer(scheme + "://localhost/inbox?sendNoop=false");
+        // the client still regards itself as connected, as an ftp client does after the server closed the connection
+        when(operations.isConnected()).thenReturn(true);
+        when(operations.sendNoop()).thenReturn(false);
+        // so the first command of the poll fails
+        when(operations.getCurrentDirectory()).thenThrow(
+                new GenericFileOperationFailedException(
+                        "Cannot get current directory", new SocketException("Connection reset")));
+
+        // the failure is thrown out of the poll, and a custom poll strategy does not disconnect
+        assertThrows(GenericFileOperationFailedException.class, () -> consumer.poll(null));
+        verify(operations, never()).sendNoop();
+        verify(operations, never()).forceDisconnect();
+
+        // the next poll sends a noop, which fails, so it connects again
+        consumer.connectIfNecessary();
+
+        verify(operations, times(1)).sendNoop();
+        verify(operations, times(1)).connect(any(), any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ftp", "ftps", "sftp" })
+    void testSendNoopFalseSendsNoNoopAfterOtherPollFailure(String scheme) {
+        RemoteFileConsumer<?> consumer = createLoggedInConsumer(scheme + "://localhost/inbox?sendNoop=false");
+        when(operations.isConnected()).thenReturn(true);
+        when(operations.getCurrentDirectory())
+                .thenThrow(new GenericFileOperationFailedException("Cannot get current directory"));
+
+        assertThrows(GenericFileOperationFailedException.class, () -> consumer.poll(null));
+
+        consumer.connectIfNecessary();
+
+        verify(operations, times(2)).isConnected();
+        verify(operations, never()).sendNoop();
+        verify(operations, never()).connect(any(), any());
     }
 
     @ParameterizedTest

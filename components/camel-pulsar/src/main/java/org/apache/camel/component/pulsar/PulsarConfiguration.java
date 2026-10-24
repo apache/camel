@@ -137,7 +137,10 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Control batching method used by the producer.", defaultValue = "DEFAULT",
               enums = "DEFAULT,KEY_BASED")
     private BatcherBuilder batcherBuilder = BatcherBuilder.DEFAULT;
-    @UriParam(label = "producer", description = "The first message published will have a sequence Id of initialSequenceId  1.",
+    @UriParam(label = "producer",
+              description = "The first message published will have a sequence Id of initialSequenceId plus one. The"
+                            + " default -1 leaves it to the Pulsar client, which continues after the last sequence id the"
+                            + " broker has for the producer name.",
               defaultValue = "-1")
     private long initialSequenceId = -1;
     @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE",
@@ -454,8 +457,9 @@ public class PulsarConfiguration implements Cloneable {
 
     /**
      * Set the baseline for the sequence ids for messages published by the producer. First message will be using
-     * (initialSequenceId 1) as its sequence id and subsequent messages will be assigned incremental sequence ids, if
-     * not otherwise specified.
+     * (initialSequenceId + 1) as its sequence id and subsequent messages will be assigned incremental sequence ids, if
+     * not otherwise specified. The default -1 leaves it to the Pulsar client, which continues after the last sequence
+     * id the broker has for the producer name (needed for broker deduplication across restarts).
      */
     public void setInitialSequenceId(long initialSequenceId) {
         this.initialSequenceId = initialSequenceId;

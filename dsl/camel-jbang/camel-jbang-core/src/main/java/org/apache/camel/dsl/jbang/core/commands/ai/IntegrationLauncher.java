@@ -458,6 +458,28 @@ public final class IntegrationLauncher {
     }
 
     /**
+     * Whether the integration reloads its routes when this file changes. One started with --source-dir watches its
+     * whole directory. One started with its own files watches only those: camel run puts a template or a script on the
+     * classpath, not in the reload pattern, so a write of it is not reloaded. True when the command line of the process
+     * cannot be read, as before.
+     */
+    static boolean watchesFile(long pid, String file) {
+        List<String> args = ProcessHandle.of(pid).flatMap(ph -> ph.info().arguments()).map(Arrays::asList).orElse(null);
+        return watchesFile(args, file);
+    }
+
+    static boolean watchesFile(List<String> args, String file) {
+        if (args == null || args.stream().anyMatch(a -> a.startsWith("--source-dir"))) {
+            return true;
+        }
+        String name = Path.of(file).getFileName().toString();
+        // the file itself on the command line (a Groovy route), or a wildcard that camel run expands;
+        // options (starting with -) are excluded: a JVM option such as -Dtest=* is not a file glob
+        return args.stream().anyMatch(a -> (!a.startsWith("-") && a.contains("*")) || a.equals(name)
+                || a.endsWith("/" + name) || a.endsWith(":" + name));
+    }
+
+    /**
      * The integration that runs in dev mode from the directory (its working directory, started with --dev), or null:
      * the one whose reload a write to the directory is answered with when no integration is selected (CAMEL-25513).
      */
