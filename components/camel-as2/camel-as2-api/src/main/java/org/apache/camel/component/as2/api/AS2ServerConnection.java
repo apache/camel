@@ -89,10 +89,7 @@ public class AS2ServerConnection {
     private final String as2Version;
     private final String originServer;
     private final String serverFqdn;
-    private final String userName;
-    private final String password;
-    private final String accessToken;
-    private final String asyncMdnAllowedHosts;
+    private final SSLContext sslContext;
 
     /**
      * Stores the configuration for each consumer endpoint path (e.g., "/consumerA"). Uses LinkedHashMap to preserve
@@ -130,8 +127,10 @@ public class AS2ServerConnection {
             = ContextValue.newThreadLocal("AS2ConsumerConfig");
 
     /**
-     * Configuration data holding all necessary security material (signing keys/certs and decryption keys/certs) for a
-     * single AS2 consumer endpoint. This immutable object is looked up per request URI.
+     * Configuration data holding all necessary security material (signing keys/certs and decryption keys/certs) and the
+     * asynchronous MDN settings (the credentials attached to an asynchronous MDN and the hosts it may be delivered to)
+     * for a single AS2 consumer endpoint. This immutable object is looked up per request URI, so the consumers sharing
+     * a server connection each use their own values.
      */
     public static class AS2ConsumerConfiguration {
         private final Certificate[] signingCertificateChain;
@@ -139,18 +138,49 @@ public class AS2ServerConnection {
         private final PrivateKey decryptingPrivateKey;
         private final Certificate[] validateSigningCertificateChain;
         private final AS2SignatureAlgorithm signingAlgorithm;
+        private final String mdnUserName;
+        private final String mdnPassword;
+        private final String mdnAccessToken;
+        private final String asyncMdnAllowedHosts;
 
+        /**
+         * Creates a configuration without asynchronous MDN settings: an asynchronous MDN for a request matched by it is
+         * delivered without credentials, to the delivery address the sender named.
+         */
         public AS2ConsumerConfiguration(
                                         AS2SignatureAlgorithm signingAlgorithm,
                                         Certificate[] signingCertificateChain,
                                         PrivateKey signingPrivateKey,
                                         PrivateKey decryptingPrivateKey,
                                         Certificate[] validateSigningCertificateChain) {
+            this(signingAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey,
+                 validateSigningCertificateChain, null, null, null, null);
+        }
+
+        /**
+         * Creates a configuration with its own asynchronous MDN settings: an asynchronous MDN for a request matched by
+         * it is delivered with these credentials (a user name and password, or an access token), and only to a delivery
+         * address in {@code asyncMdnAllowedHosts} when that list is set.
+         */
+        public AS2ConsumerConfiguration(
+                                        AS2SignatureAlgorithm signingAlgorithm,
+                                        Certificate[] signingCertificateChain,
+                                        PrivateKey signingPrivateKey,
+                                        PrivateKey decryptingPrivateKey,
+                                        Certificate[] validateSigningCertificateChain,
+                                        String mdnUserName,
+                                        String mdnPassword,
+                                        String mdnAccessToken,
+                                        String asyncMdnAllowedHosts) {
             this.signingAlgorithm = signingAlgorithm;
             this.signingCertificateChain = signingCertificateChain;
             this.signingPrivateKey = signingPrivateKey;
             this.decryptingPrivateKey = decryptingPrivateKey;
             this.validateSigningCertificateChain = validateSigningCertificateChain;
+            this.mdnUserName = mdnUserName;
+            this.mdnPassword = mdnPassword;
+            this.mdnAccessToken = mdnAccessToken;
+            this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
         }
 
         // Getters
@@ -172,6 +202,22 @@ public class AS2ServerConnection {
 
         public PrivateKey getDecryptingPrivateKey() {
             return decryptingPrivateKey;
+        }
+
+        public String getMdnUserName() {
+            return mdnUserName;
+        }
+
+        public String getMdnPassword() {
+            return mdnPassword;
+        }
+
+        public String getMdnAccessToken() {
+            return mdnAccessToken;
+        }
+
+        public String getAsyncMdnAllowedHosts() {
+            return asyncMdnAllowedHosts;
         }
     }
 
@@ -510,55 +556,7 @@ public class AS2ServerConnection {
                     HttpCoreContext coreContext = HttpCoreContext.castOrCreate(context);
 
                     try {
-                        // Safely retrieve the AS2 consumer configuration and path from ThreadLocal storage.
-                        AS2ConsumerConfiguration config = Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
-                                .map(w -> w.config)
-                                .orElse(null);
-
-                        String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
-                                String.class);
-
-                        if (recipientAddress != null && config != null) {
-                            // Send the MDN asynchronously.
-
-                            DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
-                                    AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
-                                    DispositionNotificationMultipartReportEntity.class);
-                            AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
-                                    AS2ServerConnection.this.as2Version,
-                                    AS2ServerConnection.this.originServer,
-                                    AS2ServerConnection.this.serverFqdn,
-                                    config.getSigningCertificateChain(),
-                                    config.getSigningPrivateKey(),
-                                    AS2ServerConnection.this.userName,
-                                    AS2ServerConnection.this.password,
-                                    AS2ServerConnection.this.accessToken,
-                                    AS2ServerConnection.this.asyncMdnAllowedHosts);
-
-                            HttpRequest request = coreContext.getRequest();
-                            AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
-                                    request,
-                                    config.getSigningAlgorithm(),
-                                    config.getSigningCertificateChain(),
-                                    config.getSigningPrivateKey());
-                            if (gen != null) {
-                                // send a signed MDN
-                                MultipartSignedEntity multipartSignedEntity = null;
-                                try {
-                                    multipartSignedEntity = ResponseMDN.prepareSignedReceipt(gen, multipartReportEntity);
-                                } catch (Exception e) {
-                                    LOG.warn("failed to sign MDN");
-                                }
-                                if (multipartSignedEntity != null) {
-                                    asynchronousMDNManager.send(
-                                            multipartSignedEntity, multipartSignedEntity.getContentType(), recipientAddress);
-                                }
-                            } else {
-                                // send an unsigned MDN
-                                asynchronousMDNManager.send(multipartReportEntity,
-                                        multipartReportEntity.getMainMessageContentType(), recipientAddress);
-                            }
-                        }
+                        handleAsynchronousMDN(coreContext);
                     } finally {
                         // The context and the ThreadLocal are reused for every request handled on this
                         // connection, and nothing else clears them. Without this, a later request that does not
@@ -579,6 +577,61 @@ public class AS2ServerConnection {
                 try {
                     this.serverConnection.close();
                 } catch (final IOException ignore) {
+                }
+            }
+        }
+
+        private void handleAsynchronousMDN(HttpCoreContext coreContext) throws HttpException, IOException {
+            // Safely retrieve the AS2 consumer configuration and path from ThreadLocal storage.
+            AS2ConsumerConfiguration config = Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
+                    .map(w -> w.config)
+                    .orElse(null);
+
+            String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
+                    String.class);
+
+            if (recipientAddress != null && config != null) {
+                // Send the MDN asynchronously.
+
+                DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
+                        AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
+                        DispositionNotificationMultipartReportEntity.class);
+                // The MDN settings come from the matched path's configuration, like the signing material: the
+                // consumers sharing this connection each deliver their asynchronous MDNs with their own values.
+                AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
+                        AS2ServerConnection.this.as2Version,
+                        AS2ServerConnection.this.originServer,
+                        AS2ServerConnection.this.serverFqdn,
+                        config.getSigningCertificateChain(),
+                        config.getSigningPrivateKey(),
+                        config.getMdnUserName(),
+                        config.getMdnPassword(),
+                        config.getMdnAccessToken(),
+                        config.getAsyncMdnAllowedHosts(),
+                        AS2ServerConnection.this.sslContext);
+
+                HttpRequest request = coreContext.getRequest();
+                AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
+                        request,
+                        config.getSigningAlgorithm(),
+                        config.getSigningCertificateChain(),
+                        config.getSigningPrivateKey());
+                if (gen != null) {
+                    // send a signed MDN
+                    MultipartSignedEntity multipartSignedEntity = null;
+                    try {
+                        multipartSignedEntity = ResponseMDN.prepareSignedReceipt(gen, multipartReportEntity);
+                    } catch (Exception e) {
+                        LOG.warn("failed to sign MDN");
+                    }
+                    if (multipartSignedEntity != null) {
+                        asynchronousMDNManager.send(
+                                multipartSignedEntity, multipartSignedEntity.getContentType(), recipientAddress);
+                    }
+                } else {
+                    // send an unsigned MDN
+                    asynchronousMDNManager.send(multipartReportEntity,
+                            multipartReportEntity.getMainMessageContentType(), recipientAddress);
                 }
             }
         }
@@ -621,24 +674,27 @@ public class AS2ServerConnection {
                                String accessToken,
                                String asyncMdnAllowedHosts)
                                                             throws IOException {
-        this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
+        this.sslContext = sslContext;
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
         final Integer parserServerPortNumber = ObjectHelper.notNull(serverPortNumber, "serverPortNumber");
-        this.userName = userName;
-        this.password = password;
-        this.accessToken = accessToken;
 
         // Create and register a default consumer configuration for the root path ('/').
-        // This ensures that all incoming requests have a fallback configuration for decryption
-        // and MDN signing, even if they don't match a specific Camel route path.
+        // This ensures that all incoming requests have a fallback configuration for decryption,
+        // MDN signing and asynchronous MDN delivery, even if they don't match a specific Camel route path.
+        // The MDN settings given to this constructor belong to that fallback only: a consumer registers
+        // its own configuration, with its own MDN settings, for its own request URI pattern.
         AS2ServerConnection.AS2ConsumerConfiguration consumerConfig = new AS2ServerConnection.AS2ConsumerConfiguration(
                 signingAlgorithm,
                 signingCertificateChain,
                 signingPrivateKey,
                 decryptingPrivateKey,
-                validateSigningCertificateChain);
+                validateSigningCertificateChain,
+                userName,
+                password,
+                accessToken,
+                asyncMdnAllowedHosts);
         registerConsumerConfiguration("/", consumerConfig);
 
         listenerService = new RequestListenerService(
@@ -670,6 +726,13 @@ public class AS2ServerConnection {
                 .orElse(null);
     }
 
+    /**
+     * Registers the configuration used for the requests matching a consumer's request URI pattern: its signing and
+     * decrypting material and its asynchronous MDN settings. Each consumer registers its own configuration for its own
+     * pattern, also when the pattern is the root path ({@code /}) for which the constructor registered a fallback: the
+     * fallback and the configurations of the other consumers sharing this connection are not its own. Registering a
+     * pattern again replaces the configuration registered for it.
+     */
     public void registerConsumerConfiguration(String path, AS2ConsumerConfiguration config) {
         consumerConfigurations.put(path, config);
     }
