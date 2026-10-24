@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,18 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
 @UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port",
              alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE },
              headersClass = SshConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.STREAM,
+                                   description = "The standard output of the pollCommand as a stream, with the exit value and"
+                                                 + " the standard error in the CamelSshExitValue and CamelSshStderr headers"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The command to run, as text: bytes, a stream or a file are read as text. A Map"
+                                                + " or a POJO is sent as its toString(): build the command as text first. No"
+                                                + " body fails"),
+           producerOut = @BodyType(value = Carrier.STREAM,
+                                   description = "The standard output of the command as a stream, with the exit value and the"
+                                                 + " standard error in the CamelSshExitValue and CamelSshStderr headers; an"
+                                                 + " exit value that is not 0 does not fail the exchange. Convert it to text to"
+                                                 + " read it more than once"))
 public class SshEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam

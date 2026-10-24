@@ -25,12 +25,28 @@ import com.univocity.parsers.fixed.FixedWidthParser;
 import com.univocity.parsers.fixed.FixedWidthParserSettings;
 import com.univocity.parsers.fixed.FixedWidthWriter;
 import com.univocity.parsers.fixed.FixedWidthWriterSettings;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Dataformat;
 
 /**
  * This class is the data format that uses the fixed-width uniVocity parser.
  */
 @Dataformat("univocityFixed")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                 description = "One row as a Map, or the rows as a List (or an Iterator) of Maps. Rows that are"
+                                               + " Lists, as unmarshal gives without asMap, are not accepted"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The fixed-width records in the stream cache, or a byte array when stream"
+                                                + " caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = Carrier.LIST,
+                                    byOption = @BodyType.When(option = "lazyLoad", value = "true",
+                                                              carriers = Carrier.ITERATOR),
+                                    description = "A List of the rows, each a List of its values (the first line too, unless"
+                                                  + " headerExtractionEnabled); with asMap, a Map of the header names and"
+                                                  + " the values"))
 public class UniVocityFixedDataFormat
         extends
         AbstractUniVocityDataFormat<FixedWidthFormat, FixedWidthWriterSettings, FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedDataFormat> {

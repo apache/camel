@@ -62,12 +62,13 @@ the following. Some operations also require the message body to be set.
 |`INSERT` | File |inserts/updates a document or documents using the given File (using ContentStreamUpdateRequest)
 |`INSERT` | SolrInputDocument or Collection<SolrInputDocument>|inserts/updates a document or documents based on the given (collection of) SolrInputDocument
 |`INSERT` | bean or Collection<bean> |inserts/updates a document or documents based on values in an http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated bean]
-|`INSERT` | String |inserts/updates a document or documents index based on the given XML or json as string (must follow SolrInputDocument format)
+|`INSERT` | Map or Collection<Map> |inserts/updates a document or documents with the fields of the Map
+|`INSERT` | String |inserts/updates the documents of the given JSON or XML text: a JSON array of documents, or XML documents (an `<add>` element is added when the text does not start with one)
 
 |`DELETE` | String or Collection<String> | delete a record by ID (or collection of ids), or by a query (or a collection of queries) when the header `CamelSolrDeleteByQuery` or the option `deleteByQuery` is true (false by default)
 |`DELETE` | n/a | sends only the solr parameters (such as a commit)
 
-|`PING` |SolrPing | Pings the solr instance
+|`PING` |n/a | Pings the solr instance
 
 |`SEARCH` |SolrQuery | Performs a search request to the solr instance
 |`SEARCH` |QueryRequest | Performs a search request to the solr instance
@@ -82,6 +83,10 @@ text, a byte array or a bean without `@Field` annotations) fails with the same e
 solr parameters (such as the commit the `autoCommit` option adds).
 
 A field of a `Map` body or a `CamelSolrField.` header with a null value is left out of the document.
+
+After each operation the message body is the response of Solr as a Map (a `SimpleOrderedMap`) with the
+`responseHeader`, and for a search the documents under `response` as a `SolrDocumentList`. Convert it to a
+`QueryResponse` to read it with SolrJ.
 
 == Example
 

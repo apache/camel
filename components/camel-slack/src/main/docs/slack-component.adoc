@@ -53,7 +53,12 @@ include::partial$component-endpoint-headers.adoc[]
 == Usage
 
 To send a message contained in the message body, a pre-established
-https://api.slack.com/incoming-webhooks[Slack incoming webhook] must be configured in Slack.
+https://api.slack.com/incoming-webhooks[Slack incoming webhook] must be configured in Slack, or the producer uses a token
+of a Slack app.
+
+The producer sends the message body as the text of the message: bytes, a stream or a file are read as text. A
+`com.slack.api.model.Message` body is sent with its blocks and attachments. Marshal a Map or another object to text
+first, as it is otherwise sent as its `toString()`. The message body is unchanged after the call.
 
 === Configuring in Spring XML
 
@@ -194,7 +199,8 @@ YAML::
 ----
 ====
 
-This way you'll get the last message from `general` channel.
+This way you'll get the last message from `general` channel, as a `com.slack.api.model.Message`, whose text is
+`${body.text}`.
 The consumer will track the timestamp of the last message consumed,
 and in the next poll it will consume only newer messages in the channel.
 When more than `maxResults` new messages were posted since the previous poll, the consumer reads the following pages of

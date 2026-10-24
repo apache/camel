@@ -116,9 +116,12 @@ camel.component.nats.servers=scott:tiger@someserver:4222,superman:123@someothers
 ----
 
 === Request/Reply support
-The producer supports request/reply where it can wait for an expected reply message.
+The producer supports request/reply: when the exchange pattern is InOut, it waits for the reply message, up to
+`requestTimeout`, and the payload of the reply becomes the message body, as a byte array.
 
-The consumer will, when routing the message is complete, send back the message as reply-message if required.
+The consumer sends back the message body as the reply message, when routing the message is complete, if the message has a
+reply subject and the consumer has `exchangePattern=InOut`. The body must convert to a byte array: text, bytes, a stream or a
+file. A body that does not, such as a Map, sends no reply.
 
 A consumer replies when its `exchangePattern` is `InOut`, the message has a reply subject, `replyToDisabled` is `false`,
 and the exchange did not fail (NATS has no error reply, so a failed exchange is not answered and the requester times out).

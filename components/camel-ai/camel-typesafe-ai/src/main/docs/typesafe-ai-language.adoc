@@ -37,7 +37,7 @@ settings belong to the component or selected endpoint.
 | `threshold` | Endpoint `threshold` (`0.5`) | Probability at or above this value matches outside the uncertainty band.
 | `uncertainty` | Endpoint `uncertainty` (`0`) | Half-width of the inclusive band around the threshold; zero disables it.
 | `uncertainty-policy` | Endpoint `uncertaintyPolicy` (`NonMatch`) | `NonMatch` returns false within the band; `Fail` raises `TypeSafeAiUncertainResultException`.
-| `state` | Endpoint `state` (`$\{body}`) | Simple expression selecting the state to send. For streams, use `${bodyAs(String)}`.
+| `state` | Endpoint `state` (`$\{body}`) | Simple expression selecting the state to send: text, a Map or a List. For a stream, bytes or another object, use `${bodyAs(String)}`.
 |===
 
 Prefix these properties with `camel.language.typesafe-ai.`. Unset language properties fall back to

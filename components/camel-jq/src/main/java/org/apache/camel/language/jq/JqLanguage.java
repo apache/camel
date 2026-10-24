@@ -31,7 +31,8 @@ import org.apache.camel.support.SingleInputTypedLanguageSupport;
 
 @Language("jq")
 @BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
-                                    format = "json", description = "JSON as text, bytes, a stream or a file, or a Map"),
+                                    format = "json", dependsOn = "source",
+                                    description = "JSON as text, bytes, a stream or a file, or a Map"),
            expressionOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL }, dependsOn = "resultType",
                                      description = "A JsonNode; a List of JsonNode when the filter gives several, null when it"
                                                    + " gives none"))

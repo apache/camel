@@ -38,6 +38,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.service.TelegramServiceRestBotAPIAdapter;
 import org.apache.camel.component.webhook.WebhookCapableEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -51,6 +54,27 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type",
              category = { Category.CLOUD, Category.API, Category.CHAT }, headersClass = TelegramConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                   description = "One message per update: an IncomingMessage for a message or a channel post,"
+                                                 + " with the chat id in the CamelTelegramChatId header, and the"
+                                                 + " IncomingCallbackQuery, IncomingInlineQuery, PreCheckoutQuery,"
+                                                 + " ShippingQuery or PaidMediaPurchased of the other updates; no body for an"
+                                                 + " update of another kind, such as an edited message"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO,
+                   Carrier.NULL },
+                                  description = "A message of org.apache.camel.component.telegram.model, such as an"
+                                                + " OutgoingTextMessage, or text to send as a text message: a Map or another"
+                                                + " POJO is sent as its toString(), so marshal it first. A byte array, a stream"
+                                                + " or a file is sent as the photo, audio, video or document the"
+                                                + " CamelTelegramMediaType header names, or as text when it names TEXT. Without"
+                                                + " the header, a byte array fails, and a stream or a file is read as text. No"
+                                                + " body, or an IncomingMessage without text, sends nothing"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.UNCHANGED },
+                                   description = "The MessageResult of the call, with the message sent, or a subclass of it"
+                                                 + " such as MessageResultString for createInvoiceLink; an answer with ok=false"
+                                                 + " fails the exchange. No body, or an IncomingMessage without text, is left"
+                                                 + " as it is"))
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint, EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
     private static final Pattern WEBHOOK_SECRET_TOKEN_PATTERN = Pattern.compile("[A-Za-z0-9_-]{1,256}");

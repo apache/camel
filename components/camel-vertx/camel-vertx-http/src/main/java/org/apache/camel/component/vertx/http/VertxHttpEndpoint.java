@@ -28,6 +28,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.vertx.common.VertxHelper;
 import org.apache.camel.http.base.HttpHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +42,16 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-http", title = "Vert.x HTTP Client", syntax = "vertx-http:httpUri",
              category = { Category.HTTP }, producerOnly = true, lenientProperties = true,
              headersClass = VertxHttpConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The request body: text, bytes, a stream or a file (a file as a multipart form"
+                                                + " with multipartUpload), or a Vert.x Buffer, MultiMap (a form) or"
+                                                + " MultipartForm. A Map, a List or a POJO fails: marshal it first. Without"
+                                                + " httpMethod, a query string in the URI or no body sends a GET, and a body a"
+                                                + " POST"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.NULL },
+                                   description = "The response body as a byte array, or null for a response without a body. A"
+                                                 + " Vert.x Buffer with responsePayloadAsByteArray=false, which stream caching"
+                                                 + " turns into a stream"))
 public class VertxHttpEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * completion from the underlying future (e.g. a Bad_Timeout service fault) and used {@code handleAsync()}, it converted
  * the failure into a normal completion with a null value. {@code MiloClientProducer} then reported success with a null
  * body. The fix replaces {@code handleAsync()} with {@code whenCompleteAsync()} to preserve the original exceptional
- * completion while still triggering the reconnection side-effect.
+ * completion.
  */
 class MiloClientProducerWriteFailureTest {
 

@@ -24,6 +24,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -40,6 +43,32 @@ import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TSimpleJSONProtocol;
 
 @Dataformat("thrift")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO, javaType = "org.apache.thrift.TBase",
+                                 description = "An object of a class the Thrift compiler generated, as unmarshal gives. The"
+                                               + " body is not converted: other bodies fail"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The Thrift binary data, or JSON with contentTypeFormat json or sjson, in the"
+                                                + " stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, dependsOn = "contentTypeFormat",
+                                   byOption = {
+                                           @BodyType.When(option = "contentTypeFormat", value = "binary",
+                                                          carriers = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                           @BodyType.When(option = "contentTypeFormat", value = "json",
+                                                          carriers = {
+                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                  Carrier.FILE }) },
+                                   description = "Thrift binary data, or with contentTypeFormat json the Thrift JSON protocol"
+                                                 + " (field ids and types) as marshal writes it. sjson is for marshal only"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.thrift.TBase",
+                                    dependsOn = "contentTypeFormat",
+                                    byOption = {
+                                            @BodyType.When(option = "contentTypeFormat", value = "binary",
+                                                           carriers = Carrier.POJO,
+                                                           javaType = "org.apache.thrift.TBase"),
+                                            @BodyType.When(option = "contentTypeFormat", value = "json",
+                                                           carriers = Carrier.POJO,
+                                                           javaType = "org.apache.thrift.TBase") },
+                                    description = "An object of the class instanceClass names: unmarshal fails without it"))
 public class ThriftDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

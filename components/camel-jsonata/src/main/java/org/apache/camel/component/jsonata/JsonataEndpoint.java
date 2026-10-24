@@ -29,6 +29,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -43,6 +46,20 @@ import static com.dashjoin.jsonata.Jsonata.jsonata;
 @UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri",
              producerOnly = true, remote = false,
              category = { Category.TRANSFORMATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.POJO }, format = "json",
+                                  byOption = @BodyType.When(option = "inputType", value = "JsonString",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "JSON data: a Map, a List, a JsonNode or another object Jackson converts. JSON"
+                                                + " as text, bytes, a stream or a file needs inputType=JsonString: without it"
+                                                + " text is read as one JSON string, and bytes or a stream fail"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "com.fasterxml.jackson.databind.JsonNode",
+                                   format = "json",
+                                   byOption = @BodyType.When(option = "outputType", value = "JsonString",
+                                                             carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                   description = "The result as a Jackson JsonNode, or as JSON text with"
+                                                 + " outputType=JsonString"))
 public class JsonataEndpoint extends ResourceEndpoint {
 
     private final ObjectMapper mapper = new ObjectMapper();

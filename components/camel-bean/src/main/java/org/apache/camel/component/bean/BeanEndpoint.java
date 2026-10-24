@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,13 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true,
              remote = false, category = { Category.CORE, Category.SCRIPT })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The first parameter of the method gets the body, converted to its type: a"
+                                                + " String parameter gets a Map or a POJO as its toString(), so marshal it"
+                                                + " first"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "What the method returns, also when it returns null. A void method leaves"
+                                                 + " the body unchanged"))
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;

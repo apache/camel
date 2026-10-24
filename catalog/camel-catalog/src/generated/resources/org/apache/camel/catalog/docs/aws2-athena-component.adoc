@@ -406,8 +406,10 @@ YAML::
 ----
 ====
 
-The preceding example will yield an
-https://docs.aws.amazon.com/athena/latest/APIReference/API_QueryExecution.html[Athena QueryExecution] in the body.
+The preceding example will yield a
+https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/athena/model/GetQueryExecutionResponse.html[GetQueryExecutionResponse]
+in the body, whose `queryExecution()` is the
+https://docs.aws.amazon.com/athena/latest/APIReference/API_QueryExecution.html[Athena QueryExecution].
 
 The getQueryExecution operation also supports retrieving the query execution ID from a header
 (`CamelAwsAthenaQueryExecutionId`), and since startQueryExecution sets the same header, upon starting a query,
@@ -466,7 +468,7 @@ YAML::
 ----
 ====
 
-The preceding example will yield an Athena QueryExecution in the body for the query that was just started.
+The preceding example will yield a GetQueryExecutionResponse in the body for the query that was just started.
 
 - getQueryResults: this operation returns the results of a query that has succeeded.  The results are returned in the
 body in one of three formats.
@@ -556,7 +558,7 @@ from("direct:start")
 The preceding example will print the results of the query as CSV to the console.
 
 `SelectList` - returns a
-https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/athena/model/GetQueryResultsResponse.html[GetQueryResponse]
+https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/athena/model/GetQueryResultsResponse.html[GetQueryResultsResponse]
 in the body containing at most 1,000 rows, plus the NextToken value as a header (`CamelAwsAthenaNextToken`),
 which can be used for manual pagination of results:
 
@@ -616,11 +618,11 @@ YAML::
 ====
 
 The preceding example will return a
-https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/athena/model/GetQueryResultsResponse.html[GetQueryResponse]
+https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/athena/model/GetQueryResultsResponse.html[GetQueryResultsResponse]
 in the body plus the NextToken value as a header (`CamelAwsAthenaNextToken`), which can be used to manually page
 through the results 1,000 rows at a time.
 
-`S3Pointer` - return an S3 path (e.g. `s3://bucket/path/`) pointing to the results:
+`S3Pointer` - returns the S3 location of the results of the query as text:
 
 [tabs]
 ====
@@ -677,9 +679,8 @@ YAML::
 ----
 ====
 
-The preceding example will return an
-S3 path (e.g. `s3://bucket/path/`) in the body pointing to the results.  The path will also be set in a header
-(`CamelAwsAthenaOutputLocation`).
+The preceding example will return the S3 location of the results of the query as text in the body.
+The location will also be set in a header (`CamelAwsAthenaOutputLocation`).
 
 - listQueryExecutions: this operation returns a list of query execution IDs
 
@@ -722,8 +723,9 @@ YAML::
 ----
 ====
 
-The preceding example will return a list of query executions in the body, plus the NextToken value as a
-header (`CamelAwsAthenaNextToken`) than can be used for manual pagination of results.
+The preceding example will return a ListQueryExecutionsResponse in the body, whose `queryExecutionIds()` lists the
+ids of the query executions, plus the NextToken value as a header (`CamelAwsAthenaNextToken`) that can be used for
+manual pagination of results.
 
 - startQueryExecution: this operation starts the execution of a query.  It supports waiting for the query to
 complete before proceeding, and retrying the query based on a set of configurable failure conditions:
@@ -777,7 +779,8 @@ YAML::
 
 The preceding example will start the query `SELECT 1` and configure the
 results to be saved to `s3://bucket/path/`, but will not wait for the query
-to complete.
+to complete. The body is then empty, and the id of the query is in the
+`CamelAwsAthenaQueryExecutionId` header.
 
 [tabs]
 ====
@@ -830,6 +833,9 @@ YAML::
 The preceding example will start a query and wait up to 60 seconds for it to
 reach a status that indicates it is complete (one of SUCCEEDED, FAILED, CANCELLED,
 or UNKNOWN_TO_SDK_VERSION).  Upon failure, the query would not be retried.
+The body is then the GetQueryExecutionResponse of the last check: a query that fails, or
+still runs after the wait, does not fail the exchange, so check the state of the query in the
+`CamelAwsAthenaQueryExecutionState` header.
 
 [tabs]
 ====

@@ -26,6 +26,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -47,6 +50,23 @@ import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICAT
 @UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
              syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
              category = { Category.MAIL }, headersClass = MailConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.STREAM, Carrier.POJO }, dependsOn = "binding",
+                                   byOption = @BodyType.When(option = "mapMailMessage", value = "false",
+                                                             carriers = Carrier.POJO, javaType = "jakarta.mail.Message"),
+                                   description = "The content of the mail an imap or pop3 consumer reads: a String for"
+                                                 + " text/plain, text/html and text/xml, a stream for another content type,"
+                                                 + " and a jakarta.mail Multipart for a multipart mail, which converts to the"
+                                                 + " text of its first text part, with the files in the attachments. The"
+                                                 + " jakarta.mail.Message itself with mapMailMessage=false"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "binding",
+                                  description = "The text of the mail smtp sends, in the contentType: bytes, a stream or a"
+                                                + " file are read as text, so send binary content as an attachment, and no"
+                                                + " body sends an empty text. A jakarta.mail MimeMessage is sent as it is,"
+                                                + " and a Map or a POJO as its toString(): marshal it first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, with the Message-ID of the mail in the CamelMailMessageId"
+                                                 + " header"))
 public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",

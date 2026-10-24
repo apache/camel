@@ -23,6 +23,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -30,6 +33,12 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 
 @Language("hl7terser")
+@BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.POJO }, format = "hl7", dependsOn = "source",
+                                    description = "An HL7 message as text or bytes, in ER7 or XML, a HAPI Message, or a DOM of"
+                                                  + " HL7 XML. A stream or a file fails: convert it to text first"),
+           expressionOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String",
+                                     dependsOn = "resultType",
+                                     description = "The value of the field as text, null when the field is empty"))
 public class Hl7TerserLanguage extends SingleInputTypedLanguageSupport {
 
     public static Expression terser(final String expression) {

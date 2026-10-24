@@ -24,11 +24,17 @@ import ognl.OgnlContext;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.TypedLanguageSupport;
 
 @Language("ognl")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, in request.body: there is no variable body"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the expression returns"))
 public class OgnlLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     @Override

@@ -189,7 +189,9 @@ trust/key store files (see `SSLNOTES.txt` in JavaMail for details).
 
 Camel uses the message exchange's IN body as the
 http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
-text content. The body is converted to `String.class`.
+text content. The body is converted to `String.class`: bytes, a stream or a file are read as text, so send binary
+content as an attachment, and a Map or a POJO is sent as its `toString()`. A body that is a `jakarta.mail.internet.MimeMessage`
+is sent as it is, with its own recipients and subject.
 
 Mails are sent with `smtp` or `smtps`. A producer on `imap`, `imaps`, `pop3` or `pop3s` fails when it is created.
 
@@ -705,17 +707,8 @@ the Splitter as shown below
 </split>
 ----
 
-You can also split the attachments as byte[] to
-be stored as the message body. This is done by creating the expression
-with boolean true
-
-._Java-only: programmatic `SplitAttachmentsExpression` configuration_
-[source,java]
-----
-SplitAttachmentsExpression split = SplitAttachmentsExpression(true);
-----
-
-And then use the expression with the splitter EIP.
+Each split message has the content of one attachment as its body: a byte array, or a String for a text
+attachment, with the name of the attachment in the `CamelSplitAttachmentId` header.
 
 === Using custom SearchTerm
 
