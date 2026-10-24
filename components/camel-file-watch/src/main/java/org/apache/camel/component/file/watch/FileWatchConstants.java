@@ -54,7 +54,8 @@ public final class FileWatchConstants {
     public static final String FILE_NAME_CONSUMED = Exchange.FILE_NAME_CONSUMED;
     @Metadata(description = "The parent path.", javaType = "String")
     public static final String FILE_PARENT = Exchange.FILE_PARENT;
-    @Metadata(description = "A `Long` value containing the last modified timestamp of the file.",
+    @Metadata(description = "A `Long` value containing the last modified timestamp of the file."
+                            + " Not set when the file no longer exists, such as for a DELETE event.",
               javaType = "long")
     public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
 

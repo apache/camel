@@ -171,10 +171,22 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         message.setHeader(FileWatchConstants.FILE_PARENT,
                 PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
-        message.setHeader(FileWatchConstants.FILE_LAST_MODIFIED, event.getEventDate());
+        Long lastModified = lastModified(event.getEventPath());
+        if (lastModified != null) {
+            message.setHeader(FileWatchConstants.FILE_LAST_MODIFIED, lastModified);
+        }
         message.setHeader(Exchange.MESSAGE_TIMESTAMP, event.getEventDate());
 
         return exchange;
+    }
+
+    private static Long lastModified(Path path) {
+        try {
+            return Files.getLastModifiedTime(path).toMillis();
+        } catch (IOException | SecurityException e) {
+            // the file no longer exists (IOException) or access is denied (SecurityException)
+            return null;
+        }
     }
 
     private boolean matchFilters(FileEvent fileEvent) {
