@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.errorhandler;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,9 +29,6 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,9 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * CAMEL-25823: verifies that a route-stop cut-off produces exactly one WARN line even when the exchange passes through
- * multiple nested stopped error handlers (e.g. a split inside a multicast). The
- * {@code setInterrupted(true)} marker set after the first log prevents subsequent stopped handlers from
- * logging the same cut-off again.
+ * multiple nested stopped error handlers (e.g. a split inside a multicast). The {@code setInterrupted(true)} marker set
+ * after the first log prevents subsequent stopped handlers from logging the same cut-off again.
  */
 public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
 
