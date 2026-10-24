@@ -27,6 +27,9 @@ import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskConstants;
 import org.apache.camel.component.zendesk.internal.ZendeskHelper;
 import org.apache.camel.component.zendesk.internal.ZendeskPropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,27 @@ import org.zendesk.client.v2.Zendesk;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
              apiSyntax = "methodName",
              consumerPrefix = "consumer", category = { Category.CLOUD, Category.API, Category.SAAS })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.MAP },
+                                   description = "One message per poll with the return value of the method: a Zendesk"
+                                                 + " model object, such as the Ticket of getTicket. An Iterable or a List,"
+                                                 + " such as the tickets of getTickets, is split into one message per"
+                                                 + " element, and all its pages are read. getIncrementalTicketsResult gives"
+                                                 + " a Map"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names a parameter of the method, and"
+                                                + " must then be of the type of that parameter: a Zendesk model object such"
+                                                + " as a Ticket for ticket of createTicket, a Long for id, or a byte[] for"
+                                                + " content of createUpload. JSON text or a Map is not turned into a model"
+                                                + " object: build it first. Without inBody the arguments come from the"
+                                                + " options and the CamelZendesk. headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.ITERATOR, Carrier.LIST, Carrier.MAP, Carrier.NULL },
+                                   description = "The return value of the method: a Zendesk model object, such as the"
+                                                 + " Ticket of getTicket and createTicket; an Iterable for the methods that"
+                                                 + " list, such as getTickets, which reads the pages from Zendesk while it is"
+                                                 + " iterated, with split for example; a List for some, such as the tags of"
+                                                 + " addTagToTicket; a ListenableFuture for the Async methods; a Map for"
+                                                 + " getIncrementalTicketsResult; null for the methods without a result,"
+                                                 + " such as deleteTicket"))
 public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, ZendeskConfiguration>
         implements EndpointServiceLocation {
 

@@ -30,6 +30,10 @@
   "headers": {
     "CamelWorkdayURL": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The workday URL", "constantName": "org.apache.camel.component.workday.producer.WorkdayDefaultProducer#WORKDAY_URL_HEADER" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "The body is not read: the report or the API resource is the path, and the report parameters are the other options of the endpoint" },
+    "producerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "format": "json", "description": "The JSON that Workday answers, as text: the report (in the reportFormat) or the API resource; unmarshal it to work with its fields. The URL called is in the CamelWorkdayURL header" }
+  },
   "properties": {
     "entity": { "index": 0, "kind": "path", "displayName": "Entity", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.workday.WorkdayConfiguration.Entity", "enum": [ "report", "commonAPI" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.workday.WorkdayConfiguration", "configurationField": "workdayConfiguration", "description": "The entity to be requested or subscribed via API." },
     "path": { "index": 1, "kind": "path", "displayName": "Path", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.workday.WorkdayConfiguration", "configurationField": "workdayConfiguration", "description": "The API path to access an entity structure." },
