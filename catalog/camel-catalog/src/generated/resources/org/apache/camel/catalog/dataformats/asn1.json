@@ -15,6 +15,12 @@
     "modelName": "asn1",
     "modelJavaType": "org.apache.camel.model.dataformat.ASN1DataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "bytes", "stream", "file" ], "dependsOn": [ "unmarshalType" ], "byOption": [ { "option": "usingIterator", "value": "true", "carriers": [ "bytes", "pojo" ] } ], "description": "BER-encoded data, written as it is. With usingIterator, a byte array or a Bouncy Castle ASN1Primitive, and with unmarshalType as well an object of a class the asn1bean compiler generated" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "binary", "description": "The BER-encoded data in the stream cache, or a byte array when stream caching is off. With usingIterator, and no unmarshalType, nothing is written for a body that is neither a byte array nor an ASN1Primitive" },
+    "unmarshalIn": { "carriers": [ "bytes", "stream", "file" ], "format": "binary", "description": "BER-encoded data: one record, or several one after the other" },
+    "unmarshalOut": { "carriers": [ "bytes" ], "byOption": [ { "option": "usingIterator", "value": "true", "carriers": [ "iterator" ] } ], "description": "The records, encoded again, in one byte array. With usingIterator, an Iterator for the split EIP: of messages with the bytes of one record each, or of objects of the class unmarshalType names" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "unmarshalType": { "index": 1, "kind": "attribute", "displayName": "Unmarshal Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when unmarshalling." },

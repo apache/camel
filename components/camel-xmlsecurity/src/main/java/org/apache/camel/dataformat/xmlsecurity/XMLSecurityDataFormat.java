@@ -50,6 +50,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.language.xpath.XPathBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -69,6 +72,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Dataformat("xmlSecurity")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                 format = "xml",
+                                 description = "The XML: text, bytes, a stream, a file, a DOM Document, a DOMSource or a"
+                                               + " StreamSource"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "xml",
+                                  description = "The XML with EncryptedData elements, in the stream cache, or a byte array when"
+                                                + " stream caching is off. Without secureTag the whole document is encrypted;"
+                                                + " with it the elements it selects, or their content when secureTagContents"
+                                                + " is true"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                   format = "xml",
+                                   description = "The XML with EncryptedData elements: text, bytes, a stream, a file, a DOM"
+                                                 + " Document, a DOMSource or a StreamSource"),
+           unmarshalOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "xml",
+                                    description = "The decrypted XML document, as a byte array"))
 public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLSecurityDataFormat.class);

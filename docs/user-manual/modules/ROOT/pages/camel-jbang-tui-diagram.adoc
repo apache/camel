@@ -213,7 +213,8 @@ The arrows of a branch are side by side, so the types beside them are cut to the
 many more (`ByteArrayInputStreamCache +2`). The Info panel of the selected step lists them all with their kind. In the
 topology, the Info panel of a route says how many of its steps were reached with more than one type
 (`⚠ 1 mixed · 2 varied`), and the Routes tab has the same in its BODY TYPES column, with the types of each step in the
-table of the processors of the selected route.
+table of the processors of the selected route. The source view of the Source tab has them at the end of the line of each
+step (see xref:camel-jbang-tui-source-editor.adoc#_body_types[Body Types]).
 
 image::jbang/camel-tui-routes-body-types.png[The Routes tab: the orders route has four steps reached with bodies of more than one kind, and its processors list the types of each step]
 

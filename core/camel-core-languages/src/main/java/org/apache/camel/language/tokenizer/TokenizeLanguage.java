@@ -21,6 +21,9 @@ import java.util.Iterator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.IteratorConvertTo;
@@ -40,6 +43,14 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * <tt>token</tt> and <tt>endToken</tt>. And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
  */
 @Language("tokenize")
+@BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                    dependsOn = "source",
+                                    description = "Text as text, bytes, a stream or a file. Another body is tokenized as its"
+                                                  + " toString(), and fails with endToken or xml: marshal it first"),
+           expressionOut = @BodyType(value = Carrier.ITERATOR,
+                                     description = "An Iterator of the tokens as text, read once: in setBody the body is the"
+                                                   + " Iterator, for the Split EIP to walk. With group, each N tokens are"
+                                                   + " joined into one text"))
 public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
 
     @Override

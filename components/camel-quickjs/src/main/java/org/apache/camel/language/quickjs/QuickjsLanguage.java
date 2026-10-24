@@ -34,6 +34,9 @@ import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Service;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.TypedLanguageSupport;
@@ -55,6 +58,15 @@ import run.endive.runtime.Memory;
  * </p>
  */
 @Language("quickjs")
+@BodyTypes(expressionIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
+        Carrier.POJO },
+                                    description = "A JSON copy of the body, in the variable body: bytes as Base64 text, and a"
+                                                  + " POJO through Jackson. A stream fails: convert it to text first"),
+           expressionOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.NULL },
+                                     dependsOn = "resultType",
+                                     description = "The JSON value the script returns: an object as a Map, an array as a List,"
+                                                   + " and undefined, NaN or a function as null"))
 public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     /**

@@ -31,6 +31,9 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
@@ -50,6 +53,12 @@ import org.graalvm.polyglot.Value;
  * {@code engine()} accessor also builds it on demand for an expression used before start.
  */
 @Language("js")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, in the variable body: a String is a JavaScript string,"
+                                                  + " and other Java objects keep their methods"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "What the script returns: an object as a Map, an array as a List, a Set as a"
+                                                   + " Set and a Date as an Instant"))
 public class JavaScriptLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     // Source is not a Service, so nothing is stopped on eviction

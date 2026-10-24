@@ -83,7 +83,7 @@ don't require a key header — just set the `operation` parameter.
 |
 
 | `getObject`
-| Get a single object. Returns an `S3Object` instance.
+| Get a single object. Returns its content as a stream.
 |
 
 | `getObjectRange`
