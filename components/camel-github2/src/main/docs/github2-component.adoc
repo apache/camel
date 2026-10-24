@@ -123,9 +123,9 @@ Sets the commit status on a pull request.
 |pullRequestFiles |none | - `CamelGitHubPullRequest` (integer) (REQUIRED): Pull request number.
 Returns the list of files changed in a pull request.
 
-|getCommitFile |none | - `CamelGitHubCommitSha` (String) (REQUIRED): Commit SHA.
-- `CamelGitHubFilePath` (String) (REQUIRED): File path.
-Returns the content of a file at a specific commit.
+|getCommitFile |String (the path of the file, if the `CamelGitHubFilePath` header is not set) | - `CamelGitHubCommitSha` (String) (REQUIRED): The commit id (40 hexadecimal characters; a branch or tag name is not accepted).
+- `CamelGitHubFilePath` (String): The path of the file in the repository, such as `docs/README.md`. If not set, the body is the path.
+Returns the content of the file in the tree of that commit, as a `String` (decoded with the `encoding` option, or the default charset of the JVM).
 |=======================================================================
 
 === Example: Consuming commits
