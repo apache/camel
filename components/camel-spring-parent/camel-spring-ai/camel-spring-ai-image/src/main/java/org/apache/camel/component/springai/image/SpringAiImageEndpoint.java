@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,15 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "spring-ai-image:imageId", producerOnly = true, category = {
                      Category.AI
              }, headersClass = SpringAiImageHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The prompt as text, or an ImagePrompt, which keeps its own options: n,"
+                                                + " width and the other options and headers then do not apply. Another"
+                                                + " body is converted to text, and no body fails"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                   description = "The generated org.springframework.ai.image.Image, with a URL or base64"
+                                                 + " data, or a List of Image when the model returns more than one (n"
+                                                 + " above 1). An Image converts to byte[] by decoding the base64 data;"
+                                                 + " an Image with only a URL gives the bytes of the URL text"))
 public class SpringAiImageEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id")

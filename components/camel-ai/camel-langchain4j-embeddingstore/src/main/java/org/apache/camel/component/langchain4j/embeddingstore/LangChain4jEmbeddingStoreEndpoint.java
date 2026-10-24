@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,6 +44,29 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              },
              headersClass = LangChain4jEmbeddingStoreHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "action", value = "REMOVE",
+                                                            carriers = { Carrier.TEXT, Carrier.LIST }),
+                                  description = "ADD and SEARCH take the embedding from the"
+                                                + " CamelLangChain4jEmbeddingsEmbedding header (a batch ADD from the"
+                                                + " CamelLangChain4jEmbeddingsEmbeddings header) and ignore the body, but with"
+                                                + " an embeddingModel and no such header they embed the body read as a String,"
+                                                + " so no body fails and another body, a TextSegment too, is embedded as its"
+                                                + " toString(). REMOVE takes the id as text or a Collection of ids, unless the"
+                                                + " CamelLangchain4jEmbeddingStoreFilter header is set"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.LIST, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "ADD",
+                                                          carriers = { Carrier.TEXT, Carrier.LIST }),
+                                           @BodyType.When(option = "action", value = "REMOVE",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "SEARCH",
+                                                          carriers = Carrier.LIST) },
+                                   description = "By the action, from the endpoint or the"
+                                                 + " CamelLangchain4jEmbeddingStoreAction header: the id of the added embedding"
+                                                 + " as a String for ADD, a List of the ids for a batch ADD, and a List of"
+                                                 + " EmbeddingMatch for SEARCH (a List of the matched texts with"
+                                                 + " returnTextContent). REMOVE keeps the body"))
 public class LangChain4jEmbeddingStoreEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id of the embedding store")

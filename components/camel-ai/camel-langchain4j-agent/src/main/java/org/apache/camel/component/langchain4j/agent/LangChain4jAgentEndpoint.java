@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.langchain4j.agent.api.Headers;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,17 @@ import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHE
              syntax = "langchain4j-agent:agentId",
              producerOnly = true,
              category = { Category.AI }, headersClass = Headers.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The user message as text, or an AiAgentBody with the user message, the system"
+                                                + " message, the memory id and a content. Bytes, a stream or a file of the file"
+                                                + " consumers is sent as an image, audio, video, PDF or text content after the"
+                                                + " text of the CamelLangChain4jAgentUserMessage header; bytes and a stream need"
+                                                + " the CamelLangChain4jAgentMediaType or Content-Type header. A Map, a"
+                                                + " java.io.File or another object fails, and no body fails"),
+           producerOut = @BodyType(value = Carrier.TEXT,
+                                   description = "The answer of the agent as text, also with outputClass or jsonSchema:"
+                                                 + " unmarshal the JSON to read its fields. The token counts, the finish"
+                                                 + " reason, the sources and the tool executions are in headers"))
 public class LangChain4jAgentEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The Agent id")

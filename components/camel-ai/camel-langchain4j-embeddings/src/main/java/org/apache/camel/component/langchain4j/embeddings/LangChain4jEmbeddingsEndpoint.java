@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,17 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "langchain4j-embeddings:embeddingId", producerOnly = true, category = {
                      Category.AI
              }, headersClass = LangChain4jEmbeddingsHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO, Carrier.LIST },
+                                  description = "The text to embed as a String or a TextSegment, or a non-empty List of"
+                                                + " them to embed in one batch. Bytes, a stream, a file, a Map and no body"
+                                                + " fail: convert the body to a String first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body is kept. The vector goes in the CamelLangChain4jEmbeddingsVector"
+                                                 + " header as a float array, with the Embedding and the TextSegment in the"
+                                                 + " CamelLangChain4jEmbeddingsEmbedding and CamelLangChain4jEmbeddingsTextSegment"
+                                                 + " headers; a List body gives Lists of them in the"
+                                                 + " CamelLangChain4jEmbeddingsEmbeddings and CamelLangChain4jEmbeddingsTextSegments"
+                                                 + " headers instead"))
 public class LangChain4jEmbeddingsEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id")

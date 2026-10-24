@@ -157,7 +157,8 @@ YAML::
 ----
 ====
 
-The `Image` → `byte[]` conversion decodes the base64 data automatically.
+The `Image` → `byte[]` conversion decodes the base64 data automatically. Set `responseFormat=b64_json` when the
+provider returns a URL by default, as the URL is not downloaded.
 
 === Using with Ollama (Local Image Generation)
 
@@ -256,8 +257,8 @@ The component registers automatic type converters for `Image` objects:
 |===
 | From | To | Behavior
 
-| `Image` | `byte[]` | Decodes base64 data
-| `Image` | `InputStream` | Wraps decoded bytes in ByteArrayInputStream
+| `Image` | `byte[]` | Decodes base64 data. An `Image` with only a URL gives the bytes of the URL text: the image is not downloaded
+| `Image` | `InputStream` | Wraps the `byte[]` above in ByteArrayInputStream
 | `Image` | `String` | Returns base64 string or URL
 |===
 

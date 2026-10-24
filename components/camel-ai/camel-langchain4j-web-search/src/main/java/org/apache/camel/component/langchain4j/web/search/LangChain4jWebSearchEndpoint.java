@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,19 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "langchain4j-web-search:searchId", producerOnly = true, category = {
                      Category.AI
              })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The search terms as text; another body is converted to text, so a Map or a"
+                                                + " POJO is searched as its toString(), and no body fails. With"
+                                                + " webSearchRequest the body is not read"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, dependsOn = { "maxResults", "webSearchRequest" },
+                                   byOption = @BodyType.When(option = "resultType",
+                                                             value = "LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT",
+                                                             carriers = { Carrier.POJO, Carrier.NULL }),
+                                   description = "The content of the first result as text (its snippet with resultType"
+                                                 + " SNIPPET, the WebSearchOrganicResult with"
+                                                 + " LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT), or null when there is no result"
+                                                 + " or the engine gives no content. With maxResults above 1 it is a List of"
+                                                 + " them, which can hold nulls"))
 public class LangChain4jWebSearchEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

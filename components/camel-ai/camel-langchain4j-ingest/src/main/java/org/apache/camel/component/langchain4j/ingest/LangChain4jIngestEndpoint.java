@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,20 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              },
              headersClass = LangChain4jIngestHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
+                                  byOption = @BodyType.When(option = "modality", value = "MEDIA",
+                                                            carriers = {
+                                                                    Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                    Carrier.NULL }),
+                                  description = "The document read as a String, then split and embedded; another body,"
+                                                + " such as a Map or a TextSegment, is ingested as its toString(). With"
+                                                + " modality=MEDIA it is read as bytes and embedded whole, and a Map or a POJO"
+                                                + " fails. No body or a blank one writes nothing. The document id comes from"
+                                                + " the CamelLangChain4jIngestDocumentId header or exchange property"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "org.apache.camel.component.langchain4j.ingest.IngestResult",
+                                   description = "An IngestResult with the pipeline, the document id, the number of segments"
+                                                 + " written and the outcome: INGESTED, EMPTY, SKIPPED or FILTERED"))
 public class LangChain4jIngestEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
