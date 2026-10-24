@@ -63,12 +63,13 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
              headersClass = Sqs2Constants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
                                    description = "The body of the SQS message"),
-           producerIn = @BodyType(value = Carrier.TEXT,
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   byOption = @BodyType.When(option = "operation", value = "sendBatchMessage",
-                                                            carriers = { Carrier.LIST, Carrier.TEXT }),
-                                  description = "The body of the message to send, as text, so a Map or a POJO is sent as"
-                                                + " its toString(): marshal it first. sendBatchMessage takes a List of"
-                                                + " text, or text that batchSeparator splits"),
+                                                            carriers = { Carrier.LIST, Carrier.TEXT, Carrier.POJO }),
+                                  description = "The body of the message to send, as text: bytes, a stream or a file are read"
+                                                + " as text, and a Map or a POJO is sent as its toString(): marshal it first."
+                                                + " sendBatchMessage takes a List of text, text that batchSeparator splits, or"
+                                                + " a SendMessageBatchRequest"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "sendBatchMessage",

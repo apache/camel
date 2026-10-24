@@ -32,6 +32,9 @@ import org.apache.camel.component.github2.producer.GetCommitFileProducer;
 import org.apache.camel.component.github2.producer.PullRequestCommentProducer;
 import org.apache.camel.component.github2.producer.PullRequestFilesProducer;
 import org.apache.camel.component.github2.producer.PullRequestStateProducer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -58,6 +61,62 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "4.18.0", scheme = "github2", title = "GitHub2", syntax = "github2:type/branchName",
              category = { Category.FILE, Category.CLOUD, Category.API }, headersClass = GitHub2Constants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
+                                   byOption = {
+                                           @BodyType.When(option = "commitMessageAsBody", value = "false",
+                                                          carriers = Carrier.POJO, javaType = "org.kohsuke.github.GHCommit"),
+                                           @BodyType.When(option = "type", value = "PULLREQUEST", carriers = Carrier.POJO,
+                                                          javaType = "org.kohsuke.github.GHPullRequest"),
+                                           @BodyType.When(option = "type", value = "PULLREQUESTCOMMENT",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.kohsuke.github.GHIssueComment"),
+                                           @BodyType.When(option = "type", value = "TAG", carriers = Carrier.POJO,
+                                                          javaType = "org.kohsuke.github.GHTag"),
+                                           @BodyType.When(option = "type", value = "EVENT", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String") },
+                                   description = "One message per new item, oldest first. commit gives the commit message (null"
+                                                 + " when the data of the commit cannot be loaded), or the GHCommit with"
+                                                 + " commitMessageAsBody=false, and event the type of the event, such as PUSH,"
+                                                 + " with the GHEventInfo in the CamelGitHubEventPayload header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "type", value = "PULLREQUESTCOMMENT",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "type", value = "CREATEISSUE",
+                                                         carriers = {
+                                                                 Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "type", value = "PULLREQUESTSTATE",
+                                                         carriers = {
+                                                                 Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }) },
+                                  description = "Read as text: the comment for pullRequestComment, which needs a body, and the"
+                                                + " description of the issue for createIssue and of the commit status for"
+                                                + " pullRequestState; a Map or a POJO is sent as its toString(), so marshal it"
+                                                + " first. getCommitFile reads the sha from the body when the"
+                                                + " CamelGitHubCommitSha header is not set, and the other types read only"
+                                                + " headers"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "type", value = "CLOSEPULLREQUEST", carriers = Carrier.POJO,
+                                                          javaType = "org.kohsuke.github.GHPullRequest"),
+                                           @BodyType.When(option = "type", value = "PULLREQUESTCOMMENT",
+                                                          carriers = { Carrier.POJO, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "type", value = "PULLREQUESTSTATE", carriers = Carrier.POJO,
+                                                          javaType = "org.kohsuke.github.GHCommitStatus"),
+                                           @BodyType.When(option = "type", value = "PULLREQUESTFILES", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<org.kohsuke.github.GHPullRequestFileDetail>"),
+                                           @BodyType.When(option = "type", value = "GETCOMMITFILE", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "type", value = "CREATEISSUE", carriers = Carrier.POJO,
+                                                          javaType = "org.kohsuke.github.GHIssue") },
+                                   description = "The GHPullRequest as read before the close for closePullRequest, the"
+                                                 + " GHIssueComment for pullRequestComment when the exchange expects a reply"
+                                                 + " (InOut), otherwise the body is unchanged, the GHCommitStatus for"
+                                                 + " pullRequestState, a List of GHPullRequestFileDetail for pullRequestFiles,"
+                                                 + " the content of the file as text for getCommitFile, and the GHIssue for"
+                                                 + " createIssue"))
 public class GitHub2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriPath

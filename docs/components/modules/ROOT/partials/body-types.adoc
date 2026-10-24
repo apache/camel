@@ -1,0 +1,21 @@
+// body types: START
+// the including partial sets body-types-module (the module of the page) and body-types-intro
+include::jsonpathcount${body-types-module}:example$json/{shortname}.json[queries='bodytypecount=nodes$.bodyTypes.*']
+
+ifeval::[{bodytypecount} != 0]
+== Message Body
+
+[subs="attributes,quotes"]
+{body-types-intro}
+
+[width="100%",cols="2,3,6a",options="header"]
+|===
+| Side | Body | Description
+|===
+
+jsonpathTable::{body-types-module}:example$json/{shortname}.json['nodes$.bodyTypes.*','camel.bodySide(path[2])|camel.bodyCarriers(value)|camel.bodyDescription(value)','camel=xref:ROOT:js/camel.js']
+
+The bodies are the ones with the default options. A side that is not listed is not known, and tooling does not guess
+it. The carriers are described in the xref:manual::camel-catalog.adoc[Camel Catalog].
+endif::[]
+// body types: END

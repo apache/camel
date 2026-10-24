@@ -15,6 +15,12 @@
     "modelName": "avro",
     "modelJavaType": "org.apache.camel.model.dataformat.AvroDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo" ], "description": "An Avro record: an object of a class the Avro compiler generated, or a GenericRecord of the schema of instanceClassName. Without instanceClassName the schema comes from the class of the body, so a GenericRecord fails. A Map is not converted" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "binary", "description": "The record in Avro binary encoding, without the schema (not an Avro container file), in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "bytes", "stream", "file" ], "format": "binary", "description": "One record in Avro binary encoding, as marshal writes it: unmarshal fails without instanceClassName (or a schema set in Java)" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "description": "An object of the class instanceClassName names; a GenericRecord when a schema set in Java has no class on the classpath" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "instanceClassName": { "index": 1, "kind": "attribute", "displayName": "Instance Class Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name to use for marshal and unmarshalling." },

@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.textract.client.Textract2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,23 @@ import software.amazon.awssdk.services.textract.TextractClient;
  */
 @UriEndpoint(firstVersion = "4.15.0", scheme = "aws2-textract", title = "AWS Textract", syntax = "aws2-textract:label",
              producerOnly = true, category = { Category.CLOUD, Category.DOCUMENT }, headersClass = Textract2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "The document of detectDocumentText, the default, analyzeDocument and"
+                                                + " analyzeExpense when no S3 object is named: an image or a PDF as bytes, a"
+                                                + " stream or a file; a Map, a List, a POJO or no body fails. The s3Bucket and"
+                                                + " s3Object options, or else the CamelAwsTextractS3Bucket and"
+                                                + " CamelAwsTextractS3Object headers, name an S3 object instead, and the start"
+                                                + " operations read only that. The get operations take the job id from the"
+                                                + " CamelAwsTextractJobId header, or else the body as text. With"
+                                                + " pojoRequest=true the request of the AWS SDK for the operation, such as a"
+                                                + " DetectDocumentTextRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " DetectDocumentTextResponse of detectDocumentText, the default, whose"
+                                                 + " blocks hold the lines and the words found. The start operations give the"
+                                                 + " job id only in the response: set the CamelAwsTextractJobId header from it"
+                                                 + " for the get operations"))
 public class Textract2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private TextractClient textractClient;

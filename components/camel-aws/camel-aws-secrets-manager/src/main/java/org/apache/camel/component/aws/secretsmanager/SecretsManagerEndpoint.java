@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -39,6 +42,35 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 @Metadata(annotations = {
         "vault=aws-secrets-manager",
 })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "createSecret",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "updateSecret",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "putSecretValue",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }) },
+                                  description = "The value of the secret for createSecret, updateSecret and putSecretValue, as"
+                                                + " text: bytes, a stream or a file are read as text, a Map or a POJO is stored"
+                                                + " as its toString(), so marshal it first, and no body fails. The other"
+                                                + " operations take their input from headers. With pojoRequest=true the body is"
+                                                + " the request of the AWS SDK for the operation, such as a"
+                                                + " CreateSecretRequest"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getSecret",
+                                                          carriers = { Carrier.TEXT, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "batchGetSecret",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.lang.String>") },
+                                   description = "The value of the secret as text for getSecret, with its version id in a"
+                                                 + " header: unmarshal a JSON secret to read its fields. No body for a binary"
+                                                 + " secret unless binaryPayload=true. A List of the values for batchGetSecret,"
+                                                 + " and the response of the AWS SDK for the other operations, such as a"
+                                                 + " CreateSecretResponse"))
 public class SecretsManagerEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private SecretsManagerClient secretsManagerClient;

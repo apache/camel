@@ -24,6 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.caffeine.CaffeineConfiguration;
 import org.apache.camel.component.caffeine.CaffeineConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -38,6 +41,27 @@ import org.apache.camel.support.DefaultEndpoint;
              remote = false, internal = true, syntax = "caffeine-cache:cacheName",
              category = { Category.CACHE, Category.CLUSTERING },
              producerOnly = true, headersClass = CaffeineConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The value to store for PUT, converted to the valueType when set, and a Map of"
+                                                + " the entries for PUT_ALL, unless the CamelCaffeineValue header gives it;"
+                                                + " without either they fail. The other actions do not use the body"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "GET_ALL", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map"),
+                                           @BodyType.When(option = "action", value = "AS_MAP", carriers = Carrier.MAP,
+                                                          javaType = "java.util.concurrent.ConcurrentMap"),
+                                           @BodyType.When(option = "action", value = "PUT", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "PUT_ALL", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "INVALIDATE",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "INVALIDATE_ALL",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "CLEANUP", carriers = Carrier.UNCHANGED) },
+                                   description = "By the action, which the CamelCaffeineAction header can set: the value of the"
+                                                 + " key for GET, or the body as it was when the key is not in the cache, a Map"
+                                                 + " of the entries found for GET_ALL, and the cache as a Map for AS_MAP. The"
+                                                 + " other actions keep the body"))
 public class CaffeineCacheEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Cache name")

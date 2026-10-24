@@ -15,6 +15,12 @@
     "modelName": "protobuf",
     "modelJavaType": "org.apache.camel.model.dataformat.ProtobufDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo", "map" ], "description": "A protobuf Message of a generated class, or a Map of the fields of the instanceClass message, which needs instanceClass. JSON text is not converted" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "The protobuf binary data, or JSON with contentTypeFormat json, in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "bytes", "stream", "file" ], "byOption": [ { "option": "contentTypeFormat", "value": "json", "carriers": [ "text", "bytes", "stream", "file" ] } ], "description": "Protobuf binary data, or JSON with contentTypeFormat json: unmarshal fails without instanceClass" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "javaType": "com.google.protobuf.Message", "description": "The generated class of instanceClass, such as AddressBookProtos$Person; convertBodyTo Map gives its fields" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "instanceClass": { "index": 1, "kind": "attribute", "displayName": "Instance Class", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of class to use when unmarshalling." },

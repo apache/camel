@@ -125,8 +125,10 @@ The statement runs on the scope of the endpoint (the default scope when `scope` 
 bucket, and the bucket name alone fails with "Keyspace not found". Use the full path `\`bucket\`.\`scope\`.\`collection\`` for a collection of
 another scope.
 
-When `fullDocument` is `true` (the default), the consumer fetches the complete document from the KV store using
-the document ID. When `false`, the query result row is used directly as the message body.
+When `fullDocument` is `true` (the default), the consumer fetches the document from the KV store by its id, and the
+message body is the `GetResult` of the Couchbase SDK, with the id in the `CamelCouchbaseId` header: `contentAsObject()`
+gives the JSON document. When `false`, the message body is the query result row as JSON text, or with views the value the
+view emits.
 
 NOTE: SQL++ queries require a primary index or appropriate secondary index on the bucket/collection.
 Create one with: `CREATE PRIMARY INDEX ON \`myBucket\`` or via the Couchbase SDK.

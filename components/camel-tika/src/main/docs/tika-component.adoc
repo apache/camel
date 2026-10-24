@@ -43,7 +43,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 === To Detect a file's MIME Type
 
-The file should be placed in the Body.
+The body is the document: text, bytes, a stream or a file. After `detect`, the body is the MIME type as text, such as
+`text/html`.
 
 [tabs]
 ====
@@ -80,7 +81,10 @@ YAML::
 
 === To Parse a File
 
-The file should be placed in the Body.
+The body is the document: text, bytes, a stream or a file. After `parse`, the body is a `ByteArrayOutputStream` with
+the content as XHTML, or as HTML or plain text with `tikaParseOutputFormat`, which converts to a `String`, and the
+metadata of the document are headers, such as `dc:title`. The component has the Tika parsers of HTML and text: other
+types need their Tika parser module, such as `org.apache.tika:tika-parser-pdf-module` for PDF, or the content is empty.
 
 [tabs]
 ====
