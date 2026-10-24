@@ -26,6 +26,21 @@ scheduled time of its window, but before the (late) timer has run, joins that wi
 checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
 set. Routes that read this header can now see `timeout` as well as `size`.
 
+=== camel-aws2-athena - the queryString option takes precedence over the message body
+
+The `startQueryExecution` operation of the `aws2-athena` producer, which is its default operation, now takes the SQL to
+run from the `CamelAwsAthenaQueryString` header, then from the `queryString` option, and from the message body only
+when neither the header nor the option is set. Previously the message body came first, so an endpoint configured with
+`queryString` used the message body as the SQL whenever the message had one.
+
+Routes that set the SQL in the message body and configure no `queryString` option, as the examples in the component
+documentation do, keep working. Routes that set both now run the `queryString` option; remove the option, or set the
+SQL in the `CamelAwsAthenaQueryString` header, to keep running the SQL of the message body.
+
+With `includeTrace=true`, the URI of the from endpoint in the SQL comment is now sanitized, as Camel does when it logs
+an endpoint URI, and it is left out when the exchange has no from endpoint, which failed with a `NullPointerException`
+before.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
