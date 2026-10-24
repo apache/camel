@@ -22,7 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.bedrock.agent.client.BedrockAgentClientFactory;
-import org.apache.camel.component.aws2.bedrock.agentruntime.BedrockAgentRuntimeConstants;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -38,7 +37,7 @@ import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent", title = "AWS Bedrock Agent",
              syntax = "aws-bedrock-agent:label", category = { Category.AI, Category.CLOUD },
-             headersClass = BedrockAgentRuntimeConstants.class)
+             headersClass = BedrockAgentConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
                                    javaType = "software.amazon.awssdk.services.bedrockagent.model.IngestionJob",
                                    description = "The ingestion job of the knowledgeBaseId, dataSourceId and ingestionJobId"
@@ -47,8 +46,8 @@ import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
            producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
                                   description = "Not used: the knowledge base, the data source and the ingestion job come from"
-                                                + " the options, or from headers such as CamelAwsBedrockAgentKnowledgeBaseId"
-                                                + " when the option is not set. With pojoRequest=true the request of the AWS"
+                                                + " the options, or from headers such as CamelAwsBedrockAgentKnowledgeBaseId,"
+                                                + " which override the options. With pojoRequest=true the request of the AWS"
                                                 + " SDK for the operation, such as a StartIngestionJobRequest: another body"
                                                 + " fails"),
            producerOut = @BodyType(value = Carrier.POJO,

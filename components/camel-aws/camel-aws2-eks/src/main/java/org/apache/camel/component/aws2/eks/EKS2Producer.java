@@ -84,6 +84,11 @@ public class EKS2Producer extends DefaultProducer {
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
+        if (ObjectHelper.isEmpty(operation)) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + EKS2Constants.OPERATION
+                                               + " header");
+        }
         return operation;
     }
 
@@ -143,7 +148,7 @@ public class EKS2Producer extends DefaultProducer {
                     if (ObjectHelper.isNotEmpty(roleArn)) {
                         builder.roleArn(roleArn);
                     }
-                    VpcConfigRequest vpcConfig = getOptionalHeader(exchange, EKS2Constants.VPC_CONFIG, VpcConfigRequest.class);
+                    VpcConfigRequest vpcConfig = getVpcConfig(exchange);
                     if (ObjectHelper.isNotEmpty(vpcConfig)) {
                         builder.resourcesVpcConfig(vpcConfig);
                     }
@@ -235,8 +240,7 @@ public class EKS2Producer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
-                                requestClass.getName(),
-                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
+                                requestClass.getName(), payload.getClass().getName()));
             }
         } else {
             try {
@@ -262,6 +266,24 @@ public class EKS2Producer extends DefaultProducer {
             throw new IllegalArgumentException(errorMessage);
         }
         return value;
+    }
+
+    /**
+     * Gets the VPC config header, which must be a {@link VpcConfigRequest}; a value of another type would otherwise be
+     * dropped silently.
+     */
+    private VpcConfigRequest getVpcConfig(Exchange exchange) {
+        Object value = exchange.getIn().getHeader(EKS2Constants.VPC_CONFIG);
+        if (value == null) {
+            return null;
+        }
+        VpcConfigRequest vpcConfig = exchange.getIn().getHeader(EKS2Constants.VPC_CONFIG, VpcConfigRequest.class);
+        if (vpcConfig == null) {
+            throw new IllegalArgumentException(
+                    "The " + EKS2Constants.VPC_CONFIG + " header must be of type " + VpcConfigRequest.class.getName()
+                                               + " but was " + value.getClass().getName());
+        }
+        return vpcConfig;
     }
 
     /**

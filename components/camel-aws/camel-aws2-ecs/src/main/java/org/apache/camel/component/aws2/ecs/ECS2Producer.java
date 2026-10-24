@@ -84,6 +84,11 @@ public class ECS2Producer extends DefaultProducer {
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
+        if (ObjectHelper.isEmpty(operation)) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + ECS2Constants.OPERATION
+                                               + " header");
+        }
         return operation;
     }
 
@@ -230,8 +235,7 @@ public class ECS2Producer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
-                                requestClass.getName(),
-                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
+                                requestClass.getName(), payload.getClass().getName()));
             }
         } else {
             try {

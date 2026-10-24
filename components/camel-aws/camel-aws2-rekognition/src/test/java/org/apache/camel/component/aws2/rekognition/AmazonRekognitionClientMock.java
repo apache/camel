@@ -95,6 +95,10 @@ import software.amazon.awssdk.services.rekognition.model.UserMatch;
 
 public class AmazonRekognitionClientMock implements RekognitionClient {
 
+    volatile CompareFacesRequest lastCompareFacesRequest;
+    volatile DetectFacesRequest lastDetectFacesRequest;
+    volatile IndexFacesRequest lastIndexFacesRequest;
+
     public AmazonRekognitionClientMock() {
     }
 
@@ -110,6 +114,7 @@ public class AmazonRekognitionClientMock implements RekognitionClient {
 
     @Override
     public CompareFacesResponse compareFaces(CompareFacesRequest compareFacesRequest) {
+        lastCompareFacesRequest = compareFacesRequest;
         CompareFacesResponse.Builder result = CompareFacesResponse.builder();
         ComparedFace face = ComparedFace.builder()
                 .confidence(99.5f)
@@ -162,6 +167,7 @@ public class AmazonRekognitionClientMock implements RekognitionClient {
 
     @Override
     public DetectFacesResponse detectFaces(DetectFacesRequest detectFacesRequest) {
+        lastDetectFacesRequest = detectFacesRequest;
         DetectFacesResponse.Builder result = DetectFacesResponse.builder();
         FaceDetail face = FaceDetail.builder()
                 .confidence(99.5f)
@@ -238,6 +244,7 @@ public class AmazonRekognitionClientMock implements RekognitionClient {
 
     @Override
     public IndexFacesResponse indexFaces(IndexFacesRequest indexFacesRequest) {
+        lastIndexFacesRequest = indexFacesRequest;
         IndexFacesResponse.Builder result = IndexFacesResponse.builder();
         FaceRecord record = FaceRecord.builder()
                 .face(Face.builder().faceId("test-face-id").build())

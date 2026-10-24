@@ -65,10 +65,14 @@ public class Transcribe2Component extends DefaultComponent {
         if (ObjectHelper.isEmpty(endpoint.getConfiguration().getRegion())) {
             setRegionOnEndpoint(endpoint);
         }
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getTranscribeClient())
+        if (!endpoint.getConfiguration().isUseDefaultCredentialsProvider()
+                && !endpoint.getConfiguration().isUseProfileCredentialsProvider()
+                && !endpoint.getConfiguration().isUseSessionCredentials()
+                && ObjectHelper.isEmpty(endpoint.getConfiguration().getTranscribeClient())
                 && (ObjectHelper.isEmpty(endpoint.getConfiguration().getAccessKey())
                         || ObjectHelper.isEmpty(endpoint.getConfiguration().getSecretKey()))) {
-            throw new IllegalArgumentException("Amazon transcribe client or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException(
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, useSessionCredentials is set to false, Amazon transcribe client or accessKey and secretKey must be specified");
         }
 
         return endpoint;

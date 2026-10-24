@@ -81,6 +81,11 @@ public class MSK2Producer extends DefaultProducer {
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + MSK2Constants.OPERATION
+                                               + " header");
+        }
         return operation;
     }
 
@@ -161,6 +166,8 @@ public class MSK2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
+                message.setHeader(MSK2Constants.CLUSTER_ARN, response.clusterArn());
+                message.setHeader(MSK2Constants.CLUSTER_STATE, response.stateAsString());
             } else {
                 throw new IllegalArgumentException(
                         "createCluster operation requires CreateClusterRequest in POJO mode");
@@ -185,10 +192,16 @@ public class MSK2Producer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Number of Broker Nodes must be specified");
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO))) {
-                BrokerNodeGroupInfo brokerNodesGroupInfo
-                        = exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
-                builder.brokerNodeGroupInfo(brokerNodesGroupInfo);
+            Object groupInfo = exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO);
+            if (ObjectHelper.isNotEmpty(groupInfo)) {
+                if (groupInfo instanceof BrokerNodeGroupInfo brokerNodesGroupInfo) {
+                    builder.brokerNodeGroupInfo(brokerNodesGroupInfo);
+                } else {
+                    throw new IllegalArgumentException(
+                            "The " + MSK2Constants.BROKER_NODES_GROUP_INFO + " header must be a "
+                                                       + BrokerNodeGroupInfo.class.getName() + " but was "
+                                                       + groupInfo.getClass().getName());
+                }
             } else {
                 throw new IllegalArgumentException("BrokerNodeGroupInfo must be specified");
             }
@@ -251,11 +264,15 @@ public class MSK2Producer extends DefaultProducer {
                 try {
                     result = mskClient.describeCluster(describeClusterRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Cluster command returned the error code {}", AwsExceptionUtil.errorCode(ase));
+                    LOG.trace("Describe Cluster command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                if (ObjectHelper.isNotEmpty(result.clusterInfo())) {
+                    message.setHeader(MSK2Constants.CLUSTER_ARN, result.clusterInfo().clusterArn());
+                    message.setHeader(MSK2Constants.CLUSTER_STATE, result.clusterInfo().stateAsString());
+                }
             } else {
                 throw new IllegalArgumentException(
                         "describeCluster operation requires DescribeClusterRequest in POJO mode");

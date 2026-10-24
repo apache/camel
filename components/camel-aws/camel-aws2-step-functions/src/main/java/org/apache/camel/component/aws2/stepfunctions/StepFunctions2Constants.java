@@ -57,8 +57,23 @@ public interface StepFunctions2Constants {
     @Metadata(description = "Optional name of the execution.", javaType = "String")
     String EXECUTION_NAME = "CamelAwsStepFunctionsExecutionName";
 
-    @Metadata(description = "The string that contains the JSON input data for the execution.", javaType = "String")
+    @Metadata(description = "The JSON input data for the execution, as text (a String, a byte array or a stream).",
+              javaType = "String")
     String EXECUTION_INPUT = "CamelAwsStepFunctionsExecutionInput";
+
+    @Metadata(label = "startSyncExecution",
+              description = "The status of the execution: SUCCEEDED, FAILED or TIMED_OUT. The exchange does not fail when the"
+                            + " execution did not succeed: check this header.",
+              javaType = "String")
+    String EXECUTION_STATUS = "CamelAwsStepFunctionsExecutionStatus";
+
+    @Metadata(label = "startSyncExecution", description = "The error code of the failure, when the execution failed.",
+              javaType = "String")
+    String EXECUTION_ERROR = "CamelAwsStepFunctionsExecutionError";
+
+    @Metadata(label = "startSyncExecution", description = "The cause of the failure, when the execution failed.",
+              javaType = "String")
+    String EXECUTION_CAUSE = "CamelAwsStepFunctionsExecutionCause";
 
     @Metadata(description = "Passes the X-Ray trace header.", javaType = "String")
     String EXECUTION_TRACE_HEADER = "CamelAwsStepFunctionsExecutionTraceHeader";

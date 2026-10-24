@@ -57,7 +57,7 @@ public class Rekognition2ProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Rekognition2Constants.OPERATION, Rekognition2Operations.compareFaces);
-                exchange.getIn().setHeader(Rekognition2Constants.IMAGE, Image.builder().build());
+                exchange.getIn().setHeader(Rekognition2Constants.SOURCE_IMAGE, Image.builder().build());
                 exchange.getIn().setHeader(Rekognition2Constants.TARGET_IMAGE, Image.builder().build());
             }
         });

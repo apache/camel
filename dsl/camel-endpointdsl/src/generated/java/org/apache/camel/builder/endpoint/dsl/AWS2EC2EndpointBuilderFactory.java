@@ -612,7 +612,9 @@ public interface AWS2EC2EndpointBuilderFactory {
             return "CamelAwsEC2ImageId";
         }
         /**
-         * The instance type we want to create and run.
+         * The instance type we want to create and run, as an InstanceType, its
+         * AWS value (such as t2.micro) or the name of the constant (such as
+         * T2_MICRO).
          * 
          * The option is a: {@code
          * software.amazon.awssdk.services.ec2.model.InstanceType} type.
@@ -710,7 +712,8 @@ public interface AWS2EC2EndpointBuilderFactory {
         }
         /**
          * A collection of instances IDS to execute start, stop, describe and
-         * terminate operations on.
+         * terminate operations on. A String of ids separated by commas is
+         * accepted too.
          * 
          * The option is a: {@code Collection<String>} type.
          * 

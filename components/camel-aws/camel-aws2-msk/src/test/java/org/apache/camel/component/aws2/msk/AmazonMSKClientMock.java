@@ -57,6 +57,7 @@ public class AmazonMSKClientMock implements KafkaClient {
     public CreateClusterResponse createCluster(CreateClusterRequest request) {
         CreateClusterResponse.Builder builder = CreateClusterResponse.builder();
         builder.clusterName(request.clusterName());
+        builder.clusterArn("test-kafka");
         builder.state(ClusterState.CREATING.name());
         return builder.build();
     }
