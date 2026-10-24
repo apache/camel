@@ -2102,3 +2102,10 @@ acknowledged and the failure is left to the Camel error handler. A consumer that
 option leaves a failed QoS 1 message on a session that the broker keeps unacknowledged, as before; as the consumer does
 not connect that client, set the `cleanStart` and `sessionExpiryInterval` of the endpoint to match its connection
 options.
+
+=== camel-vertx - standalone TrustManager on SSLContextParameters is applied
+
+When configuring TLS through `SSLContextParameters` with a standalone `TrustManager` instance (via `TrustManagersParameters.setTrustManager(...)`), Vert.x components now wrap and apply the configured `TrustManager`. Previously, only `TrustAllTrustManager.INSTANCE` and KeyStore-backed configurations were applied, and other standalone `TrustManager` instances were not set on the underlying Vert.x options.
+
+When both a `TrustManager` and a keystore are configured on `TrustManagersParameters`, the `TrustManager` is now used,
+as with the other components that use `SSLContextParameters`; before, the keystore-based trust options were used.
