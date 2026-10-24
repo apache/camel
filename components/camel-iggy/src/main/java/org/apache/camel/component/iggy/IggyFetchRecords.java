@@ -97,6 +97,8 @@ public class IggyFetchRecords implements Runnable {
             IggyBaseClient client = iggyClientConnectionPool.borrowObject();
             boolean polled = false;
             try {
+                // a client created after a failed poll is not a member of the group yet
+                iggyConsumer.joinConsumerGroupIfNeeded(client);
                 polledMessages = poll(client, streamId, topicId, consumerId);
                 polled = true;
             } finally {
@@ -104,6 +106,7 @@ public class IggyFetchRecords implements Runnable {
                     iggyClientConnectionPool.returnClient(client);
                 } else {
                     // the client of a failed poll may be broken (connection lost): do not hand it out again
+                    iggyConsumer.clientDiscarded(client);
                     iggyClientConnectionPool.invalidateClient(client);
                 }
             }

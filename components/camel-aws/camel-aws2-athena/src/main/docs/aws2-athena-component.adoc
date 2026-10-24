@@ -43,6 +43,69 @@ You have to provide the amazonAthenaClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/athena/[AWS Athena] service.
 
+== Usage
+
+=== Where the SQL comes from
+
+The `startQueryExecution` operation, which is the default operation, runs the SQL of the `CamelAwsAthenaQueryString`
+header, and when the header is not set, the SQL of the `queryString` option.
+
+The message body is used as the SQL only when the `useMessageBodyForSql` option is set to `true`. A non-empty body then
+takes precedence over the header and the option. When no SQL is found, the exchange fails with an
+`IllegalArgumentException`.
+
+For example, to run the same query each time a message arrives, whatever its body:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader(Athena2Constants.QUERY_STRING, constant("SELECT 1"))
+    .to("aws2-athena://label?outputLocation=s3://bucket/path/")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsAthenaQueryString">
+    <constant>SELECT 1</constant>
+  </setHeader>
+  <to uri="aws2-athena://label?outputLocation=s3://bucket/path/"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsAthenaQueryString
+            expression:
+              constant:
+                expression: SELECT 1
+        - to:
+            uri: aws2-athena://label
+            parameters:
+              outputLocation: s3://bucket/path/
+        - to:
+            uri: mock:result
+----
+====
+
+The examples below set the SQL in the message body, so they set `useMessageBodyForSql=true`.
+
 == Examples
 
 === Producer Examples
@@ -57,7 +120,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?useMessageBodyForSql=true&waitTimeout=60000&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
     .split(body()).streaming()
     .to("log:out")
@@ -73,7 +136,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?useMessageBodyForSql=true&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
   <to uri="aws2-athena://label?operation=getQueryResults&amp;outputType=StreamList"/>
   <split streaming="true">
     <simple>${body}</simple>
@@ -96,6 +159,7 @@ YAML::
         - to:
             uri: aws2-athena://label
             parameters:
+              useMessageBodyForSql: true
               waitTimeout: "60000"
               outputLocation: s3://bucket/path/
         - to:
@@ -124,7 +188,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?useMessageBodyForSql=true&waitTimeout=60000&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer")
     .to("mock:result");
 ----
@@ -138,7 +202,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?useMessageBodyForSql=true&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
   <to uri="aws2-athena://label?operation=getQueryResults&amp;outputType=S3Pointer"/>
   <to uri="mock:result"/>
 </route>
@@ -157,6 +221,7 @@ YAML::
         - to:
             uri: aws2-athena://label
             parameters:
+              useMessageBodyForSql: true
               waitTimeout: "60000"
               outputLocation: s3://bucket/path/
         - to:
@@ -358,7 +423,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryExecution")
     .to("mock:result");
 ----
@@ -372,7 +437,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?operation=startQueryExecution&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?operation=startQueryExecution&amp;useMessageBodyForSql=true&amp;outputLocation=s3://bucket/path/"/>
   <to uri="aws2-athena://label?operation=getQueryExecution"/>
   <to uri="mock:result"/>
 </route>
@@ -392,6 +457,7 @@ YAML::
             uri: aws2-athena://label
             parameters:
               operation: startQueryExecution
+              useMessageBodyForSql: true
               outputLocation: s3://bucket/path/
         - to:
             uri: aws2-athena://label
@@ -419,7 +485,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
     .to("mock:result");
 ----
@@ -433,7 +499,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?operation=startQueryExecution&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?operation=startQueryExecution&amp;useMessageBodyForSql=true&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
   <to uri="aws2-athena://label?operation=getQueryResults&amp;outputType=StreamList"/>
   <to uri="mock:result"/>
 </route>
@@ -453,6 +519,7 @@ YAML::
             uri: aws2-athena://label
             parameters:
               operation: startQueryExecution
+              useMessageBodyForSql: true
               waitTimeout: "60000"
               outputLocation: s3://bucket/path/
         - to:
@@ -473,7 +540,7 @@ The output of StreamList can be processed in various ways:
 ----
 from("direct:start")
     .setBody(constant("SELECT * FROM (VALUES (1, 'a'), (2, 'b')) AS t (id, name)"))
-    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
     .split(body()).streaming()
     .process(exchange -> {
@@ -503,7 +570,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryResults&outputType=SelectList")
     .to("mock:result");
 ----
@@ -517,7 +584,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?operation=startQueryExecution&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?operation=startQueryExecution&amp;useMessageBodyForSql=true&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
   <to uri="aws2-athena://label?operation=getQueryResults&amp;outputType=SelectList"/>
   <to uri="mock:result"/>
 </route>
@@ -537,6 +604,7 @@ YAML::
             uri: aws2-athena://label
             parameters:
               operation: startQueryExecution
+              useMessageBodyForSql: true
               waitTimeout: "60000"
               outputLocation: s3://bucket/path/
         - to:
@@ -564,7 +632,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer")
     .to("mock:result");
 ----
@@ -578,7 +646,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?operation=startQueryExecution&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?operation=startQueryExecution&amp;useMessageBodyForSql=true&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
   <to uri="aws2-athena://label?operation=getQueryResults&amp;outputType=S3Pointer"/>
   <to uri="mock:result"/>
 </route>
@@ -598,6 +666,7 @@ YAML::
             uri: aws2-athena://label
             parameters:
               operation: startQueryExecution
+              useMessageBodyForSql: true
               waitTimeout: "60000"
               outputLocation: s3://bucket/path/
         - to:
@@ -669,7 +738,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation=s3://bucket/path/")
     .to("mock:result");
 ----
 
@@ -682,7 +751,7 @@ XML::
     <setBody>
         <constant>SELECT 1</constant>
     </setBody>
-    <to uri="aws2-athena://label?operation=startQueryExecution&amp;outputLocation=s3://bucket/path/"/>
+    <to uri="aws2-athena://label?operation=startQueryExecution&amp;useMessageBodyForSql=true&amp;outputLocation=s3://bucket/path/"/>
     <to uri="mock:result"/>
 </route>
 ----
@@ -701,6 +770,7 @@ YAML::
             uri: aws2-athena://label
             parameters:
               operation: startQueryExecution
+              useMessageBodyForSql: true
               outputLocation: "s3://bucket/path/"
         - to:
             uri: mock:result
@@ -720,7 +790,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation=s3://bucket/path/")
     .to("mock:result");
 ----
 
@@ -733,7 +803,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?operation=startQueryExecution&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?operation=startQueryExecution&amp;useMessageBodyForSql=true&amp;waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -752,6 +822,7 @@ YAML::
             uri: aws2-athena://label
             parameters:
               operation: startQueryExecution
+              useMessageBodyForSql: true
               waitTimeout: "60000"
               outputLocation: s3://bucket/path/
         - to:
@@ -774,7 +845,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&initialDelay=10000&delay=1000&maxAttempts=3&retry=retryable&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&initialDelay=10000&delay=1000&maxAttempts=3&retry=retryable&outputLocation=s3://bucket/path/")
     .to("mock:result");
 ----
 
@@ -787,7 +858,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?operation=startQueryExecution&amp;waitTimeout=60000&amp;initialDelay=10000&amp;delay=1000&amp;maxAttempts=3&amp;retry=retryable&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?operation=startQueryExecution&amp;useMessageBodyForSql=true&amp;waitTimeout=60000&amp;initialDelay=10000&amp;delay=1000&amp;maxAttempts=3&amp;retry=retryable&amp;outputLocation=s3://bucket/path/"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -806,6 +877,7 @@ YAML::
             uri: aws2-athena://label
             parameters:
               operation: startQueryExecution
+              useMessageBodyForSql: true
               waitTimeout: "60000"
               initialDelay: "10000"
               delay: "1000"
@@ -836,7 +908,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?waitTimeout=60000&maxAttempts=3&retry=retryable&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?useMessageBodyForSql=true&waitTimeout=60000&maxAttempts=3&retry=retryable&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
     .to("mock:result");
 ----
@@ -850,7 +922,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?waitTimeout=60000&amp;maxAttempts=3&amp;retry=retryable&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?useMessageBodyForSql=true&amp;waitTimeout=60000&amp;maxAttempts=3&amp;retry=retryable&amp;outputLocation=s3://bucket/path/"/>
   <to uri="aws2-athena://label?operation=getQueryResults&amp;outputType=StreamList"/>
   <to uri="mock:result"/>
 </route>
@@ -869,6 +941,7 @@ YAML::
         - to:
             uri: aws2-athena://label
             parameters:
+              useMessageBodyForSql: true
               waitTimeout: "60000"
               maxAttempts: 3
               retry: retryable
@@ -897,7 +970,7 @@ Java::
 ----
 from("direct:start")
     .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation=s3://bucket/path/")
     .loopDoWhile(simple("${header.CamelAwsAthenaQueryExecutionState} != 'SUCCEEDED'"))
       .delay(1_000)
       .to("aws2-athena://label?operation=getQueryExecution")
@@ -915,7 +988,7 @@ XML::
   <setBody>
     <constant>SELECT 1</constant>
   </setBody>
-  <to uri="aws2-athena://label?operation=startQueryExecution&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?operation=startQueryExecution&amp;useMessageBodyForSql=true&amp;outputLocation=s3://bucket/path/"/>
   <loop doWhile="true">
     <simple>${header.CamelAwsAthenaQueryExecutionState} != 'SUCCEEDED'</simple>
     <delay>
@@ -942,6 +1015,7 @@ YAML::
             uri: aws2-athena://label
             parameters:
               operation: startQueryExecution
+              useMessageBodyForSql: true
               outputLocation: s3://bucket/path/
         - loop:
             doWhile: true

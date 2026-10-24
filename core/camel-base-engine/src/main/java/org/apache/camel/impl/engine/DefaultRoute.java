@@ -82,6 +82,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final String sourceLocation;
     private final String sourceLocationShort;
     private final String routeTemplateId;
+    private final String checksum;
+    private volatile int revision;
     private final Resource templatedRouteResource;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
@@ -139,6 +141,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
         NamedRoute namedRoute = route instanceof NamedRoute nr ? nr : null;
         this.routeTemplateId = namedRoute != null ? namedRoute.getRouteTemplateId() : null;
         this.templatedRouteResource = namedRoute != null ? namedRoute.getTemplatedRouteResource() : null;
+        this.checksum = namedRoute != null ? namedRoute.getChecksum() : null;
     }
 
     @Override
@@ -231,6 +234,21 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public String getRouteTemplateId() {
         return routeTemplateId;
+    }
+
+    @Override
+    public String getChecksum() {
+        return checksum;
+    }
+
+    @Override
+    public int getRevision() {
+        return revision;
+    }
+
+    /** Set by the CamelContext when the route is added: see {@link Route#getRevision()}. */
+    void setRevision(int revision) {
+        this.revision = revision;
     }
 
     @Override

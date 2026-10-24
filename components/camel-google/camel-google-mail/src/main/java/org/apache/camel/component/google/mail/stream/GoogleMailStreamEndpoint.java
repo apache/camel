@@ -18,6 +18,8 @@ package org.apache.camel.component.google.mail.stream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
@@ -47,6 +49,8 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements E
 
     @UriParam
     private GoogleMailStreamConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Gmail client;
 
     public GoogleMailStreamEndpoint(String uri, GoogleMailStreamComponent component,
                                     GoogleMailStreamConfiguration endpointConfiguration) {
@@ -86,8 +90,24 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements E
         return consumer;
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Gmail getClient() {
-        return ((GoogleMailStreamComponent) getComponent()).getClient(configuration);
+        Gmail answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleMailStreamComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     public GoogleMailClientFactory getClientFactory() {

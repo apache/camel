@@ -231,4 +231,21 @@ class IntegrationLauncherTest {
         assertThat(IntegrationLauncher.stoppedByRestart(other, null)).isFalse();
         assertThat(IntegrationLauncher.runName(other, null)).isNull();
     }
+
+    /**
+     * Started with --source-dir, the integration watches its directory; started with its own files, only those: camel
+     * run puts a template or a script on the classpath, not in the reload pattern.
+     */
+    @Test
+    void anIntegrationStartedWithItsOwnFilesWatchesOnlyThose() {
+        List<String> sourceDir = List.of("run", "--source-dir=.", "--dev");
+        assertThat(IntegrationLauncher.watchesFile(sourceDir, "templates/letter.ftl")).isTrue();
+        List<String> ownFiles = List.of("run", "order.camel.yaml", "routes/stock.groovy", "--dev");
+        assertThat(IntegrationLauncher.watchesFile(ownFiles, "letter.ftl")).isFalse();
+        assertThat(IntegrationLauncher.watchesFile(ownFiles, "mapping.groovy")).isFalse();
+        assertThat(IntegrationLauncher.watchesFile(ownFiles, "routes/stock.groovy")).isTrue();
+        assertThat(IntegrationLauncher.watchesFile(List.of("run", "*", "--dev"), "letter.ftl")).isTrue();
+        // the command line cannot be read: waited for, as before
+        assertThat(IntegrationLauncher.watchesFile(null, "letter.ftl")).isTrue();
+    }
 }
