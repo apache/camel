@@ -26,6 +26,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestApiProcessorFactory;
@@ -46,6 +49,13 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path",
              remote = false, consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL, dependsOn = "consumerComponentName",
+                                   description = "The GET request for the API document, which has no body"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM },
+                                     dependsOn = "consumerComponentName",
+                                     description = "The API document the route of the REST DSL sets: the OpenAPI document as"
+                                                   + " bytes, JSON unless the path ends with .yaml or the Accept header asks"
+                                                   + " for YAML"))
 public class RestApiEndpoint extends DefaultEndpoint {
 
     public static final String[] DEFAULT_REST_API_CONSUMER_COMPONENTS

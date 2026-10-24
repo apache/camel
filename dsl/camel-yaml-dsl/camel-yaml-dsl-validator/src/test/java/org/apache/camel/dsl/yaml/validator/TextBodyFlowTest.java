@@ -1187,6 +1187,57 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfCoreComponents() {
+        // the stream consumer gives each line as text, so a field read needs an unmarshal, and stream:out writes text,
+        // bytes, a stream or a file, so parsed data must be marshalled first; the knative consumer gives bytes, or the
+        // data of a structured event parsed, so it says nothing, and after a bean the body is what the method returns
+        String yaml = """
+                - route:
+                    id: lines
+                    from:
+                      uri: stream:file?fileName=orders.txt
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: print
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: stream:out
+                - route:
+                    id: events
+                    from:
+                      uri: knative:endpoint/orders
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: beans
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: bean:orders?method=toText
+                        - to: file:outbox
+                """;
+        assertThat(lines(yaml)).hasSize(2).anySatisfy(m -> assertThat(m)
+                .contains("route lines: simple reads a field of the body (${body[id]})")
+                .contains("the stream consumer gives it as text"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route print: to: stream needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
     public void testOneReportForAStepThatFails() {
         // the first write fails at runtime, so the second does not run with this body
         String yaml = """
