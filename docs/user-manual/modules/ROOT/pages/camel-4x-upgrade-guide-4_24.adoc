@@ -2661,3 +2661,9 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== camel-file-watch - CamelFileLastModified is the last modified time of the file
+
+The `CamelFileLastModified` header is now the last modified time of the file, as its documentation says.
+Before, it was the time of the event. The header is not set when the file no longer exists, for example for a `DELETE` event.
+The time of the event is in the `CamelMessageTimestamp` header.
