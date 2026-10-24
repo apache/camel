@@ -356,8 +356,10 @@ public final class AuthoringTools {
                         // the process selected before is gone, such as one that died at startup
                         return previousLog(ctx, args, null).toJson();
                     }
-                    return LogFileReader.read(ctx.pid(), p != null ? p.name() : null, integer(args, "limit", 50),
-                            args.get("filter"), args.get("level"), bool(args, "details", false)).toJson();
+                    String name = p != null ? p.name() : null;
+                    return markLogBeforeLastReload(LogFileReader.read(ctx.pid(), name, integer(args, "limit", 50),
+                            args.get("filter"), args.get("level"), bool(args, "details", false)), ctx.pid(), name)
+                            .toJson();
                 }));
 
         registry.accept(tool("camel_get_errors",
@@ -698,7 +700,12 @@ public final class AuthoringTools {
                 return exact;
             }
         }
-        if (!"invalid".equals(result.getString("status"))) {
+        if ("unchanged".equals(result.getString("status"))) {
+            result.put("message", "The edit leaves the file as it is (the replacement gives the text the file already"
+                                  + " has), so nothing was written and nothing reloads. To change what the route does,"
+                                  + " change the text; camel_get_log and camel_get_errors show what the current version"
+                                  + " does.");
+        } else if (!"invalid".equals(result.getString("status"))) {
             result.put("status", "edited");
             if (edit.get("matchedLines") instanceof JsonArray matched) {
                 result.put("matchedLines", matched);
@@ -771,6 +778,7 @@ public final class AuthoringTools {
         } catch (IOException e) {
             throw new ToolExecutionException("Failed to read " + path + ": " + e.getMessage());
         }
+        String original = content;
         JsonObject result = null;
         JsonArray lines = new JsonArray();
         JsonArray matched = new JsonArray();
@@ -779,11 +787,25 @@ public final class AuthoringTools {
             JsonObject one = editedSnippet(file, content, all.get(i)[0], all.get(i)[1], closest);
             if (one.getString("content") == null) {
                 if (all.size() > 1) {
+                    if (i > 0) {
+                        // nothing is written, so the window shows the file as it is: a window with the edits before
+                        // made in it was read as those edits written, and only the one that missed was sent again
+                        // (r21 of the local-model benchmark)
+                        JsonObject asItIs = editedSnippet(file, original, all.get(i)[0], all.get(i)[1], closest);
+                        if (asItIs.getString("content") == null && asItIs.get("fileWindow") != null) {
+                            one = asItIs;
+                        }
+                    }
                     one.put("edit", i + 1);
                     one.put("edits", all.size());
+                    String earlier = i == 1 ? "edit 1, which matched" : "edits 1 to " + i + ", which matched";
                     one.put("message", "Edit " + (i + 1) + " of " + all.size() + ": " + one.getString("message")
-                                       + (i > 0 ? " (the file as the edits before it leave it)" : "")
-                                       + ". None of the edits was made: the file is unchanged.");
+                                       + ". None of the edits was written, so the file is unchanged"
+                                       + (i > 0
+                                               ? ", also not " + earlier + ": send all " + all.size() + " edits again in"
+                                                 + " one call, the text to find of each copied from the file as it is"
+                                                 + " (fileWindow)."
+                                               : "."));
                 }
                 return one;
             }
@@ -1207,9 +1229,11 @@ public final class AuthoringTools {
                 // the depth of the replacement where it goes: from the anchor before it, or after it for the first
                 int d = pf >= 0 ? leadingSpaces(lines[fw[pf]]) - leadingSpaces(f.get(pf))
                         : a[0] < f.size() ? leadingSpaces(lines[a[1]]) - leadingSpaces(f.get(a[0])) : firstDelta;
+                List<String> replacement = new ArrayList<>();
                 for (String line : r.subList(pr + 1, a[2])) {
-                    out.add(shiftIndent(line, d));
+                    replacement.add(shiftIndent(line, d));
                 }
+                out.addAll(mergeStretch(f.subList(pf + 1, a[0]), lines, pw + 1, a[1], d, replacement));
             }
             if (a[0] < f.size()) {
                 out.add(lines[a[1]]);
@@ -1223,6 +1247,47 @@ public final class AuthoringTools {
         int end = we + 1 < lines.length ? offsets[we + 1] : content.length();
         boolean newline = end > start && content.charAt(end - 1) == '\n';
         return new ClosestEdit(start, end, String.join("\n", out) + (newline ? "\n" : ""), ws + 1, we + 1);
+    }
+
+    /**
+     * The lines of a stretch of the file that the model changed: the lines of the file that find has (the same text, or
+     * the same key at the same depth) are replaced by replace's version, where the first of them stands, and the lines
+     * of the file that find does not have stay, as a parameter the model did not remember (r21 of the local-model
+     * benchmark: name: report of a cron endpoint was dropped). When find has lines here and none of them is in the
+     * file, the model remembered the stretch wrongly, and replace takes its place.
+     */
+    private static List<String> mergeStretch(
+            List<String> find, String[] lines, int from, int to, int delta, List<String> replacement) {
+        boolean[] known = new boolean[Math.max(0, to - from)];
+        boolean anyKnown = false;
+        int next = 0;
+        for (String line : find) {
+            for (int k = next; k < known.length; k++) {
+                if (sameLineOrKey(line, lines[from + k], delta)) {
+                    known[k] = true;
+                    anyKnown = true;
+                    next = k + 1;
+                    break;
+                }
+            }
+        }
+        if (!find.isEmpty() && !anyKnown) {
+            return replacement;
+        }
+        List<String> out = new ArrayList<>();
+        boolean placed = false;
+        for (int k = 0; k < known.length; k++) {
+            if (!known[k]) {
+                out.add(lines[from + k]);
+            } else if (!placed) {
+                out.addAll(replacement);
+                placed = true;
+            }
+        }
+        if (!placed) {
+            out.addAll(replacement);
+        }
+        return out;
     }
 
     /** Which line of b each line of a is (their longest common subsequence), or -1; empty lines match nothing. */
@@ -1622,6 +1687,19 @@ public final class AuthoringTools {
                 return result;
             }
         }
+        if (exists && content.equals(read(path))) {
+            // the content the file has: nothing to write and no reload to wait for. Told "overwritten", a model wrote
+            // one file unchanged up to 24 times in a row (r20 and r21 of the local-model benchmark)
+            LAST_REFUSED.remove(path.toAbsolutePath().normalize());
+            JsonObject result = new JsonObject();
+            result.put("status", "unchanged");
+            result.put("file", file);
+            result.put("directory", dir.toString());
+            result.put("message", "The file already has exactly this content, so nothing was written and nothing"
+                                  + " reloads. To change what the route does, change the content; camel_get_log and"
+                                  + " camel_get_errors show what the current version does.");
+            return result;
+        }
         // a client that asks before each write (camel ask, CAMEL-25676) shows the change first; the others write as
         // before
         if (ctx.confirmer() != null
@@ -1633,7 +1711,7 @@ public final class AuthoringTools {
         String processName = null;
         String sinceKey = null;
         long watchPid = -1;
-        if (SourceValidator.isValidatableFile(file)) {
+        if (SourceValidator.isValidatableFile(file) || reloadsWithRoutes(file)) {
             if (ctx.hasProcess()) {
                 watchPid = ctx.pid();
                 RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(Long.toString(ctx.pid()));
@@ -1647,6 +1725,14 @@ public final class AuthoringTools {
                     processName = p.name();
                 }
             }
+        }
+        long notWatchedBy = -1;
+        if (watchPid >= 0 && !SourceValidator.isValidatableFile(file) && !IntegrationLauncher.watchesFile(watchPid, file)) {
+            // started with its own files, the template or script is not one it watches: waiting the whole
+            // RELOAD_WAIT_MILLIS would only end in "no reload seen" (route files keep the wait: application.properties
+            // is watched without being on the command line)
+            notWatchedBy = watchPid;
+            watchPid = -1;
         }
         boolean watch = watchPid >= 0;
         if (watch) {
@@ -1701,13 +1787,19 @@ public final class AuthoringTools {
                           + (output.size() > 1 ? " (and " + (output.size() - 1) + " more in reload.output)" : "");
             }
             final String loggedAfter = logged;
+            String reloadedWhat = SourceValidator.isValidatableFile(file) ? "the file" : "its routes, which load the file";
             result.put("message", switch (status) {
-                case "reloaded" -> "The running integration reloaded the file." + loggedAfter;
+                case "reloaded" -> "The running integration reloaded " + reloadedWhat + "." + loggedAfter;
                 case "properties" -> "The running integration reloaded the properties.";
-                case "failed" -> "The running integration FAILED to reload the file, the route is not running; fix the"
+                case "failed" ->
+                    "The running integration FAILED to reload " + reloadedWhat + ", the route is not running; fix the"
                                  + " content and write again (see reload.message).";
                 default -> "Written; " + reload.getString("message");
             });
+        } else if (notWatchedBy >= 0) {
+            result.put("message", "The running integration (pid " + notWatchedBy + ") was started with its own files"
+                                  + " and does not reload when this file changes; camel_control restart picks up the"
+                                  + " change.");
         } else {
             result.put("message", "An integration running the file in dev mode reloads it now; otherwise restart the"
                                   + " integration for the change to take effect.");
@@ -1721,6 +1813,20 @@ public final class AuthoringTools {
                                   + String.join("; ", repaired) + ". " + result.getString("message"));
         }
         return result;
+    }
+
+    /** The script and template files that routes load, such as resource:file:mapping.groovy. */
+    private static final List<String> ROUTE_RESOURCES
+            = List.of(".groovy", ".js", ".py", ".ftl", ".vm", ".mustache", ".jslt", ".jsonata");
+
+    /**
+     * A file the routes load, such as the Groovy script of a setBody (resource:file:mapping.groovy) or a template: dev
+     * mode reloads the routes when it changes, so its write waits for that reload and reports what the routes then do,
+     * as the write of a route file does. Answered at once, an agent read the errors before the reload, and saw none.
+     */
+    static boolean reloadsWithRoutes(String fileName) {
+        String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
+        return ROUTE_RESOURCES.stream().anyMatch(name::endsWith);
     }
 
     /** The content of the last refused write of each file, and how many times in a row it was refused. */
@@ -2337,11 +2443,92 @@ public final class AuthoringTools {
             }
         }
         if (before > 0) {
-            errors.put("note", before + (before == 1 ? " exchange" : " exchanges") + " failed before the routes were last"
-                               + " reloaded (at " + reloadTime + "), so on an earlier version of the routes"
-                               + " (beforeLastReload); the errors are kept until the integration restarts");
+            int since = errors.get("errors") instanceof List<?> entries ? entries.size() - before : 0;
+            // first in the answer: the errors before it carry their stack traces, and a model that reads the first
+            // few thousand characters of a 60 KB answer never got to a note at the end (r21 of the local-model
+            // benchmark)
+            putFirst(errors, "note", before + (before == 1 ? " exchange" : " exchanges")
+                                     + " failed before the routes were last reloaded (at " + reloadTime + "), so on an"
+                                     + " earlier version of the routes (beforeLastReload), "
+                                     + (since == 0 ? "and none since" : since + " since")
+                                     + "; the errors are kept until the integration restarts");
         }
         return errors;
+    }
+
+    /** Puts a key first in an answer, in place: what is read first is the start of the answer. */
+    static void putFirst(JsonObject answer, String key, Object value) {
+        JsonObject rest = new JsonObject();
+        rest.putAll(answer);
+        rest.remove(key);
+        answer.clear();
+        answer.put(key, value);
+        answer.putAll(rest);
+    }
+
+    /**
+     * Marks the log records of an earlier version of the routes: those before the newest reload of the routes in the
+     * log. A model that read the ERROR records of camel_get_log after a change took the ones from before its change for
+     * errors of its new version, and changed a route that worked (r21 of the local-model benchmark).
+     */
+    static JsonObject markLogBeforeLastReload(JsonObject log, long pid, String name) {
+        try {
+            JsonObject reloads = LogFileReader.read(pid, name, 1, ReloadOutcome.RELOADED, null);
+            if (reloads.get("lines") instanceof List<?> lines && !lines.isEmpty()
+                    && lines.get(0) instanceof JsonObject reload) {
+                return markLogBefore(log, reload.getString("time"));
+            }
+        } catch (Exception e) {
+            // no log to tell: the records as they are
+        }
+        return log;
+    }
+
+    /** Marks the records before the reload at the given time of day; the log keeps the time of day only. */
+    static JsonObject markLogBefore(JsonObject log, String reloadTime) {
+        long reload;
+        try {
+            // the summary is logged after the new routes started: a margin keeps a route that fails at once unmarked
+            reload = LocalTime.parse(reloadTime).toNanoOfDay() - RELOAD_MARGIN_MILLIS * 1_000_000L;
+        } catch (Exception e) {
+            return log;
+        }
+        long day = 24L * 3600 * 1_000_000_000L;
+        int before = 0;
+        int since = 0;
+        if (log.get("lines") instanceof List<?> rows) {
+            for (Object o : rows) {
+                if (!(o instanceof JsonObject r)) {
+                    continue;
+                }
+                long time;
+                try {
+                    time = LocalTime.parse(r.getString("time")).toNanoOfDay();
+                } catch (Exception e) {
+                    continue;
+                }
+                // a log that runs past midnight: the nearer of the two days
+                long ahead = reload - time;
+                if (ahead > day / 2) {
+                    ahead -= day;
+                } else if (ahead < -day / 2) {
+                    ahead += day;
+                }
+                if (ahead > 0) {
+                    r.put("beforeLastReload", true);
+                    before++;
+                } else {
+                    since++;
+                }
+            }
+        }
+        if (before > 0) {
+            putFirst(log, "reloadNote", before + (before == 1 ? " record is" : " records are")
+                                        + " from before the routes were last reloaded (at " + reloadTime + "), so from"
+                                        + " an earlier version of the routes (beforeLastReload)"
+                                        + (since == 0 ? "; none is from the current version" : ""));
+        }
+        return log;
     }
 
     /**

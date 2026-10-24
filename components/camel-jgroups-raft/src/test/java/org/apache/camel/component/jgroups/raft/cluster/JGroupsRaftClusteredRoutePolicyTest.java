@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jgroups.raft.cluster;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
-import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
 
@@ -34,33 +33,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstractTest {
 
-    private ArrayList<CamelContext> lcc = new ArrayList<>();
-    private ArrayList<String> rn = new ArrayList<>();
-
     @Test
     @SuppressWarnings("resource")
     public void test() throws Exception {
-        // NOTE: to be closed by component lifecycle.
-        JChannel chA = new JChannel("raftABC.xml").name("A");
-        RaftHandle handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
+        RaftHandle handleA = createHandle("A", new NopStateMachine());
         CamelContext contextA = createContext("A", handleA);
 
-        // NOTE: to be closed by component lifecycle.
-        JChannel chB = new JChannel("raftABC.xml").name("B");
-        RaftHandle handleB = new RaftHandle(chB, new NopStateMachine()).raftId("B");
+        RaftHandle handleB = createHandle("B", new NopStateMachine());
         CamelContext contextB = createContext("B", handleB);
 
-        // NOTE: to be closed by component lifecycle.
-        JChannel chC = new JChannel("raftABC.xml").name("C");
-        RaftHandle handleC = new RaftHandle(chC, new NopStateMachine()).raftId("C");
+        RaftHandle handleC = createHandle("C", new NopStateMachine());
         CamelContext contextC = createContext("C", handleC);
 
-        lcc.add(contextA);
-        rn.add("route-A");
-        lcc.add(contextB);
-        rn.add("route-B");
-        lcc.add(contextC);
-        rn.add("route-C");
+        contexts.add(contextA);
+        routeNames.add("route-A");
+        contexts.add(contextB);
+        routeNames.add("route-B");
+        contexts.add(contextC);
+        routeNames.add("route-C");
 
         contextA.start();
         contextB.start();
@@ -70,18 +60,17 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstr
 
         contextA.stop();
         // Ensure channel A is fully closed before checking for a new leader
-        chA.close();
+        handleA.channel().close();
         waitForLeader(50, handleB, handleC);
         awaitOneActiveRoute();
 
         contextB.stop();
         // Ensure channel B is fully closed before creating a new channel with the same member name
-        chB.close();
-        waitForViewSize(chC, 1, 30);
-        chA = new JChannel("raftABC.xml").name("A");
-        handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
+        handleB.channel().close();
+        waitForViewSize(handleC.channel(), 1, 30);
+        handleA = createHandle("A", new NopStateMachine());
         contextA = createContext("A", handleA);
-        lcc.set(0, contextA);
+        contexts.set(0, contextA);
         contextA.start();
         waitForLeader(50, handleA, handleC);
         awaitOneActiveRoute();
@@ -113,17 +102,18 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstr
 
     private void awaitOneActiveRoute() {
         // the policy starts and stops the routes on its own thread, shortly after the leadership change
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(contexts, routeNames)));
     }
 
-    private int countActiveFromEndpoints(ArrayList<CamelContext> lcc, ArrayList<String> rn) {
+    private int countActiveFromEndpoints(List<CamelContext> contexts, List<String> routeNames) {
         int result = 0;
-        if (lcc.size() != rn.size()) {
+        if (contexts.size() != routeNames.size()) {
             throw new UnsupportedOperationException(
                     "CamelContext list and Route ids list must have the same number of elements!");
         }
-        for (int i = 0; i < lcc.size(); i++) {
-            ServiceStatus status = lcc.get(i).getRouteController().getRouteStatus(rn.get(i));
+        for (int i = 0; i < contexts.size(); i++) {
+            ServiceStatus status = contexts.get(i).getRouteController().getRouteStatus(routeNames.get(i));
             if (ServiceStatus.Starting.equals(status) || ServiceStatus.Started.equals(status)) {
                 result++;
             }

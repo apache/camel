@@ -206,6 +206,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
     }
 
     @Override
+    public String getChecksum() {
+        return route.getChecksum();
+    }
+
+    @Override
+    public int getRevision() {
+        return route.getRevision();
+    }
+
+    @Override
     public int getVariedBodyTypes() {
         BodyTypeRegistry registry = context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
         if (registry == null || getRouteId() == null) {

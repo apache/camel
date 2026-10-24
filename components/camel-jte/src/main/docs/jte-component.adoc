@@ -84,6 +84,9 @@ location for a template or the template content itself. If any of these
 headers is set, and the endpoint has `allowTemplateFromHeader=true`, then Camel uses this
 over the endpoint configured resource. This allows you to provide a dynamic template at runtime.
 
+Each distinct template text from the `CamelJteTemplate` header is compiled once, and the compiled template is kept
+until the component stops. So the templates in this header should come from a small, known set.
+
 == Examples
 
 For example, you could use something like:

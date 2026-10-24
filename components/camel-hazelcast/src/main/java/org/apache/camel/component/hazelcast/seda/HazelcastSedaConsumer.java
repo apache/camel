@@ -43,6 +43,9 @@ import org.slf4j.LoggerFactory;
 public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastSedaConsumer.class);
+    // the longest a single poll waits (or pollTimeout when it is shorter): the consumer stops by letting its poll end,
+    // so the thread sees a stop within this time. A poll that returns nothing just goes round the loop again
+    private static final long MAX_POLL_WAIT = 1000L;
 
     private final HazelcastSedaEndpoint endpoint;
     private final AsyncProcessor processor;
@@ -71,13 +74,16 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     protected void doStop() throws Exception {
+        if (executor != null) {
+            // wait for the consumer threads to end their current poll (at most MAX_POLL_WAIT) and route what it returned:
+            // a poll takes the item from the queue, so an item polled after the processor is stopped is lost
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
+            executor = null;
+        }
+        // after the consumer threads, which use it for the delay after an error
         if (taskExecutor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
             taskExecutor = null;
-        }
-        if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
-            executor = null;
         }
         super.doStop();
     }
@@ -87,11 +93,14 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
         BaseQueue<?> queue = endpoint.getHazelcastInstance().getQueue(endpoint.getConfiguration().getQueueName());
 
         while (queue != null && isRunAllowed()) {
-            final Exchange exchange = createExchange(true);
+            final boolean transacted = endpoint.getConfiguration().isTransacted();
+            // the transacted consumer reads the outcome of the exchange after the routing is done, so it releases the
+            // exchange itself: a pooled exchange is otherwise reset (and its exception cleared) when it is done
+            final Exchange exchange = createExchange(!transacted);
 
             TransactionContext transactionCtx = null;
             try {
-                if (endpoint.getConfiguration().isTransacted()) {
+                if (transacted) {
                     // Get and begin transaction if exist
                     transactionCtx = endpoint.getHazelcastInstance().newTransactionContext();
 
@@ -102,7 +111,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     }
                 }
 
-                final Object body = queue.poll(endpoint.getConfiguration().getPollTimeout(), TimeUnit.MILLISECONDS);
+                final Object body = queue.poll(Math.min(endpoint.getConfiguration().getPollTimeout(), MAX_POLL_WAIT),
+                        TimeUnit.MILLISECONDS);
 
                 if (body != null) {
                     if (body instanceof DefaultExchangeHolder defaultExchangeHolder) {
@@ -112,27 +122,24 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     }
                     try {
                         final TransactionContext txc = transactionCtx;
-                        // process using the asynchronous routing engine
-                        processor.process(exchange, new AsyncCallback() {
-                            public void done(boolean asyncDone) {
-                                // a rollback only exchange (without an exception) did not complete successfully either
-                                boolean rollback = exchange.getException() != null || exchange.isRollbackOnly()
-                                        || exchange.isRollbackOnlyLast();
-                                if (rollback && txc != null) {
-                                    LOG.trace("Rollback transaction: {}", txc.getTxnId());
-                                    txc.rollbackTransaction();
-                                }
-                                if (exchange.getException() != null) {
-                                    getExceptionHandler().handleException("Error processing exchange", exchange,
-                                            exchange.getException());
-                                }
-                                // It's OK, I commit
-                                if (!rollback && txc != null) {
-                                    LOG.trace("Commit transaction: {}", txc.getTxnId());
-                                    txc.commitTransaction();
-                                }
+                        if (transacted) {
+                            // a Hazelcast transaction belongs to the thread that began it, and cannot be committed
+                            // or rolled back from another thread: wait for the exchange to complete, also when the
+                            // route continues on another thread, and end the transaction on this thread
+                            try {
+                                processor.process(exchange);
+                            } catch (Exception e) {
+                                exchange.setException(e);
                             }
-                        });
+                            onExchangeDone(exchange, txc);
+                        } else {
+                            // process using the asynchronous routing engine
+                            processor.process(exchange, new AsyncCallback() {
+                                public void done(boolean asyncDone) {
+                                    onExchangeDone(exchange, null);
+                                }
+                            });
+                        }
                     } catch (Exception e) {
                         LOG.error("Hzlq Exception caught: {}", e, e);
                         // Rollback
@@ -175,7 +182,29 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                         .withName("HazelcastSedaErrorRecoveryDelay")
                         .build()
                         .run(getEndpoint().getCamelContext(), () -> true);
+            } finally {
+                if (transacted) {
+                    releaseExchange(exchange, false);
+                }
             }
+        }
+    }
+
+    private void onExchangeDone(Exchange exchange, TransactionContext txc) {
+        // a rollback only exchange (without an exception) did not complete successfully either
+        boolean rollback = exchange.getException() != null || exchange.isRollbackOnly()
+                || exchange.isRollbackOnlyLast();
+        if (rollback && txc != null) {
+            LOG.trace("Rollback transaction: {}", txc.getTxnId());
+            txc.rollbackTransaction();
+        }
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+        }
+        // It's OK, I commit
+        if (!rollback && txc != null) {
+            LOG.trace("Commit transaction: {}", txc.getTxnId());
+            txc.commitTransaction();
         }
     }
 

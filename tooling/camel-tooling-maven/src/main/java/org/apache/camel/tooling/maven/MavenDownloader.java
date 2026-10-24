@@ -105,10 +105,10 @@ public interface MavenDownloader extends Service {
     void setOffline(boolean offline);
 
     /**
-     * When enabled, resolution will first check if artifacts exist in the local Maven repository and attempt offline
-     * resolution to avoid remote repository checks. Falls back to normal resolution if offline resolution fails. This
-     * is useful for CLI tools where artifacts are typically already cached and remote SNAPSHOT metadata checks add
-     * significant latency.
+     * When enabled, the artifacts and metadata already in the local Maven repository are used as is, without checking
+     * the remote repositories for updates (like {@code mvn --no-snapshot-updates}), while missing artifacts are still
+     * downloaded. This is useful for CLI tools where artifacts are typically already cached and remote SNAPSHOT
+     * metadata checks add significant latency.
      */
     void setPreferLocal(boolean preferLocal);
 

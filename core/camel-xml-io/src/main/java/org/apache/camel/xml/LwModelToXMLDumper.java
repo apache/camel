@@ -18,14 +18,21 @@ package org.apache.camel.xml;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -54,6 +61,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.xml.out.BaseWriter;
 import org.apache.camel.xml.out.ModelWriter;
 
@@ -65,6 +73,10 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
 @JdkService(ModelToXMLDumper.FACTORY)
 public class LwModelToXMLDumper implements ModelToXMLDumper {
 
+    // the separator before a query parameter, and its value; the & after it is not part of the match
+    private static final Pattern HASH_PARAMETER = Pattern.compile("([?&])hash=([0-9a-f]+)(?=&|$)");
+    private static final Pattern ROUTE_ID_PARAMETER = Pattern.compile("([?&])routeId=([^&]*)(?=&|$)");
+
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
         return dumpModelAsXml(context, definition, false, true, false);
@@ -75,17 +87,42 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds,
             boolean sourceLocation)
             throws Exception {
+        StringWriter buffer = new StringWriter();
+        // while debugging the source locations are written too, for the debugger to show where a step is
+        write(context, definition, buffer, resolvePlaceholders, generatedIds, sourceLocation || context.isDebugging(),
+                false);
+        return buffer.toString();
+    }
+
+    /**
+     * Writes the definition as XML: the dump, and the text the checksum of a route is computed from
+     * ({@link LwModelChecksumGenerator}), which never has the source locations.
+     *
+     * @param checksum whether the text is for the checksum: then what Camel makes from a counter or an identity hash is
+     *                 left out (the node prefix and the route id that a route template or Kamelet makes, the hash of
+     *                 the endpoint DSL options that are objects), and the secrets in endpoint URIs are masked
+     */
+    static void write(
+            CamelContext context, NamedNode definition, Writer out, boolean resolvePlaceholders, boolean generatedIds,
+            boolean sourceLocation, boolean checksum)
+            throws Exception {
 
         Properties properties = new Properties();
         Map<String, String> namespaces = new LinkedHashMap<>();
         Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
         List<Runnable> restorers = new ArrayList<>();
+        // the definitions whose id Camel makes from a counter, though it is marked as custom, and those ids
+        Set<OptionalIdentifiedDefinition<?>> counterIds = Collections.newSetFromMap(new IdentityHashMap<>());
+        Set<String> counterRouteIds = new HashSet<>();
         Consumer<RouteDefinition> extractor = route -> {
             extractNamespaces(route, namespaces);
-            if (sourceLocation || context.isDebugging()) {
+            if (sourceLocation) {
                 extractSourceLocations(route, locations);
             }
-            restorers.add(resolveEndpointDslUris(route));
+            restorers.add(resolveEndpointDslUris(route, checksum));
+            if (checksum) {
+                restorers.add(leaveOutCounters(route, counterIds, counterRouteIds));
+            }
             if (Boolean.TRUE.equals(route.isTemplate())) {
                 Map<String, Object> parameters = route.getTemplateParameters();
                 if (parameters != null) {
@@ -94,13 +131,12 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             }
         };
 
-        StringWriter buffer = new StringWriter();
-        ModelWriter writer = new ModelWriter(buffer, BaseWriter.DEFAULT_NAMESPACE) {
+        ModelWriter writer = new ModelWriter(out, BaseWriter.DEFAULT_NAMESPACE) {
             @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
                     throws IOException {
 
-                if (generatedIds || Boolean.TRUE.equals(def.getCustomId())) {
+                if ((generatedIds || Boolean.TRUE.equals(def.getCustomId())) && !counterIds.contains(def)) {
                     // write id
                     doWriteAttribute("id", def.getId());
                 }
@@ -113,7 +149,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                     doWriteAttribute("note", def.getNote());
                 }
                 // write location information
-                if (sourceLocation || context.isDebugging()) {
+                if (sourceLocation) {
                     int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
                     if (line != -1) {
                         writer.addAttribute("sourceLineNumber", Integer.toString(line));
@@ -181,6 +217,15 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                 if (resolvePlaceholders && value != null) {
                     value = resolve(value.toString(), properties);
                 }
+                if (checksum && "uri".equals(name) && value != null) {
+                    String uri = value.toString();
+                    for (String id : counterRouteIds) {
+                        // kamelet:source and kamelet:sink have the id of their route
+                        uri = withoutRouteId(uri, id);
+                    }
+                    // a literal password is no part of the checksum, which is printed beside the masked URIs
+                    value = URISupport.sanitizeUri(uri);
+                }
                 super.attribute(name, value);
             }
 
@@ -212,8 +257,6 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         } finally {
             restorers.forEach(Runnable::run);
         }
-
-        return buffer.toString();
     }
 
     @Override
@@ -321,24 +364,77 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
     }
 
     /**
+     * The URI of an endpoint DSL builder, for the checksum without the hash of its options that are objects: an
+     * identity hash, another one in every run. The objects are beans, which the checksum leaves out.
+     */
+    static String rawUri(String uri, boolean checksum) {
+        return checksum && uri != null ? withoutParameter(uri, HASH_PARAMETER, null) : uri;
+    }
+
+    /** The URI without its routeId parameter of that id, which kamelet:source and kamelet:sink have. */
+    static String withoutRouteId(String uri, String id) {
+        return withoutParameter(uri, ROUTE_ID_PARAMETER, id);
+    }
+
+    /**
+     * The URI without the first query parameter the pattern matches, whose value is the given value, or any value when
+     * it is null.
+     */
+    static String withoutParameter(String uri, Pattern parameter, String value) {
+        Matcher matcher = parameter.matcher(uri);
+        while (matcher.find()) {
+            if (value == null || value.equals(matcher.group(2))) {
+                if (matcher.end() < uri.length()) {
+                    // more options follow: keep the separator before it, and drop the & after it
+                    return uri.substring(0, matcher.start() + 1) + uri.substring(matcher.end() + 1);
+                }
+                return uri.substring(0, matcher.start());
+            }
+        }
+        return uri;
+    }
+
+    /**
+     * Leaves out of the checksum what a route template or a Kamelet makes from a counter when it creates the route: the
+     * node prefix (RouteTemplateDefinition.asRouteDefinition and Kamelet.templateToRoute), and the id of a Kamelet
+     * route that has none of its own, the template id and that prefix, which its kamelet:source and kamelet:sink have
+     * too. The same route then has the same checksum each time it is created, such as when a reload creates it again.
+     */
+    private static Runnable leaveOutCounters(
+            RouteDefinition route, Set<OptionalIdentifiedDefinition<?>> counterIds, Set<String> counterRouteIds) {
+        if (!Boolean.TRUE.equals(route.isTemplate())) {
+            return () -> {
+            };
+        }
+        String prefix = route.getNodePrefixId();
+        if (prefix != null && Boolean.TRUE.equals(route.isKamelet()) && route.getId() != null
+                && route.getId().endsWith("-" + prefix)) {
+            counterIds.add(route);
+            counterRouteIds.add(route.getId());
+        }
+        route.setNodePrefixId(null);
+        return () -> route.setNodePrefixId(prefix);
+    }
+
+    /**
      * If the route has been built with endpoint-dsl, then the model will not have uri set which then cannot be included
      * in the JAXB model dump. Returns a {@link Runnable} that restores the original endpoint DSL builders after the XML
      * has been written, so that the live {@link RouteDefinition} is not permanently mutated by the dump.
      */
     @SuppressWarnings("rawtypes")
-    private static Runnable resolveEndpointDslUris(RouteDefinition route) {
+    private static Runnable resolveEndpointDslUris(RouteDefinition route, boolean checksum) {
         List<Runnable> restorers = new ArrayList<>();
         FromDefinition from = route.getInput();
         if (from != null && from.getEndpointConsumerBuilder() != null) {
             EndpointConsumerBuilder builder = from.getEndpointConsumerBuilder();
-            from.setUri(builder.getRawUri());
+            from.setUri(rawUri(builder.getRawUri(), checksum));
             restorers.add(() -> from.setEndpointConsumerBuilder(builder));
         }
         Collection<SendDefinition> col = filterTypeInOutputs(route.getOutputs(), SendDefinition.class);
         for (SendDefinition<?> to : col) {
             if (to.getEndpointProducerBuilder() != null) {
                 EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
-                to.setUri(builder.getRawUri());
+                to.setUri(rawUri(builder.getRawUri(), checksum));
                 restorers.add(() -> to.setEndpointProducerBuilder(builder));
             }
         }
@@ -346,7 +442,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         for (ToDynamicDefinition to : col2) {
             if (to.getEndpointProducerBuilder() != null) {
                 EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
-                to.setUri(builder.getRawUri());
+                to.setUri(rawUri(builder.getRawUri(), checksum));
                 // ToDynamicDefinition.setUri does not call clear(), so the builder is preserved;
                 // only the uri field needs to be reset.
                 restorers.add(() -> to.setUri(null));

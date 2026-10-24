@@ -287,10 +287,11 @@ public interface Aws2AthenaComponentBuilderFactory {
         }
     
         /**
-         * The SQL query to run. Except for simple queries, prefer setting this
-         * as the body of the Exchange or as a header using
-         * Athena2Constants.QUERY_STRING to avoid having to deal with URL
-         * encoding issues.
+         * The SQL query to run. The CamelAwsAthenaQueryString header takes
+         * precedence over this option, and when useMessageBodyForSql is
+         * enabled, so does a non-empty message body. Except for simple queries,
+         * prefer setting the query in the header to avoid having to deal with
+         * URL encoding issues.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -378,6 +379,26 @@ public interface Aws2AthenaComponentBuilderFactory {
          */
         default Aws2AthenaComponentBuilder uriEndpointOverride(java.lang.String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to use the message body as the SQL query to run. When
+         * enabled, a non-empty message body takes precedence over the
+         * CamelAwsAthenaQueryString header and the queryString option. When
+         * disabled, the message body is not used as the query.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useMessageBodyForSql the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder useMessageBodyForSql(boolean useMessageBodyForSql) {
+            doSetProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
         }
     
@@ -777,6 +798,7 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "resetWaitTimeoutOnRetry": getOrCreateConfiguration((Athena2Component) component).setResetWaitTimeoutOnRetry((boolean) value); return true;
             case "retry": getOrCreateConfiguration((Athena2Component) component).setRetry((java.lang.String) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Athena2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "useMessageBodyForSql": getOrCreateConfiguration((Athena2Component) component).setUseMessageBodyForSql((boolean) value); return true;
             case "waitTimeout": getOrCreateConfiguration((Athena2Component) component).setWaitTimeout((long) value); return true;
             case "workGroup": getOrCreateConfiguration((Athena2Component) component).setWorkGroup((java.lang.String) value); return true;
             case "amazonAthenaClient": getOrCreateConfiguration((Athena2Component) component).setAmazonAthenaClient((software.amazon.awssdk.services.athena.AthenaClient) value); return true;
