@@ -100,9 +100,12 @@ final class CatalogBodyTypes {
             return carriers.equals(List.of("unchanged"));
         }
 
-        /** The file as read. */
+        /**
+         * The file as read, such as the GenericFile of the file consumer: the file is the only carrier. A blob that is
+         * a stream or a downloaded file is a payload like any other.
+         */
         boolean file() {
-            return carriers.contains("file");
+            return carriers.equals(List.of("file"));
         }
 
         /** The data format of the format, as an unmarshal or a marshal names it: json, jacksonXml, csv or yaml. */

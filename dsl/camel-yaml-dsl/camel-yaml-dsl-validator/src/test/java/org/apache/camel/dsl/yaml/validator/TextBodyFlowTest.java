@@ -1082,6 +1082,59 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfObjectStorage() {
+        // getObject gives the stream of the object and the blob consumer the stream or the file of the blob, so a field
+        // read needs an unmarshal; an upload names no operation, which the component may set, and dropbox search gives a
+        // List
+        String yaml = """
+                - route:
+                    id: get
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: aws2-s3:reports?operation=getObject
+                        - setHeader:
+                            name: name
+                            simple: ${body[name]}
+                - route:
+                    id: upload
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"name": "Camel"}'
+                        - to: aws2-s3:reports
+                        - setHeader:
+                            name: name
+                            simple: ${body[name]}
+                - route:
+                    id: blob
+                    from:
+                      uri: azure-storage-blob:account/reports
+                      steps:
+                        - setHeader:
+                            name: name
+                            simple: ${body[name]}
+                - route:
+                    id: search
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: dropbox:search?query=camel
+                        - setHeader:
+                            name: first
+                            simple: ${body[0]}
+                """;
+        assertThat(lines(yaml)).hasSize(2).anySatisfy(m -> assertThat(m)
+                .contains("route get: simple reads a field of the body (${body[name]})")
+                .contains("to: aws2-s3:reports returns it as a stream: unmarshal it first"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route blob: simple reads a field of the body (${body[name]})")
+                        .contains("the body here is still text, not parsed data")
+                        .contains("the azure-storage-blob consumer gives it as a stream or a file: unmarshal it first"));
+    }
+
+    @Test
     public void testOneReportForAStepThatFails() {
         // the first write fails at runtime, so the second does not run with this body
         String yaml = """

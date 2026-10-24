@@ -69,8 +69,8 @@ Camel-AWS2-S3 component provides the following operation on the producer side:
 - listBuckets
 - deleteBucket
 - listObjects
-- getObject (this will return an S3Object instance)
-- getObjectRange (this will return an S3Object instance)
+- getObject (this will return the content of the object as a stream)
+- getObjectRange (this will return the range of the content as a stream)
 - createDownloadLink
 - createUploadLink
 - headBucket

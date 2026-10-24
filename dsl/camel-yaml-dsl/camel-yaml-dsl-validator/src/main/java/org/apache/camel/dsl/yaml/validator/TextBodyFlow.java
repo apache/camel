@@ -280,7 +280,7 @@ final class TextBodyFlow {
         if (out.payload()) {
             // the file as read has the format of the files it reads
             return out.file()
-                    ? new Text(consumer + (out.carriers().size() > 1 ? " as " + out.inWords() : ""), fileFormat(from), true)
+                    ? new Text(consumer, fileFormat(from), true)
                     : new Text(consumer + " as " + out.inWords(), out.dataFormat());
         }
         return out.data() ? new Parsed(consumer + " as " + out.inWords(), out.dataFormat()) : null;
