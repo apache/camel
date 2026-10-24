@@ -209,7 +209,7 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
 
         // a component whose body types are not in the catalog has no such table
         printer = new StringPrinter();
-        command = createCommand("jdbc", false);
+        command = createCommand("weather", false);
         Assertions.assertEquals(0, command.doCall());
         Assertions.assertFalse(printer.getOutput().contains("Message body"), printer.getOutput());
     }
