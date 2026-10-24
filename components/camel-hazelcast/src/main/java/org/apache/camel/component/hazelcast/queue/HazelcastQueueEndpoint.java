@@ -28,6 +28,9 @@ import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastOperation;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -39,6 +42,35 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_QUE
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_QUEUE, title = "Hazelcast Queue",
              syntax = "hazelcast-queue:cacheName", category = { Category.CACHE, Category.CLUSTERING, Category.MESSAGING },
              headersClass = HazelcastConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.hazelcast.collection.ItemEvent", byOption = {
+        @BodyType.When(option = "queueConsumerMode", value = "poll", carriers = Carrier.UNKNOWN) },
+                                   description = "In Listen mode, the default, the Hazelcast ItemEvent of an item "
+                                                 + "added to or removed from the queue, not the item: ${body.item} "
+                                                 + "is the item, and the CamelHazelcastListenerAction header is "
+                                                 + "added or removed. In Poll mode the consumer takes the items off "
+                                                 + "the queue, and the body is the item itself, without headers"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "The item that add, the default, put and offer add to the queue, "
+                                                + "and that removeValue removes (without a body it removes the "
+                                                + "head): an object Hazelcast can serialize, so a stream or no body "
+                                                + "fails. A Collection for removeAll and retainAll. The other "
+                                                + "operations do not use the body"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, byOption = {
+                   @BodyType.When(option = "defaultOperation", value = "poll", carriers = Carrier.UNKNOWN),
+                   @BodyType.When(option = "defaultOperation", value = "peek", carriers = Carrier.UNKNOWN),
+                   @BodyType.When(option = "defaultOperation", value = "take", carriers = Carrier.UNKNOWN),
+                   @BodyType.When(option = "defaultOperation", value = "remainingCapacity", carriers = Carrier.VALUE,
+                                  javaType = "java.lang.Integer"),
+                   @BodyType.When(option = "defaultOperation", value = "drainTo", carriers = Carrier.VALUE,
+                                  javaType = "java.lang.Integer") },
+                                   description = "Unchanged for add, the default, and the other operations that "
+                                                 + "change the queue. poll and peek give the head of the queue, or "
+                                                 + "null when it is empty, and take waits for one; remainingCapacity "
+                                                 + "gives an Integer, and drainTo the number of items it moved into "
+                                                 + "the Collection of the CamelHazelcastDrainToCollection header. "
+                                                 + "The CamelHazelcastOperationType header overrides the "
+                                                 + "defaultOperation option"))
 public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
 
     @UriParam

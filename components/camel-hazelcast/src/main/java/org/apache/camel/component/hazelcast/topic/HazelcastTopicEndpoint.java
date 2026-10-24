@@ -27,6 +27,9 @@ import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastOperation;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -38,6 +41,16 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_TOP
 @UriEndpoint(firstVersion = "2.15.0", scheme = SCHEME_TOPIC, title = "Hazelcast Topic",
              syntax = "hazelcast-topic:cacheName", category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.hazelcast.topic.Message",
+                                   description = "The Hazelcast Message, not the published object: "
+                                                 + "${body.messageObject} is the object and ${body.publishingMember} "
+                                                 + "the member that published it. The CamelHazelcastListenerAction "
+                                                 + "header is received"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "The object to publish: an object Hazelcast can serialize, so "
+                                                + "convert a stream to bytes or text first; no body fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, description = "The producer publishes the body and keeps it"))
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam
