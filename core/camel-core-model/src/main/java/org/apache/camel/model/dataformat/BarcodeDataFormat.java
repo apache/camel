@@ -38,7 +38,8 @@ public class BarcodeDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(enums = "AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION",
               defaultValue = "QR_CODE",
-              description = "Barcode format such as QR-Code.")
+              description = "Barcode format such as QR-Code. MAXICODE, RSS_14, RSS_EXPANDED and UPC_EAN_EXTENSION cannot be"
+                            + " written by marshal, as there is no encoder for them; unmarshal reads the format of the image.")
     private String barcodeFormat;
     @XmlAttribute
     @Metadata(enums = "JPG,GIF,PNG", defaultValue = "PNG",
@@ -162,7 +163,8 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * Barcode format such as QR-Code
+         * Barcode format such as QR-Code. MAXICODE, RSS_14, RSS_EXPANDED and UPC_EAN_EXTENSION cannot be written by
+         * marshal, as there is no encoder for them; unmarshal reads the format of the image.
          */
         public Builder barcodeFormat(String barcodeFormat) {
             this.barcodeFormat = barcodeFormat;

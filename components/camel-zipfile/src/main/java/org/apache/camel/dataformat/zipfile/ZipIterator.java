@@ -151,13 +151,16 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 answer.setHeader(Exchange.FILE_NAME, FileUtil.stripPath(zipFileName));
                 if (currentEntry.isDirectory()) {
                     if (allowEmptyDirectory) {
+                        answer.setHeader(Exchange.FILE_LENGTH, 0L);
                         answer.setBody(new ByteArrayInputStream(new byte[0]));
                     } else {
                         return getNextElement(); // skip directory
                     }
                 } else {
                     CachedOutputStream cos = new CachedOutputStream(exchange);
-                    IOHelper.copy(zipInputStream, cos, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
+                    long size = IOHelper.copy(zipInputStream, cos, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
+                    // the size of this entry, not the one of the archive the headers are copied from
+                    answer.setHeader(Exchange.FILE_LENGTH, size);
                     answer.setBody(cos.getInputStream());
                     cachedOutputStreamsToClose.add(cos);
                 }

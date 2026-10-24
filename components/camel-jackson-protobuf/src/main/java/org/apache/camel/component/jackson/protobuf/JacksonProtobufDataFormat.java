@@ -34,8 +34,8 @@ import org.apache.camel.spi.annotations.Dataformat;
           excludeProperties = "library,permissions,dateFormatPattern,instanceClass,contentTypeFormat,defaultInstance")
 @BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.POJO },
                                  description = "A POJO, a Map or a JsonNode to write as the message of the protobuf schema of"
-                                               + " the schemaResolver. Text, bytes or a stream are written as they are, not"
-                                               + " encoded"),
+                                               + " the schemaResolver. Text, bytes or a stream are not written as they are:"
+                                               + " marshal fails for them"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
                                   description = "The protobuf binary data in the stream cache, or a byte array when stream"
                                                 + " caching is off"),
@@ -120,4 +120,9 @@ public class JacksonProtobufDataFormat extends JacksonDataFormat {
         return ProtobufMapper.class;
     }
 
+    @Override
+    protected boolean isWriteJsonAsIs() {
+        // JSON text is not protobuf, so marshal it as any other body
+        return false;
+    }
 }

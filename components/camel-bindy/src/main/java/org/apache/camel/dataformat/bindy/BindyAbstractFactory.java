@@ -185,6 +185,21 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     }
 
     /**
+     * Indicates whether the row has an object of a class of this model, keyed by the class name
+     *
+     * @param  row the row of objects keyed by their class names
+     * @return     true if the row has at least one class of this model
+     */
+    public boolean containsModel(Map<String, ?> row) {
+        for (String name : modelClassNames) {
+            if (row.containsKey(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Generate a unique key
      *
      * @param  key1 The key of the section number

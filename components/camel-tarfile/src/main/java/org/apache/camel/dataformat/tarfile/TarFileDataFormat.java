@@ -17,6 +17,8 @@
 package org.apache.camel.dataformat.tarfile;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,6 +27,8 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -41,7 +45,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
-import static org.apache.camel.Exchange.FILE_LENGTH;
 import static org.apache.camel.Exchange.FILE_NAME;
 
 /**
@@ -50,8 +53,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
 @Dataformat("tarFile")
 @BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                  description = "The content of the one entry: text, bytes, a stream or a file. The entry size"
-                                               + " is the CamelFileLength header, or else what the stream has available, and"
-                                               + " must match the content"),
+                                               + " is taken from the content, not from the CamelFileLength header"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
                                   description = "The tar file, not compressed, in the stream cache, or a byte array when"
                                                 + " stream caching is off. The CamelFileName header is the entry name with"
@@ -63,10 +65,10 @@ import static org.apache.camel.Exchange.FILE_NAME;
                                     byOption = @BodyType.When(option = "usingIterator", value = "true",
                                                               carriers = Carrier.ITERATOR,
                                                               javaType = "org.apache.camel.dataformat.tarfile.TarIterator"),
-                                    description = "The content of the one entry in the stream cache, or a byte array when"
-                                                  + " stream caching is off; a tar with more entries, a folder too, fails."
-                                                  + " With usingIterator, an Iterator for a streaming split EIP: of messages"
-                                                  + " whose body streams one file of the archive, to read before the next"))
+                                    description = "The content of the one file in the stream cache, or a byte array when"
+                                                  + " stream caching is off; folder entries are skipped, and a tar with more"
+                                                  + " files fails. With usingIterator, an Iterator for the split EIP: of"
+                                                  + " messages with the content of one file each, in a stream cache"))
 public class TarFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     /**
      * The default maximum decompressed size (in bytes), which corresponds to 1G.
@@ -86,7 +88,6 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         String filename;
         String filepath = exchange.getIn().getHeader(FILE_NAME, String.class);
-        Long filelength = exchange.getIn().getHeader(FILE_LENGTH, Long.class);
         if (filepath == null) {
             // generate the file name as the camel file component would do
             filename = filepath = StringHelper.sanitize(exchange.getIn().getMessageId());
@@ -98,9 +99,29 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
         tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
         tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
 
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
-        if (filelength == null) {
-            filelength = (long) is.available();
+        // the tar entry needs the exact size of the content before the content is written,
+        // and the CamelFileLength header is not to be trusted as the body may have changed since
+        // (CAMEL-26009), so take the size from the body itself
+        long filelength;
+        InputStream is;
+        CachedOutputStream cos = null;
+        File file = asFile(graph);
+        if (graph instanceof byte[] bytes) {
+            filelength = bytes.length;
+            is = new ByteArrayInputStream(bytes);
+        } else if (file != null) {
+            filelength = file.length();
+            is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
+        } else {
+            // the size is not known up front, so copy the body to a stream cache first
+            cos = new CachedOutputStream(exchange);
+            InputStream body = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
+            try {
+                filelength = copyAndCount(body, cos);
+            } finally {
+                IOHelper.close(body);
+            }
+            is = cos.getInputStream();
         }
 
         if (preservePathElements) {
@@ -113,7 +134,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
             IOHelper.copy(is, tos);
         } finally {
             tos.closeArchiveEntry();
-            IOHelper.close(is, tos);
+            IOHelper.close(is, tos, cos);
         }
 
         String newFilename = filename + ".tar";
@@ -134,7 +155,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {
-                TarArchiveEntry entry = tis.getNextEntry();
+                TarArchiveEntry entry = getNextFileEntry(tis);
                 if (entry != null) {
                     exchange.getMessage().setHeader(FILE_NAME, FileUtil.stripPath(entry.getName()));
                     IOHelper.copy(tis, osb, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
@@ -142,7 +163,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
                     throw new IllegalStateException("Unable to untar the file, it may be corrupted.");
                 }
 
-                entry = tis.getNextEntry();
+                entry = getNextFileEntry(tis);
                 if (entry != null) {
                     throw new IllegalStateException("Tar file has more than 1 entry.");
                 }
@@ -155,14 +176,46 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
         }
     }
 
-    private void createTarEntries(TarArchiveOutputStream tos, String filepath, Long filelength) throws IOException {
+    private static TarArchiveEntry getNextFileEntry(TarArchiveInputStream tis) throws IOException {
+        // skip the folder entries, as an archive of a folder with one file has an entry for the folder too
+        TarArchiveEntry entry;
+        while ((entry = tis.getNextEntry()) != null) {
+            if (!entry.isDirectory()) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    private static File asFile(Object graph) {
+        if (graph instanceof File file) {
+            return file;
+        } else if (graph instanceof WrappedFile<?> wrappedFile && wrappedFile.getFile() instanceof File file) {
+            return file;
+        }
+        return null;
+    }
+
+    private static long copyAndCount(InputStream is, OutputStream os) throws IOException {
+        long total = 0;
+        byte[] buffer = new byte[IOHelper.DEFAULT_BUFFER_SIZE];
+        int n;
+        while ((n = is.read(buffer)) != -1) {
+            os.write(buffer, 0, n);
+            total += n;
+        }
+        os.flush();
+        return total;
+    }
+
+    private void createTarEntries(TarArchiveOutputStream tos, String filepath, long filelength) throws IOException {
         Iterator<Path> elements = Paths.get(filepath).iterator();
         StringBuilder sb = new StringBuilder(256);
 
         while (elements.hasNext()) {
             Path path = elements.next();
             String element = path.toString();
-            Long length = filelength;
+            long length = filelength;
 
             // If there are more elements to come this element is a directory
             // The "/" at the end tells the TarEntry it is a folder

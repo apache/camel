@@ -2830,8 +2830,8 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("passPhrase", def.getPassPhrase(), null);
         doWriteAttribute("passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute("secureTag", def.getSecureTag(), null);
-        doWriteAttribute("secureTagContents", def.getSecureTagContents(), null);
-        doWriteAttribute("keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
+        doWriteAttribute("secureTagContents", def.getSecureTagContents(), "true");
+        doWriteAttribute("keyCipherAlgorithm", def.getKeyCipherAlgorithm(), null);
         doWriteAttribute("recipientKeyAlias", def.getRecipientKeyAlias(), null);
         doWriteAttribute("keyOrTrustStoreParameters", def.getKeyOrTrustStoreParameters(), null);
         doWriteAttribute("keyPassword", def.getKeyPassword(), null);

@@ -7599,7 +7599,8 @@ resolved from schemas; Camel automatically trusts packages derived from the conf
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Barcode format such as QR-Code. Default value: QR_CODE
+Barcode format such as QR-Code. MAXICODE, RSS_14, RSS_EXPANDED and UPC_EAN_EXTENSION cannot be written by marshal, as
+there is no encoder for them; unmarshal reads the format of the image. Default value: QR_CODE
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8780,7 +8781,8 @@ Whether to validate the iCal document. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The j8583 configuration file to load from classpath. Default value: j8583-config.xml
+The j8583 configuration file. It is loaded from the classpath by default; use the file: or http: prefix to load it from
+somewhere else. Default value: j8583-config.xml
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10648,7 +10650,7 @@ encrypted/decrypted.
             <xs:documentation xml:lang="en">
 <![CDATA[
 A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false =
-Element Level, true = Element Content Level. Default value: false
+Element Level, true = Element Content Level. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10657,7 +10659,8 @@ Element Level, true = Element Content Level. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The cipher algorithm to be used for encryption/decryption of the asymmetric key. Default value: RSA_OAEP
+The cipher algorithm to be used for encryption/decryption of the asymmetric key. When not set, marshal uses RSA_OAEP
+when the recipientKeyAlias is set, and unmarshal decrypts with the symmetric key of the passPhrase.
 ]]>
             </xs:documentation>
           </xs:annotation>

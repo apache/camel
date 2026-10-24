@@ -58,7 +58,7 @@ public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        Calendar calendar = exchange.getContext().getTypeConverter().convertTo(Calendar.class, graph);
+        Calendar calendar = exchange.getContext().getTypeConverter().mandatoryConvertTo(Calendar.class, exchange, graph);
         outputer.output(calendar, stream);
     }
 

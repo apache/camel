@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
 @Dataformat("bindyKvp")
 @BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
                                  description = "An object of the classType class, or a List (or an Iterator) of them; a Map of"
-                                               + " the model class names to the objects is one message"),
+                                               + " the model class names to the objects is one message. Other bodies, such as"
+                                               + " a Map of field values or a String, fail"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
                                   description = "The key-value pair messages, one per line, in the stream cache, or a byte"
                                                 + " array when stream caching is off"),
@@ -100,6 +101,8 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
             } else {
                 row = Collections.singletonMap(model.getClass().getName(), model);
             }
+            // fail rather than write an empty line for a row that has no object of the model
+            checkModelRow(exchange, factory, row);
             String result = factory.unbind(getCamelContext(), row);
             outputStream.write(converter.convertTo(byte[].class, exchange, result));
             outputStream.write(crlf);

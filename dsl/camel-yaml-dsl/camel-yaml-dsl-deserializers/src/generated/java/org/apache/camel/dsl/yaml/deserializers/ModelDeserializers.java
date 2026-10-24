@@ -894,7 +894,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Transform strings to various 1D/2D barcode bitmap formats and back",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "barcodeFormat", type = "enum:AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION", defaultValue = "QR_CODE", description = "Barcode format such as QR-Code.", displayName = "Barcode Format"),
+                    @YamlProperty(name = "barcodeFormat", type = "enum:AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION", defaultValue = "QR_CODE", description = "Barcode format such as QR-Code. MAXICODE, RSS_14, RSS_EXPANDED and UPC_EAN_EXTENSION cannot be written by marshal, as there is no encoder for them; unmarshal reads the format of the image.", displayName = "Barcode Format"),
                     @YamlProperty(name = "height", type = "number", defaultValue = "100", description = "Height of the barcode.", displayName = "Height"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "imageType", type = "enum:JPG,GIF,PNG", defaultValue = "PNG", description = "Image type of the barcode such as png.", displayName = "Image Type"),
@@ -7448,7 +7448,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowAutoWiredMessageFormat", type = "boolean", defaultValue = "true", description = "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry", displayName = "Allow Auto Wired Message Format"),
-                    @YamlProperty(name = "configFile", type = "string", defaultValue = "j8583-config.xml", description = "The j8583 configuration file to load from classpath", displayName = "Config File"),
+                    @YamlProperty(name = "configFile", type = "string", defaultValue = "j8583-config.xml", description = "The j8583 configuration file. It is loaded from the classpath by default; use the file: or http: prefix to load it from somewhere else.", displayName = "Config File"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "isoType", type = "string", description = "The default ISO-Type to use", displayName = "Iso Type")
             }
@@ -21236,7 +21236,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "addKeyValueForEncryptedKey", type = "boolean", defaultValue = "true", description = "Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.", displayName = "Add Key Value For Encrypted Key"),
                     @YamlProperty(name = "digestAlgorithm", type = "enum:SHA1,SHA256,SHA512", defaultValue = "SHA1", description = "The digest algorithm to use with the RSA OAEP algorithm.", displayName = "Digest Algorithm"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "keyCipherAlgorithm", type = "enum:RSA_v1dot5,RSA_OAEP,RSA_OAEP_11", defaultValue = "RSA_OAEP", description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key.", displayName = "Key Cipher Algorithm"),
+                    @YamlProperty(name = "keyCipherAlgorithm", type = "enum:RSA_v1dot5,RSA_OAEP,RSA_OAEP_11", description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key. When not set, marshal uses RSA_OAEP when the recipientKeyAlias is set, and unmarshal decrypts with the symmetric key of the passPhrase.", displayName = "Key Cipher Algorithm"),
                     @YamlProperty(name = "keyOrTrustStoreParameters", type = "string", description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.", displayName = "Key Or Trust Store Parameters"),
                     @YamlProperty(name = "keyPassword", type = "string", format = "password", description = "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.", displayName = "Key Password"),
                     @YamlProperty(name = "mgfAlgorithm", type = "enum:MGF1_SHA1,MGF1_SHA256,MGF1_SHA512", defaultValue = "MGF1_SHA1", description = "The MGF Algorithm to use with the RSA OAEP algorithm.", displayName = "Mgf Algorithm"),
@@ -21245,7 +21245,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "passPhraseByte", type = "string", format = "binary", description = "A byte used as passPhrase to encrypt/decrypt content.", displayName = "Pass Phrase Byte"),
                     @YamlProperty(name = "recipientKeyAlias", type = "string", description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.", displayName = "Recipient Key Alias"),
                     @YamlProperty(name = "secureTag", type = "string", description = "The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted.", displayName = "Secure Tag"),
-                    @YamlProperty(name = "secureTagContents", type = "boolean", defaultValue = "false", description = "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false = Element Level, true = Element Content Level.", displayName = "Secure Tag Contents"),
+                    @YamlProperty(name = "secureTagContents", type = "boolean", defaultValue = "true", description = "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false = Element Level, true = Element Content Level.", displayName = "Secure Tag Contents"),
                     @YamlProperty(name = "xmlCipherAlgorithm", type = "enum:TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256", defaultValue = "AES_256_GCM", description = "The cipher algorithm to be used for encryption/decryption of the XML message content.", displayName = "Xml Cipher Algorithm")
             }
     )

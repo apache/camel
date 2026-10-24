@@ -23,7 +23,7 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "configFile": { "index": 1, "kind": "attribute", "displayName": "Config File", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "j8583-config.xml", "description": "The j8583 configuration file to load from classpath" },
+    "configFile": { "index": 1, "kind": "attribute", "displayName": "Config File", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "j8583-config.xml", "description": "The j8583 configuration file. It is loaded from the classpath by default; use the file: or http: prefix to load it from somewhere else." },
     "isoType": { "index": 2, "kind": "attribute", "displayName": "Iso Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The default ISO-Type to use" },
     "allowAutoWiredMessageFormat": { "index": 3, "kind": "attribute", "displayName": "Allow Auto Wired Message Format", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry" }
   }

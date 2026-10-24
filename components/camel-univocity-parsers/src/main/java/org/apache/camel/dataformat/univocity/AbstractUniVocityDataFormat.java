@@ -100,7 +100,7 @@ public abstract class AbstractUniVocityDataFormat<
 
         P parser = createParser(parserSettings);
         Reader reader = new InputStreamReader(stream, getCharsetName(exchange));
-        return unmarshaller.unmarshal(reader, parser, headerRowProcessor);
+        return unmarshaller.unmarshal(reader, parser);
     }
 
     String[] headersAsArray() {
