@@ -1528,6 +1528,18 @@ they refer to the same `ConnectionConfiguration` instance (for example the same 
 `XmppEndpoint.createConnection()` now creates a new connection on every call, instead of returning the connection of
 the endpoint, and an endpoint no longer disconnects a connection when it stops.
 
+=== camel-pulsar - a consumer that cannot subscribe fails the start of the route
+
+With `subscriptionType` `Shared`, `Failover` or `Key_Shared`, a consumer that could not subscribe when the route
+started (for example a broker that could not be reached within the operation timeout of the Pulsar client) was only
+logged at `ERROR`, and the route started with fewer consumers than `numberOfConsumers`, or with none, and never
+subscribed them again. Now the consumers that did subscribe are closed and the route fails to start with the error of
+the Pulsar client, as it already did with `Exclusive`. When the route starts with the CamelContext, the CamelContext
+then fails to start, unless the supervising route controller (`camel.routecontroller.enabled=true`) is used, which
+starts such a route again. With `messageListener=true` (the default) the consumers that did subscribe may already have
+received messages before they are closed, and messages they received but did not acknowledge can be delivered again
+once the route has started.
+
 === camel-vertx-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the HTTP consumers map a request
