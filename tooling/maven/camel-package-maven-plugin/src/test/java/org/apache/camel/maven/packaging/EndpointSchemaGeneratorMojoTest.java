@@ -28,6 +28,7 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingInterfaceConst
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBodyTypes;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithEnumStyleBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderClassHierarchy;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderInterfaceHierarchy;
@@ -259,6 +260,17 @@ class EndpointSchemaGeneratorMojoTest {
         assertEquals("bytes", bytes.getValue());
         assertEquals(List.of("bytes"), bytes.getCarriers());
         assertEquals("byte[]", bytes.getJavaType());
+    }
+
+    @Test
+    void testEndpointWithBodyTypesForEnumValuesInOtherStyles() throws Exception {
+        // the catalog and the enum type converter take convert-to-json and chunkHybrid as CONVERT_TO_JSON and
+        // CHUNK_HYBRID, so the build takes them too
+        addEnumOption("operation", "CONVERT_TO_MARKDOWN", "CONVERT_TO_JSON", "CHUNK_HYBRID");
+        mojo.addBodyTypes(model, SomeEndpointWithEnumStyleBodyTypes.class);
+        List<BodyTypeModel.OptionBodyTypeModel> values = model.getBodyType(BodyTypeModel.PRODUCER_OUT).getByOption();
+        assertEquals(List.of("convert-to-json", "chunkHybrid"),
+                values.stream().map(BodyTypeModel.OptionBodyTypeModel::getValue).toList());
     }
 
     @Test

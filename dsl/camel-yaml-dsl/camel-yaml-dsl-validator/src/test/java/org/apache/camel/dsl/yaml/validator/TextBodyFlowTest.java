@@ -1492,6 +1492,156 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfMoreComponents() {
+        // ssh runs the body as a command and gives its output as a stream, and so does its consumer; spring-redis keeps
+        // the body for SET, its default command, gives text for PING and is not known for GET; a couchbase row read with
+        // fullDocument=false is JSON text, and so is the result of CCB_DEL, while CCB_GET gives the GetResult of the SDK;
+        // the response of solr is a Map, and slack also sends an object as its text
+        String yaml = """
+                - route:
+                    id: shell
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: ssh:localhost:22
+                - route:
+                    id: output
+                    from:
+                      uri: ssh:localhost:22?pollCommand=date
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: ping
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: spring-redis:localhost:6379?command=PING
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: cache
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: spring-redis:localhost:6379
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: lookup
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: spring-redis:localhost:6379?command=GET
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: rows
+                    from:
+                      uri: couchbase:http://localhost?bucket=orders&fullDocument=false
+                      steps:
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: remove
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: couchbase:http://localhost?bucket=orders&operation=CCB_DEL
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: fetch
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: couchbase:http://localhost?bucket=orders&operation=CCB_GET
+                        - setHeader:
+                            name: id
+                            simple: ${body[id]}
+                - route:
+                    id: search
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: "id:1"
+                        - to: solr:localhost:8983/solr?collection=orders&operation=SEARCH
+                        - setHeader:
+                            name: hits
+                            simple: ${body[response]}
+                - route:
+                    id: chat
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: slack:#orders
+                """;
+        assertThat(lines(yaml)).hasSize(5)
+                .anySatisfy(
+                        m -> assertThat(m).contains("route shell: to: ssh needs the body as text, bytes, a stream or a file"))
+                .anySatisfy(m -> assertThat(m).contains("route remove: simple reads a field of the body (${body[id]})"))
+                .anySatisfy(m -> assertThat(m).contains("route output: simple reads a field of the body (${body[id]})"))
+                .anySatisfy(m -> assertThat(m).contains("route ping: simple reads a field of the body (${body[id]})"))
+                .anySatisfy(m -> assertThat(m).contains("route rows: simple reads a field of the body (${body[id]})"));
+    }
+
+    @Test
+    public void testAnOptionValueInAnotherStyleOfTheEnum() {
+        // the catalog and the enum type converter take convert-to-json and convertToJson as CONVERT_TO_JSON, so after
+        // docling the body is the document of that operation, and not the text of the default operation
+        String yaml = """
+                - route:
+                    id: dashes
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: docling:convert?operation=convert-to-json
+                        - setHeader:
+                            name: title
+                            simple: ${body[title]}
+                - route:
+                    id: camelCase
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: docling:convert?operation=convertToJson
+                        - setHeader:
+                            name: title
+                            simple: ${body[title]}
+                - route:
+                    id: markdown
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: docling:convert?operation=convert-to-markdown
+                        - setHeader:
+                            name: title
+                            simple: ${body[title]}
+                """;
+        assertThat(lines(yaml)).singleElement().asString()
+                .contains("route markdown: simple reads a field of the body (${body[title]})");
+    }
+
+    @Test
     public void testTheBodyOfCoreComponents() {
         // the stream consumer gives each line as text, so a field read needs an unmarshal, and stream:out writes text,
         // bytes, a stream or a file, so parsed data must be marshalled first; the knative consumer gives bytes, or the

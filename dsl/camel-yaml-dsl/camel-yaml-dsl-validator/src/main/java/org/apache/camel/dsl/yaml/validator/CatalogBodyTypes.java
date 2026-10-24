@@ -35,6 +35,7 @@ import org.apache.camel.tooling.model.BodyTypeModel.OptionBodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
 
@@ -252,7 +253,7 @@ final class CatalogBodyTypes {
         for (String option : side.getDependsOn()) {
             String value = set.get(option);
             if (value != null && side.getByOption().stream()
-                    .noneMatch(w -> w.getOption().equals(option) && value.equalsIgnoreCase(w.getValue()))) {
+                    .noneMatch(w -> w.getOption().equals(option) && isSameValue(value, w.getValue()))) {
                 // the body depends on this option, and no option value of the side says the body for its value: the
                 // value another option names does not hold then, such as output=bytes with a resultHandlerFactory
                 return null;
@@ -261,7 +262,7 @@ final class CatalogBodyTypes {
         Answer matched = null;
         for (OptionBodyTypeModel when : side.getByOption()) {
             String value = set.get(when.getOption());
-            if (value != null && value.equalsIgnoreCase(when.getValue())) {
+            if (value != null && isSameValue(value, when.getValue())) {
                 if (matched != null && !matched.carriers().equals(when.getCarriers())) {
                     // two options the step sets say different bodies
                     return null;
@@ -276,6 +277,15 @@ final class CatalogBodyTypes {
             return null;
         }
         return new Answer(side.getCarriers(), side.getJavaType(), side.getFormat());
+    }
+
+    /**
+     * Whether the value a step sets is the value of an option body: in any case, and in any style of an enum constant,
+     * as the catalog and the enum type converter take it, so operation=convert-to-json is CONVERT_TO_JSON.
+     */
+    private static boolean isSameValue(String value, String other) {
+        return value.equalsIgnoreCase(other)
+                || StringHelper.asEnumConstantValue(value).equals(StringHelper.asEnumConstantValue(other));
     }
 
     /** The options of a node, by name in camel case: allowNullBody as well for allow-null-body. */

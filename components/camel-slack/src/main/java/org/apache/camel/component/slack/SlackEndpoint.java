@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,17 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel",
              category = { Category.SOCIAL })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.slack.api.model.Message",
+                                   description = "One message per new message of the conversation, the most recent first, or"
+                                                 + " the oldest first with naturalOrder; the first poll gives the last message"
+                                                 + " of the history. The text is ${body.text}"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  description = "The text of the message, or a com.slack.api.model.Message with its blocks:"
+                                                + " bytes, a stream or a file are read as text. A Map or another POJO is sent"
+                                                + " as its toString(): marshal it first. No body sends no text, which Slack"
+                                                + " rejects"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: the answer of Slack is not kept"))
 public class SlackEndpoint extends ScheduledPollEndpoint {
 
     @UriParam(defaultValue = "" + SlackConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",
