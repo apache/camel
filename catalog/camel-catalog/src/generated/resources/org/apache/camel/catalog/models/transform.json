@@ -18,5 +18,9 @@
     "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description for this node" },
     "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
     "expression": { "index": 4, "kind": "expression", "displayName": "Expression", "group": "common", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "jactl", "java", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "python3", "quickjs", "ref", "simple", "spel", "tokenize", "variable", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "The expression whose result replaces the message body." }
+  },
+  "bodyTypes": {
+    "eipIn": { "from": "expressionIn" },
+    "eipOut": { "from": "expressionOut", "description": "The result of the expression, in the language of the expression" }
   }
 }

@@ -52,6 +52,7 @@ import javax.inject.Inject;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
@@ -301,6 +302,13 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         if ("route".equals(eipModel.getName())) {
             // route should not have disabled
             eipModel.getOptions().removeIf(o -> "disabled".equals(o.getName()));
+        }
+
+        // the body the EIP needs, the body after it and the body its steps start with (CAMEL-25928)
+        try {
+            BodyTypesHelper.addBodyTypes(eipModel, classElement.getAnnotation(BodyTypes.class), classElement);
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
 
         // write json schema file

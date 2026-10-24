@@ -28,6 +28,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 
@@ -39,6 +42,10 @@ import org.apache.camel.spi.Resource;
           description = "Defines the fallback route that executes when the Circuit Breaker trips or the primary route fails")
 @XmlRootElement(name = "onFallback")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with"),
+           eipSteps = @BodyType(value = Carrier.UNCHANGED,
+                                description = "The body the circuit breaker got"))
 public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbackDefinition>
         implements CopyableDefinition<OnFallbackDefinition>, Block, OutputNode {
 

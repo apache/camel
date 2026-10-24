@@ -22,6 +22,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -31,6 +34,8 @@ import org.apache.camel.spi.Metadata;
           description = "Executes an expression or script in a chosen language for side effects without modifying the message body")
 @XmlRootElement(name = "script")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "The EIP does not use the result of the script, but the script can set the body"))
 public class ScriptDefinition extends ExpressionNode {
 
     public ScriptDefinition() {

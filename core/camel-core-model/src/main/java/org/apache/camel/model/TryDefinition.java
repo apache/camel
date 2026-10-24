@@ -28,6 +28,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslProperty;
 
@@ -38,6 +41,10 @@ import org.apache.camel.spi.annotations.DslProperty;
           description = "Wraps route steps in a try-catch-finally block for fine-grained exception handling within the route")
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with, or what the doCatch that handled the exception ends"
+                                            + " with"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class TryDefinition extends OutputDefinition<TryDefinition> {
 
     @DslProperty

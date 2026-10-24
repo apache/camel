@@ -26,6 +26,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -36,6 +39,11 @@ import org.apache.camel.spi.Metadata;
           description = "Processes the message body repeatedly for a specified number of iterations, or until a condition is met")
 @XmlRootElement(name = "loop")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What the last iteration ends with"),
+           eipSteps = @BodyType(value = Carrier.UNCHANGED,
+                                description = "The first iteration starts with the body; each next one with what the last ended"
+                                              + " with, or with the body again with copy"))
 public class LoopDefinition extends OutputExpressionNode {
 
     @XmlTransient

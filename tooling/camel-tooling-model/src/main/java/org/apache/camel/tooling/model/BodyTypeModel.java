@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * One side of the body types of a component, data format or language: the body a step needs, or the body it leaves
- * after it, with the default options (CAMEL-24961).
+ * One side of the body types of a component, data format, language or EIP: the body a step needs, or the body it leaves
+ * after it, with the default options (CAMEL-24961, CAMEL-25928).
  * <p/>
  * The carriers are the kinds of Java object the body is in: null, text, bytes, stream, file, value, map, list, iterator
  * and pojo; unchanged for a step that leaves the body as it was, any for a step that takes any body, and unknown for a
@@ -49,12 +49,21 @@ public class BodyTypeModel {
     public static final String EXPRESSION_IN = "expressionIn";
     /** The result of an expression of a language. */
     public static final String EXPRESSION_OUT = "expressionOut";
+    /** The bodies an EIP needs. */
+    public static final String EIP_IN = "eipIn";
+    /** The body after an EIP. */
+    public static final String EIP_OUT = "eipOut";
+    /** The body the steps of an EIP start with. */
+    public static final String EIP_STEPS = "eipSteps";
+    /** The value of {@link #getFrom()} for the body the steps of an EIP end with. */
+    public static final String FROM_STEPS = "steps";
 
     private List<String> carriers = new ArrayList<>();
     private String javaType;
     private String format;
     private List<String> dependsOn = new ArrayList<>();
     private List<OptionBodyTypeModel> byOption = new ArrayList<>();
+    private String from;
     private String description;
 
     /**
@@ -125,6 +134,18 @@ public class BodyTypeModel {
     }
 
     /**
+     * The side of another model the body comes from, for an EIP: such as marshalOut, the side of its data format, or
+     * steps, the body its own steps end with. Null when the carriers say the body.
+     */
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    /**
      * Whether the body is left as it was (for the body after a step).
      */
     public boolean isUnchanged() {
@@ -137,7 +158,7 @@ public class BodyTypeModel {
      * it.
      */
     public boolean isUnknown() {
-        return carriers.isEmpty() || carriers.contains("unknown");
+        return (from == null && carriers.isEmpty()) || carriers.contains("unknown");
     }
 
     @Override

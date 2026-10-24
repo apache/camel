@@ -25,6 +25,9 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.TransactedPolicy;
@@ -37,6 +40,9 @@ import org.apache.camel.util.ObjectHelper;
           description = "Wraps the route in a transaction, ensuring that all steps within the transacted block either complete together or roll back on failure")
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {
 
     // JAXB does not support changing the ref attribute from required to

@@ -19,5 +19,8 @@
     "resumeStrategy": { "index": 4, "kind": "attribute", "displayName": "Resume Strategy", "group": "common", "required": true, "type": "object", "javaType": "org.apache.camel.resume.ResumeStrategy", "deprecated": false, "autowired": false, "secret": false, "description": "The resume strategy to use for resuming processing from the last known offset." },
     "loggingLevel": { "index": 5, "kind": "attribute", "displayName": "Logging Level", "group": "advanced", "label": "advanced", "required": false, "type": "enum", "javaType": "org.apache.camel.LoggingLevel", "enum": [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "ERROR", "description": "The logging level to use in case of failures." },
     "intermittent": { "index": 6, "kind": "attribute", "displayName": "Intermittent", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the offsets will be intermittently present or whether they must be present in every exchange." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "description": "Records where the consumer is: the body stays as it was" }
   }
 }

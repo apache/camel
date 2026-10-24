@@ -24,6 +24,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -39,6 +41,10 @@ import org.apache.camel.spi.annotations.DslArg;
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 @DslArg(exclude = "expression")
+@BodyTypes(eipOut = @BodyType(from = "producerOut",
+                              dependsOn = { "aggregationStrategy", "variableReceive" },
+                              description = "The reply of the endpoint, with the default aggregation strategy. With"
+                                            + " variableReceive the reply goes into the variable, and the body stays as it was"))
 public class EnrichDefinition extends ExpressionNode
         implements AggregationStrategyAwareDefinition<EnrichDefinition> {
 
