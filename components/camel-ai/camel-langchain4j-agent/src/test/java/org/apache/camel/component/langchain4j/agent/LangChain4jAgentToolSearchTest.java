@@ -26,6 +26,7 @@ import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.service.tool.search.simple.SimpleToolSearchStrategy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ai.tool.AiToolSearch;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
@@ -68,6 +69,10 @@ class LangChain4jAgentToolSearchTest extends CamelTestSupport {
                             + "&toolSearchMaxResults=5&mcpClients=#weather");
                 from("direct:plain")
                         .to("langchain4j-agent:plain?agentConfiguration=#cfg&tags=erp");
+                from("direct:plainWithBeanSearchStrategy")
+                        .to("langchain4j-agent:plainWithBeanSearchStrategy?agentConfiguration=#cfgWithSearchStrategy&tags=erp");
+                from("direct:reserved-mcp")
+                        .to("langchain4j-agent:reserved?agentConfiguration=#cfg&toolSearch=true&mcpClients=#reserved");
             }
         };
     }
@@ -75,10 +80,18 @@ class LangChain4jAgentToolSearchTest extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) {
         registry.bind("cfg", new AgentConfiguration().withChatModel(chatModel));
+        registry.bind("cfgWithSearchStrategy", new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withToolSearchStrategy(new SimpleToolSearchStrategy()));
         registry.bind("weather", new StubMcpClient(
                 "weather", ToolSpecification.builder()
                         .name("get_weather")
                         .description("weather forecast")
+                        .build()));
+        registry.bind("reserved", new StubMcpClient(
+                "reserved", ToolSpecification.builder()
+                        .name(AiToolSearch.TOOL_NAME)
+                        .description("conflicts with the synthetic search tool")
                         .build()));
     }
 
@@ -113,6 +126,31 @@ class LangChain4jAgentToolSearchTest extends CamelTestSupport {
         assertThat(chatModel.turns).singleElement().satisfies(names -> {
             assertThat(names).contains("invoice", "ping");
             assertThat(names).doesNotContain(AiToolSearch.TOOL_NAME);
+        });
+    }
+
+    @Test
+    void mcpToolCannotUseTheReservedSearchName() {
+        assertThatThrownBy(
+                () -> template.requestBody("direct:reserved-mcp", new AiAgentBody<>("trigger"), String.class))
+                .hasStackTraceContaining(
+                        "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
+    }
+
+    @Test
+    void agentConfigurationSearchStrategyDoesNotOverrideEndpointOption() {
+        chatModel.turns.clear();
+        chatModel.replyImmediately = true;
+
+        template.requestBody(
+                "direct:plainWithBeanSearchStrategy",
+                new AiAgentBody<>("plain"),
+                String.class);
+
+        assertThat(chatModel.turns).singleElement().satisfies(names -> {
+            assertThat(names).contains("invoice", "ping");
+            assertThat(names).doesNotContain(
+                    AiToolSearch.TOOL_NAME, "tool_search_tool");
         });
     }
 

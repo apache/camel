@@ -57,10 +57,11 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIToolExecutionProducer.class);
 
     private McpToolCallExecutor toolCallExecutor;
-    private final OpenAIToolSearch toolSearch = new OpenAIToolSearch();
+    private final OpenAIToolSearch toolSearch;
 
     public OpenAIToolExecutionProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
+        this.toolSearch = new OpenAIToolSearch(endpoint.getToolSearchSessions());
     }
 
     @Override
@@ -152,7 +153,7 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
 
         boolean toolSearchEnabled = config.isToolSearch();
         if (toolSearchEnabled) {
-            toolSearch.openSession(exchange, config);
+            toolSearch.openSessionForExecution(exchange, config);
         }
         List<McpToolCallExecutor.ToolResult> results;
         try {

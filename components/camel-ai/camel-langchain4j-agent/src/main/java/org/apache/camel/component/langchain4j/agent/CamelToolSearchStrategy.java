@@ -36,6 +36,7 @@ import dev.langchain4j.service.tool.search.ToolSearchRequest;
 import dev.langchain4j.service.tool.search.ToolSearchResult;
 import dev.langchain4j.service.tool.search.ToolSearchStrategy;
 import org.apache.camel.component.ai.tool.AiToolSearch;
+import org.apache.camel.component.ai.tool.AiToolSearchArguments;
 import org.apache.camel.component.ai.tool.AiToolSearchCandidate;
 import org.apache.camel.component.ai.tool.AiToolSearchEmbedder;
 import org.apache.camel.component.ai.tool.AiToolSearchIndex;
@@ -65,9 +66,11 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
 
     /*
      * The cache belongs to this strategy instance and therefore to its final embeddingModel.
-     * Access is serialized by search(), including batch population and query embedding.
+     * Cache and catalogue-key metadata are protected by embeddingCacheLock. Model calls must
+     * run outside that lock so a slow embedding request cannot block other searches.
      */
     private final EmbeddingModel embeddingModel;
+    private final Object embeddingCacheLock = new Object();
     private int maxCachedEmbeddings = MIN_CACHED_EMBEDDINGS;
 
     private final Map<String, float[]> embeddingCache = new LinkedHashMap<>(256, 0.75f, true) {
@@ -95,7 +98,7 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
     }
 
     @Override
-    public synchronized ToolSearchResult search(ToolSearchRequest request) {
+    public ToolSearchResult search(ToolSearchRequest request) {
         List<AiToolSearchCandidate> candidates = new ArrayList<>();
         for (ToolSpecification specification : request.searchableTools()) {
             if (AiToolSearch.TOOL_NAME.equals(specification.name())) {
@@ -113,14 +116,15 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
         List<String> terms = null;
 
         if (strategy == AiToolSearchStrategy.VECTOR) {
-            query = readString(arguments, AiToolSearch.QUERY_ARGUMENT);
+            query = AiToolSearchArguments.readString(arguments, AiToolSearch.QUERY_ARGUMENT,
+                    CamelToolSearchStrategy::readArguments);
             if (query == null) {
                 return new ToolSearchResult(
                         List.of(),
                         "Error: missing required tool argument '" + AiToolSearch.QUERY_ARGUMENT + "'");
             }
         } else {
-            terms = readTerms(arguments);
+            terms = AiToolSearchArguments.readTerms(arguments, CamelToolSearchStrategy::readArguments);
             if (terms == null) {
                 return new ToolSearchResult(
                         List.of(),
@@ -135,31 +139,36 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
                 currentToolKeys.add(embeddingText(candidate));
             }
 
+            List<String> missingTexts;
+            synchronized (embeddingCacheLock) {
+                /*
+                 * Reserve enough capacity for all current tool vectors plus query-cache
+                 * headroom. Keep the map and its access order protected by this lock.
+                 */
+                maxCachedEmbeddings = Math.max(
+                        MIN_CACHED_EMBEDDINGS,
+                        currentToolKeys.size() + CACHE_HEADROOM);
+
+                for (String previousKey : cachedToolEmbeddingKeys) {
+                    if (!currentToolKeys.contains(previousKey)) {
+                        embeddingCache.remove(previousKey);
+                    }
+                }
+                cachedToolEmbeddingKeys = Set.copyOf(currentToolKeys);
+
+                missingTexts = new ArrayList<>();
+                for (String text : currentToolKeys) {
+                    if (!embeddingCache.containsKey(text)) {
+                        missingTexts.add(text);
+                    }
+                }
+            }
+
             /*
-             * Keep enough room for every distinct current tool embedding plus a bounded
-             * amount of query-cache headroom. This avoids evicting current tool vectors
-             * while the index is being constructed, even for catalogues larger than the
-             * minimum cache capacity.
+             * Do not hold embeddingCacheLock during embedAll(). A concurrent search may
+             * compute the same missing vectors; putIfAbsent below safely reconciles the
+             * results, while both searches can progress independently.
              */
-            maxCachedEmbeddings = Math.max(
-                    MIN_CACHED_EMBEDDINGS,
-                    currentToolKeys.size() + CACHE_HEADROOM);
-
-            // Remove embeddings for tools no longer present or whose content has changed.
-            for (String previousKey : cachedToolEmbeddingKeys) {
-                if (!currentToolKeys.contains(previousKey)) {
-                    embeddingCache.remove(previousKey);
-                }
-            }
-            cachedToolEmbeddingKeys = Set.copyOf(currentToolKeys);
-
-            List<String> missingTexts = new ArrayList<>();
-            for (String text : currentToolKeys) {
-                if (!embeddingCache.containsKey(text)) {
-                    missingTexts.add(text);
-                }
-            }
-
             if (!missingTexts.isEmpty()) {
                 try {
                     List<TextSegment> segments = missingTexts.stream()
@@ -172,34 +181,46 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
                         List<float[]> vectors = new ArrayList<>(missingTexts.size());
                         for (int i = 0; i < missingTexts.size(); i++) {
                             var embedding = response.content().get(i);
-                            if (embedding == null || embedding.vector() == null || embedding.vector().length == 0) {
+                            if (embedding == null
+                                    || embedding.vector() == null
+                                    || embedding.vector().length == 0) {
                                 valid = false;
                                 break;
                             }
                             vectors.add(embedding.vector());
                         }
+
                         if (valid) {
-                            for (int i = 0; i < missingTexts.size(); i++) {
-                                embeddingCache.putIfAbsent(missingTexts.get(i), vectors.get(i));
+                            synchronized (embeddingCacheLock) {
+                                for (int i = 0; i < missingTexts.size(); i++) {
+                                    embeddingCache.putIfAbsent(
+                                            missingTexts.get(i), vectors.get(i));
+                                }
                             }
                         } else {
                             LOG.debug(
                                     "Batch embedding returned invalid or empty vectors, falling back to individual embedding");
                         }
                     } else {
-                        LOG.debug("Batch embedding returned null or mismatched size, falling back to individual embedding");
+                        LOG.debug(
+                                "Batch embedding returned null or mismatched size, falling back to individual embedding");
                     }
                 } catch (UnsupportedOperationException e) {
                     LOG.debug(
                             "Batch embedding (embedAll) not supported by embedding model, falling back to individual embedding");
                 } catch (Exception e) {
-                    LOG.warn("Batch embedding failed unexpectedly, falling back to individual embedding: {}", e.getMessage());
+                    LOG.warn(
+                            "Batch embedding failed unexpectedly, falling back to individual embedding: {}",
+                            e.getMessage());
                 }
             }
         }
 
         AiToolSearchEmbedder embedder = embeddingModel == null ? null : text -> {
-            float[] cached = embeddingCache.get(text);
+            float[] cached;
+            synchronized (embeddingCacheLock) {
+                cached = embeddingCache.get(text);
+            }
             if (cached != null) {
                 return cached;
             }
@@ -212,7 +233,9 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
             if (vector.length == 0) {
                 throw new IllegalStateException("Embedding model returned an empty vector");
             }
-            embeddingCache.put(text, vector);
+            synchronized (embeddingCacheLock) {
+                embeddingCache.put(text, vector);
+            }
             return vector;
         };
 
@@ -273,36 +296,6 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
             return candidate.name();
         }
         return candidate.name() + "\n" + description;
-    }
-
-    private static List<String> readTerms(String argumentsJson) {
-        Map<String, Object> arguments = readArguments(argumentsJson);
-        if (arguments == null || !arguments.containsKey(AiToolSearch.TERMS_ARGUMENT)) {
-            return null;
-        }
-        Object value = arguments.get(AiToolSearch.TERMS_ARGUMENT);
-        if (value instanceof List<?> list) {
-            List<String> terms = new ArrayList<>();
-            for (Object item : list) {
-                if (item != null) {
-                    terms.add(item.toString());
-                }
-            }
-            return terms;
-        }
-        if (value instanceof String text) {
-            return List.of(text);
-        }
-        return null;
-    }
-
-    private static String readString(String argumentsJson, String name) {
-        Map<String, Object> arguments = readArguments(argumentsJson);
-        if (arguments == null || arguments.get(name) == null) {
-            return null;
-        }
-        String text = arguments.get(name).toString().trim();
-        return text.isEmpty() ? null : text;
     }
 
     private static Map<String, Object> readArguments(String argumentsJson) {

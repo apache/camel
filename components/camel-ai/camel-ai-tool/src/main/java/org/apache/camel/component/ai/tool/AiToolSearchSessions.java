@@ -17,10 +17,15 @@
  */
 package org.apache.camel.component.ai.tool;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.LongSupplier;
 
 /**
  * Conversation-scoped {@link AiToolSearchSession}s.
@@ -41,6 +46,7 @@ public final class AiToolSearchSessions {
 
     private final int maxSessions;
     private final long expirationNanos;
+    private final LongSupplier nanoClock;
 
     /*
      * Access-order LinkedHashMap provides least-recently-used eviction.
@@ -49,10 +55,14 @@ public final class AiToolSearchSessions {
     private final LinkedHashMap<String, Entry> sessions = new LinkedHashMap<>(16, 0.75f, true);
 
     public AiToolSearchSessions() {
-        this(DEFAULT_MAX_SESSIONS, DEFAULT_EXPIRATION_MILLIS);
+        this(DEFAULT_MAX_SESSIONS, DEFAULT_EXPIRATION_MILLIS, System::nanoTime);
     }
 
     AiToolSearchSessions(int maxSessions, long expirationMillis) {
+        this(maxSessions, expirationMillis, System::nanoTime);
+    }
+
+    AiToolSearchSessions(int maxSessions, long expirationMillis, LongSupplier nanoClock) {
         if (maxSessions < 1) {
             throw new IllegalArgumentException("maxSessions must be greater than zero");
         }
@@ -61,6 +71,7 @@ public final class AiToolSearchSessions {
         }
         this.maxSessions = maxSessions;
         this.expirationNanos = TimeUnit.MILLISECONDS.toNanos(expirationMillis);
+        this.nanoClock = Objects.requireNonNull(nanoClock, "nanoClock");
     }
 
     /**
@@ -74,7 +85,7 @@ public final class AiToolSearchSessions {
     public synchronized AiToolSearchSession session(String conversationId) {
         validateConversationId(conversationId);
 
-        long now = System.nanoTime();
+        long now = nanoClock.getAsLong();
         purgeExpired(now);
 
         Entry entry = sessions.get(conversationId);
@@ -92,11 +103,31 @@ public final class AiToolSearchSessions {
      * @param  conversationId conversation id
      * @return                true if a retained session was removed
      */
+    /**
+     * Finds an existing retained session without creating a new one.
+     */
+    public synchronized AiToolSearchSession find(String conversationId) {
+        if (conversationId == null || conversationId.isBlank()) {
+            return null;
+        }
+
+        long now = nanoClock.getAsLong();
+        purgeExpired(now);
+
+        Entry entry = sessions.get(conversationId);
+        if (entry == null) {
+            return null;
+        }
+
+        entry.lastAccessNanos = now;
+        return entry.session;
+    }
+
     public synchronized boolean remove(String conversationId) {
         if (conversationId == null || conversationId.isBlank()) {
             return false;
         }
-        purgeExpired(System.nanoTime());
+        purgeExpired(nanoClock.getAsLong());
         return sessions.remove(conversationId) != null;
     }
 
@@ -110,17 +141,17 @@ public final class AiToolSearchSessions {
     /**
      * Records discovered tool names, registering the session only when names are present.
      */
-    synchronized void remember(String conversationId, java.util.Collection<String> names) {
+    synchronized void remember(String conversationId, Collection<String> names) {
         if (names == null || names.isEmpty()) {
             return;
         }
 
-        long now = System.nanoTime();
+        long now = nanoClock.getAsLong();
         purgeExpired(now);
 
         Entry entry = sessions.get(conversationId);
         if (entry == null) {
-            AiToolSearchSession stored = new AiToolSearchSession();
+            AiToolSearchSession stored = new AiToolSearchSession(this, conversationId);
             stored.rememberLocal(names);
             sessions.put(conversationId, new Entry(stored, now));
             evictExcessSessions();
@@ -130,21 +161,21 @@ public final class AiToolSearchSessions {
         }
     }
 
-    synchronized java.util.List<String> discoveredNames(String conversationId) {
-        long now = System.nanoTime();
+    synchronized List<String> discoveredNames(String conversationId) {
+        long now = nanoClock.getAsLong();
         purgeExpired(now);
 
         Entry entry = sessions.get(conversationId);
         if (entry == null) {
-            return java.util.List.of();
+            return List.of();
         }
 
         entry.lastAccessNanos = now;
         return entry.session.discoveredNamesLocal();
     }
 
-    synchronized void retainAvailable(String conversationId, java.util.Set<String> availableNames) {
-        long now = System.nanoTime();
+    synchronized void retainAvailable(String conversationId, Set<String> availableNames) {
+        long now = nanoClock.getAsLong();
         purgeExpired(now);
 
         Entry entry = sessions.get(conversationId);
@@ -161,7 +192,7 @@ public final class AiToolSearchSessions {
     }
 
     synchronized int size() {
-        purgeExpired(System.nanoTime());
+        purgeExpired(nanoClock.getAsLong());
         return sessions.size();
     }
 
@@ -169,9 +200,11 @@ public final class AiToolSearchSessions {
         Iterator<Map.Entry<String, Entry>> iterator = sessions.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry entry = iterator.next().getValue();
-            if (now - entry.lastAccessNanos >= expirationNanos) {
-                iterator.remove();
+            if (now - entry.lastAccessNanos < expirationNanos) {
+                // The map is in access order, so all remaining entries were accessed even more recently.
+                break;
             }
+            iterator.remove();
         }
     }
 

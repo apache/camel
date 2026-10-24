@@ -62,6 +62,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolRegistryListener;
+import org.apache.camel.component.ai.tool.AiToolSearchSessions;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -210,6 +211,10 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    AiToolSearchSessions getToolSearchSessions() {
+        return ((OpenAIComponent) getComponent()).getToolSearchSessions();
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         return switch (operation) {
@@ -264,7 +269,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         }
         if (operation == OpenAIOperations.chatCompletion || operation == OpenAIOperations.toolExecution
                 || operation == OpenAIOperations.responses) {
-            OpenAIToolSearch.validateConfiguration(configuration);
+            OpenAIToolSearch.validateConfiguration(configuration, operation == OpenAIOperations.responses);
         }
         mcpStopped = false;
         if (operation != OpenAIOperations.webhook) {

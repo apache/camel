@@ -21,6 +21,7 @@ import java.util.Map;
 import com.openai.core.ClientOptions;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.ai.tool.AiToolSearchSessions;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -32,6 +33,21 @@ import org.apache.camel.support.DefaultComponent;
  */
 @Component("openai,llm")
 public class OpenAIComponent extends DefaultComponent implements SSLContextParametersAware {
+
+    private final AiToolSearchSessions toolSearchSessions = new AiToolSearchSessions();
+
+    AiToolSearchSessions getToolSearchSessions() {
+        return toolSearchSessions;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        try {
+            toolSearchSessions.clear();
+        } finally {
+            super.doStop();
+        }
+    }
 
     @Metadata(description = "Default API key for all endpoints", security = "secret")
     private String apiKey;

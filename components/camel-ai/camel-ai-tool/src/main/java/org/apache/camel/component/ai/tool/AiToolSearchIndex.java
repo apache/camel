@@ -17,6 +17,7 @@
 package org.apache.camel.component.ai.tool;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,8 +33,10 @@ import java.util.Map;
  * Keyword scoring matches a deterministic contains match: each distinct term adds 2 when it occurs in the name and 1
  * when it occurs in the description. A tool needs a score of at least 1. Equal scores keep catalogue order.
  * <p>
- * Vector scoring is cosine similarity of embeddings of {@code name} and {@code description}. A missing embedder is
- * rejected and is never treated as keyword search.
+ * Vector scoring is cosine similarity of embeddings of {@code name} and {@code description}. Vector search does not
+ * apply a minimum similarity threshold: when the catalogue contains enough candidates, results with zero or negative
+ * cosine similarity can be returned. Equal scores are ordered by catalogue position. A missing embedder is rejected and
+ * is never treated as keyword search.
  *
  * @since 4.24
  */
@@ -120,7 +123,8 @@ public final class AiToolSearchIndex {
             return List.of();
         }
         List<Scored> scored = new ArrayList<>();
-        for (Entry entry : entries) {
+        for (int catalogueIndex = 0; catalogueIndex < entries.size(); catalogueIndex++) {
+            Entry entry = entries.get(catalogueIndex);
             int score = 0;
             for (String term : cleaned) {
                 if (entry.name.contains(term)) {
@@ -131,7 +135,7 @@ public final class AiToolSearchIndex {
                 }
             }
             if (score >= 1) {
-                scored.add(new Scored(entry.candidate, score));
+                scored.add(new Scored(entry.candidate, score, catalogueIndex));
             }
         }
         return limit(scored);
@@ -157,14 +161,16 @@ public final class AiToolSearchIndex {
             throw new IllegalArgumentException("Embedding model returned an empty vector for the search query");
         }
         List<Scored> scored = new ArrayList<>(entries.size());
-        for (Entry entry : entries) {
-            scored.add(new Scored(entry.candidate, cosine(queryVector, entry.vector)));
+        for (int catalogueIndex = 0; catalogueIndex < entries.size(); catalogueIndex++) {
+            Entry entry = entries.get(catalogueIndex);
+            scored.add(new Scored(entry.candidate, cosine(queryVector, entry.vector), catalogueIndex));
         }
         return limit(scored);
     }
 
     private List<AiToolSearchCandidate> limit(List<Scored> scored) {
-        scored.sort((left, right) -> Double.compare(right.score, left.score));
+        scored.sort(Comparator.comparingDouble(Scored::score).reversed()
+                .thenComparingInt(Scored::catalogueIndex));
         int count = Math.min(maxResults, scored.size());
         List<AiToolSearchCandidate> hits = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
@@ -242,6 +248,6 @@ public final class AiToolSearchIndex {
     private record Entry(AiToolSearchCandidate candidate, String name, String description, float[] vector) {
     }
 
-    private record Scored(AiToolSearchCandidate candidate, double score) {
+    private record Scored(AiToolSearchCandidate candidate, double score, int catalogueIndex) {
     }
 }

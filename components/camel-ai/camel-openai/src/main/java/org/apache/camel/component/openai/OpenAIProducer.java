@@ -75,10 +75,11 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private Class<?> outputClassResolved;
     private McpToolCallExecutor toolCallExecutor;
-    private final OpenAIToolSearch toolSearch = new OpenAIToolSearch();
+    private final OpenAIToolSearch toolSearch;
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
+        this.toolSearch = new OpenAIToolSearch(endpoint.getToolSearchSessions());
     }
 
     @Override

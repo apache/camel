@@ -50,10 +50,11 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
     private Class<?> outputClassResolved;
     private McpToolCallExecutor toolCallExecutor;
-    private final OpenAIToolSearch toolSearch = new OpenAIToolSearch();
+    private final OpenAIToolSearch toolSearch;
 
     public OpenAIResponsesProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
+        this.toolSearch = new OpenAIToolSearch(endpoint.getToolSearchSessions());
     }
 
     @Override
@@ -186,7 +187,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
         boolean toolSearchEnabled = config.isToolSearch();
         if (toolSearchEnabled) {
-            toolSearch.openSession(exchange, config);
+            toolSearch.openSession(exchange, config, conversationId);
         }
         try {
             if (toolSearchEnabled) {
@@ -280,7 +281,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                     AiToolSearchSession session = exchange.getProperty(
                             OpenAIToolSearch.SESSION_PROPERTY, AiToolSearchSession.class);
                     if (session == null) {
-                        session = toolSearch.openSession(exchange, config);
+                        session = toolSearch.openSession(exchange, config, conversationId);
                     }
                     selectedTools = OpenAIToolSearch.select(
                             config, getEndpoint().getMcpToolState(), session);
@@ -329,7 +330,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 List<ChatCompletionMessageToolCall> toolCalls = OpenAIResponsesSupport.toChatToolCalls(functionCalls);
                 List<McpToolCallExecutor.ToolResult> results = config.isToolSearch()
                         ? toolCallExecutor.execute(toolCalls, exchange,
-                                call -> toolSearch.execute(getEndpoint(), call, exchange),
+                                call -> toolSearch.execute(getEndpoint(), call, exchange, conversationId),
                                 conversationId)
                         : toolCallExecutor.execute(toolCalls, exchange, null, conversationId);
                 observability.recordIteration(

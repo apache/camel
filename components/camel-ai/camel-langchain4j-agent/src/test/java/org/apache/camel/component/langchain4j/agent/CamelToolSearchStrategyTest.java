@@ -25,6 +25,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
@@ -114,6 +119,32 @@ class CamelToolSearchStrategyTest {
         assertThat(embeddingModel.embedAllCount()).isEqualTo(batchCallsAfterChange);
     }
 
+    @Test
+    void concurrentSearchesDoNotSerializeEmbeddingCalls() throws Exception {
+        ConcurrentEmbeddingModel embeddingModel = new ConcurrentEmbeddingModel();
+        CamelToolSearchStrategy strategy = new CamelToolSearchStrategy(
+                AiToolSearchStrategy.VECTOR, 5, embeddingModel);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        try {
+            Future<ToolSearchResult> first = executor.submit(
+                    () -> strategy.search(createRequest("{\"query\":\"weather\"}")));
+            Future<ToolSearchResult> second = executor.submit(
+                    () -> strategy.search(createRequest("{\"query\":\"forecast\"}")));
+
+            boolean bothEnteredEmbedding = embeddingModel.awaitBothCalls();
+            embeddingModel.releaseCalls();
+
+            assertThat(first.get(5, TimeUnit.SECONDS).foundToolNames()).isNotEmpty();
+            assertThat(second.get(5, TimeUnit.SECONDS).foundToolNames()).isNotEmpty();
+            assertThat(bothEnteredEmbedding).isTrue();
+            assertThat(embeddingModel.maxConcurrentBatchCalls()).isGreaterThan(1);
+        } finally {
+            embeddingModel.releaseCalls();
+            executor.shutdownNow();
+        }
+    }
+
     private ToolSearchRequest createRequest(String arguments) {
         return createRequest(arguments, "Get weather for a city");
     }
@@ -149,6 +180,46 @@ class CamelToolSearchStrategyTest {
                 .toolExecutionRequest(executionRequest)
                 .invocationContext(invocationContext)
                 .build();
+    }
+
+    private static class ConcurrentEmbeddingModel extends CountingEmbeddingModel {
+
+        private final CountDownLatch bothCallsEntered = new CountDownLatch(2);
+        private final CountDownLatch release = new CountDownLatch(1);
+        private final AtomicInteger activeBatchCalls = new AtomicInteger();
+        private final AtomicInteger maximumConcurrentBatchCalls = new AtomicInteger();
+
+        @Override
+        public Response<List<Embedding>> embedAll(List<TextSegment> textSegments) {
+            int active = activeBatchCalls.incrementAndGet();
+            maximumConcurrentBatchCalls.accumulateAndGet(active, Math::max);
+            bothCallsEntered.countDown();
+
+            try {
+                if (!release.await(5, TimeUnit.SECONDS)) {
+                    throw new IllegalStateException(
+                            "Timed out waiting for concurrent embedding call");
+                }
+                return super.embedAll(textSegments);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Interrupted during test embedding", e);
+            } finally {
+                activeBatchCalls.decrementAndGet();
+            }
+        }
+
+        boolean awaitBothCalls() throws InterruptedException {
+            return bothCallsEntered.await(2, TimeUnit.SECONDS);
+        }
+
+        void releaseCalls() {
+            release.countDown();
+        }
+
+        int maxConcurrentBatchCalls() {
+            return maximumConcurrentBatchCalls.get();
+        }
     }
 
     private static class CountingEmbeddingModel implements EmbeddingModel {

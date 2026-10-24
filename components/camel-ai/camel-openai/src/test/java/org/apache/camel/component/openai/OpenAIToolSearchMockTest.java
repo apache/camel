@@ -40,6 +40,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -54,6 +55,10 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
             .end()
             .when("search on")
             .replyWith("on")
+            .end()
+            .when("call invoice directly")
+            .invokeTool("invoice")
+            .replyWith("invoiced-direct")
             .end()
             .when("find invoice")
             .invokeTool(AiToolSearch.TOOL_NAME)
@@ -92,6 +97,21 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
             .withParam("terms", List.of("weather"))
             .replyWith("weather-done")
             .end()
+            .when("find weather semantically")
+            .invokeTool(AiToolSearch.TOOL_NAME)
+            .withParam("query", "weather")
+            .invokeTool("get_weather")
+            .replyWith("semantic-weather")
+            .end()
+            .whenEmbedding("invoice\nbilling-document-invoice")
+            .replyWithEmbedding(new float[] { 0.0f, 1.0f })
+            .end()
+            .whenEmbedding("get_weather\nweather forecast")
+            .replyWithEmbedding(new float[] { 1.0f, 0.0f })
+            .end()
+            .whenEmbedding("weather")
+            .replyWithEmbedding(new float[] { 1.0f, 0.0f })
+            .end()
             .build();
 
     @Test
@@ -127,6 +147,27 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
         assertFalse(turns.get(0).contains("invoice"));
         assertTrue(turns.get(1).contains("invoice"));
         assertFalse(turns.get(1).contains("get_weather"));
+    }
+
+    @Test
+    void vectorSearchFindsAndExecutesTheSemanticallyMatchingMcpTool() {
+        String endpointUri = "openai:chat-completion?model=gpt-4o-mini&apiKey=dummy"
+                             + "&autoToolExecution=true&toolSearch=true"
+                             + "&toolSearchStrategy=vector&toolSearchEmbeddingModel=text-embedding-ada-002"
+                             + "&toolSearchMaxResults=1&tags=search&baseUrl="
+                             + openAIMock.getBaseUrl() + "/v1";
+        injectWeather(endpointUri);
+
+        String body = template.requestBody(
+                "direct:vector", "find weather semantically", String.class);
+
+        assertEquals("semantic-weather", body);
+        List<List<String>> turns = toolNamesFor("find weather semantically");
+        assertTrue(turns.size() >= 2);
+        assertTrue(turns.get(0).contains(AiToolSearch.TOOL_NAME));
+        assertFalse(turns.get(0).contains("invoice"));
+        assertTrue(turns.get(1).contains("get_weather"));
+        assertFalse(turns.get(1).contains("invoice"));
     }
 
     @Test
@@ -183,6 +224,59 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
         assertFalse(invoiceSecond.contains("get_weather"));
         assertTrue(weatherSecond.contains("get_weather"));
         assertFalse(weatherSecond.contains("invoice"));
+    }
+
+    @Test
+    void conversationMemoryReusesDiscoveriesAcrossExchanges() {
+        String endpointUri = "openai:chat-completion?model=gpt-4o-mini&apiKey=dummy"
+                             + "&autoToolExecution=true&toolSearch=true&conversationMemory=true"
+                             + "&tags=search&baseUrl=" + openAIMock.getBaseUrl() + "/v1";
+        injectWeather(endpointUri);
+
+        Exchange first = template.request(endpointUri, e -> {
+            e.getIn().setBody("find invoice");
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv-shared");
+        });
+        assertNull(first.getException());
+
+        List<RecordedRequest> afterFirst = openAIMock.getReceivedRequests();
+        int secondExchangeStart = afterFirst.size();
+        assertTrue(secondExchangeStart > 0);
+        assertFalse(toolNames(afterFirst.get(0).bodyAsJson()).contains("invoice"));
+
+        Exchange second = template.request(endpointUri, e -> {
+            e.getIn().setBody("call invoice directly");
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv-shared");
+        });
+        assertNull(second.getException());
+        assertEquals("invoiced-direct", second.getMessage().getBody(String.class));
+        assertEquals(List.of("invoice"),
+                second.getMessage().getHeader(OpenAIConstants.MCP_TOOL_CALLS, List.class));
+
+        List<RecordedRequest> afterSecond = openAIMock.getReceivedRequests();
+        assertTrue(afterSecond.size() > secondExchangeStart);
+        assertTrue(
+                toolNames(afterSecond.get(secondExchangeStart).bodyAsJson()).contains("invoice"));
+
+        int thirdExchangeStart = afterSecond.size();
+        Exchange third = template.request(endpointUri, e -> {
+            e.getIn().setBody("find invoice");
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv-other");
+        });
+        assertEquals(null, third.getException());
+
+        List<RecordedRequest> afterThird = openAIMock.getReceivedRequests();
+        assertTrue(afterThird.size() > thirdExchangeStart);
+        assertFalse(
+                toolNames(afterThird.get(thirdExchangeStart).bodyAsJson()).contains("invoice"));
+    }
+
+    private static List<String> toolNames(JsonNode root) {
+        List<String> names = new ArrayList<>();
+        for (JsonNode tool : root.path("tools")) {
+            names.add(tool.path("function").path("name").asText());
+        }
+        return names;
     }
 
     private void injectWeather(String endpointUri) {
@@ -251,6 +345,11 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
                 from("direct:on")
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true&toolSearch=true&tags=search&baseUrl="
                             + base);
+                from("direct:vector")
+                        .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true"
+                            + "&toolSearch=true&toolSearchStrategy=vector"
+                            + "&toolSearchEmbeddingModel=text-embedding-ada-002&toolSearchMaxResults=1"
+                            + "&tags=search&baseUrl=" + base);
                 from("direct:limited")
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true&toolSearch=true"
                             + "&maxToolIterations=1&tags=search&baseUrl=" + base);

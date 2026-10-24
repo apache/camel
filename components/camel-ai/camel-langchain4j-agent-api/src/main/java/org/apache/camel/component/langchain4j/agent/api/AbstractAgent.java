@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.BiPredicate;
 
+import dev.langchain4j.agent.tool.CompensateFor;
 import dev.langchain4j.agent.tool.SearchBehavior;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.McpToolProvider;
@@ -58,6 +60,60 @@ public abstract class AbstractAgent<S> implements Agent {
 
     protected AbstractAgent(AgentConfiguration configuration) {
         this.configuration = configuration;
+        validateToolSearchCompensation(configuration);
+    }
+
+    /**
+     * LangChain4j's tools(List<AiServiceTool>) overload does not register
+     *
+     * @CompensateFor methods. Reject this unsupported combination before the agent starts handling requests.
+     */
+    private static void validateToolSearchCompensation(
+            AgentConfiguration configuration) {
+        if (configuration == null
+                || configuration.getToolSearchStrategy() == null
+                || !Boolean.TRUE.equals(
+                        configuration.getCompensateOnToolErrors())) {
+            return;
+        }
+
+        List<Object> customTools = configuration.getCustomTools();
+        if (customTools == null || customTools.isEmpty()) {
+            return;
+        }
+
+        for (Object customTool : customTools) {
+            if (customTool != null
+                    && hasCompensatingMethod(customTool.getClass())) {
+                throw new IllegalArgumentException(
+                        "toolSearch cannot be combined with "
+                                                   + "compensateOnToolErrors=true when a custom tool "
+                                                   + "declares @CompensateFor. LangChain4j's "
+                                                   + "search-enabled custom-tool registration does not "
+                                                   + "register compensation handlers. Disable tool "
+                                                   + "search or disable compensation.");
+            }
+        }
+    }
+
+    private static boolean hasCompensatingMethod(Class<?> type) {
+        if (type == null || type == Object.class) {
+            return false;
+        }
+
+        for (Method method : type.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(CompensateFor.class)) {
+                return true;
+            }
+        }
+
+        for (Class<?> implementedInterface : type.getInterfaces()) {
+            if (hasCompensatingMethod(implementedInterface)) {
+                return true;
+            }
+        }
+
+        return hasCompensatingMethod(type.getSuperclass());
     }
 
     /**

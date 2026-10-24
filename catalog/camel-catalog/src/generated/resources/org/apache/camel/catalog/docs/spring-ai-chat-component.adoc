@@ -1013,7 +1013,7 @@ available tools. You can combine `toolNames` with `tags` — both tool sources a
 
 Enabling tool search does not skip MCP `tools/list`. It only reduces the definitions sent to the model. `toolSearch=false` (the default) sends the current combined set, and the `searchable` flag has no effect.
 
-Camel has to build the `ChatClient` from `chatModel`. A prebuilt `chatClient` cannot install the search advisor and fails at startup when `toolSearch=true`. `toolSearchStrategy=vector` requires an autowired `toolSearchEmbeddingModel` and does not fall back to keyword search.
+Camel has to build the `ChatClient` from `chatModel`. A prebuilt `chatClient` cannot install the search advisor and fails at startup when `toolSearch=true`. `toolSearchStrategy=vector` requires an autowired `toolSearchEmbeddingModel` and does not fall back to keyword search. Retained discoveries are keyed by `CamelSpringAiChatConversationId`. Sessions expire after 30 minutes of inactivity and each `SpringAiToolSearch` instance retains at most 10,000 sessions, evicting the least-recently-used session at capacity. Expired sessions are purged during later session operations; there is no background cleanup thread.
 
 [source,yaml]
 ----

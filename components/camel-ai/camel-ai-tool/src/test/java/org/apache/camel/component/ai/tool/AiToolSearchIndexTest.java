@@ -19,6 +19,7 @@ package org.apache.camel.component.ai.tool;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Test;
 
@@ -127,6 +128,22 @@ public class AiToolSearchIndexTest {
     }
 
     @Test
+    public void vectorTiesKeepCatalogueOrderAndThereIsNoMinimumSimilarityThreshold() {
+        AiToolSearchCandidate first = candidate("first", "one", null, true, "first");
+        AiToolSearchCandidate tied = candidate("tied", "two", null, true, "tied");
+        AiToolSearchCandidate opposite = candidate("opposite", "three", null, true, "opposite");
+        AiToolSearchIndex index = AiToolSearchIndex.create(
+                AiToolSearchStrategy.VECTOR,
+                List.of(first, tied, opposite),
+                3,
+                text -> "query".equals(text) || "first\none".equals(text) || "tied\ntwo".equals(text)
+                        ? new float[] { 1f, 0f }
+                        : new float[] { -1f, 0f });
+
+        assertThat(index.searchVector("query")).containsExactly(first, tied, opposite);
+    }
+
+    @Test
     public void sessionDropsNamesThatLeaveTheCatalogueAndIsolatesConversations() {
         AiToolSearchSession session = new AiToolSearchSession();
         session.remember(List.of("invoice", "weather"));
@@ -169,15 +186,24 @@ public class AiToolSearchIndexTest {
     }
 
     @Test
-    public void sessionsExpireAfterInactivity() throws InterruptedException {
-        AiToolSearchSessions sessions = new AiToolSearchSessions(10, 40);
+    public void sessionsExpireAfterInactivity() {
+        AtomicLong clock = new AtomicLong();
+        AiToolSearchSessions sessions = new AiToolSearchSessions(10, 40, clock::get);
 
-        sessions.session("one").remember(List.of("invoice"));
+        AiToolSearchSession session = sessions.session("one");
+        session.remember(List.of("invoice"));
         assertThat(sessions.size()).isEqualTo(1);
 
-        Thread.sleep(100);
+        clock.addAndGet(TimeUnit.MILLISECONDS.toNanos(10));
+        AiToolSearchSession retained = sessions.session("one");
+        clock.addAndGet(TimeUnit.MILLISECONDS.toNanos(30));
+        // Accessing the retained session refreshes its idle timeout.
+        assertThat(retained.discoveredNames()).containsExactly("invoice");
+        clock.addAndGet(TimeUnit.MILLISECONDS.toNanos(30));
+        assertThat(sessions.size()).isEqualTo(1);
 
-        assertThat(sessions.session("one").discoveredNames()).isEmpty();
+        clock.addAndGet(TimeUnit.MILLISECONDS.toNanos(11));
+        assertThat(session.discoveredNames()).isEmpty();
         assertThat(sessions.size()).isZero();
     }
 

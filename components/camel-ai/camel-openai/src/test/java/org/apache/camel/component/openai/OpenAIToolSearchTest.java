@@ -22,15 +22,22 @@ import java.util.Set;
 
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import io.modelcontextprotocol.client.McpSyncClient;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.ai.tool.AiToolSearch;
 import org.apache.camel.component.ai.tool.AiToolSearchCandidate;
 import org.apache.camel.component.ai.tool.AiToolSearchIndex;
 import org.apache.camel.component.ai.tool.AiToolSearchSession;
+import org.apache.camel.component.ai.tool.AiToolSearchSessions;
 import org.apache.camel.component.ai.tool.AiToolSearchStrategy;
 import org.apache.camel.component.ai.tool.AiToolSpec;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -96,6 +103,52 @@ class OpenAIToolSearchTest {
     }
 
     @Test
+    void manualToolExecutionReusesRetainedDiscoveryWhenItsMemoryOptionIsDisabled() {
+        AiToolSearchSessions sessions = new AiToolSearchSessions();
+        OpenAIToolSearch chatSearch = new OpenAIToolSearch(sessions);
+        OpenAIToolSearch executionSearch = new OpenAIToolSearch(sessions);
+
+        OpenAIConfiguration chatConfiguration = configuration(true);
+        chatConfiguration.setConversationMemory(true);
+
+        OpenAIConfiguration executionConfiguration = configuration(true);
+        executionConfiguration.setConversationMemory(false);
+
+        String conversationId = "manual-loop-conversation";
+
+        Exchange chatExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession discovered = chatSearch.openSession(
+                chatExchange, chatConfiguration, conversationId);
+        discovered.remember(List.of("invoice"));
+        chatSearch.closeSession(chatExchange, chatConfiguration);
+
+        Exchange executionExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession reused = executionSearch.openSessionForExecution(
+                executionExchange, executionConfiguration, conversationId);
+
+        assertEquals(List.of("invoice"), reused.discoveredNames());
+        executionSearch.closeSession(executionExchange, executionConfiguration);
+
+        Exchange nextChatExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession nextTurn = chatSearch.openSession(
+                nextChatExchange, chatConfiguration, conversationId);
+        assertEquals(List.of("invoice"), nextTurn.discoveredNames());
+    }
+
+    @Test
+    void responsesToolSearchRequiresAutomaticToolExecution() {
+        OpenAIConfiguration configuration = configuration(true);
+        configuration.setAutoToolExecution(false);
+
+        assertDoesNotThrow(() -> OpenAIToolSearch.validateConfiguration(configuration, false));
+
+        IllegalArgumentException error = assertThrows(
+                IllegalArgumentException.class,
+                () -> OpenAIToolSearch.validateConfiguration(configuration, true));
+        assertTrue(error.getMessage().contains("autoToolExecution=true"));
+    }
+
+    @Test
     void reservedNameFailsWhenSearchIsEnabled() {
         AiToolSpec reservedSpec = spec(AiToolSearch.TOOL_NAME, "collision", false);
         ChatCompletionFunctionTool reserved = AiToolSpecToOpenAI.convert(reservedSpec);
@@ -114,6 +167,119 @@ class OpenAIToolSearchTest {
         first.remember(List.of("invoice"));
 
         assertEquals(List.of(), second.discoveredNames());
+    }
+
+    @Test
+    void conversationSessionIsReusedAcrossExchanges() {
+        OpenAIToolSearch toolSearch = new OpenAIToolSearch();
+        OpenAIConfiguration configuration = configuration(true);
+        configuration.setConversationMemory(true);
+
+        Exchange firstExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession firstSession = toolSearch.openSession(firstExchange, configuration, "conversation-1");
+        firstSession.remember(List.of("invoice"));
+
+        toolSearch.closeSession(firstExchange, configuration);
+        assertNull(firstExchange.getProperty(OpenAIToolSearch.SESSION_PROPERTY));
+
+        Exchange secondExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession secondSession = toolSearch.openSession(secondExchange, configuration, "conversation-1");
+
+        assertEquals(List.of("invoice"), secondSession.discoveredNames());
+    }
+
+    @Test
+    void differentConversationsDoNotShareSessions() {
+        OpenAIToolSearch toolSearch = new OpenAIToolSearch();
+        OpenAIConfiguration configuration = configuration(true);
+        configuration.setConversationMemory(true);
+
+        Exchange firstExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession firstSession = toolSearch.openSession(firstExchange, configuration, "conversation-1");
+
+        Exchange secondExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession secondSession = toolSearch.openSession(secondExchange, configuration, "conversation-2");
+
+        assertNotSame(firstSession, secondSession);
+    }
+
+    @Test
+    void clearingSessionsStartsANewConversationSession() {
+        OpenAIToolSearch toolSearch = new OpenAIToolSearch();
+        OpenAIConfiguration configuration = configuration(true);
+        configuration.setConversationMemory(true);
+
+        Exchange firstExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession firstSession = toolSearch.openSession(firstExchange, configuration, "conversation-1");
+
+        toolSearch.clearSessions();
+
+        Exchange secondExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession secondSession = toolSearch.openSession(secondExchange, configuration, "conversation-1");
+
+        assertNotSame(firstSession, secondSession);
+    }
+
+    @Test
+    void sessionsAreNotSharedWhenConversationMemoryIsDisabled() {
+        OpenAIToolSearch toolSearch = new OpenAIToolSearch();
+        OpenAIConfiguration configuration = configuration(true);
+        configuration.setConversationMemory(false);
+
+        Exchange firstExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession firstSession = toolSearch.openSession(firstExchange, configuration, "conversation-1");
+
+        toolSearch.closeSession(firstExchange, configuration);
+        assertNull(firstExchange.getProperty(OpenAIToolSearch.SESSION_PROPERTY));
+
+        Exchange secondExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession secondSession = toolSearch.openSession(secondExchange, configuration, "conversation-1");
+
+        assertNotSame(firstSession, secondSession);
+    }
+
+    @Test
+    void conversationHeaderTakesPrecedenceOverConfiguredConversationId() {
+        OpenAIToolSearch toolSearch = new OpenAIToolSearch();
+        OpenAIConfiguration configuration = configuration(true);
+        configuration.setConversationMemory(true);
+        configuration.setConversationId("configured-id");
+
+        Exchange firstExchange = new DefaultExchange(new DefaultCamelContext());
+        firstExchange.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "header-id");
+
+        AiToolSearchSession headerSession = toolSearch.openSession(firstExchange, configuration, "header-id");
+        headerSession.remember(List.of("invoice"));
+        toolSearch.closeSession(firstExchange, configuration);
+
+        Exchange secondExchange = new DefaultExchange(new DefaultCamelContext());
+        secondExchange.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "header-id");
+
+        AiToolSearchSession reusedHeaderSession = toolSearch.openSession(secondExchange, configuration);
+
+        assertEquals(List.of("invoice"), reusedHeaderSession.discoveredNames());
+
+        Exchange configuredExchange = new DefaultExchange(new DefaultCamelContext());
+        AiToolSearchSession configuredSession = toolSearch.openSession(configuredExchange, configuration);
+
+        assertNotSame(headerSession, configuredSession);
+        assertEquals(List.of(), configuredSession.discoveredNames());
+    }
+
+    @Test
+    void searchFailuresRespectConfiguredErrorStrategy() throws Exception {
+        OpenAIConfiguration configuration = configuration(true);
+        IllegalStateException failure = new IllegalStateException("embedding request failed");
+
+        // Default FAIL_EXCHANGE policy propagates the original failure.
+        assertThrows(IllegalStateException.class,
+                () -> OpenAIToolSearch.handleSearchError(configuration, failure));
+
+        // REPROMPT_MODEL turns the failure into an unsuccessful tool result.
+        configuration.setToolExecutionErrorStrategy(ToolExecutionErrorStrategy.REPROMPT_MODEL);
+        assertEquals(
+                "Error: Tool search failed: embedding request failed",
+                OpenAIToolSearch.handleSearchError(configuration, failure));
     }
 
     private static OpenAIConfiguration configuration(boolean toolSearch) {

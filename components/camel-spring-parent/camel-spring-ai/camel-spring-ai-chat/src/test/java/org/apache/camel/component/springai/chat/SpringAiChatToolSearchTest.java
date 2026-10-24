@@ -19,6 +19,7 @@ package org.apache.camel.component.springai.chat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -32,6 +33,12 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.embedding.Embedding;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.embedding.EmbeddingRequest;
+import org.springframework.ai.embedding.EmbeddingResponse;
+import org.springframework.ai.embedding.EmbeddingResponseMetadata;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,11 +51,46 @@ class SpringAiChatToolSearchTest extends CamelTestSupport {
 
     private final List<List<String>> turns = new CopyOnWriteArrayList<>();
     private final AtomicInteger calls = new AtomicInteger();
+    private final AtomicBoolean vectorMode = new AtomicBoolean();
+    private final AtomicInteger embeddingCalls = new AtomicInteger();
     private ChatModel chatModel;
+    private EmbeddingModel embeddingModel;
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
+        embeddingModel = new EmbeddingModel() {
+            @Override
+            public EmbeddingResponse call(EmbeddingRequest request) {
+                List<Embedding> embeddings = new ArrayList<>();
+                int index = 0;
+                for (String text : request.getInstructions()) {
+                    embeddingCalls.incrementAndGet();
+                    embeddings.add(new Embedding(vectorFor(text), index++));
+                }
+                return new EmbeddingResponse(embeddings, new EmbeddingResponseMetadata());
+            }
+
+            @Override
+            public float[] embed(Document document) {
+                embeddingCalls.incrementAndGet();
+                return vectorFor(document.getText());
+            }
+
+            @Override
+            public List<float[]> embed(List<String> texts) {
+                return texts.stream().map(text -> {
+                    embeddingCalls.incrementAndGet();
+                    return vectorFor(text);
+                }).toList();
+            }
+
+            @Override
+            public int dimensions() {
+                return 2;
+            }
+        };
+
         chatModel = mock(ChatModel.class);
         when(chatModel.getOptions()).thenReturn(ToolCallingChatOptions.builder().build());
         when(chatModel.call(any(Prompt.class))).thenAnswer(invocation -> {
@@ -58,7 +100,8 @@ class SpringAiChatToolSearchTest extends CamelTestSupport {
                 AssistantMessage search = AssistantMessage.builder()
                         .content("")
                         .toolCalls(List.of(new AssistantMessage.ToolCall(
-                                "call-1", "function", AiToolSearch.TOOL_NAME, "{\"terms\":[\"invoice\"]}")))
+                                "call-1", "function", AiToolSearch.TOOL_NAME,
+                                vectorMode.get() ? "{\"query\":\"invoice\"}" : "{\"terms\":[\"invoice\"]}")))
                         .build();
                 return new ChatResponse(List.of(new Generation(search)));
             }
@@ -74,6 +117,21 @@ class SpringAiChatToolSearchTest extends CamelTestSupport {
         assertThat(turns).hasSizeGreaterThanOrEqualTo(2);
         assertThat(turns.get(0)).contains("ping", AiToolSearch.TOOL_NAME);
         assertThat(turns.get(0)).doesNotContain("invoice");
+        assertThat(turns.get(1)).contains("invoice");
+    }
+
+    @Test
+    void vectorSearchUsesTheEmbeddingModelToDiscoverTheOriginalRouteTool() {
+        vectorMode.set(true);
+        embeddingCalls.set(0);
+
+        String response = template.requestBody(
+                "direct:vector", "find invoice semantically", String.class);
+
+        assertThat(response).isEqualTo("done");
+        assertThat(embeddingCalls.get()).isGreaterThanOrEqualTo(2);
+        assertThat(turns).hasSizeGreaterThanOrEqualTo(2);
+        assertThat(turns.get(0)).contains("ping", AiToolSearch.TOOL_NAME).doesNotContain("invoice");
         assertThat(turns.get(1)).contains("invoice");
     }
 
@@ -125,6 +183,13 @@ class SpringAiChatToolSearchTest extends CamelTestSupport {
         }
     }
 
+    private static float[] vectorFor(String text) {
+        if (text != null && text.toLowerCase(java.util.Locale.ROOT).contains("invoice")) {
+            return new float[] { 1.0f, 0.0f };
+        }
+        return new float[] { 0.0f, 1.0f };
+    }
+
     private static List<String> toolNames(Prompt prompt) {
         if (!(prompt.getOptions() instanceof ToolCallingChatOptions options) || options.getToolCallbacks() == null) {
             return List.of();
@@ -140,6 +205,7 @@ class SpringAiChatToolSearchTest extends CamelTestSupport {
             @Override
             public void configure() {
                 context.getRegistry().bind("chatModel", chatModel);
+                context.getRegistry().bind("embeddingModel", embeddingModel);
                 from("ai-tool:invoice?tags=erp&searchable=true&description=billing-document-invoice")
                         .routeId("invoice-route")
                         .setBody(constant("invoice-ok"));
@@ -147,6 +213,10 @@ class SpringAiChatToolSearchTest extends CamelTestSupport {
                         .setBody(constant("pong"));
                 from("direct:search")
                         .to("spring-ai-chat:chat?chatModel=#chatModel&tags=erp&toolSearch=true&toolSearchMaxResults=5");
+                from("direct:vector")
+                        .to("spring-ai-chat:chat?chatModel=#chatModel&tags=erp&toolSearch=true"
+                            + "&toolSearchMaxResults=1&toolSearchStrategy=vector"
+                            + "&toolSearchEmbeddingModel=#embeddingModel");
             }
         };
     }

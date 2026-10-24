@@ -479,7 +479,7 @@ Route-based tools registered via the xref:components::ai-tool-component.adoc[ai-
 
 Enabling tool search does not skip MCP `tools/list`. It only reduces the definitions sent to the model. `toolSearch=false` (the default) sends the current combined set, and the `searchable` flag has no effect.
 
-`toolSearchStrategy=keyword` (the default) matches the tool name and description. `toolSearchStrategy=vector` requires `toolSearchEmbeddingModel` and does not fall back to keyword search. `toolSearchMaxResults` defaults to 5. Discovered names are kept for the conversation when `conversationMemory=true`, and only for the current request otherwise. The name `tool_search_tool` is reserved while search is enabled.
+`toolSearchStrategy=keyword` (the default) matches the tool name and description. `toolSearchStrategy=vector` requires `toolSearchEmbeddingModel` and does not fall back to keyword search. `toolSearchMaxResults` defaults to 5. Discovered names are kept for the conversation when `conversationMemory=true`, and only for the current request otherwise. The name `tool_search_tool` is reserved while search is enabled. For manual tool loops, use the same stable `CamelOpenAIConversationId` header or configured `conversationId` on `openai:chat-completion` and `openai:tool-execution`; the tool-execution endpoint can then reuse the retained discoveries even when its `conversationMemory=false`. Retained sessions expire after 30 minutes of inactivity and are limited to 10,000 conversations per OpenAI component, with least-recently-used eviction. `toolSearch=true` on `openai:responses` requires `autoToolExecution=true`, because a Responses function-call result cannot be executed directly by `openai:tool-execution`.
 
 [source,yaml]
 ----

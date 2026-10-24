@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
@@ -311,6 +312,12 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                     endpointConfiguration.getToolSearchStrategy(),
                     endpointConfiguration.getToolSearchMaxResults(),
                     endpointConfiguration.getToolSearchEmbeddingModel()));
+        } else {
+            // The endpoint option controls Camel tool-search behavior.
+            // A strategy on the supplied bean must not hide route tools when
+            // toolSearch=false, because searchable metadata is only applied
+            // when the endpoint option is enabled.
+            agentConfiguration.withToolSearchStrategy(null);
         }
     }
 
@@ -372,11 +379,37 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (!allMcpClients.isEmpty()) {
             LOG.debug("Adding {} MCP clients to tool provider", allMcpClients.size());
             McpToolProvider.Builder mcpBuilder = McpToolProvider.builder().mcpClients(allMcpClients);
+            boolean toolSearch = endpoint.getConfiguration().isToolSearch();
+            AtomicBoolean reservedSearchNameFound = new AtomicBoolean();
             BiPredicate<McpClient, ToolSpecification> mcpFilter = resolveMcpToolProviderFilter();
+            if (toolSearch) {
+                BiPredicate<McpClient, ToolSpecification> configuredFilter = mcpFilter;
+                mcpFilter = (client, specification) -> {
+                    if (AiToolSearch.TOOL_NAME.equals(specification.name())) {
+                        // Record the conflict; the provider may swallow filter exceptions.
+                        reservedSearchNameFound.set(true);
+                        return false;
+                    }
+                    return configuredFilter == null || configuredFilter.test(client, specification);
+                };
+            }
             if (mcpFilter != null) {
                 mcpBuilder.filter(mcpFilter);
             }
-            providers.add(mcpBuilder.build());
+            ToolProvider mcpProvider = mcpBuilder.build();
+            if (toolSearch) {
+                providers.add(request -> {
+                    ToolProviderResult result = mcpProvider.provideTools(request);
+                    if (reservedSearchNameFound.get()) {
+                        throw new IllegalArgumentException(
+                                "Tool name '" + AiToolSearch.TOOL_NAME
+                                                           + "' is reserved while toolSearch=true");
+                    }
+                    return result;
+                });
+            } else {
+                providers.add(mcpProvider);
+            }
         }
 
         if (providers.isEmpty()) {
@@ -385,6 +418,13 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             return providers.get(0);
         } else {
             return new CompositeToolProvider(providers);
+        }
+    }
+
+    private static void rejectReservedToolName(ToolSpecification specification) {
+        if (AiToolSearch.TOOL_NAME.equals(specification.name())) {
+            throw new IllegalArgumentException(
+                    "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
         }
     }
 

@@ -30,10 +30,12 @@ import com.openai.models.embeddings.CreateEmbeddingResponse;
 import com.openai.models.embeddings.EmbeddingCreateParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ai.tool.AiToolSearch;
+import org.apache.camel.component.ai.tool.AiToolSearchArguments;
 import org.apache.camel.component.ai.tool.AiToolSearchCandidate;
 import org.apache.camel.component.ai.tool.AiToolSearchEmbedder;
 import org.apache.camel.component.ai.tool.AiToolSearchIndex;
 import org.apache.camel.component.ai.tool.AiToolSearchSession;
+import org.apache.camel.component.ai.tool.AiToolSearchSessions;
 import org.apache.camel.component.ai.tool.AiToolSearchStrategy;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.util.ObjectHelper;
@@ -61,6 +63,16 @@ final class OpenAIToolSearch {
                                                 + "\"description\":\"Natural language query describing the desired tool\"}},"
                                                 + "\"required\":[\"query\"]}";
 
+    private final AiToolSearchSessions sessions;
+
+    OpenAIToolSearch() {
+        this(new AiToolSearchSessions());
+    }
+
+    OpenAIToolSearch(AiToolSearchSessions sessions) {
+        this.sessions = ObjectHelper.notNull(sessions, "sessions");
+    }
+
     private final Object indexLock = new Object();
     private String cachedFingerprint;
     private AiToolSearchIndex cachedIndex;
@@ -82,6 +94,15 @@ final class OpenAIToolSearch {
         }
     }
 
+    static void validateConfiguration(OpenAIConfiguration configuration, boolean responsesOperation) {
+        validateConfiguration(configuration);
+        if (responsesOperation && configuration.isToolSearch() && !configuration.isAutoToolExecution()) {
+            throw new IllegalArgumentException(
+                    "toolSearch=true with openai:responses requires autoToolExecution=true; "
+                                               + "Responses function-call results cannot be executed by openai:tool-execution");
+        }
+    }
+
     static void rejectReservedName(McpToolState state) {
         if (state.knownToolNames().contains(AiToolSearch.TOOL_NAME)) {
             throw new IllegalArgumentException(
@@ -90,24 +111,69 @@ final class OpenAIToolSearch {
     }
 
     AiToolSearchSession openSession(Exchange exchange, OpenAIConfiguration configuration) {
-        if (configuration.isConversationMemory()) {
-            AiToolSearchSession existing = exchange.getProperty(SESSION_PROPERTY, AiToolSearchSession.class);
-            if (existing != null) {
-                return existing;
-            }
-            AiToolSearchSession created = new AiToolSearchSession();
-            exchange.setProperty(SESSION_PROPERTY, created);
-            return created;
+        String conversationId = exchange.getIn().getHeader(
+                OpenAIConstants.CONVERSATION_ID, String.class);
+        if (ObjectHelper.isEmpty(conversationId)) {
+            conversationId = configuration.getConversationId();
         }
+        return openSession(exchange, configuration, conversationId);
+    }
+
+    AiToolSearchSession openSession(
+            Exchange exchange, OpenAIConfiguration configuration, String conversationId) {
+        if (configuration.isConversationMemory() && ObjectHelper.isNotEmpty(conversationId)) {
+            AiToolSearchSession session = sessions.session(conversationId);
+            exchange.setProperty(SESSION_PROPERTY, session);
+            return session;
+        }
+
+        AiToolSearchSession existing = exchange.getProperty(SESSION_PROPERTY, AiToolSearchSession.class);
+        if (existing != null) {
+            return existing;
+        }
+
         AiToolSearchSession created = new AiToolSearchSession();
         exchange.setProperty(SESSION_PROPERTY, created);
         return created;
     }
 
-    void closeSession(Exchange exchange, OpenAIConfiguration configuration) {
-        if (!configuration.isConversationMemory()) {
-            exchange.removeProperty(SESSION_PROPERTY);
+    /**
+     * Opens a tool-execution session, preferring discoveries retained by the chat-completion endpoint for the same
+     * conversation id.
+     */
+    AiToolSearchSession openSessionForExecution(Exchange exchange, OpenAIConfiguration configuration) {
+        String conversationId = exchange.getIn().getHeader(
+                OpenAIConstants.CONVERSATION_ID, String.class);
+        if (ObjectHelper.isEmpty(conversationId)) {
+            conversationId = configuration.getConversationId();
         }
+        return openSessionForExecution(exchange, configuration, conversationId);
+    }
+
+    AiToolSearchSession openSessionForExecution(
+            Exchange exchange, OpenAIConfiguration configuration, String conversationId) {
+        AiToolSearchSession current = exchange.getProperty(SESSION_PROPERTY, AiToolSearchSession.class);
+        if (current != null) {
+            return current;
+        }
+
+        if (ObjectHelper.isNotEmpty(conversationId)) {
+            AiToolSearchSession retained = sessions.find(conversationId);
+            if (retained != null) {
+                exchange.setProperty(SESSION_PROPERTY, retained);
+                return retained;
+            }
+        }
+
+        return openSession(exchange, configuration, conversationId);
+    }
+
+    void closeSession(Exchange exchange, OpenAIConfiguration configuration) {
+        exchange.removeProperty(SESSION_PROPERTY);
+    }
+
+    void clearSessions() {
+        sessions.clear();
     }
 
     List<ChatCompletionTool> toolsFor(OpenAIEndpoint endpoint, AiToolSearchSession session) {
@@ -116,22 +182,47 @@ final class OpenAIToolSearch {
         return select(endpoint.getConfiguration(), state, session).stream().map(ChatCompletionTool::ofFunction).toList();
     }
 
-    McpToolCallExecutor.ToolResult execute(OpenAIEndpoint endpoint, ChatCompletionMessageToolCall toolCall, Exchange exchange) {
+    McpToolCallExecutor.ToolResult execute(OpenAIEndpoint endpoint, ChatCompletionMessageToolCall toolCall, Exchange exchange)
+            throws Exception {
+        OpenAIConfiguration configuration = endpoint.getConfiguration();
+        String conversationId = exchange.getIn().getHeader(
+                OpenAIConstants.CONVERSATION_ID, String.class);
+        if (ObjectHelper.isEmpty(conversationId)) {
+            conversationId = configuration.getConversationId();
+        }
+        return execute(endpoint, toolCall, exchange, conversationId);
+    }
+
+    McpToolCallExecutor.ToolResult execute(
+            OpenAIEndpoint endpoint, ChatCompletionMessageToolCall toolCall, Exchange exchange, String conversationId)
+            throws Exception {
         OpenAIConfiguration configuration = endpoint.getConfiguration();
         AiToolSearchSession session = exchange.getProperty(SESSION_PROPERTY, AiToolSearchSession.class);
         if (session == null) {
-            session = openSession(exchange, configuration);
+            session = openSessionForExecution(exchange, configuration, conversationId);
         }
         McpToolState state = endpoint.getMcpToolState();
         String arguments = toolCall.asFunction().function().arguments();
         String content;
         try {
             content = search(configuration, state, session, arguments, index(endpoint, state));
-        } catch (IllegalArgumentException e) {
-            content = "Error: " + e.getMessage();
+        } catch (Exception e) {
+            content = handleSearchError(configuration, e);
         }
         return new McpToolCallExecutor.ToolResult(
                 toolCall.asFunction().id(), AiToolSearch.TOOL_NAME, content, false, 0, !content.startsWith("Error:"));
+    }
+
+    /**
+     * Apply the configured tool execution error policy to tool-search failures.
+     */
+    static String handleSearchError(
+            OpenAIConfiguration configuration, Exception exception)
+            throws Exception {
+        if (configuration.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+            throw exception;
+        }
+        return "Error: Tool search failed: " + exception.getMessage();
     }
 
     static String search(
@@ -139,13 +230,14 @@ final class OpenAIToolSearch {
             AiToolSearchIndex index) {
         List<AiToolSearchCandidate> hits;
         if (configuration.getToolSearchStrategy() == AiToolSearchStrategy.VECTOR) {
-            String query = readString(argumentsJson, AiToolSearch.QUERY_ARGUMENT);
+            String query = AiToolSearchArguments.readString(argumentsJson, AiToolSearch.QUERY_ARGUMENT,
+                    OpenAIToolSearch::readArguments);
             if (query == null) {
                 return "Error: missing required tool argument '" + AiToolSearch.QUERY_ARGUMENT + "'";
             }
             hits = index.searchVector(query);
         } else {
-            List<String> terms = readTerms(argumentsJson);
+            List<String> terms = AiToolSearchArguments.readTerms(argumentsJson, OpenAIToolSearch::readArguments);
             if (terms == null) {
                 return "Error: missing required tool argument '" + AiToolSearch.TERMS_ARGUMENT + "'";
             }
@@ -193,20 +285,19 @@ final class OpenAIToolSearch {
     }
 
     private AiToolSearchIndex index(OpenAIEndpoint endpoint, McpToolState state) {
-        OpenAIConfiguration configuration = endpoint.getConfiguration();
-        String fingerprint = fingerprint(configuration, state);
         synchronized (indexLock) {
+            OpenAIConfiguration configuration = endpoint.getConfiguration();
+            String fingerprint = fingerprint(configuration, state);
             if (fingerprint.equals(cachedFingerprint) && cachedIndex != null) {
                 return cachedIndex;
             }
-        }
-        AiToolSearchEmbedder embedder = configuration.getToolSearchStrategy() == AiToolSearchStrategy.VECTOR
-                ? embedder(endpoint)
-                : null;
-        AiToolSearchIndex built = AiToolSearchIndex.create(
-                configuration.getToolSearchStrategy(), candidates(state), configuration.getToolSearchMaxResults(),
-                embedder);
-        synchronized (indexLock) {
+
+            AiToolSearchEmbedder embedder = configuration.getToolSearchStrategy() == AiToolSearchStrategy.VECTOR
+                    ? embedder(endpoint)
+                    : null;
+            AiToolSearchIndex built = AiToolSearchIndex.create(
+                    configuration.getToolSearchStrategy(), candidates(state),
+                    configuration.getToolSearchMaxResults(), embedder);
             cachedFingerprint = fingerprint;
             cachedIndex = built;
             return built;
@@ -280,40 +371,6 @@ final class OpenAIToolSearch {
             }
         }
         return List.copyOf(selected);
-    }
-
-    private static List<String> readTerms(String argumentsJson) {
-        Map<String, Object> arguments = readArguments(argumentsJson);
-        if (arguments == null || !arguments.containsKey(AiToolSearch.TERMS_ARGUMENT)) {
-            return null;
-        }
-        Object value = arguments.get(AiToolSearch.TERMS_ARGUMENT);
-        if (value instanceof List<?> list) {
-            List<String> terms = new ArrayList<>();
-            for (Object item : list) {
-                if (item != null) {
-                    terms.add(item.toString());
-                }
-            }
-            return terms;
-        }
-        if (value instanceof String text) {
-            return List.of(text);
-        }
-        return null;
-    }
-
-    private static String readString(String argumentsJson, String name) {
-        Map<String, Object> arguments = readArguments(argumentsJson);
-        if (arguments == null) {
-            return null;
-        }
-        Object value = arguments.get(name);
-        if (value == null) {
-            return null;
-        }
-        String text = value.toString().trim();
-        return text.isEmpty() ? null : text;
     }
 
     private static Map<String, Object> readArguments(String argumentsJson) {

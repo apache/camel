@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.component.ai.tool.AiToolSearch;
+import org.apache.camel.component.ai.tool.AiToolSearchArguments;
 import org.apache.camel.component.ai.tool.AiToolSearchCandidate;
 import org.apache.camel.component.ai.tool.AiToolSearchEmbedder;
 import org.apache.camel.component.ai.tool.AiToolSearchIndex;
@@ -179,25 +180,25 @@ final class SpringAiToolSearch {
     }
 
     private AiToolSearchIndex index(List<ToolCallback> catalogue, Set<String> searchable) {
-        List<AiToolSearchCandidate> candidates = new ArrayList<>();
-        for (ToolCallback callback : catalogue) {
-            String name = callback.getToolDefinition().name();
-            if (!searchable.contains(name) || AiToolSearch.TOOL_NAME.equals(name)) {
-                continue;
-            }
-            candidates.add(new AiToolSearchCandidate(
-                    name, callback.getToolDefinition().description(), callback.getToolDefinition().inputSchema(), true,
-                    callback));
-        }
-        String fingerprint = fingerprint(candidates);
         synchronized (indexLock) {
+            List<AiToolSearchCandidate> candidates = new ArrayList<>();
+            for (ToolCallback callback : catalogue) {
+                String name = callback.getToolDefinition().name();
+                if (!searchable.contains(name) || AiToolSearch.TOOL_NAME.equals(name)) {
+                    continue;
+                }
+                candidates.add(new AiToolSearchCandidate(
+                        name, callback.getToolDefinition().description(),
+                        callback.getToolDefinition().inputSchema(), true, callback));
+            }
+
+            String fingerprint = fingerprint(candidates);
             if (fingerprint.equals(cachedFingerprint) && cachedIndex != null) {
                 return cachedIndex;
             }
-        }
-        AiToolSearchEmbedder embedder = strategy == AiToolSearchStrategy.VECTOR ? this::embed : null;
-        AiToolSearchIndex built = AiToolSearchIndex.create(strategy, candidates, maxResults, embedder);
-        synchronized (indexLock) {
+
+            AiToolSearchEmbedder embedder = strategy == AiToolSearchStrategy.VECTOR ? this::embed : null;
+            AiToolSearchIndex built = AiToolSearchIndex.create(strategy, candidates, maxResults, embedder);
             cachedFingerprint = fingerprint;
             cachedIndex = built;
             return built;
@@ -251,7 +252,8 @@ final class SpringAiToolSearch {
     }
 
     private static String requiredQuery(String argumentsJson) {
-        String query = readString(argumentsJson, AiToolSearch.QUERY_ARGUMENT);
+        String query = AiToolSearchArguments.readString(
+                argumentsJson, AiToolSearch.QUERY_ARGUMENT, SpringAiToolSearch::parseArguments);
         if (query == null) {
             throw new IllegalArgumentException("missing required tool argument '" + AiToolSearch.QUERY_ARGUMENT + "'");
         }
@@ -259,44 +261,14 @@ final class SpringAiToolSearch {
     }
 
     private static List<String> requiredTerms(String argumentsJson) {
-        List<String> terms = readTerms(argumentsJson);
+        List<String> terms = AiToolSearchArguments.readTerms(argumentsJson, SpringAiToolSearch::parseArguments);
         if (terms == null) {
             throw new IllegalArgumentException("missing required tool argument '" + AiToolSearch.TERMS_ARGUMENT + "'");
         }
         return terms;
     }
 
-    private static List<String> readTerms(String argumentsJson) {
-        Map<String, Object> arguments = readArguments(argumentsJson);
-        if (arguments == null || !arguments.containsKey(AiToolSearch.TERMS_ARGUMENT)) {
-            return null;
-        }
-        Object value = arguments.get(AiToolSearch.TERMS_ARGUMENT);
-        if (value instanceof List<?> list) {
-            List<String> terms = new ArrayList<>();
-            for (Object item : list) {
-                if (item != null) {
-                    terms.add(item.toString());
-                }
-            }
-            return terms;
-        }
-        if (value instanceof String text) {
-            return List.of(text);
-        }
-        return null;
-    }
-
-    private static String readString(String argumentsJson, String name) {
-        Map<String, Object> arguments = readArguments(argumentsJson);
-        if (arguments == null || arguments.get(name) == null) {
-            return null;
-        }
-        String text = arguments.get(name).toString().trim();
-        return text.isEmpty() ? null : text;
-    }
-
-    private static Map<String, Object> readArguments(String argumentsJson) {
+    private static Map<String, Object> parseArguments(String argumentsJson) {
         if (argumentsJson == null || argumentsJson.isBlank()) {
             return null;
         }
