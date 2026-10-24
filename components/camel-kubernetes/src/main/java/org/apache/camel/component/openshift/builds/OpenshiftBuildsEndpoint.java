@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_BUILDS;
@@ -34,6 +37,24 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_B
              syntax = "openshift-builds:masterUrl", producerOnly = true,
              category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operation (the operation option, or else the"
+                                                + " CamelKubernetesOperation header) takes its input from headers: the"
+                                                + " namespace in CamelKubernetesNamespaceName, the name in"
+                                                + " CamelKubernetesBuildName and the labels in CamelKubernetesBuildsLabels. listBuilds does not"
+                                                + " read the namespace header: it lists the builds of all namespaces"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listBuilds", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.openshift.api.model.Build>"),
+                                           @BodyType.When(option = "operation", value = "listBuildsByLabels",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.openshift.api.model.Build>"),
+                                           @BodyType.When(option = "operation", value = "getBuild",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "io.fabric8.openshift.api.model.Build") },
+                                   description = "A List of Build for listBuilds and listBuildsByLabels; the Build for"
+                                                 + " getBuild (null when not found)"))
 public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {
 
     public OpenshiftBuildsEndpoint(String uri, OpenshiftBuildsComponent component, KubernetesConfiguration config) {

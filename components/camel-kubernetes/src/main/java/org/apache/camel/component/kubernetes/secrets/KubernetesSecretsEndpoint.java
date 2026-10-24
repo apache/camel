@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SECRETS;
@@ -33,6 +36,32 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_S
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SECRETS, title = "Kubernetes Secrets",
              syntax = "kubernetes-secrets:masterUrl", producerOnly = true,
              category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operation (the operation option, or else the"
+                                                + " CamelKubernetesOperation header) takes its input from headers: the"
+                                                + " namespace in CamelKubernetesNamespaceName, the name in"
+                                                + " CamelKubernetesSecretName, the labels in CamelKubernetesSecretsLabels and"
+                                                + " the Secret to create or update in CamelKubernetesSecret"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listSecrets", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.Secret>"),
+                                           @BodyType.When(option = "operation", value = "listSecretsByLabels",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.Secret>"),
+                                           @BodyType.When(option = "operation", value = "getSecret",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "io.fabric8.kubernetes.api.model.Secret"),
+                                           @BodyType.When(option = "operation", value = "createSecret", carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.Secret"),
+                                           @BodyType.When(option = "operation", value = "updateSecret", carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.Secret"),
+                                           @BodyType.When(option = "operation", value = "deleteSecret",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "A List of Secret for listSecrets and listSecretsByLabels; the Secret for"
+                                                 + " getSecret (null when not found), createSecret and updateSecret; a"
+                                                 + " Boolean for deleteSecret, false when not found"))
 public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesSecretsEndpoint(String uri, KubernetesSecretsComponent component, KubernetesConfiguration config) {
