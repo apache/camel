@@ -44,6 +44,9 @@
     "CamelTahuMessageUUID": { "index": 3, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "java.util.UUID", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The UUID of a Sparkplug message", "constantName": "org.apache.camel.component.tahu.TahuConstants#MESSAGE_UUID" },
     "CamelTahuMessageSequenceNumber": { "index": 4, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The sequence number of a Sparkplug message", "constantName": "org.apache.camel.component.tahu.TahuConstants#MESSAGE_SEQUENCE_NUMBER" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "null", "bytes" ], "description": "The body of the Sparkplug payload as a byte array when it has one, else no body, as for most messages and for the exchange of each metric. The metrics are the CamelTahuMetric.<name> headers, each a Tahu Metric" }
+  },
   "properties": {
     "hostId": { "index": 0, "kind": "path", "displayName": "Host Id", "group": "consumer", "label": "consumer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "ID for the host application" },
     "checkClientIdLength": { "index": 1, "kind": "parameter", "displayName": "Check Client Id Length", "group": "common", "label": "common", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.tahu.TahuConfiguration", "configurationField": "configuration", "description": "MQTT client ID length check enabled" },

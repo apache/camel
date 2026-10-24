@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -47,6 +50,11 @@ import org.eclipse.tahu.message.model.SparkplugBPayloadMap;
              producerOnly = true,
              category = { Category.MESSAGING, Category.IOT, Category.MONITORING },
              headersClass = TahuConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                  description = "A Tahu SparkplugBPayload with the metrics to publish, or no body: the"
+                                                + " metrics are then made from the CamelTahuMetric.<name> headers. Text, bytes"
+                                                + " or another body fails, as it does not convert to a SparkplugBPayload"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilterStrategyAware {
 
     @UriPath(label = "producer", description = "ID of the group")
