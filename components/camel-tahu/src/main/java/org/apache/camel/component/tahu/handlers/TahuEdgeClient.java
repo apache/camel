@@ -106,7 +106,10 @@ public final class TahuEdgeClient extends EdgeClient {
                 clientSubmittedFuture.get(SHUTDOWN_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
             } catch (TimeoutException te) {
                 clientSubmittedFuture.cancel(true);
-            } catch (CancellationException | ExecutionException | InterruptedException e) {
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOG.warn(loggingMarker, "Interrupted waiting for client shutdown", e);
+            } catch (CancellationException | ExecutionException e) {
                 LOG.warn(loggingMarker, "Caught exception waiting for client shutdown", e);
             }
             this.clientSubmittedFuture = null;

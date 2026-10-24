@@ -47,6 +47,21 @@ processors on each line do: the exchanges they handled (`79`), how many failed
 its width, so the code does not move as the numbers grow. The source reads as
 a heat map of the route: where messages go, where they fail.
 
+## Running as Saved
+The bottom border of the source says whether the integration runs the routes
+of the file as it is saved:
+- `● running as saved` — the integration loaded the file after it was saved
+- `○ reloading...` — saved a moment ago, and the integration reloads on save (`--dev`)
+- `○ not running yet` — saved after the integration loaded it: restart an
+  integration that runs without `--dev`, or see the log of one that did not
+  reload the file
+- `⚠ the reload failed` — the integration runs what it ran before the reload,
+  until a reload succeeds
+
+It compares when the file was saved with when the integration loaded the
+routes it has from it, and shows nothing for a file it has no route from.
+Edits not saved yet are not part of it: the title marks them with `*`.
+
 ## Edit Mode (Shortcuts)
 - **Ctrl+Z** — undo
 - **Ctrl+Y / Ctrl+Shift+Z** — redo
