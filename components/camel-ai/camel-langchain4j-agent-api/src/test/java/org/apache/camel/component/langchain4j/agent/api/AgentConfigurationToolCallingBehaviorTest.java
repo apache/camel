@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.langchain4j.agent.tool.CompensateFor;
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.data.message.AiMessage;
@@ -31,6 +32,7 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.tool.ToolErrorHandlerResult;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
+import dev.langchain4j.service.tool.search.simple.SimpleToolSearchStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -120,6 +122,20 @@ class AgentConfigurationToolCallingBehaviorTest {
     }
 
     @Test
+    void toolSearchRejectsCustomCompensationCombination() {
+        AgentConfiguration configuration = new AgentConfiguration()
+                .withCustomTools(List.of(new CompensatingCustomTool()))
+                .withCompensateOnToolErrors(true)
+                .withToolSearchStrategy(new SimpleToolSearchStrategy());
+
+        assertThatThrownBy(() -> new AgentWithoutMemory(configuration))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("toolSearch")
+                .hasMessageContaining("compensateOnToolErrors=true")
+                .hasMessageContaining("@CompensateFor");
+    }
+
+    @Test
     void toolExecutionErrorHandlerAndCompensationAllowRecovery() {
         ChatModel chatModel = new ChatModel() {
             @Override
@@ -188,6 +204,17 @@ class AgentConfigurationToolCallingBehaviorTest {
 
         assertThat(result.content()).isEqualTo("done");
         assertThat(beforeToolExecutionInvoked).isTrue();
+    }
+
+    static class CompensatingCustomTool {
+
+        @Tool(name = "completeOperation", value = "Completes an operation")
+        void completeOperation() {
+        }
+
+        @CompensateFor("completeOperation")
+        void compensateCompleteOperation() {
+        }
     }
 
     static class CountItemsTool {

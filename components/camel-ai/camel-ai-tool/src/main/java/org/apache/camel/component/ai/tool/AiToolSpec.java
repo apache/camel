@@ -44,7 +44,11 @@ public final class AiToolSpec {
     private final Set<String> requiredArgumentNames;
     private final AiToolAnnotations annotations;
     private final DefaultConsumer consumer;
+    private final boolean searchable;
 
+    /**
+     * Creates a spec that stays directly visible to the model. Equivalent to {@code searchable=false}.
+     */
     public AiToolSpec(
                       String name,
                       String description,
@@ -54,6 +58,20 @@ public final class AiToolSpec {
                       String outputJsonSchema,
                       AiToolAnnotations annotations,
                       DefaultConsumer consumer) {
+        this(name, description, parameterDefs, parametersJsonSchema, outputParameterDefs, outputJsonSchema, annotations,
+             consumer, false);
+    }
+
+    public AiToolSpec(
+                      String name,
+                      String description,
+                      Map<String, AiToolParameterHelper.ParameterDef> parameterDefs,
+                      String parametersJsonSchema,
+                      Map<String, AiToolParameterHelper.ParameterDef> outputParameterDefs,
+                      String outputJsonSchema,
+                      AiToolAnnotations annotations,
+                      DefaultConsumer consumer,
+                      boolean searchable) {
         this.name = name;
         this.description = description;
         this.parameterDefs = parameterDefs != null ? Collections.unmodifiableMap(parameterDefs) : Map.of();
@@ -75,6 +93,7 @@ public final class AiToolSpec {
         }
         this.annotations = annotations;
         this.consumer = consumer;
+        this.searchable = searchable;
     }
 
     public String getName() {
@@ -145,6 +164,15 @@ public final class AiToolSpec {
         return consumer;
     }
 
+    /**
+     * Whether this route tool is omitted from the initial model request while tool search is enabled.
+     * <p>
+     * This is a visibility policy. It does not authorize or reject a call.
+     */
+    public boolean isSearchable() {
+        return searchable;
+    }
+
     // Consumer is included so that two endpoints with the same tool name but different configurations
     // (e.g. different descriptions or parameters) are treated as distinct specs in the registry sets.
     @Override
@@ -165,14 +193,15 @@ public final class AiToolSpec {
                 && Objects.equals(declaredArgumentNames, that.declaredArgumentNames)
                 && Objects.equals(requiredArgumentNames, that.requiredArgumentNames)
                 && Objects.equals(annotations, that.annotations)
-                && Objects.equals(consumer, that.consumer);
+                && Objects.equals(consumer, that.consumer)
+                && searchable == that.searchable;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name, description, parameterDefs, parametersJsonSchema, outputParameterDefs,
                 outputJsonSchema, declaredArgumentNames,
-                requiredArgumentNames, annotations, consumer);
+                requiredArgumentNames, annotations, consumer, searchable);
     }
 
     @Override

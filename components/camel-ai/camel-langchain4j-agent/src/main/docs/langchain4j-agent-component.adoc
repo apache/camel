@@ -312,6 +312,29 @@ from("direct:start")
         + "&maxToolCallingRoundTrips=5&compensateOnToolErrors=true&executeToolsConcurrently=true");
 ----
 
+==== Tool search
+
+`toolSearch=true` omits route tools marked `searchable=true`, and remote MCP tools that already passed the tag, server, and provider filters, from the initial model request. A route tool with `searchable=false` stays directly visible, as do `customTools`. The model finds hidden tools through one synthetic `tool_search_tool`. Route and MCP tools are ranked together. LangChain4j still executes a found tool through its original executor and restores tools found earlier from chat memory.
+
+Enabling tool search does not skip MCP `tools/list`. It only reduces the definitions sent to the model. `toolSearch=false` (the default) sends the current combined set, and the `searchable` flag has no effect.
+
+`toolSearchStrategy=vector` requires an autowired `toolSearchEmbeddingModel` and does not fall back to keyword search. A dynamic tool provider registered outside Camel's composite is refreshed by LangChain4j after search and is not part of this catalogue. Tool search is only applied in inline agent creation mode.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ask
+      steps:
+        - to:
+            uri: langchain4j-agent:ops
+            parameters:
+              agentConfiguration: "#cfg"
+              tags: erp
+              toolSearch: true
+              toolSearchMaxResults: 5
+----
+
 ==== Creating an Agent without Memory
 
 ._Java-only: LangChain4j `AgentConfiguration` and programmatic bean registration_

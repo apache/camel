@@ -16,18 +16,23 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.BiPredicate;
 
+import dev.langchain4j.agent.tool.CompensateFor;
+import dev.langchain4j.agent.tool.SearchBehavior;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.tool.AiServiceTool;
 import dev.langchain4j.service.tool.ToolProvider;
+import dev.langchain4j.service.tool.ToolService;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -55,6 +60,60 @@ public abstract class AbstractAgent<S> implements Agent {
 
     protected AbstractAgent(AgentConfiguration configuration) {
         this.configuration = configuration;
+        validateToolSearchCompensation(configuration);
+    }
+
+    /**
+     * LangChain4j's tools(List<AiServiceTool>) overload does not register
+     *
+     * @CompensateFor methods. Reject this unsupported combination before the agent starts handling requests.
+     */
+    private static void validateToolSearchCompensation(
+            AgentConfiguration configuration) {
+        if (configuration == null
+                || configuration.getToolSearchStrategy() == null
+                || !Boolean.TRUE.equals(
+                        configuration.getCompensateOnToolErrors())) {
+            return;
+        }
+
+        List<Object> customTools = configuration.getCustomTools();
+        if (customTools == null || customTools.isEmpty()) {
+            return;
+        }
+
+        for (Object customTool : customTools) {
+            if (customTool != null
+                    && hasCompensatingMethod(customTool.getClass())) {
+                throw new IllegalArgumentException(
+                        "toolSearch cannot be combined with "
+                                                   + "compensateOnToolErrors=true when a custom tool "
+                                                   + "declares @CompensateFor. LangChain4j's "
+                                                   + "search-enabled custom-tool registration does not "
+                                                   + "register compensation handlers. Disable tool "
+                                                   + "search or disable compensation.");
+            }
+        }
+    }
+
+    private static boolean hasCompensatingMethod(Class<?> type) {
+        if (type == null || type == Object.class) {
+            return false;
+        }
+
+        for (Method method : type.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(CompensateFor.class)) {
+                return true;
+            }
+        }
+
+        for (Class<?> implementedInterface : type.getInterfaces()) {
+            if (hasCompensatingMethod(implementedInterface)) {
+                return true;
+            }
+        }
+
+        return hasCompensatingMethod(type.getSuperclass());
     }
 
     /**
@@ -154,9 +213,14 @@ public abstract class AbstractAgent<S> implements Agent {
             builder.toolProvider(new CompositeToolProvider(toolProviders));
         }
 
-        // Additional custom LangChain4j Tool Instances (objects with @Tool methods)
+        // Additional custom LangChain4j Tool Instances (objects with @Tool methods).
+        // These are not an MCP catalogue: when tool search is enabled they stay directly visible.
         if (configuration.getCustomTools() != null && !configuration.getCustomTools().isEmpty()) {
-            builder.tools(configuration.getCustomTools());
+            if (configuration.getToolSearchStrategy() != null) {
+                builder.tools(alwaysVisibleCustomTools(configuration.getCustomTools()));
+            } else {
+                builder.tools(configuration.getCustomTools());
+            }
         }
 
         // RAG
@@ -204,9 +268,35 @@ public abstract class AbstractAgent<S> implements Agent {
             }
         }
 
-        // Custom AiServices builder customizer (escape hatch for any builder option not directly exposed)
+        // Custom AiServices builder customizer (escape hatch for any builder option not directly exposed).
+        // It does not replace the shared tool ranker: the producer strategy is applied after this callback.
         if (configuration.getAiServicesCustomizer() != null) {
             configuration.getAiServicesCustomizer().accept(builder);
         }
+        if (configuration.getToolSearchStrategy() != null) {
+            builder.toolSearchStrategy(configuration.getToolSearchStrategy());
+        }
+    }
+
+    /**
+     * Custom {@code @Tool} objects are not part of the searchable MCP or route catalogue. Mark them always visible so
+     * an unmarked annotation, whose default is searchable, is not omitted from the first model request.
+     */
+    private static List<AiServiceTool> alwaysVisibleCustomTools(List<Object> customTools) {
+        List<AiServiceTool> visible = new ArrayList<>();
+        for (Object customTool : customTools) {
+            for (AiServiceTool found : ToolService.findTools(customTool)) {
+                ToolSpecification specification = found.toolSpecification().toBuilder()
+                        .addMetadata(ToolSpecification.METADATA_SEARCH_BEHAVIOR, SearchBehavior.ALWAYS_VISIBLE)
+                        .build();
+                visible.add(AiServiceTool.builder()
+                        .toolSpecification(specification)
+                        .toolExecutor(found.toolExecutor())
+                        .returnBehavior(found.returnBehavior())
+                        .immediateReturn(found.immediateReturn())
+                        .build());
+            }
+        }
+        return visible;
     }
 }

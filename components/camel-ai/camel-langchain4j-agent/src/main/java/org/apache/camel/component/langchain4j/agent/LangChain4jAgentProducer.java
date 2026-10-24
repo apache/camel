@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
@@ -60,6 +61,8 @@ import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolExecutor;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolResult;
+import org.apache.camel.component.ai.tool.AiToolSearch;
+import org.apache.camel.component.ai.tool.AiToolSearchStrategy;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.component.langchain4j.agent.api.AbstractAgent;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
@@ -124,7 +127,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (hasToolCallingEndpointOptions(endpoint.getConfiguration())) {
             if (endpoint.getConfiguration().getAgentConfiguration() == null) {
                 throw new IllegalArgumentException(
-                        "maxToolCallingRoundTrips, compensateOnToolErrors, and executeToolsConcurrently require "
+                        "maxToolCallingRoundTrips, compensateOnToolErrors, executeToolsConcurrently, and toolSearch require "
                                                    + "agentConfiguration to be set (inline agent creation mode). "
                                                    + "They cannot be used with a user-provided agent bean or agentFactory.");
             }
@@ -145,6 +148,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         } else if (endpoint.getConfiguration().getAgentConfiguration() != null) {
             AgentConfiguration agentConfiguration = endpoint.getConfiguration().getAgentConfiguration().duplicate();
             applyEndpointToolCallingOptions(agentConfiguration, endpoint.getConfiguration());
+            rejectReservedToolName(endpoint.getConfiguration());
             resolveExecuteToolsConcurrentlyExecutor(agentConfiguration);
             agent = agentConfiguration.getChatMemoryProvider() != null
                     ? new AgentWithMemory(agentConfiguration)
@@ -277,7 +281,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     private static boolean hasToolCallingEndpointOptions(LangChain4jAgentConfiguration configuration) {
         return configuration.getMaxToolCallingRoundTrips() > 0
                 || configuration.getCompensateOnToolErrors() != null
-                || configuration.getExecuteToolsConcurrently() != null;
+                || configuration.getExecuteToolsConcurrently() != null
+                || configuration.isToolSearch();
     }
 
     private static void applyEndpointToolCallingOptions(
@@ -290,6 +295,41 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         }
         if (endpointConfiguration.getExecuteToolsConcurrently() != null) {
             agentConfiguration.withExecuteToolsConcurrentlyEnabled(endpointConfiguration.getExecuteToolsConcurrently());
+        }
+        if (endpointConfiguration.isToolSearch()) {
+            if (endpointConfiguration.getToolSearchMaxResults() < 1) {
+                throw new IllegalArgumentException("toolSearchMaxResults must be at least 1");
+            }
+            if (endpointConfiguration.getToolSearchStrategy() == null) {
+                throw new IllegalArgumentException("toolSearchStrategy is required when toolSearch=true");
+            }
+            if (endpointConfiguration.getToolSearchStrategy() == AiToolSearchStrategy.VECTOR
+                    && endpointConfiguration.getToolSearchEmbeddingModel() == null) {
+                throw new IllegalArgumentException(
+                        "toolSearchStrategy=vector requires toolSearchEmbeddingModel and does not fall back to keyword search");
+            }
+            agentConfiguration.withToolSearchStrategy(new CamelToolSearchStrategy(
+                    endpointConfiguration.getToolSearchStrategy(),
+                    endpointConfiguration.getToolSearchMaxResults(),
+                    endpointConfiguration.getToolSearchEmbeddingModel()));
+        } else {
+            // The endpoint option controls Camel tool-search behavior.
+            // A strategy on the supplied bean must not hide route tools when
+            // toolSearch=false, because searchable metadata is only applied
+            // when the endpoint option is enabled.
+            agentConfiguration.withToolSearchStrategy(null);
+        }
+    }
+
+    private void rejectReservedToolName(LangChain4jAgentConfiguration configuration) {
+        if (!configuration.isToolSearch() || configuration.getTags() == null || configuration.getTags().isBlank()) {
+            return;
+        }
+        for (AiToolSpec spec : discoverAiToolsByName(configuration.getTags()).values()) {
+            if (AiToolSearch.TOOL_NAME.equals(spec.getName())) {
+                throw new IllegalArgumentException(
+                        "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
+            }
         }
     }
 
@@ -339,11 +379,37 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (!allMcpClients.isEmpty()) {
             LOG.debug("Adding {} MCP clients to tool provider", allMcpClients.size());
             McpToolProvider.Builder mcpBuilder = McpToolProvider.builder().mcpClients(allMcpClients);
+            boolean toolSearch = endpoint.getConfiguration().isToolSearch();
+            AtomicBoolean reservedSearchNameFound = new AtomicBoolean();
             BiPredicate<McpClient, ToolSpecification> mcpFilter = resolveMcpToolProviderFilter();
+            if (toolSearch) {
+                BiPredicate<McpClient, ToolSpecification> configuredFilter = mcpFilter;
+                mcpFilter = (client, specification) -> {
+                    if (AiToolSearch.TOOL_NAME.equals(specification.name())) {
+                        // Record the conflict; the provider may swallow filter exceptions.
+                        reservedSearchNameFound.set(true);
+                        return false;
+                    }
+                    return configuredFilter == null || configuredFilter.test(client, specification);
+                };
+            }
             if (mcpFilter != null) {
                 mcpBuilder.filter(mcpFilter);
             }
-            providers.add(mcpBuilder.build());
+            ToolProvider mcpProvider = mcpBuilder.build();
+            if (toolSearch) {
+                providers.add(request -> {
+                    ToolProviderResult result = mcpProvider.provideTools(request);
+                    if (reservedSearchNameFound.get()) {
+                        throw new IllegalArgumentException(
+                                "Tool name '" + AiToolSearch.TOOL_NAME
+                                                           + "' is reserved while toolSearch=true");
+                    }
+                    return result;
+                });
+            } else {
+                providers.add(mcpProvider);
+            }
         }
 
         if (providers.isEmpty()) {
@@ -352,6 +418,13 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             return providers.get(0);
         } else {
             return new CompositeToolProvider(providers);
+        }
+    }
+
+    private static void rejectReservedToolName(ToolSpecification specification) {
+        if (AiToolSearch.TOOL_NAME.equals(specification.name())) {
+            throw new IllegalArgumentException(
+                    "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
         }
     }
 
@@ -416,7 +489,12 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
             for (Map.Entry<String, AiToolSpec> entry : aiTools.entrySet()) {
                 AiToolSpec spec = entry.getValue();
-                ToolSpecification toolSpec = AiToolSpecToLangChain4j.toToolSpecification(spec);
+                if (endpoint.getConfiguration().isToolSearch() && AiToolSearch.TOOL_NAME.equals(spec.getName())) {
+                    throw new IllegalArgumentException(
+                            "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
+                }
+                ToolSpecification toolSpec = AiToolSpecToLangChain4j.toToolSpecification(
+                        spec, endpoint.getConfiguration().isToolSearch());
                 addToolToResult(resultBuilder, spec, toolSpec, exchange, hasMemory);
             }
 

@@ -19,6 +19,8 @@ package org.apache.camel.component.openai;
 import java.util.Map;
 
 import com.openai.core.ClientOptions;
+import org.apache.camel.component.ai.tool.AiToolSearch;
+import org.apache.camel.component.ai.tool.AiToolSearchStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -330,6 +332,30 @@ public class OpenAIConfiguration implements Cloneable {
                             + "The default of 0 disables the batch timeout and relies on mcpTimeout, which already bounds "
                             + "each individual MCP request. Only used when parallelToolExecution=true.")
     private long parallelToolTimeout;
+
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "When true, route tools marked searchable and remote MCP tools are omitted from the initial "
+                            + "model request and exposed through one synthetic search tool. Directly visible tools stay "
+                            + "in the request. Search is a visibility policy, not authorization. Enabling it does not "
+                            + "skip MCP tools/list; it only reduces the definitions sent to the model. When false, every "
+                            + "eligible tool is sent as before and the searchable flag has no effect.")
+    private boolean toolSearch;
+
+    @UriParam(defaultValue = "5")
+    @Metadata(description = "Maximum number of tools returned by one tool search. Route and MCP tools are ranked "
+                            + "together against this limit.")
+    private int toolSearchMaxResults = AiToolSearch.DEFAULT_MAX_RESULTS;
+
+    @UriParam(enums = "keyword,vector", defaultValue = "keyword")
+    @Metadata(description = "How tool search ranks route and MCP tools. 'keyword' matches the tool name and description. "
+                            + "'vector' uses cosine similarity and requires toolSearchEmbeddingModel. Vector search "
+                            + "does not fall back to keyword search.")
+    private AiToolSearchStrategy toolSearchStrategy = AiToolSearchStrategy.KEYWORD;
+
+    @UriParam
+    @Metadata(description = "Embedding model used when toolSearchStrategy=vector, for example text-embedding-3-small. "
+                            + "Required for vector search. It is not read from the embeddings operation model option.")
+    private String toolSearchEmbeddingModel;
 
     // ========== EMBEDDINGS CONFIGURATION ==========
 
@@ -1140,6 +1166,38 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setParallelToolTimeout(long parallelToolTimeout) {
         this.parallelToolTimeout = parallelToolTimeout;
+    }
+
+    public boolean isToolSearch() {
+        return toolSearch;
+    }
+
+    public void setToolSearch(boolean toolSearch) {
+        this.toolSearch = toolSearch;
+    }
+
+    public int getToolSearchMaxResults() {
+        return toolSearchMaxResults;
+    }
+
+    public void setToolSearchMaxResults(int toolSearchMaxResults) {
+        this.toolSearchMaxResults = toolSearchMaxResults;
+    }
+
+    public AiToolSearchStrategy getToolSearchStrategy() {
+        return toolSearchStrategy;
+    }
+
+    public void setToolSearchStrategy(AiToolSearchStrategy toolSearchStrategy) {
+        this.toolSearchStrategy = toolSearchStrategy;
+    }
+
+    public String getToolSearchEmbeddingModel() {
+        return toolSearchEmbeddingModel;
+    }
+
+    public void setToolSearchEmbeddingModel(String toolSearchEmbeddingModel) {
+        this.toolSearchEmbeddingModel = toolSearchEmbeddingModel;
     }
 
     public SSLContextParameters getSslContextParameters() {
