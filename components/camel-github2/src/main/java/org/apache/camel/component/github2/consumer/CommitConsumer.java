@@ -37,6 +37,7 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
     private static final int CAPACITY = 1000;
+    private static final int MAX_COMMITS_WITHOUT_LAST_SHA = 100;
 
     private final String branchName;
     private final String startingSha;
@@ -109,12 +110,32 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
             }
 
             List<GHCommit> commits = new ArrayList<>();
+            // read up to the last routed commit, and not only the first 100: lastSha then moves to the newest one, so
+            // the older new commits would be lost when more than 100 were pushed between two polls. GitHub lists the
+            // commits by committer date, newest first: in a linear history the commits pushed since the last routed
+            // one all come before it, but the commits that a merge brings in keep their older dates and can come after
+            // it, and are not routed. Without a last commit, or when it is not among the remembered number of newest
+            // commits (it is no longer on the branch, or it is further back than that), only the 100 newest are
+            // considered
+            int limit = lastSha != null ? CAPACITY : MAX_COMMITS_WITHOUT_LAST_SHA;
+            boolean lastShaFound = false;
             for (GHCommit commit : getRepository().queryCommits().from(branchName).list().withPageSize(100)) {
                 commits.add(commit);
-                // Stop after 100 commits to avoid fetching too many
-                if (commits.size() >= 100) {
+                if (lastSha != null && lastSha.equals(commit.getSHA1())) {
+                    lastShaFound = true;
                     break;
                 }
+                if (commits.size() >= limit) {
+                    break;
+                }
+            }
+            if (lastSha != null && !lastShaFound && commits.size() >= CAPACITY) {
+                LOG.warn("Last routed commit {} not found among the newest {} commits of branch {}: routing the newest {}"
+                         + " only. If it is still on the branch, the new commits before those are skipped",
+                        lastSha, CAPACITY, branchName, MAX_COMMITS_WITHOUT_LAST_SHA);
+            }
+            if (!lastShaFound && commits.size() > MAX_COMMITS_WITHOUT_LAST_SHA) {
+                commits = commits.subList(0, MAX_COMMITS_WITHOUT_LAST_SHA);
             }
 
             // clip the list after the last sha
@@ -139,6 +160,14 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
                 if (!commitHashes.contains(sha)) {
                     newCommits.push(commit);
                 }
+            }
+            if (newCommits.isEmpty() && lastSha != null && !lastShaFound && !commits.isEmpty()) {
+                // the last routed commit is no longer on the branch (a force push or a reset to an older commit), and
+                // the newest commits were all routed before: continue from the newest one, so that the next polls do
+                // not read the remembered number of commits again to look for the last routed one
+                LOG.info("Last routed commit {} is no longer on branch {}, continuing from the newest commit {}",
+                        lastSha, branchName, commits.get(0).getSHA1());
+                lastSha = commits.get(0).getSHA1();
             }
 
             Queue<Object> exchanges = new ArrayDeque<>();

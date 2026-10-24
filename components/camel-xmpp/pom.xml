@@ -49,6 +49,12 @@
             <artifactId>jxmpp-jid</artifactId>
             <version>${jxmpp-version}</version>
         </dependency>
+        <!-- smack-core needs it, but the resolver used on CI can leave it out (smack asks for jxmpp in a version range) -->
+        <dependency>
+            <groupId>org.jxmpp</groupId>
+            <artifactId>jxmpp-util-cache</artifactId>
+            <version>${jxmpp-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-core</artifactId>

@@ -76,6 +76,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyChannelCreation": target.getConfiguration().setLazyChannelCreation(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "nativetransport":
         case "nativeTransport": target.getConfiguration().setNativeTransport(property(camelContext, boolean.class, value)); return true;
         case "needclientauth":
@@ -217,6 +219,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyChannelCreation": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "nativetransport":
         case "nativeTransport": return boolean.class;
         case "needclientauth":
@@ -359,6 +363,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyChannelCreation": return target.getConfiguration().isLazyChannelCreation();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "muteexception":
+        case "muteException": return target.getConfiguration().isMuteException();
         case "nativetransport":
         case "nativeTransport": return target.getConfiguration().isNativeTransport();
         case "needclientauth":

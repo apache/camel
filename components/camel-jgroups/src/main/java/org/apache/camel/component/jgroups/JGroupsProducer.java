@@ -37,6 +37,9 @@ public class JGroupsProducer extends DefaultProducer {
 
     private final String clusterName;
 
+    // whether this producer connected the channel, so that a producer that failed to start does not disconnect it
+    private volatile boolean connected;
+
     // Constructor
 
     public JGroupsProducer(JGroupsEndpoint endpoint, String clusterName) {
@@ -52,11 +55,15 @@ public class JGroupsProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         endpoint.connect();
+        connected = true;
     }
 
     @Override
     protected void doStop() throws Exception {
-        endpoint.disconnect();
+        if (connected) {
+            connected = false;
+            endpoint.disconnect();
+        }
         super.doStop();
     }
 

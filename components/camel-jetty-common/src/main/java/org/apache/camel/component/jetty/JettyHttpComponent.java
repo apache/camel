@@ -123,7 +123,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     protected boolean useXForwardedForHeader;
     private Integer proxyPort;
     private boolean sendServerVersion = true;
-    private QueuedThreadPool defaultQueuedThreadPool;
     private String filesLocation;
     private Long maxFileSize = -1L;
     private Long maxRequestSize = -1L;
@@ -137,12 +136,15 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         final Server server;
         final ServerConnector connector;
         final CamelServlet servlet;
+        // the thread pool created for this server from minThreads / maxThreads, stopped with the server
+        final QueuedThreadPool threadPool;
         int refCount;
 
-        ConnectorRef(Server server, ServerConnector connector, CamelServlet servlet) {
+        ConnectorRef(Server server, ServerConnector connector, CamelServlet servlet, QueuedThreadPool threadPool) {
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
+            this.threadPool = threadPool;
             increment();
         }
 
@@ -359,7 +361,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
             connectorRef = new ConnectorRef(
                     server, connector,
-                    createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
+                    createServletForConnector(server, connector, endpoint.getHandlers(), endpoint),
+                    ownThreadPool(server));
             // must enable session before we start
             if (endpoint.isSessionSupport()) {
                 enableSessionSupport(connectorRef.server, connectorKey);
@@ -554,15 +557,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                 this.removeServerMBean(connectorRef.server);
                 //mbContainer.removeBean(connectorRef.connector);
             }
-            if (defaultQueuedThreadPool != null) {
-                try {
-                    defaultQueuedThreadPool.stop();
-                } catch (Exception t) {
-                    defaultQueuedThreadPool.destroy();
-                } finally {
-                    defaultQueuedThreadPool = null;
-                }
-            }
+            stopThreadPool(connectorRef);
             return null;
         }
         return connectorRef;
@@ -1332,10 +1327,34 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         }
     }
 
+    /**
+     * The thread pool that {@link #createServer()} created for the server from minThreads / maxThreads, which the
+     * server does not stop: each server has its own, so it is kept with the server and stopped when the server is no
+     * longer used, not when another server is.
+     */
+    private QueuedThreadPool ownThreadPool(Server server) {
+        if (threadPool == null && (minThreads != null || maxThreads != null)
+                && server.getThreadPool() instanceof QueuedThreadPool queuedThreadPool) {
+            return queuedThreadPool;
+        }
+        return null;
+    }
+
+    private static void stopThreadPool(ConnectorRef connectorRef) {
+        QueuedThreadPool pool = connectorRef.threadPool;
+        if (pool != null) {
+            try {
+                pool.stop();
+            } catch (Exception t) {
+                pool.destroy();
+            }
+        }
+    }
+
     protected Server createServer() {
 
         ThreadPool tp = threadPool;
-        defaultQueuedThreadPool = null;
+        QueuedThreadPool defaultQueuedThreadPool = null;
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
             if (getThreadPool() != null) {
@@ -1430,6 +1449,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                 // registered MBeans when Camel is done with the managed objects.
                 removeServerMBean(connectorRef.server);
                 connectorRef.server.stop();
+                stopThreadPool(connectorRef);
                 //removeServerMBean(connectorRef.connector);
                 CONNECTORS.remove(connectorEntry.getKey());
             }
