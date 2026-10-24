@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,24 @@ import org.apache.camel.support.DefaultEndpoint;
 @ManagedResource(description = "ZooKeeper Endpoint")
 @UriEndpoint(firstVersion = "2.9.0", scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path",
              category = { Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA }, headersClass = ZooKeeperMessage.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.BYTES, Carrier.NULL }, dependsOn = "sendEmptyMessageOnDelete",
+                                   byOption = @BodyType.When(option = "listChildren", value = "true",
+                                                             carriers = Carrier.LIST),
+                                   description = "The data of the znode as bytes, and no body when the znode is deleted;"
+                                                 + " with listChildren, the List of the names of its child znodes. The"
+                                                 + " CamelZooKeeperNode and CamelZookeeperStatistics headers say which znode"
+                                                 + " and its version"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The data to store in the znode, converted to bytes. A Map, a POJO or a"
+                                                + " number is not converted and stores no data; with the CamelZookeeperOperation"
+                                                + " header set to DELETE the body is not read"),
+           producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.BYTES, Carrier.TEXT, Carrier.VALUE },
+                                   byOption = @BodyType.When(option = "listChildren", value = "true",
+                                                             carriers = { Carrier.LIST, Carrier.UNCHANGED }),
+                                   description = "InOnly writes without waiting and leaves the body unchanged. InOut waits and"
+                                                 + " sets the bytes written, the path of the znode as text when it was created,"
+                                                 + " or true for a DELETE; with listChildren, the List of the names of the child"
+                                                 + " znodes of the path"))
 public class ZooKeeperEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

@@ -31,6 +31,9 @@
     "service": { "index": 4, "kind": "property", "displayName": "Service", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.cluster.CamelClusterService", "deprecated": false, "autowired": false, "secret": false, "description": "Inject the service to use." },
     "serviceSelector": { "index": 5, "kind": "property", "displayName": "Service Selector", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.cluster.CamelClusterService.Selector", "deprecated": false, "autowired": false, "secret": false, "description": "Inject the service selector used to lookup the CamelClusterService to use." }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unknown" ], "description": "The body the consumer of the delegate endpoint (delegateUri) makes, such as the file of a file consumer: only the node that holds the leadership of the namespace in the cluster service runs it" }
+  },
   "properties": {
     "namespace": { "index": 0, "kind": "path", "displayName": "Namespace", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the cluster namespace to use" },
     "delegateUri": { "index": 1, "kind": "path", "displayName": "Delegate Uri", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The endpoint uri to use in master\/slave mode" },

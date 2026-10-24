@@ -27,6 +27,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,11 @@ import org.apache.camel.support.DefaultEndpoint;
              remote = false, syntax = "opentelemetry-metrics:metricType:metricName", producerOnly = true,
              category = { Category.MONITORING },
              headersClass = OpenTelemetryConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used, unless an option such as increment, decrement or value is a simple"
+                                                + " expression that reads it, which must then give a number. The CamelMetrics"
+                                                + " headers override the options"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, description = "Unchanged; the CamelMetrics headers are removed"))
 public class OpenTelemetryEndpoint extends DefaultEndpoint {
 
     protected Meter meter;

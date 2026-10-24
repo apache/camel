@@ -23,6 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,10 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName",
              remote = false, internal = true, producerOnly = true, category = { Category.MONITORING },
              headersClass = MetricsConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the values come from the options or the CamelMetrics headers,"
+                                                + " such as CamelMetricsCounterIncrement or CamelMetricsGaugeSubject"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, description = "Unchanged; the CamelMetrics headers are removed"))
 public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;

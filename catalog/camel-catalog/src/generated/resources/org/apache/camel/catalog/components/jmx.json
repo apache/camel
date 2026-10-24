@@ -30,6 +30,9 @@
   "headers": {
     "jmx.handback": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The handback.", "constantName": "org.apache.camel.component.jmx.JMXConstants#JMX_HANDBACK" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "format": "xml", "byOption": [ { "option": "format", "value": "raw", "carriers": [ "pojo" ], "javaType": "javax.management.Notification" } ], "description": "The notification as XML text, such as an AttributeChangeNotification or a MonitorNotification element; with format=raw the Notification object. The handback object is in the jmx.handback header" }
+  },
   "properties": {
     "serverURL": { "index": 0, "kind": "path", "displayName": "Server URL", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Server url comes from the remaining endpoint. Use platform to connect to local JVM." },
     "format": { "index": 1, "kind": "parameter", "displayName": "Format", "group": "consumer", "label": "", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "xml", "raw" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "xml", "description": "Format for the message body. Either xml or raw. If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body." },
