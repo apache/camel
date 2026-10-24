@@ -2675,6 +2675,15 @@ password are refused over a channel that is neither signed nor encrypted unless 
 See the incompatible changes in the https://github.com/apache/plc4x/releases/tag/v1.0.0[PLC4X 1.0.0 release notes]
 for the full list.
 
+PLC4X 1.0.0 writes the array selection of a tag address before the data type, and as a range instead of a count. An
+address written as `holding-register:1:INT[4]` or `%DB42:28.0:BYTE[4]` for four elements is now written
+`holding-register:1[0..3]:INT` or `%DB42:28.0[0..3]:BYTE`; `[4]` before the data type selects the single element at
+index 4. Addresses in the old form no longer parse. This applies to the `tag.*` options, to `trigger` and to the
+addresses in the body of the producer.
+
+The S7 driver of PLC4X 1.0.0 no longer includes the `s7-light` driver, so `plc4x:s7-light://` endpoints no longer find
+a driver. Use `plc4x:s7://` instead.
+
 A consumer with `trigger` now reads the trigger tag and the tags in one request on the connection of the endpoint,
 every `period` milliseconds from the start of the route. Before, it sampled the trigger first after about one second,
 and read the tags in a later, separate request on another connection. A failed read is now reported to the exception
@@ -2682,9 +2691,11 @@ handler of the consumer (or to the error handler of the route with `bridgeErrorH
 before, the consumer stopped triggering after the first failed read of the trigger. After a failed poll the remembered
 trigger value is unknown, so a trigger that is still `true` when the PLC returns emits once. Since the consumer now uses
 the connection of the endpoint, `autoReconnect` governs its reconnects. A connection that cannot be set up when the
-route starts fails the start of the route, unless `autoReconnect=true`, in which case the polls retry it. As before,
-`period` must be positive when `trigger` is set. See the xref:components::plc4x-component.adoc[PLC4X component] for how
-triggered reading works.
+route starts fails the start of the route, unless `autoReconnect=true`, in which case the polls retry it. A route that
+starts with the CamelContext then fails the start of the CamelContext too, unless the route is supervised by the
+xref:route-controller.adoc[supervising route controller] or has `autoStartup=false`. As before, `period` must be
+positive when `trigger` is set. A trigger that reads as a value that is not a boolean, such as a number or an array,
+fails the poll. See the xref:components::plc4x-component.adoc[PLC4X component] for how triggered reading works.
 
 With `autoReconnect=true`, a lost connection is now closed and replaced with a new one from the driver instead of being
 reconnected, because the PLC4X 1.0.0 S7 and EtherNet/IP drivers cannot connect a connection again once it is lost. This
