@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.cyberark.vault.client.ConjurClient;
 import org.apache.camel.component.cyberark.vault.client.ConjurClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,21 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "4.17.0", scheme = "cyberark-vault", title = "CyberArk Vault",
              syntax = "cyberark-vault:label", producerOnly = true, category = { Category.CLOUD, Category.SECURITY },
              headersClass = CyberArkVaultConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "createSecret",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "getSecret, the default operation, does not read the body. createSecret stores"
+                                                + " the body as text, unless the CamelCyberArkVaultSecretValue header is set: bytes,"
+                                                + " a stream or a file are read as text, a Map or a POJO is stored as its"
+                                                + " toString(), so marshal it first, and no body fails"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   byOption = @BodyType.When(option = "operation", value = "createSecret",
+                                                             carriers = Carrier.UNCHANGED),
+                                   description = "The value of the secret as text for getSecret, also in the"
+                                                 + " CamelCyberArkVaultSecretValue header: unmarshal a JSON secret to read its"
+                                                 + " fields. createSecret leaves the body unchanged"))
 public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
