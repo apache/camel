@@ -311,7 +311,7 @@ class MavenDownloaderImplTest {
         // Now create a new downloader with preferLocal=true, Maven Central disabled,
         // and a non-existent fake repo. Without preferLocal, this would fail because
         // there are no reachable remote repos. With preferLocal, it should succeed
-        // by resolving from the local cache via offline-first resolution.
+        // by using the local cache without checking the remote repositories.
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
             downloader.setPreferLocal(true);
             downloader.setMavenCentralEnabled(false);
@@ -335,9 +335,9 @@ class MavenDownloaderImplTest {
 
     @Test
     @EnabledIfSystemProperty(named = "enableMavenDownloaderTests", matches = "true")
-    void testPreferLocalFallsBackToOnline() throws Exception {
+    void testPreferLocalDownloadsMissingArtifact() throws Exception {
         // With preferLocal=true, if the artifact is NOT in the local repo,
-        // it should fall back to online resolution and succeed
+        // it is still downloaded
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
             downloader.setPreferLocal(true);
             downloader.build();

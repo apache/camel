@@ -347,10 +347,11 @@ public interface Athena2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The SQL query to run. Except for simple queries, prefer setting this
-         * as the body of the Exchange or as a header using
-         * Athena2Constants.QUERY_STRING to avoid having to deal with URL
-         * encoding issues.
+         * The SQL query to run. The CamelAwsAthenaQueryString header takes
+         * precedence over this option, and when useMessageBodyForSql is
+         * enabled, so does a non-empty message body. Except for simple queries,
+         * prefer setting the query in the header to avoid having to deal with
+         * URL encoding issues.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -450,6 +451,42 @@ public interface Athena2EndpointBuilderFactory {
          */
         default Athena2EndpointBuilder uriEndpointOverride(String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Whether to use the message body as the SQL query to run. When
+         * enabled, a non-empty message body takes precedence over the
+         * CamelAwsAthenaQueryString header and the queryString option. When
+         * disabled, the message body is not used as the query.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useMessageBodyForSql the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder useMessageBodyForSql(boolean useMessageBodyForSql) {
+            doSetProperty("useMessageBodyForSql", useMessageBodyForSql);
+            return this;
+        }
+        /**
+         * Whether to use the message body as the SQL query to run. When
+         * enabled, a non-empty message body takes precedence over the
+         * CamelAwsAthenaQueryString header and the queryString option. When
+         * disabled, the message body is not used as the query.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useMessageBodyForSql the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder useMessageBodyForSql(String useMessageBodyForSql) {
+            doSetProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
         }
         /**
@@ -1179,9 +1216,9 @@ public interface Athena2EndpointBuilderFactory {
             return "CamelAwsAthenaClientRequestToken";
         }
         /**
-         * The SQL query to run. Except for simple queries, prefer setting this
-         * as the body of the Exchange or as this header to avoid having to deal
-         * with URL encoding issues.
+         * The SQL query to run. It takes precedence over the queryString
+         * option. When the useMessageBodyForSql option is enabled, a non-empty
+         * message body takes precedence over this header.
          * 
          * The option is a: {@code String} type.
          * 

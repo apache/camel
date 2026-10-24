@@ -76,6 +76,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             @Metadata(description = "The source location (only present when known)") String source,
             @Metadata(description = "The source line number (only present when known)") Integer line,
             @Metadata(description = "The route description (only present when configured)") String description,
+            @Metadata(description = "The checksum of the route as written, the same in every run: the facts a tool keeps per line hold for this version of the route (only present when known, as it needs camel-xml-io)") String checksum,
             @Metadata(description = "The route's structure, one entry per processor (only present when the dump succeeded)") List<CodeEntry> code) {
     }
 
@@ -124,6 +125,9 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 if (def.getResource() != null) {
                     sb.append(String.format("%n    Source: %s",
                             extractSourceLocationNoLineNumber(def.getResource().getLocation())));
+                }
+                if (def.getChecksum() != null) {
+                    sb.append(String.format("%n    Checksum: %s", def.getChecksum()));
                 }
                 sb.append("\n\n");
                 // the body types line up in a column after the code (a long line pushes only its own types out)
@@ -186,7 +190,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 // ignore
             }
 
-            list.add(new RouteEntry(def.getRouteId(), def.getEndpointUrl(), source, line, def.getDescription(), code));
+            list.add(new RouteEntry(
+                    def.getRouteId(), def.getEndpointUrl(), source, line, def.getDescription(), def.getChecksum(), code));
             return null;
         };
         doCall(options, task);

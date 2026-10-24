@@ -99,3 +99,11 @@ An `as2://server/listen` consumer receives AS2 messages on `serverPortNumber`, f
 
 A `SIGNED`, `ENCRYPTED` or `SIGNED_ENCRYPTED` message structure also needs the keys and certificates of the signing
 and encrypting options.
+
+Several `as2://server/listen` consumers can share a `serverPortNumber`, each with its own `requestUriPattern`. Each
+consumer applies its own keys and certificates and its own asynchronous MDN settings (`mdnUserName`, `mdnPassword`,
+`mdnAccessToken` and `asyncMdnAllowedHosts`) to the messages received on its own pattern.
+
+The settings of the shared server connection still come from the first endpoint created on the port:
+`sslContextParameters` and `sslContext` (used for the TLS listener and for the https delivery of asynchronous MDNs),
+`mdnMessageTemplate`, `server`, `serverFqdn` and `as2Version`. They are per port, not per consumer.

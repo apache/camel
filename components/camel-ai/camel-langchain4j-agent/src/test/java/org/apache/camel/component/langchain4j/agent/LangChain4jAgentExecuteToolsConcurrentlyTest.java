@@ -17,17 +17,22 @@
 package org.apache.camel.component.langchain4j.agent;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ai.tool.AiToolConstants;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -35,6 +40,8 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,6 +57,7 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
     private CountDownLatch bothToolsEntered = new CountDownLatch(2);
     private final AtomicInteger inFlight = new AtomicInteger();
     private final AtomicInteger maxConcurrent = new AtomicInteger();
+    private final Map<String, String> toolConversations = new ConcurrentHashMap<>();
 
     @BeforeEach
     void resetConcurrencyState() {
@@ -57,6 +65,7 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
         bothToolsEntered = new CountDownLatch(2);
         maxConcurrent.set(0);
         inFlight.set(0);
+        toolConversations.clear();
     }
 
     @Override
@@ -66,6 +75,9 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
             public void configure() {
                 from("direct:agent")
                         .to("langchain4j-agent:test?agentConfiguration=#agentConfig&tags=" + TAG);
+
+                from("direct:agentWithMemory")
+                        .to("langchain4j-agent:test?agentConfiguration=#memoryConfig&tags=" + TAG);
 
                 from("ai-tool:slowToolA?tags=" + TAG + "&description=Slow tool A")
                         .process(exchange -> recordConcurrentEntry("A", exchange));
@@ -82,19 +94,37 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
                 .withChatModel(chatModel)
                 .withExecuteToolsConcurrently()
                 .withMaxToolCallingRoundTrips(5));
+        registry.bind("memoryConfig", new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withChatMemoryProvider(id -> MessageWindowChatMemory.withMaxMessages(20))
+                .withExecuteToolsConcurrently()
+                .withMaxToolCallingRoundTrips(5));
     }
 
     @Test
     void concurrentToolExecutionRunsBothToolsInParallel() throws Exception {
-        String response = template.requestBody("direct:agent", new AiAgentBody<>("run tools"), String.class);
+        String response = template.requestBody("direct:agent",
+                new AiAgentBody<>("run tools").withMemoryId("parallel-conversation"), String.class);
 
         assertThat(response).isEqualTo("done");
         assertThat(bothToolsEntered.await(10, TimeUnit.SECONDS))
                 .as("both tools should be invoked")
                 .isTrue();
+        assertThat(toolConversations).as("memory-less agents must not propagate the default conversation ID").isEmpty();
         assertThat(maxConcurrent.get())
                 .as("tools should overlap when executeToolsConcurrently is enabled")
                 .isGreaterThanOrEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "conversation-123", "default" })
+    void concurrentCallsHaveDistinctCallIdsAndShareTheConversationId(String conversationId) {
+        String response = template.requestBody("direct:agentWithMemory",
+                new AiAgentBody<>("run tools").withMemoryId(conversationId), String.class);
+
+        assertThat(response).isEqualTo("done");
+        assertThat(toolConversations).containsExactlyInAnyOrderEntriesOf(
+                Map.of("a", conversationId, "b", conversationId));
     }
 
     @Test
@@ -129,10 +159,7 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
     @Test
     void managedExecutorWorksAfterContextStopAndRestart() throws Exception {
         context.stop();
-        context.getRegistry().bind("agentConfig", new AgentConfiguration()
-                .withChatModel(chatModel)
-                .withExecuteToolsConcurrently()
-                .withMaxToolCallingRoundTrips(5));
+        bindToRegistry(context.getRegistry());
         context.start();
 
         String response = template.requestBody("direct:agent", new AiAgentBody<>("run tools"), String.class);
@@ -141,6 +168,12 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
     }
 
     private void recordConcurrentEntry(String label, Exchange exchange) throws InterruptedException {
+        String callId = exchange.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID, String.class);
+        assertThat(callId).isEqualTo(label.toLowerCase(Locale.ROOT));
+        String conversationId = exchange.getMessage().getHeader(AiToolConstants.CONVERSATION_ID, String.class);
+        if (conversationId != null) {
+            toolConversations.put(callId, conversationId);
+        }
         int concurrent = inFlight.incrementAndGet();
         maxConcurrent.updateAndGet(current -> Math.max(current, concurrent));
         bothToolsEntered.countDown();

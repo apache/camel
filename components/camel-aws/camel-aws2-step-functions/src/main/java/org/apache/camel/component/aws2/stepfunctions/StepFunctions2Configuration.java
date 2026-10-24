@@ -130,7 +130,7 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
     }
 
     /**
-     * The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction
+     * The operation to perform
      */
     public void setOperation(StepFunctions2Operations operation) {
         this.operation = operation;

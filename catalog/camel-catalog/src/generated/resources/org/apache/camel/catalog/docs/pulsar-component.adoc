@@ -72,3 +72,11 @@ The following routes send a message to the `orders` topic every five seconds, an
         - log:
             message: "Received ${body}"
 ----
+
+=== Producer sequence ids and deduplication
+
+With a `producerName` and deduplication enabled on the broker, the producer continues the sequence ids after the
+last sequence id the broker stored for that producer name, also after a restart, so the broker does not drop the
+messages of the new run as duplicates. Set `initialSequenceId` only to start from a given sequence id: every start
+then begins after that value again, so with a `producerName` and deduplication the broker drops the messages until
+their sequence ids pass the last one it stored. Leave the option unset to let the client continue.
