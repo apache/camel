@@ -80,12 +80,12 @@ public interface SmppConstants {
               javaType = "Date")
     String DONE_DATE = "CamelSmppDoneDate";
     @Metadata(label = "producer", description = "*only for SubmitSm,\n" +
-                                                "SubmitMulti and DataSm*.  Specifies the encoding (character set name) of\n" +
-                                                "the bytes in the message body.  If the message body is a string then\n" +
-                                                "this is not relevant because Java Strings are always Unicode.  If the\n" +
-                                                "body is a byte array then this header can be used to indicate that it is\n" +
-                                                "ISO-8859-1 or some other value.  Default value is specified by the\n" +
-                                                "endpoint configuration parameter _encoding_",
+                                                "SubmitMulti and ReplaceSm*.  Specifies the encoding (character set name)\n" +
+                                                "the text of the message body is encoded in, as the short message.  A\n" +
+                                                "byte array body is first read as text, in the charset of the exchange,\n" +
+                                                "unless an 8-bit data coding or alphabet header sends it as it is.\n" +
+                                                "Default value is specified by the endpoint configuration parameter\n" +
+                                                "_encoding_",
               javaType = "String")
     String ENCODING = "CamelSmppEncoding";
     @Metadata(description = "*Producer:* *only for SubmitMultiSm* The errors which\n" +

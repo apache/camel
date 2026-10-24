@@ -24,6 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -49,6 +52,15 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
              headersClass = ThymeleafConstants.class)
 @Metadata(excludeProperties = "contentCache")
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The template gets the body as ${body}, as it is: text, or a Map, a List or a"
+                                                + " POJO to read from; no body prints as empty text, and bytes or a stream"
+                                                + " are not read as text. The template is the resource, or the"
+                                                + " CamelThymeleafTemplate header with allowTemplateFromHeader=true, never the"
+                                                + " body"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The text the template writes, in its templateMode such as HTML. The headers"
+                                                 + " are kept"))
 public class ThymeleafEndpoint extends ResourceEndpoint {
 
     private TemplateEngine templateEngine;

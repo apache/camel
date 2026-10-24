@@ -86,7 +86,7 @@ and the key from the `keyName` option, unless the `CamelAwsS3Key` header is set.
 |
 
 | `getObject`
-| Get a single object. Returns an `S3Object` instance.
+| Get a single object. Returns its content as a stream.
 |
 
 | `getObjectRange`

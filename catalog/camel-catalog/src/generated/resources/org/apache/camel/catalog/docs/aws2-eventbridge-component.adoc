@@ -526,7 +526,7 @@ YAML::
 
 This operation will return a list of rules associated with a target.
 
-- PutEvent: this operation will send an event to the event bus. The message body is the detail of the event, which must be a JSON object
+- PutEvent: this operation will send an event to the event bus, with the message body as the detail of the event, which must be a JSON object as text
 
 [tabs]
 ====
@@ -538,7 +538,7 @@ from("direct:start")
     .setHeader("CamelAwsEventbridgeResourcesArn", constant("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test"))
     .setHeader("CamelAwsEventbridgeSource", constant("com.pippo"))
     .setHeader("CamelAwsEventbridgeDetailType", constant("peppe"))
-    .setBody(constant("Test Event"))
+    .setBody(constant("{\"message\": \"Test Event\"}"))
     .to("aws2-eventbridge://test?operation=putEvent")
     .to("mock:result");
 ----
@@ -559,7 +559,7 @@ XML::
     <constant>peppe</constant>
   </setHeader>
   <setBody>
-    <constant>Test Event</constant>
+    <constant>{"message": "Test Event"}</constant>
   </setBody>
   <to uri="aws2-eventbridge://test?operation=putEvent"/>
   <to uri="mock:result"/>
@@ -584,7 +584,7 @@ YAML::
             name: CamelAwsEventbridgeDetailType
             constant: peppe
         - setBody:
-            constant: Test Event
+            constant: '{"message": "Test Event"}'
         - to:
             uri: aws2-eventbridge://test
             parameters:

@@ -94,6 +94,42 @@ public class BodyTypeFlowTest {
     }
 
     @Test
+    public void testTheConsumersWithoutABodyComeFromTheCatalog() {
+        // CAMEL-24961: cron gives no body, and neither does an ftp consumer that does not download the file
+        String yaml = """
+                - route:
+                    id: nightly
+                    from:
+                      uri: cron:nightly
+                      parameters:
+                        schedule: 0 0 2 * * ?
+                      steps:
+                        - setHeader:
+                            name: sku
+                            jsonpath: $.sku
+                - route:
+                    id: listing
+                    from:
+                      uri: ftp:files.example.com/inbox?download=false
+                      steps:
+                        - setHeader:
+                            name: sku
+                            jsonpath: $.sku
+                - route:
+                    id: files
+                    from:
+                      uri: ftp:files.example.com/inbox
+                      steps:
+                        - setHeader:
+                            name: sku
+                            jsonpath: $.sku
+                """;
+        assertThat(messages(yaml)).satisfiesExactly(
+                m -> assertThat(m).contains("route nightly: jsonpath reads the message body"),
+                m -> assertThat(m).contains("route listing: jsonpath reads the message body"));
+    }
+
+    @Test
     public void testAPostCarriesABodySoNothingIsSaid() {
         String yaml = """
                 - rest:

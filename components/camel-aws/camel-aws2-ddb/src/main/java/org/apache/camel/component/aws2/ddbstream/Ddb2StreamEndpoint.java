@@ -23,6 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,11 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true,
              syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = Ddb2StreamConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "software.amazon.awssdk.services.dynamodb.model.Record",
+                                   description = "The change record of the stream, one message per record, with the event name"
+                                                 + " (INSERT, MODIFY or REMOVE) in a header. The keys and the images of the"
+                                                 + " item are maps of AttributeValue in body.dynamodb(). A Record is not a"
+                                                 + " JavaBean, so Jackson cannot marshal it"))
 public class Ddb2StreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam

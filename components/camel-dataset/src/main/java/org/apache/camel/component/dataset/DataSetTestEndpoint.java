@@ -27,6 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -46,6 +49,11 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset-test", title = "DataSet Test", syntax = "dataset-test:name",
              remote = false, producerOnly = true, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Each message is compared with the next body read at startup from the endpoint"
+                                                + " in the name. A mismatch fails the assertions of the endpoint, not the"
+                                                + " message"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class DataSetTestEndpoint extends MockEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSetTestEndpoint.class);

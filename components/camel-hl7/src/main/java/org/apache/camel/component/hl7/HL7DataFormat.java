@@ -32,6 +32,9 @@ import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -95,6 +98,22 @@ import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
  * @see org.apache.camel.component.hl7.HL7MLLPCodec
  */
 @Dataformat("hl7")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.POJO },
+                                 description = "A HAPI Message, or HL7 as text or bytes (ER7 or XML) or an HL7 XML DOM"
+                                               + " Document, which a type converter parses into a Message. A stream or a file"
+                                               + " fails: convert it to text first"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "HL7 in ER7 (pipe-delimited), or HL7 XML with targetFormat XML, in the stream"
+                                                + " cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                   description = "HL7 in ER7 (pipe-delimited) or XML, which the parser detects"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "ca.uhn.hl7v2.model.Message",
+                                    byOption = @BodyType.When(option = "targetFormat", value = "XML", carriers = Carrier.POJO,
+                                                              javaType = "org.w3c.dom.Document"),
+                                    description = "The HAPI Message of the structure for its type and version, such as"
+                                                  + " ADT_A01 (a GenericMessage without the structures), with the MSH fields"
+                                                  + " in CamelHL7 headers. With targetFormat XML, the HL7 XML as a DOM"
+                                                  + " Document"))
 public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final Map<String, String> HEADER_MAP = new HashMap<>();

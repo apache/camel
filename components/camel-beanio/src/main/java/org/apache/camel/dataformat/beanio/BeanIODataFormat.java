@@ -32,6 +32,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -51,6 +54,19 @@ import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanRea
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ( {@link DataFormat}) for beanio data.
  */
 @Dataformat("beanio")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                 byOption = @BodyType.When(option = "unmarshalSingleObject", value = "true",
+                                                           carriers = { Carrier.POJO, Carrier.MAP, Carrier.LIST }),
+                                 description = "A bean of a record of the mapping file, or a List (or an Iterator) of them; a"
+                                               + " Map is one record only with unmarshalSingleObject"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The records in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType({ Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+           unmarshalOut = @BodyType(value = Carrier.LIST,
+                                    byOption = @BodyType.When(option = "unmarshalSingleObject", value = "true",
+                                                              carriers = { Carrier.POJO, Carrier.MAP }),
+                                    description = "A List with the bean of each record, of the class the mapping file names"
+                                                  + " (a Map for a map record); with unmarshalSingleObject, the one bean"))
 public class BeanIODataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private transient CamelContext camelContext;

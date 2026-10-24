@@ -66,8 +66,8 @@ version (1.0) if the "headersInline" parameter is set to false.
 |Content-Type |String |The content of this header will be used as a content type for the
 message body part. If no content type is set, "application/octet-stream"
 is assumed. After the marshal operation, the content type is set to
-"multipart/related" or empty if the "headersInline" parameter is set to
-true.
+"multipart/" with the "multipartSubType" ("multipart/mixed" by default), or empty
+if the "headersInline" parameter is set to true.
 
 |Content-Encoding |String |If the incoming content type is "text/*" the content encoding will be
 set to the encoding parameter of the Content-Type MIME header of the

@@ -50,6 +50,10 @@ When the SSH Component is used as a Producer (`.to("ssh://...")`), it
 will send the message body as the command to execute on the remote SSH
 server.
 
+After the call, the message body is the standard output of the command as a stream, with the exit value in the
+`CamelSshExitValue` header and the standard error, as a stream as well, in the `CamelSshStderr` header. An exit value
+that is not 0 does not fail the exchange. The polling consumer gives the output of its `pollCommand` the same way.
+
 Here is an example of this. Note that the command has
 a newline (`+&#10;+`).
 

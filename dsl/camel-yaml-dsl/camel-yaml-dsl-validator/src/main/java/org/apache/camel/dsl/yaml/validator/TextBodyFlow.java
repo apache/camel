@@ -34,6 +34,7 @@ import com.networknt.schema.path.PathType;
 import org.apache.camel.util.MimeTypeHelper;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.from;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.normalize;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
 
@@ -52,9 +53,13 @@ import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
  * at runtime, because no type converter turns a Map into the stream they write: "No type converter available to convert
  * from type: java.util.LinkedHashMap to the required type: java.io.InputStream".
  * <p/>
- * Where the walk does not know the body - after a consumer other than the file consumer, or after a to: it cannot
- * follow - what a running integration of the routes saw there fills the gap, when all the bodies it saw were of one
- * kind (CAMEL-25750): the stream cache of an HTTP request, the List a sql call returns.
+ * What a component or a data format does with the body comes from the body types of the catalog (CAMEL-24961): the body
+ * a consumer gives (the file as read), what a producer can write (text, bytes, a stream or a file), the body it leaves
+ * (log keeps it, the http producer gives the response as bytes or a stream), what an unmarshal makes (a Map or a List),
+ * and what a consumer can reply with. Where the walk does not know the body - after a consumer or a to: the catalog
+ * does not say, or after a to: it cannot follow - what a running integration of the routes saw there fills the gap,
+ * when all the bodies it saw were of one kind (CAMEL-25750): the stream cache of an HTTP request, the List a sql call
+ * returns.
  */
 final class TextBodyFlow {
 
@@ -92,9 +97,6 @@ final class TextBodyFlow {
     private static final Set<String> SAME_BODY_BLOCKS = Set.of("choice", "when", "otherwise", "filter", "doTry",
             "doCatch", "doFinally");
 
-    /** Endpoints that leave the body as it is. */
-    private static final Set<String> KEEPS_THE_BODY = Set.of("log", "mock");
-
     /** Steps that leave the body as it is. */
     private static final Set<String> KEEPING_STEPS = Set.of("setHeader", "setHeaders", "setProperty", "setVariable",
             "setVariables", "removeHeader", "removeHeaders", "removeProperty", "removeProperties", "removeVariable",
@@ -105,12 +107,6 @@ final class TextBodyFlow {
 
     /** $.sku or $['sku']: a jsonpath that reads a field of the body, which is then an object. */
     private static final Pattern JSONPATH_FIELD = Pattern.compile("^\\$\\s*(\\.\\s*[A-Za-z_]|\\[\\s*['\"])");
-
-    /** The data formats whose unmarshal makes a Map or a List of the text. */
-    private static final Set<String> PARSES = Set.of("json", "jacksonXml", "yaml", "csv");
-
-    /** The unmarshal options that make something else of the text: an object of a class, or an iterator. */
-    private static final Set<String> NOT_A_MAP = Set.of("unmarshalType", "unmarshalTypeName", "lazyLoad");
 
     /** The Groovy collection methods whose result is data again: a List or a Map. */
     private static final Set<String> GIVES_DATA = Set.of("findAll", "collect", "collectEntries", "grep", "sort",
@@ -124,9 +120,6 @@ final class TextBodyFlow {
 
     /** The parameter of a closure: x -> ... */
     private static final Pattern CLOSURE_PARAMETER = Pattern.compile("^\\s*([A-Za-z_]\\w*)\\s*->");
-
-    /** The producers that write the body to a file. */
-    private static final Set<String> WRITES_A_FILE = Set.of("file", "ftp", "ftps", "sftp");
 
     /**
      * The consumers that bring no HTTP control headers, so an http producer after them picks POST for a body: after an
@@ -185,21 +178,21 @@ final class TextBodyFlow {
 
     /**
      * What a walk knows besides the body: the route, the routes of the file, where reports go (null for a route a step
-     * calls, which reports from its own walk), whether an http producer sends the body with POST, and the verbs of the
+     * calls, which reports from its own walk), whether an http producer sends the body with POST, the verbs of the
      * OpenAPI operations a rest-openapi call can be judged by (empty when a REST binding may write the body), with the
-     * fields their JSON requests need.
+     * fields their JSON requests need, and the body types of the catalog.
      */
     private record Walk(String routeId, Map<String, JsonNode> byFrom, List<Error> errors, Set<String> seen, boolean post,
             Map<String, Map<String, String>> operations, Map<String, Map<String, List<String>>> requestFields,
-            Map<String, ProjectFacts.Observed> observed) {
+            Map<String, ProjectFacts.Observed> observed, CatalogBodyTypes bodyTypes) {
 
         /** The walk of a route a step calls: for its outcome alone. */
         Walk called() {
-            return new Walk(null, byFrom, null, seen, false, operations, requestFields, observed);
+            return new Walk(null, byFrom, null, seen, false, operations, requestFields, observed, bodyTypes);
         }
     }
 
-    static void check(JsonNode target, NodePath path, List<Error> errors, ProjectFacts facts) {
+    static void check(JsonNode target, NodePath path, List<Error> errors, ProjectFacts facts, CatalogBodyTypes bodyTypes) {
         if (target == null || !target.isArray()) {
             return;
         }
@@ -240,24 +233,26 @@ final class TextBodyFlow {
             String uri = endpointOf(from);
             String consumer = scheme(uri);
             boolean post = NO_HTTP_HEADERS.contains(consumer) && !setsHttpHeaders(steps);
-            Body start = consumerText(from);
+            Body start = uri != null ? consumerBody(uri, from, bodyTypes) : null;
             if (start == null && uri != null) {
                 // what the consumer gave in a running integration of the route
                 start = observed(observed, ProjectFacts.consumerKey(uri), "from: " + normalize(uri) + " gave");
             }
             Body end = walk(steps, start, at, new Walk(
                     id, byFrom, errors, new HashSet<>(), post, operations,
-                    requestFields, observed));
-            // the body at the end of a platform-http route, or of the route of a REST call, is the reply
+                    requestFields, observed, bodyTypes));
+            // the body at the end of the route of a consumer that replies with text (platform-http), or of the route of
+            // a REST call, is the reply
             boolean rest = uri != null && restReplies.contains(normalize(uri));
-            if (("platform-http".equals(consumer) || rest) && end instanceof Parsed parsed && steps != null
+            CatalogBodyTypes.Answer reply = uri != null && !rest ? bodyTypes.consumerReply(uri, from) : null;
+            if ((rest || reply != null && reply.onlyPayload()) && end instanceof Parsed parsed && steps != null
                     && steps.isArray() && !steps.isEmpty() && steps.get(steps.size() - 1).fieldNames().hasNext()) {
                 int last = steps.size() - 1;
+                String caller = rest ? "REST call" : bodyTypes.http(uri) ? "HTTP request" : consumer + " request";
                 errors.add(error(at.append(last).append(steps.get(last).fieldNames().next()), id,
                         new Need(
-                                "the body at the end of the route is the reply to the "
-                                 + (rest ? "REST call" : "HTTP request"),
-                                "as the last step", rest),
+                                "the body at the end of the route is the reply to the " + caller, "as the last step",
+                                rest),
                         parsed));
             }
         }
@@ -272,20 +267,27 @@ final class TextBodyFlow {
         return steps != null && steps.toString().toLowerCase(Locale.ROOT).contains("camelhttp");
     }
 
-    private static JsonNode from(JsonNode entry) {
-        if (entry == null || !entry.isObject()) {
+    /**
+     * The body a consumer starts with, as the catalog says: the file as read (file, ftp), text or bytes (aws2-sqs,
+     * paho-mqtt5), or data (a row of sql); null when it is not known, or neither text nor data.
+     */
+    private static Body consumerBody(String uri, JsonNode from, CatalogBodyTypes bodyTypes) {
+        CatalogBodyTypes.Answer out = bodyTypes.consumerOut(uri, from);
+        if (out == null) {
             return null;
         }
-        JsonNode route = entry.get("route");
-        return route != null ? route.get("from") : entry.get("from");
+        String consumer = "the " + scheme(uri) + " consumer gives it";
+        if (out.payload()) {
+            // the file as read has the format of the files it reads
+            return out.file()
+                    ? new Text(consumer, fileFormat(from), true)
+                    : new Text(consumer + " as " + out.inWords(), out.dataFormat());
+        }
+        return out.data() ? new Parsed(consumer + " as " + out.inWords(), out.dataFormat()) : null;
     }
 
-    /** The body a consumer starts with: the file consumer reads a file, the text as it is; others are not known. */
-    private static Text consumerText(JsonNode from) {
-        String uri = endpointOf(from);
-        if (!"file".equals(scheme(uri))) {
-            return null;
-        }
+    /** The format of the files a file consumer reads, by the extension it includes. */
+    private static String fileFormat(JsonNode from) {
         JsonNode parameters = from.get("parameters");
         String format = null;
         for (String key : new String[] { "include", "antInclude", "fileName" }) {
@@ -294,7 +296,21 @@ final class TextBodyFlow {
                 format = formatOf(parameters.get(key).asText().replace("\\", ""));
             }
         }
-        return new Text("the file consumer gives it", format, true);
+        return format;
+    }
+
+    /**
+     * The body a producer leaves as the catalog says it: text (the response of the http producer) or data (the List of
+     * a mongodb findAll); null when it is not known, or neither text nor data.
+     */
+    private static Body producerBody(CatalogBodyTypes.Answer out, String origin) {
+        if (out == null) {
+            return null;
+        }
+        if (out.payload()) {
+            return new Text(origin + " as " + out.inWords(), out.dataFormat(), out.file());
+        }
+        return out.data() ? new Parsed(origin + " as " + out.inWords(), out.dataFormat()) : null;
     }
 
     /**
@@ -329,6 +345,9 @@ final class TextBodyFlow {
                     Parsed element = "split".equals(name) ? splitElement(value, parsed) : null;
                     if (need != null) {
                         w.errors().add(error(here, w.routeId(), need, parsed));
+                        // the step fails at runtime, so what comes after it is not run with this body: one report
+                        body = null;
+                        continue;
                     } else if (element != null) {
                         walk(value.get("steps"), element, here.append("steps"), w);
                     }
@@ -385,7 +404,7 @@ final class TextBodyFlow {
                         : null;
             }
             case "unmarshal" -> {
-                return unmarshalled(value);
+                return unmarshalled(value, w.bodyTypes());
             }
             case "marshal" -> {
                 String format = value != null && value.isObject() && value.fieldNames().hasNext()
@@ -404,11 +423,15 @@ final class TextBodyFlow {
             }
             case "to", "toD" -> {
                 String uri = endpointOf(value);
-                String scheme = scheme(uri);
-                if (scheme != null && KEEPS_THE_BODY.contains(scheme)) {
+                CatalogBodyTypes.Answer out = uri != null ? w.bodyTypes().producerOut(uri, value) : null;
+                if (out != null && out.unchanged()) {
+                    // log, a file write
                     return body;
                 }
                 Body returned = calledRoute(name, uri, body, w);
+                if (returned == null) {
+                    returned = producerBody(out, name + ": " + normalize(uri) + " returns it");
+                }
                 if (returned == null && uri != null) {
                     // what the producer returned in a running integration of the route
                     returned = observed(w.observed(), ProjectFacts.producerKey(uri),
@@ -512,22 +535,18 @@ final class TextBodyFlow {
         return null;
     }
 
-    /** The body after an unmarshal: parsed data for the data formats that make a Map or a List of the text. */
-    private static Parsed unmarshalled(JsonNode value) {
+    /**
+     * The body after an unmarshal: parsed data for a data format that makes a Map or a List of the text, as the catalog
+     * says with the options of the step (not with unmarshalType, which makes an object of a class, or lazyLoad, an
+     * iterator).
+     */
+    private static Parsed unmarshalled(JsonNode value, CatalogBodyTypes bodyTypes) {
         if (value == null || !value.isObject() || !value.fieldNames().hasNext()) {
             return null;
         }
         String format = value.fieldNames().next();
-        if (!PARSES.contains(format)) {
-            return null;
-        }
-        JsonNode options = value.get(format);
-        for (String option : NOT_A_MAP) {
-            if (options != null && options.isObject() && options.has(option)) {
-                return null;
-            }
-        }
-        return new Parsed("unmarshal: " + format + " turns the text into data", format);
+        CatalogBodyTypes.Answer out = bodyTypes.unmarshalOut(format, value.get(format));
+        return out != null && out.data() ? new Parsed("unmarshal: " + format + " turns the text into data", format) : null;
     }
 
     /**
@@ -654,8 +673,10 @@ final class TextBodyFlow {
     }
 
     /**
-     * A to: that needs the body as text: one that writes a file, an http producer that sends it with POST, or a
-     * rest-openapi call to an operation whose verb sends it (the producer calls with the verb of the specification).
+     * A to: that needs the body as text: a producer that the catalog says can only send or write text, bytes, a stream
+     * or a file (file, ftp), an http producer that sends it with POST, or a rest-openapi call to an operation whose
+     * verb sends it (the producer calls with the verb of the specification). The http method decides whether the http
+     * producer sends the body, and a REST binding may write it for rest-openapi: they keep their own rule.
      */
     private static Need needsText(String name, JsonNode value, Walk w) {
         if (!"to".equals(name) && !"toD".equals(name)) {
@@ -665,14 +686,6 @@ final class TextBodyFlow {
         String scheme = scheme(uri);
         if (scheme == null) {
             return null;
-        }
-        if (WRITES_A_FILE.contains(scheme)) {
-            return new Need(name + ": " + scheme + " writes the body to a file", "before this step");
-        }
-        if (w.post() && ("http".equals(scheme) || "https".equals(scheme)) && sendsTheBody(uri, value)) {
-            return new Need(
-                    name + ": " + scheme + " sends the body as the request (a message with a body is sent as a POST)",
-                    "before this step, or set httpMethod: GET when the call sends no body");
         }
         if ("rest-openapi".equals(scheme)) {
             Operation operation = operationOf(uri, value);
@@ -687,8 +700,21 @@ final class TextBodyFlow {
                                 + verb.toUpperCase(Locale.ROOT) + " in " + operation.spec() + ")",
                         "before this step", true, fields);
             }
+            return null;
         }
-        return null;
+        CatalogBodyTypes.Answer in = w.bodyTypes().producerIn(uri, value);
+        if (in == null || !in.onlyPayload()) {
+            return null;
+        }
+        if ("http".equals(scheme) || "https".equals(scheme)) {
+            return w.post() && sendsTheBody(uri, value)
+                    ? new Need(
+                            name + ": " + scheme
+                               + " sends the body as the request (a message with a body is sent as a POST)",
+                            "before this step, or set httpMethod: GET when the call sends no body")
+                    : null;
+        }
+        return new Need(name + ": " + scheme + " needs the body as " + in.inWords(), "before this step");
     }
 
     /**

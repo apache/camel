@@ -26,6 +26,9 @@ import com.github.jasminb.jsonapi.ResourceConverter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -35,6 +38,16 @@ import org.apache.camel.support.service.ServiceSupport;
  * JSonApi data format for marshal/unmarshal
  */
 @Dataformat("jsonApi")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO,
+                                 description = "One resource object of a class dataFormatTypes names, annotated with @Type and"
+                                               + " @Id of JSONAPI-Converter. A Map or a List fails"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
+                                  description = "The JSON:API document in the stream cache, or a byte array when stream"
+                                                + " caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                    description = "The primary data as an object of the class mainFormatType names, or no body"
+                                                  + " when the data is null. A document whose data is an array fails"))
 public class JsonApiDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
