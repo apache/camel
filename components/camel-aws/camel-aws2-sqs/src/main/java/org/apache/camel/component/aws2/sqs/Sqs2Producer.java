@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -33,6 +34,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
@@ -45,6 +47,7 @@ import software.amazon.awssdk.services.sqs.model.PurgeQueueResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
@@ -118,7 +121,7 @@ public class Sqs2Producer extends DefaultProducer {
         message.setHeader(Sqs2Constants.SEQUENCE_NUMBER, result.sequenceNumber());
     }
 
-    private void sendBatchMessage(SqsClient amazonSQS, Exchange exchange) {
+    private void sendBatchMessage(SqsClient amazonSQS, Exchange exchange) throws NoTypeConversionAvailableException {
         if (getEndpoint().getConfiguration().isFifoQueue()
                 && ObjectHelper.isEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
             throw new IllegalArgumentException("messageGroupIdStrategy must be set for FIFO queues.");
@@ -131,7 +134,8 @@ public class Sqs2Producer extends DefaultProducer {
                 SendMessageBatchRequestEntry.Builder entry = SendMessageBatchRequestEntry.builder();
                 entry.id(UUID.randomUUID().toString());
                 entry.messageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
-                entry.messageBody((String) o);
+                entry.messageBody(o instanceof String str
+                        ? str : exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, o));
                 addDelay(entry, exchange);
                 configureFifoAttributes(entry, exchange, index++);
                 entries.add(entry.build());
@@ -169,23 +173,27 @@ public class Sqs2Producer extends DefaultProducer {
         if (entries.isEmpty()) {
             return;
         }
-        int totalFailed = 0;
-        int totalSuccessful = 0;
-        SendMessageBatchResponse lastResult = null;
+        // the entries are sent in requests of 10, and the body holds the results of all the requests
+        List<SendMessageBatchResultEntry> successful = new ArrayList<>();
+        List<BatchResultErrorEntry> failed = new ArrayList<>();
         for (int i = 0; i < entries.size(); i += MAX_BATCH_ENTRIES) {
             List<SendMessageBatchRequestEntry> chunk = entries.subList(i, Math.min(i + MAX_BATCH_ENTRIES, entries.size()));
             SendMessageBatchRequest request = SendMessageBatchRequest.builder()
                     .queueUrl(getQueueUrl())
                     .entries(chunk)
                     .build();
-            lastResult = amazonSQS.sendMessageBatch(request);
-            totalFailed += ObjectHelper.isNotEmpty(lastResult.failed()) ? lastResult.failed().size() : 0;
-            totalSuccessful += ObjectHelper.isNotEmpty(lastResult.successful()) ? lastResult.successful().size() : 0;
+            SendMessageBatchResponse result = amazonSQS.sendMessageBatch(request);
+            if (ObjectHelper.isNotEmpty(result.successful())) {
+                successful.addAll(result.successful());
+            }
+            if (ObjectHelper.isNotEmpty(result.failed())) {
+                failed.addAll(result.failed());
+            }
         }
         Message message = getMessageForResponse(exchange);
-        message.setBody(lastResult);
-        message.setHeader(Sqs2Constants.FAILED_MESSAGE_COUNT, totalFailed);
-        message.setHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT, totalSuccessful);
+        message.setBody(SendMessageBatchResponse.builder().successful(successful).failed(failed).build());
+        message.setHeader(Sqs2Constants.FAILED_MESSAGE_COUNT, failed.size());
+        message.setHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT, successful.size());
     }
 
     private void deleteMessage(SqsClient amazonSQS, Exchange exchange) {

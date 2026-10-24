@@ -870,11 +870,7 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void headBucket(S3Client s3Client, Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, String.class);
-        if (ObjectHelper.isEmpty(bucketName)) {
-            throw new IllegalArgumentException(
-                    "Head Bucket operation requires to specify a bucket name via Header");
-        }
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         Message message = getMessageForResponse(exchange);
         boolean exists = true;
         try {
@@ -890,13 +886,10 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void headObject(S3Client s3Client, Exchange exchange) {
-        String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
-        if (ObjectHelper.isEmpty(key)) {
-            throw new IllegalArgumentException(
-                    "Head Object operation requires to specify a bucket name via Header");
-        }
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+        final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         HeadObjectResponse headObjectResponse = s3Client.headObject(HeadObjectRequest.builder()
-                .bucket(AWS2S3Utils.determineBucketName(exchange, getConfiguration())).key(key).build());
+                .bucket(bucketName).key(keyName).build());
 
         Message message = getMessageForResponse(exchange);
         message.setBody(headObjectResponse);

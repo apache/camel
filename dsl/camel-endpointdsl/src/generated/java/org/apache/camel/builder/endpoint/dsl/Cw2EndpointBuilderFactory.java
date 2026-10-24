@@ -169,7 +169,8 @@ public interface Cw2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The metric unit.
+         * The metric unit, the name of a StandardUnit such as Count or Bytes,
+         * in any case.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -695,7 +696,8 @@ public interface Cw2EndpointBuilderFactory {
             return "CamelAwsCwMetricValue";
         }
         /**
-         * The Amazon CW metric unit.
+         * The Amazon CW metric unit, the name of a StandardUnit such as Count
+         * or Bytes, in any case.
          * 
          * The option is a: {@code String} type.
          * 
@@ -707,9 +709,9 @@ public interface Cw2EndpointBuilderFactory {
             return "CamelAwsCwMetricUnit";
         }
         /**
-         * The Amazon CW metric timestamp.
+         * The Amazon CW metric timestamp. A java.util.Date works too.
          * 
-         * The option is a: {@code Date} type.
+         * The option is a: {@code Instant} type.
          * 
          * Group: producer
          * 

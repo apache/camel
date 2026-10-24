@@ -2540,7 +2540,8 @@ public interface EventbridgeEndpointBuilderFactory {
             return "CamelAwsEventbridgeRuleArn";
         }
         /**
-         * The number of failed entries in the response.
+         * The number of failed entries in the response. The putEvent operation
+         * fails the exchange when an entry failed.
          * 
          * The option is a: {@code Integer} type.
          * 

@@ -422,6 +422,19 @@ public class EndpointHeaderBuilders {
         return Ddb2EndpointBuilderFactory.Ddb2HeaderNameBuilder.INSTANCE;
     }
     /**
+     * AWS DynamoDB Streams (camel-aws2-ddb)
+     * Receive messages from AWS DynamoDB Stream.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-ddb
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static Ddb2StreamEndpointBuilderFactory.Ddb2StreamHeaderNameBuilder aws2Ddbstream() {
+        return Ddb2StreamEndpointBuilderFactory.Ddb2StreamHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances.
      * 

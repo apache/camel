@@ -93,8 +93,8 @@ public interface Aws2LambdaComponentBuilderFactory {
     
         
         /**
-         * The operation to perform. It can be listFunctions, getFunction,
-         * createFunction, deleteFunction or invokeFunction.
+         * The operation to perform. See the list of available operations in the
+         * component documentation.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.lambda.Lambda2Operations&lt;/code&gt; type.

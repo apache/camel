@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests the full route flow: JSON body -> transformDataType(aws2-ddb:application-json) -> aws2-ddb endpoint. This
@@ -53,6 +56,10 @@ public class Ddb2JsonDataTypeTransformerRouteTest extends CamelTestSupport {
                         .setProperty("operation", constant(Ddb2Operations.UpdateItem.name()))
                         .transformDataType(null, "aws2-ddb:application-json")
                         .to("aws2-ddb://activeTable?operation=UpdateItem");
+
+                from("direct:endpointOperation")
+                        .transformDataType(null, "aws2-ddb:application-json")
+                        .to("aws2-ddb://activeTable?operation=DeleteItem");
 
                 from("direct:deleteItem")
                         .setProperty("operation", constant(Ddb2Operations.DeleteItem.name()))
@@ -106,6 +113,29 @@ public class Ddb2JsonDataTypeTransformerRouteTest extends CamelTestSupport {
 
         assertNotNull(ddbClient.deleteItemRequest.key());
         assertEquals("1234", ddbClient.deleteItemRequest.key().get("id").n());
+    }
+
+    @Test
+    public void testOperationOfTheEndpointApplies() {
+        String json = "{\"id\": 1234}";
+
+        template.sendBody("direct:endpointOperation", json);
+
+        assertNull(ddbClient.putItemRequest);
+        assertNotNull(ddbClient.deleteItemRequest);
+        assertEquals("activeTable", ddbClient.deleteItemRequest.tableName());
+        assertEquals("1234", ddbClient.deleteItemRequest.key().get("id").n());
+    }
+
+    @Test
+    public void testBodyOperationDoesNotOverrideTheEndpoint() {
+        String json = "{\"operation\": \"PutItem\", \"id\": 1234}";
+
+        Exchange exchange = template.send("direct:endpointOperation", e -> e.getMessage().setBody(json));
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertNull(ddbClient.putItemRequest);
+        assertNull(ddbClient.deleteItemRequest);
     }
 
     @Test

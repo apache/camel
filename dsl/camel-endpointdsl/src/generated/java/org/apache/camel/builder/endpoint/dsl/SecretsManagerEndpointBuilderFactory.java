@@ -45,7 +45,12 @@ public interface SecretsManagerEndpointBuilderFactory {
         }
 
         /**
-         * Set if the secret is binary or not.
+         * Set if the secret is binary or not. When true, the createSecret,
+         * updateSecret and putSecretValue operations store the bytes of the
+         * message body as the binary of the secret. The getSecret and
+         * batchGetSecret operations give the value the secret has, whatever
+         * this option says: a byte for a binary secret, a String for a string
+         * secret.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -60,7 +65,12 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set if the secret is binary or not.
+         * Set if the secret is binary or not. When true, the createSecret,
+         * updateSecret and putSecretValue operations store the bytes of the
+         * message body as the binary of the secret. The getSecret and
+         * batchGetSecret operations give the value the secret has, whatever
+         * this option says: a byte for a binary secret, a String for a string
+         * secret.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -723,10 +733,11 @@ public interface SecretsManagerEndpointBuilderFactory {
             return "CamelAwsSecretsManagerSecretVersionId";
         }
         /**
-         * The unique identifier of the version of the secrets in batch
-         * operation.
+         * The version ids of the secrets in the batch operation, in the same
+         * order as the values in the message body (null for a secret with no
+         * version id).
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code List<String>} type.
          * 
          * Group: producer
          * 

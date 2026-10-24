@@ -20,9 +20,11 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -31,7 +33,6 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -212,12 +213,14 @@ public class Cw2Producer extends DefaultProducer {
 
     private List<MetricDatum> getMetricData(Exchange exchange) {
         Object body = exchange.getIn().getBody();
-        if (body instanceof List) {
-            return CastUtils.cast((List<?>) body);
-        }
-
         if (body instanceof MetricDatum metricDatum) {
             return Arrays.asList(metricDatum);
+        }
+        if (body instanceof Collection<?> collection) {
+            return toMetricData(collection);
+        }
+        if (body instanceof Object[] array) {
+            return toMetricData(Arrays.asList(array));
         }
 
         MetricDatum.Builder metricDatum = MetricDatum.builder().metricName(determineName(exchange))
@@ -225,6 +228,21 @@ public class Cw2Producer extends DefaultProducer {
                 .timestamp(determineTimestamp(exchange));
         setDimension(metricDatum, exchange);
         return Arrays.asList(metricDatum.build());
+    }
+
+    private static List<MetricDatum> toMetricData(Collection<?> elements) {
+        List<MetricDatum> metricData = new ArrayList<>(elements.size());
+        for (Object element : elements) {
+            if (element instanceof MetricDatum metricDatum) {
+                metricData.add(metricDatum);
+            } else {
+                throw new IllegalArgumentException(
+                        "The body must be a MetricDatum or a collection or an array of MetricDatum, but it has an element of type "
+                                                   + (element == null ? "null" : element.getClass().getName())
+                                                   + ". For any other body the metric is taken from the headers and options.");
+            }
+        }
+        return metricData;
     }
 
     private void setDimension(MetricDatum.Builder metricDatum, Exchange exchange) {
@@ -248,6 +266,9 @@ public class Cw2Producer extends DefaultProducer {
     }
 
     private Instant determineTimestamp(Exchange exchange) {
+        if (exchange.getIn().getHeader(Cw2Constants.METRIC_TIMESTAMP) instanceof Date date) {
+            return date.toInstant();
+        }
         return getOptionalHeader(exchange, Cw2Constants.METRIC_TIMESTAMP, Instant.class,
                 () -> getConfiguration().getTimestamp(), "timestamp");
     }
@@ -271,7 +292,19 @@ public class Cw2Producer extends DefaultProducer {
     private StandardUnit determineUnit(Exchange exchange) {
         String unit = getOptionalHeader(exchange, Cw2Constants.METRIC_UNIT, String.class,
                 () -> getConfiguration().getUnit(), "unit");
-        return ObjectHelper.isNotEmpty(unit) ? StandardUnit.fromValue(unit) : StandardUnit.COUNT;
+        return ObjectHelper.isNotEmpty(unit) ? toStandardUnit(unit) : StandardUnit.COUNT;
+    }
+
+    private static StandardUnit toStandardUnit(String unit) {
+        for (StandardUnit standardUnit : StandardUnit.knownValues()) {
+            if (standardUnit.toString().equalsIgnoreCase(unit) || standardUnit.name().equalsIgnoreCase(unit)) {
+                return standardUnit;
+            }
+        }
+        throw new IllegalArgumentException(
+                "Unknown unit " + unit + ": use one of "
+                                           + StandardUnit.knownValues().stream().map(StandardUnit::toString)
+                                                   .collect(Collectors.joining(", ")));
     }
 
     /**

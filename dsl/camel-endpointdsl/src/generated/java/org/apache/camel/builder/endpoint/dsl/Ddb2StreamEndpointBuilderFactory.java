@@ -1129,6 +1129,19 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-ddb
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Ddb2StreamHeaderNameBuilder aws2Ddbstream() {
+            return Ddb2StreamHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS DynamoDB Streams (camel-aws2-ddb)
+         * Receive messages from AWS DynamoDB Stream.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-ddb
+         * 
          * Syntax: <code>aws2-ddbstream:tableName</code>
          * 
          * Path parameter: tableName (required)
@@ -1162,6 +1175,93 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return Ddb2StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the AWS DynamoDB Streams component.
+     */
+    public static class Ddb2StreamHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final Ddb2StreamHeaderNameBuilder INSTANCE = new Ddb2StreamHeaderNameBuilder();
+
+        /**
+         * The Amazon Web Services service from which the stream record
+         * originated. For DynamoDB Streams, this is aws:dynamodb.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsDdbStreamEventSource}.
+         */
+        public String awsDdbStreamEventSource() {
+            return "CamelAwsDdbStreamEventSource";
+        }
+        /**
+         * A globally unique identifier for the event that was recorded in this
+         * stream record.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsDdbStreamEventId}.
+         */
+        public String awsDdbStreamEventId() {
+            return "CamelAwsDdbStreamEventId";
+        }
+        /**
+         * The type of data modification that was performed on the DynamoDB
+         * table (INSERT, MODIFY, REMOVE).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsDdbStreamEventName}.
+         */
+        public String awsDdbStreamEventName() {
+            return "CamelAwsDdbStreamEventName";
+        }
+        /**
+         * The sequence number of the stream record.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsDdbStreamSequenceNumber}.
+         */
+        public String awsDdbStreamSequenceNumber() {
+            return "CamelAwsDdbStreamSequenceNumber";
+        }
+        /**
+         * The approximate date and time when the stream record was created.
+         * 
+         * The option is a: {@code java.time.Instant} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AwsDdbStreamApproximateCreationDateTime}.
+         */
+        public String awsDdbStreamApproximateCreationDateTime() {
+            return "CamelAwsDdbStreamApproximateCreationDateTime";
+        }
+        /**
+         * The size of the stream record, in bytes.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsDdbStreamSizeBytes}.
+         */
+        public String awsDdbStreamSizeBytes() {
+            return "CamelAwsDdbStreamSizeBytes";
+        }
     }
     static Ddb2StreamEndpointBuilder endpointBuilder(String componentName, String path) {
         class Ddb2StreamEndpointBuilderImpl extends AbstractEndpointBuilder implements Ddb2StreamEndpointBuilder, AdvancedDdb2StreamEndpointBuilder {

@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The AWS2 STS component supports assumeRole operation.
+The AWS2 STS component supports the assumeRole, getSessionToken and getFederationToken operations of
 https://aws.amazon.com/sts/[AWS STS].
 
 Prerequisites
@@ -48,8 +48,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 Required STS component options
 
-You have to provide the amazonSTSClient in the
-Registry or your accessKey and secretKey to access
+You have to provide the `stsClient` option (an `StsClient` in the
+Registry) or your accessKey and secretKey to access
 the https://aws.amazon.com/sts/[Amazon STS] service.
 
 == Usage

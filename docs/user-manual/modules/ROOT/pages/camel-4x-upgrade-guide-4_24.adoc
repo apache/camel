@@ -3053,3 +3053,110 @@ Previously it failed every call with a `StringIndexOutOfBoundsException`.
 The `splitResult` option of the google-sheets consumer now defaults to `true`, as documented and as the other API
 components do: an array or collection result gives one exchange per element. Set `splitResult=false` for one exchange
 with the whole result.
+
+=== camel-aws2-sqs - sendBatchMessage of more than 10 entries
+
+With more than 10 entries, which are sent in requests of 10, the message body is now one `SendMessageBatchResponse`
+with the successful and failed entries of all the requests. Previously the body had the entries of the last request
+only. An element of the body that is not a String is now converted to a String, instead of failing with a
+`ClassCastException`.
+
+=== camel-aws2-kinesis - a Path body is one record
+
+A `java.nio.file.Path` body is now sent as one record with the content of the file, as a `java.io.File` is. Previously
+it was sent as a batch of its name elements, which failed. A body that does not convert to a `byte[]` now fails with an
+`InvalidPayloadException` instead of a `NullPointerException`.
+
+=== camel-aws2-s3 - headBucket and headObject
+
+The `headBucket` and `headObject` operations now take the bucket from the endpoint (or the
+`CamelAwsS3OverrideBucketName` header) and the key from the `keyName` option (or the `CamelAwsS3Key` header), as the
+other operations do. Previously they failed without the headers.
+
+=== camel-aws2-cw - the metric data of putMetricData
+
+* A `Collection` or an array of `MetricDatum` in the body is now sent. Previously only a `List` was, and a Set or an
+  array was ignored, so the metric was taken from the headers and options. A collection or an array with an element
+  that is not a `MetricDatum` now fails with an `IllegalArgumentException`.
+* The `unit` option and the `CamelAwsCwMetricUnit` header now match the unit in any case (`BYTES` is `Bytes`). An
+  unknown unit now fails, where it was sent as `null` before.
+* A `java.util.Date` in the `CamelAwsCwMetricTimestamp` header is now used. Previously it was ignored. The catalog
+  lists the header as an `Instant`.
+
+=== camel-aws2-lambda - the code of createFunction and updateFunction, and the payload of invokeFunction
+
+* createFunction and updateFunction: the `CamelAwsLambdaZipFile` header, or the S3 location of the
+  `CamelAwsLambdaS3Bucket` and `CamelAwsLambdaS3Key` headers, now wins over the message body. The body is the zip of
+  the code only when neither is set. Previously the body won over the zip file header, and with the S3 headers both a
+  zip and an S3 location were sent. Setting the zip file header and the S3 headers together, or only one of the S3
+  bucket and key headers, now fails. A body that is not the zip as bytes, a stream or a file now fails with an
+  `IllegalArgumentException` instead of a `NullPointerException`.
+* invokeFunction without a body now invokes the function without a payload, instead of failing with a
+  `NullPointerException`. A `byte[]` or an `InputStream` body is sent as its bytes, and another body as text in UTF-8
+  (previously in the default charset of the JVM).
+
+=== camel-aws2-eventbridge - putEvent fails when the event is rejected
+
+When EventBridge rejects the event, for example with `MalformedDetail` for a detail that is not a JSON object, the
+putEvent operation now fails the exchange with a `CamelExecutionException` that has the error code and message.
+Previously only the `CamelAwsEventbridgeFailedEntryCount` header showed it; the header is still set. Without a body,
+putEvent now fails with the `InvalidPayloadException` itself instead of a `RuntimeException`. The ARNs of the
+`CamelAwsEventbridgeResourcesArn` header are now trimmed.
+
+=== camel-aws2-ses - raw mails
+
+* A `RawMessage` body is now sent as a raw mail (`sendRawEmail`), so the recipient gets the mail itself. Previously it
+  was sent as a plain mail whose text was the MIME source of the raw mail, with the subject of the endpoint.
+* A `SendRawEmailRequest` body is now sent as it is. Previously it was sent as its `toString()`.
+* For a raw mail (a `jakarta.mail.Message` or a `RawMessage` body), the cc and bcc options and headers are now added
+  to the destinations together with the to ones. When none is set, SES sends the mail to the recipients of its own
+  headers.
+* A plain mail without a body now fails with an `InvalidPayloadException` before it is sent to SES.
+
+=== camel-aws-secrets-manager - binary secrets
+
+* With `binaryPayload=true`, createSecret, updateSecret and putSecretValue now store the bytes of the message body as
+  the binary of the secret. Previously they stored the Base64 text of the body, which the AWS SDK Base64-encodes once
+  more, so other clients read the Base64 text instead of the value.
+* getSecret now gives the value the secret has, whatever `binaryPayload` is: a `byte[]` for a binary secret, a String
+  for a string secret. batchGetSecret gives a List with such a value per secret, and the
+  `CamelAwsSecretsManagerSecretVersionIds` header lines up with it. batchGetSecret now fails when AWS reports errors
+  for some of the secrets, which were dropped before.
+* The `aws:` properties function reads a binary secret as the UTF-8 text of its bytes. Previously it decoded it from
+  Base64 and failed for a binary secret that another client stored.
+* Without an operation, the producer now fails with an `IllegalArgumentException` instead of a `NullPointerException`.
+
+A binary secret that an earlier Camel version stored with `binaryPayload=true` holds the Base64 text of the value, and
+now reads back as that text, in getSecret and in the properties function. Store such secrets again, or decode the
+value from Base64 in the route.
+
+=== camel-aws2-iam - the access key status in any case
+
+The `CamelAwsIAMAccessKeyStatus` header now matches `Active` and `Inactive` in any case. An unknown status now fails
+in Camel, before the request is sent.
+
+=== camel-aws2-ddb - the operation of the JSON data type transformer
+
+The `aws2-ddb:application-json` data type transformer now takes the operation only from the route: the
+`CamelAwsDdbOperation` header, else the `operation` exchange property. When the route names neither, the transformer no
+longer sets the `CamelAwsDdbOperation` header (and the `CamelAwsDdbReturnValues` header), so the `operation` option of
+the endpoint applies. It then sets the item, key and update values headers that PutItem, UpdateItem and DeleteItem
+need. Previously the transformer took the operation from a top-level `operation` field of the JSON body, else PutItem,
+and always set the header, which won over the operation of the endpoint: `aws2-ddb:orders?operation=DeleteItem` put the
+item.
+
+A JSON body with a top-level `operation` field now fails with an `IllegalArgumentException`, unless the route names
+that same operation. A route that chose the operation in the body must set the header or the exchange property
+instead. The aws-ddb-sink Kamelet sets the exchange property, and is not affected.
+
+=== camel-aws2-ddb - result headers
+
+* DescribeTable and DeleteTable no longer set the `CamelAwsDdbTableName` header. It is also the header that names the
+  table of an aws2-ddb step, so the next step went to that table instead of the one of its endpoint.
+* UpdateTable now sets the headers of the table description of the response (`CamelAwsDdbProvisionedThroughput`,
+  `CamelAwsDdbCreationDate`, `CamelAwsDdbTableItemCount`, `CamelAwsDdbKeySchema`, `CamelAwsDdbTableSize` and
+  `CamelAwsDdbTableStatus`), and DescribeTable also sets `CamelAwsDdbProvisionedThroughput`.
+* Query and Scan now ask for the consumed capacity, so the `CamelAwsDdbConsumedCapacity` header has a value. It was
+  always null before.
+* The catalog now gives the types the headers have, such as `TableStatus` for `CamelAwsDdbTableStatus` and `Instant`
+  for `CamelAwsDdbCreationDate`, and lists the `CamelAwsDdbNextToken` header and the headers of aws2-ddbstream.

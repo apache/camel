@@ -16,13 +16,20 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
+import java.time.Instant;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescription;
+import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UpdateTableCommandTest {
 
@@ -50,5 +57,18 @@ public class UpdateTableCommandTest {
         assertEquals("DOMAIN1", ddbClient.updateTableRequest.tableName());
         assertEquals(Long.valueOf(20), ddbClient.updateTableRequest.provisionedThroughput().readCapacityUnits());
         assertEquals(Long.valueOf(30), ddbClient.updateTableRequest.provisionedThroughput().writeCapacityUnits());
+
+        assertEquals(TableStatus.UPDATING, exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS));
+        assertEquals(Instant.ofEpochMilli(AmazonDDBClientMock.NOW), exchange.getIn().getHeader(Ddb2Constants.CREATION_DATE));
+        assertEquals(100L, exchange.getIn().getHeader(Ddb2Constants.ITEM_COUNT));
+        assertEquals(1000L, exchange.getIn().getHeader(Ddb2Constants.TABLE_SIZE));
+        assertEquals(List.of(KeySchemaElement.builder().attributeName("name").build()),
+                exchange.getIn().getHeader(Ddb2Constants.KEY_SCHEMA));
+        assertEquals(Long.valueOf(5), exchange.getIn().getHeader(Ddb2Constants.PROVISIONED_THROUGHPUT,
+                ProvisionedThroughputDescription.class).readCapacityUnits());
+        // the table name and the capacity headers are inputs: they are not set from the response
+        assertNull(exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME));
+        assertNull(exchange.getIn().getHeader(Ddb2Constants.READ_CAPACITY));
+        assertNull(exchange.getIn().getHeader(Ddb2Constants.WRITE_CAPACITY));
     }
 }

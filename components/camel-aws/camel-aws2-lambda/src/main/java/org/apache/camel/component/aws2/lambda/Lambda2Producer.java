@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.aws2.lambda;
 
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -304,8 +304,7 @@ public class Lambda2Producer extends DefaultProducer {
             request = exchange.getIn().getMandatoryBody(InvokeRequest.class);
         } else {
             InvokeRequest.Builder builder = InvokeRequest.builder();
-            request = builder.functionName(getEndpoint().getFunction())
-                    .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
+            request = builder.functionName(getEndpoint().getFunction()).payload(determinePayload(exchange)).build();
         }
         try {
             result = lambdaClient.invoke(request);
@@ -320,6 +319,81 @@ public class Lambda2Producer extends DefaultProducer {
         message.setHeader(Lambda2Constants.LOG_RESULT, result.logResult());
     }
 
+    /**
+     * The payload of invokeFunction: none without a body, the bytes of a byte[] or a stream as they are, else the body
+     * as text in UTF-8.
+     */
+    private static SdkBytes determinePayload(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            return null;
+        }
+        if (body instanceof byte[] bytes) {
+            return SdkBytes.fromByteArray(bytes);
+        }
+        if (body instanceof InputStream inputStream) {
+            return SdkBytes.fromInputStream(inputStream);
+        }
+        String text = exchange.getIn().getBody(String.class);
+        return text != null ? SdkBytes.fromUtf8String(text) : null;
+    }
+
+    /**
+     * The code of createFunction and updateFunction: the zip file of the CamelAwsLambdaZipFile header, or the S3
+     * location of the S3 headers, or else the body as the zip.
+     */
+    private static FunctionCodeSource determineFunctionCode(Exchange exchange) throws IOException {
+        Message in = exchange.getIn();
+        String zipFile = in.getHeader(Lambda2Constants.ZIP_FILE, String.class);
+        String s3Bucket = in.getHeader(Lambda2Constants.S3_BUCKET, String.class);
+        String s3Key = in.getHeader(Lambda2Constants.S3_KEY, String.class);
+        String s3ObjectVersion = in.getHeader(Lambda2Constants.S3_OBJECT_VERSION, String.class);
+        boolean s3Location = ObjectHelper.isNotEmpty(s3Bucket) || ObjectHelper.isNotEmpty(s3Key)
+                || ObjectHelper.isNotEmpty(s3ObjectVersion);
+
+        if (ObjectHelper.isNotEmpty(zipFile) && s3Location) {
+            throw new IllegalArgumentException(
+                    "Set the code of the function with the " + Lambda2Constants.ZIP_FILE
+                                               + " header or with the S3 headers, not both");
+        }
+        if (s3Location) {
+            if (ObjectHelper.isEmpty(s3Bucket) || ObjectHelper.isEmpty(s3Key)) {
+                throw new IllegalArgumentException(
+                        "The S3 location of the code needs both the " + Lambda2Constants.S3_BUCKET + " and the "
+                                                   + Lambda2Constants.S3_KEY + " headers");
+            }
+            return new FunctionCodeSource(
+                    null, s3Bucket, s3Key, ObjectHelper.isNotEmpty(s3ObjectVersion) ? s3ObjectVersion : null);
+        }
+        if (ObjectHelper.isNotEmpty(zipFile)) {
+            try (FileInputStream inputStream = new FileInputStream(zipFile)) {
+                return new FunctionCodeSource(SdkBytes.fromInputStream(inputStream), null, null, null);
+            }
+        }
+        Object body = in.getBody();
+        if (ObjectHelper.isEmpty(body)) {
+            throw new IllegalArgumentException(
+                    "The code of the function must be set: the zip of the code as the body, the " + Lambda2Constants.ZIP_FILE
+                                               + " header, or the " + Lambda2Constants.S3_BUCKET + " and "
+                                               + Lambda2Constants.S3_KEY + " headers");
+        }
+        ByteBuffer zip = in.getBody(ByteBuffer.class);
+        if (zip == null) {
+            throw new IllegalArgumentException(
+                    "The body must be the zip of the code as bytes, a stream or a file, but it is a "
+                                               + body.getClass().getName()
+                                               + ": or set the " + Lambda2Constants.ZIP_FILE + " header, or the "
+                                               + Lambda2Constants.S3_BUCKET + " and " + Lambda2Constants.S3_KEY + " headers");
+        }
+        return new FunctionCodeSource(SdkBytes.fromByteBuffer(zip), null, null, null);
+    }
+
+    /**
+     * The code of a function: either the zip or the S3 location.
+     */
+    private record FunctionCodeSource(SdkBytes zipFile, String s3Bucket, String s3Key, String s3ObjectVersion) {
+    }
+
     @SuppressWarnings("unchecked")
     private void createFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
         CreateFunctionRequest request = null;
@@ -330,41 +404,9 @@ public class Lambda2Producer extends DefaultProducer {
             CreateFunctionRequest.Builder builder = CreateFunctionRequest.builder();
             builder.functionName(getEndpoint().getFunction());
 
-            FunctionCode.Builder functionCode = FunctionCode.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
-                String s3Bucket = exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET, String.class);
-                functionCode.s3Bucket(s3Bucket);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
-                String s3Key = exchange.getIn().getHeader(Lambda2Constants.S3_KEY, String.class);
-                functionCode.s3Key(s3Key);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION))) {
-                String s3ObjectVersion = exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION, String.class);
-                functionCode.s3ObjectVersion(s3ObjectVersion);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
-                String zipFile = exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE, String.class);
-                File fileLocalPath = new File(zipFile);
-                try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
-                    functionCode.zipFile(SdkBytes.fromInputStream(inputStream));
-                }
-            }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                functionCode.zipFile(SdkBytes.fromByteBuffer(exchange.getIn().getBody(ByteBuffer.class)));
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())
-                    || ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))
-                    || ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
-                            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
-                builder.code(functionCode.build());
-            } else {
-                throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
-            }
+            FunctionCodeSource code = determineFunctionCode(exchange);
+            builder.code(FunctionCode.builder().zipFile(code.zipFile()).s3Bucket(code.s3Bucket()).s3Key(code.s3Key())
+                    .s3ObjectVersion(code.s3ObjectVersion()).build());
 
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ROLE))) {
                 builder.role(exchange.getIn().getHeader(Lambda2Constants.ROLE, String.class));
@@ -467,38 +509,9 @@ public class Lambda2Producer extends DefaultProducer {
             UpdateFunctionCodeRequest.Builder builder = UpdateFunctionCodeRequest.builder();
             builder.functionName(getEndpoint().getFunction());
 
-            if (ObjectHelper.isEmpty(exchange.getIn().getBody())
-                    && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
-                    && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))
-                    && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
-                throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
-                String s3Bucket = exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET, String.class);
-                builder.s3Bucket(s3Bucket);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
-                String s3Key = exchange.getIn().getHeader(Lambda2Constants.S3_KEY, String.class);
-                builder.s3Key(s3Key);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION))) {
-                String s3ObjectVersion = exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION, String.class);
-                builder.s3ObjectVersion(s3ObjectVersion);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
-                String zipFile = exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE, String.class);
-                File fileLocalPath = new File(zipFile);
-                try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
-                    builder.zipFile(SdkBytes.fromInputStream(inputStream));
-                }
-            }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                builder.zipFile(SdkBytes.fromByteBuffer(exchange.getIn().getBody(ByteBuffer.class)));
-            }
+            FunctionCodeSource code = determineFunctionCode(exchange);
+            builder.zipFile(code.zipFile()).s3Bucket(code.s3Bucket()).s3Key(code.s3Key())
+                    .s3ObjectVersion(code.s3ObjectVersion());
 
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
                 Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);

@@ -50,7 +50,7 @@ public class AWS2DeleteTableRuleIT extends Aws2DDBBase {
             }
         });
 
-        assertEquals(tableName, exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME));
+        assertNull(exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME));
         assertEquals(TableStatus.ACTIVE, exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS));
 
         //And... it's gone.

@@ -41,7 +41,7 @@ public interface Lambda2Constants {
               javaType = "String")
     String S3_OBJECT_VERSION = "CamelAwsLambdaS3ObjectVersion";
     @Metadata(label = "createFunction", description = "The local path of the zip file (the deployment package).\n" +
-                                                      " Content of zip file can also be put in Message body.",
+                                                      " Without this header and the S3 headers, the message body is the zip.",
               javaType = "String")
     String ZIP_FILE = "CamelAwsLambdaZipFile";
     @Metadata(label = "createFunction", description = "The user-provided description.", javaType = "String")
@@ -51,7 +51,7 @@ public interface Lambda2Constants {
               javaType = "String", required = true)
     String ROLE = "CamelAwsLambdaRole";
     @Metadata(label = "createFunction", description = "The runtime environment for the Lambda function you are uploading.\n" +
-                                                      " (nodejs, nodejs4.3, nodejs6.10, java8, python2.7, python3.6, dotnetcore1.0, odejs4.3-edge)",
+                                                      " (for example nodejs22.x, java21 or python3.13)",
               javaType = "String", required = true)
     String RUNTIME = "CamelAwsLambdaRuntime";
     @Metadata(label = "createFunction", description = "The function within your code that Lambda calls to begin execution.\n" +
@@ -154,7 +154,9 @@ public interface Lambda2Constants {
               description = "The HTTP status code of the function invocation.", javaType = "Integer")
     String STATUS_CODE = "CamelAwsLambdaStatusCode";
     @Metadata(label = "invokeFunction",
-              description = "If present, indicates that an error occurred during function execution.", javaType = "String")
+              description = "If present, indicates that an error occurred during function execution."
+                            + " The exchange does not fail: the body is the JSON of the error.",
+              javaType = "String")
     String FUNCTION_ERROR = "CamelAwsLambdaFunctionError";
     @Metadata(label = "invokeFunction",
               description = "The last 4 KB of the execution log.", javaType = "String")

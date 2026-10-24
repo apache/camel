@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.sqs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -28,6 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,6 +66,40 @@ public class SqsProducerBatchTest extends CamelTestSupport {
         SendMessageBatchResponse res = result.getExchanges().get(0).getIn().getBody(SendMessageBatchResponse.class);
         assertEquals(2, res.failed().size());
         assertEquals(2, res.successful().size());
+    }
+
+    @Test
+    public void sendBatchMessageOfMoreThanTenEntriesHasTheResultsOfAllRequests() throws Exception {
+        result.expectedMessageCount(1);
+
+        List<String> body = new ArrayList<>();
+        for (int i = 0; i < 25; i++) {
+            body.add("message" + i);
+        }
+        template.sendBody("direct:start", body);
+
+        MockEndpoint.assertIsSatisfied(context);
+        // 25 entries are sent in 3 requests, and the mock answers each request with 2 successful and 2 failed entries
+        assertEquals(3, mock.getSendMessageBatchRequests().size());
+        Exchange out = result.getExchanges().get(0);
+        SendMessageBatchResponse res = out.getIn().getBody(SendMessageBatchResponse.class);
+        assertEquals(6, res.successful().size());
+        assertEquals(6, res.failed().size());
+        assertEquals(6, out.getIn().getHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT));
+        assertEquals(6, out.getIn().getHeader(Sqs2Constants.FAILED_MESSAGE_COUNT));
+    }
+
+    @Test
+    public void sendBatchMessageConvertsElementsToString() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.sendBody("direct:start", List.of(1, 2, "three"));
+
+        MockEndpoint.assertIsSatisfied(context);
+        List<SendMessageBatchRequest> requests = mock.getSendMessageBatchRequests();
+        assertEquals(1, requests.size());
+        List<String> bodies = requests.get(0).entries().stream().map(SendMessageBatchRequestEntry::messageBody).toList();
+        assertEquals(List.of("1", "2", "three"), bodies);
     }
 
     @Override

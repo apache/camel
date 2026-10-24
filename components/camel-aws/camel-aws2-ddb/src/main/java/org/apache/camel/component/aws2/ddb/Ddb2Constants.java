@@ -34,20 +34,22 @@ public interface Ddb2Constants {
               javaType = "Map<String, KeysAndAttributes>")
     String BATCH_ITEMS = "CamelAwsDdbBatchItems";
     @Metadata(label = "BatchGetItems", description = "Table names and the respective item attributes from the tables.",
-              javaType = "Map<String, BatchResponse>")
+              javaType = "Map<String, List<Map<String, AttributeValue>>>")
     String BATCH_RESPONSE = "CamelAwsDdbBatchResponse";
     @Metadata(description = """
             If set to true, then a consistent read is issued, otherwise eventually
             consistent is used.""",
               javaType = "Boolean")
     String CONSISTENT_READ = "CamelAwsDdbConsistentRead";
-    @Metadata(label = "Query Scan", description = "The number of Capacity Units of the provisioned throughput of the table\n" +
-                                                  "consumed during the operation.",
-              javaType = "Double")
+    @Metadata(label = "Query Scan",
+              description = "The capacity the operation consumed: its capacityUnits are the total Capacity Units of the table\n"
+                            + "and its indexes used by the operation.",
+              javaType = "software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity")
     String CONSUMED_CAPACITY = "CamelAwsDdbConsumedCapacity";
     @Metadata(label = "Query Scan", description = "Number of items in the response.", javaType = "Integer")
     String COUNT = "CamelAwsDdbCount";
-    @Metadata(label = "DeleteTable DescribeTable", description = "Creation DateTime of this table.", javaType = "Date")
+    @Metadata(label = "DeleteTable DescribeTable UpdateTable", description = "Creation DateTime of this table.",
+              javaType = "java.time.Instant")
     String CREATION_DATE = "CamelAwsDdbCreationDate";
     // Removed from DynamoDB v1 to v2
     // @Metadata(description = "If set to true, Amazon DynamoDB returns a total number of items that\n" +
@@ -67,10 +69,15 @@ public interface Ddb2Constants {
     @Metadata(label = "Query Scan", description = "The list of attributes returned by the operation.",
               javaType = "List<Map<String,AttributeValue>>")
     String ITEMS = "CamelAwsDdbItems";
-    @Metadata(label = "DeleteTable DescribeTable", description = "Item count for this table.", javaType = "Long")
+    @Metadata(label = "DeleteTable DescribeTable UpdateTable", description = "Item count for this table.", javaType = "Long")
     String ITEM_COUNT = "CamelAwsDdbTableItemCount";
     String ITEM_NAME = "CamelAwsDdbItemName";
     String MESSAGE_ID = "CamelAwsDdbMessageId";
+    @Metadata(label = "ExecuteStatement",
+              description = "ExecuteStatement reads it as the token of the page to read, and sets it to the token of the next\n"
+                            + "page (null on the last page). A loop can page through a statement with it; remove it before\n"
+                            + "running another statement, as that statement would read this page of the earlier one.",
+              javaType = "String")
     String NEXT_TOKEN = "CamelAwsDdbNextToken";
     @Metadata(description = "The primary key that uniquely identifies each item in a table.",
               javaType = "Map<String, AttributeValue>")
@@ -81,14 +88,14 @@ public interface Ddb2Constants {
                             "and *CamelAwsDdbScanRangeKeyCondition*",
               javaType = "Map<String, Condition>")
     String KEY_CONDITIONS = "CamelAwsDdbKeyConditions";
-    @Metadata(label = "DeleteTable DescribeTable",
+    @Metadata(label = "DeleteTable DescribeTable UpdateTable",
               description = "The KeySchema that identifies the primary key for this table.\n" +
                             "*From Camel 2.16.0 the type of this header is List<KeySchemaElement> and not KeySchema*",
               javaType = "List<KeySchemaElement>")
     String KEY_SCHEMA = "CamelAwsDdbKeySchema";
     @Metadata(label = "Query Scan", description = "Primary key of the item where the query operation stopped, inclusive of\n" +
                                                   "the previous result set.",
-              javaType = "Key")
+              javaType = "Map<String, AttributeValue>")
     String LAST_EVALUATED_KEY = "CamelAwsDdbLastEvaluatedKey";
     @Metadata(label = "Query Scan",
               description = "Whether the response has more results (is truncated). If true, use LAST_EVALUATED_KEY as START_KEY for the next page.",
@@ -98,11 +105,16 @@ public interface Ddb2Constants {
     String LIMIT = "CamelAwsDdbLimit";
     @Metadata(description = "The operation to perform.", javaType = "org.apache.camel.component.aws2.ddb.Ddb2Operations")
     String OPERATION = "CamelAwsDdbOperation";
-    @Metadata(label = "DeleteTable DescribeTable",
+    @Metadata(label = "DeleteTable DescribeTable UpdateTable",
               description = "The value of the ProvisionedThroughput property for this table",
               javaType = "software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescription")
     String PROVISIONED_THROUGHPUT = "CamelAwsDdbProvisionedThroughput";
-    @Metadata(label = "UpdateTable DescribeTable", description = "ReadCapacityUnits property of this table.", javaType = "Long")
+    @Metadata(label = "UpdateTable DescribeTable",
+              description = "ReadCapacityUnits property of this table. UpdateTable reads it as the read capacity to set, and\n"
+                            + "DescribeTable sets it to the read capacity of the table: remove it before an UpdateTable that\n"
+                            + "follows a DescribeTable, or the UpdateTable sets the capacity the DescribeTable read instead\n"
+                            + "of the readCapacity option.",
+              javaType = "Long")
     String READ_CAPACITY = "CamelAwsDdbReadCapacity";
     @Metadata(description = "Use this parameter if you want to get the attribute name-value pairs\n" +
                             "before or after they are modified(NONE, ALL_OLD, UPDATED_OLD, ALL_NEW,\n" +
@@ -124,12 +136,13 @@ public interface Ddb2Constants {
     @Metadata(description = "Primary key of the item from which to continue an earlier query.",
               javaType = "Map<String, AttributeValue>")
     String START_KEY = "CamelAwsDdbStartKey";
-    @Metadata(description = "Table Name for this operation.", javaType = "String")
+    @Metadata(description = "Table Name for this operation, instead of the table of the endpoint.", javaType = "String")
     String TABLE_NAME = "CamelAwsDdbTableName";
-    @Metadata(label = "DeleteTable DescribeTable", description = "The table size in bytes.", javaType = "Long")
+    @Metadata(label = "DeleteTable DescribeTable UpdateTable", description = "The table size in bytes.", javaType = "Long")
     String TABLE_SIZE = "CamelAwsDdbTableSize";
-    @Metadata(label = "DeleteTable DescribeTable",
-              description = "The status of the table: CREATING, UPDATING, DELETING, ACTIVE", javaType = "String")
+    @Metadata(label = "DeleteTable DescribeTable UpdateTable",
+              description = "The status of the table: CREATING, UPDATING, DELETING, ACTIVE",
+              javaType = "software.amazon.awssdk.services.dynamodb.model.TableStatus")
     String TABLE_STATUS = "CamelAwsDdbTableStatus";
     @Metadata(description = "Designates an attribute for a conditional modification.",
               javaType = "Map<String, ExpectedAttributeValue>")
@@ -141,7 +154,11 @@ public interface Ddb2Constants {
                                                      "processed with the current response.",
               javaType = "Map<String,KeysAndAttributes>")
     String UNPROCESSED_KEYS = "CamelAwsDdbUnprocessedKeys";
-    @Metadata(label = "UpdateTable DescribeTable", description = "WriteCapacityUnits property of this table.",
+    @Metadata(label = "UpdateTable DescribeTable",
+              description = "WriteCapacityUnits property of this table. UpdateTable reads it as the write capacity to set, and\n"
+                            + "DescribeTable sets it to the write capacity of the table: remove it before an UpdateTable that\n"
+                            + "follows a DescribeTable, or the UpdateTable sets the capacity the DescribeTable read instead\n"
+                            + "of the writeCapacity option.",
               javaType = "Long")
     String WRITE_CAPACITY = "CamelAwsDdbWriteCapacity";
     @Metadata(label = "ExecuteStatement",
@@ -203,7 +220,7 @@ public interface Ddb2Constants {
               javaType = "Map<String, String>")
     String FILTER_EXPRESSION_ATTRIBUTE_NAMES = "CamelAwsDdbFilterExpressionAttributeNames";
     @Metadata(label = "Query Scan", description = "The Filter Expression Attribute Values.",
-              javaType = "Map<String, String>")
+              javaType = "Map<String, AttributeValue>")
     String FILTER_EXPRESSION_ATTRIBUTE_VALUES = "CamelAwsDdbFilterExpressionAttributeValues";
     @Metadata(label = "Query Scan", description = "The Project Expression.",
               javaType = "String")

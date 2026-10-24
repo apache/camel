@@ -33,12 +33,13 @@ public class DescribeTableCommand extends AbstractDdbCommand {
         DescribeTableResponse result
                 = ddbClient.describeTable(DescribeTableRequest.builder().tableName(determineTableName()).build());
 
+        // the table name is not set as a result, as the next aws2-ddb step would take it as its table
         Message msg = getMessageForResponse(exchange);
-        msg.setHeader(Ddb2Constants.TABLE_NAME, result.table().tableName());
         msg.setHeader(Ddb2Constants.TABLE_STATUS, result.table().tableStatus());
         msg.setHeader(Ddb2Constants.CREATION_DATE, result.table().creationDateTime());
         msg.setHeader(Ddb2Constants.ITEM_COUNT, result.table().itemCount());
         msg.setHeader(Ddb2Constants.KEY_SCHEMA, result.table().keySchema());
+        msg.setHeader(Ddb2Constants.PROVISIONED_THROUGHPUT, result.table().provisionedThroughput());
         msg.setHeader(Ddb2Constants.READ_CAPACITY, result.table().provisionedThroughput().readCapacityUnits());
         msg.setHeader(Ddb2Constants.WRITE_CAPACITY, result.table().provisionedThroughput().writeCapacityUnits());
         msg.setHeader(Ddb2Constants.TABLE_SIZE, result.table().tableSizeBytes());

@@ -29,6 +29,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
+import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -70,5 +71,12 @@ public class ScanCommandTest {
 
         Map<?, ?> items = (Map<?, ?>) exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
         assertEquals(AttributeValue.builder().s("attrValue").build(), items.get("attrName"));
+    }
+
+    @Test
+    public void executeAsksForConsumedCapacity() {
+        command.execute();
+
+        assertEquals(ReturnConsumedCapacity.TOTAL, ddbClient.scanRequest.returnConsumedCapacity());
     }
 }
