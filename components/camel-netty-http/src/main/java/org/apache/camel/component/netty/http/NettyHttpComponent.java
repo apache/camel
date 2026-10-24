@@ -64,7 +64,7 @@ public class NettyHttpComponent extends NettyComponent
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
     // factories which is created by this component and therefore manage their lifecycles
-    private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new ConcurrentHashMap<>();
+    private final Map<String, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new ConcurrentHashMap<>();
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new ConcurrentHashMap<>();
     @Metadata(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
@@ -333,8 +333,26 @@ public class NettyHttpComponent extends NettyComponent
         getConfiguration().setMuteException(muteException);
     }
 
+    public HttpServerConsumerChannelFactory getMultiplexChannelHandler(String address) {
+        int port = 0;
+        int idx = address.lastIndexOf(':');
+        if (idx > -1) {
+            try {
+                port = Integer.parseInt(address.substring(idx + 1));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
+        return getMultiplexChannelHandler(address, port);
+    }
+
+    public HttpServerConsumerChannelFactory getMultiplexChannelHandler(String address, int port) {
+        return multiplexChannelHandlers.computeIfAbsent(address, s -> newHttpServerConsumerChannelFactory(port));
+    }
+
+    @Deprecated
     public HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
-        return multiplexChannelHandlers.computeIfAbsent(port, s -> newHttpServerConsumerChannelFactory(port));
+        return getMultiplexChannelHandler("0.0.0.0:" + port, port);
     }
 
     private static HttpServerConsumerChannelFactory newHttpServerConsumerChannelFactory(int port) {
@@ -369,7 +387,7 @@ public class NettyHttpComponent extends NettyComponent
 
     private HttpServerBootstrapFactory newHttpServerBootstrapFactory(NettyHttpConsumer consumer) {
         final HttpServerConsumerChannelFactory channelFactory
-                = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
+                = getMultiplexChannelHandler(consumer.getConfiguration().getAddress(), consumer.getConfiguration().getPort());
         final HttpServerBootstrapFactory answer = new HttpServerBootstrapFactory(channelFactory);
 
         answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerInitializerFactory(consumer));
