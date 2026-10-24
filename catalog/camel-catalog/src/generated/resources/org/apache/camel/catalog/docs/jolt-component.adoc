@@ -52,6 +52,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 For example, you could use something like
 
+The messages of the queue are JSON text, so the examples set `inputType` and `outputType` to `JsonString`: with the default, `Hydrated`, the body must be parsed JSON (a Map or a List), such as after `unmarshal: json`, and the result is parsed JSON too.
+
 [tabs]
 ====
 Java::
@@ -59,7 +61,7 @@ Java::
 [source,java]
 ----
 from("activemq:My.Queue")
-    .to("jolt:com/acme/MyResponse.json");
+    .to("jolt:com/acme/MyResponse.json?inputType=JsonString&outputType=JsonString");
 ----
 
 XML::
@@ -68,7 +70,7 @@ XML::
 ----
 <route>
   <from uri="activemq:My.Queue"/>
-  <to uri="jolt:com/acme/MyResponse.json"/>
+  <to uri="jolt:com/acme/MyResponse.json?inputType=JsonString&amp;outputType=JsonString"/>
 </route>
 ----
 
@@ -82,6 +84,9 @@ YAML::
       steps:
         - to:
             uri: jolt:com/acme/MyResponse.json
+            parameters:
+              inputType: JsonString
+              outputType: JsonString
 ----
 ====
 
@@ -94,7 +99,7 @@ Java::
 [source,java]
 ----
 from("activemq:My.Queue")
-    .to("jolt:file://myfolder/MyResponse.json?contentCache=true")
+    .to("jolt:file://myfolder/MyResponse.json?contentCache=true&inputType=JsonString&outputType=JsonString")
     .to("activemq:Another.Queue");
 ----
 
@@ -104,7 +109,7 @@ XML::
 ----
 <route>
   <from uri="activemq:My.Queue"/>
-  <to uri="jolt:file://myfolder/MyResponse.json?contentCache=true"/>
+  <to uri="jolt:file://myfolder/MyResponse.json?contentCache=true&amp;inputType=JsonString&amp;outputType=JsonString"/>
   <to uri="activemq:Another.Queue"/>
 </route>
 ----
@@ -121,6 +126,8 @@ YAML::
             uri: jolt:file://myfolder/MyResponse.json
             parameters:
               contentCache: true
+              inputType: JsonString
+              outputType: JsonString
         - to:
             uri: activemq:Another.Queue
 ----

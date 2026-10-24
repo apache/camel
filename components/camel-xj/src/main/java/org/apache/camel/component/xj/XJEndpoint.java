@@ -24,6 +24,9 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.component.xslt.saxon.XsltSaxonBuilder;
 import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,31 @@ import org.apache.camel.spi.UriParam;
 @ManagedResource(description = "Managed XJEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION }, headersClass = XJConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  dependsOn = { "source", "useJsonBody" },
+                                  byOption = {
+                                          @BodyType.When(option = "transformDirection", value = "XML2JSON",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.POJO }),
+                                          @BodyType.When(option = "transformDirection", value = "JSON2XML",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }) },
+                                  description = "The XML for XML2JSON as text, bytes, a stream, a file, a DOM or another"
+                                                + " javax.xml.transform.Source; the JSON for JSON2XML as text, bytes, a stream"
+                                                + " or a file. A Map, a List or no body fails, unless failOnNullBody=false for"
+                                                + " no body"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "resultHandlerFactory",
+                                   byOption = {
+                                           @BodyType.When(option = "output", value = "bytes", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "output", value = "DOM", carriers = Carrier.POJO,
+                                                          javaType = "org.w3c.dom.Document"),
+                                           @BodyType.When(option = "output", value = "file", carriers = Carrier.FILE,
+                                                          javaType = "java.io.File") },
+                                   description = "The result of the transformation: JSON text with XML2JSON, XML text with"
+                                                 + " JSON2XML. output=DOM works with JSON2XML only"))
 public class XJEndpoint extends XsltSaxonEndpoint {
 
     private final JsonFactory jsonFactory = new JsonFactory();

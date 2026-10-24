@@ -29,8 +29,9 @@ This language is provided by the `camel-openfeature` component:
 
 == Usage
 
-The language evaluates the given flag key as a boolean and returns the
-result. It uses the `openfeature:flags` endpoint by default, inheriting
+As a predicate, the language evaluates the given flag key as a boolean.
+As an expression, it gives the string value of the flag, or the `defaultValue` of the endpoint (`false` unless set)
+when the flag is missing or is not a string flag, see below. It uses the `openfeature:flags` endpoint by default, inheriting
 component-level configuration such as `flagsResource` or `host`.
 
 The language does not modify the exchange — it reads targeting context

@@ -20,6 +20,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -31,6 +34,14 @@ import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 
 @Dataformat("base64")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The bytes to encode: text in the charset of the exchange, bytes, a stream or a"
+                                               + " file"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The Base64 text in the stream cache, or a byte array when stream caching is"
+                                                + " off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM, description = "The decoded bytes, as a stream"))
 public class Base64DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private int lineLength = Base64.MIME_CHUNK_SIZE;

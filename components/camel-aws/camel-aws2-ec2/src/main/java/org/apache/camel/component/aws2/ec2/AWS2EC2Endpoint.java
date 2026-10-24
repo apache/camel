@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.ec2.client.AWS2EC2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,46 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ec2", title = "AWS Elastic Compute Cloud (EC2)",
              syntax = "aws2-ec2:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = AWS2EC2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: the operations take their input from headers, such as the ids of the"
+                                                + " instances in CamelAwsEC2InstancesIds as a Collection. With pojoRequest=true"
+                                                + " the request of the AWS SDK for the operation, such as a"
+                                                + " DescribeInstancesRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "createAndRunInstances",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.RunInstancesResponse"),
+                                           @BodyType.When(option = "operation", value = "startInstances",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.StartInstancesResponse"),
+                                           @BodyType.When(option = "operation", value = "stopInstances",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.StopInstancesResponse"),
+                                           @BodyType.When(option = "operation", value = "terminateInstances",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.TerminateInstancesResponse"),
+                                           @BodyType.When(option = "operation", value = "describeInstances",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.DescribeInstancesResponse"),
+                                           @BodyType.When(option = "operation", value = "describeInstancesStatus",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusResponse"),
+                                           @BodyType.When(option = "operation", value = "rebootInstances",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "monitorInstances",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.MonitorInstancesResponse"),
+                                           @BodyType.When(option = "operation", value = "unmonitorInstances",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse"),
+                                           @BodyType.When(option = "operation", value = "createTags", carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.CreateTagsResponse"),
+                                           @BodyType.When(option = "operation", value = "deleteTags", carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.ec2.model.DeleteTagsResponse") },
+                                   description = "The response of the AWS SDK for the operation, such as a RunInstancesResponse"
+                                                 + " for createAndRunInstances; rebootInstances keeps the body"))
 public class AWS2EC2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private Ec2Client ec2Client;

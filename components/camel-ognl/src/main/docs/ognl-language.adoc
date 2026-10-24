@@ -15,7 +15,7 @@ supported by https://commons.apache.org/dormant/commons-ognl/[(Apache Commons OG
 used as an xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
 in Camel routes.
 
-For example, you can use MVEL in a xref:manual::predicate.adoc[Predicate]
+For example, you can use OGNL in a xref:manual::predicate.adoc[Predicate]
 with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
 
 You can use OGNL dot notation to invoke operations. If you for instance
@@ -48,13 +48,12 @@ include::partial$language-options.adoc[]
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Variable |Type |Description
-|*this* |Exchange |the Exchange is the root object
+|*this* |RootObject |the root object, whose properties are the variables below
 |context |CamelContext |the CamelContext
 |exchange |Exchange |the Exchange
 |exchangeId |String |the exchange id
 |exception |Throwable |the Exchange exception (if any)
 |request |Message |the message
-|message |Message |the message
 |headers |Map |the message headers
 |getHeader(name) |Object |the message header by the given name
 |getHeader(name, type) |Type |the message header by the given name as the given type

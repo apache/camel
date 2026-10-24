@@ -209,7 +209,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 }
                 if (fOrig != null) {
                     Exchange exchange = createExchange(true);
-                    GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getFilename());
+                    // by id: several files can have the same name (revisions), and by name GridFS opens the newest
+                    GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getId());
                     file = downloadStream.getGridFSFile();
 
                     Document metadata = file.getMetadata();

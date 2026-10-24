@@ -28,6 +28,7 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingInterfaceConst
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBodyTypes;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithEnumStyleBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderClassHierarchy;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderInterfaceHierarchy;
@@ -233,7 +234,8 @@ class EndpointSchemaGeneratorMojoTest {
     @Test
     void testEndpointWithBodyTypes() throws Exception {
         // CAMEL-24961: the body a step needs and the body it leaves, in the order of the annotation
-        addEndpointOptions("resultHandlerFactory", "output");
+        addEndpointOptions("resultHandlerFactory");
+        addEnumOption("output", "string", "bytes");
         mojo.addBodyTypes(model, SomeEndpointWithBodyTypes.class);
         assertEquals(List.of(BodyTypeModel.CONSUMER_OUT, BodyTypeModel.PRODUCER_IN, BodyTypeModel.PRODUCER_OUT),
                 List.copyOf(model.getBodyTypes().keySet()));
@@ -261,6 +263,17 @@ class EndpointSchemaGeneratorMojoTest {
     }
 
     @Test
+    void testEndpointWithBodyTypesForEnumValuesInOtherStyles() throws Exception {
+        // the catalog and the enum type converter take convert-to-json and chunkHybrid as CONVERT_TO_JSON and
+        // CHUNK_HYBRID, so the build takes them too
+        addEnumOption("operation", "CONVERT_TO_MARKDOWN", "CONVERT_TO_JSON", "CHUNK_HYBRID");
+        mojo.addBodyTypes(model, SomeEndpointWithEnumStyleBodyTypes.class);
+        List<BodyTypeModel.OptionBodyTypeModel> values = model.getBodyType(BodyTypeModel.PRODUCER_OUT).getByOption();
+        assertEquals(List.of("convert-to-json", "chunkHybrid"),
+                values.stream().map(BodyTypeModel.OptionBodyTypeModel::getValue).toList());
+    }
+
+    @Test
     void testEndpointDoesNotInheritBodyTypes() throws Exception {
         // a subclass may change the body, so it declares its own
         mojo.addBodyTypes(model, SomeEndpointExtendingBodyTypes.class);
@@ -277,10 +290,12 @@ class EndpointSchemaGeneratorMojoTest {
     @ValueSource(classes = {
             SomeEndpointWithBadBodyTypes.DataFormatSide.class, SomeEndpointWithBadBodyTypes.ProducerSideOfConsumer.class,
             SomeEndpointWithBadBodyTypes.UnchangedInput.class, SomeEndpointWithBadBodyTypes.AnyOutput.class,
+            SomeEndpointWithBadBodyTypes.UnknownInput.class,
             SomeEndpointWithBadBodyTypes.UnknownWithOthers.class, SomeEndpointWithBadBodyTypes.NoCarriers.class,
-            SomeEndpointWithBadBodyTypes.UnknownOption.class, SomeEndpointWithBadBodyTypes.OptionValueWithoutCarriers.class })
+            SomeEndpointWithBadBodyTypes.UnknownOption.class, SomeEndpointWithBadBodyTypes.OptionValueWithoutCarriers.class,
+            SomeEndpointWithBadBodyTypes.ValueTheOptionDoesNotHave.class })
     void testEndpointWithBadBodyTypes(Class<?> clazz) {
-        addEndpointOptions("output");
+        addEnumOption("output", "string", "bytes");
         model.setConsumerOnly(clazz.getAnnotation(UriEndpoint.class).consumerOnly());
         MojoExecutionException e = assertThrows(MojoExecutionException.class, () -> mojo.addBodyTypes(model, clazz));
         assertTrue(e.getMessage().startsWith(clazz.getName() + ": the @BodyTypes "), e.getMessage());
@@ -293,5 +308,13 @@ class EndpointSchemaGeneratorMojoTest {
             option.setName(name);
             model.addEndpointOption(option);
         }
+    }
+
+    private void addEnumOption(String name, String... values) {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setName(name);
+        option.setType("enum");
+        option.setEnums(List.of(values));
+        model.addEndpointOption(option);
     }
 }

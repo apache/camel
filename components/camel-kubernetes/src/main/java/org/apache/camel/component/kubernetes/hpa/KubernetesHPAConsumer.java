@@ -60,7 +60,7 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         hpasWatcher = new HpaConsumerTask();
-        executor.submit(hpasWatcher);
+        KubernetesHelper.watch(this, executor, hpasWatcher);
     }
 
     @Override

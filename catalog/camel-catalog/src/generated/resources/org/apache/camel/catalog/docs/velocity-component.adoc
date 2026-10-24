@@ -67,6 +67,8 @@ The `fruit` header is now accessible from the `message.out.headers`.
 Camel will provide exchange information in the Velocity context (just a
 `Map`).
 The `Exchange` is transferred as:
+The `body`, `header`, `headers`, `variable`, `variables` and `exception` entries are always
+there; the others only when the endpoint has `allowContextMapAll=true`.
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -195,8 +197,8 @@ when the resource never changes.
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set, then Camel uses this over the endpoint configured
-resource. This allows you to provide a dynamic template at runtime.
+headers is set, and the endpoint has `allowTemplateFromHeader=true`, then Camel uses this
+over the endpoint configured resource. This allows you to provide a dynamic template at runtime.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

@@ -16,7 +16,7 @@
     "modelJavaType": "org.apache.camel.model.language.XPathExpression"
   },
   "bodyTypes": {
-    "expressionIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "description": "XML as text, bytes, a stream or a file, or a DOM" },
+    "expressionIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "dependsOn": [ "source" ], "description": "XML as text, bytes, a stream or a file, or a DOM" },
     "expressionOut": { "carriers": [ "pojo" ], "javaType": "org.w3c.dom.NodeList", "dependsOn": [ "resultType" ], "byOption": [ { "option": "resultQName", "value": "STRING", "carriers": [ "text" ], "javaType": "java.lang.String" }, { "option": "resultQName", "value": "NUMBER", "carriers": [ "value" ], "javaType": "java.lang.Double" }, { "option": "resultQName", "value": "BOOLEAN", "carriers": [ "value" ], "javaType": "java.lang.Boolean" }, { "option": "resultQName", "value": "NODE", "carriers": [ "pojo" ], "javaType": "org.w3c.dom.Node" } ], "description": "The nodes the expression selects" }
   },
   "properties": {

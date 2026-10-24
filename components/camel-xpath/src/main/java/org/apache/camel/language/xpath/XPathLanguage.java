@@ -38,7 +38,8 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @Language("xpath")
 @BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
-                                    format = "xml", description = "XML as text, bytes, a stream or a file, or a DOM"),
+                                    format = "xml", dependsOn = "source",
+                                    description = "XML as text, bytes, a stream or a file, or a DOM"),
            expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.NodeList", dependsOn = "resultType",
                                      byOption = {
                                              @BodyType.When(option = "resultQName", value = "STRING", carriers = Carrier.TEXT,

@@ -108,3 +108,39 @@ consumer applies its own keys and certificates and its own asynchronous MDN sett
 The settings of the shared server connection still come from the first endpoint created on the port:
 `sslContextParameters` and `sslContext` (used for the TLS listener and for the https delivery of asynchronous MDNs),
 `mdnMessageTemplate`, `server`, `serverFqdn` and `as2Version`. They are per port, not per consumer.
+
+=== Sending through an HTTP proxy
+
+When outbound traffic must go through an HTTP forward proxy, set `proxyHost` and `proxyPort` on the
+`as2://client/send` endpoint. The client connects to the proxy over plain http:
+
+* without an `sslContext`, the AS2 message is sent to the proxy with an absolute request URI;
+* with an `sslContext`, the client asks the proxy to open a `CONNECT` tunnel to `targetHostname` and
+`targetPortNumber`, and the TLS handshake and hostname verification are made with the target through the tunnel.
+
+If the proxy requires authentication, set `proxyAuthUsername` and `proxyAuthPassword`. They are sent to the
+proxy as a preemptive Basic `Proxy-Authorization` header, on the `CONNECT` request when tunnelling, and are not
+sent to the AS2 partner. Setting only one of them is a configuration error: the endpoint fails to start. If the
+proxy refuses the request, for example with `407 Proxy Authentication Required`, the send fails with an exception,
+as the message has not reached the partner. The proxy options apply to the AS2 client only: asynchronous MDNs are
+delivered directly.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sendToPartner
+      steps:
+        - to:
+            uri: as2://client/send
+            parameters:
+              inBody: ediMessage
+              targetHostname: partner.example.com
+              targetPortNumber: 443
+              sslContext: "#partnerSslContext"
+              proxyHost: proxy.internal
+              proxyPort: 3128
+              proxyAuthUsername: "{{proxy.user}}"
+              proxyAuthPassword: "{{proxy.password}}"
+              # ... the AS2 message options
+----

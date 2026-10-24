@@ -91,9 +91,9 @@ class SubscriptionManagerExceptionPropagationTest {
         CompletableFuture<Object> upstream = new CompletableFuture<>();
         upstream.completeExceptionally(serviceError);
 
-        // Same chain as the fixed SubscriptionManager.write(): side-effect only, completion preserved
+        // Same chain as the fixed SubscriptionManager.write(): no side-effect, completion preserved
         CompletableFuture<?> result = upstream.whenCompleteAsync((r, e) -> {
-            // side-effect (e.g. handleConnectionFailure); exception propagated by whenCompleteAsync
+            // no side-effect; exception propagated by whenCompleteAsync
         }, executor);
 
         ExecutionException ex = null;

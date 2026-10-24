@@ -54,6 +54,10 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         map.put("MethodName", java.lang.String.class);
         map.put("MuteException", boolean.class);
         map.put("Password", java.lang.String.class);
+        map.put("ProxyAuthPassword", java.lang.String.class);
+        map.put("ProxyAuthUsername", java.lang.String.class);
+        map.put("ProxyHost", java.lang.String.class);
+        map.put("ProxyPort", java.lang.Integer.class);
         map.put("ReceiptDeliveryOption", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
         map.put("Server", java.lang.String.class);
@@ -140,6 +144,14 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "muteexception":
         case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": target.setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthusername":
+        case "proxyAuthUsername": target.setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": target.setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
@@ -246,6 +258,14 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "muteexception":
         case "muteException": return boolean.class;
         case "password": return java.lang.String.class;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return java.lang.String.class;
+        case "proxyauthusername":
+        case "proxyAuthUsername": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return java.lang.String.class;
         case "requesturi":
@@ -348,6 +368,14 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "muteexception":
         case "muteException": return target.isMuteException();
         case "password": return target.getPassword();
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return target.getProxyAuthPassword();
+        case "proxyauthusername":
+        case "proxyAuthUsername": return target.getProxyAuthUsername();
+        case "proxyhost":
+        case "proxyHost": return target.getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getProxyPort();
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return target.getReceiptDeliveryOption();
         case "requesturi":

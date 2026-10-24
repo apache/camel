@@ -36,6 +36,9 @@ import net.sf.flatpack.writer.FixedWriterFactory;
 import net.sf.flatpack.writer.Writer;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.flatpack.DataSetList;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -59,6 +62,17 @@ import org.slf4j.LoggerFactory;
  * <b>Notice:</b> The Flatpack library does currently not support header and trailers for the marshal operation.
  */
 @Dataformat("flatpack")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.LIST,
+                                 description = "The rows as a List of Maps, such as the DataSetList unmarshal gives; a single"
+                                               + " Map fails. Without a definition, the keys of the first Map name the"
+                                               + " columns"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The records in the stream cache, or a byte array when stream caching is off."
+                                                + " An empty List writes nothing"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = Carrier.LIST, javaType = "org.apache.camel.component.flatpack.DataSetList",
+                                    description = "A DataSetList: a List of the rows, each a HashMap of the column names and"
+                                                  + " the values, which does not keep the column order"))
 public class FlatpackDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private static final Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();

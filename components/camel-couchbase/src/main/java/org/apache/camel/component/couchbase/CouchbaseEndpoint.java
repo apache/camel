@@ -39,6 +39,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -63,6 +66,31 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol://hostname:port",
              category = { Category.DATABASE }, headersClass = CouchbaseConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.couchbase.client.java.kv.GetResult",
+                                   byOption = {
+                                           @BodyType.When(option = "fullDocument", value = "false", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "useView", value = "true", carriers = Carrier.POJO,
+                                                          javaType = "com.couchbase.client.java.kv.GetResult") },
+                                   description = "One message per document the query finds, read by its id (the"
+                                                 + " CamelCouchbaseId header) as the GetResult of the Couchbase SDK:"
+                                                 + " contentAsObject() gives the JSON document. With fullDocument=false the row"
+                                                 + " of the SQL++ query as JSON text, or with useView=true the value the view"
+                                                 + " emits"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.MAP, Carrier.LIST, Carrier.POJO }, dependsOn = "operation",
+                                  description = "The document that CCB_PUT, the default, stores as JSON: a Map, a List or a"
+                                                + " POJO becomes JSON, and text is stored as a JSON string, so unmarshal JSON"
+                                                + " text first. Bytes, a stream or no body fail. CCB_GET and CCB_DEL do not use"
+                                                + " the body: the id is the CamelCouchbaseId header"),
+           producerOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Boolean", dependsOn = "operation",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "CCB_GET", carriers = Carrier.POJO,
+                                                          javaType = "com.couchbase.client.java.kv.GetResult"),
+                                           @BodyType.When(option = "operation", value = "CCB_DEL", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String") },
+                                   description = "true for CCB_PUT, the default; the GetResult of the Couchbase SDK for"
+                                                 + " CCB_GET, and the MutationResult as text for CCB_DEL. The producer removes"
+                                                 + " the CamelCouchbaseId header"))
 public class CouchbaseEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriPath

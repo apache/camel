@@ -41,6 +41,9 @@ import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.WrappedException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -52,6 +55,18 @@ import org.slf4j.LoggerFactory;
  * Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy
  */
 @Dataformat("bindyCsv")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                 description = "An object of the classType class, or a List (or an Iterator) of them; a Map of"
+                                               + " the model class names to the objects is one record. Other bodies, such as"
+                                               + " a Map of field values, are not records"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "csv",
+                                  description = "The CSV in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "csv"),
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                    byOption = @BodyType.When(option = "unwrapSingleInstance", value = "false",
+                                                              carriers = Carrier.LIST),
+                                    description = "An object of the classType class when there is one record, otherwise a"
+                                                  + " List of them; an empty List for no records with allowEmptyStream"))
 public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(BindyCsvDataFormat.class);
 
