@@ -26,6 +26,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -37,6 +40,18 @@ import org.optaplanner.core.api.solver.SolverFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:problemName",
              category = { Category.WORKFLOW }, headersClass = OptaPlannerConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
+                                   description = "The body is empty: the new best solution is in the CamelOptaPlannerBestSolution"
+                                                 + " header. Events come only from producers that solve asynchronously, with the"
+                                                 + " same problemId"),
+           producerIn = @BodyType(value = Carrier.POJO,
+                                  description = "The planning problem: an instance of the PlanningSolution class of the solver"
+                                                + " configuration, or a ProblemChange to apply to the problem being solved. Any"
+                                                + " other body fails to solve, and no body fails"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.UNCHANGED },
+                                   description = "The best solution found, a new instance of the problem class, with the"
+                                                 + " CamelOptaPlannerIsSolving header false (also with async, the exchange waits"
+                                                 + " for it); a ProblemChange leaves the body unchanged"))
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver<Object>> SOLVERS = new ConcurrentHashMap<>();
     private static final Map<Long, Set<OptaplannerSolutionEventListener>> SOLUTION_LISTENER = new ConcurrentHashMap<>();

@@ -21,6 +21,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -35,6 +38,15 @@ import org.flowable.eventregistry.model.CamelOutboundChannelModel;
  */
 @UriEndpoint(firstVersion = "4.9.0", scheme = "flowable", title = "Flowable", syntax = "flowable:channelKey",
              category = { Category.WORKFLOW })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The event a process or case sends on an outbound channel, as text: JSON"
+                                                 + " or XML, as the serializerType of the channel says"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO },
+                                  description = "The event for an inbound channel: JSON or XML text, as the deserializerType"
+                                                + " of the channel expects, or an object whose toString() is that text, such"
+                                                + " as a Jackson JsonNode. Bytes, a stream or a Map fail: convert them to"
+                                                + " text first. The headers go along as the headers of the event"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class FlowableEndpoint extends DefaultEndpoint {
 
     private EventRegistryEngineConfiguration eventRegistryEngineConfiguration;
