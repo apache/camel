@@ -436,6 +436,13 @@ earlier in the route.
 
 Signatures created by earlier versions may not verify and need to be created again.
 
+=== camel-github2 - getCommitFile
+
+getCommitFile now takes the commit from the `CamelGitHubCommitSha` header, which must be a commit id of 40
+hexadecimal characters, and the path of the file from the new `CamelGitHubFilePath` header, or else the body, and gives
+the content of the file at that commit. Previously the body was taken as the commit when the header was not set, and
+the operation could not give the content of a file.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs

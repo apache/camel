@@ -79,8 +79,8 @@ public class SnmpProducer extends DefaultProducer {
     private PDU createPdu() {
         PDU pdu = SnmpHelper.createPDU(endpoint);
 
-        // in here,only POLL do set the oids
-        if (this.actionType == SnmpActionType.POLL) {
+        // a GET (type POLL or no type) asks for the oids; a walk adds its oid for each request
+        if (this.actionType != SnmpActionType.GET_NEXT) {
             for (OID oid : this.endpoint.getOids()) {
                 pdu.add(new VariableBinding(oid));
             }

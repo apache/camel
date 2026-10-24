@@ -52,6 +52,14 @@ public final class PdfConverterLoader implements TypeConverterLoader, CamelConte
                 }
                 return answer;
             });
+        addTypeConverter(registry, org.apache.pdfbox.pdmodel.PDDocument.class, java.io.ByteArrayOutputStream.class, false,
+            (type, exchange, value) -> {
+                Object answer = getPdfConverter().convertToPDF((java.io.ByteArrayOutputStream) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.pdfbox.pdmodel.PDDocument.class, java.io.File.class, false,
             (type, exchange, value) -> {
                 Object answer = getPdfConverter().convertToPDF((java.io.File) value);
@@ -63,6 +71,14 @@ public final class PdfConverterLoader implements TypeConverterLoader, CamelConte
         addTypeConverter(registry, org.apache.pdfbox.pdmodel.PDDocument.class, java.io.InputStream.class, false,
             (type, exchange, value) -> {
                 Object answer = getPdfConverter().toPDDocument((java.io.InputStream) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
+        addTypeConverter(registry, org.apache.pdfbox.pdmodel.PDDocument.class, java.nio.file.Path.class, false,
+            (type, exchange, value) -> {
+                Object answer = getPdfConverter().convertToPDF((java.nio.file.Path) value);
                 if (false && answer == null) {
                     answer = Void.class;
                 }

@@ -4990,7 +4990,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup.
+     * The type of the lookup. The wikipedia type is deprecated, as the
+     * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param path dnsType
@@ -5010,7 +5011,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup.
+     * The type of the lookup. The wikipedia type is deprecated, as the
+     * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -11703,8 +11705,9 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>micrometer:metricsType:metricsName</code>
      * 
-     * Path parameter: metricsType (required)
+     * Path parameter: metricsType
      * Type of metrics
+     * Default value: counter
      * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
@@ -11727,8 +11730,9 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>micrometer:metricsType:metricsName</code>
      * 
-     * Path parameter: metricsType (required)
+     * Path parameter: metricsType
      * Type of metrics
+     * Default value: counter
      * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)

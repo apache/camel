@@ -2795,7 +2795,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param download the value to set
@@ -2814,7 +2814,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param download the value to set

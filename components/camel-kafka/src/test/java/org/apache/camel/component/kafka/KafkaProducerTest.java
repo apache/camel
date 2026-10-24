@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -55,6 +56,7 @@ import org.apache.kafka.common.errors.SerializationException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -616,6 +618,79 @@ public class KafkaProducerTest {
         producer.process(exchange);
 
         verifySendMessages(Arrays.asList("sometopic", "sometopic"), null);
+    }
+
+    @Test
+    public void processSendsMessageWithJsonObjectNode() throws Exception {
+        // CAMEL-25924: an object node is one record, not one record per field value
+        endpoint.getConfiguration().setTopic("sometopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
+        node.put("orderId", 42);
+        node.put("customer", "acme");
+        node.put("total", 9.5);
+
+        in.setBody(node);
+        producer.process(exchange);
+
+        verifySendMessage("sometopic");
+        verifySentValues(node);
+    }
+
+    @Test
+    public void processSendsMessagesWithJackson3ArrayNode() throws Exception {
+        endpoint.getConfiguration().setTopic("sometopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+
+        JsonNode first = tools.jackson.databind.node.JsonNodeFactory.instance.numberNode(1);
+        JsonNode second = tools.jackson.databind.node.JsonNodeFactory.instance.numberNode(2);
+        in.setBody(tools.jackson.databind.node.JsonNodeFactory.instance.arrayNode().add(first).add(second));
+        producer.process(exchange);
+
+        verifySendMessages(Arrays.asList("sometopic", "sometopic"), null);
+        verifySentValues(first, second);
+    }
+
+    @Test
+    public void processSendsMessageWithJackson3ObjectNode() throws Exception {
+        // CAMEL-25924: a Jackson 3 object node is one record, not one record per field value
+        endpoint.getConfiguration().setTopic("sometopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+
+        JsonNode node
+                = tools.jackson.databind.node.JsonNodeFactory.instance.objectNode().put("orderId", 42).put("customer", "acme");
+        in.setBody(node);
+        producer.process(exchange);
+
+        verifySendMessage("sometopic");
+        verifySentValues(node);
+    }
+
+    @Test
+    public void processSendsMessageWithJackson3ScalarNode() throws Exception {
+        // CAMEL-25924: a Jackson 3 scalar node has no elements, and must be sent as one record and not dropped
+        endpoint.getConfiguration().setTopic("sometopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+
+        JsonNode node = tools.jackson.databind.node.JsonNodeFactory.instance.numberNode(42);
+        in.setBody(node);
+        producer.process(exchange);
+
+        verifySendMessage("sometopic");
+        verifySentValues(node);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void verifySentValues(Object... expectedValues) {
+        ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
+        Mockito.verify(producer.getKafkaProducer(), Mockito.atLeastOnce()).send(captor.capture());
+        List<Object> actualValues = captor.getAllValues().stream().map(ProducerRecord::value).collect(Collectors.toList());
+        assertEquals(Arrays.asList(expectedValues), actualValues);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

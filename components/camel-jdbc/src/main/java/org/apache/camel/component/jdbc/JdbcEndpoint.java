@@ -68,6 +68,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
     @UriParam
     private int readSize;
     @UriParam
+    @Metadata(deprecationNote = "Not used: the producer does not read this option")
+    @Deprecated
     private boolean transacted;
     @UriParam(defaultValue = "true")
     private boolean resetAutoCommit = true;
@@ -134,13 +136,18 @@ public class JdbcEndpoint extends DefaultEndpoint {
         this.readSize = readSize;
     }
 
+    @Deprecated
     public boolean isTransacted() {
         return transacted;
     }
 
     /**
      * Whether transactions are in use.
+     *
+     * @deprecated not used: the producer does not read this option. The producer takes part in a Spring transaction
+     *             through the connection of the data source with the Spring JDBC component.
      */
+    @Deprecated
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
     }
@@ -280,7 +287,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To read BLOB columns as bytes instead of string data.
+     * To read BLOB columns as bytes (a byte[]) instead of a java.sql.Blob, which cannot be read after the producer has
+     * closed the connection.
      * <p/>
      * This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
      */

@@ -94,8 +94,8 @@ import org.apache.camel.util.StringHelper;
                                   description = "Read as text: the comment for pullRequestComment, which needs a body, and the"
                                                 + " description of the issue for createIssue and of the commit status for"
                                                 + " pullRequestState; a Map or a POJO is sent as its toString(), so marshal it"
-                                                + " first. getCommitFile reads the sha from the body when the"
-                                                + " CamelGitHubCommitSha header is not set, and the other types read only"
+                                                + " first. getCommitFile reads the path of the file from the body when the"
+                                                + " CamelGitHubFilePath header is not set, and the other types read only"
                                                 + " headers"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    byOption = {
@@ -311,7 +311,7 @@ public class GitHub2Endpoint extends ScheduledPollEndpoint implements EndpointSe
     }
 
     /**
-     * To use the given encoding when getting a git commit file
+     * The charset of the content of the file for the getCommitFile producer (the default charset of the JVM if not set)
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;

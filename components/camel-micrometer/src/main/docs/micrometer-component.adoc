@@ -148,8 +148,10 @@ from("direct:in")
 will update a counter with name `new.name` instead of `name.not.used` using the
 tag `dynamic-key` with value `dynamic-value` in addition to the tag `key` with value `value`.
 
-All Metrics specific headers are removed from the message once the Micrometer endpoint finishes processing of exchange. While processing exchange
-Micrometer endpoint will catch all exceptions and write log entry using level `warn`.
+All Metrics specific headers are removed from the message once the Micrometer endpoint finishes processing of exchange.
+If the Micrometer endpoint cannot update the meter, then the exchange fails with the exception, which the
+error handler of the route handles as any other failure. For example, a `value`, `increment` or `decrement` that is
+not a number, or a timer `action` that is not `start` or `stop`, fails the exchange with a `TypeConversionException`.
 
 
 [[MicrometerComponent-counter]]
@@ -412,8 +414,9 @@ micrometer:summary:metricname[?options]
 |value |- |Value to use in histogram
 |===================================
 
-If no `value` is not set, nothing is added to histogram and warning is
-logged.
+If `value` is not set, and there is no `CamelMetricsHistogramValue` header, then nothing is added to the
+distribution summary, and nothing is logged. A value that is not a number fails the exchange with a
+`TypeConversionException`.
 
 [tabs]
 ====
@@ -461,7 +464,7 @@ Java::
 +
 [source,java]
 ----
-// nothing is added to simple.histogram; warning is logged
+// nothing is added to simple.histogram
 from("direct:in")
     .to("micrometer:summary:simple.histogram")
     .to("direct:out");
@@ -543,7 +546,7 @@ the Micrometer endpoint URI.
 [width="100%",cols="10%,80%,10%",options="header",]
 |=================================================================
 |Name |Description |Expected type
-|CamelMetricsHistogramValue |Override histogram value in URI |Long
+|CamelMetricsHistogramValue |Override histogram value in URI |Double
 |=================================================================
 
 [tabs]
@@ -609,10 +612,9 @@ micrometer:timer:metricname[?options]
 |action |- |start or stop
 |==========================
 
-If no `action` or invalid value is provided then warning is logged
-without any timer update. If action `start` is called on an already running
-timer or `stop` is called on an unknown timer, nothing is updated
-and warning is logged.
+If no `action` is provided, then the timer is not updated, and nothing is logged. An `action` that is not
+`start` or `stop` fails the exchange with a `TypeConversionException`. If action `start` is called on an
+already running timer or `stop` is called on an unknown timer, nothing is updated, and nothing is logged.
 
 [tabs]
 ====

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.as2.api.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -98,8 +100,7 @@ public final class EntityUtils {
             case "base64":
                 return Base64.encode(data);
             case "quoted-printable":
-                // TODO: implement QuotedPrintableOutputStream
-                return QuotedPrintableCodec.encodeQuotedPrintable(null, data);
+                return QuotedPrintableCodec.encodeQuotedPrintable(null, data, true);
             case "binary":
             case "7bit":
             case "8bit":
@@ -121,9 +122,7 @@ public final class EntityUtils {
             case "base64":
                 return Base64OutputStream.builder().setOutputStream(os).setEncode(true).get();
             case "quoted-printable":
-                // TODO: implement QuotedPrintableOutputStream
-                return Base64OutputStream.builder().setOutputStream(os).setEncode(true).get();
-            // return new Base64OutputStream(os, true);
+                return new QuotedPrintableOutputStream(os);
             case "binary":
             case "7bit":
             case "8bit":
@@ -172,8 +171,11 @@ public final class EntityUtils {
             case "base64":
                 return Base64InputStream.builder().setInputStream(is).setEncode(false).get();
             case "quoted-printable":
-                // TODO: implement QuotedPrintableInputStream
-                return Base64InputStream.builder().setInputStream(is).setEncode(false).get();
+                try {
+                    return new ByteArrayInputStream(QuotedPrintableCodec.decodeQuotedPrintable(is.readAllBytes()));
+                } catch (IOException | DecoderException e) {
+                    throw new CamelException("Failed to decode quoted-printable content", e);
+                }
             case "binary":
             case "7bit":
             case "8bit":
@@ -287,4 +289,38 @@ public final class EntityUtils {
         }
     }
 
+    /**
+     * Encodes what is written to it as quoted-printable (RFC 2045, with soft line breaks) when it is closed.
+     */
+    private static final class QuotedPrintableOutputStream extends FilterOutputStream {
+
+        private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        private boolean closed;
+
+        QuotedPrintableOutputStream(OutputStream os) {
+            super(os);
+        }
+
+        @Override
+        public void write(int b) {
+            buffer.write(b);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) {
+            buffer.write(b, off, len);
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (!closed) {
+                closed = true;
+                try {
+                    out.write(QuotedPrintableCodec.encodeQuotedPrintable(null, buffer.toByteArray(), true));
+                } finally {
+                    super.close();
+                }
+            }
+        }
+    }
 }

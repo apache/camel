@@ -20,6 +20,7 @@ The component offers the following operations:
 * `ip`: to resolve a domain to its ip
 * `lookup`: to lookup information about the domain
 * `dig`: to run DNS queries
+* `wikipedia` (deprecated): to query the Wikipedia over DNS service, which is no longer available
 
 [NOTE]
 ====
@@ -177,7 +178,10 @@ YAML::
 ----
 ====
 
-The query must be provided in the header with key `"CamelDnsName"`.
+The query must be provided in the header with key `"CamelDnsName"`; without it the
+exchange fails with an `IllegalArgumentException`. The `"CamelDnsType"` header sets the type of
+the query, such as `MX`, and defaults to `A` when it is not set or not a known type. The
+`"CamelDnsClass"` header sets the DNS class, and defaults to `IN`.
 
 
 === Dns Activation Policy

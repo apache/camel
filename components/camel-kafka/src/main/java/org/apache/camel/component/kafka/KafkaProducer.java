@@ -64,6 +64,8 @@ import static org.apache.camel.component.kafka.producer.support.ProducerUtil.try
 public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducer.class);
+    private static final String JACKSON3_JSON_NODE = "tools.jackson.databind.JsonNode";
+    private static final String JACKSON3_ARRAY_NODE = "tools.jackson.databind.node.ArrayNode";
 
     @SuppressWarnings("rawtypes")
     private Producer kafkaProducer;
@@ -314,14 +316,33 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     }
 
     private boolean isIterable(Object body) {
+        // a JSON node is an Iterable of its elements, but only an array is split: an object node (whose elements
+        // are its field values) and a scalar node are sent as one record
         if (body instanceof JsonNode node) {
-            return node.isContainerNode();
+            return node.isArray();
         }
 
-        if (body instanceof Iterable || body instanceof Iterator) {
-            return true;
+        if (body instanceof Iterable) {
+            return !isJackson3NonArrayNode(body.getClass());
         }
 
+        return body instanceof Iterator;
+    }
+
+    /**
+     * Whether the class is a Jackson 3 node other than an array node. Jackson 3 is recognized by class name, as
+     * camel-kafka does not depend on it.
+     */
+    private static boolean isJackson3NonArrayNode(Class<?> type) {
+        for (Class<?> c = type; c != null && c != Object.class; c = c.getSuperclass()) {
+            String name = c.getName();
+            if (JACKSON3_ARRAY_NODE.equals(name)) {
+                return false;
+            }
+            if (JACKSON3_JSON_NODE.equals(name)) {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.graphql.server;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,6 +41,7 @@ public class GraphqlServer {
 
     private final GraphQL graphql;
     private final HttpServer server;
+    private volatile Map<String, String> lastRequestHeaders = Map.of();
 
     public GraphqlServer() {
         this.graphql = GraphqlFactory.newGraphQL();
@@ -61,6 +63,13 @@ public class GraphqlServer {
         return server.getLocalPort();
     }
 
+    /**
+     * The headers of the last request received by the server, with case-insensitive names.
+     */
+    public Map<String, String> getLastRequestHeaders() {
+        return lastRequestHeaders;
+    }
+
     class GraphqlHandler implements HttpRequestHandler {
 
         private final ObjectMapper objectMapper = new ObjectMapper();
@@ -69,6 +78,12 @@ public class GraphqlServer {
         public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                 throws HttpException, IOException {
             HttpEntity entity = request.getEntity();
+
+            Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            for (Header header : request.getHeaders()) {
+                headers.put(header.getName(), header.getValue());
+            }
+            lastRequestHeaders = headers;
 
             Header h = request.getHeader("kaboom");
             if (h != null) {

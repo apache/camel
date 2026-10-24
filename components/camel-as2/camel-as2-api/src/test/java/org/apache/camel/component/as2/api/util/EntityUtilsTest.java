@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.as2.api.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.component.as2.api.AS2Header;
@@ -69,5 +73,34 @@ public class EntityUtilsTest {
         Assertions.assertEquals("application/edifact", actualContentType, "content type matches");
         Header[] actualContentDisposition = applicationEntity.getHeaders(AS2Header.CONTENT_DISPOSITION);
         Assertions.assertEquals(0, actualContentDisposition.length, "no Content-Disposition headers found");
+    }
+
+    @Test
+    public void testQuotedPrintableOutputStreamEncodesQuotedPrintable() throws Exception {
+        byte[] message = ("UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\r\n"
+                          + "FTX+AAI+++Prix = 12 \u20ac, Gr\u00fc\u00dfe, a line longer than seventy-six characters'")
+                .getBytes(StandardCharsets.UTF_8);
+
+        ByteArrayOutputStream encoded = new ByteArrayOutputStream();
+        try (OutputStream os = EntityUtils.encode(encoded, "quoted-printable")) {
+            os.write(message);
+        }
+
+        String text = encoded.toString(StandardCharsets.US_ASCII);
+        Assertions.assertTrue(text.contains("Prix =3D 12 =E2=82=AC"), text);
+        for (String line : text.split("\r\n")) {
+            Assertions.assertTrue(line.length() <= 76, "line longer than 76 characters: " + line);
+        }
+        Assertions.assertArrayEquals(message, EntityUtils.decode(encoded.toByteArray(), "quoted-printable"));
+    }
+
+    @Test
+    public void testQuotedPrintableInputStreamDecodesQuotedPrintable() throws Exception {
+        byte[] message = "FTX+AAI+++Prix = 12 \u20ac'".getBytes(StandardCharsets.UTF_8);
+        byte[] encoded = EntityUtils.encode(message, "quoted-printable");
+
+        try (InputStream is = EntityUtils.decode(new ByteArrayInputStream(encoded), "quoted-printable")) {
+            Assertions.assertArrayEquals(message, is.readAllBytes());
+        }
     }
 }

@@ -74,7 +74,7 @@ public class JdbcProducer extends DefaultProducer {
     }
 
     private void processingSqlBySettingAutoCommit(Exchange exchange) throws Exception {
-        String sql = exchange.getIn().getBody(String.class);
+        String sql = exchange.getIn().getMandatoryBody(String.class);
         Connection conn = null;
         boolean autoCommit = false;
         boolean shouldCloseResources = true;
@@ -122,7 +122,7 @@ public class JdbcProducer extends DefaultProducer {
     }
 
     private void processingSqlWithoutSettingAutoCommit(Exchange exchange) throws Exception {
-        String sql = exchange.getIn().getBody(String.class);
+        String sql = exchange.getIn().getMandatoryBody(String.class);
         Connection conn = null;
         boolean shouldCloseResources = true;
 
@@ -372,7 +372,11 @@ public class JdbcProducer extends DefaultProducer {
             ResultSetIterator iterator = new ResultSetIterator(
                     conn, generatedKeys, getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(),
                     getEndpoint().isUseGetBytesForBlob());
-            List<Map<String, Object>> data = extractRows(iterator);
+            // the generated keys are the key columns of the statement, not rows of the outputClass
+            List<Map<String, Object>> data = new ArrayList<>();
+            while (iterator.hasNext()) {
+                data.add(iterator.next());
+            }
 
             exchange.getMessage().setHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT, data.size());
             exchange.getMessage().setHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, data);

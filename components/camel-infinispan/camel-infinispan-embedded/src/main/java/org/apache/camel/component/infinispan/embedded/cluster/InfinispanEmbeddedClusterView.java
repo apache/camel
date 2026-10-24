@@ -68,6 +68,7 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
     public void doStart() throws Exception {
         super.doStart();
 
+        manager.setCamelContext(getCamelContext());
         ServiceHelper.startService(manager);
 
         this.cache = manager.getCache(getNamespace(), Cache.class);

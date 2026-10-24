@@ -35,7 +35,10 @@ import org.xbill.DNS.Type;
  * See here for a reference: http://www.commandlinefu.com/commands/view/2829/query-wikipedia-via-console-over-dns
  * <p/>
  * This endpoint accepts the following header: CamelDnsTerm: a simple term to use to query wikipedia.
+ *
+ * @deprecated the Wikipedia over DNS service that this producer queries is no longer available
  */
+@Deprecated
 public class DnsWikipediaProducer extends DefaultProducer {
 
     public DnsWikipediaProducer(Endpoint endpoint) {

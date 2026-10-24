@@ -36,6 +36,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
@@ -125,11 +127,11 @@ public class TikaProducer extends DefaultProducer {
         exchange.getMessage().setBody(result);
     }
 
-    private Object doDetect(Exchange exchange) throws IOException, TikaConfigException {
+    private Object doDetect(Exchange exchange) throws IOException, TikaConfigException, InvalidPayloadException {
         MediaType result;
         Metadata metadata = new Metadata();
         ParseContext context = tikaLoader.loadParseContext();
-        try (InputStream stream = exchange.getIn().getBody(InputStream.class);
+        try (InputStream stream = exchange.getIn().getMandatoryBody(InputStream.class);
              TikaInputStream inputStream = TikaInputStream.get(stream, metadata)) {
             result = this.detector.detect(inputStream, metadata, context);
             convertMetadataToHeaders(metadata, exchange);
@@ -138,11 +140,12 @@ public class TikaProducer extends DefaultProducer {
     }
 
     private Object doParse(Exchange exchange)
-            throws TikaException, TikaConfigException, IOException, SAXException, TransformerConfigurationException {
+            throws TikaException, TikaConfigException, IOException, SAXException, TransformerConfigurationException,
+            InvalidPayloadException {
 
         OutputStream result = new ByteArrayOutputStream();
         Metadata metadata = new Metadata();
-        try (InputStream stream = exchange.getIn().getBody(InputStream.class);
+        try (InputStream stream = exchange.getIn().getMandatoryBody(InputStream.class);
              TikaInputStream inputStream = TikaInputStream.get(stream, metadata)) {
             ContentHandler contentHandler = getContentHandler(this.tikaConfiguration, result);
             ParseContext context = tikaLoader.loadParseContext();
@@ -150,6 +153,8 @@ public class TikaProducer extends DefaultProducer {
             this.parser.parse(inputStream, contentHandler, metadata, context);
             convertMetadataToHeaders(metadata, exchange);
         }
+        // the output is written in the output encoding, so converting it to text must decode it with that charset
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, this.encoding);
         return result;
     }
 

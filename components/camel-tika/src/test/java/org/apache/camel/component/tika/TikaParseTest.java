@@ -23,8 +23,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -41,10 +43,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TikaParseTest extends CamelTestSupport {
+
+    private static final String HTML_TEXT = "Gr\u00fc\u00dfe aus K\u00f8benhavn";
+    private static final byte[] HTML
+            = ("<html><head><title>Test</title></head><body><p>" + HTML_TEXT + "</p></body></html>")
+                    .getBytes(StandardCharsets.UTF_8);
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -133,21 +143,56 @@ public class TikaParseTest extends CamelTestSupport {
     @Test
     public void testEmptyConfigDocumentParse() throws Exception {
         resultEndpoint.setExpectedMessageCount(1);
-        resultEndpoint.expectedMessagesMatches(new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-                Object body = exchange.getIn().getBody(String.class);
-                Map<String, Object> headerMap = exchange.getIn().getHeaders();
-                assertThat(body, instanceOf(String.class));
-                assertThat((String) body, containsString("<body/>"));
-                assertThat(headerMap.get(Exchange.CONTENT_TYPE), equalTo("application/x-tika-msoffice"));
-                return true;
-            }
+        resultEndpoint.expectedMessagesMatches(exchange -> {
+            String body = exchange.getIn().getBody(String.class);
+            // the empty parser of the config file gives no text, which the default parser gives
+            assertThat(body, containsString("<body/>"));
+            assertThat(body, not(containsString(HTML_TEXT)));
+            return true;
         });
 
-        File document = new File("src/test/resources/test.doc");
-        template.sendBody("direct:start3", document);
+        template.sendBody("direct:start2", HTML);
         resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testDefaultConfigDocumentParse() throws Exception {
+        resultEndpoint.setExpectedMessageCount(1);
+        resultEndpoint.expectedMessagesMatches(exchange -> {
+            assertThat(exchange.getIn().getBody(String.class), containsString(HTML_TEXT));
+            return true;
+        });
+
+        template.sendBody("direct:start", HTML);
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testTextParseWithEncoding() throws Exception {
+        resultEndpoint.setExpectedMessageCount(1);
+        resultEndpoint.expectedMessagesMatches(exchange -> {
+            // the exchange carries the output encoding, so the text decodes right
+            assertThat(exchange.getIn().getBody(String.class), containsString(HTML_TEXT));
+            assertThat(exchange.getProperty(Exchange.CHARSET_NAME), equalTo(StandardCharsets.UTF_16.name()));
+            return true;
+        });
+
+        template.sendBody("direct:start5", HTML);
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testParseBodyNotStream() {
+        Exception e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", Map.of("key", "value")));
+        assertInstanceOf(InvalidPayloadException.class, e.getCause());
+    }
+
+    @Test
+    public void testParseWithoutBody() {
+        Exception e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", null));
+        assertInstanceOf(InvalidPayloadException.class, e.getCause());
     }
 
     @Test
@@ -180,6 +225,9 @@ public class TikaParseTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:start3").to("tika:parse?tikaLoader=#testLoader").to("mock:result");
                 from("direct:start4").to("tika:parse?tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
+                        .to("mock:result");
+                from("direct:start5")
+                        .to("tika:parse?tikaParseOutputFormat=text&tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
                         .to("mock:result");
             }
         };

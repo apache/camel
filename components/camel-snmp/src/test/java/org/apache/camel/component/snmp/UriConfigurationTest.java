@@ -22,6 +22,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UriConfigurationTest {
@@ -64,5 +66,39 @@ public class UriConfigurationTest {
         assertEquals(SnmpActionType.POLL, snmpEndpoint.getType());
         assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
         assertEquals("udp:127.0.0.1/1662", snmpEndpoint.getServerAddress());
+    }
+
+    @Test
+    public void testProducerWithoutTypeAndPortConfiguration() {
+        context.start();
+
+        SnmpEndpoint snmpEndpoint = context.getEndpoint("snmp:127.0.0.1?oids=1.3.6.1.2.1.1.1.0", SnmpEndpoint.class);
+
+        assertNull(snmpEndpoint.getType());
+        assertEquals("udp:127.0.0.1/161", snmpEndpoint.getServerAddress());
+    }
+
+    @Test
+    public void testGetNextWithoutPortConfiguration() {
+        context.start();
+
+        SnmpEndpoint snmpEndpoint
+                = context.getEndpoint("snmp:127.0.0.1?type=GET_NEXT&oids=1.3.6.1.2.1.1.1.0", SnmpEndpoint.class);
+
+        assertEquals(SnmpActionType.GET_NEXT, snmpEndpoint.getType());
+        assertEquals("udp:127.0.0.1/161", snmpEndpoint.getServerAddress());
+    }
+
+    @Test
+    public void testConsumerWithGetNextFails() {
+        context.start();
+
+        SnmpEndpoint snmpEndpoint
+                = context.getEndpoint("snmp:127.0.0.1?type=GET_NEXT&oids=1.3.6.1.2.1.1.1.0", SnmpEndpoint.class);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> snmpEndpoint.createConsumer(exchange -> {
+                }));
+        assertTrue(e.getMessage().contains("TRAP or POLL"), e.getMessage());
     }
 }

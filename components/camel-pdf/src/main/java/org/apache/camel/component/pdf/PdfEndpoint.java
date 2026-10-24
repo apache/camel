@@ -43,14 +43,15 @@ import org.apache.camel.support.DefaultEndpoint;
                                           @BodyType.When(option = "operation", value = "merge", carriers = Carrier.ANY) },
                                   description = "The text to write for create and append, which takes the document from the"
                                                 + " CamelPdfDocument header; a Map or a POJO is written as its toString:"
-                                                + " marshal it first. extractText reads a PDF from bytes, a stream, a file or a"
-                                                + " PDDocument, not from text. merge takes the files from the"
+                                                + " marshal it first. extractText reads a PDF from bytes, such as the"
+                                                + " ByteArrayOutputStream of create, a stream, a file or a PDDocument, not from"
+                                                + " text; another body, or none, fails. merge takes the files from the"
                                                 + " CamelPdfFilesToMerge header"),
            producerOut = @BodyType(value = Carrier.BYTES, javaType = "java.io.ByteArrayOutputStream",
                                    byOption = @BodyType.When(option = "operation", value = "extractText",
                                                              carriers = Carrier.TEXT, javaType = "java.lang.String"),
-                                   description = "The PDF of create, append and merge as bytes, in a ByteArrayOutputStream:"
-                                                 + " convertBodyTo byte[] before extractText. The text of the document for"
+                                   description = "The PDF of create, append and merge as bytes, in a ByteArrayOutputStream,"
+                                                 + " which extractText reads as it is. The text of the document for"
                                                  + " extractText"))
 public class PdfEndpoint extends DefaultEndpoint {
 
