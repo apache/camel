@@ -32,6 +32,11 @@
   "headers": {
     "CamelXmppDoc": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "org.jivesoftware.smack.packet.Message", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The XMPP message", "constantName": "org.apache.camel.component.xmpp.XmppConstants#DOC_HEADER" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text", "pojo" ], "byOption": [ { "option": "doc", "value": "true", "carriers": [ "pojo" ], "javaType": "org.jivesoftware.smack.packet.Message" } ], "description": "The text of the chat message; the Smack Message when it has no body text, such as a pubsub notification. With doc, the Smack Message. The subject, thread and sender are in the CamelXmpp* headers" },
+    "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "doc", "value": "true", "carriers": [ "pojo" ] }, { "option": "pubsub", "value": "true", "carriers": [ "pojo" ], "javaType": "org.jivesoftware.smackx.pubsub.packet.PubSub" } ], "description": "The body is converted to text and sent as the chat message (a Map or a POJO as its toString); the headers become message properties. Without a room, doc sends a Smack Stanza (or an array of them) and pubsub a Smack PubSub packet as they are; another body fails" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Hostname for the chat server" },
     "port": { "index": 1, "kind": "path", "displayName": "Port", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 5222, "description": "Port number for the chat server" },

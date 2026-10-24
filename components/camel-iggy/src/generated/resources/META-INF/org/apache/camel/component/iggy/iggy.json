@@ -56,6 +56,11 @@
     "useGlobalSslContextParameters": { "index": 29, "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." },
     "username": { "index": 30, "kind": "property", "displayName": "Username", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "configurationClass": "org.apache.camel.component.iggy.IggyConfiguration", "configurationField": "configuration", "description": "Iggy username" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The payload of the Iggy message, decoded as text with the default charset of the JVM: a binary payload does not survive" },
+    "producerIn": { "carriers": [ "any" ], "description": "The body is converted to text and sent as one message, so bytes are decoded as text (a binary payload is corrupted) and a Map or a POJO is sent as its toString(): marshal it first. A List of String or of Iggy Message is sent as one message per element, and an Iggy Message as it is. No body or an empty List fails" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "topicName": { "index": 0, "kind": "path", "displayName": "Topic Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of the topic" },
     "autoCreateStream": { "index": 1, "kind": "parameter", "displayName": "Auto Create Stream", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "configurationClass": "org.apache.camel.component.iggy.IggyConfiguration", "configurationField": "configuration", "description": "Whether to automatically create stream if it does not exist" },

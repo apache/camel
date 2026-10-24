@@ -24,6 +24,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,41 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "pubnub", title = "PubNub", syntax = "pubnub:channel",
              category = { Category.CLOUD, Category.IOT, Category.MESSAGING }, headersClass = PubNubConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "com.pubnub.api.models.consumer.pubsub.PNMessageResult",
+                                   byOption = @BodyType.When(option = "withPresence", value = "true",
+                                                             carriers = Carrier.POJO),
+                                   description = "The PubNub PNMessageResult; its getMessage() is the payload as a Gson"
+                                                 + " JsonElement, and it does not convert to the payload text. With"
+                                                 + " withPresence, a presence event comes as a PNPresenceEventResult. The"
+                                                 + " channel and timetoken are in the CamelPubNubChannel and"
+                                                 + " CamelPubNubTimeToken headers"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "SETSTATE",
+                                                         carriers = { Carrier.MAP, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "GETHISTORY", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "GETSTATE", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "HERENOW", carriers = Carrier.ANY) },
+                                  description = "The message to publish or fire, serialized to JSON by the PubNub client:"
+                                                + " text is sent as a JSON string (not parsed), a Map or a POJO as a JSON"
+                                                + " object, bytes as an array of numbers; a stream or a file fails, and an"
+                                                + " empty body fails. SETSTATE needs a Map or a POJO (a JSON object); the"
+                                                + " other operations do not read the body"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "GETHISTORY",
+                                                          carriers = { Carrier.LIST, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "operation", value = "GETSTATE", carriers = Carrier.POJO,
+                                                          javaType = "com.pubnub.api.models.consumer.presence.PNGetStateResult"),
+                                           @BodyType.When(option = "operation", value = "HERENOW", carriers = Carrier.POJO,
+                                                          javaType = "com.pubnub.api.models.consumer.presence.PNHereNowResult"),
+                                           @BodyType.When(option = "operation", value = "SETSTATE", carriers = Carrier.POJO,
+                                                          javaType = "com.pubnub.api.models.consumer.presence.PNSetStateResult") },
+                                   description = "PUBLISH and FIRE leave the body unchanged, with the timetoken in the"
+                                                 + " CamelPubNubTimeToken header. GETHISTORY gives a List of"
+                                                 + " PNHistoryItemResult; GETSTATE, HERENOW and SETSTATE the result object"
+                                                 + " of the PubNub client"))
 public class PubNubEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "advanced")

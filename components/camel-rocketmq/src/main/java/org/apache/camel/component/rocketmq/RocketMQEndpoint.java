@@ -23,6 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,6 +39,17 @@ import org.apache.camel.support.DefaultMessage;
  */
 @UriEndpoint(firstVersion = "3.20.0", scheme = "rocketmq", syntax = "rocketmq:topicName", title = "RocketMQ",
              category = Category.MESSAGING, headersClass = RocketMQConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The body of the RocketMQ message. The consumer does not reply: the body"
+                                                 + " the route ends with is not sent back"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "What converts to a byte array: text, bytes, a stream or a file, sent as"
+                                                + " the body of the message. A Map, a POJO, a number or no body fails, and"
+                                                + " the broker rejects an empty body: marshal it first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, dependsOn = "replyToTopic",
+                                   description = "The body is left as it was. With the InOut pattern and a replyToTopic,"
+                                                 + " the producer waits for the reply and the body is the reply as a byte"
+                                                 + " array"))
 public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
 
     @UriPath

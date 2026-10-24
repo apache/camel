@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,6 +39,30 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "vertx", title = "Vert.x", syntax = "vertx:address",
              category = { Category.MESSAGING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body of the event bus message, as the sender sent it: a String, a byte"
+                                                 + " array, a number or a boolean, a JsonObject or a JsonArray, or a"
+                                                 + " Serializable object such as a HashMap. A Buffer becomes a stream with"
+                                                 + " stream caching enabled"),
+           consumerReply = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                                     description = "A message with a reply address is answered with the body the route ends"
+                                                   + " with, as the producer sends it. A stream, such as a received Buffer the"
+                                                   + " route did not change, or a POJO that is not Serializable sends no reply,"
+                                                   + " and the requester times out"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "Sent as is, with the event bus codec of its type: a String, a byte array, a"
+                                                + " number or a boolean, a JsonObject, a JsonArray or a Buffer, or a"
+                                                + " Serializable object such as a HashMap. A stream, a POJO that is not"
+                                                + " Serializable (without a codec registered for it) or no body fails:"
+                                                + " convert it first"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = @BodyType.When(option = "exchangePattern", value = "InOnly",
+                                                             carriers = Carrier.UNCHANGED),
+                                   description = "Unchanged for a message that expects no reply (InOnly). A message that"
+                                                 + " expects one (InOut) is sent as a request, also with pubSub, and gets"
+                                                 + " the body of the reply"))
 public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport, EndpointServiceLocation {
 
     @UriPath
