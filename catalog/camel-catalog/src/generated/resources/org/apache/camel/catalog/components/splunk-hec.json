@@ -32,6 +32,10 @@
   "headers": {
     "CamelSplunkHECIndexTime": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Epoch-formatted time. Specify with the time query string parameter. Sets a default for all events in the request. The default time can be overridden.", "constantName": "org.apache.camel.component.splunkhec.SplunkHECConstants#INDEX_TIME" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "value", "map", "list", "pojo", "null" ], "byOption": [ { "option": "headersOnly", "value": "true", "carriers": [ "any" ] } ], "description": "The event, written as JSON by Jackson with the headers beside it, or alone with bodyOnly. A stream fails, bytes become base64 and a File its path: convert them to text first. With headersOnly the body is not sent" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "splunkURL": { "index": 0, "kind": "path", "displayName": "Splunk URL", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Splunk Host and Port (example: my_splunk_server:8089)" },
     "bodyOnly": { "index": 1, "kind": "parameter", "displayName": "Body Only", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.splunkhec.SplunkHECConfiguration", "configurationField": "configuration", "description": "Send only the message body" },

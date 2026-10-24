@@ -30,6 +30,9 @@ import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -48,6 +51,51 @@ import org.apache.camel.util.CaseInsensitiveMap;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.CLOUD }, headersClass = Olingo2Constants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.MAP, Carrier.TEXT, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "methodName", value = "uread",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "splitResult", value = "false",
+                                                          carriers = {
+                                                                  Carrier.POJO, Carrier.MAP, Carrier.LIST, Carrier.TEXT,
+                                                                  Carrier.VALUE }) },
+                                   description = "The result of read for the resourcePath, as in the producer: a feed is"
+                                                 + " split into one message per ODataEntry and the $links of an entry into"
+                                                 + " one message per link URI; with splitResult=false the ODataFeed or the"
+                                                 + " List comes in one message. uread gives the response unparsed as a"
+                                                 + " stream"),
+           producerIn = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.TEXT, Carrier.VALUE }, dependsOn = "inBody",
+                                  byOption = {
+                                          @BodyType.When(option = "methodName", value = "read", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "methodName", value = "uread", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "methodName", value = "delete", carriers = Carrier.ANY) },
+                                  description = "create, update, patch, merge and batch send the body as their data, passed"
+                                                + " as it is without type conversion: a Map of the property names and"
+                                                + " values for an entry or a complex property, the Java value of a simple"
+                                                + " property, a Map of the key for a link and a List of such Maps for"
+                                                + " links, and a List of Olingo2BatchRequest for batch. JSON text, bytes or"
+                                                + " a stream fails: unmarshal it to a Map first. read, uread and delete"
+                                                + " do not use the body"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.MAP, Carrier.LIST, Carrier.TEXT, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "methodName", value = "uread",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "methodName", value = "delete",
+                                                          carriers = Carrier.VALUE),
+                                           @BodyType.When(option = "methodName", value = "batch",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "filterAlreadySeen", value = "true",
+                                                          carriers = {
+                                                                  Carrier.POJO, Carrier.MAP, Carrier.LIST, Carrier.TEXT,
+                                                                  Carrier.VALUE, Carrier.NULL }) },
+                                   description = "read gives the Olingo object of the resource: an ODataFeed, an ODataEntry,"
+                                                 + " the Edm of $metadata or the ServiceDocument; a Map for a property, the"
+                                                 + " Java value for $value, a Long for $count, the URI text of a link and a"
+                                                 + " List of them for $links. uread gives the response as a stream. create"
+                                                 + " gives the created ODataEntry, or the HttpStatusCodes when the response"
+                                                 + " has no content; update, patch, merge and delete the"
+                                                 + " HttpStatusCodes, and batch a List of Olingo2BatchResponse. With"
+                                                 + " filterAlreadySeen, a result read before is null"))
 @Deprecated(since = "4.18")
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration>
         implements EndpointServiceLocation {

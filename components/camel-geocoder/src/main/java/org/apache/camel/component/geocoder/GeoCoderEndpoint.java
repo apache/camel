@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.geocoder.http.AuthenticationMethod;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,20 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng",
              producerOnly = true, category = { Category.API, Category.SEARCH }, headersClass = GeoCoderConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not read: the address or the latitude and longitude come from the"
+                                                + " CamelGeoCoderAddress or CamelGeoCoderLatlng header, or else from the endpoint"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "type", value = "NOMINATIM", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "headersOnly", value = "true",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "With Google, the array of com.google.maps.model.GeocodingResult, empty for"
+                                                 + " no results; unchanged when Google denies the request, with the status in"
+                                                 + " the CamelGeoCoderStatus header. With Nominatim, its jsonv2 response as text:"
+                                                 + " an array of one place for an address, an object for a latitude and"
+                                                 + " longitude. The first result is also in the headers"))
 public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath

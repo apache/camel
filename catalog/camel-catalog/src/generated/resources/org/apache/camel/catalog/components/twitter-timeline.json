@@ -42,6 +42,11 @@
   "headers": {
     "CamelTwitterEventType": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of event. The supported values are the values of the enum org.apache.camel.component.twitter.consumer.TwitterEventType", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_EVENT_TYPE" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "twitter4j.v1.Status", "description": "One tweet of the timeline per exchange, with its text in getText()" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "description": "The text to tweet as the status of the account, or a twitter4j StatusUpdate: bytes, a stream or a file are read as text, and a Map or another POJO is tweeted as its toString(). No body fails. Only the user timeline type has a producer" },
+    "producerOut": { "carriers": [ "unchanged", "pojo" ], "byOption": [ { "option": "exchangePattern", "value": "InOnly", "carriers": [ "unchanged" ] }, { "option": "exchangePattern", "value": "InOut", "carriers": [ "pojo" ], "javaType": "twitter4j.v1.Status" } ], "description": "Unchanged when the exchange expects no reply (InOnly). When it expects one (InOut), the twitter4j Status of the tweet posted, with its id" }
+  },
   "properties": {
     "timelineType": { "index": 0, "kind": "path", "displayName": "Timeline Type", "group": "common", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.twitter.data.TimelineType", "enum": [ "PUBLIC", "HOME", "USER", "MENTIONS", "LIST", "UNKNOWN" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timeline type to produce\/consume." },
     "list": { "index": 1, "kind": "parameter", "displayName": "List", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The list name when using timelineType=list" },

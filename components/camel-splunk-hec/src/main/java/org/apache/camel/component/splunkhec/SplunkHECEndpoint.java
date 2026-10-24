@@ -27,6 +27,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -43,6 +46,13 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 @UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
              syntax = "splunk-hec:splunkURL", category = { Category.MONITORING },
              headersClass = SplunkHECConstants.class)
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                                  byOption = @BodyType.When(option = "headersOnly", value = "true", carriers = Carrier.ANY),
+                                  description = "The event, written as JSON by Jackson with the headers beside it, or alone with"
+                                                + " bodyOnly. A stream fails, bytes become base64 and a File its path: convert"
+                                                + " them to text first. With headersOnly the body is not sent"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class SplunkHECEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Pattern SPLUNK_URL_PATTERN = Pattern.compile("^(.*?):(\\d+)$");

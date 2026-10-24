@@ -28,6 +28,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.xchange.XChangeConfiguration.XChangeService;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -55,6 +58,33 @@ import org.knowm.xchange.utils.Assert;
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "xchange", title = "XChange", syntax = "xchange:name", producerOnly = true,
              category = { Category.BLOCKCHAIN }, headersClass = XChangeConfiguration.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Read only by ticker and currencyPairMetaData, as a CurrencyPair, and by"
+                                                + " currencyMetaData, as a Currency, when the CurrencyPair or Currency header"
+                                                + " is not set. Text such as BTC/USDT is not converted: use the currencyPair"
+                                                + " option, or a CurrencyPair object in the body or the header"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "method", value = "ticker", carriers = Carrier.POJO,
+                                                          javaType = "org.knowm.xchange.dto.marketdata.Ticker"),
+                                           @BodyType.When(option = "method", value = "currencies", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<org.knowm.xchange.currency.Currency>"),
+                                           @BodyType.When(option = "method", value = "currencyPairs", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<org.knowm.xchange.currency.CurrencyPair>"),
+                                           @BodyType.When(option = "method", value = "currencyMetaData",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "method", value = "currencyPairMetaData",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "method", value = "balances", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<org.knowm.xchange.dto.account.Balance>"),
+                                           @BodyType.When(option = "method", value = "wallets", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<org.knowm.xchange.dto.account.Wallet>"),
+                                           @BodyType.When(option = "method", value = "fundingHistory", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<org.knowm.xchange.dto.account.FundingRecord>") },
+                                   description = "The XChange object of the method: a Ticker, a List of Currency,"
+                                                 + " CurrencyPair, Balance, Wallet or FundingRecord, or the CurrencyMetaData or"
+                                                 + " InstrumentMetaData, null for one the exchange does not know. A method of"
+                                                 + " another service leaves the body unchanged"))
 public class XChangeEndpoint extends DefaultEndpoint {
 
     @UriParam
