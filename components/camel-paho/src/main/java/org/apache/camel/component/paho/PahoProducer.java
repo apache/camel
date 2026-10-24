@@ -20,6 +20,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -56,7 +57,7 @@ public class PahoProducer extends DefaultAsyncProducer {
                         Integer.class);
                 boolean retained = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_RETAINED,
                         getEndpoint().getConfiguration().isRetained(), Boolean.class);
-                byte[] payload = exchange.getIn().getBody(byte[].class);
+                byte[] payload = exchange.getIn().getMandatoryBody(byte[].class);
 
                 MqttMessage message = new MqttMessage(payload);
                 message.setQos(qos);
@@ -64,7 +65,7 @@ public class PahoProducer extends DefaultAsyncProducer {
 
                 LOG.debug("Publishing to topic: {}, qos: {}, retrained: {}", topic, qos, retained);
                 client.publish(topic, message);
-            } catch (MqttException e) {
+            } catch (InvalidPayloadException | MqttException e) {
                 exchange.setException(e);
             }
         }

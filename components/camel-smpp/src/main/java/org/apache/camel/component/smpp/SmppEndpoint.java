@@ -42,21 +42,16 @@ import org.jsmpp.bean.DeliverSm;
                                    description = "A short message as text decoded by its data coding, or as bytes for an"
                                                  + " 8-bit data coding; the text of a delivery receipt, with its fields in"
                                                  + " headers. A data_sm or an alert notification has no body"),
-           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.FILE },
-                                  description = "The text of the short message: bytes or a file are read as text, unless an"
-                                                + " 8-bit CamelSmppDataCoding or CamelSmppAlphabet header sends bytes as they"
-                                                + " are. A stream is sent empty and no body fails: convert it to text first;"
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The text of the short message: bytes, a stream or a file are read as text,"
+                                                + " unless an 8-bit CamelSmppDataCoding or CamelSmppAlphabet header, or an"
+                                                + " 8-bit dataCoding or alphabet option for a byte array, sends bytes as they"
+                                                + " are. A stream is read once and replaced by its content. No body fails;"
                                                 + " a Map or a POJO is sent as its toString(). DataSm, QuerySm and CancelSm do"
                                                 + " not read the body"),
-           producerOut = @BodyType(value = Carrier.UNKNOWN,
-                                   byOption = {
-                                           @BodyType.When(option = "exchangePattern", value = "InOnly",
-                                                          carriers = Carrier.UNCHANGED),
-                                           @BodyType.When(option = "exchangePattern", value = "InOut",
-                                                          carriers = Carrier.NULL) },
-                                   description = "Unchanged, with the message ids in the CamelSmppId header. When the"
-                                                 + " exchange expects a reply (InOut), a new message with no body and only the"
-                                                 + " result headers"))
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, with the message ids in the CamelSmppId header, also when the"
+                                                 + " exchange expects a reply (InOut)"))
 public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SmppBinding binding;

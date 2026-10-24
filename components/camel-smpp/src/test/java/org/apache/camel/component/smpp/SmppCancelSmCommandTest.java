@@ -78,4 +78,19 @@ public class SmppCancelSmCommandTest {
 
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
+
+    @Test
+    public void executeInOutKeepsTheBodyAndTheHeaders() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "CancelSm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+        exchange.getIn().setHeader("marker", "kept");
+        exchange.getIn().setBody("the body");
+
+        command.execute(exchange);
+
+        assertEquals("the body", exchange.getMessage().getBody());
+        assertEquals("kept", exchange.getMessage().getHeader("marker"));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
+    }
 }

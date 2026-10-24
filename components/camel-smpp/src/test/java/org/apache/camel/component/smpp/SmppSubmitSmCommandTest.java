@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -25,6 +27,7 @@ import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.Alphabet;
@@ -48,6 +51,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
@@ -643,5 +647,109 @@ public class SmppSubmitSmCommandTest {
         command.execute(exchange);
         assertEquals(Arrays.asList("1", "2"), exchange.getMessage().getHeader(SmppConstants.ID));
         assertEquals(2, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+    }
+
+    @Test
+    public void streamBodyIsReadOnce() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setBody(new ByteArrayInputStream("Hello stream".getBytes()));
+        stubSubmitShortMessage((byte) 0, "Hello stream".getBytes());
+
+        command.execute(exchange);
+
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+    }
+
+    @Test
+    public void missingBodyFailsWithInvalidPayloadException() {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+
+        SmppException e = assertThrows(SmppException.class, () -> command.execute(exchange));
+
+        assertInstanceOf(InvalidPayloadException.class, e.getCause());
+    }
+
+    @Test
+    public void eightBitDataCodingAndAlphabetOptionsSendByteArrayAsIs() throws Exception {
+        config.setDataCoding((byte) 0x04);
+        config.setAlphabet(Alphabet.ALPHA_8_BIT.value());
+        byte[] body = { 'A', 'B', (byte) 0xE9, (byte) 0xFF };
+
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setBody(body);
+        stubSubmitShortMessage((byte) 0x04, body);
+
+        command.execute(exchange);
+
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+    }
+
+    @Test
+    public void eightBitDataCodingOptionSendsByteArrayAsIs() throws Exception {
+        config.setDataCoding((byte) 0x04);
+        byte[] body = { 'A', 'B', (byte) 0xE9, (byte) 0xFF };
+
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setBody(body);
+        stubSubmitShortMessage((byte) 0x04, body);
+
+        command.execute(exchange);
+
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+    }
+
+    @Test
+    public void eightBitAlphabetOptionSendsByteArrayAsIs() throws Exception {
+        config.setAlphabet(Alphabet.ALPHA_8_BIT.value());
+        byte[] body = { 'A', 'B', (byte) 0xE9, (byte) 0xFF };
+
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setBody(body);
+        // the data coding of the PDU is the dataCoding option
+        stubSubmitShortMessage((byte) 0x00, body);
+
+        command.execute(exchange);
+
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+    }
+
+    @Test
+    public void textBodyWithEightBitOptionsIsEncodedWithTheEncodingOption() throws Exception {
+        config.setDataCoding((byte) 0x04);
+        config.setAlphabet(Alphabet.ALPHA_8_BIT.value());
+
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.name());
+        exchange.getIn().setBody("ABé");
+        // ISO-8859-1, the default of the encoding option
+        stubSubmitShortMessage((byte) 0x04, new byte[] { 'A', 'B', (byte) 0xE9 });
+
+        command.execute(exchange);
+
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+    }
+
+    @Test
+    public void executeInOutKeepsTheBodyAndTheHeaders() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader("marker", "kept");
+        exchange.getIn().setBody("Hello inout");
+        stubSubmitShortMessage((byte) 0, "Hello inout".getBytes());
+
+        command.execute(exchange);
+
+        assertEquals("Hello inout", exchange.getMessage().getBody());
+        assertEquals("kept", exchange.getMessage().getHeader("marker"));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+    }
+
+    private void stubSubmitShortMessage(byte dataCoding, byte[] shortMessage) throws Exception {
+        when(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()), eq((byte) 0),
+                eq((byte) 1), (String) isNull(), (String) isNull(),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),
+                eq(DataCodings.newInstance(dataCoding)), eq((byte) 0), eq(shortMessage)))
+                .thenReturn(new SubmitSmResult(new MessageId("1"), null));
     }
 }

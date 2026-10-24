@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.telegram.service;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
@@ -25,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Multipart message serialization tests")
 class OutgoingMessageHandlerTest {
@@ -36,13 +36,12 @@ class OutgoingMessageHandlerTest {
 
         bodyPublisher.addBodyPart(new TelegramBodyPublisher.SingleBodyPart("message=\"value\""));
 
-        ByteBuffer buffer = ByteBuffer.allocate(100);
+        TelegramBodyPublisher.BodyBuffer buffer = new TelegramBodyPublisher.BodyBuffer(100);
         Set<TelegramBodyPublisher.TelegramBodyPart> bodyParts = bodyPublisher.getBodyParts();
 
         TelegramBodyPublisher.serialize(bodyParts, buffer, "");
 
-        int written = buffer.capacity() - buffer.remaining();
-        String serialized = new String(buffer.array(), 0, written);
+        String serialized = buffer.toString(StandardCharsets.UTF_8);
 
         assertEquals("message=\"value\"", serialized);
     }
@@ -55,13 +54,12 @@ class OutgoingMessageHandlerTest {
         bodyPublisher
                 .addBodyPart(new TelegramBodyPublisher.MultilineBodyPart<>("message", "value1", StandardCharsets.UTF_8.name()));
 
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        TelegramBodyPublisher.BodyBuffer buffer = new TelegramBodyPublisher.BodyBuffer(1024);
         Set<TelegramBodyPublisher.TelegramBodyPart> bodyParts = bodyPublisher.getBodyParts();
 
         TelegramBodyPublisher.serialize(bodyParts, buffer, "aaa");
 
-        int written = buffer.capacity() - buffer.remaining();
-        String serialized = new String(buffer.array(), 0, written);
+        String serialized = buffer.toString(StandardCharsets.UTF_8);
 
         assertEquals("--aaa\r\n" +
                      "Content-Disposition: form-data; name=\"message\"\r\n" +
@@ -84,13 +82,12 @@ class OutgoingMessageHandlerTest {
         stringMultilineBodyPart.addHeader("key2", "value2");
         bodyPublisher.addBodyPart(stringMultilineBodyPart);
 
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        TelegramBodyPublisher.BodyBuffer buffer = new TelegramBodyPublisher.BodyBuffer(1024);
         Set<TelegramBodyPublisher.TelegramBodyPart> bodyParts = bodyPublisher.getBodyParts();
 
         TelegramBodyPublisher.serialize(bodyParts, buffer, "aaa");
 
-        int written = buffer.capacity() - buffer.remaining();
-        String serialized = new String(buffer.array(), 0, written);
+        String serialized = buffer.toString(StandardCharsets.UTF_8);
 
         assertEquals("--aaa\r\n" +
                      "Content-Disposition: form-data; name=\"message\"; key1=\"value1\"; key2=\"value2\"\r\n"
@@ -122,13 +119,12 @@ class OutgoingMessageHandlerTest {
         stringMultilineBodyPart2.addHeader("key2", "value2");
         bodyPublisher.addBodyPart(stringMultilineBodyPart2);
 
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        TelegramBodyPublisher.BodyBuffer buffer = new TelegramBodyPublisher.BodyBuffer(1024);
         Set<TelegramBodyPublisher.TelegramBodyPart> bodyParts = bodyPublisher.getBodyParts();
 
         TelegramBodyPublisher.serialize(bodyParts, buffer, "aaa");
 
-        int written = buffer.capacity() - buffer.remaining();
-        String serialized = new String(buffer.array(), 0, written);
+        String serialized = buffer.toString(StandardCharsets.UTF_8);
 
         assertEquals("--aaa\r\n" +
                      "Content-Disposition: form-data; name=\"message1\"; key1=\"value1\"; key2=\"value2\"\r\n"
@@ -142,5 +138,27 @@ class OutgoingMessageHandlerTest {
                      "value2\r\n" +
                      "--aaa--\r\n",
                 serialized);
+    }
+
+    @DisplayName("Test the buffer grows to the content, and text and numbers are written in UTF-8")
+    @Test
+    void testMultiBodyLargerThanTheInitialBuffer() {
+        TelegramBodyPublisher bodyPublisher = new TelegramBodyPublisher(16);
+
+        byte[] media = new byte[4096];
+        bodyPublisher
+                .addBodyPart(new TelegramBodyPublisher.MultilineBodyPart<>("media", media, "application/octet-stream", null));
+        bodyPublisher
+                .addBodyPart(new TelegramBodyPublisher.MultilineBodyPart<>("caption", "Gr\u00fc\u00dfe \u2603", "text/plain"));
+        bodyPublisher.addBodyPart(new TelegramBodyPublisher.MultilineBodyPart<>("duration", 42, "text/plain"));
+
+        TelegramBodyPublisher.BodyBuffer buffer = new TelegramBodyPublisher.BodyBuffer(16);
+        TelegramBodyPublisher.serialize(bodyPublisher.getBodyParts(), buffer, "aaa");
+
+        String serialized = buffer.toString(StandardCharsets.UTF_8);
+        assertTrue(buffer.size() > media.length);
+        assertTrue(serialized.contains("charset=UTF-8\r\n\r\nGr\u00fc\u00dfe \u2603\r\n"));
+        assertTrue(serialized.contains("name=\"duration\"\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n42\r\n"));
+        assertTrue(serialized.endsWith("--aaa--\r\n"));
     }
 }

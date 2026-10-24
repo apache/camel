@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MailMessageTest extends CamelTestSupport {
     private Session mailSession;
@@ -80,6 +81,41 @@ public class MailMessageTest extends CamelTestSupport {
         assertEquals("frank@localhost", value, "value");
 
         assertEquals(body, in.getBody(), "body");
+    }
+
+    @Test
+    public void testBodySetToNullStaysNull() throws Exception {
+        Exchange exchange = endpoint.createExchange(mimeMessage);
+        MailMessage in = (MailMessage) exchange.getIn();
+        assertEquals(body, in.getBody());
+
+        in.setBody(null);
+        assertNull(in.getBody());
+        assertNull(in.copy().getBody());
+        // the mail itself is still there
+        assertNotNull(in.getMessage());
+    }
+
+    @Test
+    public void testBodySetToNullBeforeReadStaysNull() throws Exception {
+        Exchange exchange = endpoint.createExchange(mimeMessage);
+        MailMessage in = (MailMessage) exchange.getIn();
+
+        in.setBody(null);
+        assertNull(in.getBody());
+    }
+
+    @Test
+    public void testBodySetOnRawMessageIsCopied() throws Exception {
+        MailEndpoint raw = checkEndpoint("pop3://someone@myhost:30/subject?mapMailMessage=false");
+        Exchange exchange = raw.createExchange(mimeMessage);
+        MailMessage in = (MailMessage) exchange.getIn();
+
+        in.setBody(null);
+        assertNull(in.copy().getBody());
+
+        in.setBody("Bye World");
+        assertEquals("Bye World", in.copy().getBody());
     }
 
     @Override

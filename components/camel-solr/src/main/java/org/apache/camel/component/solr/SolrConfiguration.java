@@ -54,8 +54,8 @@ public class SolrConfiguration {
     private String collection;
     @UriParam
     private String requestHandler;
-    @UriParam(defaultValue = "true")
-    private boolean deleteByQuery = false;
+    @UriParam(defaultValue = "false")
+    private boolean deleteByQuery;
     @UriParam(label = "security")
     private boolean enableSSL;
     @UriParam(label = "security")

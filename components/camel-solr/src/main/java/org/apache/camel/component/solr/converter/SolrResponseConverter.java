@@ -37,11 +37,19 @@ public final class SolrResponseConverter {
 
     @Converter
     public static Map<String, Object> createSolrResponseMap(Object body, Exchange exchange) {
-        return SolrUtils.parseAsFlatMap(SolrUtils.parseAsMap(createSolrResponse(body, exchange)));
+        // only a solr response can be converted, as this converter is used for any conversion to a Map
+        SolrResponse solrResponse = createSolrResponse(body, exchange);
+        if (solrResponse == null) {
+            return null;
+        }
+        return SolrUtils.parseAsFlatMap(SolrUtils.parseAsMap(solrResponse));
     }
 
     @Converter
     public static SolrResponse createSolrResponse(Object body, Exchange exchange) {
+        if (body instanceof SolrResponse solrResponse) {
+            return solrResponse;
+        }
         return createSolrResponse(body, SolrResponseBase.class);
     }
 

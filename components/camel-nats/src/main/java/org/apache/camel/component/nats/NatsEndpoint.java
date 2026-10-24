@@ -54,12 +54,12 @@ import org.apache.camel.util.ObjectHelper;
            consumerReply = @BodyType(value = Carrier.ANY,
                                      byOption = @BodyType.When(option = "exchangePattern", value = "InOut",
                                                                carriers = {
-                                                                       Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
-                                                                       Carrier.FILE }),
-                                     description = "Only with exchangePattern=InOut is a message with a reply subject"
-                                                   + " answered, with the body the route ends with: text, bytes, a stream or a"
-                                                   + " file. A Map, a POJO or no body sends no reply, and the requester"
-                                                   + " times out"),
+                                                                       Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                       Carrier.STREAM, Carrier.FILE }),
+                                     description = "Only with exchangePattern=InOut is a core NATS message with a reply"
+                                                   + " subject answered, with the body the route ends with: text, bytes, a"
+                                                   + " stream or a file, and no body sends an empty reply. A Map or a POJO"
+                                                   + " sends no reply, and the requester times out"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "What converts to a byte array: text, bytes, a stream or a file. A Map or a"
                                                 + " POJO is sent as its toString(), and a List or no body fails: marshal it"

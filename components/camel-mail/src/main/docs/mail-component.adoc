@@ -193,6 +193,20 @@ text content. The body is converted to `String.class`: bytes, a stream or a file
 content as an attachment, and a Map or a POJO is sent as its `toString()`. A body that is a `jakarta.mail.internet.MimeMessage`
 is sent as it is, with its own recipients and subject.
 
+Mails are sent with `smtp` or `smtps`. A producer on `imap`, `imaps`, `pop3` or `pop3s` fails when it is created.
+
+The text is encoded in the charset of the `contentType` option (or of the `Content-Type` header), else in the charset of
+the exchange (the `CamelCharsetName` exchange property). When neither has a charset, the text is encoded in the default
+charset of Jakarta Mail (the `mail.mime.charset` system property, else the JVM default charset, which is UTF-8 unless
+changed), and that charset is added to the `Content-Type` of the mail.
+
+When the body is a `jakarta.mail.internet.MimeMessage`, it is sent as it is. A message read from a mail store, such as
+the body of a mail consumer with `mapMailMessage=false`, is read-only, so a copy of it is sent.
+
+When a mail consumer gives a multipart mail, the body converts to the text of its first text part (a text part
+without a content handler in Jakarta Mail, such as `text/csv`, is read in the charset of the part), or to `null`
+when the mail has no text part.
+
 Camel copies all of the exchange's IN headers to the
 http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
 headers.

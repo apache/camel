@@ -64,15 +64,17 @@ import org.slf4j.LoggerFactory;
                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO,
                    Carrier.NULL },
                                   description = "A message of org.apache.camel.component.telegram.model, such as an"
-                                                + " OutgoingTextMessage, or text to send as a text message: a stream or a file"
-                                                + " is read as text, and a Map or another POJO is sent as its toString(), so"
-                                                + " marshal it first. A byte array is sent as the photo, audio, video or"
-                                                + " document the CamelTelegramMediaType header names, and fails without it."
-                                                + " No body sends nothing"),
+                                                + " OutgoingTextMessage, or text to send as a text message: a Map or another"
+                                                + " POJO is sent as its toString(), so marshal it first. A byte array, a stream"
+                                                + " or a file is sent as the photo, audio, video or document the"
+                                                + " CamelTelegramMediaType header names, or as text when it names TEXT. Without"
+                                                + " the header, a byte array fails, and a stream or a file is read as text. No"
+                                                + " body, or an IncomingMessage without text, sends nothing"),
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.UNCHANGED },
                                    description = "The MessageResult of the call, with the message sent, or a subclass of it"
                                                  + " such as MessageResultString for createInvoiceLink; an answer with ok=false"
-                                                 + " is a MessageResult too. No body is left as it is"))
+                                                 + " fails the exchange. No body, or an IncomingMessage without text, is left"
+                                                 + " as it is"))
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint, EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
     private static final Pattern WEBHOOK_SECRET_TOKEN_PATTERN = Pattern.compile("[A-Za-z0-9_-]{1,256}");
@@ -81,8 +83,8 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     private TelegramConfiguration configuration;
     @UriParam(label = "advanced")
     private HttpClient client;
-    @UriParam(label = "advanced", defaultValue = "" + (1024 * 1024))
-    private int bufferSize = 1024 * 1024;
+    @UriParam(label = "advanced", defaultValue = "" + (8 * 1024))
+    private int bufferSize = 8 * 1024;
 
     private WebhookConfiguration webhookConfiguration;
 
@@ -251,7 +253,8 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     }
 
     /**
-     * The initial in-memory buffer size used when transferring data between Camel and AHC Client.
+     * The initial size, in bytes, of the in-memory buffer for the body of a request sent to Telegram. The buffer grows
+     * to the size of the content, so it does not limit the size of the media that can be sent.
      */
     public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;

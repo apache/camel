@@ -22,7 +22,9 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SmppCommandTypeTest {
 
@@ -71,5 +73,24 @@ public class SmppCommandTypeTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "CancelSm");
 
         assertSame(SmppCommandType.CANCEL_SM, SmppCommandType.fromExchange(exchange));
+    }
+
+    @Test
+    public void nullCommandIsSubmitSm() {
+        exchange.getIn().setHeader(SmppConstants.COMMAND, null);
+
+        assertSame(SmppCommandType.SUBMIT_SM, SmppCommandType.fromExchange(exchange));
+    }
+
+    @Test
+    public void unknownCommandFails() {
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "querySm");
+
+        IllegalArgumentException e
+                = assertThrows(IllegalArgumentException.class, () -> SmppCommandType.fromExchange(exchange));
+
+        assertEquals("Unknown command querySm in the CamelSmppCommand header: use one of SubmitSm, ReplaceSm, QuerySm,"
+                     + " SubmitMulti, CancelSm, DataSm",
+                e.getMessage());
     }
 }

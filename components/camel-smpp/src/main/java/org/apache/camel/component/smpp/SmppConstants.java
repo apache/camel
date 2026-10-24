@@ -29,7 +29,9 @@ public interface SmppConstants {
                                                 "URI option `alphabet` settings above.",
               javaType = "Byte")
     String ALPHABET = "CamelSmppAlphabet";
-    @Metadata(description = "The command", javaType = "String")
+    @Metadata(description = "The command to send: SubmitSm (the default when the header is missing), ReplaceSm, QuerySm,\n" +
+                            "SubmitMulti, CancelSm or DataSm. The names are case-sensitive, and any other value fails.",
+              javaType = "String")
     String COMMAND = "CamelSmppCommand";
     @Metadata(label = "consumer", description = "*only for AlertNotification, DeliverSm and DataSm* The command id field\n" +
                                                 "identifies the particular SMPP PDU. For the complete list of defined\n" +
@@ -83,7 +85,8 @@ public interface SmppConstants {
                                                 "SubmitMulti and ReplaceSm*.  Specifies the encoding (character set name)\n" +
                                                 "the text of the message body is encoded in, as the short message.  A\n" +
                                                 "byte array body is first read as text, in the charset of the exchange,\n" +
-                                                "unless an 8-bit data coding or alphabet header sends it as it is.\n" +
+                                                "unless an 8-bit data coding or alphabet (in a header, or in the\n" +
+                                                "endpoint options) sends it as it is.\n" +
                                                 "Default value is specified by the endpoint configuration parameter\n" +
                                                 "_encoding_",
               javaType = "String")
