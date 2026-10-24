@@ -339,6 +339,15 @@ The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are
 * The producers of an `autoStartup=false` route are no longer started when the context starts; they start when the
   route itself is started (regardless of which route controller is used).
 
+Additionally, an inflight exchange that a forced route stop cuts off while it is passing through a stopped
+`Split` or `Multicast` error-handler wrapper is now marked as interrupted (`exchange.setInterrupted(true)`)
+after the cut-off WARN is logged. This prevents nested stopped error handlers from each emitting their own
+WARN for the same exchange. The interrupted flag also causes the error handler to skip redelivery,
+`onException` routes, and the dead letter channel — the same behavior that `DirectProducer` applies
+(CAMEL-25502) when a route is stopped while an exchange is waiting for a consumer. If your application
+relied on `onException` or the dead letter channel handling a `RouteStoppingException` from a `Split` or
+`Multicast` branch, it will no longer trigger on a forced route stop.
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
