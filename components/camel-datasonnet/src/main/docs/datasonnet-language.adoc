@@ -87,7 +87,7 @@ YAML::
 In XML and YAML DSL, `resultType` is the fully qualified class name.
 
 If the expression results in an array, or an object, you can instruct the expression to return you `List.class`
-or `Map.class`, respectively. However, you must also set the output media type to `application/x-java-object`.
+or `Map.class`, respectively, as long as the output media type is `application/x-java-object`, which is the default.
 
 NOTE: The default `Document` object is useful in situations where there are intermediate transformation steps, and so
 retaining the content metadata through a route execution is valuable.
@@ -115,6 +115,10 @@ And for output media type:
 3. A "CamelDatasonnetOutputMediaType" message header
 4. The DataSonnet Header output media type directive
 5. `application/x-java-object`
+
+NOTE: With the body media type `application/x-java-object`, the body is the Java object it is: JSON text is a string,
+not an object, so `body.foo` fails on it. Set `bodyMediaType`, or a `Content-Type` header, to read text, bytes, a
+stream or a file in that format, such as `application/json`, `application/xml` or `application/csv`.
 
 === Functions
 
