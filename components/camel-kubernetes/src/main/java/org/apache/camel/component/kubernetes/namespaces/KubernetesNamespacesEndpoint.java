@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_NAMESPACES;
@@ -33,6 +36,32 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_N
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_NAMESPACES, title = "Kubernetes Namespaces",
              syntax = "kubernetes-namespaces:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "io.fabric8.kubernetes.api.model.Namespace",
+                                   description = "The Namespace that changed, with the action (ADDED, MODIFIED or DELETED) in the "
+                                                 + "CamelKubernetesEventAction header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the name of the "
+                                                + "Namespace in CamelKubernetesNamespaceName and its labels as a Map in "
+                                                + "CamelKubernetesNamespaceLabels"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listNamespaces",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listNamespacesByLabels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getNamespace",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "createNamespace",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.Namespace"),
+                                           @BodyType.When(option = "operation", value = "updateNamespace",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.Namespace"),
+                                           @BodyType.When(option = "operation", value = "deleteNamespace",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean") },
+                                   description = "A List of the Namespaces for the list operations, the Namespace of get, create and "
+                                                 + "update (null when getNamespace finds none), and a Boolean of whether deleteNamespace "
+                                                 + "deleted it"))
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNamespacesEndpoint(String uri, KubernetesNamespacesComponent component, KubernetesConfiguration config) {

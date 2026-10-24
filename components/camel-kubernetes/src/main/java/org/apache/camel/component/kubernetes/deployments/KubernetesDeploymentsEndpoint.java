@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_DEPLOYMENTS;
@@ -33,6 +36,36 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_D
 @UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_DEPLOYMENTS, title = "Kubernetes Deployments",
              syntax = "kubernetes-deployments:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "io.fabric8.kubernetes.api.model.apps.Deployment",
+                                   description = "The Deployment that changed, with the action (ADDED, MODIFIED or DELETED) in the "
+                                                 + "CamelKubernetesEventAction header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the name of the "
+                                                + "Deployment in CamelKubernetesDeploymentName, its DeploymentSpec in "
+                                                + "CamelKubernetesDeploymentSpec and the replicas of scaleDeployment in "
+                                                + "CamelKubernetesDeploymentReplicas"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listDeployments",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listDeploymentsByLabels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getDeployment",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "createDeployment",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.apps.Deployment"),
+                                           @BodyType.When(option = "operation", value = "updateDeployment",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.apps.Deployment"),
+                                           @BodyType.When(option = "operation", value = "deleteDeployment",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "scaleDeployment",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Integer") },
+                                   description = "A List of the Deployments for the list operations, the Deployment of get, create and "
+                                                 + "update (null when getDeployment finds none), and a Boolean of whether deleteDeployment "
+                                                 + "deleted it. scaleDeployment gives the number of replicas in the status of the "
+                                                 + "Deployment"))
 public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesDeploymentsEndpoint(String uri, KubernetesDeploymentsComponent component, KubernetesConfiguration config) {

@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_NODES;
@@ -33,6 +36,27 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_N
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_NODES, title = "Kubernetes Nodes",
              syntax = "kubernetes-nodes:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "io.fabric8.kubernetes.api.model.Node",
+                                   description = "The Node that changed, with the action (ADDED, MODIFIED or DELETED) in the "
+                                                 + "CamelKubernetesEventAction header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the name of the Node "
+                                                + "in CamelKubernetesNodeName and its NodeSpec in CamelKubernetesNodeSpec"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listNodes", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listNodesByLabels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getNode",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "createNode", carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.Node"),
+                                           @BodyType.When(option = "operation", value = "updateNode", carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.Node"),
+                                           @BodyType.When(option = "operation", value = "deleteNode", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "A List of the Nodes for the list operations, the Node of get, create and update (null "
+                                                 + "when getNode finds none), and a Boolean of whether deleteNode deleted it"))
 public class KubernetesNodesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNodesEndpoint(String uri, KubernetesNodesComponent component, KubernetesConfiguration config) {

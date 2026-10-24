@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CRON_JOB;
@@ -33,6 +36,27 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_C
 @UriEndpoint(firstVersion = "4.3.0", scheme = SCHEME_CRON_JOB, title = "Kubernetes Cronjob",
              syntax = "kubernetes-cronjob:masterUrl", producerOnly = true,
              category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the name of the "
+                                                + "CronJob in CamelKubernetesCronJobName and its CronJobSpec in "
+                                                + "CamelKubernetesCronJobSpec"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listCronJob", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listCronJobByLabels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getCronJob",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "createCronJob",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.batch.v1.CronJob"),
+                                           @BodyType.When(option = "operation", value = "updateCronJob",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.batch.v1.CronJob"),
+                                           @BodyType.When(option = "operation", value = "deleteCronJob",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "A List of the CronJobs for the list operations, the CronJob of get, create and update "
+                                                 + "(null when getCronJob finds none), and the body as it was after deleteCronJob"))
 public class KubernetesCronJobEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesCronJobEndpoint(String uri, KubernetesCronJobComponent component, KubernetesConfiguration config) {
