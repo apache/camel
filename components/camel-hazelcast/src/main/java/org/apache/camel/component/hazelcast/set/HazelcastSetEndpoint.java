@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SET;
@@ -34,6 +37,23 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SET
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_SET, title = "Hazelcast Set", syntax = "hazelcast-set:cacheName",
              category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.hazelcast.collection.ItemEvent",
+                                   description = "The Hazelcast ItemEvent of an item added to or removed from the "
+                                                 + "set, not the item: ${body.item} is the item, and the "
+                                                 + "CamelHazelcastListenerAction header is added or removed"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "The item that add adds and removeValue removes: an object "
+                                                + "Hazelcast can serialize, so a stream or no body fails. A "
+                                                + "Collection for addAll, removeAll and retainAll. clear and getAll "
+                                                + "do not use the body"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, byOption = {
+                   @BodyType.When(option = "defaultOperation", value = "getAll", carriers = Carrier.LIST) },
+                                   description = "The operations that change the set keep the body. getAll gives "
+                                                 + "the Hazelcast set itself: a live distributed Set, not a copy. "
+                                                 + "The operation comes from the CamelHazelcastOperationType header, "
+                                                 + "or else the defaultOperation option: without either the producer "
+                                                 + "fails"))
 public class HazelcastSetEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastSetEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,

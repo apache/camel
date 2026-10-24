@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_RING_BUFFER;
@@ -35,6 +38,25 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_RIN
 @UriEndpoint(firstVersion = "2.16.0", scheme = SCHEME_RING_BUFFER, title = "Hazelcast Ringbuffer",
              syntax = "hazelcast-ringbuffer:cacheName", producerOnly = true, category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "The item that add appends: an object Hazelcast can serialize, "
+                                                + "so a stream or no body fails. The other operations do not use "
+                                                + "the body"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "defaultOperation", value = "add", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Long"),
+                                           @BodyType.When(option = "defaultOperation", value = "capacity",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Long"),
+                                           @BodyType.When(option = "defaultOperation", value = "remainingCapacity",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Long") },
+                                   description = "By the operation, which the CamelHazelcastOperationType header "
+                                                 + "sets, or else the defaultOperation option (without either the "
+                                                 + "producer fails): the sequence of the added item as a Long for "
+                                                 + "add, a Long for capacity and remainingCapacity, and the item at "
+                                                 + "the head (readOnceHead) or the tail (readOnceTail) of the "
+                                                 + "ringbuffer"))
 public class HazelcastRingbufferEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastRingbufferEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component,
