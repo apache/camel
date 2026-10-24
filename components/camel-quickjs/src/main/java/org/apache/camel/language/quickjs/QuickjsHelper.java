@@ -71,6 +71,11 @@ final class QuickjsHelper {
     static final List<String> EXCHANGE_BINDINGS
             = List.of("body", "headers", "properties", "exchangeId", "variables", "exception");
 
+    /**
+     * The result of an evaluation whose script result never reached Java, see {@link EvalFunction}.
+     */
+    static final Object NO_RESULT = new Object();
+
     private static final Logger LOG = LoggerFactory.getLogger("org.apache.camel.language.quickjs.script");
 
     private static final ObjectMapper MAPPER = Engine.DEFAULT_OBJECT_MAPPER;
@@ -296,9 +301,22 @@ final class QuickjsHelper {
                 .build();
     }
 
-    @SuppressWarnings("rawtypes")
     private static GuestFunction evalFunction() {
-        return new GuestFunction(FUNCTION_NAME, List.of(Object.class, String.class), Object.class);
+        return new EvalFunction();
+    }
+
+    /**
+     * Fails an evaluation that gave {@link #NO_RESULT}, instead of letting it continue with no value.
+     */
+    static Object checkResult(Object result, Exchange exchange) {
+        if (result == NO_RESULT) {
+            throw new ExpressionEvaluationException(
+                    null, exchange, new IllegalStateException(
+                            "The script gave no result: its result cannot be turned into JSON (a BigInt, a cyclic"
+                                                              + " object or a toJSON that throws), or it is a Promise"
+                                                              + " that was rejected"));
+        }
+        return result;
     }
 
     /**
@@ -635,6 +653,38 @@ final class QuickjsHelper {
                 }
                 return body.apply(exchange, args);
             });
+        }
+    }
+
+    /**
+     * The script function of the module. QuickJS4J hands its result to Java in a promise callback, after the function
+     * returned. When that fails (JSON.stringify of a BigInt or a cyclic object, a toJSON that throws, a rejected
+     * promise) the rejection is dropped, and QuickJS4J returned the result of the previous evaluation. This function
+     * forgets its result once it is read, so such an evaluation gives {@link #NO_RESULT} instead.
+     */
+    @SuppressWarnings("rawtypes")
+    private static final class EvalFunction extends GuestFunction {
+        private final HostFunction setResult;
+        private Object result = NO_RESULT;
+
+        EvalFunction() {
+            super(FUNCTION_NAME, List.of(Object.class, String.class), Object.class);
+            setResult = new HostFunction(setResultFunName(), List.of(Object.class), Void.class, args -> {
+                result = args.get(0);
+                return null;
+            });
+        }
+
+        @Override
+        public HostFunction setResultHostFunction() {
+            return setResult;
+        }
+
+        @Override
+        public Object getResult() {
+            Object answer = result;
+            result = NO_RESULT;
+            return answer;
         }
     }
 

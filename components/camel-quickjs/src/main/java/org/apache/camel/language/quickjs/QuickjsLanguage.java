@@ -169,7 +169,7 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
                 discard(state);
             }
         }
-        return convert(result, resultType, getCamelContext(), null);
+        return convert(QuickjsHelper.checkResult(result, null), resultType, getCamelContext(), null);
     }
 
     Object evaluateExpression(String script, Exchange exchange) {
@@ -199,7 +199,7 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
                     discard(state);
                 }
             }
-            return convert(result, Object.class, exchange.getContext(), exchange);
+            return convert(QuickjsHelper.checkResult(result, exchange), Object.class, exchange.getContext(), exchange);
         } finally {
             if (previous != null) {
                 currentExchange.set(previous);
