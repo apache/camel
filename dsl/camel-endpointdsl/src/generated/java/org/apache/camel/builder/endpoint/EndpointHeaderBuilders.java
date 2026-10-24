@@ -4164,7 +4164,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19
