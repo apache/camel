@@ -163,7 +163,8 @@ description:
 ----
 
 The sides say what the body is with the default options. A side that is not in the catalog is not known, and tooling
-should not guess it. The Java API gives them on the model:
+should not guess it. The documentation page of a component, data format or language shows them in its _Message Body_
+section, and `camel catalog doc` prints them. The Java API gives them on the model:
 
 [source,java]
 ----
