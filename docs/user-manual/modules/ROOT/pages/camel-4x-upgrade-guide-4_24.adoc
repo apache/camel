@@ -2661,3 +2661,52 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== camel-python - a script gives the Java value of its result
+
+The `python` language (Jython) now gives the Java value of what a script returns, instead of its Python text from
+`str()`. `None` is `null`, a string, a number or a boolean is the Java `String`, number or `Boolean`, a dict, list,
+tuple or set is a `Map`, `List` or `Set` of Java values, and a Java object bound to the script, such as the body, is
+returned as it is. For example `1 + 2` gives the `Integer` 3 instead of the text `3`, and `body` on a byte array gives
+the byte array instead of the text `array('b', [...])`. Set `resultType` to `java.lang.String` to get text.
+
+This also changes predicates: `None` was the text `None`, which counted as true, and is now `null`, which is false. An
+empty list was the text `[]`, which counted as true, and is now an empty collection, which is false.
+
+An error while a script runs, such as a `NameError`, now fails with `ExpressionEvaluationException` instead of
+`ExpressionIllegalSyntaxException`, which is kept for a script that does not compile.
+
+=== camel-openfeature - an expression gives the value of a boolean flag
+
+Used as an expression, for example in `setBody`, `setHeader` or `setProperty`, the `openfeature` language now gives the
+`Boolean` value of a boolean flag. Before, it evaluated every flag as a string flag, so a boolean flag gave the
+`defaultValue` of the endpoint as text (`false` unless set) and logged a `TYPE_MISMATCH` warning. String flags give
+their text as before, and number and object flags still give the `defaultValue`. Predicates are unchanged.
+
+=== camel-datasonnet - a null result and a stream body
+
+An expression whose result is `null` now gives `null` instead of a `Document` without content, unless `resultType` is
+`com.datasonnet.document.Document`. A predicate whose result is `null` is false; before, it failed with a
+`NullPointerException`.
+
+A stream body without a body media type is now read as text. Before, it failed while the stream was mapped as a Java
+object.
+
+=== camel-hl7 - the hl7terser language reads a stream or a file
+
+The `hl7terser` language now reads a stream or a file body as an HL7 message, in the charset of MSH-18 as the HL7
+data format does. A body that is not an HL7 message, such as a `Map`, or no body, now fails with an
+`ExpressionEvaluationException` that says what the body is, instead of a `NullPointerException`; text that is not a
+valid HL7 message fails with an `ExpressionEvaluationException` that has the parse error as its cause.
+
+=== camel-javascript, camel-python3 - bytes and functions in the result of a script
+
+A Python `bytes`, `bytearray` or `memoryview` returned by a `python3` script, and an `ArrayBuffer` returned by a `js`
+script, now give a `byte[]` instead of a `List` of numbers. A script that returns a function now fails with an
+`ExpressionEvaluationException`; before, it gave a value that failed when it was used later.
+
+=== camel-quickjs - a Set, a Map or a typed array in the result of a script
+
+A JavaScript `Set` returned by a `quickjs` script now gives a `List`, a JavaScript `Map` a `Map` with its keys as text,
+and a typed array or an `ArrayBuffer` a `List` of numbers, also when nested. Before, a `Set` and a `Map` gave an empty
+`Map`, and a typed array a `Map` of index to value.

@@ -16,7 +16,7 @@
     "modelJavaType": "org.apache.camel.model.language.OgnlExpression"
   },
   "bodyTypes": {
-    "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in request.body: there is no variable body" },
+    "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in message.body or request.body: there is no variable body" },
     "expressionOut": { "carriers": [ "unknown" ], "description": "What the expression returns" }
   },
   "properties": {

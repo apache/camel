@@ -81,7 +81,7 @@ public class JavaScriptExpression extends ExpressionSupport {
             b.putMember("properties", properties);
 
             Value o = cx.eval(lang.source(expressionString));
-            Object answer = JavaScriptLanguage.materialize(o);
+            Object answer = JavaScriptLanguage.materializeResult(o, this, exchange);
             if (type == Object.class) {
                 return (T) answer;
             }
