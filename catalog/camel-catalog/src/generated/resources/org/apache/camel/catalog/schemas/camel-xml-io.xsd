@@ -14794,6 +14794,17 @@ patterns can be specified separated by comma. Default value: classpath:camel-moc
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="externalReferences" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to
+the classpath and the file system only, and none allows only references inside the document. A reference the option does
+not allow fails the start. Default value: all
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

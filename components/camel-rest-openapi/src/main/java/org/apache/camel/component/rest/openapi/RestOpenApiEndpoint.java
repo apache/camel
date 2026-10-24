@@ -46,6 +46,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import io.swagger.v3.parser.util.RemoteUrl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Category;
@@ -201,6 +202,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
               description = "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer"
                             + " (platform) or Camel via the unmatched request handler (camel).")
     private String unmatchedRequestHandling = "platform";
+    @UriParam(label = "security", defaultValue = "all", enums = "all,local,none",
+              description = "Which external references ($ref) the OpenAPI specification may use. The parser loads every"
+                            + " external reference when the consumer or producer is created, from the classpath, the file"
+                            + " system or over http(s). all allows any reference, local allows references to the classpath"
+                            + " and the file system only, and none allows only references inside the document. A reference"
+                            + " the option does not allow fails the start, before the parser loads anything. Overrides"
+                            + " component configuration.")
+    private String externalReferences = "all";
     @UriParam(label = "consumer,security", displayName = "OAuth Profile",
               description = "OAuth profile name passed to the HTTP consumer delegate for validating incoming"
                             + " Authorization: Bearer tokens. The selected consumer component must support the"
@@ -247,7 +256,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri);
+        OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri, externalReferences);
         String path = determineBasePath(doc);
 
         RestOpenApiProcessor openApiProcessor
@@ -397,7 +406,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         final CamelContext camelContext = getCamelContext();
-        final OpenAPI openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
+        final OpenAPI openapiDoc = loadSpecificationFrom(camelContext, specificationUri, externalReferences);
         final Paths paths = openapiDoc.getPaths();
 
         for (final Entry<String, PathItem> pathEntry : paths.entrySet()) {
@@ -572,6 +581,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public void setUnmatchedRequestHandling(String unmatchedRequestHandling) {
         this.unmatchedRequestHandling = unmatchedRequestHandling;
+    }
+
+    public String getExternalReferences() {
+        return externalReferences;
+    }
+
+    public void setExternalReferences(String externalReferences) {
+        this.externalReferences = externalReferences;
     }
 
     public String getOauthProfile() {
@@ -1026,26 +1043,59 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
      * @return              the specification
      */
     static OpenAPI loadSpecificationFrom(final CamelContext camelContext, final String uri) {
-        final OpenAPIV3Parser openApiParser = new OpenAPIV3Parser();
-        final ParseOptions options = new ParseOptions();
-        options.setResolveFully(true);
+        return loadSpecificationFrom(camelContext, uri, OpenApiExternalReferences.ALL);
+    }
 
+    /**
+     * Loads the OpenApi definition model from the given path, after checking its references against the
+     * externalReferences option. The parser resolves every external reference of the specification, so a reference the
+     * option does not allow fails the load before the parser runs.
+     *
+     * @param  camelContext       context to use
+     * @param  uri                the specification uri
+     * @param  externalReferences the externalReferences option: all, local or none
+     * @return                    the specification
+     */
+    static OpenAPI loadSpecificationFrom(
+            final CamelContext camelContext, final String uri, final String externalReferences) {
+        final String policy = OpenApiExternalReferences.policy(externalReferences);
+
+        String location = null;
+        String content = null;
         InputStream is = null;
-        List<String> messages = null;
         try {
-            String location = null;
-            String content = null;
             Resource resource = ResourceHelper.resolveMandatoryResource(camelContext, uri);
             if (resource.getScheme().startsWith("http")) {
                 location = resource.getURI().toString();
+                if (!OpenApiExternalReferences.ALL.equals(policy)) {
+                    // read the document as the parser would, to check its references before the parser resolves them
+                    content = RemoteUrl.urlToString(location, Collections.emptyList());
+                }
             } else {
                 is = resource.getInputStream();
                 if (is != null) {
                     content = IOHelper.loadText(is);
                 }
             }
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Failed to load OpenAPI specification from: " + uri, e);
+        } finally {
+            IOHelper.close(is);
+        }
+        if (content != null) {
+            OpenApiExternalReferences.check(policy, content, uri, location != null);
+        }
+
+        final OpenAPIV3Parser openApiParser = new OpenAPIV3Parser();
+        final ParseOptions options = new ParseOptions();
+        options.setResolveFully(true);
+        List<String> messages = null;
+        try {
             SwaggerParseResult openApi = null;
-            if (location != null) {
+            if (location != null && content != null) {
+                openApi = openApiParser.readContents(content, null, options, location);
+            } else if (location != null) {
                 openApi = openApiParser.readLocation(location, null, options);
             } else if (content != null) {
                 openApi = openApiParser.readContents(content, null, options);
@@ -1064,8 +1114,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     "Failed to load OpenAPI specification from: " + uri, e);
-        } finally {
-            IOHelper.close(is);
         }
 
         throw new IllegalArgumentException(

@@ -1103,6 +1103,10 @@
       "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
     },
     {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      externalReferences: none\n"
+    },
+    {
       "source": "rest-dsl.adoc",
       "yaml": "- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:customerNewOrder\n"
     },

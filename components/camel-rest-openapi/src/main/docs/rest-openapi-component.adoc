@@ -330,6 +330,35 @@ so a misconfigured delegate cannot start without the expected protection. Custom
 enforce the option must override `RestOpenApiConsumerFactory.supportsOAuthProfile()` to return
 `true`.
 
+=== Restricting the external references of the specification
+
+An OpenAPI specification can reference other documents with `$ref`: files on the classpath or the file system,
+and documents on an http(s) server. The parser loads every such document when the consumer or producer is
+created, and a document it loads can reference further documents. The `externalReferences` option, on the
+endpoint or the component, restricts this:
+
+* `all` (default) allows any reference.
+* `local` allows references to the classpath and the file system only. A specification loaded from a URL may
+  then reference no other document at all, because the parser resolves its references against that URL.
+* `none` allows only references inside the document, such as `#/components/schemas/Pet`.
+
+The check runs before the parser resolves anything, on the document tree the parser uses (YAML aliases expanded).
+It resolves every `$ref` the way the parser does: against the document that contains it and, for OpenAPI 3.1,
+against the enclosing `$id`. `file:` and `classpath:` references count as local. The local documents the option
+allows are read and checked in turn, and a document that cannot be read fails the check. A reference the option
+does not allow fails the start, with a message that names the reference and where it is.
+
+[source,java]
+----
+from("direct:getPetById")
+    .to("rest-openapi:petstore-v3.json#getPetById?externalReferences=local");
+----
+
+The option can also be set once on the component, for example with
+`camel.component.rest-openapi.external-references=none`. For the contract-first Rest DSL, set it on the `openApi`
+element as shown in xref:manual::rest-dsl-openapi.adoc[REST DSL with contract-first OpenAPI]; the component setting
+applies there as well, also to the specification served as api-doc.
+
 == Request validation
 
 API requests can be validated against the configured OpenAPI specification before they are sent by setting the `requestValidationEnabled` option to `true`.

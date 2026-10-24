@@ -3772,6 +3772,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute(sb, "unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute(sb, "mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute(sb, "externalReferences", def.getExternalReferences(), "all");
     }
     protected void doWriteOpenIdConnectDefinition(StringBuilder sb, OpenIdConnectDefinition def) {
         doWriteRestSecurityDefinitionAttributes(sb, def);

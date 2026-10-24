@@ -1041,6 +1041,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         if (openApi.getApiContextPath() != null) {
             options.put("apiContextPath", parseText(camelContext, openApi.getApiContextPath()));
         }
+        if (openApi.getExternalReferences() != null) {
+            options.put("externalReferences", parseText(camelContext, openApi.getExternalReferences()));
+        }
 
         // include optional description
         String description = openApi.getDescription();

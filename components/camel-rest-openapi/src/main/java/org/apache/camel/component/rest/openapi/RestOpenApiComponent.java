@@ -147,6 +147,12 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " (platform) or Camel via the unmatched request handler (camel). Can be overridden in endpoint"
                             + " configuration.")
     private String unmatchedRequestHandling = "platform";
+    @Metadata(label = "security", defaultValue = "all", enums = "all,local,none",
+              description = "Which external references ($ref) the OpenAPI specification may use: all allows any reference,"
+                            + " local allows references to the classpath and the file system only, and none allows only"
+                            + " references inside the document. A reference the option does not allow fails the start."
+                            + " Can be overridden in endpoint configuration.")
+    private String externalReferences = "all";
     @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
     @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
@@ -185,6 +191,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         endpoint.setMissingOperation(getMissingOperation());
         endpoint.setMockIncludePattern(getMockIncludePattern());
         endpoint.setUnmatchedRequestHandling(getUnmatchedRequestHandling());
+        endpoint.setExternalReferences(getExternalReferences());
         if (restOpenapiProcessorStrategy != null) {
             endpoint.setRestOpenapiProcessorStrategy(restOpenapiProcessorStrategy);
         } else {
@@ -292,6 +299,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public void setUnmatchedRequestHandling(String unmatchedRequestHandling) {
         this.unmatchedRequestHandling = unmatchedRequestHandling;
+    }
+
+    public String getExternalReferences() {
+        return externalReferences;
+    }
+
+    public void setExternalReferences(String externalReferences) {
+        this.externalReferences = externalReferences;
     }
 
     public void setBasePath(final String basePath) {

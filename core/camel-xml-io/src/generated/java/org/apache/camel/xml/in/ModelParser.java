@@ -2601,6 +2601,7 @@ public class ModelParser extends BaseParser {
         return doParse(new OpenApiDefinition(), (def, key, val) -> switch (key) {
                 case "apiContextPath": def.setApiContextPath(val); yield true;
                 case "disabled": def.setDisabled(val); yield true;
+                case "externalReferences": def.setExternalReferences(val); yield true;
                 case "missingOperation": def.setMissingOperation(val); yield true;
                 case "mockIncludePattern": def.setMockIncludePattern(val); yield true;
                 case "routeId": def.setRouteId(val); yield true;

@@ -3289,6 +3289,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute(jo, "unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute(jo, "mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute(jo, "externalReferences", def.getExternalReferences(), "all");
         return jo;
     }
     protected JsonObject doWriteOpenIdConnectDefinition(OpenIdConnectDefinition def) {

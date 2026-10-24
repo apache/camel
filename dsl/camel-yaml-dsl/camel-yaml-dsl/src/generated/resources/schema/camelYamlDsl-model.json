@@ -17745,6 +17745,18 @@
         "index" : 9,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "externalReferences",
+        "type" : "enum",
+        "enum" : [ "all", "local", "none" ],
+        "description" : "Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to the classpath and the file system only, and none allows only references inside the document. A reference the option does not allow fails the start.",
+        "title" : "External References",
+        "default" : "all",
+        "displayName" : "External References",
+        "kind" : "attribute",
+        "index" : 10,
+        "group" : "security",
+        "label" : "security"
       } ]
     },
     "openIdConnect" : {

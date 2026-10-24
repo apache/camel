@@ -11735,6 +11735,13 @@
             "description" : "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
+          "externalReferences" : {
+            "type" : "string",
+            "title" : "External References",
+            "description" : "Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to the classpath and the file system only, and none allows only references inside the document. A reference the option does not allow fails the start.",
+            "default" : "all",
+            "enum" : [ "all", "local", "none" ]
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
