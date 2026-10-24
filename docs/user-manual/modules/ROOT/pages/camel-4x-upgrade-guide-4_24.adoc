@@ -3449,3 +3449,10 @@ insert, and a collection of Strings ran a delete by id, even when the header or 
 body decides only when neither is set, and a body that is a request of SolrJ, such as a `SolrQuery` or an
 `UpdateRequest`, still runs its own operation. The `CamelSolrQueryString` header makes a search only when no operation
 is set, and a `CamelSolrOperation` header with a value that is not an operation now fails.
+
+=== camel-vertx-http - the httpMethod option is not overridden by the CamelHttpMethod header
+
+The `httpMethod` option of the endpoint now wins over the `CamelHttpMethod` header, as its description says and as in
+camel-http. Before, the header overrode the option, so a route that received a request through an HTTP consumer, which
+sets the header to the method of that request, sent it on with that method instead of the method of the endpoint. To
+let the header choose the method, do not set `httpMethod` on the endpoint.
