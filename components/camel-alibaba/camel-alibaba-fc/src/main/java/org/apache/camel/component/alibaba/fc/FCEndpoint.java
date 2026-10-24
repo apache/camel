@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.fc.constants.FCHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,21 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-fc", title = "Alibaba Function Compute (FC)",
              syntax = "alibaba-fc:operation", category = { Category.CLOUD, Category.SERVERLESS },
              headersClass = FCHeaders.class, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "invokeFunction",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                    Carrier.NULL }),
+                                  description = "invokeFunction sends the body as the payload of the function: text and bytes"
+                                                + " as they are, a stream or a file read as text, which corrupts binary data, a"
+                                                + " Map or a POJO as its toString(), so marshal it first, and no body as an"
+                                                + " empty payload. getFunction does not use the body"),
+           producerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map",
+                                   description = "A Map: for invokeFunction the statusCode, the headers and the body of the"
+                                                 + " response, which holds the payload the function returns as bytes, with"
+                                                 + " the status code in the CamelAlibabaFcStatusCode header too; for"
+                                                 + " getFunction the fields of the function, such as functionName, runtime"
+                                                 + " and handler"))
 public class FCEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",

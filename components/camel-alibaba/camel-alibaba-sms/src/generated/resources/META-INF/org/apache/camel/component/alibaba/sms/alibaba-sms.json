@@ -37,6 +37,10 @@
     "CamelAlibabaSmsOutId": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Out id for the SMS", "constantName": "org.apache.camel.component.alibaba.sms.constants.SMSHeaders#OUT_ID" },
     "CamelAlibabaSmsRequestId": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Alibaba Cloud request id", "constantName": "org.apache.camel.component.alibaba.sms.constants.SMSHeaders#REQUEST_ID" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "Not used: sendSms takes the phone numbers, sign name, template code and template parameters from options or headers, such as CamelAlibabaSmsTemplateParam" },
+    "producerOut": { "carriers": [ "map" ], "description": "A Map of the response: the statusCode, and the code, message, bizId and requestId the service returns" }
+  },
   "properties": {
     "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "producer", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "sendSms" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation to perform" },
     "endpoint": { "index": 1, "kind": "parameter", "displayName": "Endpoint", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "SMS endpoint URL. Carries higher precedence than region based client initialization" },

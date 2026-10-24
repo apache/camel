@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,18 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-eventbridge", title = "Alibaba EventBridge",
              syntax = "alibaba-eventbridge:operation", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = AlibabaEventBridgeHeaders.class, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "The event to publish: the JSON text of the data of the event, with the source,"
+                                                + " the type and the bus from the options or headers; a Map of the event"
+                                                + " fields, such as eventSource, eventType and eventData, where a Map or a POJO"
+                                                + " as data is serialized to JSON; a CloudEvent of the Alibaba SDK; or a List of"
+                                                + " these for a batch. Bytes, a stream, a file, another POJO or no body fail:"
+                                                + " convert to text first"),
+           producerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map",
+                                   description = "A Map with the requestId, the failedEntryCount, the resourceOwnerAccountId"
+                                                 + " and the entryList of the response, with the request id in the"
+                                                 + " CamelAlibabaEventBridgeRequestId header too. An event that EventBridge"
+                                                 + " rejects does not fail the exchange: check failedEntryCount"))
 public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",

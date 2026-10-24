@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.ots.constants.AlibabaOtsHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,26 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-ots", title = "Alibaba Tablestore (OTS)",
              syntax = "alibaba-ots:operation", category = { Category.CLOUD, Category.DATABASE },
              headersClass = AlibabaOtsHeaders.class, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "putRow", carriers = Carrier.POJO,
+                                                         javaType = "com.alicloud.openservices.tablestore.model.PutRowRequest"),
+                                          @BodyType.When(option = "operation", value = "getRow", carriers = Carrier.POJO,
+                                                         javaType = "com.alicloud.openservices.tablestore.model.GetRowRequest"),
+                                          @BodyType.When(option = "operation", value = "updateRow", carriers = Carrier.POJO,
+                                                         javaType = "com.alicloud.openservices.tablestore.model.UpdateRowRequest"),
+                                          @BodyType.When(option = "operation", value = "deleteRow", carriers = Carrier.POJO,
+                                                         javaType = "com.alicloud.openservices.tablestore.model.DeleteRowRequest") },
+                                  description = "The request of the Tablestore SDK for the row operations, such as a"
+                                                + " PutRowRequest for putRow: any other body fails. listTables does not"
+                                                + " read the body"),
+           producerOut = @BodyType(value = Carrier.MAP,
+                                   byOption = @BodyType.When(option = "operation", value = "listTables",
+                                                             carriers = Carrier.LIST,
+                                                             javaType = "java.util.List<String>"),
+                                   description = "A Map of the response for the row operations: the requestId, the"
+                                                 + " consumedCapacity and the row as a Map of its primaryKey and columns."
+                                                 + " listTables gives a List of the table names"))
 public class AlibabaOtsEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",
