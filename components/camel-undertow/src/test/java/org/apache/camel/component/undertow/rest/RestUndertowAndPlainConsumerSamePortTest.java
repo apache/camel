@@ -59,7 +59,7 @@ class RestUndertowAndPlainConsumerSamePortTest extends BaseUndertowTest {
     }
 
     @Test
-    void testPlainConsumerOnRootTakesThePathsUntilItStops() throws Exception {
+    void testPlainCatchAllOnRootAndRestApiAreBothServed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -67,12 +67,36 @@ class RestUndertowAndPlainConsumerSamePortTest extends BaseUndertowTest {
                         .setBody(constant("root"));
             }
         });
-        // the plain endpoints come first
-        assertResponse("/users/123", 200, "root");
+        // the rest-dsl consumers come first, and the catch-all gets the other requests
+        assertResponse("/users/123", 200, "user 123");
+        assertResponse("/api/orders/1", 200, "order 1");
+        assertResponse("/plain", 200, "plain");
+        assertResponse("/index.html", 200, "root");
+        assertResponse("/users/123/unknown", 200, "root");
 
         context.getRouteController().stopRoute("root");
         assertResponse("/users/123", 200, "user 123");
         assertResponse("/unknown", 404, null);
+    }
+
+    @Test
+    void testRestTemplateComesBeforeAnOverlappingPlainPath() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("undertow:http://localhost:{{port}}/users/me").routeId("me").setBody(constant("me"));
+            }
+        });
+        // documented in the upgrade guide: the rest-dsl consumer gets a request that both paths match
+        assertResponse("/users/me", 200, "user me");
+    }
+
+    @Test
+    void testRestMethodNotAllowedWithoutCatchAll() {
+        Exchange out = template.request(
+                "undertow:http://localhost:" + getPort() + "/users/123?throwExceptionOnFailure=false",
+                exchange -> exchange.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE"));
+        assertEquals(405, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
     }
 
     @Test
@@ -86,7 +110,7 @@ class RestUndertowAndPlainConsumerSamePortTest extends BaseUndertowTest {
         });
 
         assertResponse("/api/x", 200, "plain x");
-        // the template /api/{name} does not match: the request goes on to the rest-dsl consumers
+        // the rest-dsl consumer comes first, and the template /api/{name} does not match it anyway
         assertResponse("/api/orders/1", 200, "order 1");
         assertResponse("/api/x/unknown", 404, null);
     }

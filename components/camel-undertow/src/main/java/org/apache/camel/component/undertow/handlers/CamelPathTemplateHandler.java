@@ -133,7 +133,8 @@ public class CamelPathTemplateHandler implements HttpHandler {
             HttpHandler other = fallback;
             if (other != null && current.isEmpty()) {
                 // no template and no static path of this base path matches: the request is not for this base path,
-                // so it goes on as if the base path was not there (for example to the rest-dsl consumers of the port)
+                // so it gets the answer of a request that no path of the server matches (404, or 405 when a rest-dsl
+                // consumer of the port has the path with another method)
                 other.handleRequest(exchange);
             } else {
                 current.handleRequest(exchange);

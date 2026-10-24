@@ -60,9 +60,11 @@ public class DefaultUndertowHost implements UndertowHost {
         this.options = options;
         this.restHandler = new RestRootHandler();
         this.restHandler.init(key.getPort());
-        // the server serves both kinds of consumers on the same port: the plain endpoints first, then a request that
-        // matches no plain endpoint goes to the rest-dsl consumers, which answer 404 or 405 when none of them matches
-        this.rootHandler = new CamelRootHandler(restHandler);
+        // the server serves both kinds of consumers on the same port: the rest-dsl consumers first, as their paths are
+        // exact or templates, then a request that matches none of them goes to the plain endpoints (so that a plain
+        // catch-all, such as matchOnUriPrefix on /, does not hide them), and gets 404 or 405 when none matches either
+        this.rootHandler = new CamelRootHandler(restHandler::handleNoMatch);
+        this.restHandler.setFallbackHandler(rootHandler);
     }
 
     @Override
@@ -132,7 +134,7 @@ public class DefaultUndertowHost implements UndertowHost {
                     }
                 }
 
-                entryHandler = rootHandler;
+                entryHandler = restHandler;
                 if (requiresServletContext(endpoint)) {
                     // deploy before the server starts, so that a failure leaves no server running
                     deployServletContext();
@@ -199,7 +201,7 @@ public class DefaultUndertowHost implements UndertowHost {
      * Starts an empty servlet deployment around the handler of the server, so that every request has a servlet context.
      */
     private void deployServletContext() {
-        HttpHandler handler = rootHandler;
+        HttpHandler handler = restHandler;
         DeploymentInfo deployment = Servlets.deployment()
                 .setContextPath("")
                 .setDisplayName("application")

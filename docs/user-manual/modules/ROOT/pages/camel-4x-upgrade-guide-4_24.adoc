@@ -1451,12 +1451,13 @@ text, and must declare its charset (for example `application/x-www-form-urlencod
 
 When rest-dsl consumers and plain `undertow:` consumers use the same port, both kinds are now served. Before, only the
 kind that registered first on the port was served, the other answered 404, and stopping the last consumer of one kind
-stopped the server for the other. A request now goes to the plain endpoints first, and to the rest-dsl consumers when
-no plain endpoint matches its path. If the rest-dsl consumers registered first and a plain endpoint of the same port
-has a path that overlaps theirs (for example `matchOnUriPrefix=true` on `/`), that endpoint now takes those requests:
-give it another path or port. A request under the static part of a plain endpoint path with a template (such as
-`/api/x/y` for `/api/{name}`) that no template matches now goes on to the rest-dsl consumers, and gets 404 when none
-matches (it got 405 before).
+stopped the server for the other. A request now goes to the rest-dsl consumers first, and to the plain endpoints when
+no rest-dsl consumer matches it, so a plain catch-all (for example `matchOnUriPrefix=true` on `/`, for static files)
+and a REST API can share a port. When a rest-dsl path and a plain path both match a request, the rest-dsl consumer
+gets it, even when the plain path is more specific (for example a plain `/users/me` next to a rest-dsl
+`+/users/{id}+`): give the plain endpoint another path or port. A request under the static part of a plain endpoint
+path with a template (such as `/api/x/y` for `+/api/{name}+`) that no template matches now gets 404 (it got 405
+before).
 
 === camel-huaweicloud-obs - a listed object that cannot be got is skipped
 
