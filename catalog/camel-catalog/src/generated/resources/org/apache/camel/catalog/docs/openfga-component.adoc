@@ -288,9 +288,9 @@ with it. Both replace the body with a `List<String>`.
 
 === Granting and revoking access
 
-A route that creates a resource usually has to grant access to it too. `writeTuples` takes its tuples from the
-body, and falls back to the endpoint's `user`/`relation`/`object` when the body carries none — which is the shape
-that reads best right after a resource was created:
+A route that creates a resource usually has to grant access to it too. `writeTuples` takes its tuple from the
+endpoint's `user`/`relation`/`object` when they are configured, and from the body only when none of them is — the
+configured tuple is the shape that reads best right after a resource was created:
 
 [tabs]
 ====
