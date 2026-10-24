@@ -51,6 +51,9 @@
   "headers": {
     "CamelGoogleCalendarEventId": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The calendar event id", "constantName": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConstants#EVENT_ID" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "com.google.api.services.calendar.model.Event", "description": "One message per event of the calendar that is new or changed since the last poll, with its id in the CamelGoogleCalendarEventId header. The Event is a GenericJson, which is also a Map of the JSON fields" }
+  },
   "properties": {
     "index": { "index": 0, "kind": "path", "displayName": "Index", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration", "configurationField": "configuration", "description": "Specifies an index for the endpoint" },
     "applicationName": { "index": 1, "kind": "parameter", "displayName": "Application Name", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration", "configurationField": "configuration", "description": "Google Calendar application name. Example would be camel-google-calendar\/1.0" },

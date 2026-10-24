@@ -28,6 +28,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeClientFactory;
 import org.apache.camel.component.azure.storage.datalake.operations.DataLakeOperationResponse;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,65 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure Storage Data Lake Service",
              syntax = "azure-storage-datalake:accountName/fileSystemName",
              category = { Category.CLOUD, Category.FILE, Category.BIGDATA }, headersClass = DataLakeConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.FILE },
+                                   description = "The content of the file, one message per file: a stream that reads it, or with"
+                                                 + " fileDir the java.io.File it is downloaded to. The name of the file is in the"
+                                                 + " CamelAzureStorageDataLakeFileName header; without fileName, every file of"
+                                                 + " the file system is consumed, the directories skipped"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "upload",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "appendToFile",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }) },
+                                  description = "The content to write for upload and appendToFile: text, bytes, a stream or a"
+                                                + " file; a Map or no body fails: marshal it first. getFile writes into an"
+                                                + " OutputStream body. The other operations do not use the body: uploadFromFile"
+                                                + " reads the file of the path option"),
+           producerOut = @BodyType(value = Carrier.LIST,
+                                   javaType = "java.util.List<com.azure.storage.file.datalake.models.FileSystemItem>",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "createFileSystem",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deleteFileSystem",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deleteFile", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "appendToFile",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "uploadFromFile",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "upload", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deleteDirectory",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "listPaths", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.azure.storage.file.datalake.models.PathItem>"),
+                                           @BodyType.When(option = "operation", value = "getFile", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "openQueryInputStream",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "downloadToFile",
+                                                          carriers = Carrier.FILE,
+                                                          javaType = "java.io.File"),
+                                           @BodyType.When(option = "operation", value = "downloadLink", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "flushToFile", carriers = Carrier.POJO,
+                                                          javaType = "com.azure.storage.file.datalake.models.PathInfo"),
+                                           @BodyType.When(option = "operation", value = "createFile", carriers = Carrier.POJO,
+                                                          javaType = "com.azure.storage.file.datalake.DataLakeFileClient") },
+                                   description = "A List of the items of the SDK for listFileSystem, the default, and listPaths."
+                                                 + " A stream of the content for getFile, or the OutputStream body it wrote"
+                                                 + " into, and of the query result for openQueryInputStream; the java.io.File for"
+                                                 + " downloadToFile; the link for downloadLink; the PathInfo for flushToFile and"
+                                                 + " the DataLakeFileClient for createFile; true for createFileSystem and the"
+                                                 + " operations that upload, append or delete, with their results in headers"))
 public class DataLakeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam(description = "service client of data lake")

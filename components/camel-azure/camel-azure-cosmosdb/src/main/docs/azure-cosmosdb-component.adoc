@@ -149,12 +149,12 @@ For these operations, `databaseName` and `containerName` is *required* for all o
 |Operation |Description
 |`deleteContainer`  | Delete a container from the specified Azure CosmosDB database.
 |`replaceContainerThroughput`  | Replace the throughput for the specified Azure CosmosDB container.
-|`createItem`  | *`itemPartitionKey` is required* Creates an item in the specified container, it accepts POJO or key value as `Map<String, ?>`.
-|`upsertItem`  | *`itemPartitionKey` is required* Creates an item in the specified container if it doesn't exist otherwise overwrite it if it exists, it accepts POJO or key value as `Map<String, ?>`.
-|`replaceItem`  | *`itemPartitionKey` and `itemId` are required* Overwrites an item in the specified container, it accepts POJO or key value as `Map<String, ?>`.
+|`createItem`  | *`itemPartitionKey` is required* Creates an item in the specified container, it accepts POJO or key value as `Map<String, ?>`; a JSON String fails: unmarshal it first.
+|`upsertItem`  | *`itemPartitionKey` is required* Creates an item in the specified container if it doesn't exist otherwise overwrite it if it exists, it accepts POJO or key value as `Map<String, ?>`; a JSON String fails: unmarshal it first.
+|`replaceItem`  | *`itemPartitionKey` and `itemId` are required* Overwrites an item in the specified container, it accepts POJO or key value as `Map<String, ?>`; a JSON String fails: unmarshal it first.
 |`deleteItem`  | *`itemPartitionKey` and `itemId` are required* Deletes an item in the specified container.
 |`readItem`  | *`itemPartitionKey` and `itemId` are required* Gets an item in the specified container as `Map<String,?>` set in the exchange body message.
-|`readItem`  | *`itemPartitionKey`* Gets a list of items in the specified container per the `itemPartitionKey` as `List<Map<String,?>>` set in the exchange body message.
+|`readAllItems`  | *`itemPartitionKey`* Gets a list of items in the specified container per the `itemPartitionKey` as `List<Map<String,?>>` set in the exchange body message.
 |`queryItems`  | *`query` is required* Execute an SQL query against the container level in order, for example, return only matching items per the SQL query. It will set `List<Map<String,>?>` in the exchange message body.
 |===
 
@@ -165,7 +165,7 @@ Refer to the example section in this page to learn how to use these operations i
 
 === Consuming records from a specific container
 
-For example, to consume records from a specific container in a specific database to a file, use the following snippet:
+For example, to consume records from a specific container in a specific database to a file, use the following snippet. The consumer gives a `List` of the changed items as `Map`, so marshal it to JSON before writing it:
 
 [tabs]
 ====
@@ -174,6 +174,7 @@ Java::
 [source,java]
 ----
 from("azure-cosmosdb://camelDb/myContainer?accountKey=MyaccountKey&databaseEndpoint=https//myazure.com:443&leaseDatabaseName=myLeaseDB&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true")
+    .marshal().json()
     .to("file://directory");
 ----
 
@@ -183,6 +184,7 @@ XML::
 ----
 <route>
     <from uri="azure-cosmosdb://camelDb/myContainer?accountKey=MyaccountKey&amp;databaseEndpoint=https//myazure.com:443&amp;leaseDatabaseName=myLeaseDB&amp;createLeaseDatabaseIfNotExists=true&amp;createLeaseContainerIfNotExists=true"/>
+    <marshal><json/></marshal>
     <to uri="file://directory"/>
 </route>
 ----
@@ -201,6 +203,8 @@ YAML::
         createLeaseDatabaseIfNotExists: true
         createLeaseContainerIfNotExists: true
       steps:
+        - marshal:
+            json: {}
         - to:
             uri: file://directory
 ----
@@ -554,6 +558,7 @@ from("direct:start")
     .setHeader("CamelAzureCosmosDbContainerPartitionKeyPath", constant("partition"))
     .setHeader("CamelAzureCosmosDbItemPartitionKey", constant("test-1"))
     .setBody(constant("{\"id\":\"test-id-1\",\"partition\":\"test-1\",\"field1\":\"awesome!\"}"))
+    .unmarshal().json()
     .to("azure-cosmosdb://?operation=createItem")
     .to("mock:result");
 ----
@@ -579,6 +584,9 @@ XML::
   <setBody>
     <constant>{"id":"test-id-1","partition":"test-1","field1":"awesome!"}</constant>
   </setBody>
+  <unmarshal>
+    <json/>
+  </unmarshal>
   <to uri="azure-cosmosdb://?operation=createItem"/>
   <to uri="mock:result"/>
 </route>
@@ -606,6 +614,8 @@ YAML::
             constant: "test-1"
         - setBody:
             constant: '{"id":"test-id-1","partition":"test-1","field1":"awesome!"}'
+        - unmarshal:
+            json: {}
         - to:
             uri: azure-cosmosdb://
             parameters:
@@ -629,6 +639,7 @@ from("direct:start")
     .setHeader("CamelAzureCosmosDbItemPartitionKey", constant("test-1"))
     .setHeader("CamelAzureCosmosDbItemId", constant("test-id-1"))
     .setBody(constant("{\"id\":\"test-id-1\",\"partition\":\"test-1\",\"field1\":\"awesome!\"}"))
+    .unmarshal().json()
     .to("azure-cosmosdb://?operation=replaceItem")
     .to("mock:result");
 ----
@@ -654,6 +665,9 @@ XML::
   <setBody>
     <constant>{"id":"test-id-1","partition":"test-1","field1":"awesome!"}</constant>
   </setBody>
+  <unmarshal>
+    <json/>
+  </unmarshal>
   <to uri="azure-cosmosdb://?operation=replaceItem"/>
   <to uri="mock:result"/>
 </route>
@@ -681,6 +695,8 @@ YAML::
             constant: "test-id-1"
         - setBody:
             constant: '{"id":"test-id-1","partition":"test-1","field1":"awesome!"}'
+        - unmarshal:
+            json: {}
         - to:
             uri: azure-cosmosdb://
             parameters:
