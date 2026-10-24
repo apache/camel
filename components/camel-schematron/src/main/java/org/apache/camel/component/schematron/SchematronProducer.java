@@ -16,17 +16,24 @@
  */
 package org.apache.camel.component.schematron;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.transform.Source;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
 import org.apache.camel.component.schematron.processor.SchematronProcessor;
 import org.apache.camel.component.schematron.processor.SchematronProcessorFactory;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +71,20 @@ public class SchematronProducer extends DefaultProducer {
         } else if (payload instanceof String) {
             LOG.debug("Applying schematron validation on payload: {}", payload);
             report = schematronProcessor.validate((String) payload);
+        } else if (isBinary(payload) && ExchangeHelper.getCharsetName(exchange, false) == null) {
+            // let the parser decode the bytes using the encoding of the XML declaration
+            LOG.debug("Applying schematron validation on payload: {}", payload);
+            InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+            try {
+                report = schematronProcessor.validate(is);
+            } finally {
+                // close only the stream opened here, such as on a file, not a stream that is the body
+                if (is != payload) {
+                    IOHelper.close(is);
+                }
+            }
         } else {
-            String stringPayload = exchange.getIn().getBody(String.class);
+            String stringPayload = exchange.getIn().getMandatoryBody(String.class);
             LOG.debug("Applying schematron validation on payload: {}", stringPayload);
             report = schematronProcessor.validate(stringPayload);
         }
@@ -74,6 +93,14 @@ public class SchematronProducer extends DefaultProducer {
         String status = getValidationStatus(report);
         LOG.info("Schematron validation status : {}", status);
         setValidationReport(exchange, report, status);
+    }
+
+    /**
+     * Whether the payload holds bytes the parser can read as they are
+     */
+    private static boolean isBinary(Object payload) {
+        return payload instanceof byte[] || payload instanceof InputStream || payload instanceof StreamCache
+                || payload instanceof File || payload instanceof Path || payload instanceof WrappedFile;
     }
 
     /**

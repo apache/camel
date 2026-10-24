@@ -383,6 +383,86 @@ public class KnativeHttpTest {
 
     @ParameterizedTest
     @EnumSource(CloudEvents.class)
+    void testConsumeStructuredContentWithCharset(CloudEvent ce) throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceEndpoint(
+                        "myEndpoint",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:endpoint/myEndpoint")
+                    .to("mock:ce");
+        });
+
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:ce", MockEndpoint.class);
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, ce.version());
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event");
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_ID, "myEventID");
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "/somewhere");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain");
+        mock.expectedBodiesReceived("test");
+        mock.expectedMessageCount(1);
+
+        // the structured content mode is identified by the media type, whatever its parameters and case
+        given()
+                .contentType("Application/CloudEvents+JSON; charset=UTF-8")
+                .body(
+                        Map.of(
+                                "specversion", ce.version(),
+                                "type", "org.apache.camel.event",
+                                "id", "myEventID",
+                                "source", "/somewhere",
+                                "datacontenttype", "text/plain",
+                                "data", "test"),
+                        ObjectMapperType.JACKSON_2)
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
+
+        mock.assertIsSatisfied();
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testConsumeBatchContentWithCharset(CloudEvent ce) throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceEndpoint(
+                        "myEndpoint",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:endpoint/myEndpoint")
+                    .to("mock:ce");
+        });
+
+        context.start();
+
+        // batched CloudEvents are not supported, also when the media type has parameters
+        given()
+                .contentType("application/cloudevents-batch+json; charset=UTF-8")
+                .body("[]")
+                .when()
+                .post()
+                .then()
+                .statusCode(500);
+
+        MockEndpoint mock = context.getEndpoint("mock:ce", MockEndpoint.class);
+        assertThat(mock.getReceivedCounter()).isZero();
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
     void testConsumeStructuredContentFiltersInternalHeaders(CloudEvent ce) throws Exception {
         configureKnativeComponent(
                 context,

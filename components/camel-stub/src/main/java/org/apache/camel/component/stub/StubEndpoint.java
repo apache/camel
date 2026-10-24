@@ -44,9 +44,10 @@ import org.apache.camel.spi.UriEndpoint;
 @BodyTypes(consumerOut = @BodyType(value = Carrier.UNCHANGED, description = "The body the producer sent"),
            producerIn = @BodyType(Carrier.ANY),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
-                                   description = "Unchanged when no route consumes from the stub endpoint, or for a message"
-                                                 + " that expects no reply (InOnly). A message that expects one (InOut) waits"
-                                                 + " for the body the stub route ends with"))
+                                   description = "Unchanged when no route consumes from the stub endpoint (it keeps the latest"
+                                                 + " size messages and drops the oldest), or for a message that expects no reply"
+                                                 + " (InOnly). A message that expects one (InOut) waits for the body the stub"
+                                                 + " route ends with"))
 public class StubEndpoint extends SedaEndpoint {
 
     public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {

@@ -52,6 +52,7 @@ public class JsonataComponent extends DefaultComponent {
         JsonataEndpoint answer = new JsonataEndpoint(uri, this, remaining, frameBinding);
         answer.setContentCache(cache);
         answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        setProperties(answer, parameters);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {

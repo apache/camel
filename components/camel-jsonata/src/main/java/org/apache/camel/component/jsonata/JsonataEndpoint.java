@@ -18,9 +18,11 @@ package org.apache.camel.component.jsonata;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 import com.dashjoin.jsonata.Jsonata;
@@ -28,6 +30,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -46,14 +50,17 @@ import static com.dashjoin.jsonata.Jsonata.jsonata;
 @UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri",
              producerOnly = true, remote = false,
              category = { Category.TRANSFORMATION })
-@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.POJO }, format = "json",
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
+        Carrier.STREAM, Carrier.FILE }, format = "json",
                                   byOption = @BodyType.When(option = "inputType", value = "JsonString",
                                                             carriers = {
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
                                                                     Carrier.FILE }),
-                                  description = "JSON data: a Map, a List, a JsonNode or another object Jackson converts. JSON"
-                                                + " as text, bytes, a stream or a file needs inputType=JsonString: without it"
-                                                + " text is read as one JSON string, and bytes or a stream fail"),
+                                  description = "JSON data: a Map, a List, a JsonNode or another object Jackson converts, or"
+                                                + " JSON as text, bytes, a stream or a file, which is parsed. Text that does"
+                                                + " not start with { or [ is read as one JSON string. With"
+                                                + " inputType=JsonString the body is always parsed as JSON"),
            producerOut = @BodyType(value = Carrier.POJO, javaType = "com.fasterxml.jackson.databind.JsonNode",
                                    format = "json",
                                    byOption = @BodyType.When(option = "outputType", value = "JsonString",
@@ -114,7 +121,10 @@ public class JsonataEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * Specifies if the input should be Jackson JsonNode or a JSON String.
+     * Specifies if the input should be Jackson JsonNode or a JSON String. With Jackson, a body that is JSON text (its
+     * first non-whitespace character is { or [), bytes, a stream or a file is parsed as JSON, other text is a JSON
+     * string value, and any other body, such as a Map or a List, is converted by Jackson. With JsonString, the body is
+     * always parsed as JSON.
      */
     public void setInputType(JsonataInputOutputType inputType) {
         this.inputType = inputType;
@@ -166,7 +176,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
             InputStream inputStream = exchange.getIn().getBody(InputStream.class);
             input = mapper.readValue(inputStream, Object.class);
         } else {
-            input = mapper.convertValue(exchange.getIn().getBody(), Object.class);
+            input = jacksonInput(exchange);
         }
 
         InputStream is = getResourceAsInputStream();
@@ -207,6 +217,40 @@ public class JsonataEndpoint extends ResourceEndpoint {
             output = mapper.readTree(bodyAsString);
         }
         ExchangeHelper.setInOutBodyPatternAware(exchange, output);
+    }
+
+    /**
+     * The input for the Jackson input type: JSON text, bytes, a stream or a file is parsed, any other body (such as a
+     * Map or a List) is converted by Jackson. Text that is not a JSON object or array is a JSON string value.
+     */
+    private Object jacksonInput(Exchange exchange) throws Exception {
+        Object body = exchange.getIn().getBody();
+        if (body instanceof CharSequence text) {
+            return isJsonText(text) ? mapper.readValue(text.toString(), Object.class) : text.toString();
+        }
+        if (body instanceof byte[] || body instanceof InputStream || body instanceof StreamCache
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile) {
+            if (ExchangeHelper.getCharsetName(exchange, false) != null) {
+                // decode the text in the charset of the exchange
+                return mapper.readValue(exchange.getIn().getMandatoryBody(String.class), Object.class);
+            }
+            // let Jackson detect the encoding
+            return mapper.readValue(exchange.getIn().getMandatoryBody(InputStream.class), Object.class);
+        }
+        return mapper.convertValue(body, Object.class);
+    }
+
+    /**
+     * Whether the text is a JSON object or array, that is whether its first non-whitespace character is { or [
+     */
+    private static boolean isJsonText(CharSequence text) {
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (!Character.isWhitespace(ch)) {
+                return ch == '{' || ch == '[';
+            }
+        }
+        return false;
     }
 
 }

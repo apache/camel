@@ -24,46 +24,25 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(33);
+        Set<String> props = new HashSet<>(14);
         props.add("allowStAX");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
         props.add("configuration");
         props.add("configurationProperties");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("moduleURIResolver");
         props.add("namespacePrefixes");
         props.add("parameters");
-        props.add("pollStrategy");
         props.add("properties");
-        props.add("repeatCount");
         props.add("resourceUri");
         props.add("resultType");
         props.add("resultsFormat");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
         props.add("source");
-        props.add("startScheduler");
         props.add("staticQueryContext");
         props.add("stripsAllWhiteSpace");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
-        Map<String, String> prefixes = new HashMap<>(1);
-        prefixes.put("schedulerProperties", "scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
     @Override

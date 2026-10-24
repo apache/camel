@@ -2960,3 +2960,64 @@ in FROM fails: use the collection, such as ``FROM `_default` ``, or the full pat
 
 In view mode, the rows of a reduce view and the rows with a compound key no longer fail the poll. The body of a reduce
 row is its value, and it has no `CamelCouchbaseId` header. A compound key is set in `CamelCouchbaseKey` as its JSON text.
+
+=== camel-jolt, camel-jsonata - JSON text, bytes, streams and files are parsed with the default inputType
+
+With the default `inputType` (`Hydrated` for jolt, `Jackson` for jsonata), a body that is bytes, an `InputStream`
+(including a stream cache) or a file is now parsed as JSON, and so is text whose first non-whitespace character is `{`
+or `[`. Previously such a body reached the specification or expression unparsed: jolt gave null or the text back, and
+jsonata read the text as one JSON string, refused bytes and failed on a stream. The bytes are decoded in the charset of
+the exchange when one is set; otherwise the JSON parser detects the encoding. Such text that is not valid JSON now fails
+with the parse error. Other text, a `Map`, a `List` and other objects are used as before.
+
+=== camel-jsonata - the endpoint options of an http resource
+
+For a `jsonata:http:` or `jsonata:https:` resource, the options of the endpoint, such as `inputType`, `outputType` and
+`prettyPrint`, are now used by the endpoint. Previously they were appended to the URL of the resource and sent to the
+server, and the endpoint used its defaults. Only the other query parameters are sent to the server.
+
+=== camel-saxon - the xquery endpoint is producer-only
+
+The `xquery` endpoint can only be used as a producer. A route that starts `from("xquery:...")` now fails when it
+starts, with a message that says to use the endpoint in `to`. Previously it polled, and every poll failed because the
+query had no message to run on. The consumer and scheduler options (such as `delay`, `initialDelay`,
+`sendEmptyMessageWhenIdle`, `bridgeErrorHandler` and the `scheduler` and `backoff` options) are removed from the
+endpoint, and `bridgeErrorHandler` from the component.
+
+=== camel-schematron - no body fails, and bytes are read in the encoding of the XML declaration
+
+A message without a body now fails with an `InvalidPayloadException` instead of a `NullPointerException`.
+
+A body that is bytes, a stream or a file is given to the XML parser as bytes, so it is read in the encoding of the XML
+declaration (UTF-8 when there is none), unless the exchange has a charset set. A `String` body is read as text.
+Previously the body was converted to a String and encoded again in the platform charset, so a document whose declared
+encoding was not the platform charset could be read wrong and its validation result may now differ.
+
+=== camel-mustache - contentCache=false reads the template for each exchange
+
+With `contentCache=false`, the template is now read and compiled for each exchange, so a changed template is used.
+Previously it was compiled once, and only the JMX operation `clearContentCache` read it again. The default,
+`contentCache=true`, is unchanged.
+
+=== camel-stub - a stub endpoint without a consumer keeps its latest messages
+
+A stub endpoint that no route consumes from, such as the endpoints `camel run --stub` stubs, keeps the latest `size`
+messages (1000 by default) and drops the oldest one when the queue is full. Previously the producer failed with
+`IllegalStateException: Queue full` after `size` messages, or with `blockWhenFull=true` waited for a consumer that
+never came. The on-completions of a dropped message run as done. With a consumer, the stub endpoint queues as seda does.
+
+Browsing a stub endpoint with a limit, such as `camel cmd stub --browse --limit`, now shows the latest messages.
+Previously the newest message was left out.
+
+=== camel-stream - stream:header without the stream header fails
+
+The `stream:header` producer now fails with a `NoSuchHeaderException` when the `stream` header is missing or is not an
+`OutputStream`. Previously it failed with a `NullPointerException`, or did nothing when the body was null.
+
+=== camel-knative - a structured CloudEvent whose Content-Type has parameters
+
+The consumer now finds the content mode of a CloudEvent by the media type of the `Content-Type` header, ignoring its
+parameters and its case. A request with `Content-Type: application/cloudevents+json; charset=UTF-8` is now read as a
+structured CloudEvent: the body is the `data` field and the attributes are set as the CloudEvent headers. Previously it
+was read as binary mode, and the body was the whole JSON envelope. A batch content type with parameters is now refused
+as unsupported, as the plain one is.

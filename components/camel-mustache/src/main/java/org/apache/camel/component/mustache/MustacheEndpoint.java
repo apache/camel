@@ -166,6 +166,10 @@ public class MustacheEndpoint extends ResourceEndpoint {
     }
 
     private Mustache getOrCreateMustache() throws IOException {
+        if (!isContentCache()) {
+            // read and compile the template for each exchange, so a changed template is used
+            return createMustache(getResourceAsReader(), getResourceUri());
+        }
         if (mustache == null) {
             mustache = createMustache(getResourceAsReader(), getResourceUri());
         }

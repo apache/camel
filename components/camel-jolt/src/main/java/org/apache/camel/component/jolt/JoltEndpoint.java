@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.jolt;
 
+import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Map;
 
 import io.joltcommunity.jolt.Chainr;
@@ -31,6 +33,8 @@ import io.joltcommunity.jolt.removr.Removr;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -47,14 +51,16 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION }, headersClass = JoltConstants.class)
 @Metadata(excludeProperties = "allowContextMapAll")
-@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.LIST }, format = "json",
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.MAP, Carrier.LIST, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+        Carrier.FILE }, format = "json",
                                   byOption = @BodyType.When(option = "inputType", value = "JsonString",
                                                             carriers = {
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
                                                                     Carrier.FILE }),
-                                  description = "Parsed JSON: a Map or a List. JSON as text, bytes, a stream or a file needs"
-                                                + " inputType=JsonString: without it the body reaches the spec unparsed, and"
-                                                + " the result is most likely null"),
+                                  description = "Parsed JSON (a Map or a List), or JSON as text, bytes, a stream or a file,"
+                                                + " which is parsed. Text that does not start with { or [ reaches the spec as"
+                                                + " it is. With inputType=JsonString the body is always parsed as JSON"),
            producerOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, format = "json",
                                    byOption = @BodyType.When(option = "outputType", value = "JsonString",
                                                              carriers = Carrier.TEXT, javaType = "java.lang.String"),
@@ -167,7 +173,9 @@ public class JoltEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * Specifies if the input is hydrated JSON or a JSON String.
+     * Specifies if the input is hydrated JSON or a JSON String. With Hydrated, a body that is JSON text (its first
+     * non-whitespace character is { or [), bytes, a stream or a file is parsed as JSON, and any other body, such as a
+     * Map or a List, is used as it is. With JsonString, the body is always parsed as JSON.
      */
     public void setInputType(JoltInputOutputType inputType) {
         this.inputType = inputType;
@@ -225,7 +233,7 @@ public class JoltEndpoint extends ResourceEndpoint {
         if (getInputType() == JoltInputOutputType.JsonString) {
             input = JsonUtils.jsonToObject(exchange.getIn().getBody(InputStream.class));
         } else {
-            input = exchange.getIn().getBody();
+            input = hydratedInput(exchange);
         }
 
         Map<String, Object> inputContextMap = null;
@@ -245,6 +253,40 @@ public class JoltEndpoint extends ResourceEndpoint {
             body = JsonUtils.toJsonString(output);
         }
         ExchangeHelper.setInOutBodyPatternAware(exchange, body);
+    }
+
+    /**
+     * The input for the Hydrated input type: JSON text, bytes, a stream or a file is parsed, any other body (such as a
+     * Map or a List) is used as it is.
+     */
+    private static Object hydratedInput(Exchange exchange) throws Exception {
+        Object body = exchange.getIn().getBody();
+        if (body instanceof CharSequence text) {
+            return isJsonText(text) ? JsonUtils.jsonToObject(text.toString()) : body;
+        }
+        if (body instanceof byte[] || body instanceof InputStream || body instanceof StreamCache
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile) {
+            if (ExchangeHelper.getCharsetName(exchange, false) != null) {
+                // decode the text in the charset of the exchange
+                return JsonUtils.jsonToObject(exchange.getIn().getMandatoryBody(String.class));
+            }
+            // let the JSON parser detect the encoding
+            return JsonUtils.jsonToObject(exchange.getIn().getMandatoryBody(InputStream.class));
+        }
+        return body;
+    }
+
+    /**
+     * Whether the text is a JSON object or array, that is whether its first non-whitespace character is { or [
+     */
+    private static boolean isJsonText(CharSequence text) {
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (!Character.isWhitespace(ch)) {
+                return ch == '{' || ch == '[';
+            }
+        }
+        return false;
     }
 
 }

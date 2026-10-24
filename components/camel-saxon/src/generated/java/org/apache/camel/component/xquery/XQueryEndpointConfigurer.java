@@ -25,25 +25,9 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowstax":
         case "allowStAX": target.setAllowStAX(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier":
-        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
         case "configurationproperties":
         case "configurationProperties": target.setConfigurationProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay":
-        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "moduleuriresolver":
@@ -51,35 +35,16 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "namespaceprefixes":
         case "namespacePrefixes": target.setNamespacePrefixes(property(camelContext, java.util.Map.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "pollstrategy":
-        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "properties": target.setProperties(property(camelContext, java.util.Properties.class, value)); return true;
-        case "repeatcount":
-        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "resulttype":
         case "resultType": target.setResultType(property(camelContext, java.lang.Class.class, value)); return true;
         case "resultsformat":
         case "resultsFormat": target.setResultsFormat(property(camelContext, org.apache.camel.component.xquery.ResultFormat.class, value)); return true;
-        case "runlogginglevel":
-        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
-        case "schedulerproperties":
-        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "source": target.setSource(property(camelContext, java.lang.String.class, value)); return true;
-        case "startscheduler":
-        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "staticquerycontext":
         case "staticQueryContext": target.setStaticQueryContext(property(camelContext, net.sf.saxon.query.StaticQueryContext.class, value)); return true;
         case "stripsallwhitespace":
         case "stripsAllWhiteSpace": target.setStripsAllWhiteSpace(property(camelContext, boolean.class, value)); return true;
-        case "timeunit":
-        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay":
-        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -89,25 +54,9 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowstax":
         case "allowStAX": return boolean.class;
-        case "backofferrorthreshold":
-        case "backoffErrorThreshold": return int.class;
-        case "backoffidlethreshold":
-        case "backoffIdleThreshold": return int.class;
-        case "backoffmultiplier":
-        case "backoffMultiplier": return int.class;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
         case "configuration": return net.sf.saxon.Configuration.class;
         case "configurationproperties":
         case "configurationProperties": return java.util.Map.class;
-        case "delay": return long.class;
-        case "exceptionhandler":
-        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
-        case "exchangepattern":
-        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
-        case "greedy": return boolean.class;
-        case "initialdelay":
-        case "initialDelay": return long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "moduleuriresolver":
@@ -115,35 +64,16 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "namespaceprefixes":
         case "namespacePrefixes": return java.util.Map.class;
         case "parameters": return java.util.Map.class;
-        case "pollstrategy":
-        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "properties": return java.util.Properties.class;
-        case "repeatcount":
-        case "repeatCount": return long.class;
         case "resulttype":
         case "resultType": return java.lang.Class.class;
         case "resultsformat":
         case "resultsFormat": return org.apache.camel.component.xquery.ResultFormat.class;
-        case "runlogginglevel":
-        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
-        case "scheduledexecutorservice":
-        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
-        case "scheduler": return java.lang.Object.class;
-        case "schedulerproperties":
-        case "schedulerProperties": return java.util.Map.class;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": return boolean.class;
         case "source": return java.lang.String.class;
-        case "startscheduler":
-        case "startScheduler": return boolean.class;
         case "staticquerycontext":
         case "staticQueryContext": return net.sf.saxon.query.StaticQueryContext.class;
         case "stripsallwhitespace":
         case "stripsAllWhiteSpace": return boolean.class;
-        case "timeunit":
-        case "timeUnit": return java.util.concurrent.TimeUnit.class;
-        case "usefixeddelay":
-        case "useFixedDelay": return boolean.class;
         default: return null;
         }
     }
@@ -154,25 +84,9 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowstax":
         case "allowStAX": return target.isAllowStAX();
-        case "backofferrorthreshold":
-        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
-        case "backoffidlethreshold":
-        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
-        case "backoffmultiplier":
-        case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
         case "configurationproperties":
         case "configurationProperties": return target.getConfigurationProperties();
-        case "delay": return target.getDelay();
-        case "exceptionhandler":
-        case "exceptionHandler": return target.getExceptionHandler();
-        case "exchangepattern":
-        case "exchangePattern": return target.getExchangePattern();
-        case "greedy": return target.isGreedy();
-        case "initialdelay":
-        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "moduleuriresolver":
@@ -180,35 +94,16 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "namespaceprefixes":
         case "namespacePrefixes": return target.getNamespacePrefixes();
         case "parameters": return target.getParameters();
-        case "pollstrategy":
-        case "pollStrategy": return target.getPollStrategy();
         case "properties": return target.getProperties();
-        case "repeatcount":
-        case "repeatCount": return target.getRepeatCount();
         case "resulttype":
         case "resultType": return target.getResultType();
         case "resultsformat":
         case "resultsFormat": return target.getResultsFormat();
-        case "runlogginglevel":
-        case "runLoggingLevel": return target.getRunLoggingLevel();
-        case "scheduledexecutorservice":
-        case "scheduledExecutorService": return target.getScheduledExecutorService();
-        case "scheduler": return target.getScheduler();
-        case "schedulerproperties":
-        case "schedulerProperties": return target.getSchedulerProperties();
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "source": return target.getSource();
-        case "startscheduler":
-        case "startScheduler": return target.isStartScheduler();
         case "staticquerycontext":
         case "staticQueryContext": return target.getStaticQueryContext();
         case "stripsallwhitespace":
         case "stripsAllWhiteSpace": return target.isStripsAllWhiteSpace();
-        case "timeunit":
-        case "timeUnit": return target.getTimeUnit();
-        case "usefixeddelay":
-        case "useFixedDelay": return target.isUseFixedDelay();
         default: return null;
         }
     }
@@ -223,8 +118,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parameters": return java.lang.Object.class;
         case "resulttype":
         case "resultType": return java.lang.Object.class;
-        case "schedulerproperties":
-        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

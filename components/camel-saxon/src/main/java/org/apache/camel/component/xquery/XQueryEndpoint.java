@@ -26,6 +26,8 @@ import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -44,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Query and/or transform XML payloads using XQuery and Saxon.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri",
-             remote = false, category = { Category.TRANSFORMATION })
+             producerOnly = true, remote = false, category = { Category.TRANSFORMATION })
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
                                   format = "xml", dependsOn = "source",
                                   description = "The XML to query: text, bytes, a stream, a file, a DOM or another"
@@ -108,6 +110,12 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     @Override
     public boolean isRemote() {
         return false;
+    }
+
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException(
+                "The xquery endpoint " + getEndpointUri() + " supports only the producer: use it in to() instead of from()");
     }
 
     public String getResourceUri() {

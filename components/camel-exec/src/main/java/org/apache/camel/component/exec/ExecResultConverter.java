@@ -52,6 +52,10 @@ public final class ExecResultConverter {
     @Converter
     public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws IOException {
         try (InputStream stream = toInputStream(result)) {
+            if (stream == null) {
+                // no stdout/stderr, so return an empty byte array (same as an empty string)
+                return new byte[0];
+            }
             return IOUtils.toByteArray(stream);
         }
     }
