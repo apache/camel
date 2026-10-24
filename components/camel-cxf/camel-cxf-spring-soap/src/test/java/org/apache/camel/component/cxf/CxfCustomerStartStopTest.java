@@ -58,8 +58,11 @@ public class CxfCustomerStartStopTest {
         // Need to call the bus shutdown ourselves.
         String orig = System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", "false");
         bus.shutdown(true);
-        System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort",
-                orig == null ? "true" : "false");
+        if (orig == null) {
+            System.clearProperty("org.apache.cxf.transports.http_undertow.DontClosePort");
+        } else {
+            System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", orig);
+        }
         engine = factory.retrieveUndertowHTTPServerEngine(PORT1);
         assertNull(engine, "Undertow engine should be removed");
     }
@@ -74,8 +77,11 @@ public class CxfCustomerStartStopTest {
         // Bus shutdown will be called when the application context is closed.
         String orig = System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", "false");
         IOHelper.close(applicationContext);
-        System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort",
-                orig == null ? "true" : "false");
+        if (orig == null) {
+            System.clearProperty("org.apache.cxf.transports.http_undertow.DontClosePort");
+        } else {
+            System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", orig);
+        }
         UndertowHTTPServerEngineFactory factory = bus.getExtension(UndertowHTTPServerEngineFactory.class);
         // test if the port is still used
         UndertowHTTPServerEngine engine = factory.retrieveUndertowHTTPServerEngine(PORT2);

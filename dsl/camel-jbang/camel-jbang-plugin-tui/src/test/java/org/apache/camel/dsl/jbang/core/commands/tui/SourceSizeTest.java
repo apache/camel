@@ -76,7 +76,7 @@ class SourceSizeTest {
             SendMessagePopup.handleKeyEvent 220
             SourceEditAssist.java 2006
             SourceViewer.handleEditKeyEvent 231
-            SourceViewer.java 3055
+            SourceViewer.java 2953
             SourceViewer.renderContent 207
             SourceViewer.renderEditMode 256
             TuiToolDefinitions.addInteractionTools 183

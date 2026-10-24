@@ -105,6 +105,8 @@ The Dapr Configuration Consumer in Apache Camel allows your route to receive rea
 
 To configure the consumer, the configStore name and configKeys must be provided.
 
+When the subscription ends, for example because the Dapr sidecar restarts, the consumer subscribes again, first after one second and then with a growing delay of up to 30 seconds while the sidecar cannot be reached. A change made to the configuration store while the consumer is not subscribed is not delivered.
+
 == Examples
 
 === Producer Operations Examples

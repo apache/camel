@@ -14,3 +14,7 @@ The {doctitle} language supports the following options which are listed below.
 
 jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]',{cellformats},{requires}]
 
+
+:body-types-module: languages
+:body-types-intro: The message body at each side of the {doctitle} language: _Expression input_ is the body its expressions can read, and _Expression result_ what they return.
+include::ROOT:partial$body-types.adoc[]
