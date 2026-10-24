@@ -232,6 +232,7 @@ mvn camel:run -DSTRIPE_API_KEY=sk_test_...
 == Usage Examples
 
 The Stripe component accepts both Map objects and JSON strings as input, providing flexibility for different integration scenarios.
+Other bodies, such as the byte array or stream of an HTTP request, are not converted: convert them to a String first.
 
 === Creating a Customer
 
@@ -330,6 +331,7 @@ Java::
 [source,java]
 ----
 from("rest:post:/payments")
+    .convertBodyTo(String.class)
     .log("Received payment request: ${body}")
     .to("stripe:paymentIntents?apiKey={{stripe.apiKey}}")
     .log("Payment intent created: ${body.id}");
@@ -341,6 +343,7 @@ XML::
 ----
 <route>
   <from uri="rest:post:/payments"/>
+  <convertBodyTo type="java.lang.String"/>
   <log message="Received payment request: ${body}"/>
   <to uri="stripe:paymentIntents?apiKey={{stripe.apiKey}}"/>
   <log message="Payment intent created: ${body.id}"/>
@@ -355,6 +358,8 @@ YAML::
     from:
       uri: rest:post:/payments
       steps:
+        - convertBodyTo:
+            type: java.lang.String
         - log:
             message: "Received payment request: ${body}"
         - to:

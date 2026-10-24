@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,23 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.18.0", scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName",
              producerOnly = true, category = { Category.API, Category.CLOUD, Category.MANAGEMENT },
              headersClass = ServiceNowConstants.class)
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.MAP, Carrier.POJO, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
+                                  description = "The record to create, modify or update must be an instance of the request"
+                                                + " model: a Map by default, an object of the class set with models or"
+                                                + " requestModels or the CamelServiceNowRequestModel header, or JSON text"
+                                                + " with a String model; another body fails. An attachment upload sends the"
+                                                + " body as a stream, with its content type in the CamelServiceNowContentType"
+                                                + " header. A retrieve or delete does not read the body: the action, table"
+                                                + " and sys_id are headers"),
+           producerOut = @BodyType(value = {
+                   Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.TEXT, Carrier.STREAM, Carrier.UNCHANGED },
+                                   description = "The result of the call: a Map of the record, or a List of Maps for many,"
+                                                 + " or objects of the response model class set with models or"
+                                                 + " responseModels or the CamelServiceNowResponseModel header (the JSON"
+                                                 + " text with a String model). The content of an attachment is an"
+                                                 + " InputStream. A response with no content, such as a delete, leaves the"
+                                                 + " body; the paging offsets and the other response fields are headers"))
 public class ServiceNowEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 

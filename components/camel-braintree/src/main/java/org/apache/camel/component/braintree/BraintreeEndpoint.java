@@ -29,6 +29,9 @@ import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.BraintreePropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
@@ -42,6 +45,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
              producerOnly = true,
              apiSyntax = "apiName/methodName",
              category = { Category.SAAS, Category.FINANCE })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names a parameter of the method, and"
+                                                + " must then be of the type of that parameter: a request object such as"
+                                                + " the TransactionRequest for request of transaction/sale, or text for an"
+                                                + " id. A Map or JSON or XML text is not turned into a request: build it"
+                                                + " first. Without inBody the arguments come from the options and the"
+                                                + " CamelBraintree. headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.ITERATOR, Carrier.LIST, Carrier.TEXT },
+                                   description = "The return value of the method: a Result for the methods that change"
+                                                 + " data, such as transaction/sale, which does not fail the exchange when"
+                                                 + " Braintree rejects the request: isSuccess() is then false and the"
+                                                 + " errors are in the Result; the model object of a find, such as a"
+                                                 + " Customer; a ResourceCollection for search and customer/all, which"
+                                                 + " fetches the records while it is iterated; a List for plan/all; text"
+                                                 + " for clientToken/generate, oauth/connectUrl and"
+                                                 + " webhookNotification/verify"))
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 
     @UriParam
