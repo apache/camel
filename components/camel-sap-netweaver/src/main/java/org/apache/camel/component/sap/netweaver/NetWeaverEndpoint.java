@@ -23,6 +23,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,6 +39,21 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url",
              producerOnly = true, category = { Category.SAAS },
              headersClass = NetWeaverConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not sent: the producer makes a GET of the OData command in the"
+                                                + " CamelNetWeaverCommand header"),
+           producerOut = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.NULL },
+                                   byOption = {
+                                           @BodyType.When(option = "flatternMap", value = "false",
+                                                          carriers = { Carrier.MAP, Carrier.NULL }),
+                                           @BodyType.When(option = "jsonAsMap", value = "false",
+                                                          carriers = { Carrier.TEXT, Carrier.NULL }),
+                                           @BodyType.When(option = "json", value = "false",
+                                                          carriers = { Carrier.TEXT, Carrier.NULL }) },
+                                   description = "The JSON response read into a Map; when it has one entry, such as the d of"
+                                                 + " OData, the value of that entry instead, a Map or a List. Null for a response"
+                                                 + " without a body; a JSON array or a response that is not JSON fails. With"
+                                                 + " jsonAsMap=false or json=false the response as text"))
 public class NetWeaverEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath

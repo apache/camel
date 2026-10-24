@@ -26,6 +26,9 @@ import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterHelper;
 import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.data.TimelineType;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,21 @@ import static org.apache.camel.component.twitter.data.TimelineType.USER;
 @UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_TIMELINE, title = "Twitter Timeline",
              syntax = "twitter-timeline:timelineType",
              category = { Category.SAAS, Category.SOCIAL }, headersClass = TwitterConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "twitter4j.v1.Status",
+                                   description = "One tweet of the timeline per exchange, with its text in getText()"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  description = "The text to tweet as the status of the account, or a twitter4j"
+                                                + " StatusUpdate: bytes, a stream or a file are read as text, and a Map or"
+                                                + " another POJO is tweeted as its toString(). No body fails. Only the user"
+                                                + " timeline type has a producer"),
+           producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.POJO },
+                                   byOption = {
+                                           @BodyType.When(option = "exchangePattern", value = "InOnly",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "exchangePattern", value = "InOut",
+                                                          carriers = Carrier.POJO, javaType = "twitter4j.v1.Status") },
+                                   description = "Unchanged when the exchange expects no reply (InOnly). When it expects"
+                                                 + " one (InOut), the twitter4j Status of the tweet posted, with its id"))
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The timeline type to produce/consume.")

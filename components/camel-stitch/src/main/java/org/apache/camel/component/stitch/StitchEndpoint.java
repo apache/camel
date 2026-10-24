@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.stitch.client.StitchClient;
 import org.apache.camel.component.stitch.client.StitchClientBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -36,6 +39,16 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "stitch:tableName", producerOnly = true, category = {
                      Category.CLOUD, Category.API, Category.SAAS, Category.BIGDATA },
              headersClass = StitchConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.MAP, Carrier.LIST },
+                                  description = "A StitchRequestBody, a StitchMessage, a Map of the Stitch batch JSON"
+                                                + " (table_name, schema, messages, key_names as a list), or a List of"
+                                                + " StitchMessage, Map of a message, StitchRequestBody, Message or Exchange."
+                                                + " Text, bytes, a stream or no body fails. The tableName, keyNames and schema"
+                                                + " options or headers set the rest of the batch"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The message of the response of Stitch, empty when it has none; the HTTP"
+                                                 + " status code, the status and the response headers are in the"
+                                                 + " CamelStitchCode, CamelStitchStatus and CamelStitchHeaders headers"))
 public class StitchEndpoint extends DefaultEndpoint {
 
     @UriParam

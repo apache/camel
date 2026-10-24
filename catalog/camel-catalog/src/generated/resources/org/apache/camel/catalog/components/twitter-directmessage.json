@@ -43,6 +43,11 @@
     "CamelTwitterUser": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The user", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_USER" },
     "CamelTwitterEventType": { "index": 1, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of event. The supported values are the values of the enum org.apache.camel.component.twitter.consumer.TwitterEventType", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_EVENT_TYPE" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "twitter4j.v1.DirectMessage", "description": "One direct message of the account per exchange, with its text in getText(). It converts to text as the date, the sender id and the text" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The text of the direct message: bytes, a stream or a file are read as text, and a Map or a POJO is sent as its toString(). The CamelTwitterUser header overrides the user to send to" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged" }
+  },
   "properties": {
     "user": { "index": 0, "kind": "path", "displayName": "User", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The user name to send a direct message. This will be ignored for consumer." },
     "sendEmptyMessageWhenIdle": { "index": 1, "kind": "parameter", "displayName": "Send Empty Message When Idle", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead." },

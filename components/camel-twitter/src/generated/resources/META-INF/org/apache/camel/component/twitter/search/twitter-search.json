@@ -48,6 +48,11 @@
     "CamelTwitterMaxId": { "index": 5, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "If specified, returns tweets with status ids less than the given id.", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_MAXID" },
     "CamelTwitterEventType": { "index": 6, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of event. The supported values are the values of the enum org.apache.camel.component.twitter.consumer.TwitterEventType", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_EVENT_TYPE" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "twitter4j.v1.Status", "description": "One tweet found by the search per exchange, with its text in getText()" },
+    "producerIn": { "carriers": [ "any" ], "description": "The body is not read: the search uses the keywords of the endpoint, or of the CamelTwitterKeywords header" },
+    "producerOut": { "carriers": [ "list" ], "javaType": "java.util.List<twitter4j.v1.Status>", "description": "The tweets found, an empty List when there are none" }
+  },
   "properties": {
     "keywords": { "index": 0, "kind": "path", "displayName": "Keywords", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The search query, use the keywords AND, OR, - and () to narrow the search results." },
     "sendEmptyMessageWhenIdle": { "index": 1, "kind": "parameter", "displayName": "Send Empty Message When Idle", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead." },
