@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,39 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(annotations = {
         "protocol=http",
 })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "consumerStrategy", value = "AGGREGATION",
+                                                          carriers = { Carrier.POJO, Carrier.LIST }),
+                                           @BodyType.When(option = "forwardOnCompleted", value = "true",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }) },
+                                   description = "The protobuf request message of the called method, with the method name in"
+                                                 + " the CamelGrpcMethodName header. A streaming request gives one exchange per"
+                                                 + " message, or with the AGGREGATION strategy a List of all its messages."
+                                                 + " forwardOnCompleted sends no body at the end of the stream, forwardOnError"
+                                                 + " the Throwable"),
+           consumerReply = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL },
+                                     dependsOn = "routeControlledStreamObserver",
+                                     description = "The protobuf response message, or a List of them for a streaming response;"
+                                                   + " no body sends an empty message. Text, bytes or a Map fail: build the"
+                                                   + " message of the method. With routeControlledStreamObserver the route"
+                                                   + " replies through a producer with toRouteControlledStreamObserver"),
+           producerIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                  description = "The protobuf request message of the method, or a List of them for a"
+                                                + " streaming request. Text, bytes or a Map fail with an argument type"
+                                                + " mismatch: build the message first"),
+           producerOut = @BodyType(value = Carrier.LIST,
+                                   byOption = {
+                                           @BodyType.When(option = "synchronous", value = "true",
+                                                          carriers = { Carrier.POJO, Carrier.LIST }),
+                                           @BodyType.When(option = "producerStrategy", value = "STREAMING",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "toRouteControlledStreamObserver", value = "true",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "A List of the protobuf response messages. With synchronous=true the"
+                                                 + " response message itself, or a List of them for a streaming response."
+                                                 + " With the STREAMING strategy the body is unchanged and each response goes"
+                                                 + " to the streamRepliesTo endpoint"))
 public class GrpcEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GrpcConfiguration configuration;

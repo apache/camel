@@ -24,6 +24,9 @@ import javax.net.ssl.SSLContext;
 import org.apache.camel.Category;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,10 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "lumberjack", title = "Lumberjack", syntax = "lumberjack:host:port",
              consumerOnly = true, category = { Category.MONITORING })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.TEXT, Carrier.VALUE, Carrier.NULL },
+                                   description = "The log event: a Map of its fields, such as message, source and host, with"
+                                                 + " the nested objects as Maps and the arrays as Lists. A JSON frame that is"
+                                                 + " not an object gives a List, a String, a number, a boolean or null"))
 public class LumberjackEndpoint extends DefaultEndpoint {
     @UriPath(description = "Network interface on which to listen for Lumberjack")
     @Metadata(required = true)

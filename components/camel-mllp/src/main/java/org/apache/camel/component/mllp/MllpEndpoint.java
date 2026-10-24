@@ -30,6 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -52,6 +55,24 @@ import org.slf4j.Logger;
 @UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port",
              category = { Category.HEALTH }, generateConfigurer = true,
              headersClass = MllpConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   byOption = @BodyType.When(option = "stringPayload", value = "false",
+                                                             carriers = Carrier.BYTES, javaType = "byte[]"),
+                                   description = "The HL7 message without the MLLP envelope, as a String in the charset of"
+                                                 + " MSH-18 or charsetName, or a byte array with stringPayload=false"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     description = "The body is not sent back: the acknowledgement is the"
+                                                   + " CamelMllpAcknowledgement or CamelMllpAcknowledgementString exchange"
+                                                   + " property, or with autoAck an HL7 ACK (AA, or AE when the exchange"
+                                                   + " failed)"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES },
+                                  description = "The HL7 message as a String or a byte array. No body fails; another body,"
+                                                + " such as a stream, is sent as an empty message: convert it to a String"
+                                                + " first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body is left as it was: with InOut the acknowledgement is in the"
+                                                 + " CamelMllpAcknowledgement (byte array) and"
+                                                 + " CamelMllpAcknowledgementString headers"))
 public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath

@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -35,6 +38,19 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name",
              category = { Category.MOBILE }, headersClass = AsteriskConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "org.asteriskjava.manager.event.ManagerEvent",
+                                   description = "The AMI event: a subclass of ManagerEvent such as NewChannelEvent or"
+                                                 + " HangupEvent, with its simple class name in the CamelAsteriskEventName"
+                                                 + " header. The ConnectEvent of the login comes first"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not read: the action comes from the action option or the"
+                                                + " CamelAsteriskAction header, and the extension and context of"
+                                                + " EXTENSION_STATE from the CamelAsteriskExtension and"
+                                                + " CamelAsteriskContext headers"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.asteriskjava.manager.response.ManagerResponse",
+                                   description = "The ManagerResponse of the action, such as an ExtensionStateResponse; a"
+                                                 + " ManagerError when Asterisk answers with an error. QUEUE_STATUS and"
+                                                 + " SIP_PEERS give only the first response, not the events of the list"))
 public class AsteriskEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     @UriPath(description = "Name of component")
     @Metadata(required = true)
