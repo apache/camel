@@ -35,6 +35,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.NullFaultListener;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -75,6 +78,48 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
 @Metadata(annotations = {
         "protocol=http",
 })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.LIST, javaType = "org.apache.cxf.message.MessageContentsList",
+                                   dependsOn = "performInvocation",
+                                   byOption = {
+                                           @BodyType.When(option = "bindingStyle", value = "SimpleConsumer",
+                                                          carriers = Carrier.UNKNOWN),
+                                           @BodyType.When(option = "bindingStyle", value = "Custom",
+                                                          carriers = Carrier.UNKNOWN) },
+                                   description = "Default: a MessageContentsList of the parameters of the resource method,"
+                                                 + " with its name in the CamelCxfOperationName header. SimpleConsumer: the"
+                                                 + " request entity as the method declares it (a String, an InputStream, a"
+                                                 + " JAXB bean), with the path, query and header parameters in headers; the"
+                                                 + " MessageContentsList when the method has no entity, such as a GET"),
+           consumerReply = @BodyType(value = {
+                   Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                   Carrier.POJO },
+                                     byOption = @BodyType.When(option = "bindingStyle", value = "Custom",
+                                                               carriers = Carrier.ANY),
+                                     description = "The response entity: a jakarta.ws.rs.core.Response, or text, bytes, a"
+                                                   + " stream, a file, or an object a JAX-RS provider writes for the"
+                                                   + " Content-Type (a JAXB bean as XML); a Map or a List fails without a"
+                                                   + " provider for it. With the Default binding the request"
+                                                   + " MessageContentsList fails: set the reply body"),
+           producerIn = @BodyType(value = {
+                   Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                   Carrier.POJO },
+                                  byOption = @BodyType.When(option = "httpClientAPI", value = "false",
+                                                            carriers = {
+                                                                    Carrier.LIST, Carrier.TEXT, Carrier.VALUE,
+                                                                    Carrier.POJO, Carrier.NULL }),
+                                  description = "The request entity, written for the Content-Type header: text, bytes, a"
+                                                + " stream, a file or an object a JAX-RS provider writes; of a List only"
+                                                + " the first element is sent, and a Map fails. A GET sends no body. With"
+                                                + " httpClientAPI=false: the parameters of the resource method named by the"
+                                                + " CamelCxfOperationName header, as a List or the one parameter"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = @BodyType.When(option = "httpClientAPI", value = "false",
+                                                             carriers = Carrier.UNKNOWN),
+                                   description = "A jakarta.ws.rs.core.Response whose entity is the response stream, read"
+                                                 + " once (it converts to a String or an InputStream); the entity read as the"
+                                                 + " class in the CamelCxfRsResponseClass header when that is set. With"
+                                                 + " httpClientAPI=false: the return value of the resource method, null for"
+                                                 + " a void one"))
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);

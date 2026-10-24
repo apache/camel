@@ -24,6 +24,9 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
@@ -41,6 +44,15 @@ import org.slf4j.LoggerFactory;
 @Metadata(annotations = {
         "protocol=http",
 })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the webhook handler of the delegate component (endpointUri) makes of"
+                                                 + " the HTTP request: the same body as its polling consumer, such as an"
+                                                 + " IncomingMessage (or another update) for Telegram, an Event for ClickUp, or the JSON as a String"
+                                                 + " for WhatsApp"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     description = "The delegate component sets the HTTP response body itself after the route:"
+                                                   + " Telegram and ClickUp reply with an empty body, WhatsApp with the request"
+                                                   + " content, whatever body the route ends with"))
 public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint, AfterPropertiesConfigured {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebhookEndpoint.class);
