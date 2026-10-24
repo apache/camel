@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.plc4x;
 
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -25,17 +28,20 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.plc4x.java.DefaultPlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
+import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +54,11 @@ import org.slf4j.LoggerFactory;
 public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
 
+    // how long the producer and the triggered consumer wait for the PLC to answer a request
+    static final long REQUEST_TIMEOUT_MILLIS = 5000;
+
     protected DefaultPlcDriverManager plcDriverManager;
-    protected PlcConnection connection;
+    protected volatile PlcConnection connection;
 
     @UriPath
     @Metadata(required = true, description = "PLC4X connection string for the connection to the target")
@@ -69,6 +78,8 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     private boolean autoReconnect;
 
     private String uri;
+    // the connection string handed to the driver: the uri without the options of this endpoint
+    private String connectionString;
 
     public Plc4XEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -120,7 +131,9 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      */
     public void setupConnection() throws PlcConnectionException {
         try {
-            connection = plcDriverManager.getConnection(this.uri);
+            synchronized (this) {
+                connection = plcDriverManager.getConnection(connectionString);
+            }
             if (!isConnected()) {
                 reconnectIfNeeded();
             }
@@ -145,24 +158,34 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      * @throws PlcConnectionException If reconnect failed and auto-reconnect is turned on
      */
     public void reconnectIfNeeded() throws PlcConnectionException {
-        if (isConnected()) {
-            LOGGER.trace("No reconnect needed, already connected");
-        } else if (autoReconnect && connection == null) {
-            connection = plcDriverManager.getConnection(uri);
-            LOGGER.debug("Successfully reconnected");
-        } else if (autoReconnect && !isConnected()) {
-            if (connection != null) {
-                connection.connect();
+        // the producer and the consumers of the endpoint share the connection: one of them replaces it at a time
+        synchronized (this) {
+            if (isConnected()) {
+                LOGGER.trace("No reconnect needed, already connected");
+                return;
             }
-            // If reconnection fails without Exception, reset connection
-            if (!isConnected()) {
-                LOGGER.debug("No connection established after connect, resetting connection");
-                connection = plcDriverManager.getConnection(uri);
+            if (autoReconnect) {
+                // a lost PLC4X connection cannot always connect again (the S7 and EtherNet/IP drivers fail on a closed
+                // transport), so it is replaced by a new one
+                closeLostConnection();
+                connection = plcDriverManager.getConnection(connectionString);
+                LOGGER.debug("Successfully reconnected");
+                return;
             }
-            LOGGER.debug("Successfully reconnected");
-        } else {
-            LOGGER.warn("Connection lost and auto-reconnect is turned off, shutting down Plc4XEndpoint");
-            stop();
+        }
+        // stop() is called outside the lock, as a concurrent stop() holds the service lock while doStop() waits for it
+        LOGGER.warn("Connection lost and auto-reconnect is turned off, shutting down Plc4XEndpoint");
+        stop();
+    }
+
+    private void closeLostConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (Exception e) {
+                LOGGER.debug("Closing the lost connection failed: {}", e.getMessage());
+            }
+            connection = null;
         }
     }
 
@@ -170,14 +193,16 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      * @return true if connection supports writing, else false
      */
     public boolean canWrite() {
-        return connection != null && connection.getMetadata().isWriteSupported();
+        PlcConnection current = connection;
+        return current != null && current.getMetadata().isWriteSupported();
     }
 
     /**
      * @return true if connection is established and still connected
      */
     public boolean isConnected() {
-        return connection != null && connection.isConnected();
+        PlcConnection current = connection;
+        return current != null && current.isConnected();
     }
 
     @Override
@@ -187,7 +212,8 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Plc4XConsumer consumer = new Plc4XConsumer(this, processor);
+        Consumer consumer = trigger == null
+                ? new Plc4XConsumer(this, processor) : new Plc4XTriggeredConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }
@@ -201,7 +227,18 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      * Build a {@link PlcReadRequest} using the tags specified in the endpoint.
      */
     public PlcReadRequest buildPlcReadRequest() {
+        return buildPlcReadRequest(Map.of());
+    }
+
+    /**
+     * Build a {@link PlcReadRequest} using the given tags and the tags specified in the endpoint.
+     *
+     * @param  additionalTags tag addresses by name to read in addition to the tags of the endpoint
+     * @return                {@link PlcReadRequest}
+     */
+    PlcReadRequest buildPlcReadRequest(Map<String, String> additionalTags) {
         PlcReadRequest.Builder builder = connection.readRequestBuilder();
+        additionalTags.forEach(builder::addTagAddress);
         if (tags != null) {
             for (Map.Entry<String, String> tag : tags.entrySet()) {
                 try {
@@ -213,6 +250,17 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
             }
         }
         return builder.build();
+    }
+
+    /**
+     * @return the values of a read response by tag name
+     */
+    static Map<String, Object> tagValues(PlcReadResponse response) {
+        Map<String, Object> values = new HashMap<>();
+        for (String tag : response.getTagNames()) {
+            values.put(tag, response.getObject(tag));
+        }
+        return values;
     }
 
     /**
@@ -258,16 +306,37 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        connectionString = withoutEndpointOptions(uri);
         ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
         this.plcDriverManager = new DefaultPlcDriverManager(cl);
+    }
+
+    /**
+     * Removes the options of this endpoint from a connection string, so the PLC4X driver only gets the parameters it
+     * knows.
+     */
+    private String withoutEndpointOptions(String endpointUri) throws URISyntaxException {
+        EndpointUriFactory factory = getCamelContext().getCamelContextExtension().getEndpointUriFactory("plc4x");
+        if (factory == null) {
+            throw new IllegalStateException("Cannot find the EndpointUriFactory of the plc4x component");
+        }
+        Map<String, Object> parameters
+                = new LinkedHashMap<>(URISupport.parseQuery(URISupport.extractQuery(endpointUri), true));
+        parameters.keySet().removeIf(name -> factory.propertyNames().contains(name)
+                || factory.multiValuePrefixes().values().stream().anyMatch(name::startsWith));
+        String query = URISupport.createQueryString(parameters, false);
+        String path = URISupport.stripQuery(endpointUri);
+        return query.isEmpty() ? path : path + "?" + query;
     }
 
     @Override
     public void doStop() throws Exception {
         super.doStop();
-        if (isConnected() && connection != null) {
-            connection.close();
-            connection = null;
+        synchronized (this) {
+            if (isConnected()) {
+                connection.close();
+                connection = null;
+            }
         }
     }
 

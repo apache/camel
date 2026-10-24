@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.plc4x;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -101,11 +99,7 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
                 response = future.get();
             }
 
-            Map<String, Object> rsp = new HashMap<>();
-            for (String field : response.getTagNames()) {
-                rsp.put(field, response.getObject(field));
-            }
-            exchange.getIn().setBody(rsp);
+            exchange.getIn().setBody(Plc4XEndpoint.tagValues(response));
         } catch (TimeoutException e) {
             // nothing received within the timeout
             LOGGER.debug("No response from the PLC within {} millis", timeout);

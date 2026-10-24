@@ -2661,3 +2661,48 @@ Node producer creates it, from the options of the Edge Node endpoint (`deviceIds
 Device route that starts before the Edge Node route, or while it is stopped, therefore no longer fails with a
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
+
+=== camel-plc4x - PLC4X 1.0.0 and the triggered consumer
+
+`camel-plc4x` now uses PLC4X 1.0.0, which requires Java 21, as Camel 4.24 does.
+
+PLC4X 1.0.0 changes the connection strings of its drivers. Several parameters are renamed, for example
+`request-timeout` to `request-timeout-ms`, and the S7 driver reads the rack and slot as `cotp.remote-rack` and
+`cotp.remote-slot` instead of `remote-rack` and `remote-slot`. A parameter that a driver does not know, such as an old
+name, is logged as a warning and does not apply. The OPC UA driver now uses the security policy `Basic256Sha256` by
+default instead of `NONE`, `insecure-certificate-verification=true` becomes `tls.verify=false`, and a user name and
+password are refused over a channel that is neither signed nor encrypted unless `allow-insecure-credentials` is set.
+See the incompatible changes in the https://github.com/apache/plc4x/releases/tag/v1.0.0[PLC4X 1.0.0 release notes]
+for the full list.
+
+PLC4X 1.0.0 writes the array selection of a tag address before the data type, and as a range instead of a count. An
+address written as `holding-register:1:INT[4]` or `%DB42:28.0:BYTE[4]` for four elements is now written
+`holding-register:1[0..3]:INT` or `%DB42:28.0[0..3]:BYTE`; `[4]` before the data type selects the single element at
+index 4. Addresses in the old form no longer parse. This applies to the `tag.*` options, to `trigger` and to the
+addresses in the body of the producer.
+
+The S7 driver of PLC4X 1.0.0 no longer includes the `s7-light` driver, so `plc4x:s7-light://` endpoints no longer find
+a driver. Use `plc4x:s7://` instead.
+
+A consumer with `trigger` now reads the trigger tag and the tags in one request on the connection of the endpoint,
+every `period` milliseconds from the start of the route. Before, it sampled the trigger first after about one second,
+and read the tags in a later, separate request on another connection. A failed read is now reported to the exception
+handler of the consumer (or to the error handler of the route with `bridgeErrorHandler=true`), and polling continues;
+before, the consumer stopped triggering after the first failed read of the trigger. After a failed poll the remembered
+trigger value is unknown, so a trigger that is still `true` when the PLC returns emits once. Since the consumer now uses
+the connection of the endpoint, `autoReconnect` governs its reconnects. A connection that cannot be set up when the
+route starts fails the start of the route, unless `autoReconnect=true`, in which case the polls retry it. A route that
+starts with the CamelContext then fails the start of the CamelContext too, unless the route is supervised by the
+xref:route-controller.adoc[supervising route controller] or has `autoStartup=false`. As before, `period` must be
+positive when `trigger` is set. A trigger that reads as a value that is not a boolean, such as a number or an array,
+fails the poll. See the xref:components::plc4x-component.adoc[PLC4X component] for how triggered reading works.
+
+With `autoReconnect=true`, a lost connection is now closed and replaced with a new one from the driver instead of being
+reconnected, because the PLC4X 1.0.0 S7 and EtherNet/IP drivers cannot connect a connection again once it is lost. This
+applies to the producer and to the consumers alike.
+
+The component now removes its own options (`trigger`, `period`, `tag.*`, `autoReconnect` and the generic consumer
+options such as `exceptionHandler`) from the connection string it hands to the driver. Before, the driver received them
+as connection string parameters too.
+
+The constant `Constants.PLC_NAME`, which was only used with the PLC4X scraper, was removed.
