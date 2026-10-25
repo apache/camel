@@ -139,8 +139,12 @@ final class RouteDiagramZoom {
      * when it is chosen for the screen.
      */
     String label(LayoutRoute shown) {
-        RouteDensity d = shown != null ? densityOf(shown) : density;
-        String label = d.label() + " " + d.position();
+        return label(shown != null ? densityOf(shown) : density);
+    }
+
+    /** What the zoom toggle of the view bar says of the topology, laid out with the given density. */
+    String label(RouteDensity shown) {
+        String label = shown.label() + " " + shown.position();
         return fit ? "fit " + label : label;
     }
 

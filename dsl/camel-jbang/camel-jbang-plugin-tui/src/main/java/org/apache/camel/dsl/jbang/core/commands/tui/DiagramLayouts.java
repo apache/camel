@@ -16,16 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.TopologyAsciiRenderer;
+import org.apache.camel.diagram.TopologyErrorFrame;
+import org.apache.camel.diagram.TopologyLayoutEngine;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 
 /**
- * What {@link DiagramSupport} does to a layout before it draws it: the diagram moved up to the top, and the steps a
- * highlighted step is inside highlighted too.
+ * What {@link DiagramSupport} does to a layout before it draws it: the diagram moved up to the top, the steps a
+ * highlighted step is inside highlighted too, and the steps that send to an external system marked.
  */
 final class DiagramLayouts {
 
@@ -53,6 +59,46 @@ final class DiagramLayouts {
                 nodeIds.add(node.id);
             }
         }
+    }
+
+    /** Marks the steps that send to an external system of the topology as remote: the diagram draws them as an edge. */
+    static void markRemote(List<RouteDiagramLayoutEngine.RouteInfo> routes, Set<String> externalUris) {
+        if (externalUris.isEmpty()) {
+            return;
+        }
+        for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
+            for (RouteDiagramLayoutEngine.NodeInfo ni : r.nodes) {
+                if (!ni.remote) {
+                    String baseUri = DiagramSupport.getBaseUri(ni);
+                    if (baseUri != null && externalUris.contains(baseUri)) {
+                        ni.remote = true;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Lays out the topology with boxes the given number of columns wide, and the routes reached only on error (when
+     * any) in a frame below: no layout when there are neither.
+     */
+    static TopologyErrorFrame.Placed layoutTopology(
+            List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges, List<TopologyNodeInfo> errorNodes,
+            TopologyErrorFrame.Externals externals, List<TopologyErrorFrame.ErrorPath> paths, int columns) {
+        TopologyLayoutEngine engine = DiagramSupport.engineFor(columns);
+        TopologyLayoutResult result = null;
+        if (!nodes.isEmpty()) {
+            result = engine.layout(nodes, edges);
+            normalizeTopologyLayoutY(result);
+        }
+        if (errorNodes.isEmpty()) {
+            return new TopologyErrorFrame.Placed(result, null);
+        }
+        if (result == null) {
+            result = new TopologyLayoutResult(new ArrayList<>(), new ArrayList<>(), 0, 0);
+        }
+        return TopologyErrorFrame.place(result, errorNodes, externals, paths, engine.getNodeWidth(),
+                engine.getNodeHeight(), TopologyAsciiRenderer.ROW_HEIGHT);
     }
 
     static void normalizeTopologyLayoutY(TopologyLayoutResult result) {

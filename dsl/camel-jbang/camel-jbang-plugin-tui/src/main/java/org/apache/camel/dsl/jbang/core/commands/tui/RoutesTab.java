@@ -733,6 +733,7 @@ class RoutesTab extends AbstractDiagramTab {
         if (diagramShown) {
             toggles.add(new SubViewBar.Toggle("m", "metrics", diagramMetrics ? "on" : "off"));
             if (topologyMode) {
+                toggles.add(new SubViewBar.Toggle("+/-", "zoom", diagram.zoom.label(diagram.getTopologyDensity())));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
                         EXTERNAL_LABELS[externalMode].trim().replace("[", "").replace("]", "")));
@@ -774,6 +775,7 @@ class RoutesTab extends AbstractDiagramTab {
                 hint(spans, "Esc", "close");
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "Enter", "drill-down");
+                hint(spans, "+/-", "zoom");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
             } else {

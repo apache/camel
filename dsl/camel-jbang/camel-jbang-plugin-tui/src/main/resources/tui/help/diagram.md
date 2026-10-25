@@ -206,6 +206,10 @@ you an at-a-glance view of where you are in the route.
 - `↑↓←→` — navigate between route boxes
 - `Enter` — drill down into selected route
 - `c` — show route source code
+- `+` / `-` — zoom in or out: detailed, compact (the default: boxes of
+  one line, the count in the border, the layers closer together) and
+  bare (a mark, the name and the count of each route on one row)
+- `z` — fit: the most detail in which the whole topology fits the screen
 - `v` — next level: architecture, topology, route
 - `g` — show each route's group in the topology, its colour as in
   the architecture, with a legend of the groups at the bottom

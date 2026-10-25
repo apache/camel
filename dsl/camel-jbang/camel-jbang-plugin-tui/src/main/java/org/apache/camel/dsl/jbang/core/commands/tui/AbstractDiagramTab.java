@@ -144,7 +144,7 @@ abstract class AbstractDiagramTab extends AbstractTab {
             gotoNodePopup.open(diagram.getEipNodeBoxes(), diagram.getSelectedEipNodeIndex());
             return true;
         }
-        if (routeNodes && handleZoomKeys(ke)) {
+        if ((routeNodes || topologyMode) && handleZoomKeys(ke)) {
             return true;
         }
         if (!topologyMode && detailMode) {
@@ -221,6 +221,9 @@ abstract class AbstractDiagramTab extends AbstractTab {
         } else if (ke.isCharIgnoreCase('z')) {
             zoom.toggleFit();
             ctx.backgroundExecutor.execute(zoom::persist);
+        } else if (topologyMode) {
+            // the topology zooms, its blocks are the routes' own
+            return false;
         } else if (ke.isChar(' ')) {
             String folded = zoom.toggleFold(drillDownRouteId, selected != null ? selected.layoutNode() : null);
             if (folded == null) {
@@ -234,6 +237,12 @@ abstract class AbstractDiagramTab extends AbstractTab {
             zoom.expandAll(drillDownRouteId);
         } else {
             return false;
+        }
+        if (topologyMode) {
+            // the route selected stays selected (the topology keeps its selection when it is laid out again)
+            diagram.endLoad();
+            reloadDiagram();
+            return true;
         }
         int screenRow = 0;
         for (var box : diagram.getEipNodeBoxes()) {

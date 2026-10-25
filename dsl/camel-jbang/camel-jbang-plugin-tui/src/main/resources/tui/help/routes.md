@@ -152,6 +152,10 @@ in the diagram.
 - `↑↓←→` — navigate between route boxes
 - `Enter` — drill down into selected route
 - `c` — show route source code
+- `+` / `-` — zoom in or out: detailed, compact (the default: boxes of
+  one line, the count in the border, the layers closer together) and
+  bare (a mark, the name and the count of each route on one row)
+- `z` — fit: the most detail in which the whole topology fits the screen
 - `Esc` — close diagram (back to route table)
 - `m` — toggle metrics on/off
 - `e` — toggle external systems on/off

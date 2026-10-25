@@ -60,9 +60,8 @@ class SourceSizeTest {
             AiPanel.runAgentLoop 159
             AiUsageStats.render 166
             CamelMonitor.java 2761
-            DiagramSupport.java 2413
-            DiagramSupport.loadAllDiagramsInBackground 180
-            DiagramSupport.loadHighlightedNativeDiagramInBackground 212
+            DiagramSupport.java 2399
+            DiagramSupport.loadHighlightedNativeDiagramInBackground 200
             EndpointsTab.renderContent 170
             HistoryTab.java 2727
             HistoryTab.renderDiagramInfoPanel 202

@@ -484,6 +484,7 @@ class DiagramTab extends AbstractDiagramTab {
                     toggles.add(new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"));
                 }
                 toggles.add(new SubViewBar.Toggle("x", "errors", errorsToggle()));
+                toggles.add(new SubViewBar.Toggle("+/-", "zoom", diagram.zoom.label(diagram.getTopologyDensity())));
                 toggles.add(new SubViewBar.Toggle("m", "metrics", metrics));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
@@ -652,6 +653,7 @@ class DiagramTab extends AbstractDiagramTab {
             } else if (!diagram.getNodeBoxes().isEmpty()) {
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "c", "source");
+                hint(spans, "+/-", "zoom");
                 hint(spans, "s", "summary");
             } else {
                 diagram.renderFooterHints(spans);

@@ -57,7 +57,8 @@ image::jbang/camel-tui-diagram-route.png[The checkout route drilled into, with t
 
 === Zoom and Folding
 
-A large route takes a lot of screen. Press *-* to zoom out and *+* to zoom in, through three levels:
+A large route takes a lot of screen. Press *-* to zoom out and *+* to zoom in, through three levels (the topology zooms
+too, see below):
 
 * *detailed*: a box per step, with up to three lines of text
 * *compact* (the default): a box per step with one line of text, and the steps closer together: about twice as many
@@ -65,11 +66,17 @@ steps fit
 * *bare*: no boxes, each step is a mark and its text on one row (`▶` the from, `◆` a step with steps in it, `◇` a
 branch, `●` a step), with the counts beside the lines between them
 
-The level you choose is kept for the next start. Press *z* for fit: the most detailed level in which the whole route fits the screen. The view bar shows the level and
-where it is among the three, counted up as *+* zooms in (`zoom: bare 1/3`, `compact 2/3`, `detailed 3/3`, or
-`zoom: fit bare 1/3`), and the title of the diagram how many steps
-the route has, so you can tell a large route at a glance, and how many of them are folded (`38 steps · 12 folded`). Zooming keeps the selected step selected, on the same row of the screen, and
-the Info panel has the whole text of the selected step at every level.
+Press *z* for fit: the most detailed level in which the whole route fits the screen. The level you choose is kept for
+the next start. The view bar shows the level and where it is among the three, counted up as *+* zooms in
+(`zoom: bare 1/3`, `compact 2/3`, `detailed 3/3`, or `zoom: fit bare 1/3`). The title of the diagram says how many
+steps the route has, so you can tell a large route at a glance, and how many of them are folded
+(`· 38 steps · 12 folded`). Zooming keeps the selected step selected, on the same row of the screen, and the Info panel
+has the whole text of the selected step at every level.
+
+The topology zooms the same way, which helps when it has many routes, such as with the utility routes shown: a compact
+route is a box of one line with its count in the border, a bare route a mark in the colour of its group, its name and
+its count on one row, and the layers come closer together and the boxes narrower. With fit, the topology takes the most
+detailed level in which it fits the screen.
 
 Press *Space* to fold a block (a choice, one of its branches, a split, a doTry, a filter...) into its first step,
 which then says how many steps are folded (`▸ 12 steps folded`); *Space* on a step inside a block folds that block, and
@@ -269,8 +276,8 @@ camel-xml-io, while a Spring Boot or Quarkus application may not.
 | *t* | Jump to topology view
 | *m* | Toggle metrics overlay
 | *y* | In a route: show the body types each step has been reached with, beside the arrows into the steps
-| *+* / *-* | In a route: zoom in or out (detailed, compact, bare)
-| *z* | In a route: fit, the most detail in which the whole route fits the screen
+| *+* / *-* | In a route and the topology: zoom in or out (detailed, compact, bare)
+| *z* | In a route and the topology: fit, the most detail in which it fits the screen
 | *Space* | In a route: fold the block of the selected step, or unfold a folded step
 | *f* | In a route: fold all the blocks
 | *F* | In a route: expand all the blocks

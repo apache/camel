@@ -67,6 +67,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyZoom;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -132,6 +133,13 @@ class DiagramSupport {
     private TopologyLayoutResult topologyLayout;
     private int topologyNodeWidth;
     private java.util.Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeLayouts = Collections.emptyMap();
+    /** The density the topology was laid out with: the zoom's, or with fit the one chosen for the screen. */
+    private RouteDensity topologyDensity = RouteDensity.DETAILED;
+
+    RouteDensity getTopologyDensity() {
+        return topologyDensity;
+    }
+
     /** The zoom of the route diagram, and its folded blocks; the tabs of the route diagram share theirs. */
     RouteDiagramZoom zoom = new RouteDiagramZoom();
     private String cachedPid;
@@ -1103,7 +1111,7 @@ class DiagramSupport {
                 .withNodeLines(nodeLines)
                 .withGroups(groupTags, groupColors)
                 .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
-                .withErrorMarks(errorMarkRouteIds());
+                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1125,7 +1133,7 @@ class DiagramSupport {
                 .withNodeLines(nodeLines)
                 .withGroups(groupTags, groupColors)
                 .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
-                .withErrorMarks(errorMarkRouteIds());
+                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -1699,19 +1707,7 @@ class DiagramSupport {
             return;
         }
 
-        Set<String> externalUris = parseExternalUris(jo);
-        if (!externalUris.isEmpty()) {
-            for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                for (RouteDiagramLayoutEngine.NodeInfo ni : r.nodes) {
-                    if (!ni.remote) {
-                        String baseUri = getBaseUri(ni);
-                        if (baseUri != null && externalUris.contains(baseUri)) {
-                            ni.remote = true;
-                        }
-                    }
-                }
-            }
-        }
+        DiagramLayouts.markRemote(routes, parseExternalUris(jo));
 
         stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
         if (showDescription) {
@@ -2222,6 +2218,7 @@ class DiagramSupport {
         boolean showErrors = showErrorPaths;
         List<TopologyErrorFrame.ErrorPath> loadedErrorPaths = List.of();
         TopologyErrorFrame loadedErrorLayer = null;
+        RouteDensity topoDensity = RouteDensity.DETAILED;
         boolean loadedErrorPathsKnown = true;
         if (topoJson != null) {
             List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(topoJson);
@@ -2249,23 +2246,22 @@ class DiagramSupport {
                     : new TopologyErrorFrame.Taken(List.of(), TopologyErrorFrame.Externals.NONE);
             List<TopologyNodeInfo> errorNodes = frameRoutes.routes();
             removeRoutes(nodes, edges, hidden);
-            if (!nodes.isEmpty()) {
-                TopologyLayoutEngine engine = engineFor(boxColumns);
-                topoResult = engine.layout(nodes, edges);
-                normalizeTopologyLayoutY(topoResult);
-                nodeW = engine.getNodeWidth();
-            }
-            if (showErrors && !errorNodes.isEmpty()) {
-                TopologyLayoutEngine engine = engineFor(boxColumns);
-                if (topoResult == null) {
-                    topoResult = new TopologyLayoutResult(new ArrayList<>(), new ArrayList<>(), 0, 0);
-                    nodeW = engine.getNodeWidth();
+            // the zoom: a density, or with fit the most detail in which the topology fits the screen
+            topoDensity = zoom.isFit() ? RouteDensity.DETAILED : zoom.density();
+            while (true) {
+                int columns = TopologyZoom.columns(topoDensity, boxColumns);
+                nodeW = engineFor(columns).getNodeWidth();
+                TopologyErrorFrame.Placed placed = DiagramLayouts.layoutTopology(
+                        nodes, edges, showErrors ? errorNodes : List.of(), frameRoutes.externals(), loadedErrorPaths,
+                        columns);
+                TopologyZoom.Zoomed zoomed = TopologyZoom.apply(topoDensity, placed.layout(), placed.frame());
+                topoResult = zoomed.layout();
+                loadedErrorLayer = zoomed.frame();
+                if (!zoom.isFit() || topoDensity == RouteDensity.BARE
+                        || TopologyZoom.fits(topoResult, nodeW, lastVisibleHeight, lastVisibleWidth)) {
+                    break;
                 }
-                TopologyErrorFrame.Placed placed = TopologyErrorFrame.place(
-                        topoResult, errorNodes, frameRoutes.externals(), loadedErrorPaths, nodeW, engine.getNodeHeight(),
-                        TopologyAsciiRenderer.ROW_HEIGHT);
-                topoResult = placed.layout();
-                loadedErrorLayer = placed.frame();
+                topoDensity = topoDensity.zoomOut();
             }
             if (topoResult != null) {
                 topoNodes = topoResult.nodes;
@@ -2280,19 +2276,7 @@ class DiagramSupport {
             List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(topoJson);
             if (!routes.isEmpty()) {
                 // Enrich route nodes with remote flag from topology external endpoints
-                Set<String> externalUris = parseExternalUris(topoJson);
-                if (!externalUris.isEmpty()) {
-                    for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                        for (RouteDiagramLayoutEngine.NodeInfo ni : r.nodes) {
-                            if (!ni.remote) {
-                                String baseUri = getBaseUri(ni);
-                                if (baseUri != null && externalUris.contains(baseUri)) {
-                                    ni.remote = true;
-                                }
-                            }
-                        }
-                    }
-                }
+                DiagramLayouts.markRemote(routes, parseExternalUris(topoJson));
                 stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
                 if (showDescription) {
                     BusinessEndpointLabels.apply(routes);
@@ -2318,6 +2302,7 @@ class DiagramSupport {
         List<TopologyErrorFrame.ErrorPath> finalErrorPaths = loadedErrorPaths;
         TopologyErrorFrame finalErrorLayer = loadedErrorLayer;
         boolean finalErrorPathsKnown = loadedErrorPathsKnown;
+        RouteDensity finalTopoDensity = topoDensity;
         ctx.runner.runOnRenderThread(() -> {
             layoutHidden = hidden;
             layoutBoxColumns = boxColumns;
@@ -2332,6 +2317,7 @@ class DiagramSupport {
             preloading = false;
             cachedPid = pid;
             topologyLayout = finalTopoResult;
+            topologyDensity = finalTopoDensity;
             topologyNodeWidth = finalNodeW;
             topologyNodes = finalTopoNodes;
             topologyEdges = finalTopoEdges;
