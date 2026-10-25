@@ -66,7 +66,8 @@ steps fit
 branch, `●` a step), with the counts beside the lines between them
 
 The level you choose is kept for the next start. Press *z* for fit: the most detailed level in which the whole route fits the screen. The view bar shows the level and
-where it is among the three (`zoom: compact 2/3`, or `zoom: fit bare 3/3`), and the title of the diagram how many steps
+where it is among the three, counted up as *+* zooms in (`zoom: bare 1/3`, `compact 2/3`, `detailed 3/3`, or
+`zoom: fit bare 1/3`), and the title of the diagram how many steps
 the route has, so you can tell a large route at a glance, and how many of them are folded (`38 steps · 12 folded`). Zooming keeps the selected step selected, on the same row of the screen, and
 the Info panel has the whole text of the selected step at every level.
 

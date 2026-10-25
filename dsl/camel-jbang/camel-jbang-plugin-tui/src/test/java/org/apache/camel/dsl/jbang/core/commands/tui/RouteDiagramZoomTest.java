@@ -174,7 +174,7 @@ class RouteDiagramZoomTest {
         assertThat(zoom.densityOf(fitted)).isEqualTo(RouteDensity.BARE);
         // the route starts at the top, as without fit
         assertThat(find(fitted, "from1").y).isEqualTo(40);
-        assertThat(zoom.label(layout(zoom, bare))).isEqualTo("fit bare 3/3");
+        assertThat(zoom.label(layout(zoom, bare))).isEqualTo("fit bare 1/3");
         // a zoom key leaves fit
         zoom.zoomIn();
         assertThat(zoom.isFit()).isFalse();

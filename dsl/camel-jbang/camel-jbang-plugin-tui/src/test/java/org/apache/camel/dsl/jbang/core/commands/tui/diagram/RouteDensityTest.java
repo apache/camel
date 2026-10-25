@@ -177,4 +177,11 @@ class RouteDensityTest {
                 .orElseThrow();
         assertThat(count(compact, '▼')).isEqualTo(4);
     }
+
+    @Test
+    void thePositionCountsUpAsTheDiagramZoomsIn() {
+        assertThat(RouteDensity.BARE.position()).isEqualTo("1/3");
+        assertThat(RouteDensity.COMPACT.position()).isEqualTo("2/3");
+        assertThat(RouteDensity.DETAILED.position()).isEqualTo("3/3");
+    }
 }
