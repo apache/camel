@@ -75,11 +75,12 @@ public @interface BodyType {
 
     /**
      * The option that names the Java type of the body, such as {@code resultType} of a language, whose result is
-     * converted to the class the option names. When the option is set, the body is of that class, or null when it does
-     * not convert, and the carriers say the body when it is not set. The carrier follows the class: String is text,
-     * byte[] bytes, an InputStream or a Reader a stream, a File or a Path a file, a number, a boolean or a character a
-     * value, a Map map, a List, a Set, another Collection or an array list, an Iterator iterator, and any other class
-     * pojo.
+     * converted to the class the option names. When the option is set, and the options in {@link #dependsOn()} keep
+     * their default values, the body is of that class, or null when it does not convert; the bodies {@link #byOption()}
+     * gives for other options do not hold then. The carriers say the body when it is not set. The carrier follows the
+     * class: String is text, byte[] bytes, an InputStream or a Reader a stream, a File or a Path a file, a number, a
+     * boolean or a character a value, a Map map, a List, a Set, another Collection or an array list, an Iterator
+     * iterator, Object unknown, and any other class pojo.
      */
     String javaTypeOption() default "";
 

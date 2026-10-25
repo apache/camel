@@ -180,10 +180,12 @@ expression (`expressionOut`), and a `filter` what its own steps end with (`steps
 
 An option that names the class of the body is the `javaTypeOption` of a side: the `resultType` of a language, whose
 result is converted to that class, and the `type` of `convertBodyTo`. When the option is set, the body is an object of
-the class it names, or null when it does not convert, whatever the carriers and the other options say. The carrier
-follows the class: `String` is `text`, `byte[]` is `bytes`, an `InputStream` or a `Reader` is a `stream`, a `File`
-or a `Path` is a `file`, a number, a boolean or a character is a `value`, a `Map` is a `map`, a `Collection` or an
-array is a `list`, an `Iterator` is an `iterator`, and any other class is a `pojo`. `BodyTypeModel.carrierOf` gives
+the class it names, or null when it does not convert. That holds while the options the side depends on keep their
+defaults (an option that makes the body a collection of that class is one of them), and it wins over the bodies `byOption` gives
+for other options. The carrier follows the class: `String` is `text`, `byte[]` is `bytes`, an `InputStream` or a
+`Reader` is a `stream`, a `File` or a `Path` is a `file`, a number, a boolean or a character is a `value`, a `Map` is a
+`map`, a `Collection` or an array is a `list`, an `Iterator` is an `iterator`, `Object` is `unknown`, and any other
+class is a `pojo`. `BodyTypeModel.carrierOf` gives
 it for a class name, also for the short names Camel takes, such as `String` and `int`:
 
 [source,json]

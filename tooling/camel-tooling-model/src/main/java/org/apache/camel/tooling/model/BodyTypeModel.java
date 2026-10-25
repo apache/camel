@@ -155,8 +155,9 @@ public class BodyTypeModel {
     }
 
     /**
-     * The option that names the Java type of the body, such as resultType of a language: when it is set, the body is of
-     * the class it names, or null. The carriers say the body when it is not set.
+     * The option that names the Java type of the body, such as resultType of a language: when it is set, and the
+     * options of {@link #getDependsOn()} keep their defaults, the body is of the class it names, or null, and the
+     * bodies of {@link #getByOption()} for other options do not hold. The carriers say the body when it is not set.
      */
     public String getJavaTypeOption() {
         return javaTypeOption;
@@ -168,8 +169,9 @@ public class BodyTypeModel {
 
     /**
      * The carrier of a body of a Java type, such as a type option names: text for String, bytes for byte[], stream,
-     * file, value, map, list (a Collection or an array) and iterator, and pojo for any other class. The type is a class
-     * name, with or without generics, or a short name Camel takes, such as String or int.
+     * file, value, map, list (a Collection or an array) and iterator, unknown for Object, which can be anything, and
+     * pojo for any other class. The type is a class name, with or without generics, or a short name Camel takes, such
+     * as String or int.
      */
     public static String carrierOf(String javaType) {
         if (javaType == null || javaType.isBlank()) {
@@ -225,6 +227,8 @@ public class BodyTypeModel {
             answer.put(name, "list");
         }
         answer.put("java.util.Iterator", "iterator");
+        answer.put("Object", "unknown");
+        answer.put("java.lang.Object", "unknown");
         return Map.copyOf(answer);
     }
 

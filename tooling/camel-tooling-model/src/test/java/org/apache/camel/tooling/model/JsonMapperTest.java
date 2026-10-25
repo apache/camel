@@ -232,6 +232,7 @@ class JsonMapperTest {
         assertEquals("iterator", BodyTypeModel.carrierOf("java.util.Iterator"));
         assertEquals("pojo", BodyTypeModel.carrierOf("org.w3c.dom.Document"));
         assertEquals("pojo", BodyTypeModel.carrierOf("com.foo.Order"));
+        assertEquals("unknown", BodyTypeModel.carrierOf("java.lang.Object"));
         assertEquals("unknown", BodyTypeModel.carrierOf(null));
     }
 
