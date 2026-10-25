@@ -219,9 +219,7 @@ like this
      .end();
 ----
 
-IMPORTANT: You cannot use TarSplitter in _parallel_ mode with the splitter. The splitter must be _streaming_ too: the
-body of each message streams its entry from the Tar File, which is read on as the splitter goes, so a splitter that
-is not streaming gives messages with empty bodies.
+IMPORTANT: You cannot use TarSplitter in _parallel_ mode with the splitter.
 
 
 == Aggregate

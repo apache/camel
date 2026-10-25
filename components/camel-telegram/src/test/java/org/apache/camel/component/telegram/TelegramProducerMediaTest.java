@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.camel.Endpoint;
@@ -26,8 +31,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.model.ForceReply;
+import org.apache.camel.component.telegram.model.IncomingMessage;
+import org.apache.camel.component.telegram.model.IncomingPhotoSize;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
 import org.apache.camel.component.telegram.model.InlineKeyboardMarkup;
+import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingGameMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
@@ -38,6 +46,7 @@ import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,6 +60,132 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
     @EndpointInject("direct:telegram")
     private Endpoint endpoint;
+
+    @TempDir
+    Path tempDir;
+
+    @Test
+    public void testRouteWithTextBytesInTheCharsetOfTheExchange() {
+        final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
+        mockProcessor.clearRecordedMessages();
+        final MockProcessor<byte[]> documents = getMockRoutes().getMock("sendDocument");
+        documents.clearRecordedMessages();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
+        ex.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+        ex.getIn().setBody("Grüße".getBytes(StandardCharsets.ISO_8859_1));
+
+        template.send(endpoint, ex);
+
+        assertNull(ex.getException());
+        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertEquals("my-id", message.getChatId());
+        assertEquals("Grüße", message.getText());
+        assertTrue(documents.getRecordedMessages().isEmpty());
+    }
+
+    @Test
+    public void testRouteWithPngImageStream() throws Exception {
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendPhoto");
+        mockProcessor.clearRecordedMessages();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.PHOTO_PNG.name());
+        byte[] image = TelegramTestUtil.createSampleImage("PNG");
+        ex.getIn().setBody(new ByteArrayInputStream(image));
+
+        template.send(endpoint, ex);
+
+        assertNull(ex.getException());
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertTrue(contains(message, image));
+        assertMultipartFilename(message, "photo", "photo.png");
+    }
+
+    @Test
+    public void testRouteWithDocumentFile() throws Exception {
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendDocument");
+        mockProcessor.clearRecordedMessages();
+
+        byte[] document = TelegramTestUtil.createSampleDocument();
+        File file = Files.write(tempDir.resolve("sample.txt"), document).toFile();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.DOCUMENT);
+        ex.getIn().setBody(file);
+
+        template.send(endpoint, ex);
+
+        assertNull(ex.getException());
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertTrue(contains(message, document));
+        assertMultipartFilename(message, "document", "file");
+    }
+
+    @Test
+    public void testRouteWithDocumentLargerThanTheBufferSize() throws Exception {
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendDocument");
+        mockProcessor.clearRecordedMessages();
+
+        byte[] document = new byte[3 * 1024 * 1024];
+        Arrays.fill(document, (byte) 'x');
+        document[document.length - 1] = 'y';
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.DOCUMENT);
+        ex.getIn().setBody(document);
+
+        template.send(endpoint, ex);
+
+        assertNull(ex.getException());
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertTrue(message.length > document.length);
+        assertTrue(contains(message, "xxy\r\n".getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @Test
+    public void testRouteWithAudioWritesNumbersAndUtf8Text() throws Exception {
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendAudio");
+        mockProcessor.clearRecordedMessages();
+
+        OutgoingAudioMessage audio = new OutgoingAudioMessage();
+        audio.setAudio(TelegramTestUtil.createSampleAudio());
+        audio.setFilenameWithExtension("audio.mp3");
+        audio.setTitle("Grüße \u2603");
+        audio.setDurationSeconds(42);
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setBody(audio);
+
+        template.send(endpoint, ex);
+
+        assertNull(ex.getException());
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertMultipartText(message, "title", "Grüße \u2603");
+        assertMultipartText(message, "duration", "42");
+    }
+
+    @Test
+    public void testIncomingMessageWithoutTextIsNotSent() {
+        final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
+        mockProcessor.clearRecordedMessages();
+
+        IncomingPhotoSize photo = new IncomingPhotoSize();
+        photo.setFileId("f1");
+        IncomingMessage incoming = new IncomingMessage();
+        incoming.setMessageId(2L);
+        incoming.setPhoto(Collections.singletonList(photo));
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setBody(incoming);
+
+        template.send(endpoint, ex);
+
+        assertNull(ex.getException());
+        // the producer waits for the answer of a request, so a message sent would be recorded by now
+        assertTrue(mockProcessor.getRecordedMessages().isEmpty());
+    }
 
     @Test
     public void testRouteWithPngImage() throws Exception {

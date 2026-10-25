@@ -32,6 +32,10 @@
   "headers": {
     "CamelSpringBatchJobName": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the Batch Job to use", "constantName": "org.apache.camel.component.spring.batch.SpringBatchConstants#JOB_NAME" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "The body is not read: the job parameters are the message headers (Date, Long and Double values as such, other values as text; a null header value fails)" },
+    "producerOut": { "carriers": [ "pojo" ], "javaType": "org.springframework.batch.core.job.JobExecution", "description": "The JobExecution of the launched job, with its status and exit status; the headers stay as they were" }
+  },
   "properties": {
     "jobName": { "index": 0, "kind": "path", "displayName": "Job Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the Spring Batch job located in the registry." },
     "jobFromHeader": { "index": 1, "kind": "parameter", "displayName": "Job From Header", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Explicitly defines if the jobName should be taken from the headers instead of the URI." },

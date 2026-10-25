@@ -746,7 +746,8 @@ public interface StepFunctions2EndpointBuilderFactory {
             return "CamelAwsStepFunctionsExecutionName";
         }
         /**
-         * The string that contains the JSON input data for the execution.
+         * The JSON input data for the execution, as text (a String, a byte
+         * array or a stream).
          * 
          * The option is a: {@code String} type.
          * 
@@ -757,6 +758,47 @@ public interface StepFunctions2EndpointBuilderFactory {
          */
         public String awsStepFunctionsExecutionInput() {
             return "CamelAwsStepFunctionsExecutionInput";
+        }
+        /**
+         * The status of the execution: SUCCEEDED, FAILED or TIMED_OUT. The
+         * exchange does not fail when the execution did not succeed: check this
+         * header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: startSyncExecution
+         * 
+         * @return the name of the header {@code
+         * AwsStepFunctionsExecutionStatus}.
+         */
+        public String awsStepFunctionsExecutionStatus() {
+            return "CamelAwsStepFunctionsExecutionStatus";
+        }
+        /**
+         * The error code of the failure, when the execution failed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: startSyncExecution
+         * 
+         * @return the name of the header {@code
+         * AwsStepFunctionsExecutionError}.
+         */
+        public String awsStepFunctionsExecutionError() {
+            return "CamelAwsStepFunctionsExecutionError";
+        }
+        /**
+         * The cause of the failure, when the execution failed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: startSyncExecution
+         * 
+         * @return the name of the header {@code
+         * AwsStepFunctionsExecutionCause}.
+         */
+        public String awsStepFunctionsExecutionCause() {
+            return "CamelAwsStepFunctionsExecutionCause";
         }
         /**
          * Passes the X-Ray trace header.

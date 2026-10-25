@@ -96,6 +96,16 @@ Camel-AWS Step Functions component provides the following operation on the produ
 - listExecutions
 - getExecutionHistory
 
+The startExecution and startSyncExecution operations take the input of the execution from the
+`CamelAwsStepFunctionsExecutionInput` header, which must be JSON text (a String, a byte array or a stream).
+A value of another type, such as a `Map`, is not turned into JSON: the exchange fails.
+
+The startSyncExecution operation waits for the execution to end, and sets the body to the `StartSyncExecutionResponse`
+of the AWS SDK, which holds the output. It sets the `CamelAwsStepFunctionsExecutionStatus` header to the status of the
+execution (`SUCCEEDED`, `FAILED` or `TIMED_OUT`), and, when the execution failed, the
+`CamelAwsStepFunctionsExecutionError` and `CamelAwsStepFunctionsExecutionCause` headers. The exchange does not fail
+when the execution did not succeed: check the status header.
+
 == Examples
 
 === Producer Examples

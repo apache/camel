@@ -84,8 +84,8 @@ public class Ddb2JsonDataTypeTransformerTest {
         Exchange exchange = new DefaultExchange(camelContext);
 
         exchange.getMessage()
-                .setBody(Json.mapper().readTree("{\"operation\": \"" + Ddb2Operations.UpdateItem.name() + "\", \"key\": "
-                                                + keyJson + ", \"item\": " + itemJson + "}"));
+                .setBody(Json.mapper().readTree("{\"key\": " + keyJson + ", \"item\": " + itemJson + "}"));
+        exchange.setProperty("operation", Ddb2Operations.UpdateItem.name());
 
         transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
 
@@ -137,8 +137,8 @@ public class Ddb2JsonDataTypeTransformerTest {
         Exchange exchange = new DefaultExchange(camelContext);
 
         exchange.getMessage()
-                .setBody(Json.mapper().readTree("{\"operation\": \"" + Ddb2Operations.UpdateItem.name() + "\", \"key\": "
-                                                + keyJson + ", \"item\": " + itemJson + "}"));
+                .setBody(Json.mapper().readTree("{\"key\": " + keyJson + ", \"item\": " + itemJson + "}"));
+        exchange.getMessage().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.UpdateItem);
         exchange.getMessage().setHeader(Ddb2Constants.RETURN_VALUES, ReturnValue.UPDATED_OLD.toString());
 
         transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
@@ -222,6 +222,108 @@ public class Ddb2JsonDataTypeTransformerTest {
 
         Assertions.assertThrows(UnsupportedOperationException.class, () -> transformer.transform(exchange.getMessage(),
                 DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldLeaveOperationToEndpointWhenRouteNamesNone() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setBody(Json.mapper().readTree(itemJson));
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+
+        // no operation header, so the operation option of the endpoint applies
+        Assertions.assertNull(exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
+        // the default of the return values differs per operation, so it is left to the operation
+        Assertions.assertNull(exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+
+        assertAttributeValueMap(exchange.getMessage().getHeader(Ddb2Constants.ITEM, Map.class));
+        assertAttributeValueMap(exchange.getMessage().getHeader(Ddb2Constants.KEY, Map.class));
+        assertAttributeValueUpdateMap(exchange.getMessage().getHeader(Ddb2Constants.UPDATE_VALUES, Map.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldLeaveOperationToEndpointWithKeyAndItem() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage()
+                .setBody(Json.mapper().readTree("{\"key\": " + keyJson + ", \"item\": " + itemJson + "}"));
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+
+        Assertions.assertNull(exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
+        Assertions.assertNull(exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+
+        Map<String, AttributeValue> keyMap = exchange.getMessage().getHeader(Ddb2Constants.KEY, Map.class);
+        Assertions.assertEquals(1L, keyMap.size());
+        Assertions.assertEquals(AttributeValue.builder().s("Rajesh Koothrappali").build(), keyMap.get("name"));
+        assertAttributeValueMap(exchange.getMessage().getHeader(Ddb2Constants.ITEM, Map.class));
+        assertAttributeValueUpdateMap(exchange.getMessage().getHeader(Ddb2Constants.UPDATE_VALUES, Map.class));
+    }
+
+    @Test
+    void shouldFailForBodyOperationThatDiffersFromTheRoute() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setBody(Json.mapper().readTree("{\"operation\": \"DeleteItem\", \"key\": " + keyJson + "}"));
+        exchange.setProperty("operation", Ddb2Operations.PutItem.name());
+
+        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY,
+                        new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
+        Assertions.assertEquals("The JSON body names the operation DeleteItem, but the route names PutItem: set the operation"
+                                + " with the CamelAwsDdbOperation header or the operation exchange property",
+                e.getMessage());
+        Assertions.assertNull(exchange.getMessage().getHeader(Ddb2Constants.ITEM));
+    }
+
+    @Test
+    void shouldFailForBodyOperationWhenRouteNamesNone() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setBody(Json.mapper().readTree("{\"operation\": \"DeleteItem\", \"key\": " + keyJson + "}"));
+
+        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY,
+                        new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
+        Assertions.assertEquals("The JSON body names the operation DeleteItem: set the operation with the CamelAwsDdbOperation"
+                                + " header or the operation exchange property, the transformer no longer takes it from the body",
+                e.getMessage());
+        Assertions.assertNull(exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
+        Assertions.assertNull(exchange.getMessage().getHeader(Ddb2Constants.KEY));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldAcceptBodyOperationThatMatchesTheRoute() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setBody(Json.mapper().readTree("{\"operation\": \"DeleteItem\", \"key\": " + keyJson + "}"));
+        exchange.getMessage().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.DeleteItem);
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+
+        Assertions.assertEquals(Ddb2Operations.DeleteItem, exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
+        Map<String, AttributeValue> keyMap = exchange.getMessage().getHeader(Ddb2Constants.KEY, Map.class);
+        Assertions.assertEquals(1L, keyMap.size());
+        Assertions.assertEquals(AttributeValue.builder().s("Rajesh Koothrappali").build(), keyMap.get("name"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldNotStoreBodyOperationAsAttribute() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage()
+                .setBody(Json.mapper().readTree("{\"operation\": \"PutItem\", \"name\": \"Rajesh Koothrappali\"}"));
+        exchange.setProperty("operation", Ddb2Operations.PutItem.name());
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+
+        Map<String, AttributeValue> itemMap = exchange.getMessage().getHeader(Ddb2Constants.ITEM, Map.class);
+        Assertions.assertEquals(Map.of("name", AttributeValue.builder().s("Rajesh Koothrappali").build()), itemMap);
     }
 
     @Test

@@ -65,8 +65,9 @@ import run.endive.runtime.Memory;
                                                   + " POJO through Jackson. A stream fails: convert it to text first"),
            expressionOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.NULL },
                                      dependsOn = "resultType",
-                                     description = "The JSON value the script returns: an object as a Map, an array as a List,"
-                                                   + " and undefined, NaN or a function as null"))
+                                     description = "The JSON value the script returns: an object or a Map as a Map, an array, a"
+                                                   + " Set or a typed array as a List, a Date as its ISO text, and undefined, NaN"
+                                                   + " or a function as null"))
 public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     /**
@@ -168,7 +169,7 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
                 discard(state);
             }
         }
-        return convert(result, resultType, getCamelContext(), null);
+        return convert(QuickjsHelper.checkResult(result, null), resultType, getCamelContext(), null);
     }
 
     Object evaluateExpression(String script, Exchange exchange) {
@@ -198,7 +199,7 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
                     discard(state);
                 }
             }
-            return convert(result, Object.class, exchange.getContext(), exchange);
+            return convert(QuickjsHelper.checkResult(result, exchange), Object.class, exchange.getContext(), exchange);
         } finally {
             if (previous != null) {
                 currentExchange.set(previous);

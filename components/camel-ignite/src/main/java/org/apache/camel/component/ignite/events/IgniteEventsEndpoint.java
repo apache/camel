@@ -30,6 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -52,6 +55,10 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_EVENTS;
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_EVENTS, title = "Ignite Events", syntax = "ignite-events:endpointId",
              category = { Category.MESSAGING, Category.CACHE, Category.CLUSTERING },
              consumerOnly = true)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.ignite.events.Event",
+                                   description = "The Ignite Event, such as a CacheEvent or a JobEvent, with its type in"
+                                                 + " type(); no headers are set. Ignite fires only the event types its"
+                                                 + " configuration includes (includeEventTypes)"))
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteEventsEndpoint.class);

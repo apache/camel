@@ -30,6 +30,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,6 +47,21 @@ import org.apache.camel.util.URISupport;
 @UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400",
              syntax = "jt400:userID:password@systemName/objectPath", category = { Category.MESSAGING },
              headersClass = Jt400Constants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, dependsOn = "objectPath",
+                                   byOption = {
+                                           @BodyType.When(option = "format", value = "binary", carriers = Carrier.BYTES),
+                                           @BodyType.When(option = "sendEmptyMessageWhenIdle", value = "true",
+                                                          carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.NULL }) },
+                                   description = "The data queue entry as a String, or a byte array with format=binary; a"
+                                                 + " message queue (.MSGQ) always gives the message text"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = { "objectPath", "format" },
+                                  description = "A queue writes the body converted to a String, or to a byte array with"
+                                                + " format=binary (text, bytes or a stream). A program call (.PGM, .SRVPGM)"
+                                                + " needs an Object[] of the parameters: a List fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, dependsOn = "objectPath",
+                                   description = "Unchanged for a queue. A program call sets an Object[] of the parameters,"
+                                                 + " the output ones replaced by what the program returned: Strings, or byte"
+                                                 + " arrays with format=binary"))
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     public static final String KEY = Jt400Constants.KEY;

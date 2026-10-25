@@ -21,6 +21,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,19 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-speech-to-text:operation", category = {
                      Category.CLOUD, Category.AI },
              producerOnly = true, headersClass = GoogleCloudSpeechToTextConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO,
+                                                            javaType = "com.google.cloud.speech.v1.RecognizeRequest"),
+                                  description = "The audio to transcribe, sent inline in the encoding and sample rate of the"
+                                                + " encoding and sampleRateHertz options (LINEAR16 by default). A stream or a"
+                                                + " file is read into bytes and a String is sent as its bytes, a Map, a POJO or"
+                                                + " no body fails. With pojoRequest=true a RecognizeRequest of the Google Cloud"
+                                                + " SDK: another body fails"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The transcript: the best alternative of each result, one line per result,"
+                                                 + " or an empty String when nothing is recognized, also with pojoRequest=true."
+                                                 + " The RecognizeResponse is in the"
+                                                 + " CamelGoogleCloudSpeechToTextResponseObject header"))
 public class GoogleCloudSpeechToTextEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

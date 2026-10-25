@@ -52,6 +52,7 @@ public class AS2AsyncMDNServerManagerEndpointConfigurationConfigurer extends org
         map.put("MdnPassword", java.lang.String.class);
         map.put("MdnUserName", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("MuteException", boolean.class);
         map.put("Password", java.lang.String.class);
         map.put("ProxyAuthPassword", java.lang.String.class);
         map.put("ProxyAuthUsername", java.lang.String.class);
@@ -141,6 +142,8 @@ public class AS2AsyncMDNServerManagerEndpointConfigurationConfigurer extends org
         case "mdnUserName": target.setMdnUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthpassword":
         case "proxyAuthPassword": target.setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
@@ -255,6 +258,8 @@ public class AS2AsyncMDNServerManagerEndpointConfigurationConfigurer extends org
         case "mdnUserName": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "password": return java.lang.String.class;
         case "proxyauthpassword":
         case "proxyAuthPassword": return java.lang.String.class;
@@ -365,6 +370,8 @@ public class AS2AsyncMDNServerManagerEndpointConfigurationConfigurer extends org
         case "mdnUserName": return target.getMdnUserName();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "password": return target.getPassword();
         case "proxyauthpassword":
         case "proxyAuthPassword": return target.getProxyAuthPassword();

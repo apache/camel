@@ -380,9 +380,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 } catch (Exception e) {
                     throw new GenericFileOperationFailedException("Cannot load known host file: " + knownHostsFile, e);
                 }
-            } else {
-                jsch.setKnownHosts((String) null);
             }
+            // without a known hosts file no host is known, and strictHostKeyChecking decides whether to connect
             session = jsch.getSession(config.getUsername(), config.getHost(), config.getPort());
             session.setTimeout(config.getTimeout());
             session.setUserInfo(new SessionUserInfo(config));

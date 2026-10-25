@@ -50,7 +50,7 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 @BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", description = "The payload of the MQTT message"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "What converts to a byte array: text, bytes, a stream or a file, sent as"
-                                                + " the payload"),
+                                                + " the payload. A Map, a POJO or no body fails: marshal it first"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class PahoMqtt5Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 

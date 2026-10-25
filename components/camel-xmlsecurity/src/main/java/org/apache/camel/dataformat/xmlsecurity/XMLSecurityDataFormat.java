@@ -47,7 +47,6 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.StreamCache;
 import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.spi.BodyType;
@@ -56,6 +55,7 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -512,6 +512,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
             try (XPathBuilder xpathBuilder = new XPathBuilder(secureTag)) {
                 xpathBuilder.setNamespaceContext(getNamespaceContext());
+                // evaluate on the document already parsed, as the message body may be a stream that cannot be read again
+                xpathBuilder.setSource(ExpressionBuilder.constantExpression(document));
                 NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
 
                 for (int i = 0; i < nodeList.getLength(); i++) {
@@ -542,12 +544,6 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         Document encodedDocument = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, stream);
-
-        // we may access the message body on the exchange again when decoding, so we need to reset stream cache
-        Object body = exchange.getMessage().getBody();
-        if (body instanceof StreamCache) {
-            ((StreamCache) body).reset();
-        }
 
         if (null != keyCipherAlgorithm
                 && (resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_v1dot5)
@@ -646,6 +642,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
             try (XPathBuilder xpathBuilder = new XPathBuilder(secureTag)) {
                 xpathBuilder.setNamespaceContext(getNamespaceContext());
+                // evaluate on the document already parsed, as the message body may be a stream that cannot be read again
+                xpathBuilder.setSource(ExpressionBuilder.constantExpression(encodedDocument));
                 NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
 
                 for (int i = 0; i < nodeList.getLength(); i++) {

@@ -58,7 +58,8 @@ public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(String.format("%s&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName, bucketName))
+                from(String.format("%s&useView=true&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName,
+                        bucketName))
                         .log("message received")
                         .to("mock:result");
             }

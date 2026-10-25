@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +43,7 @@ import com.azure.storage.blob.models.RehydratePriority;
 import com.azure.storage.blob.specialized.BlobClientBase;
 import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
@@ -51,6 +55,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -66,6 +71,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -132,6 +138,50 @@ class BlobOperationsTest extends CamelTestSupport {
         assertNotNull(response3.getBody());
         assertNotNull(response3.getHeaders());
         assertEquals("tag1", response3.getHeaders().get(BlobConstants.E_TAG));
+    }
+
+    @Test
+    void testGetBlobWithFileBodyDoesNotWriteIntoTheFile(@TempDir Path dir) throws IOException {
+        // a File body converts to an OutputStream, but only an OutputStream body is written to
+        final Path file = Files.writeString(dir.resolve("local.txt"), "local file content");
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("Hello Camel".getBytes(StandardCharsets.UTF_8)));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(any())).thenReturn(client);
+        when(client.withVersion(any())).thenReturn(client);
+        when(client.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(file.toFile());
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.getBlob(exchange);
+
+        assertEquals("Hello Camel", new String(((InputStream) response.getBody()).readAllBytes(), StandardCharsets.UTF_8));
+        assertEquals("local file content", Files.readString(file));
+        verify(client, never()).downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any());
+    }
+
+    @Test
+    void testCommitAppendBlobWithoutBodyDoesNotCreateTheBlob() {
+        final Exchange exchange = new DefaultExchange(context);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+
+        assertThrows(InvalidPayloadException.class, () -> operations.commitAppendBlob(exchange));
+        verify(client, never()).createAppendBlob(any(), any(), any(), any());
+    }
+
+    @Test
+    void testUploadPageBlobWithoutBodyDoesNotCreateTheBlob() {
+        final Exchange exchange = new DefaultExchange(context);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+
+        assertThrows(InvalidPayloadException.class, () -> operations.uploadPageBlob(exchange));
+        verify(client, never()).createPageBlob(anyLong(), any(), any(), any(), any(), any());
     }
 
     @Test

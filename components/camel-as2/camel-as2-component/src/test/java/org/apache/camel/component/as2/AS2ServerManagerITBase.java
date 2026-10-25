@@ -76,6 +76,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
     protected static final String PROCESSOR_EXCEPTION_MSG = "Processor Exception";
+    // the partner gets the message of the exception only with muteException=false
+    protected static final String EXPECTED_MUTED_MSG = "Failed to process AS2 message";
     protected static final String EXPECTED_EXCEPTION_MSG = "Failed to process AS2 message: " + PROCESSOR_EXCEPTION_MSG;
     protected static final String PATH_PREFIX
             = AS2ApiCollection.getCollection().getApiName(AS2ServerManagerApiMethod.class).getName();
@@ -170,6 +172,9 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
                     }
                 };
                 from("as2://" + PATH_PREFIX + "/listen?requestUriPattern=/process_error")
+                        .process(failingProcessor)
+                        .to("mock:as2RcvMsgs");
+                from("as2://" + PATH_PREFIX + "/listen?requestUriPattern=/process_error_unmuted&muteException=false")
                         .process(failingProcessor)
                         .to("mock:as2RcvMsgs");
 

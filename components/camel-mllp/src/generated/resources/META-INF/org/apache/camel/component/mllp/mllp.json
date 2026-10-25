@@ -85,6 +85,12 @@
     "CamelMllpVersionId": { "index": 21, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "MSH-12 value", "constantName": "org.apache.camel.component.mllp.MllpConstants#MLLP_VERSION_ID" },
     "CamelMllpCharset": { "index": 22, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "MSH-18 value", "constantName": "org.apache.camel.component.mllp.MllpConstants#MLLP_CHARSET" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "byOption": [ { "option": "stringPayload", "value": "false", "carriers": [ "bytes" ], "javaType": "byte[]" } ], "description": "The HL7 message without the MLLP envelope, as a String in the charset of MSH-18 or charsetName, or a byte array with stringPayload=false" },
+    "consumerReply": { "carriers": [ "any" ], "description": "The body is not sent back: the acknowledgement is the CamelMllpAcknowledgement or CamelMllpAcknowledgementString exchange property, or with autoAck an HL7 ACK (AA, or AE when the exchange failed)" },
+    "producerIn": { "carriers": [ "text", "bytes" ], "description": "The HL7 message as a String or a byte array. No body fails; another body, such as a stream, is sent as an empty message: convert it to a String first" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "The body is left as it was: with InOut the acknowledgement is in the CamelMllpAcknowledgement (byte array) and CamelMllpAcknowledgementString headers" }
+  },
   "properties": {
     "hostname": { "index": 0, "kind": "path", "displayName": "Hostname", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Hostname or IP for connection for the TCP connection. The default value is null, which means any local IP address" },
     "port": { "index": 1, "kind": "path", "displayName": "Port", "group": "common", "label": "", "required": true, "type": "integer", "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Port number for the TCP connection" },

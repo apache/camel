@@ -26,7 +26,9 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
@@ -57,9 +59,13 @@ import org.graalvm.polyglot.Value;
                                     description = "The body as it is, in the variable body: a String is a JavaScript string,"
                                                   + " and other Java objects keep their methods"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
-                                     description = "What the script returns: an object as a Map, an array as a List, a Set as a"
-                                                   + " Set and a Date as an Instant"))
+                                     description = "What the script returns: an object as a Map, an array or a typed array as a"
+                                                   + " List, a Set as a Set, an ArrayBuffer as bytes and a Date as an Instant."
+                                                   + " A function fails"))
 public class JavaScriptLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
+
+    static final String FUNCTION_RESULT
+            = "The script returned a function, which cannot be used after the script ends: return a value instead";
 
     // Source is not a Service, so nothing is stopped on eviction
     private final Map<String, Source> sourceCache = LRUCacheFactory.newLRUSoftCache(16, 1000, false);
@@ -106,7 +112,7 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
                 bindings.forEach(b::putMember);
             }
             Value o = cx.eval(source(script));
-            Object answer = materialize(o);
+            Object answer = materializeResult(o, null, null);
             if (answer == null || resultType == Object.class || resultType.isInstance(answer)) {
                 return resultType.cast(answer);
             }
@@ -123,11 +129,24 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
     }
 
     /**
+     * Materializes the result of a script, see {@link #materialize(Value)}. A script that returns a function fails here
+     * with an {@link ExpressionEvaluationException}: the function is tied to the per-evaluation {@link Context}, which
+     * is closed as soon as the script ends.
+     */
+    static Object materializeResult(Value value, Expression expression, Exchange exchange) {
+        if (value != null && value.canExecute() && !value.isHostObject() && !value.isProxyObject()) {
+            throw new ExpressionEvaluationException(expression, FUNCTION_RESULT, exchange, null);
+        }
+        return materialize(value);
+    }
+
+    /**
      * Copies a guest {@link Value} into ordinary Java types so the result remains usable after the per-evaluation
-     * {@link Context} is closed: JS arrays become {@link List}, JS objects and {@code Map} become {@link Map}, JS
-     * {@code Set} becomes {@link Set}, and {@code Date} becomes {@link java.time.Instant}. Nested values are copied
-     * recursively. Primitives, strings and host objects are returned as before; other guest objects such as functions
-     * are left to {@link Value#as(Class) value.as(Object.class)}.
+     * {@link Context} is closed: JS arrays (and typed arrays) become {@link List}, an {@code ArrayBuffer} becomes
+     * {@code byte[]}, JS objects and {@code Map} become {@link Map}, JS {@code Set} becomes {@link Set}, and
+     * {@code Date} becomes {@link java.time.Instant}. Nested values are copied recursively. Primitives, strings and
+     * host objects are returned as before; other guest objects such as functions are left to {@link Value#as(Class)
+     * value.as(Object.class)}.
      */
     static Object materialize(Value value) {
         return materialize(value, new HashMap<>());
@@ -148,6 +167,11 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
         }
         if (value.isInstant()) {
             return value.asInstant();
+        }
+        if (value.hasBufferElements()) {
+            byte[] bytes = new byte[Math.toIntExact(value.getBufferSize())];
+            value.readBuffer(0, bytes, 0, bytes.length);
+            return bytes;
         }
         Object existing = seen.get(value);
         if (existing != null) {

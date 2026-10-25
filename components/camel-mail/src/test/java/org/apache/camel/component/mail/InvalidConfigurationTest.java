@@ -20,8 +20,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for various invalid configurations etc.
@@ -44,6 +47,14 @@ public class InvalidConfigurationTest extends CamelTestSupport {
         assertThrows(IllegalArgumentException.class,
                 () -> consumer.start(),
                 "Should have thrown NoSuchProviderException as smtp protocol cannot be used for consuming mails");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "imap", "imaps", "pop3", "pop3s" })
+    public void testStoreProtocolCanNotBeUsedForSendingMails(String protocol) {
+        Endpoint endpoint = context.getEndpoint(protocol + "://localhost?username=james&to=claus@localhost");
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, endpoint::createProducer);
+        assertTrue(e.getMessage().contains("smtp or smtps"), e.getMessage());
     }
 
 }

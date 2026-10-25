@@ -54,8 +54,8 @@ import org.apache.camel.support.ScheduledPollEndpoint;
                                                          carriers = Carrier.LIST),
                                           @BodyType.When(option = "operation", value = "BATCH_EXTRACT_STRUCTURED_DATA",
                                                          carriers = Carrier.LIST) },
-                                  description = "The document: its content as text or bytes, or a File (the GenericFile of"
-                                                + " the file consumers too). A stream or a Path fails: convert it to bytes"
+                                  description = "The document: its content as text, bytes or a stream, or a File (the"
+                                                + " GenericFile of the file consumers too). A Path fails: convert it to bytes"
                                                 + " first. Text that looks like a URL or a path (it starts with http://,"
                                                 + " https:// or /, or has a backslash) is read as one only with"
                                                 + " allowUrlSource or allowFilePathSource, and fails otherwise. With the"

@@ -38,8 +38,8 @@ import org.springframework.data.redis.core.RedisTemplate;
                                    description = "The message as the serializer reads it: with the default JDK serializer the"
                                                  + " Java object the publisher serialized, such as the String a PUBLISH of this"
                                                  + " component sent, with the channel in the CamelRedis.Channel header. A"
-                                                 + " message that is not Java serialized, such as one from redis-cli, is"
-                                                 + " dropped with a WARN: set a StringRedisSerializer as the serializer to"
+                                                 + " message the serializer cannot read, such as text from redis-cli, is given"
+                                                 + " as its raw bytes: set a StringRedisSerializer as the serializer to"
                                                  + " receive text"),
            producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The body is not used: the key, the value and the other arguments of the"
@@ -65,6 +65,8 @@ import org.springframework.data.redis.core.RedisTemplate;
                                            @BodyType.When(option = "command", value = "EXPIRE", carriers = Carrier.VALUE,
                                                           javaType = "java.lang.Boolean"),
                                            @BodyType.When(option = "command", value = "SETNX", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "command", value = "MSETNX", carriers = Carrier.VALUE,
                                                           javaType = "java.lang.Boolean"),
                                            @BodyType.When(option = "command", value = "HEXISTS", carriers = Carrier.VALUE,
                                                           javaType = "java.lang.Boolean"),
@@ -114,8 +116,9 @@ import org.springframework.data.redis.core.RedisTemplate;
                                                  + " that test, count or increment, a Set or a List for those that read several"
                                                  + " members, a Map for HGETALL, and the stored object, which can be anything,"
                                                  + " for GET, HGET, LINDEX, LPOP, RPOP, SPOP and the other commands that read"
-                                                 + " or pop one value: these are not known. A null result, such as GET of a"
-                                                 + " missing key, keeps the body as well"))
+                                                 + " or pop one value: these are not known. These set the body to null when"
+                                                 + " there is no value, such as GET of a missing key. An unknown command, or one"
+                                                 + " the producer does not run, fails"))
 public class RedisEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

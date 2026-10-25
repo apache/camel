@@ -62,11 +62,11 @@ import org.slf4j.LoggerFactory;
                                                 + " off"),
            unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
                                    description = "CBOR data. A String fails"),
-           unmarshalOut = @BodyType(value = Carrier.POJO,
-                                    dependsOn = { "collectionType", "allowUnmarshallType", "allowJmsType" },
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" },
                                     byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
-                                    description = "An object of the class unmarshalType names, such as java.util.Map:"
-                                                  + " unmarshal fails without unmarshalType"))
+                                    description = "A Map (LinkedHashMap) for a CBOR map, a List (ArrayList) for an array;"
+                                                  + " an object of the class unmarshalType names"))
 public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CBORDataFormat.class);
@@ -90,6 +90,8 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
      * Use the default CBOR Jackson {@link ObjectMapper} and {@link Object}
      */
     public CBORDataFormat() {
+        // as Jackson does: a Map for a CBOR map, a List for an array
+        this.unmarshalType = Object.class;
     }
 
     /**
@@ -363,7 +365,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (unmarshalTypeName != null && unmarshalType == null) {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
             unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
         if (collectionTypeName != null && collectionType == null) {

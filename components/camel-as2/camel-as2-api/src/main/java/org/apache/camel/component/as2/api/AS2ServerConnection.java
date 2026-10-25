@@ -359,9 +359,10 @@ public class AS2ServerConnection {
         Object checkKey = context.getAttribute(AS2_DECRYPTING_PRIVATE_KEY);
 
         if (checkKey == null) {
-            LOG.error(
-                    "FATAL: Decrypting Private Key failed to be read back from HttpContext immediately after injection for path: {}",
-                    requestUriPath);
+            if (config.getDecryptingPrivateKey() != null) {
+                LOG.error("The decrypting private key could not be read back from the HttpContext for path: {}",
+                        requestUriPath);
+            }
         } else if (!(checkKey instanceof PrivateKey)) {
             LOG.error("FATAL: Key in HttpContext is not a PrivateKey object! Found type: {}", checkKey.getClass().getName());
         } else {

@@ -44,6 +44,7 @@ import io.nats.client.api.StreamConfiguration;
 import io.nats.client.api.StreamInfo;
 import io.nats.client.support.Status;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
@@ -98,6 +99,10 @@ public class NatsConsumer extends DefaultConsumer {
         if (config.isManualAck() && config.getAckPolicy() == AckPolicy.None) {
             LOG.warn(
                     "manualAck=true with ackPolicy=None: the server acknowledges automatically on delivery, manual ack/nak calls will have no effect");
+        }
+        if (config.isJetstreamEnabled() && !config.isReplyToDisabled() && getEndpoint().getExchangePattern().isOutCapable()) {
+            LOG.warn(
+                    "exchangePattern=InOut has no effect on JetStream messages: replies are for core NATS only, as the reply subject of a JetStream message is its ack subject");
         }
         this.executor.submit(new NatsConsumingTask(this.connection, config));
     }
@@ -628,22 +633,38 @@ public class NatsConsumer extends DefaultConsumer {
                     // is there a reply? only send reply if exchange pattern supports output (InOut)
                     // NATS has no error reply, so a failed exchange is not answered (the requester times out)
                     // instead of answering with the body of the failed exchange as if it succeeded
+                    // a JetStream message is never answered, as its reply subject is the ack subject
                     if (!NatsConsumingTask.this.configuration.isReplyToDisabled()
                             && msg.getReplyTo() != null && msg.getConnection() != null
+                            && !msg.isJetStream()
                             && exchange.getPattern().isOutCapable()
                             && !exchange.isFailed() && !exchange.isRollbackOnly()) {
-                        final Connection con = msg.getConnection();
-                        final byte[] data = exchange.getMessage().getBody(byte[].class);
-                        if (data != null) {
-                            LOG.debug("Publishing replyTo: {} message", msg.getReplyTo());
-                            con.publish(msg.getReplyTo(), data);
-                        }
+                        sendReply(msg, exchange);
                     }
                 } catch (final Exception e) {
                     NatsConsumer.this.getExceptionHandler().handleException("Error during processing", exchange, e);
                 } finally {
                     NatsConsumer.this.releaseExchange(exchange, false);
                 }
+            }
+
+            private void sendReply(Message msg, Exchange exchange) {
+                final byte[] data;
+                if (exchange.getMessage().getBody() == null) {
+                    // answer with an empty reply, so the requester gets a reply instead of a timeout
+                    data = new byte[0];
+                } else {
+                    try {
+                        data = exchange.getMessage().getMandatoryBody(byte[].class);
+                    } catch (InvalidPayloadException e) {
+                        String text = "Cannot send the reply to " + msg.getReplyTo()
+                                      + ": the body does not convert to byte[], so no reply is sent";
+                        NatsConsumer.this.getExceptionHandler().handleException(text, exchange, e);
+                        return;
+                    }
+                }
+                LOG.debug("Publishing replyTo: {} message", msg.getReplyTo());
+                msg.getConnection().publish(msg.getReplyTo(), data);
             }
         }
     }

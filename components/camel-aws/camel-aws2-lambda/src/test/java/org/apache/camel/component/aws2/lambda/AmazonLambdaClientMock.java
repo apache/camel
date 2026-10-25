@@ -102,6 +102,8 @@ import software.amazon.awssdk.services.lambda.model.UpdateFunctionUrlConfigRespo
 public class AmazonLambdaClientMock implements LambdaClient {
 
     public UpdateFunctionCodeRequest updateFunctionCodeRequest;
+    public CreateFunctionRequest createFunctionRequest;
+    public InvokeRequest invokeRequest;
 
     public AmazonLambdaClientMock() {
     }
@@ -129,6 +131,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public CreateFunctionResponse createFunction(CreateFunctionRequest createFunctionRequest) {
+        this.createFunctionRequest = createFunctionRequest;
 
         CreateFunctionResponse.Builder result = CreateFunctionResponse.builder();
 
@@ -193,6 +196,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public InvokeResponse invoke(InvokeRequest invokeRequest) {
+        this.invokeRequest = invokeRequest;
         InvokeResponse.Builder result = InvokeResponse.builder();
 
         Map<String, String> payload = new HashMap<>();

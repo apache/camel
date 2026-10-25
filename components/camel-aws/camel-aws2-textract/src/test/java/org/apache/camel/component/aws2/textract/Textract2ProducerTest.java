@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.textract;
 
+import java.util.List;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,10 +28,14 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextRequest;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextResponse;
 import software.amazon.awssdk.services.textract.model.Document;
+import software.amazon.awssdk.services.textract.model.FeatureType;
+import software.amazon.awssdk.services.textract.model.StartDocumentTextDetectionRequest;
+import software.amazon.awssdk.services.textract.model.StartDocumentTextDetectionResponse;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -133,6 +139,84 @@ public class Textract2ProducerTest extends CamelTestSupport {
                 .hasRootCauseMessage(expectedMessage);
     }
 
+    @Test
+    public void analyzeDocumentFeatureTypesFromListOfStrings() {
+        template.sendBodyAndHeader("direct:analyzeDocument", null, Textract2Constants.FEATURE_TYPES,
+                List.of("tables", "Signatures"));
+
+        assertEquals(List.of(FeatureType.TABLES, FeatureType.SIGNATURES),
+                clientMock.getLastAnalyzeDocumentRequest().featureTypes());
+    }
+
+    @Test
+    public void analyzeDocumentFeatureTypesFromCommaSeparatedString() {
+        template.sendBodyAndHeader("direct:analyzeDocument", null, Textract2Constants.FEATURE_TYPES, "LAYOUT, signatures");
+
+        assertEquals(List.of(FeatureType.LAYOUT, FeatureType.SIGNATURES),
+                clientMock.getLastAnalyzeDocumentRequest().featureTypes());
+    }
+
+    @Test
+    public void analyzeDocumentFeatureTypesFromFeatureTypes() {
+        template.sendBodyAndHeader("direct:analyzeDocument", null, Textract2Constants.FEATURE_TYPES,
+                List.of(FeatureType.LAYOUT));
+
+        assertEquals(List.of(FeatureType.LAYOUT), clientMock.getLastAnalyzeDocumentRequest().featureTypes());
+    }
+
+    @Test
+    public void startDocumentAnalysisFeatureTypesFromStringArray() {
+        template.sendBodyAndHeader("direct:startDocumentAnalysis", null, Textract2Constants.FEATURE_TYPES,
+                new String[] { "layout", "TABLES" });
+
+        assertEquals(List.of(FeatureType.LAYOUT, FeatureType.TABLES),
+                clientMock.getLastStartDocumentAnalysisRequest().featureTypes());
+    }
+
+    @Test
+    public void analyzeDocumentUnknownFeatureTypeFails() {
+        assertThatThrownBy(() -> template.sendBodyAndHeader("direct:analyzeDocument", null,
+                Textract2Constants.FEATURE_TYPES, List.of("TABLE")))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .rootCause().hasMessageContaining(Textract2Constants.FEATURE_TYPES).hasMessageContaining("TABLE");
+    }
+
+    @Test
+    public void startDocumentAnalysisFeatureTypeOfOtherTypeFails() {
+        assertThatThrownBy(() -> template.sendBodyAndHeader("direct:startDocumentAnalysis", null,
+                Textract2Constants.FEATURE_TYPES, List.of(1)))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .rootCause().hasMessageContaining(Textract2Constants.FEATURE_TYPES).hasMessageContaining("Integer");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "direct:startDocumentTextDetection", "direct:startDocumentAnalysis",
+            "direct:startExpenseAnalysis" })
+    void startOperationsSetJobIdHeader(String route) {
+        Exchange exchange = template.request(route, e -> {
+        });
+
+        assertEquals(AmazonAWSTextractMock.JOB_ID, exchange.getMessage().getHeader(Textract2Constants.JOB_ID));
+        assertNotNull(exchange.getMessage().getBody());
+    }
+
+    @Test
+    public void startDocumentTextDetectionPojoSetsJobIdHeader() {
+        Exchange exchange = template.request("direct:startDocumentTextDetectionPojo",
+                e -> e.getIn().setBody(StartDocumentTextDetectionRequest.builder().build()));
+
+        assertEquals(AmazonAWSTextractMock.JOB_ID, exchange.getMessage().getHeader(Textract2Constants.JOB_ID));
+        assertNotNull(exchange.getMessage().getBody(StartDocumentTextDetectionResponse.class));
+    }
+
+    @Test
+    public void startThenGetDocumentTextDetectionUsesJobId() {
+        template.sendBody("direct:startThenGetDocumentTextDetection", null);
+
+        assertEquals(AmazonAWSTextractMock.JOB_ID, clientMock.getLastGetDocumentTextDetectionRequest().jobId());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -163,6 +247,17 @@ public class Textract2ProducerTest extends CamelTestSupport {
                         .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=getDocumentAnalysis&pojoRequest=true");
                 from("direct:getExpenseAnalysisPojo")
                         .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=getExpenseAnalysis&pojoRequest=true");
+                from("direct:analyzeDocument")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=analyzeDocument&s3Bucket=testbucket&s3Object=testobject.pdf");
+                from("direct:startDocumentTextDetection")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=startDocumentTextDetection&s3Bucket=testbucket&s3Object=testobject.pdf");
+                from("direct:startDocumentAnalysis")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=startDocumentAnalysis&s3Bucket=testbucket&s3Object=testobject.pdf");
+                from("direct:startExpenseAnalysis")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=startExpenseAnalysis&s3Bucket=testbucket&s3Object=testobject.pdf");
+                from("direct:startThenGetDocumentTextDetection")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=startDocumentTextDetection&s3Bucket=testbucket&s3Object=testobject.pdf")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=getDocumentTextDetection");
             }
         };
     }

@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 @BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
                                  description = "An object of the classType class, or a List (or an Iterator) of them; a Map of"
                                                + " the model class names to the objects is one record. Other bodies, such as"
-                                               + " a Map of field values, are not records"),
+                                               + " a Map of field values or a String, fail"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "csv",
                                   description = "The CSV in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "csv"),
@@ -112,15 +112,18 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             body = Collections.singleton(body).iterator();
         }
         for (Object model : ObjectHelper.createIterable(body)) {
+            Map<String, Object> row;
             if (model instanceof Map) {
-                models.add((Map<String, Object>) model);
+                row = (Map<String, Object>) model;
             } else {
                 String name = model.getClass().getName();
-                Map<String, Object> row = new HashMap<>(1);
+                row = new HashMap<>(1);
                 row.put(name, model);
                 row.putAll(createLinkedFieldsModel(model));
-                models.add(row);
             }
+            // fail rather than write an empty line for a row that has no object of the model
+            checkModelRow(exchange, factory, row);
+            models.add(row);
         }
 
         Iterator<Map<String, Object>> modelsMap = models.iterator();

@@ -37,7 +37,7 @@ public class ConsulKeyValueProducerInvokeOnHeaderFactory implements InvokeOnHead
         case "PUT": target.put(exchange.getMessage()); return null;
         case "unlock":
         case "UNLOCK": target.unlock(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

@@ -98,7 +98,7 @@ public class SnmpTrapProducer extends DefaultProducer {
             snmp = new Snmp(transport);
 
             LOG.debug("SnmpTrap: getting pdu from body");
-            PDU trap = exchange.getIn().getBody(PDU.class);
+            PDU trap = exchange.getIn().getMandatoryBody(PDU.class);
 
             trap.setErrorIndex(0);
             trap.setErrorStatus(0);

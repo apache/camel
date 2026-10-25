@@ -120,6 +120,17 @@ Camel-AWS Timestream component provides the following operation on the producer 
 ** query
 ** cancelQuery
 
+The operation is the `CamelAwsTimestreamOperation` header, or else the `operation` option; without either, the producer fails with an `IllegalArgumentException`.
+The write operations need `clientType` `write` and the query operations need `clientType` `query` (`describeEndpoints` is an operation of both):
+an operation of the other client type fails with an `IllegalArgumentException`, already when the producer starts if it is the `operation` option.
+
+=== Writing records
+
+The `writeRecords` operation writes the records of the `CamelAwsTimestreamRecordList` header (a `List` of `Record`) into the table of the
+`CamelAwsTimestreamDatabaseName` and `CamelAwsTimestreamTableName` headers.
+The `CamelAwsTimestreamRecord` header is the common attributes of the request: the dimensions, measure and time values that all the records share.
+It is not written as a record of its own, so a request with only this header writes no record.
+
 == Examples
 
 === Producer Examples

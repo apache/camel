@@ -45,6 +45,10 @@
     "CamelTahuMessageUUID": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.UUID", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The UUID of a Sparkplug message", "constantName": "org.apache.camel.component.tahu.TahuConstants#MESSAGE_UUID" },
     "CamelTahuMessageSequenceNumber": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The sequence number of a Sparkplug message", "constantName": "org.apache.camel.component.tahu.TahuConstants#MESSAGE_SEQUENCE_NUMBER" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "pojo", "null" ], "description": "A Tahu SparkplugBPayload with the metrics to publish, or no body: the metrics are then made from the CamelTahuMetric.<name> headers. Text, bytes or another body fails, as it does not convert to a SparkplugBPayload" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "groupId": { "index": 0, "kind": "path", "displayName": "Group Id", "group": "producer", "label": "producer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "ID of the group" },
     "edgeNode": { "index": 1, "kind": "path", "displayName": "Edge Node", "group": "producer", "label": "producer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "ID of the edge node" },

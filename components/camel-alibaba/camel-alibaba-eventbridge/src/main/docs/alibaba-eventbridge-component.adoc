@@ -165,7 +165,9 @@ Java::
 ----
 from("platform-http:/ingress")
     .removeHeaders("CamelAlibabaEventBridge*")
-    .to("alibaba-eventbridge:putEvents?eventBusName=orders-bus&allowedEventSources=RAW(app.orders -> order:created:v1)&region=cn-hangzhou");
+    .convertBodyTo(String.class)
+    .to("alibaba-eventbridge:putEvents?eventBusName=orders-bus&allowedEventSources=RAW(app.orders -> order:created:v1)&region=cn-hangzhou")
+    .marshal().json();
 ----
 
 YAML::
@@ -178,12 +180,16 @@ YAML::
       steps:
         - removeHeaders:
             pattern: CamelAlibabaEventBridge*
+        - convertBodyTo:
+            type: String
         - to:
             uri: alibaba-eventbridge:putEvents
             parameters:
               eventBusName: orders-bus
               allowedEventSources: "RAW(app.orders -> order:created:v1)"
               region: cn-hangzhou
+        - marshal:
+            json: {}
 ----
 ====
 ======

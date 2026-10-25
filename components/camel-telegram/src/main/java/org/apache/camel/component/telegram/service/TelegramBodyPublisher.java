@@ -17,8 +17,9 @@
 
 package org.apache.camel.component.telegram.service;
 
+import java.io.ByteArrayOutputStream;
 import java.net.http.HttpRequest;
-import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -30,6 +31,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The body of a request. It is written to a buffer that starts at the buffer size and grows to the size of the content,
+ * so media of any size can be sent and a small request does not allocate more than it needs.
+ */
 public class TelegramBodyPublisher {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramBodyPublisher.class);
 
@@ -42,7 +47,36 @@ public class TelegramBodyPublisher {
     }
 
     public interface TelegramBodyPart {
-        void serialize(ByteBuffer buffer, String separator);
+        void serialize(BodyBuffer buffer, String separator);
+    }
+
+    /**
+     * A byte buffer that grows as needed, and whose content is published without a copy.
+     */
+    public static final class BodyBuffer extends ByteArrayOutputStream {
+
+        public BodyBuffer(int initialSize) {
+            super(initialSize);
+        }
+
+        /**
+         * Writes the text in UTF-8.
+         */
+        public void put(String text) {
+            put(text, StandardCharsets.UTF_8);
+        }
+
+        public void put(String text, Charset charset) {
+            writeBytes(text.getBytes(charset));
+        }
+
+        public void put(byte[] bytes) {
+            writeBytes(bytes);
+        }
+
+        HttpRequest.BodyPublisher toPublisher() {
+            return HttpRequest.BodyPublishers.ofByteArray(buf, 0, count);
+        }
     }
 
     public static class SingleBodyPart implements TelegramBodyPart {
@@ -53,8 +87,8 @@ public class TelegramBodyPublisher {
         }
 
         @Override
-        public void serialize(ByteBuffer buffer, String boundary) {
-            buffer.put(body.getBytes());
+        public void serialize(BodyBuffer buffer, String boundary) {
+            buffer.put(body);
         }
 
     }
@@ -82,9 +116,9 @@ public class TelegramBodyPublisher {
         }
 
         @Override
-        public void serialize(ByteBuffer buffer, String boundary) {
+        public void serialize(BodyBuffer buffer, String boundary) {
             String partHeader = "--" + boundary + "\r\n";
-            buffer.put(partHeader.getBytes());
+            buffer.put(partHeader);
 
             String contentDisposition = "Content-Disposition: form-data; ";
 
@@ -93,7 +127,7 @@ public class TelegramBodyPublisher {
                     .stream()
                     .map(e -> e.getKey().toLowerCase() + "=\"" + e.getValue().toString() + "\"")
                     .collect(Collectors.joining("; ")) + "\r\n";
-            buffer.put(contentDisposition.getBytes());
+            buffer.put(contentDisposition);
 
             String contentTypePart = "Content-Type: " + contentType;
             if (charset != null) {
@@ -101,22 +135,21 @@ public class TelegramBodyPublisher {
             }
             contentTypePart += "\r\n\r\n";
 
-            buffer.put(contentTypePart.getBytes());
+            buffer.put(contentTypePart);
 
-            if (body instanceof String) {
-                buffer.put(((String) body).getBytes());
-            } else {
-                if (body instanceof byte[]) {
-                    buffer.put((byte[]) body);
-                }
+            if (body instanceof byte[] bytes) {
+                buffer.put(bytes);
+            } else if (body != null) {
+                // a text, or a value such as a number or a boolean, in the charset the part declares
+                buffer.put(body.toString(), charset != null ? Charset.forName(charset) : StandardCharsets.UTF_8);
             }
 
-            buffer.put("\r\n".getBytes());
+            buffer.put("\r\n");
         }
 
-        public static void serializeEnd(ByteBuffer buffer, String separator) {
+        public static void serializeEnd(BodyBuffer buffer, String separator) {
             String partHeader = "--" + separator + "--\r\n";
-            buffer.put(partHeader.getBytes());
+            buffer.put(partHeader);
         }
     }
 
@@ -125,15 +158,14 @@ public class TelegramBodyPublisher {
     }
 
     public HttpRequest.BodyPublisher newPublisher() {
-        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-        LOG.debug("Allocating {} bytes", bufferSize);
+        BodyBuffer buffer = new BodyBuffer(bufferSize);
         serialize(bodyParts, buffer, boundary);
-        int written = buffer.capacity() - buffer.remaining();
+        LOG.debug("The request body has {} bytes", buffer.size());
 
-        return HttpRequest.BodyPublishers.ofByteArray(buffer.array(), 0, written);
+        return buffer.toPublisher();
     }
 
-    static void serialize(Set<TelegramBodyPart> bodyParts, ByteBuffer buffer, String separator) {
+    static void serialize(Set<TelegramBodyPart> bodyParts, BodyBuffer buffer, String separator) {
         try {
             boolean isMultiBody = false;
 

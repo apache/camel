@@ -75,20 +75,24 @@ import org.apache.camel.support.jsse.SSLContextParameters;
                                                  + " HttpCoreContext"),
            producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
                                   description = "The body is used only when inBody names the argument of the method it is: with"
-                                                + " inBody=ediMessage it is the EDI message of client/send, passed as it is,"
-                                                + " which must be text, encoded in ediMessageCharset (us-ascii when not set),"
-                                                + " or a stream; convert bytes or a file to text first. Without inBody the"
-                                                + " message comes from the ediMessage option or the CamelAs2.ediMessage"
-                                                + " header"),
+                                                + " inBody=ediMessage it is the EDI message of client/send: text, encoded in"
+                                                + " ediMessageCharset (us-ascii when not set), a stream, or bytes, a file or"
+                                                + " another body that converts to bytes, sent as those bytes; a body that does"
+                                                + " not convert fails. Without inBody the message comes from the ediMessage"
+                                                + " option or the CamelAs2.ediMessage header"),
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
                                    description = "The receipt (MDN) in the response when dispositionNotificationTo asks for"
                                                  + " one: a DispositionNotificationMultipartReportEntity, or a"
                                                  + " MultipartSignedEntity when it is signed. null without a receipt, when"
                                                  + " receiptDeliveryOption sends it to a receipt/receive consumer, or when the"
-                                                 + " response has none, such as an HTTP error, which does not fail the"
-                                                 + " exchange: the CamelAs2.interchange exchange property holds the"
-                                                 + " HttpCoreContext with the response"))
+                                                 + " response has none. An HTTP status outside 2xx fails the exchange. The"
+                                                 + " CamelAs2.interchange exchange property holds the HttpCoreContext with the"
+                                                 + " response"))
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
+
+    private static final String REQUEST_URI = "requestUri";
+    private static final String DEFAULT_REQUEST_URI = "/";
+    private static final String EDI_MESSAGE_CONTENT_TYPE = "ediMessageContentType";
 
     @UriParam
     private AS2Configuration configuration;
@@ -194,12 +198,25 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         configuration.setAs2MessageStructure(as2MessageStructure);
     }
 
+    @Deprecated
     public String getEdiMessageType() {
         return configuration.getEdiMessageType();
     }
 
-    public void setEdiMessageContentType(String ediMessageType) {
+    @Deprecated
+    public void setEdiMessageType(String ediMessageType) {
         configuration.setEdiMessageType(ediMessageType);
+    }
+
+    public String getEdiMessageContentType() {
+        return configuration instanceof AS2ClientManagerEndpointConfiguration client
+                ? client.getEdiMessageContentType() : null;
+    }
+
+    public void setEdiMessageContentType(String ediMessageContentType) {
+        if (configuration instanceof AS2ClientManagerEndpointConfiguration client) {
+            client.setEdiMessageContentType(ediMessageContentType);
+        }
     }
 
     public String getEdiMessageTransferEncoding() {
@@ -304,6 +321,19 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     public void setSslContext(SSLContext sslContext) {
         configuration.setSslContext(sslContext);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void interceptProperties(Map<String, Object> properties) {
+        if (apiName == AS2ApiName.CLIENT) {
+            // the generated configuration of client/send has its own requestUri without the default
+            properties.putIfAbsent(REQUEST_URI, DEFAULT_REQUEST_URI);
+            // the deprecated ediMessageType is the content type when ediMessageContentType is not set
+            if (configuration.getEdiMessageType() != null) {
+                properties.putIfAbsent(EDI_MESSAGE_CONTENT_TYPE, configuration.getEdiMessageType());
+            }
+        }
     }
 
     @Override

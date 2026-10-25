@@ -688,7 +688,7 @@ assertEquals("echo " + TEST_MESSAGE, result.get(0), "Reply body on Camel is wron
 
 `PAYLOAD` means that you process the payload from the SOAP
 envelope as a native CxfPayload. `Message.getBody()` will return a
-`org.apache.camel.component.cxf.CxfPayload` object, with getters
+`org.apache.camel.component.cxf.common.CxfPayload` object, with getters
 for SOAP message headers and the SOAP body.
 
 See https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfConsumerPayloadTest.java#L68[CxfConsumerPayloadTest]:

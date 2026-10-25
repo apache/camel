@@ -30,6 +30,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -45,6 +48,11 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgreSQL Replication Slot",
              syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
              category = { Category.DATABASE }, consumerOnly = true)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "One message of the output plugin of the slot, as bytes: text for"
+                                                 + " test_decoding, JSON for wal2json, the binary protocol for pgoutput;"
+                                                 + " convert it to a String for the text plugins. The exchange id is the LSN"
+                                                 + " of the message"))
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);

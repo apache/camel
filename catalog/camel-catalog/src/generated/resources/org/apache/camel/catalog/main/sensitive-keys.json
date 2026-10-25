@@ -21,6 +21,7 @@
   "authtoken",
   "azureclientid",
   "azureclientsecret",
+  "azurekeycredential",
   "basicauthpassword",
   "bearertoken",
   "blobaccesskey",

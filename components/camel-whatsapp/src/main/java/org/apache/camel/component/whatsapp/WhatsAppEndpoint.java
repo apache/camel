@@ -28,6 +28,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.webhook.WebhookCapableEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.whatsapp.service.WhatsAppServiceRestAPIAdapter;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -43,6 +46,15 @@ import org.slf4j.LoggerFactory;
                      Category.CLOUD, Category.API,
                      Category.CHAT },
              headersClass = WhatsAppConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                  description = "A request of org.apache.camel.component.whatsapp.model: a TextMessageRequest,"
+                                                + " MediaMessageRequest, LocationMessageRequest, ContactMessageRequest,"
+                                                + " InteractiveMessageRequest or TemplateMessageRequest to send a message, or an"
+                                                + " UploadMediaRequest to upload a media file. Text, bytes, a Map or another"
+                                                + " POJO fails: build the request. No body sends nothing"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.UNCHANGED },
+                                   description = "The org.apache.camel.component.whatsapp.model.MessageResponse of WhatsApp, with the ids of the messages sent, or the id"
+                                                 + " of the media uploaded. No body is left as it is"))
 public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(WhatsAppEndpoint.class);
 

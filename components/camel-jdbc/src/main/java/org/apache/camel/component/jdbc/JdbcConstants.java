@@ -27,8 +27,8 @@ public final class JdbcConstants {
                                                 "OUT header.",
               javaType = "int")
     public static final String JDBC_UPDATE_COUNT = "CamelJdbcUpdateCount";
-    @Metadata(label = "producer", description = "If the query is a `SELECT`, query the row count is returned in this OUT\n" +
-                                                "header.",
+    @Metadata(label = "producer", description = "If the query is a `SELECT` and the outputType is `SelectList`, the row\n" +
+                                                "count is returned in this OUT header.",
               javaType = "int")
     public static final String JDBC_ROW_COUNT = "CamelJdbcRowCount";
     @Metadata(label = "producer", description = "The column names from the ResultSet as a `java.util.Set`\n" +

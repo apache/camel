@@ -56,21 +56,22 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
                                   description = "The value of the secret for createSecret, updateSecret and putSecretValue, as"
                                                 + " text: bytes, a stream or a file are read as text, a Map or a POJO is stored"
                                                 + " as its toString(), so marshal it first, and no body fails. The other"
-                                                + " operations take their input from headers. With pojoRequest=true the body is"
-                                                + " the request of the AWS SDK for the operation, such as a"
+                                                + " operations take their input from headers. With binaryPayload=true the bytes"
+                                                + " of the body are stored as the binary of the secret. With pojoRequest=true the"
+                                                + " body is the request of the AWS SDK for the operation, such as a"
                                                 + " CreateSecretRequest"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "getSecret",
-                                                          carriers = { Carrier.TEXT, Carrier.NULL }),
+                                                          carriers = { Carrier.TEXT, Carrier.BYTES }),
                                            @BodyType.When(option = "operation", value = "batchGetSecret",
                                                           carriers = Carrier.LIST,
-                                                          javaType = "java.util.List<java.lang.String>") },
+                                                          javaType = "java.util.List<java.lang.Object>") },
                                    description = "The value of the secret as text for getSecret, with its version id in a"
-                                                 + " header: unmarshal a JSON secret to read its fields. No body for a binary"
-                                                 + " secret unless binaryPayload=true. A List of the values for batchGetSecret,"
-                                                 + " and the response of the AWS SDK for the other operations, such as a"
-                                                 + " CreateSecretResponse"))
+                                                 + " header: unmarshal a JSON secret to read its fields. A byte[] for a binary"
+                                                 + " secret, whatever binaryPayload says. A List of the values for"
+                                                 + " batchGetSecret, each as for getSecret, and the response of the AWS SDK for"
+                                                 + " the other operations, such as a CreateSecretResponse"))
 public class SecretsManagerEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private SecretsManagerClient secretsManagerClient;

@@ -24,6 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.IgniteConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +46,18 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_IDGEN;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_IDGEN, title = "Ignite ID Generator", syntax = "ignite-idgen:name",
              category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "ADD_AND_GET",
+                                                         carriers = { Carrier.VALUE, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "GET_AND_ADD",
+                                                         carriers = { Carrier.VALUE, Carrier.TEXT }) },
+                                  description = "ADD_AND_GET and GET_AND_ADD add the body to the sequence: a number, or text"
+                                                + " of one; no body fails. The other operations do not use the body, but text"
+                                                + " that is not a number still fails. The operation is the operation option or"
+                                                + " the CamelIgniteIdGenOperation header"),
+           producerOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Long",
+                                   description = "The value of the sequence, as a Long"))
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteIdGenEndpoint.class);

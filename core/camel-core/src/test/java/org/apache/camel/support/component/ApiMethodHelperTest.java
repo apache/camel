@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.RuntimeCamelException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
@@ -187,6 +188,31 @@ public class ApiMethodHelperTest {
         properties.clear();
         properties.put("name", "Dave");
         assertEquals("Howdy Dave", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties), "Derived sayHi(name)");
+    }
+
+    @Test
+    public void testInvokeMethodErrorShowsNoArgumentValues() {
+        // the arguments hold the endpoint options, such as a password, and the message data
+        TestProxy proxy = new TestProxy() {
+            @Override
+            public String sayHi(String name) {
+                throw new IllegalStateException("boom");
+            }
+        };
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("name", "Dave");
+        properties.put("password", "Secret123");
+
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
+        assertEquals("Error invoking sayHi with [name, password]: boom", e.getMessage());
+
+        // an argument of the wrong type fails in the invocation itself
+        properties.put("name", 42);
+        e = assertThrows(RuntimeCamelException.class,
+                () -> ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
+        assertTrue(e.getMessage().startsWith("Error invoking sayHi with [name, password]: "), e.getMessage());
+        assertFalse(e.getMessage().contains("Secret123"), e.getMessage());
     }
 
     enum TestMethod implements ApiMethod {

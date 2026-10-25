@@ -26,6 +26,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -47,6 +50,20 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName",
              category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = "enableViewMessages",
+                                   description = "The object the sender put in the message, Java-deserialized: what a jgroups"
+                                                 + " producer sent, such as a String, a byte array, a Map or a Serializable"
+                                                 + " POJO, if the deserialization filter accepts its class. With"
+                                                 + " enableViewMessages an org.jgroups.View also arrives on each change of the"
+                                                 + " members of the cluster"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
+                   Carrier.FILE, Carrier.POJO },
+                                  description = "The body as is, Java-serialized into the message, so it must be"
+                                                + " Serializable: a stream or another object that is not fails with a"
+                                                + " NotSerializableException. A null body is not sent. The CamelJGroupsDest header"
+                                                + " sends it to one member instead of the cluster"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);

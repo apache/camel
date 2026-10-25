@@ -47,7 +47,7 @@ class OpenedProjectViewsTest {
                                 "src/main/java/org/acme/TimerRoute.java").toString(),
                         27));
 
-        List<String> text = text(SourceTab.emptySourceLines(routes, dir));
+        List<String> text = text(SourceEmptyLines.of(routes, dir));
         assertThat(text).anyMatch(l -> l.contains("2 routes in this project"));
         assertThat(text).anyMatch(l -> l.contains("yaml-route") && l.contains("src/main/resources/camel/my-routes.yaml:20"));
         // a route without an id by its endpoint
@@ -57,7 +57,7 @@ class OpenedProjectViewsTest {
 
     @Test
     void withoutRoutesTheHintStays() {
-        assertThat(text(SourceTab.emptySourceLines(List.of(), dir)))
+        assertThat(text(SourceEmptyLines.of(List.of(), dir)))
                 .anyMatch(l -> l.contains("Select a file and press Enter"));
     }
 

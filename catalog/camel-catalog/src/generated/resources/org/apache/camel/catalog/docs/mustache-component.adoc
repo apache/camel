@@ -82,6 +82,12 @@ location for a template or the template content itself. If any of these
 headers is set, and the endpoint has `allowTemplateFromHeader=true`, then Camel uses this
 over the endpoint configured resource. This allows you to provide a dynamic template at runtime.
 
+=== Content cache
+
+By default (`contentCache=true`) the endpoint reads and compiles its template once and uses it for every exchange.
+With `contentCache=false` the template is read and compiled again for each exchange, so a template
+that changes while the route runs (such as a file) is picked up by the next exchange.
+
 
 == Examples
 

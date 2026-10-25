@@ -100,6 +100,9 @@ Both system labels (INBOX, UNREAD, STARRED, SPAM, TRASH, IMPORTANT, etc.) and cu
 
 === Examples
 
+The `messages/modify` method takes the `ModifyMessageRequest` from the body with `inBody=modifyMessageRequest`,
+and the id of the message from the `CamelGoogleMailId` header, which `google-mail-stream` sets.
+
 [tabs]
 ====
 Java::
@@ -110,7 +113,7 @@ from("google-mail-stream:0")
     .setVariable("addLabels", constant("Work"))
     .setVariable("removeLabels", constant("INBOX,UNREAD"))
     .transformDataType(new DataType("google-mail:update-message-labels"))
-    .to("google-mail:messages/modify");
+    .to("google-mail:messages/modify?userId=me&inBody=modifyMessageRequest");
 ----
 
 YAML::
@@ -131,6 +134,9 @@ YAML::
             toType: "google-mail:update-message-labels"
         - to:
             uri: "google-mail:messages/modify"
+            parameters:
+              userId: me
+              inBody: modifyMessageRequest
 ----
 
 XML::
@@ -146,7 +152,7 @@ XML::
         <constant>INBOX,UNREAD</constant>
     </setVariable>
     <transformDataType toType="google-mail:update-message-labels"/>
-    <to uri="google-mail:messages/modify"/>
+    <to uri="google-mail:messages/modify?userId=me&amp;inBody=modifyMessageRequest"/>
 </route>
 ----
 ====
@@ -220,7 +226,7 @@ Java::
 from("google-mail-stream:0")
     .setBody(constant("Thank you for your message. I will respond soon."))
     .transformDataType(new DataType("google-mail:draft"))
-    .to("google-mail:drafts/create?inBody=content");
+    .to("google-mail:drafts/create?userId=me&inBody=content");
 
 // Create a new draft (no threading)
 from("direct:newDraft")
@@ -229,7 +235,7 @@ from("direct:newDraft")
     .setHeader("CamelGoogleMailStreamTo", constant("recipient@example.com"))
     .setHeader("CamelGoogleMailStreamSubject", constant("New Draft"))
     .transformDataType(new DataType("google-mail:draft"))
-    .to("google-mail:drafts/create?inBody=content");
+    .to("google-mail:drafts/create?userId=me&inBody=content");
 ----
 
 YAML::
@@ -248,6 +254,7 @@ YAML::
         - to:
             uri: "google-mail:drafts/create"
             parameters:
+              userId: me
               inBody: content
 
 # Create a new draft (no threading)
@@ -271,6 +278,7 @@ YAML::
         - to:
             uri: "google-mail:drafts/create"
             parameters:
+              userId: me
               inBody: content
 ----
 
@@ -285,7 +293,7 @@ XML::
         <constant>Thank you for your message. I will respond soon.</constant>
     </setBody>
     <transformDataType toType="google-mail:draft"/>
-    <to uri="google-mail:drafts/create?inBody=content"/>
+    <to uri="google-mail:drafts/create?userId=me&amp;inBody=content"/>
 </route>
 
 <!-- Create a new draft (no threading) -->
@@ -304,7 +312,7 @@ XML::
         <constant>New Draft</constant>
     </setHeader>
     <transformDataType toType="google-mail:draft"/>
-    <to uri="google-mail:drafts/create?inBody=content"/>
+    <to uri="google-mail:drafts/create?userId=me&amp;inBody=content"/>
 </route>
 ----
 ====

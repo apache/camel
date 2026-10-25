@@ -79,13 +79,11 @@ import org.slf4j.LoggerFactory;
                                    description = "A MIME multipart, with its Content-Type (multipart/*) and MIME-Version as"
                                                  + " Camel headers, as marshal leaves them; with headersInline, the MIME"
                                                  + " headers are at the start of the body"),
-           unmarshalOut = @BodyType(value = Carrier.STREAM,
-                                    byOption = @BodyType.When(option = "headersInline", value = "true",
-                                                              carriers = { Carrier.STREAM, Carrier.UNCHANGED }),
+           unmarshalOut = @BodyType(value = { Carrier.STREAM, Carrier.UNCHANGED },
                                     description = "The first part, decoded, as a stream, with the other parts as attachments"
-                                                  + " and its Content-Type as a header. Without a multipart Content-Type header"
-                                                  + " the body is given back as a stream; with headersInline, a body that is"
-                                                  + " not a multipart stays as it was"))
+                                                  + " and its Content-Type as a header. A body that is not a multipart stays as"
+                                                  + " it was: without headersInline, one without a multipart Content-Type"
+                                                  + " header"))
 public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(MimeMultipartDataFormat.class);
     private static final String MIME_VERSION = "MIME-Version";
@@ -286,6 +284,19 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         } else {
             part.setHeader(CONTENT_TRANSFER_ENCODING, "base64");
         }
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
+        if (!headersInline) {
+            String contentType = exchange.getIn().getHeader(CONTENT_TYPE, String.class);
+            if (contentType == null || !isMultipartContentType(contentType)) {
+                // not a multipart: leave the body as it was, instead of the input stream that is closed when
+                // unmarshal returns
+                return body;
+            }
+        }
+        return super.unmarshal(exchange, body);
     }
 
     @Override

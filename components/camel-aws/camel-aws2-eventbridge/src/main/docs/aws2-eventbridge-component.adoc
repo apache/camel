@@ -14,8 +14,8 @@
 
 *{component-header}*
 
-The AWS2 Eventbridge component supports assumeRole operation.
-https://aws.amazon.com/eventbridge/[AWS Eventbridge].
+The AWS2 Eventbridge component manages the rules and targets of an
+https://aws.amazon.com/eventbridge/[AWS Eventbridge] event bus, sends events to it, and consumes its events.
 
 Prerequisites
 
@@ -31,8 +31,10 @@ To create a rule that triggers on an action by an AWS service that does not emit
 == URI Format
 
 ----
-aws2-eventbridge://label[?options]
+aws2-eventbridge://eventbusNameOrArn[?options]
 ----
+
+The path is the name or the ARN of the event bus, such as `default`.
 
 You can append query options to the URI in the following format:
 
@@ -132,6 +134,8 @@ YAML::
 ====
 
 This operation will create a rule named _firstrule_, and it will use a json file for defining the EventPattern.
+The event pattern is taken from the `CamelAwsEventbridgeEventPattern` header, else from the file of the `eventPatternFile` option;
+the operation fails when neither is set.
 
 - PutTargets: this operation will add a target to the rule
 
@@ -590,7 +594,10 @@ YAML::
 ----
 ====
 
-The message body is then the `PutEventsResponse`, with the id of each event in its entries. An event that AWS rejects, such as one whose detail is not a JSON object, does not fail the exchange: the `CamelAwsEventbridgeFailedEntryCount` header counts the events that were rejected.
+This operation will return the `PutEventsResponse` with the ID of the sent event.
+The exchange fails when EventBridge rejects the event, for example a detail that is not a JSON object is rejected with `MalformedDetail`;
+the exception gives the error code and message of the rejected event, and the `CamelAwsEventbridgeFailedEntryCount` header is still set.
+A message without a body fails with an `InvalidPayloadException`.
 
 === Updating the rule
 

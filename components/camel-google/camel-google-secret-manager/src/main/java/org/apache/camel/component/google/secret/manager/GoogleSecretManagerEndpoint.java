@@ -21,6 +21,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -40,6 +43,30 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(annotations = {
         "vault=google-secret-manager",
 })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "getSecretVersion",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "deleteSecret", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "listSecrets", carriers = Carrier.ANY) },
+                                  description = "The value of the secret for createSecret, the default operation, as text: bytes,"
+                                                + " a stream or a file are read as text, a Map or a POJO is stored as its"
+                                                + " toString(), so marshal it first, and no body fails. The other operations take"
+                                                + " the secret id from the CamelGoogleSecretManagerSecretId header. With"
+                                                + " pojoRequest=true the body is the request of the Google SDK for the operation,"
+                                                + " such as an AddSecretVersionRequest"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "com.google.cloud.secretmanager.v1.SecretVersion",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getSecretVersion",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "deleteSecret",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "listSecrets",
+                                                          carriers = Carrier.POJO) },
+                                   description = "The SecretVersion of the Google SDK that createSecret added. The value of the"
+                                                 + " secret as text for getSecretVersion: unmarshal a JSON secret to read its"
+                                                 + " fields. A ListSecretsPagedResponse for listSecrets, whose iterateAll() gives"
+                                                 + " the Secrets; deleteSecret leaves the body unchanged"))
 public class GoogleSecretManagerEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

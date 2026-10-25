@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ import groovy.xml.XmlUtil;
 import groovy.xml.slurpersupport.GPathResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -110,6 +112,10 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
             serialize(n, stream);
         } else if (graph instanceof Map map) {
             serialize(exchange, map, stream);
+        } else if (graph instanceof Collection) {
+            throw new InvalidPayloadException(
+                    exchange, Map.class, exchange.getMessage(),
+                    "a List has no root element: marshal a Map with the root element as its single key");
         } else {
             // optional jackson 2.x or 3.x support
             String type = graph.getClass().getName();

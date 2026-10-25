@@ -66,9 +66,10 @@ import org.slf4j.LoggerFactory;
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   dependsOn = { "query", "queryFile", "queryHeader" },
                                   description = "The query, when none of query, queryFile and queryHeader is set: text, or"
-                                                + " bytes, a stream or a file of it. A Map is not a query. With one of them the"
-                                                + " body is not sent, except that an org.apache.camel.util.json.JsonObject body"
-                                                + " is the variables when neither variables nor variablesHeader is set"),
+                                                + " bytes, a stream or a file of it; another body, such as a Map, fails. With"
+                                                + " one of them the body is not sent, except that a Map body, such as an"
+                                                + " org.apache.camel.util.json.JsonObject, is the variables when neither"
+                                                + " variables nor variablesHeader is set"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
                                    description = "The response as text, the JSON with the data and errors of GraphQL: unmarshal"
                                                  + " it to read them. Errors in the response do not fail the exchange; a status"
@@ -373,7 +374,8 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     /**
-     * The name of a header containing a JsonObject instance containing the operation variables.
+     * The name of a header containing the operation variables, as a JsonObject or a Map. The header is not sent as an
+     * HTTP header.
      */
     public void setVariablesHeader(String variablesHeader) {
         this.variablesHeader = variablesHeader;
@@ -384,7 +386,7 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     /**
-     * The name of a header containing the GraphQL query.
+     * The name of a header containing the GraphQL query. The header is not sent as an HTTP header.
      */
     public void setQueryHeader(String queryHeader) {
         this.queryHeader = queryHeader;

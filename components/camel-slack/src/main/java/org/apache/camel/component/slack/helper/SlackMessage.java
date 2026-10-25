@@ -18,6 +18,8 @@ package org.apache.camel.component.slack.helper;
 
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 public class SlackMessage {
 
     private String text;
@@ -226,6 +228,7 @@ public class SlackMessage {
 
             private String title;
             private String value;
+            @SerializedName("short")
             private Boolean shortValue;
 
             public String getTitle() {

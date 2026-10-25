@@ -21,6 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,6 +35,18 @@ import org.citrusframework.validation.context.ValidationContext;
 
 @UriEndpoint(firstVersion = "4.24.0", scheme = "citrus", title = "Citrus", syntax = "citrus:operation/name",
              producerOnly = true, remote = false, category = { Category.TESTING })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.STREAM },
+                                  description = "The body Citrus validates, as text; a stream cache is read as text and"
+                                                + " reset. Any other body is compared by its toString(): bytes as a list of"
+                                                + " numbers, a file as its path, a Map as {key=value}, so convert it to a String"
+                                                + " first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "operation", value = "receive",
+                                                             carriers = { Carrier.TEXT, Carrier.UNCHANGED }),
+                                   description = "validate leaves the body as it is. receive sets the body of the simulated"
+                                                 + " response, as text with its Citrus variables resolved (or what the"
+                                                 + " MessagePayloadBuilder given to it builds), and leaves the body as it is"
+                                                 + " when the response has no body or no spec matches the exchange"))
 public class CitrusEndpoint extends MockEndpoint {
 
     @UriPath(description = "The operation to perform. 'validate' validates exchanges without modifying them."

@@ -67,6 +67,18 @@ in the `CamelJdbcUpdateCount` header.
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.
 
+With `outputType=SelectList` the header `CamelJdbcRowCount` holds the number of rows of the result.
+
+A `BLOB` or `CLOB` value of a row is a `java.sql.Blob` or `java.sql.Clob`, which can be read only while the connection is
+open, and the producer closes the connection before the route continues (except with `outputType=StreamList`,
+which closes it when the exchange is done). So read such a value inside the producer: set `useGetBytesForBlob=true`
+to get a `BLOB` as a `byte[]`, or convert a `CLOB` to text in the SQL query with a function of the database.
+
+The `SQL` of the message body is mandatory: a message without a body fails with an `InvalidPayloadException`.
+
+The `transacted` option is not used (and deprecated). To take part in a Spring transaction, use the
+xref:spring-jdbc-component.adoc[Spring JDBC Component].
+
 === Generated keys
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
@@ -76,7 +88,8 @@ return the generated keys in headers. +
 generated keys will be provided as headers with the keys listed in the
 table above.
 
-Using generated keys does not work together with named parameters.
+The generated keys in the header `CamelGeneratedKeysRows` are a `List` of `Map` objects with the key columns,
+whatever the `outputClass` and `readSize` of the endpoint.
 
 === Using named parameters
 

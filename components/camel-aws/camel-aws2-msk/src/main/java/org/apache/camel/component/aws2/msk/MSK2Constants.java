@@ -26,9 +26,10 @@ public interface MSK2Constants {
     String OPERATION = "CamelAwsMSKOperation";
     @Metadata(description = "The cluster name filter for list operation", javaType = "String")
     String CLUSTERS_FILTER = "CamelAwsMSKClusterFilter";
-    @Metadata(description = "The cluster name for list and create operation", javaType = "String")
+    @Metadata(description = "The cluster name for the create operation", javaType = "String")
     String CLUSTER_NAME = "CamelAwsMSKClusterName";
-    @Metadata(description = "The cluster arn for delete operation", javaType = "String")
+    @Metadata(description = "The cluster ARN for the delete and describe operations. It is set by the create and describe operations.",
+              javaType = "String")
     String CLUSTER_ARN = "CamelAwsMSKClusterArn";
     @Metadata(description = "The Kafka for the cluster during create operation", javaType = "String")
     String CLUSTER_KAFKA_VERSION = "CamelAwsMSKClusterKafkaVersion";

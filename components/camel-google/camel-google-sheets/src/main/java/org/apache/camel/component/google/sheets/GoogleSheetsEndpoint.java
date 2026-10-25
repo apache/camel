@@ -29,6 +29,9 @@ import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollecti
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsPropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +46,25 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets",
              syntax = "google-sheets:apiName/methodName", apiSyntax = "apiName/methodName",
              category = { Category.CLOUD, Category.DOCUMENT })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   description = "One message per poll with the return value of the method: a Google"
+                                                 + " Sheets model object, such as the ValueRange of data/get, which is one"
+                                                 + " message and not split per row. The model classes are GenericJson, which"
+                                                 + " is also a Map of the JSON fields"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names a parameter of the method, and"
+                                                + " must then be of the type of that parameter: a ValueRange for values of"
+                                                + " data/append and data/update, a Spreadsheet for content of"
+                                                + " spreadsheets/create, or text for spreadsheetId. A List of rows, JSON text"
+                                                + " or a Map is not turned into a model object: put the rows in a ValueRange,"
+                                                + " or use the google-sheets:application-x-struct transformer on JSON."
+                                                + " Without inBody the arguments come from the options and the"
+                                                + " CamelGoogleSheets. headers"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The return value of the method: a Google Sheets model object, such as the"
+                                                 + " ValueRange of data/get, the AppendValuesResponse of data/append or the"
+                                                 + " Spreadsheet of spreadsheets/get. The model classes are GenericJson, which"
+                                                 + " is also a Map of the JSON fields"))
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration>
         implements EndpointServiceLocation {
 

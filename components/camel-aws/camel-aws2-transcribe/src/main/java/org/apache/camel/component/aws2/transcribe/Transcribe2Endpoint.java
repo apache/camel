@@ -44,16 +44,10 @@ import software.amazon.awssdk.services.transcribe.TranscribeClient;
                                                 + " pojoRequest=true the request of the AWS SDK for the operation, such as a"
                                                 + " StartTranscriptionJobRequest: another body fails"),
            producerOut = @BodyType(value = Carrier.POJO,
-                                   byOption = {
-                                           @BodyType.When(option = "operation", value = "deleteTranscriptionJob",
-                                                          carriers = Carrier.UNCHANGED),
-                                           @BodyType.When(option = "operation", value = "deleteVocabulary",
-                                                          carriers = Carrier.UNCHANGED) },
                                    description = "The response of the AWS SDK for the operation, such as the"
                                                  + " StartTranscriptionJobResponse of startTranscriptionJob. The transcript is"
                                                  + " not in the body: the job writes it to S3, at the URI that"
-                                                 + " getTranscriptionJob gives. deleteTranscriptionJob and deleteVocabulary"
-                                                 + " keep the body"))
+                                                 + " getTranscriptionJob gives"))
 public class Transcribe2Endpoint extends DefaultEndpoint {
 
     private TranscribeClient transcribeClient;

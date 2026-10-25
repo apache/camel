@@ -20,11 +20,13 @@ import java.time.Instant;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -102,5 +104,43 @@ public class CloudtrailConsumerTest {
 
         Assertions.assertEquals(2, underTest.poll(), "first poll delivers both new events");
         Assertions.assertEquals(1, underTest.poll(), "second poll must skip the already-delivered boundary event e2");
+    }
+
+    @Test
+    public void eventWithoutCloudTrailEventGivesNullBody() throws Exception {
+        Event noRecord = Event.builder().eventId("e1").eventName("name").eventSource("src").username("user")
+                .eventTime(Instant.parse("2099-01-01T00:00:00Z")).build();
+
+        Exchange exchange = underTest.createExchange(noRecord);
+
+        Assertions.assertNull(exchange.getMessage().getBody());
+        Assertions.assertEquals("e1", exchange.getMessage().getHeader(CloudtrailConstants.EVENT_ID));
+    }
+
+    @Test
+    public void eventWithoutEventTimeIsDeliveredOnceAndDoesNotStopTheCursor() throws Exception {
+        Instant t = Instant.parse("2099-01-01T00:00:00Z");
+        Event noTime = Event.builder().eventId("e0").eventName("name").eventSource("src").username("user")
+                .cloudTrailEvent("{}").build();
+        var firstPoll = LookupEventsResponse.builder()
+                .events(event("e1", t.plusSeconds(1)), noTime)
+                .build();
+        var secondPoll = LookupEventsResponse.builder()
+                .events(event("e2", t.plusSeconds(2)), event("e1", t.plusSeconds(1)), noTime)
+                .build();
+        var thirdPoll = LookupEventsResponse.builder()
+                .events(event("e2", t.plusSeconds(2)), noTime)
+                .build();
+        when(cloudTrailClient.lookupEvents(any(LookupEventsRequest.class))).thenReturn(firstPoll, secondPoll, thirdPoll);
+
+        Assertions.assertEquals(2, underTest.poll(), "first poll delivers both events");
+        Assertions.assertEquals(1, underTest.poll(), "second poll delivers only e2");
+        Assertions.assertEquals(0, underTest.poll(), "third poll delivers nothing new");
+
+        ArgumentCaptor<LookupEventsRequest> captor = ArgumentCaptor.forClass(LookupEventsRequest.class);
+        verify(cloudTrailClient, times(3)).lookupEvents(captor.capture());
+        // the cursor moves to the newest event time, even with an event without a time in the same poll
+        Assertions.assertEquals(t.plusSeconds(1), captor.getAllValues().get(1).startTime());
+        Assertions.assertEquals(t.plusSeconds(2), captor.getAllValues().get(2).startTime());
     }
 }

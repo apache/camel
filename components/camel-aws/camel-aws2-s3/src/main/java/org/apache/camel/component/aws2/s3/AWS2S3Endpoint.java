@@ -251,7 +251,7 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
                 }
             }
             /* 404 means the bucket doesn't exist */
-            if (!(ase.awsErrorDetails().sdkHttpResponse().statusCode() == 404)) {
+            if (ase.statusCode() != 404) {
                 throw ase;
             }
         }

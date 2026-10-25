@@ -82,7 +82,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "The payload of the NATS message as a byte array, empty for a message without one: convert or unmarshal it" },
-    "consumerReply": { "carriers": [ "any" ], "byOption": [ { "option": "exchangePattern", "value": "InOut", "carriers": [ "text", "bytes", "stream", "file" ] } ], "description": "Only with exchangePattern=InOut is a message with a reply subject answered, with the body the route ends with: text, bytes, a stream or a file. A Map, a POJO or no body sends no reply, and the requester times out" },
+    "consumerReply": { "carriers": [ "any" ], "byOption": [ { "option": "exchangePattern", "value": "InOut", "carriers": [ "null", "text", "bytes", "stream", "file" ] } ], "description": "Only with exchangePattern=InOut is a core NATS message with a reply subject answered, with the body the route ends with: text, bytes, a stream or a file, and no body sends an empty reply. A Map or a POJO sends no reply, and the requester times out" },
     "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "What converts to a byte array: text, bytes, a stream or a file. A Map or a POJO is sent as its toString(), and a List or no body fails: marshal it first" },
     "producerOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "exchangePattern", "value": "InOnly", "carriers": [ "unchanged" ] }, { "option": "exchangePattern", "value": "InOut", "carriers": [ "bytes" ], "javaType": "byte[]" } ], "description": "Unchanged for a message that expects no reply (InOnly). A message that expects one (InOut) waits for the reply, up to requestTimeout, and gets its payload as a byte array" }
   },

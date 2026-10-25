@@ -61,10 +61,11 @@ public class SmbConfiguration extends GenericFileConfiguration {
                                                 + " false, the remote files are loaded into memory before being sent into the route.")
     @Metadata
     private boolean streamDownload;
-    @UriParam(label = "consumer,advanced", description = "Whether the SMB consumer should download the file. If this "
-                                                         + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
-                                                         + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
-                                                         + "not be downloaded.")
+    @UriParam(label = "consumer,advanced", defaultValue = "true",
+              description = "Whether the SMB consumer should download the file. If this "
+                            + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
+                            + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
+                            + "not be downloaded.")
     private boolean download = true;
     @UriParam(label = "common", description = "Whether or not to disconnect from remote SMB share right after use. "
                                               + "Disconnect will only disconnect the current connection to the SMB share. If you have a consumer which "

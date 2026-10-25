@@ -37,7 +37,8 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
  * Receive messages from AWS DynamoDB Stream.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true,
-             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING })
+             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING },
+             headersClass = Ddb2StreamConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "software.amazon.awssdk.services.dynamodb.model.Record",
                                    description = "The change record of the stream, one message per record, with the event name"
                                                  + " (INSERT, MODIFY or REMOVE) in a header. The keys and the images of the"

@@ -66,7 +66,9 @@ public class AS2Configuration {
     private Integer serverPortNumber;
     @UriParam(defaultValue = "/")
     private String requestUri = "/";
+    @Deprecated
     @UriParam(enums = "application/edifact,application/edi-x12,application/edi-consent,application/xml")
+    @Metadata(deprecationNote = "Use ediMessageContentType instead")
     private String ediMessageType;
     @UriParam(defaultValue = "us-ascii")
     private String ediMessageCharset;
@@ -120,6 +122,8 @@ public class AS2Configuration {
     private SSLContext sslContext;
     @UriParam(label = "security")
     private String asyncMdnAllowedHosts;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
     @UriParam(label = "security")
     private HostnameVerifier hostnameVerifier;
@@ -285,14 +289,16 @@ public class AS2Configuration {
         this.requestUri = requestUri;
     }
 
+    @Deprecated
     public String getEdiMessageType() {
         return ediMessageType;
     }
 
     /**
      * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent,
-     * application/xml
+     * application/xml. client/send uses this value only when ediMessageContentType is not set.
      */
+    @Deprecated
     public void setEdiMessageType(String ediMessageType) {
         this.ediMessageType = ediMessageType;
     }
@@ -763,5 +769,17 @@ public class AS2Configuration {
      */
     public void setAsyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
         this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side (server listen or receipt receive), the HTTP
+     * response only says that the message or the receipt could not be processed, and not the message of the exception.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 }

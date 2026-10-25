@@ -86,6 +86,12 @@ the content as XHTML, or as HTML or plain text with `tikaParseOutputFormat`, whi
 metadata of the document are headers, such as `dc:title`. The component has the Tika parsers of HTML and text: other
 types need their Tika parser module, such as `org.apache.tika:tika-parser-pdf-module` for PDF, or the content is empty.
 
+The body of `detect` and `parse` must convert to an `InputStream`, such as a `java.io.File`, a `byte[]`, a `String` or
+a stream. A missing body or a body that does not convert, such as a `Map`, fails with an `InvalidPayloadException`.
+
+The `parse` operation writes its output in the `tikaParseOutputEncoding` and sets that encoding as the charset of the
+exchange (the `CamelCharsetName` exchange property), so converting the output to a `String` decodes it right.
+
 [tabs]
 ====
 Java::

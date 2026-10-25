@@ -29,7 +29,7 @@ public class ConsulSessionProducerInvokeOnHeaderFactory implements InvokeOnHeade
         case "LIST": target.list(exchange.getMessage()); return null;
         case "renew":
         case "RENEW": target.renew(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

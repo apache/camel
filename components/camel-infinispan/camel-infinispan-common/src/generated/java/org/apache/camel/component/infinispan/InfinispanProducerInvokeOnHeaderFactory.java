@@ -57,7 +57,7 @@ public class InfinispanProducerInvokeOnHeaderFactory implements InvokeOnHeaderSt
         case "REPLACEASYNC": target.onReplaceAsync(exchange.getMessage()); return null;
         case "size":
         case "SIZE": target.onSize(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

@@ -17,9 +17,12 @@
 
 package org.apache.camel.component.pdf.converter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.camel.Converter;
 import org.apache.pdfbox.Loader;
@@ -44,5 +47,18 @@ public class PdfConverter {
         try (InputStream is = new FileInputStream(file)) {
             return toPDDocument(is);
         }
+    }
+
+    /**
+     * Converts the output of the pdf create, append and merge operations.
+     */
+    @Converter
+    public PDDocument convertToPDF(ByteArrayOutputStream bos) throws Exception {
+        return convertToPDF(bos.toByteArray());
+    }
+
+    @Converter
+    public PDDocument convertToPDF(Path path) throws Exception {
+        return convertToPDF(Files.readAllBytes(path));
     }
 }

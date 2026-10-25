@@ -57,7 +57,8 @@ import org.apache.camel.support.DefaultComponent;
  * </p>
  * <p/>
  * <p>
- * dns:///wikipedia This endpoint takes one paramter :
+ * dns:///wikipedia (deprecated, the Wikipedia over DNS service is no longer available) This endpoint takes one
+ * parameter :
  * <ul>
  * <li>CamelDnsTerm: the search term on wikipedia</li>
  * </ul>

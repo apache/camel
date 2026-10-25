@@ -52,7 +52,7 @@ import software.amazon.awssdk.services.textract.TextractClient;
                                    description = "The response of the AWS SDK for the operation, such as the"
                                                  + " DetectDocumentTextResponse of detectDocumentText, the default, whose"
                                                  + " blocks hold the lines and the words found. The start operations give the"
-                                                 + " job id only in the response: set the CamelAwsTextractJobId header from it"
+                                                 + " response with the job id, and set the CamelAwsTextractJobId header to it"
                                                  + " for the get operations"))
 public class Textract2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 

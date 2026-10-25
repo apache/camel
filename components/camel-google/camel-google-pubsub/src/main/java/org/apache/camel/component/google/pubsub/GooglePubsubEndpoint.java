@@ -47,12 +47,14 @@ import org.slf4j.LoggerFactory;
 @BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
                                    description = "The data of the Pub/Sub message as a byte array, with its attributes in"
                                                  + " headers: convert or unmarshal it"),
-           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES }, dependsOn = "serializer",
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "serializer",
                                   description = "Text is sent as UTF-8 and bytes as they are; a List of the exchanges of a"
-                                                + " grouped aggregation is sent as one message per exchange. Any other body"
-                                                + " goes to the serializer, by default Java serialization, so a Map or a POJO"
-                                                + " is sent as Java-serialized bytes, and a stream or a file fails: marshal or"
-                                                + " convert it first"),
+                                                + " grouped aggregation is sent as one message per exchange. A body that"
+                                                + " converts to bytes, such as a stream or a file, is sent as its content. Any"
+                                                + " other body goes to the serializer, by default Java serialization, so a Map"
+                                                + " or a POJO is sent as Java-serialized bytes: marshal it first. No body"
+                                                + " fails"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "Unchanged, with the id of the published message in a header"))
 public class GooglePubsubEndpoint extends DefaultEndpoint
@@ -113,7 +115,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint
               description = "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used")
     private String pubsubEndpoint;
     @UriParam(label = "producer,advanced",
-              description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer")
+              description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer. It is used only for a body that is not a String or a byte array and that the type converter cannot convert to a byte array.")
     @Metadata(autowired = true)
     private GooglePubsubSerializer serializer;
     @UriParam(label = "producer,advanced",

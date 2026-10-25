@@ -2866,7 +2866,9 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppAlphabet";
         }
         /**
-         * The command.
+         * The command to send: SubmitSm (the default when the header is
+         * missing), ReplaceSm, QuerySm, SubmitMulti, CancelSm or DataSm. The
+         * names are case-sensitive, and any other value fails.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3014,9 +3016,10 @@ public interface SmppEndpointBuilderFactory {
          * only for SubmitSm, SubmitMulti and ReplaceSm. Specifies the encoding
          * (character set name) the text of the message body is encoded in, as
          * the short message. A byte array body is first read as text, in the
-         * charset of the exchange, unless an 8-bit data coding or alphabet
-         * header sends it as it is. Default value is specified by the endpoint
-         * configuration parameter _encoding_.
+         * charset of the exchange, unless an 8-bit data coding or alphabet (in
+         * a header, or in the endpoint options) sends it as it is. Default
+         * value is specified by the endpoint configuration parameter
+         * _encoding_.
          * 
          * The option is a: {@code String} type.
          * 

@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,24 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "spring-ai-vector-store:storeId", producerOnly = true, category = {
                      Category.AI
              }, headersClass = SpringAiVectorStoreHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "DELETE",
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "SIMILARITY_SEARCH",
+                                                         carriers = Carrier.TEXT) },
+                                  description = "ADD takes a Document, a List of Document or of texts, or text (another"
+                                                + " body is added as its text). After spring-ai-embeddings it adds the"
+                                                + " texts in the CamelSpringAiEmbeddingInputText(s) headers instead of the"
+                                                + " body. DELETE takes the id or a List of ids, unless the"
+                                                + " CamelSpringAiVectorStoreDocumentIds header has them, and"
+                                                + " SIMILARITY_SEARCH the query text. No body fails. The"
+                                                + " CamelSpringAiVectorStoreOperation header overrides operation"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "operation", value = "SIMILARITY_SEARCH",
+                                                             carriers = Carrier.LIST),
+                                   description = "SIMILARITY_SEARCH gives the List of Document found. ADD and DELETE keep"
+                                                 + " the body, with the ids and the count in headers"))
 public class SpringAiVectorStoreEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

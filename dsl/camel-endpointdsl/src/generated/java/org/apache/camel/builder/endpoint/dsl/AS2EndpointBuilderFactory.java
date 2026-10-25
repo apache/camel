@@ -259,6 +259,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -267,6 +269,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointConsumerBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
@@ -605,6 +608,42 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side
+         * (server listen or receipt receive), the HTTP response only says that
+         * the message or the receipt could not be processed, and not the
+         * message of the exception.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side
+         * (server listen or receipt receive), the HTTP response only says that
+         * the message or the receipt could not be processed, and not the
+         * message of the exception.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
             return this;
         }
         /**
@@ -1361,6 +1400,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1369,6 +1410,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointProducerBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
@@ -2559,6 +2601,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2567,6 +2611,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;

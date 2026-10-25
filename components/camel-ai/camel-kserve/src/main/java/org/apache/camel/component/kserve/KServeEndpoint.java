@@ -27,6 +27,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,37 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.10.0", scheme = "kserve", title = "KServe",
              syntax = "kserve:api", producerOnly = true,
              category = { Category.AI }, headersClass = KServeConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.POJO,
+                                  byOption = {
+                                          @BodyType.When(option = "api", value = "model/ready", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "api", value = "model/metadata", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "api", value = "server/ready", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "api", value = "server/live", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "api", value = "server/metadata",
+                                                         carriers = Carrier.ANY) },
+                                  description = "infer takes the protobuf ModelInferRequest with the input tensors, or its"
+                                                + " Builder; another body, such as text, JSON or bytes, is not read and a"
+                                                + " request without inputs is sent. model/ready and model/metadata need no"
+                                                + " body, and read a ModelReadyRequest or ModelMetadataRequest when it is"
+                                                + " one; the server apis do not use the body. The model comes from the"
+                                                + " CamelKServeModelName header, or else the modelName option"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "api", value = "infer", carriers = Carrier.POJO,
+                                                          javaType = "inference.GrpcPredictV2$ModelInferResponse"),
+                                           @BodyType.When(option = "api", value = "model/ready", carriers = Carrier.POJO,
+                                                          javaType = "inference.GrpcPredictV2$ModelReadyResponse"),
+                                           @BodyType.When(option = "api", value = "model/metadata", carriers = Carrier.POJO,
+                                                          javaType = "inference.GrpcPredictV2$ModelMetadataResponse"),
+                                           @BodyType.When(option = "api", value = "server/ready", carriers = Carrier.POJO,
+                                                          javaType = "inference.GrpcPredictV2$ServerReadyResponse"),
+                                           @BodyType.When(option = "api", value = "server/live", carriers = Carrier.POJO,
+                                                          javaType = "inference.GrpcPredictV2$ServerLiveResponse"),
+                                           @BodyType.When(option = "api", value = "server/metadata", carriers = Carrier.POJO,
+                                                          javaType = "inference.GrpcPredictV2$ServerMetadataResponse") },
+                                   description = "The protobuf response of the api, such as a ModelInferResponse whose"
+                                                 + " outputs are often in its raw output contents as bytes, or a"
+                                                 + " ModelReadyResponse with the ready flag"))
 public class KServeEndpoint extends DefaultEndpoint {
 
     /**

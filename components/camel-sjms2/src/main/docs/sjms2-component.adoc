@@ -292,13 +292,27 @@ which allows use of your own custom strategy for formatting keys.
 
 === Message Content
 
-To deliver content over the wire, we must ensure that the body of the
-message that is being delivered adheres to the JMS Message
-Specification. Therefore, all that are produced must either be
+The values of the headers sent as JMS properties must either be
 primitives or their counter-objects (such as `Integer`, `Long`, `Character`).
 The types, `String`, `CharSequence`, `Date`, `BigDecimal` and `BigInteger` are all
-converted to their `toString()` representation. All other types are
+converted to their `toString()` representation. All other header values are
 dropped.
+
+The body is mapped to and from a JMS message as follows (unless the option `jmsMessageType` forces a type):
+
+[width="100%",cols="1,1,2",options="header"]
+|===
+| Camel body | JMS message | Body when consumed
+| `String` or XML `Node` | `TextMessage` | `String`
+| `byte[]`, `InputStream`, `Reader`, `ByteBuffer`, `File`, `Path` or `StreamCache` | `BytesMessage` | `byte[]`
+| `Map` (of simple values) | `MapMessage` | `Map`
+| `null` | `Message` | `null`
+| Other `Serializable` object (such as a number or a `List`) | `ObjectMessage` (only with `objectMessageEnabled=true`, fails otherwise) | the object
+| Any other object | `Message` without a body (a WARN is logged) | `null`
+|===
+
+A received `StreamMessage` is not mapped: the body is the `jakarta.jms.StreamMessage` itself.
+With `mapJmsMessage=false` the body is always the received `jakarta.jms.Message`.
 
 === Clustering
 

@@ -207,9 +207,9 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
         Assertions.assertEquals(0, command.doCall());
         Assertions.assertTrue(printer.getOutput().contains("Unmarshal output"), printer.getOutput());
 
-        // a component whose body types are not in the catalog has no such table
+        // an EIP has no body types in the catalog, so it has no such table
         printer = new StringPrinter();
-        command = createCommand("weather", false);
+        command = createCommand("eip:split", false);
         Assertions.assertEquals(0, command.doCall());
         Assertions.assertFalse(printer.getOutput().contains("Message body"), printer.getOutput());
     }

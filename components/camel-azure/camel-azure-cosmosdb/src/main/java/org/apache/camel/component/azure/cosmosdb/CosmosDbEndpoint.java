@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosDbClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,68 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.10.0", scheme = "azure-cosmosdb", title = "Azure CosmosDB",
              syntax = "azure-cosmosdb:databaseName/containerName", category = {
                      Category.CLOUD, Category.DATABASE })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.util.Map<String, Object>>",
+                                   description = "The items of one batch of the change feed: a List with a Map per item"
+                                                 + " created or changed, with the system fields of Cosmos DB such as _etag and"
+                                                 + " _lsn"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "createItem",
+                                                         carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                          @BodyType.When(option = "operation", value = "upsertItem",
+                                                         carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                          @BodyType.When(option = "operation", value = "replaceItem",
+                                                         carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }) },
+                                  description = "The item for createItem, upsertItem and replaceItem: a Map or a POJO, which"
+                                                + " Jackson serializes, or the JSON of the item as bytes. A JSON String fails, as"
+                                                + " it is sent as a JSON string and not as an object: unmarshal it first. The other"
+                                                + " operations do not use the body: the item id, the partition key and the query"
+                                                + " are options or headers"),
+           producerOut = @BodyType(value = Carrier.LIST,
+                                   javaType = "java.util.List<com.azure.cosmos.models.CosmosDatabaseProperties>",
+                                   dependsOn = "contentResponseOnWriteEnabled",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "queryDatabases",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.azure.cosmos.models.CosmosDatabaseProperties>"),
+                                           @BodyType.When(option = "operation", value = "listContainers",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.azure.cosmos.models.CosmosContainerProperties>"),
+                                           @BodyType.When(option = "operation", value = "queryContainers",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.azure.cosmos.models.CosmosContainerProperties>"),
+                                           @BodyType.When(option = "operation", value = "createDatabase",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "deleteDatabase",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "createContainer",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "deleteContainer",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "replaceDatabaseThroughput",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "replaceContainerThroughput",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "createItem",
+                                                          carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                           @BodyType.When(option = "operation", value = "upsertItem",
+                                                          carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                           @BodyType.When(option = "operation", value = "replaceItem",
+                                                          carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                           @BodyType.When(option = "operation", value = "readItem", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, Object>"),
+                                           @BodyType.When(option = "operation", value = "readAllItems", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<String, Object>>"),
+                                           @BodyType.When(option = "operation", value = "queryItems", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "deleteItem",
+                                                          carriers = Carrier.NULL) },
+                                   description = "A List of the properties of the SDK for listDatabases, the default, and the"
+                                                 + " list and query operations of databases and containers; the item as written"
+                                                 + " for createItem, upsertItem and replaceItem, of the type of the body sent, or"
+                                                 + " no body with contentResponseOnWriteEnabled=false; the item as a Map for"
+                                                 + " readItem, and a List of them for readAllItems and queryItems, whose elements"
+                                                 + " are values for a SELECT VALUE query. The operations on databases, containers"
+                                                 + " and throughput leave the body and set the response in headers"))
 public class CosmosDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

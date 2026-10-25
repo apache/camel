@@ -29,6 +29,9 @@ import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,16 @@ import org.apache.camel.spi.UriPath;
 @Metadata(excludeProperties = "httpUri", annotations = {
         "protocol=http",
 })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.NULL }, dependsOn = { "transferException", "httpBinding" },
+                                   description = "The request body as a stream cache, which can be read again (the raw stream,"
+                                                 + " read once, with disableStreamCache); an empty one for a GET, null with"
+                                                 + " Content-Length 0 or eagerCheckContentAvailable. The fields of a form are"
+                                                 + " also headers; a multipart request is the raw multipart payload, or with"
+                                                 + " attachmentMultipartBinding an empty body and its parts as attachments"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                     description = "The response body: text, bytes, a stream or a file. A Map, a List or a POJO"
+                                                   + " is sent as an empty body (as its toString with chunked=false): marshal"
+                                                   + " it first"))
 public class ServletEndpoint extends HttpCommonEndpoint implements OAuthProfileAwareHttpEndpoint {
 
     private HttpBinding binding;

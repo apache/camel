@@ -55,8 +55,11 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         // Query string is already encoded in resolveHttpURI to avoid decode/re-encode issues
         URI uri = VertxHttpHelper.resolveHttpURI(exchange, endpoint);
 
-        // Determine the HTTP method to use if not specified in the HTTP_METHOD header
-        HttpMethod method = message.getHeader(VertxHttpConstants.HTTP_METHOD, configuration.getHttpMethod(), HttpMethod.class);
+        // as camel-http: the method of the endpoint, which the HTTP_METHOD header cannot override, then the header
+        HttpMethod method = configuration.getHttpMethod();
+        if (method == null) {
+            method = message.getHeader(VertxHttpConstants.HTTP_METHOD, HttpMethod.class);
+        }
         if (method == null) {
             if (ObjectHelper.isNotEmpty(uri.getQuery())) {
                 method = HttpMethod.GET;

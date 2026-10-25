@@ -59,8 +59,8 @@ import software.amazon.awssdk.services.sqs.SqsClient;
            producerOut = @BodyType(value = Carrier.POJO,
                                    description = "The response of the AWS SDK for the operation: a PutRuleResponse for putRule,"
                                                  + " the default, and a PutEventsResponse for putEvent. An event that AWS"
-                                                 + " rejects, such as one whose detail is not a JSON object, does not fail the"
-                                                 + " exchange: check the CamelAwsEventbridgeFailedEntryCount header"))
+                                                 + " rejects, such as one whose detail is not a JSON object, fails the exchange"
+                                                 + " with the error code and message of the rejected event"))
 public class EventbridgeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private final ReentrantLock lock = new ReentrantLock();

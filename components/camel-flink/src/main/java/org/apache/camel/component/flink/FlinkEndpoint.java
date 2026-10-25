@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -33,6 +36,16 @@ import org.apache.flink.streaming.api.datastream.DataStream;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "flink", title = "Flink", syntax = "flink:endpointType", producerOnly = true,
              category = { Category.TRANSFORMATION, Category.BIGDATA }, headersClass = FlinkConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is handed to the DataSet or DataStream callback as its payload, a List"
+                                                + " as one payload per element; the data to compute on is the DataSet or"
+                                                + " DataStream of the endpoint or of the CamelFlinkDataSet or CamelFlinkDataStream"
+                                                + " header"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "What the callback returns, null for a void callback. A DataSet it returns is"
+                                                 + " collected into a List; a DataStream it returns fails unless collect is false,"
+                                                 + " then the DataStream (or DataSet) is the body and the CamelFlinkDataStream (or"
+                                                 + " CamelFlinkDataSet) header"))
 public class FlinkEndpoint extends DefaultEndpoint {
 
     @UriPath

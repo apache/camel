@@ -40,8 +40,9 @@ import software.amazon.awssdk.services.ses.SesClient;
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The text of the mail, or its HTML with the CamelAwsSesHtmlEmail header set to"
                                                 + " true: bytes, a stream or a file are read as text, and a Map or a POJO is"
-                                                + " sent as its toString(), so marshal it first. A jakarta.mail Message is sent"
-                                                + " as a raw mail as it is"),
+                                                + " sent as its toString(), so marshal it first. A jakarta.mail Message or a"
+                                                + " RawMessage is sent as a raw mail as it is, a SendRawEmailRequest is sent as"
+                                                + " the request, and no body fails"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "Unchanged, with the id of the mail in the CamelAwsSesMessageId header"))
 public class Ses2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {

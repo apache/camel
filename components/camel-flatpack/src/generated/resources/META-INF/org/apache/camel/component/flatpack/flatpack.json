@@ -31,6 +31,11 @@
   "headers": {
     "CamelFlatpackCounter": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The current row index. For splitRows=false the counter is the total number of rows.", "constantName": "org.apache.camel.component.flatpack.FlatpackConstants#FLATPACK_COUNTER" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "net.sf.flatpack.DataSet", "description": "The Flatpack DataSet the producer parsed. With splitRows, one message per row, with the DataSet at that row: convert it to a Map before any asynchronous step, as the next row moves it; a List reads all the rows and ends the split. With splitRows=false, the whole DataSet: convert it to a List of Maps" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text", "description": "The fixed-width or delimited data to parse, such as a file from the file consumer; a java.io.File, a Map or a List fails. The rows go to the consumer of the same endpoint" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "type": { "index": 0, "kind": "path", "displayName": "Type", "group": "common", "label": "", "required": false, "type": "enum", "javaType": "org.apache.camel.component.flatpack.FlatpackType", "enum": [ "fixed", "delim" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "delim", "description": "Whether to use fixed or delimiter" },
     "resourceUri": { "index": 1, "kind": "path", "displayName": "Resource Uri", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "URL for loading the flatpack mapping file from classpath or file system" },

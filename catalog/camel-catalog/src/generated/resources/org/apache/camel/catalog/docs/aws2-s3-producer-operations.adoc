@@ -56,6 +56,9 @@ YAML::
 Bucket-level operations (`listBuckets`, `deleteBucket`, `listObjects`, `createBucket`, etc.)
 don't require a key header — just set the `operation` parameter.
 
+The operations take the bucket from the endpoint URI, unless the `CamelAwsS3OverrideBucketName` header is set,
+and the key from the `keyName` option, unless the `CamelAwsS3Key` header is set.
+
 == Operations Reference
 
 [width="100%",cols="3,5,3",options="header"]
@@ -76,7 +79,7 @@ don't require a key header — just set the `operation` parameter.
 
 | `headBucket`
 | Check if a bucket exists and you have permission to access it.
-|
+| Sets the `CamelAwsS3BucketExists` header
 
 | `listObjects`
 | List objects in a bucket.
@@ -104,7 +107,7 @@ don't require a key header — just set the `operation` parameter.
 
 | `headObject`
 | Retrieve metadata from an object without returning the object itself.
-|
+| Requires a key (the `keyName` option or the `CamelAwsS3Key` header)
 
 | `uploadObject` (default)
 | Upload a file to S3 based on the body content.

@@ -51,6 +51,7 @@ public class CloudtrailCloudEventDataTypeTransformer extends Transformer {
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(CloudtrailConstants.EVENT_ID, String.class));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.TEXT_PLAIN_MIME_TYPE);
+        // the body is the JSON of the CloudTrail record
+        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "application/json");
     }
 }

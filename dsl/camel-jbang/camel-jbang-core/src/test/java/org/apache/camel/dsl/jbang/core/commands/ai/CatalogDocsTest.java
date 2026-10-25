@@ -160,10 +160,10 @@ class CatalogDocsTest {
         assertTrue(((JsonObject) xpath.get("bodyTypes")).getString("expressionOut")
                 .startsWith("pojo (org.w3c.dom.NodeList). The nodes the expression selects. With resultQName=STRING: text"));
 
-        // a component that does not declare them has none, rather than a guess
-        JsonObject ldif = catalogDoc(Map.of("name", "ldif", "kind", "component", "includeOptions", false));
-        assertNull(ldif.get("bodyTypes"));
-        assertNull(ldif.get("bodyTypesHint"));
+        // a model that does not declare them, such as an EIP, has none, rather than a guess
+        JsonObject split = catalogDoc(Map.of("name", "split", "kind", "eip", "includeOptions", false));
+        assertNull(split.get("bodyTypes"));
+        assertNull(split.get("bodyTypesHint"));
     }
 
     @Test

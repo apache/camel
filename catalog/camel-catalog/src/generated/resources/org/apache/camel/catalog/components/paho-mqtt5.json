@@ -68,7 +68,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "The payload of the MQTT message" },
-    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "What converts to a byte array: text, bytes, a stream or a file, sent as the payload" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "What converts to a byte array: text, bytes, a stream or a file, sent as the payload. A Map, a POJO or no body fails: marshal it first" },
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {

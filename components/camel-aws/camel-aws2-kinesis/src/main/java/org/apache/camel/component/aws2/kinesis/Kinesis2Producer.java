@@ -18,10 +18,12 @@ package org.apache.camel.component.aws2.kinesis;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -66,7 +68,8 @@ public class Kinesis2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
-        if (body instanceof Iterable) {
+        // a Path is an Iterable of its name elements, but it is sent as one record with its content, as a File is
+        if (body instanceof Iterable && !(body instanceof Path)) {
             sendBatchRecords(exchange);
         } else {
             sendSingleRecord(exchange);
@@ -151,7 +154,7 @@ public class Kinesis2Producer extends DefaultProducer {
         return requestBatchList;
     }
 
-    private void sendSingleRecord(Exchange exchange) {
+    private void sendSingleRecord(Exchange exchange) throws InvalidPayloadException {
         PutRecordRequest request = createRequest(exchange);
         PutRecordResponse putRecordResult = connection.getClient(getEndpoint()).putRecord(request);
         Message message = exchange.getMessage();
@@ -159,8 +162,8 @@ public class Kinesis2Producer extends DefaultProducer {
         message.setHeader(Kinesis2Constants.SHARD_ID, putRecordResult.shardId());
     }
 
-    private PutRecordRequest createRequest(Exchange exchange) {
-        byte[] body = exchange.getIn().getBody(byte[].class);
+    private PutRecordRequest createRequest(Exchange exchange) throws InvalidPayloadException {
+        byte[] body = exchange.getIn().getMandatoryBody(byte[].class);
         Object partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY);
         Object sequenceNumber = exchange.getIn().getHeader(Kinesis2Constants.SEQUENCE_NUMBER);
 

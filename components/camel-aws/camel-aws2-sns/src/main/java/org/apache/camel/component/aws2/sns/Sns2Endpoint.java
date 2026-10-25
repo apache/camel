@@ -26,6 +26,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.component.aws2.sns.client.Sns2ClientFactory;
 import org.apache.camel.spi.*;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -138,7 +139,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     }
                 } while (ObjectHelper.isNotEmpty(nextToken));
             } catch (final AwsServiceException ase) {
-                LOG.trace("The list topics operation return the following error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("The list topics operation return the following error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
         }

@@ -232,7 +232,11 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which operation to perform such as poll, trap, etc.
+         * Which operation to perform such as poll, trap, etc. The consumer
+         * supports TRAP (receive traps) and POLL (poll the oids). The producer
+         * supports TRAP (send the PDU of the body as a trap), POLL (a GET of
+         * the oids, also done when no type is set) and GET_NEXT (a walk of the
+         * oids, for the producer only).
          * 
          * The option is a:
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
@@ -247,7 +251,11 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which operation to perform such as poll, trap, etc.
+         * Which operation to perform such as poll, trap, etc. The consumer
+         * supports TRAP (receive traps) and POLL (poll the oids). The producer
+         * supports TRAP (send the PDU of the body as a trap), POLL (a GET of
+         * the oids, also done when no type is set) and GET_NEXT (a walk of the
+         * oids, for the producer only).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
@@ -1276,7 +1284,11 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which operation to perform such as poll, trap, etc.
+         * Which operation to perform such as poll, trap, etc. The consumer
+         * supports TRAP (receive traps) and POLL (poll the oids). The producer
+         * supports TRAP (send the PDU of the body as a trap), POLL (a GET of
+         * the oids, also done when no type is set) and GET_NEXT (a walk of the
+         * oids, for the producer only).
          * 
          * The option is a:
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
@@ -1291,7 +1303,11 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which operation to perform such as poll, trap, etc.
+         * Which operation to perform such as poll, trap, etc. The consumer
+         * supports TRAP (receive traps) and POLL (poll the oids). The producer
+         * supports TRAP (send the PDU of the body as a trap), POLL (a GET of
+         * the oids, also done when no type is set) and GET_NEXT (a walk of the
+         * oids, for the producer only).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
@@ -1692,7 +1708,11 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which operation to perform such as poll, trap, etc.
+         * Which operation to perform such as poll, trap, etc. The consumer
+         * supports TRAP (receive traps) and POLL (poll the oids). The producer
+         * supports TRAP (send the PDU of the body as a trap), POLL (a GET of
+         * the oids, also done when no type is set) and GET_NEXT (a walk of the
+         * oids, for the producer only).
          * 
          * The option is a:
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
@@ -1707,7 +1727,11 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which operation to perform such as poll, trap, etc.
+         * Which operation to perform such as poll, trap, etc. The consumer
+         * supports TRAP (receive traps) and POLL (poll the oids). The producer
+         * supports TRAP (send the PDU of the body as a trap), POLL (a GET of
+         * the oids, also done when no type is set) and GET_NEXT (a walk of the
+         * oids, for the producer only).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.

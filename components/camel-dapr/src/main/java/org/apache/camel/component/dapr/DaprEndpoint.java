@@ -26,6 +26,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.dapr.consumer.DaprConfigurationConsumer;
 import org.apache.camel.component.dapr.consumer.DaprPubSubConsumer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
@@ -39,6 +42,49 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "4.12.0", scheme = "dapr", title = "Dapr", syntax = "dapr:operation", category = {
         Category.CLOUD, Category.SAAS }, headersClass = DaprConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.BYTES, Carrier.MAP },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "pubSub", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "operation", value = "configuration",
+                                                          carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<java.lang.String, java.lang.String>") },
+                                   description = "For pubSub the data of the cloud event as bytes, with its id, type, source and"
+                                                 + " content type in headers. For configuration a Map of the changed keys and"
+                                                 + " their values, with the ConfigurationItems in the CamelDaprRawConfigResponse"
+                                                 + " header"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                                  description = "The data of invokeService, pubSub, invokeBinding, state save and the workflow"
+                                                + " input, event and output, given to the Dapr client as is: bytes are sent as"
+                                                + " they are, other bodies are serialized as JSON (text as a JSON string), and a"
+                                                + " stream fails: convert it to bytes first. State save needs a body; the other"
+                                                + " operations do not read it"),
+           producerOut = @BodyType(value = {
+                   Carrier.BYTES, Carrier.POJO, Carrier.LIST, Carrier.MAP, Carrier.VALUE, Carrier.UNCHANGED, Carrier.NULL },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "invokeService",
+                                                          carriers = { Carrier.BYTES, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "invokeBinding",
+                                                          carriers = { Carrier.BYTES, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "pubSub", carriers = Carrier.POJO,
+                                                          javaType = "io.dapr.client.domain.PublishEventRequest"),
+                                           @BodyType.When(option = "operation", value = "state",
+                                                          carriers = { Carrier.POJO, Carrier.LIST }),
+                                           @BodyType.When(option = "operation", value = "secret", carriers = Carrier.MAP),
+                                           @BodyType.When(option = "operation", value = "configuration",
+                                                          carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<java.lang.String, java.lang.String>"),
+                                           @BodyType.When(option = "operation", value = "lock", carriers = Carrier.VALUE),
+                                           @BodyType.When(option = "operation", value = "workflow",
+                                                          carriers = { Carrier.POJO, Carrier.UNCHANGED, Carrier.NULL }) },
+                                   description = "The response as bytes for invokeService and invokeBinding (null when there"
+                                                 + " is none), the PublishEventRequest for pubSub, the State for state get and"
+                                                 + " save, a List of State for getBulk and the request for the other state"
+                                                 + " operations, a Map for secret and configuration, true or false for tryLock"
+                                                 + " and the UnlockResponseStatus for unlock. For workflow the"
+                                                 + " NewWorkflowOptions for scheduleNew, the WorkflowState for state and the"
+                                                 + " waits, unchanged for terminate and raiseEvent, and null otherwise"))
 public class DaprEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DaprEndpoint.class);

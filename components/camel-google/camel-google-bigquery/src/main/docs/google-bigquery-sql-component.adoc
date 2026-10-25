@@ -221,22 +221,23 @@ Returns an `Iterator<Map<String, Object>>` for memory-efficient streaming of lar
 
 == Data Type Mapping
 
-BigQuery result types are mapped to Java types:
+BigQuery result types are mapped to Java types. The values of the scalar types are the text
+BigQuery returns for them, as a `String`: convert them where you need a number or a boolean.
 
 [cols="1,1,3"]
 |===
 |BigQuery Type|Java Type|Notes
 
 |INT64
-|Long
-|
+|String
+|For example `"42"`
 
 |FLOAT64
-|Double
-|
+|String
+|For example `"1.5"`
 
-|NUMERIC
-|BigDecimal
+|NUMERIC, BIGNUMERIC
+|String
 |
 
 |STRING
@@ -244,28 +245,20 @@ BigQuery result types are mapped to Java types:
 |
 
 |BOOL
-|Boolean
-|
+|String
+|`"true"` or `"false"`
 
 |BYTES
-|byte[]
-|
-
-|DATE
 |String
-|ISO 8601 format
+|Base64 encoded
 
-|DATETIME
-|String
-|ISO 8601 format
-
-|TIME
+|DATE, DATETIME, TIME
 |String
 |ISO 8601 format
 
 |TIMESTAMP
 |String
-|ISO 8601 format with timezone
+|The text BigQuery returns, such as the seconds since the epoch
 
 |STRUCT (RECORD)
 |Map<String, Object>
@@ -276,7 +269,7 @@ BigQuery result types are mapped to Java types:
 |Elements recursively converted based on their type
 
 |RANGE
-|Map<String, Object>
+|Map<String, String>
 |Map with range start and end values
 
 |NULL

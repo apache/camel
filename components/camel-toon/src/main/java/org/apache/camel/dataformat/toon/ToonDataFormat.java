@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.toon;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -33,6 +34,7 @@ import dev.toonformat.jtoon.PathExpansion;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -51,9 +53,11 @@ import org.apache.camel.util.IOHelper;
  */
 @Dataformat("toon")
 @Metadata(firstVersion = "4.23.0", title = "TOON")
-@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
-                                 description = "A Map, a List, a POJO or a value to write as TOON. A String must be JSON text;"
-                                               + " bytes, a stream or a file are not read as text"),
+@BodyTypes(marshalIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP,
+        Carrier.LIST, Carrier.POJO },
+                                 description = "A Map, a List, a POJO or a value to write as TOON. A String, bytes, a stream or"
+                                               + " a file must be JSON text, read in the charset of the exchange"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
                                   description = "The TOON in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
@@ -102,6 +106,12 @@ public class ToonDataFormat extends ServiceSupport
         if (graph instanceof String json) {
             // String bodies are JSON documents (JSON-to-TOON), not TOON string scalars.
             // JToon.encodeJson rejects non-JSON text such as "hello world".
+            toon = JToon.encodeJson(json, options);
+        } else if (graph instanceof byte[] || graph instanceof InputStream || graph instanceof File
+                || graph instanceof WrappedFile) {
+            // bytes, a stream or a file hold JSON text as a String does (read in the charset of the exchange),
+            // which JToon.encode would write as an array of numbers, nothing or the path of the file
+            String json = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, graph);
             toon = JToon.encodeJson(json, options);
         } else {
             toon = JToon.encode(graph, options);

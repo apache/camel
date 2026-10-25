@@ -29,6 +29,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,6 +47,10 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-calendar-stream:index",
              consumerOnly = true,
              category = { Category.CLOUD }, headersClass = GoogleCalendarStreamConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.google.api.services.calendar.model.Event",
+                                   description = "One message per event of the calendar that is new or changed since the"
+                                                 + " last poll, with its id in the CamelGoogleCalendarEventId header. The"
+                                                 + " Event is a GenericJson, which is also a Map of the JSON fields"))
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam

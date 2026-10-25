@@ -35,6 +35,7 @@ import net.sf.flatpack.writer.DelimiterWriterFactory;
 import net.sf.flatpack.writer.FixedWriterFactory;
 import net.sf.flatpack.writer.Writer;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.flatpack.DataSetList;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -54,18 +55,18 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This data format supports two operations:
  * <ul>
- * <li>marshal = from <tt>List&lt;Map&lt;String, Object&gt;&gt;</tt> to <tt>OutputStream</tt> (can be converted to
- * String)</li>
+ * <li>marshal = from <tt>List&lt;Map&lt;String, Object&gt;&gt;</tt>, or a single <tt>Map&lt;String, Object&gt;</tt> as
+ * one row, to <tt>OutputStream</tt> (can be converted to String)</li>
  * <li>unmarshal = from <tt>InputStream</tt> (such as a File) to
  * {@link org.apache.camel.component.flatpack.DataSetList}.
  * </ul>
  * <b>Notice:</b> The Flatpack library does currently not support header and trailers for the marshal operation.
  */
 @Dataformat("flatpack")
-@BodyTypes(marshalIn = @BodyType(value = Carrier.LIST,
-                                 description = "The rows as a List of Maps, such as the DataSetList unmarshal gives; a single"
-                                               + " Map fails. Without a definition, the keys of the first Map name the"
-                                               + " columns"),
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.LIST, Carrier.MAP },
+                                 description = "The rows as a List of Maps, such as the DataSetList unmarshal gives, or a single"
+                                               + " Map as one row. Other bodies fail. Without a definition, the keys of the"
+                                               + " first Map name the columns"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
                                   description = "The records in the stream cache, or a byte array when stream caching is off."
                                                 + " An empty List writes nothing"),
@@ -86,26 +87,36 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
 
     @Override
     public String getDataFormatName() {
-        return "flatback";
+        return "flatpack";
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         ObjectHelper.notNull(graph, "The object to marshal must be provided");
 
-        List<Map<String, Object>> data = (List<Map<String, Object>>) graph;
+        List<?> data;
+        if (graph instanceof Map) {
+            // a single map is one row
+            data = List.of(graph);
+        } else if (graph instanceof List<?> list) {
+            data = list;
+        } else {
+            throw new InvalidPayloadException(
+                    exchange, List.class, exchange.getIn(), "flatpack marshals a List of Maps, or a single Map as one row");
+        }
         if (data.isEmpty()) {
             LOG.warn("No data to marshal as the list is empty");
             return;
         }
-        Map<String, Object> firstRow = data.get(0);
+        Map<String, Object> firstRow = asRow(exchange, data.get(0), 0);
 
         Writer writer = createWriter(exchange, firstRow, stream);
         try {
             // the header line comes from the column names, every map of the list is a data row
             writer.printHeader();
-            for (Map<String, Object> row : data) {
+            int index = 0;
+            for (Object element : data) {
+                Map<String, Object> row = asRow(exchange, element, index++);
                 for (Entry<String, Object> entry : row.entrySet()) {
                     writer.addRecordEntry(entry.getKey(), entry.getValue());
                 }
@@ -116,6 +127,18 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
             writer.flush();
             writer.close();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> asRow(Exchange exchange, Object element, int index)
+            throws InvalidPayloadException {
+        if (element instanceof Map) {
+            return (Map<String, Object>) element;
+        }
+        throw new InvalidPayloadException(
+                exchange, List.class, exchange.getIn(),
+                "every element of the List must be a Map, but element " + index + " is "
+                                                        + (element == null ? "null" : element.getClass().getName()));
     }
 
     @Override

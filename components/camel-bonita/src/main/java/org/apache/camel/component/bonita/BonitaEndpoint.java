@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.bonita.exception.BonitaException;
 import org.apache.camel.component.bonita.producer.BonitaStartProducer;
 import org.apache.camel.component.bonita.util.BonitaOperation;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,14 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true,
              category = { Category.WORKFLOW })
+@BodyTypes(producerIn = @BodyType(value = Carrier.MAP,
+                                  description = "The contract inputs of the process: a Map of the input names and their"
+                                                + " Serializable values, a FileInput for a file to upload. Any other body,"
+                                                + " also JSON text, fails as no contract input: unmarshal it to a Map first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The Map of the inputs, in which each FileInput is replaced by a Map of its"
+                                                 + " filename and the tempPath of the upload. The id of the case started is"
+                                                 + " not kept"))
 public class BonitaEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

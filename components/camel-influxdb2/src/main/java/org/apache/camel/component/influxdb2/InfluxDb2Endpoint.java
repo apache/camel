@@ -30,6 +30,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.influxdb2.enums.Operation;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -45,6 +48,20 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "3.20.0", scheme = "influxdb2", title = "InfluxDB2",
              syntax = "influxdb2:connectionBean", category = { Category.DATABASE },
              producerOnly = true, headersClass = InfluxDb2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.MAP },
+                                  byOption = @BodyType.When(option = "operation", value = "PING", carriers = Carrier.ANY),
+                                  description = "A com.influxdb.client.write.Point, or the Measurement, Record, Points,"
+                                                + " Measurements or Records wrappers of the component (package"
+                                                + " org.apache.camel.component.influxdb2.data), or a Map of the field names"
+                                                + " and their values with the measurement name under the"
+                                                + " CamelInfluxDB2MeasurementName key. Text, a List or an annotated class"
+                                                + " that is not wrapped fail: wrap a line protocol String in a Record and"
+                                                + " an annotated object in a Measurement. Ping does not read the body"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "operation", value = "PING", carriers = Carrier.VALUE,
+                                                             javaType = "java.lang.Boolean"),
+                                   description = "An insert leaves the body unchanged; ping gives a Boolean, true when the"
+                                                 + " server answered"))
 public class InfluxDb2Endpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDb2Endpoint.class);
 
