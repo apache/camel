@@ -348,7 +348,8 @@ final class RouteDiagramZoom {
                 lr = layout(engine, d, happy);
             }
             if (showErrors) {
-                RouteErrorFrame frame = DiagramSupport.errorFrame(engine, lr, split.blocks(), r.routeId, errorPaths);
+                RouteErrorFrame frame = addErrorFrame(engine, d, lr, split.blocks(),
+                        RouteErrorFrame.lines(r.routeId, errorPaths, TopologyErrorFrame.LineStyle.UNICODE));
                 if (frame != null) {
                     frames.put(r.routeId, frame);
                 }
@@ -359,6 +360,33 @@ final class RouteDiagramZoom {
             answer.put(r.routeId, lr);
         }
         return answer;
+    }
+
+    /**
+     * The error handling of a route in a frame below its steps, as {@link RouteErrorFrame#add} lays it out: the lines
+     * of the route, then its onException blocks under one another, each on the rows of the density, so the frame zooms
+     * with the route.
+     */
+    private static RouteErrorFrame addErrorFrame(
+            RouteDiagramLayoutEngine engine, RouteDensity density, LayoutRoute lr, List<RouteInfo> blocks,
+            List<String> lines) {
+        if (blocks.isEmpty() && lines.isEmpty()) {
+            return null;
+        }
+        int row = RouteDensity.ROW;
+        int top = lr.maxY + 2 * row;
+        int y = top + (lines.size() + 1) * row;
+        for (RouteInfo block : blocks) {
+            LayoutRoute b = engine.layoutRoute(block, y);
+            density.apply(b);
+            lr.nodes.addAll(b.nodes);
+            lr.maxX = Math.max(lr.maxX, b.maxX);
+            y = b.maxY + 2 * row;
+        }
+        RouteErrorFrame frame = new RouteErrorFrame(top, y, lines);
+        lr.maxY = y + row;
+        lr.errorFrame = frame;
+        return frame;
     }
 
     private static RouteDiagramLayoutEngine engine(

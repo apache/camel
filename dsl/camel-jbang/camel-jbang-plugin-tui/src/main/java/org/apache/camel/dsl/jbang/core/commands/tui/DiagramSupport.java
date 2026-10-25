@@ -989,13 +989,6 @@ class DiagramSupport {
     }
 
     /** The error frame of a route in the route view: its onException blocks, where its failures go and come from. */
-    static RouteErrorFrame errorFrame(
-            RouteDiagramLayoutEngine engine, RouteDiagramLayoutEngine.LayoutRoute lr,
-            List<RouteDiagramLayoutEngine.RouteInfo> blocks, String routeId, List<TopologyErrorFrame.ErrorPath> paths) {
-        return RouteErrorFrame.add(engine, lr, blocks,
-                RouteErrorFrame.lines(routeId, paths, TopologyErrorFrame.LineStyle.UNICODE), TopologyAsciiRenderer.ROW_HEIGHT);
-    }
-
     /** Leaves out the hidden routes, the links to and from them, and external systems only they used. */
     static void removeRoutes(List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges, Set<String> hidden) {
         if (hidden.isEmpty()) {
