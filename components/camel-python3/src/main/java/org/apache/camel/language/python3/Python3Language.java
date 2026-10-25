@@ -79,6 +79,7 @@ import org.graalvm.polyglot.Value;
                                                   + " indexed, and other Java objects have no methods unless the language is"
                                                   + " created with createWithHostAccess()"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     javaTypeOption = "resultType",
                                      description = "What the script returns: a dict as a Map, a list or a tuple as a List, a set"
                                                    + " as a Set, bytes as bytes, and None as null. A function fails"))
 public class Python3Language extends TypedLanguageSupport implements ScriptingLanguage, Service {

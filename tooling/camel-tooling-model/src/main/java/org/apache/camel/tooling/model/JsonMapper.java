@@ -728,6 +728,7 @@ public final class JsonMapper {
                 }
             }
             bodyType.setFrom(side.getString("from"));
+            bodyType.setJavaTypeOption(side.getString("javaTypeOption"));
             bodyType.setDescription(side.getString("description"));
             answer.put(entry.getKey(), bodyType);
         }
@@ -749,7 +750,7 @@ public final class JsonMapper {
     /**
      * The body types of a component, data format, language or EIP as the catalog has them: an object per side, with the
      * carriers, the Java type, the format, the options it depends on, the body for other option values, the side of
-     * another model the body comes from and the description (CAMEL-24961).
+     * another model the body comes from, the option that names its Java type and the description (CAMEL-24961).
      */
     public static JsonObject asJsonObjectBodyTypes(Map<String, BodyTypeModel> bodyTypes) {
         JsonObject json = new JsonObject();
@@ -778,6 +779,7 @@ public final class JsonMapper {
                 side.put("byOption", byOption);
             }
             side.put("from", bodyType.getFrom());
+            side.put("javaTypeOption", bodyType.getJavaTypeOption());
             side.put("description", bodyType.getDescription());
             side.entrySet().removeIf(e -> e.getValue() == null);
             json.put(entry.getKey(), side);

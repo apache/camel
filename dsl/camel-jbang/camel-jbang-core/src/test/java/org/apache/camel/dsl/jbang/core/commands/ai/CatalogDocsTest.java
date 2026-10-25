@@ -158,7 +158,12 @@ class CatalogDocsTest {
         // a language: what its expressions read, and their result
         JsonObject xpath = catalogDoc(Map.of("name", "xpath", "kind", "language", "includeOptions", false));
         assertTrue(((JsonObject) xpath.get("bodyTypes")).getString("expressionOut")
-                .startsWith("pojo (org.w3c.dom.NodeList). The nodes the expression selects. With resultQName=STRING: text"));
+                .startsWith("pojo (org.w3c.dom.NodeList). The nodes the expression selects. With resultType set: an object"
+                            + " of the class it names, or null. With resultQName=STRING: text"));
+        // CAMEL-25928: the option that names the class of the body
+        JsonObject simple = catalogDoc(Map.of("name", "simple", "kind", "language", "includeOptions", false));
+        assertTrue(((JsonObject) simple.get("bodyTypes")).getString("expressionOut")
+                .endsWith(". With resultType set: an object of the class it names, or null"));
 
         // an EIP: the body after it, the body its steps start with, and the side of another model it comes from
         JsonObject split = catalogDoc(Map.of("name", "split", "kind", "eip", "includeOptions", false));
@@ -170,6 +175,9 @@ class CatalogDocsTest {
         JsonObject marshal = catalogDoc(Map.of("name", "marshal", "kind", "eip", "includeOptions", false));
         assertTrue(((JsonObject) marshal.get("bodyTypes")).getString("eipOut")
                 .startsWith("what its data format marshals to. "));
+        JsonObject convertBodyTo = catalogDoc(Map.of("name", "convertBodyTo", "kind", "eip", "includeOptions", false));
+        assertTrue(((JsonObject) convertBodyTo.get("bodyTypes")).getString("eipOut")
+                .endsWith(". With type set: an object of the class it names, or null"));
 
         // a model that does not declare them, such as the batch settings of resequence, has none, rather than a guess
         JsonObject batchConfig = catalogDoc(Map.of("name", "batchConfig", "kind", "eip", "includeOptions", false));

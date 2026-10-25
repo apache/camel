@@ -46,7 +46,8 @@ import org.apache.camel.util.ObjectHelper;
                                                   + " in the charset of MSH-18, a HAPI Message, or a DOM of HL7 XML. Another"
                                                   + " body fails"),
            expressionOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String",
-                                     dependsOn = "resultType",
+
+                                     javaTypeOption = "resultType",
                                      description = "The value of the field as text, null when the field is empty"))
 public class Hl7TerserLanguage extends SingleInputTypedLanguageSupport {
 

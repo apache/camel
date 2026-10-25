@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
 
 @Language("groovy")
 @BodyTypes(expressionIn = @BodyType(value = Carrier.ANY, description = "The body as it is, in the variable body"),
-           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the script returns"))
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, javaTypeOption = "resultType",
+                                     description = "What the script returns"))
 public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroovyLanguage.class);

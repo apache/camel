@@ -38,6 +38,8 @@ import org.apache.camel.Route;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.language.constant.ConstantLanguage;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.CacheDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -81,6 +83,7 @@ import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -90,6 +93,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.Builder.body;
 import static org.apache.camel.builder.Builder.constant;
+import static org.apache.camel.builder.Builder.simple;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -217,13 +221,23 @@ public class EipBodyTypesTest extends ContextTestSupport {
     }
 
     @Test
-    public void convertBodyToByType() throws Exception {
-        Exchange out = run(r -> r.convertBodyTo(String.class), 5);
-        assertByOption(ConvertBodyDefinition.class, "type", "java.lang.String", null, out.getMessage().getBody());
-        out = run(r -> r.convertBodyTo(byte[].class), "Hello");
-        assertByOption(ConvertBodyDefinition.class, "type", "byte[]", null, out.getMessage().getBody());
-        out = run(r -> r.convertBodyTo(List.class), new Object[] { "a" });
-        assertByOption(ConvertBodyDefinition.class, "type", "java.util.List", null, out.getMessage().getBody());
+    public void convertBodyToTheTypeOption() throws Exception {
+        assertEquals("type", bodyTypes(ConvertBodyDefinition.class).eipOut().javaTypeOption());
+        assertJavaType(run(r -> r.convertBodyTo(String.class), 5), String.class);
+        assertJavaType(run(r -> r.convertBodyTo(byte[].class), "Hello"), byte[].class);
+        assertJavaType(run(r -> r.convertBodyTo(List.class), new Object[] { "a" }), List.class);
+    }
+
+    @Test
+    public void theResultTypeOfTheLanguage() throws Exception {
+        // setBody and transform leave what their language gives, which is of the class its resultType names
+        assertEquals("resultType", bodyTypes(SimpleLanguage.class).expressionOut().javaTypeOption());
+        assertJavaType(run(r -> r.setBody(simple("${body}", Integer.class)), "5"), Integer.class);
+        assertJavaType(run(r -> r.transform(simple("${body}", byte[].class)), "Hello"), byte[].class);
+        assertEquals("resultType", bodyTypes(ConstantLanguage.class).expressionOut().javaTypeOption());
+        ConstantExpression five = new ConstantExpression("5");
+        five.setResultType(Long.class);
+        assertJavaType(run(r -> r.setBody(five), new Order()), Long.class);
     }
 
     // the checks of a side
@@ -279,6 +293,12 @@ public class EipBodyTypesTest extends ContextTestSupport {
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    private static void assertJavaType(Exchange out, Class<?> type) {
+        Object body = out.getMessage().getBody();
+        assertTrue(type.isInstance(body),
+                "the body is not a " + type.getName() + ", but " + (body != null ? body.getClass().getName() : null));
     }
 
     private static void assertFrom(Class<?> model, String side) {

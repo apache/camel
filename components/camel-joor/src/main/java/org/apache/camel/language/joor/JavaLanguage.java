@@ -43,7 +43,8 @@ import org.slf4j.LoggerFactory;
 @BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
                                     description = "The body as it is, in the variable body of type Object: bodyAs(type)"
                                                   + " converts it"),
-           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the script returns"))
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, javaTypeOption = "resultType",
+                                     description = "What the script returns"))
 public class JavaLanguage extends TypedLanguageSupport implements ScriptingLanguage, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaLanguage.class);

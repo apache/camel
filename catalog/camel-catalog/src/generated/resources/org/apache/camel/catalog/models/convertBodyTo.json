@@ -21,6 +21,6 @@
     "charset": { "index": 6, "kind": "attribute", "displayName": "Charset", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a specific charset when converting." }
   },
   "bodyTypes": {
-    "eipOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "type", "value": "String", "carriers": [ "text" ], "javaType": "java.lang.String" }, { "option": "type", "value": "java.lang.String", "carriers": [ "text" ], "javaType": "java.lang.String" }, { "option": "type", "value": "byte[]", "carriers": [ "bytes" ], "javaType": "byte[]" }, { "option": "type", "value": "java.io.InputStream", "carriers": [ "stream" ], "javaType": "java.io.InputStream" }, { "option": "type", "value": "java.util.Map", "carriers": [ "map" ], "javaType": "java.util.Map" }, { "option": "type", "value": "java.util.List", "carriers": [ "list" ], "javaType": "java.util.List" } ], "description": "An object of the type the type option names; null when there is no conversion and mandatory is false" }
+    "eipOut": { "carriers": [ "unknown" ], "javaTypeOption": "type", "description": "An object of the type the type option names; null when there is no conversion and mandatory is false" }
   }
 }

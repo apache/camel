@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 @Language(value = "simple", functionsClass = SimpleConstants.class, operatorsClass = SimpleOperatorConstants.class)
 @BodyTypes(expressionIn = @BodyType(Carrier.ANY),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     javaTypeOption = "resultType",
                                      description = "A text with functions gives text. A single function, such as ${body} or"
                                                    + " ${header.foo}, gives its value as it is"))
 public class SimpleLanguage extends LanguageSupport implements StaticService {

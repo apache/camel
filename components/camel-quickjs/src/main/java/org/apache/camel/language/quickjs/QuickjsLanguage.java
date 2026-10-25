@@ -64,7 +64,8 @@ import run.endive.runtime.Memory;
                                     description = "A JSON copy of the body, in the variable body: bytes as Base64 text, and a"
                                                   + " POJO through Jackson. A stream fails: convert it to text first"),
            expressionOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.NULL },
-                                     dependsOn = "resultType",
+
+                                     javaTypeOption = "resultType",
                                      description = "The JSON value the script returns: an object or a Map as a Map, an array, a"
                                                    + " Set or a typed array as a List, a Date as its ISO text, and undefined, NaN"
                                                    + " or a function as null"))

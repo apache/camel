@@ -197,6 +197,45 @@ class JsonMapperTest {
     }
 
     @Test
+    void testShouldReadAndWriteJavaTypeOption() {
+        // CAMEL-25928: the option that names the Java type of the body, such as resultType of a language
+        LanguageModel model = new LanguageModel();
+        model.setName("simple");
+        BodyTypeModel out = new BodyTypeModel();
+        out.setCarriers(List.of("unknown"));
+        out.setJavaTypeOption("resultType");
+        model.getBodyTypes().put(BodyTypeModel.EXPRESSION_OUT, out);
+
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"javaTypeOption\": \"resultType\""), json);
+        BodyTypeModel out2 = JsonMapper.generateLanguageModel(json).getBodyType(BodyTypeModel.EXPRESSION_OUT);
+        assertEquals("resultType", out2.getJavaTypeOption());
+        assertTrue(out2.isUnknown());
+        assertEquals("unknown (javaTypeOption:resultType)", out2.toString());
+    }
+
+    @Test
+    void testCarrierOfJavaType() {
+        // CAMEL-25928: the carrier of the class a type option names, in the names Camel takes
+        assertEquals("text", BodyTypeModel.carrierOf("String"));
+        assertEquals("text", BodyTypeModel.carrierOf("java.lang.String"));
+        assertEquals("bytes", BodyTypeModel.carrierOf("byte[]"));
+        assertEquals("stream", BodyTypeModel.carrierOf("java.io.InputStream"));
+        assertEquals("file", BodyTypeModel.carrierOf("java.io.File"));
+        assertEquals("value", BodyTypeModel.carrierOf("int"));
+        assertEquals("value", BodyTypeModel.carrierOf("Integer"));
+        assertEquals("value", BodyTypeModel.carrierOf("java.math.BigDecimal"));
+        assertEquals("map", BodyTypeModel.carrierOf("java.util.Map<String, Object>"));
+        assertEquals("list", BodyTypeModel.carrierOf("java.util.List"));
+        assertEquals("list", BodyTypeModel.carrierOf("java.util.Set"));
+        assertEquals("list", BodyTypeModel.carrierOf("String[]"));
+        assertEquals("iterator", BodyTypeModel.carrierOf("java.util.Iterator"));
+        assertEquals("pojo", BodyTypeModel.carrierOf("org.w3c.dom.Document"));
+        assertEquals("pojo", BodyTypeModel.carrierOf("com.foo.Order"));
+        assertEquals("unknown", BodyTypeModel.carrierOf(null));
+    }
+
+    @Test
     void testShouldWriteBodyTypesOnlyWhenSet() {
         // CAMEL-24961: the body a step needs and the body it leaves
         ComponentModel model = new ComponentModel();

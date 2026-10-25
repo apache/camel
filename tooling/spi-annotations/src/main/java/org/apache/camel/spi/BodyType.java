@@ -74,6 +74,16 @@ public @interface BodyType {
     String from() default "";
 
     /**
+     * The option that names the Java type of the body, such as {@code resultType} of a language, whose result is
+     * converted to the class the option names. When the option is set, the body is of that class, or null when it does
+     * not convert, and the carriers say the body when it is not set. The carrier follows the class: String is text,
+     * byte[] bytes, an InputStream or a Reader a stream, a File or a Path a file, a number, a boolean or a character a
+     * value, a Map map, a List, a Set, another Collection or an array list, an Iterator iterator, and any other class
+     * pojo.
+     */
+    String javaTypeOption() default "";
+
+    /**
      * What to know about the body, in a sentence for the documentation and the tools.
      */
     String description() default "";
