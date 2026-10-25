@@ -22,6 +22,7 @@ import java.util.Date;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimeUtilsTest {
@@ -111,5 +112,23 @@ public class TimeUtilsTest {
         long taken = System.currentTimeMillis() - startTime.getTime();
         assertTrue(taken >= 1000, "Elapsed time should be equal to or greater than 1000 ms but was " + taken);
         assertTrue(taken < 1500, "Elapsed time should be smaller than 1500 ms but was " + taken);
+    }
+
+    @Test
+    void isPositiveIsFalseForNegativeDurationsWithANanosPart() {
+        // stored as seconds = -1 and nanos = 999999999
+        assertFalse(TimeUtils.isPositive(Duration.ofNanos(-1)));
+        assertFalse(TimeUtils.isPositive(Duration.ofNanos(-999_999_999)));
+        assertFalse(TimeUtils.isPositive(Duration.ofNanos(-1_000_000_001)));
+        assertFalse(TimeUtils.isPositive(Duration.ofMillis(-1500)));
+    }
+
+    @Test
+    void isPositiveForZeroPositiveAndWholeNegativeDurations() {
+        assertFalse(TimeUtils.isPositive(Duration.ZERO));
+        assertFalse(TimeUtils.isPositive(Duration.ofSeconds(-1)));
+        assertTrue(TimeUtils.isPositive(Duration.ofNanos(1)));
+        assertTrue(TimeUtils.isPositive(Duration.ofSeconds(1)));
+        assertTrue(TimeUtils.isPositive(Duration.ofMillis(1500)));
     }
 }

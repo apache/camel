@@ -31,6 +31,8 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
     private final Predicate<T> filter;
     private T next;
     private boolean closed;
+    // true while the last element returned by next() is the last element taken from the underlying iterator
+    private boolean canRemove;
 
     public FilterIterator(Iterator<T> it) {
         this(it, null);
@@ -55,6 +57,8 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
     @Override
     public boolean hasNext() {
         if (next == null) {
+            // looking ahead advances the underlying iterator past the element returned by next()
+            canRemove = false;
             next = checkNext();
         }
         return next != null;
@@ -68,13 +72,25 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
         if (next != null) {
             T ep = next;
             next = null;
+            canRemove = true;
             return ep;
         }
         throw new NoSuchElementException();
     }
 
+    /**
+     * Removes the last element returned by {@link #next()} from the underlying iterator.
+     *
+     * @throws IllegalStateException if {@link #next()} has not been called, {@link #remove()} has already been called
+     *                               after the last call to {@link #next()}, or {@link #hasNext()} has been called after
+     *                               it (the look-ahead has advanced the underlying iterator past that element)
+     */
     @Override
     public void remove() {
+        if (!canRemove) {
+            throw new IllegalStateException("remove() is only supported directly after next()");
+        }
+        canRemove = false;
         it.remove();
     }
 
