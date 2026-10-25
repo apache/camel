@@ -220,6 +220,7 @@ class JsonMapperTest {
         assertEquals("text", BodyTypeModel.carrierOf("String"));
         assertEquals("text", BodyTypeModel.carrierOf("java.lang.String"));
         assertEquals("bytes", BodyTypeModel.carrierOf("byte[]"));
+        assertEquals("bytes", BodyTypeModel.carrierOf("java.lang.byte[]"));
         assertEquals("stream", BodyTypeModel.carrierOf("java.io.InputStream"));
         assertEquals("file", BodyTypeModel.carrierOf("java.io.File"));
         assertEquals("value", BodyTypeModel.carrierOf("int"));

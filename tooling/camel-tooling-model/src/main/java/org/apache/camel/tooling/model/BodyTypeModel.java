@@ -197,6 +197,7 @@ public class BodyTypeModel {
         for (String name : List.of("String", "java.lang.String", "java.lang.CharSequence", "java.lang.StringBuilder")) {
             answer.put(name, "text");
         }
+        // java.lang.byte[] is a name Camel accepts for byte[] (ObjectHelper.loadSimpleType), as in convertBodyTo
         for (String name : List.of("byte[]", "java.lang.byte[]")) {
             answer.put(name, "bytes");
         }
