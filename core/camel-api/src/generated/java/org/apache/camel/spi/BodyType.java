@@ -59,7 +59,7 @@ public @interface BodyType {
     String[] dependsOn() default {};
 
     /**
-     * The body for other values of an option, such as {@code output=bytes}.
+     * The body for other values of an option, such as {@code output=bytes}, or for any value of it.
      */
     When[] byOption() default {};
 
@@ -103,7 +103,9 @@ public @interface BodyType {
         String option();
 
         /**
-         * The value of the option.
+         * The value of the option. {@code *} is any value: the body when the option is set at all, such as
+         * {@code variableReceive}, whose reply goes into the variable and leaves the body as it was. Such a body holds
+         * whatever the other options and {@link BodyType#from()} say.
          */
         String value();
 

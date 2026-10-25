@@ -224,8 +224,10 @@ final class TextBodyFlow {
             String uri = endpointOf(from);
             String consumer = scheme(uri);
             boolean post = NO_HTTP_HEADERS.contains(consumer) && !setsHttpHeaders(steps);
-            Body start = uri != null ? consumerBody(uri, from, bodyTypes) : null;
-            if (start == null && uri != null) {
+            // with variableReceive the message goes into the variable, and the route starts with no body
+            boolean variable = bodyTypes.startsWithNoBody(from);
+            Body start = uri != null && !variable ? consumerBody(uri, from, bodyTypes) : null;
+            if (start == null && uri != null && !variable) {
                 // what the consumer gave in a running integration of the route
                 start = observed(observed, ProjectFacts.consumerKey(uri), "from: " + normalize(uri) + " gave");
             }
@@ -388,6 +390,10 @@ final class TextBodyFlow {
 
     /** What is known about the body after a step. */
     private static Body after(String name, JsonNode value, Body body, Walk w) {
+        if (w.bodyTypes().keepsTheBody(name, value)) {
+            // log, setHeader, and a to or an unmarshal whose result goes into a variable (variableReceive)
+            return body;
+        }
         switch (name) {
             case "setBody", "transform" -> {
                 Text text = setBodyText(value);
@@ -436,7 +442,7 @@ final class TextBodyFlow {
                 return returned;
             }
             default -> {
-                return w.bodyTypes().keepsTheBody(name, value) ? body : null;
+                return null;
             }
         }
     }
@@ -675,7 +681,8 @@ final class TextBodyFlow {
      * producer sends the body, and a REST binding may write it for rest-openapi: they keep their own rule.
      */
     private static Need needsText(String name, JsonNode value, Walk w) {
-        if (!"to".equals(name) && !"toD".equals(name)) {
+        if (!"to".equals(name) && !"toD".equals(name) || w.bodyTypes().needsNoBody(name, value)) {
+            // with variableSend the variable is sent, not the body
             return null;
         }
         String uri = endpointOf(value);

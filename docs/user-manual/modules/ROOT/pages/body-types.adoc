@@ -203,9 +203,15 @@ instead of copying the body types of every data format, component and language:
 
 [source,json]
 ----
-"eipOut": { "from": "marshalOut", "dependsOn": [ "variableReceive" ],
+"eipOut": { "from": "marshalOut",
+  "byOption": [ { "option": "variableReceive", "value": "*", "carriers": [ "unchanged" ] } ],
   "description": "What the data format writes. With variableReceive the result goes into the variable, and the body stays as it was" }
 ----
+
+The value `*` is any value of the option: with `variableReceive` set to any name, the body stays as it was, whatever
+the data format writes. In the same way, with `variableSend` a step sends the variable instead of the body, and does
+not need the body (`any`). A route starts with the body of the consumer of its `from` endpoint, and with no body (`null`) when
+`from` has `variableReceive`.
 
 An EIP with steps of its own also says what they start with. The steps of a `split` start with each part, and after
 it the body is as it was before the split:
@@ -357,7 +363,7 @@ for a side with `from`.
 | `dependsOn` | array of strings | The options the body depends on. The side holds while they keep their default values.
 When the step sets one, only a `byOption` entry for that value says the body; without one it is not known.
 | `byOption` | array of objects | The body for a value of an option: `option`, `value`, `carriers`, and optionally
-`javaType` and `javaTypeOption`.
+`javaType` and `javaTypeOption`. The value `*` is any value: the body when the step sets the option at all.
 | `javaTypeOption` | string | The option that names the class of the body, such as `resultType`. When the step sets
 it, the body is an object of that class, or null.
 | `from` | string | For an EIP, the side of another model the body is: `expressionIn`, `expressionOut` (the language
@@ -372,6 +378,9 @@ steps end with).
 To know the body a step leaves, or the bodies it needs, read its side with the options the step sets, in this order:
 
 . *No side:* not known.
+. *A `byOption` entry for any value (`*`) whose option the step sets:* its carriers, whatever the rest of the side
+says, `from` and `dependsOn` too. When two of them say different bodies: not known. When the step does not set the
+option, but it can be set elsewhere: not known.
 . *A side with `from`:* when the step sets an option of `dependsOn`, not known. Otherwise, read the side `from` names on
 the model the step uses (the language of its expression, its data format or its endpoint), with the options of that
 model. `steps` is the body the steps of the EIP end with.

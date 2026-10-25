@@ -129,6 +129,10 @@ final class BodyTypeFlow {
         if (scheme == null) {
             return false;
         }
+        // with variableReceive the message goes into the variable, and the route starts with no body
+        if (bodyTypes.startsWithNoBody(from(route.node()))) {
+            return true;
+        }
         // a consumer that produces no body of its own, as the catalog says: timer, cron, scheduler, quartz
         CatalogBodyTypes.Answer out = bodyTypes.consumerOut(route.fromUri(), from(route.node()));
         if (out != null && out.none()) {
@@ -198,7 +202,7 @@ final class BodyTypeFlow {
             return null;
         }
         for (JsonNode step : steps) {
-            String reader = readsTheBody(step);
+            String reader = readsTheBody(step, bodyTypes);
             boolean produces = producesTheBody(step, bodyTypes);
             if (reader != null && !produces) {
                 return reader;
@@ -222,11 +226,14 @@ final class BodyTypeFlow {
         return it.hasNext() ? it.next() : "";
     }
 
-    /** What reads the body in this step: an expression language, or the step itself. Null when nothing does. */
-    private static String readsTheBody(JsonNode step) {
+    /**
+     * What reads the body in this step: an expression language, or the step itself, unless it works on a variable
+     * (variableSend). Null when nothing does.
+     */
+    private static String readsTheBody(JsonNode step, CatalogBodyTypes bodyTypes) {
         for (var it = step.fieldNames(); it.hasNext();) {
             String name = it.next();
-            if (STEPS_THAT_NEED_THE_BODY.contains(name)) {
+            if (STEPS_THAT_NEED_THE_BODY.contains(name) && !bodyTypes.needsNoBody(name, step.get(name))) {
                 return name;
             }
             String reader = readerIn(step.get(name));
@@ -258,7 +265,8 @@ final class BodyTypeFlow {
         }
         for (var it = node.fieldNames(); it.hasNext();) {
             String name = it.next();
-            if (bodyTypes.isEip(name) && bodyTypes.maySetTheBody(name)) {
+            if (bodyTypes.isEip(name) && bodyTypes.maySetTheBody(name)
+                    && !bodyTypes.keepsTheBody(name, node.get(name))) {
                 return true;
             }
             if (producesTheBody(node.get(name), bodyTypes)) {

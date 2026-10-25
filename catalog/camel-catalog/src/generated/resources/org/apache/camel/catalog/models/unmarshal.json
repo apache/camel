@@ -23,7 +23,7 @@
     "allowNullBody": { "index": 7, "kind": "attribute", "displayName": "Allow Null Body", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Indicates whether null is allowed as value of a body to unmarshall." }
   },
   "bodyTypes": {
-    "eipIn": { "dependsOn": [ "variableSend" ], "from": "unmarshalIn" },
-    "eipOut": { "dependsOn": [ "variableReceive" ], "from": "unmarshalOut", "description": "What the data format reads. With variableReceive the result goes into the variable, and the body stays as it was" }
+    "eipIn": { "byOption": [ { "option": "variableSend", "value": "*", "carriers": [ "any" ] } ], "from": "unmarshalIn", "description": "With variableSend the variable is sent, and the body is not read" },
+    "eipOut": { "byOption": [ { "option": "variableReceive", "value": "*", "carriers": [ "unchanged" ] } ], "from": "unmarshalOut", "description": "What the data format reads. With variableReceive the result goes into the variable, and the body stays as it was" }
   }
 }

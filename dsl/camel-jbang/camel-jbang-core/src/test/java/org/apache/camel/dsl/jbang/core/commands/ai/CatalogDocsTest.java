@@ -199,6 +199,21 @@ class CatalogDocsTest {
     }
 
     @Test
+    void aBodyForAnyValueOfAnOption() {
+        // CAMEL-25928: with variableReceive set, the body stays as it was, whatever the value
+        BodyTypeModel side = new BodyTypeModel();
+        side.setFrom(BodyTypeModel.PRODUCER_OUT);
+        BodyTypeModel.OptionBodyTypeModel variable = new BodyTypeModel.OptionBodyTypeModel();
+        variable.setOption("variableReceive");
+        variable.setValue(BodyTypeModel.ANY_VALUE);
+        variable.setCarriers(List.of("unchanged"));
+        side.getByOption().add(variable);
+        JsonObject lines = CatalogDocs.bodyTypes(Map.of(BodyTypeModel.EIP_OUT, side));
+        assertEquals("what the producer of its endpoint leaves. With variableReceive set: unchanged",
+                lines.getString(BodyTypeModel.EIP_OUT));
+    }
+
+    @Test
     void anOptionValueCanNameTheClassOfTheBody() throws Exception {
         // CAMEL-25928: the class of the one row of sql with outputType=SelectOne
         JsonObject sql = catalogDoc(Map.of("name", "sql", "kind", "component", "includeOptions", false));

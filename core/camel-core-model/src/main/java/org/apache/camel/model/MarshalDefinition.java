@@ -74,6 +74,7 @@ import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -87,9 +88,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 @BodyTypes(eipIn = @BodyType(from = "marshalIn",
-                             dependsOn = "variableSend"),
+                             byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY),
+                             description = "With variableSend the variable is sent, and the body is not read"),
            eipOut = @BodyType(from = "marshalOut",
-                              dependsOn = "variableReceive",
+                              byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                        carriers = Carrier.UNCHANGED),
                               description = "What the data format writes. With variableReceive the result goes into the"
                                             + " variable, and the body stays as it was"))
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> implements DataFormatDefinitionAware {

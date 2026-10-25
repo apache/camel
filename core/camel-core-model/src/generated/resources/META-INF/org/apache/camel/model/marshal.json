@@ -23,7 +23,7 @@
     "allowNullBody": { "index": 7, "kind": "attribute", "displayName": "Allow Null Body", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null." }
   },
   "bodyTypes": {
-    "eipIn": { "dependsOn": [ "variableSend" ], "from": "marshalIn" },
-    "eipOut": { "dependsOn": [ "variableReceive" ], "from": "marshalOut", "description": "What the data format writes. With variableReceive the result goes into the variable, and the body stays as it was" }
+    "eipIn": { "byOption": [ { "option": "variableSend", "value": "*", "carriers": [ "any" ] } ], "from": "marshalIn", "description": "With variableSend the variable is sent, and the body is not read" },
+    "eipOut": { "byOption": [ { "option": "variableReceive", "value": "*", "carriers": [ "unchanged" ] } ], "from": "marshalOut", "description": "What the data format writes. With variableReceive the result goes into the variable, and the body stays as it was" }
   }
 }

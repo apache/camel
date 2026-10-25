@@ -35,6 +35,7 @@
     "CamelToEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "To Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
   },
   "bodyTypes": {
-    "eipOut": { "dependsOn": [ "aggregationStrategy", "variableReceive" ], "from": "producerOut", "description": "The reply of the endpoint, with the default aggregation strategy. With variableReceive the reply goes into the variable, and the body stays as it was" }
+    "eipIn": { "byOption": [ { "option": "variableSend", "value": "*", "carriers": [ "any" ] } ], "from": "producerIn", "description": "With variableSend the variable is sent, and the body is not read" },
+    "eipOut": { "dependsOn": [ "aggregationStrategy" ], "byOption": [ { "option": "variableReceive", "value": "*", "carriers": [ "unchanged" ] } ], "from": "producerOut", "description": "The reply of the endpoint, with the default aggregation strategy. With variableReceive the reply goes into the variable, and the body stays as it was" }
   }
 }

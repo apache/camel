@@ -116,7 +116,11 @@ final class BodyTypesHelper {
             }
             for (BodyType.When when : bodyType.byOption()) {
                 checkOption(owner, side, when.option(), options);
-                checkValue(owner, side, when, options.get(when.option()));
+                if (BodyTypeModel.ANY_VALUE.equals(when.value())) {
+                    checkAnyValue(owner, side, bodyType, when);
+                } else {
+                    checkValue(owner, side, when, options.get(when.option()));
+                }
                 check(owner, side + " " + when.option() + "=" + when.value(), when.carriers());
                 if (!when.javaTypeOption().isEmpty()) {
                     checkWhenJavaTypeOption(owner, side, when, options);
@@ -241,6 +245,19 @@ final class BodyTypesHelper {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " has " + when.option() + "=" + when.value()
                                                + ", which is not a value of the option: " + String.join(", ", values));
+        }
+    }
+
+    /**
+     * The body for any value of an option holds whatever the other options say: the option has no other values with a
+     * body, and the body does not also depend on it.
+     */
+    private static void checkAnyValue(Class<?> owner, String side, BodyType bodyType, BodyType.When when) {
+        if (Arrays.asList(bodyType.dependsOn()).contains(when.option())
+                || Arrays.stream(bodyType.byOption()).anyMatch(w -> w != when && w.option().equals(when.option()))) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " has a body for any value of " + when.option()
+                                               + ", which must not also be in dependsOn or have other values in byOption");
         }
     }
 
