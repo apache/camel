@@ -79,7 +79,11 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
                 .anyMatch(e -> "shipment".equals(e.getNodeId())));
         context.getRouteController().stopRoute("nested");
 
-        await().atMost(5, TimeUnit.SECONDS).until(() -> !messages.isEmpty());
+        // wait for the route to be fully stopped and all inflight exchanges to finish before
+        // counting: avoids a race where the second WARN from an outer handler has not yet arrived
+        await().atMost(5, TimeUnit.SECONDS).until(
+                () -> context.getRouteController().getRouteStatus("nested").isStopped()
+                        && context.getInflightRepository().browse().isEmpty());
         // Only one WARN should be emitted, even though the sub-exchange passed through the split's
         // stopped error handler and the multicast's stopped error handler.
         assertEquals(1, messages.size(), messages.toString());
