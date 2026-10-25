@@ -861,8 +861,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (exchange.getException() == null) {
                 exchange.setException(new RouteStoppingException(notAllowedReason()));
             } else if (logger != null && !exchange.getExchangeExtension().isInterrupted()) {
-                // log the cut-off WARN when the exchange already has a RouteStoppingException and
-                // is not marked as interrupted: the exchange is passing through a stopped error handler
+                // log the cut-off WARN when the exchange already has an exception and is not marked as
+                // interrupted: logCutOffByRouteStop guards for instanceof RouteStoppingException and is
+                // a no-op for other exceptions. The exchange is passing through a stopped error handler
                 // (e.g. in MulticastProcessor.doStop()) while inflight; interrupted exchanges are already
                 // logged through their own path.  Mark as interrupted after logging so that nested error
                 // handlers (e.g. a split inside a filter) do not each log their own WARN for the same exchange.
