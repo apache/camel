@@ -81,8 +81,9 @@ public interface Athena2Constants {
               javaType = "String")
     String CLIENT_REQUEST_TOKEN = "CamelAwsAthenaClientRequestToken";
     @Metadata(label = "startQueryExecution",
-              description = "The SQL query to run.  Except for simple queries, prefer setting this as the `body` of the\n" +
-                            "Exchange or as this header to avoid having to deal with URL encoding issues.",
+              description = "The SQL query to run. It takes precedence over the queryString option and the message body.\n" +
+                            "Except for simple queries, prefer setting the query in this header or as the `body` of the\n" +
+                            "Exchange to avoid having to deal with URL encoding issues.",
               javaType = "String")
     String QUERY_STRING = "CamelAwsAthenaQueryString";
     @Metadata(label = "startQueryExecution", description = "The encryption type to use when storing query results in S3.",

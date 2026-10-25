@@ -43,6 +43,17 @@ You have to provide the amazonAthenaClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/athena/[AWS Athena] service.
 
+== Usage
+
+=== Where the SQL comes from
+
+The `startQueryExecution` operation, which is the default operation, runs the SQL of the `CamelAwsAthenaQueryString`
+header, and when the header is not set, the SQL of the `queryString` option. The message body is used as the SQL only
+when neither the header nor the `queryString` option is set, as in the examples below. When no SQL is found, the
+exchange fails with an `IllegalArgumentException`.
+
+So an endpoint configured with `queryString` runs that query each time a message arrives, whatever its body.
+
 == Examples
 
 === Producer Examples
