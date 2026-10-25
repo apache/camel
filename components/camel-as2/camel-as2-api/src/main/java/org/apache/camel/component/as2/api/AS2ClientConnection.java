@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.as2.api;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -53,6 +54,8 @@ import org.apache.hc.core5.http.impl.io.HttpRequestExecutor;
 import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.HttpConnectionFactory;
 import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicHttpRequest;
 import org.apache.hc.core5.http.message.MessageSupport;
@@ -272,6 +275,21 @@ public class AS2ClientConnection {
                 throw new HttpException(
                         "Proxy " + route.getProxyHost().toHostString() + " refused to forward the request to "
                                         + targetHost.toHostString() + ": " + new StatusLine(response));
+            }
+            if (response instanceof ClassicHttpResponse classicResponse && classicResponse.getEntity() != null) {
+                // read the body while the connection is ours: release may close it, or hand it to another send.
+                // The entity stays a streaming one: EntityParser rejects any other
+                HttpEntity entity = classicResponse.getEntity();
+                try {
+                    byte[] content = EntityUtils.toByteArray(entity);
+                    classicResponse.setEntity(new InputStreamEntity(
+                            new ByteArrayInputStream(content), content.length, ContentType.parse(entity.getContentType()),
+                            entity.getContentEncoding()));
+                } catch (IOException | RuntimeException e) {
+                    // a connection with a half-read body must not go back to the pool
+                    endpoint.close(CloseMode.IMMEDIATE);
+                    throw e;
+                }
             }
         } finally {
             if (endpoint != null) {

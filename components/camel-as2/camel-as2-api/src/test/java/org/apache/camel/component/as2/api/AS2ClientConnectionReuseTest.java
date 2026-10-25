@@ -42,6 +42,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The client keeps a connection in its pool only when the partner's response allows it: a connection the partner closes
@@ -73,6 +74,60 @@ class AS2ClientConnectionReuseTest {
     }
 
     @Test
+    void bodyLargerThanTheInputBufferIsReadAfterTheConnectionIsClosed() throws Exception {
+        // the body is far beyond the 8 KB input buffer: it must be read before the connection is released and closed
+        String body = "0123456789abcdef".repeat(4096);
+        startPartner("HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: " + body.length() + "\r\n\r\n" + body, true);
+
+        assertEachSendSucceeds(body);
+        assertEquals(SENDS, connections.get());
+    }
+
+    @Test
+    void chunkedBodyLargerThanTheInputBufferIsReadAfterTheConnectionIsClosed() throws Exception {
+        String body = "0123456789abcdef".repeat(4096);
+        startPartner("HTTP/1.1 200 OK\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\n"
+                     + Integer.toHexString(body.length()) + "\r\n" + body + "\r\n0\r\n\r\n",
+                true);
+
+        assertEachSendSucceeds(body);
+        assertEquals(SENDS, connections.get());
+    }
+
+    @Test
+    void largeBodyOfAKeptAliveConnectionIsReadSoTheConnectionIsReused() throws Exception {
+        String body = "0123456789abcdef".repeat(4096);
+        startPartner("HTTP/1.1 200 OK\r\nContent-Length: " + body.length() + "\r\n\r\n" + body, false);
+
+        assertEachSendSucceeds(body);
+        assertEquals(1, connections.get());
+    }
+
+    @Test
+    void truncatedBodyFailsTheSendAndTheConnectionIsNotReused() throws Exception {
+        // the partner announces 100 bytes, sends 10 and hangs up, without saying Connection: close
+        startPartner("HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\n0123456789", true);
+        AS2ClientConnection clientConnection = newClientConnection();
+
+        for (int i = 0; i < 2; i++) {
+            assertThrows(IOException.class, () -> clientConnection.send(newRequest(), as2Context()));
+        }
+        assertEquals(2, connections.get());
+    }
+
+    @Test
+    void bodyThatStallsFailsTheSendAndTheConnectionIsNotReused() throws Exception {
+        // the partner sends 10 of 100 bytes and keeps the connection open: the read times out with it still open
+        startPartner("HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\n0123456789", false);
+        AS2ClientConnection clientConnection = newClientConnection(Duration.ofSeconds(1));
+
+        for (int i = 0; i < 2; i++) {
+            assertThrows(IOException.class, () -> clientConnection.send(newRequest(), as2Context()));
+        }
+        assertEquals(2, connections.get());
+    }
+
+    @Test
     void http10ConnectionWithoutKeepAliveIsNotReused() throws Exception {
         startPartner("HTTP/1.0 200 OK\r\nContent-Length: 2\r\n\r\nok", true);
 
@@ -89,17 +144,33 @@ class AS2ClientConnectionReuseTest {
     }
 
     private void assertEachSendSucceeds() throws Exception {
-        AS2ClientConnection clientConnection = new AS2ClientConnection(
-                "1.1", "Camel AS2 Client Endpoint", "example.org", "localhost", serverSocket.getLocalPort(),
-                Duration.ofSeconds(5), Duration.ofSeconds(5), 5, Duration.ofMinutes(15), null, null);
+        assertEachSendSucceeds("ok");
+    }
+
+    private void assertEachSendSucceeds(String expectedBody) throws Exception {
+        AS2ClientConnection clientConnection = newClientConnection();
         for (int i = 0; i < SENDS; i++) {
-            BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/");
-            request.setEntity(new StringEntity("EDI message", ContentType.TEXT_PLAIN));
-            ClassicHttpResponse response = (ClassicHttpResponse) clientConnection.send(request, as2Context());
+            ClassicHttpResponse response = (ClassicHttpResponse) clientConnection.send(newRequest(), as2Context());
             assertEquals(200, response.getCode(), "send " + i);
             // read the response like AS2ClientManager does, so a reused connection starts clean
-            assertEquals("ok", EntityUtils.toString(response.getEntity()), "send " + i);
+            assertEquals(expectedBody, EntityUtils.toString(response.getEntity()), "send " + i);
         }
+    }
+
+    private AS2ClientConnection newClientConnection() throws IOException {
+        return newClientConnection(Duration.ofSeconds(5));
+    }
+
+    private AS2ClientConnection newClientConnection(Duration socketTimeout) throws IOException {
+        return new AS2ClientConnection(
+                "1.1", "Camel AS2 Client Endpoint", "example.org", "localhost", serverSocket.getLocalPort(),
+                socketTimeout, Duration.ofSeconds(5), 5, Duration.ofMinutes(15), null, null);
+    }
+
+    private static BasicClassicHttpRequest newRequest() {
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/");
+        request.setEntity(new StringEntity("EDI message", ContentType.TEXT_PLAIN));
+        return request;
     }
 
     private static HttpCoreContext as2Context() {
