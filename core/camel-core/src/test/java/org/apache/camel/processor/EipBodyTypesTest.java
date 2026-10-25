@@ -286,12 +286,15 @@ public class EipBodyTypesTest extends ContextTestSupport {
 
     @Test
     public void variableSendSendsTheVariable() throws Exception {
-        for (Class<?> model : List.of(ToDefinition.class, ToDynamicDefinition.class, MarshalDefinition.class,
-                UnmarshalDefinition.class)) {
+        for (Class<?> model : List.of(ToDefinition.class, ToDynamicDefinition.class, EnrichDefinition.class,
+                MarshalDefinition.class, UnmarshalDefinition.class)) {
             assertEquals(Carrier.ANY, anyValueOf(bodyTypes(model).eipIn(), "variableSend", model), model.getSimpleName());
         }
         Exchange out = run(r -> r.setVariable("v", constant("sent")).toV("language:simple:${body}", "v", null), new Order());
         // the endpoint got the variable, not the body
+        assertEquals("sent", out.getMessage().getBody());
+        out = run(r -> r.setVariable("v", constant("sent")).enrich().constant("language:simple:${body}").variableSend("v"),
+                new Order());
         assertEquals("sent", out.getMessage().getBody());
     }
 

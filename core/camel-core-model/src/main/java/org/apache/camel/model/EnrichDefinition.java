@@ -42,7 +42,10 @@ import org.apache.camel.spi.annotations.DslArg;
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 @DslArg(exclude = "expression")
-@BodyTypes(eipOut = @BodyType(from = "producerOut",
+@BodyTypes(eipIn = @BodyType(from = "producerIn",
+                             byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY),
+                             description = "With variableSend the variable is sent, and the body is not read"),
+           eipOut = @BodyType(from = "producerOut",
                               dependsOn = "aggregationStrategy",
                               byOption = @BodyType.When(option = "variableReceive", value = "*",
                                                         carriers = Carrier.UNCHANGED),
