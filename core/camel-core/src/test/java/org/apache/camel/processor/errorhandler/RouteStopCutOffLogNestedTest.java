@@ -42,19 +42,26 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * CAMEL-25823: verifies that a route-stop cut-off produces exactly one WARN line even when the exchange passes through
- * multiple nested stopped error handlers. Route B uses a {@code filter} wrapping a {@code .process()} step, giving the
- * exchange three nested error-handler channels: the {@code .process()} step's channel, the filter's channel, and the
- * outer pipeline's channel. The {@code setInterrupted(true)} marker set after the first WARN prevents subsequent
- * stopped handlers from logging the same cut-off again.
+ * multiple nested stopped error handlers. Two scenarios are tested:
+ *
+ * <ol>
+ * <li>{@code filter} — a filter wrapping a {@code .process()} step gives the exchange two stopped error-handler
+ * channels in route B (the {@code .process()} step's channel and the filter's channel) plus route A's running channel.
+ * The {@code setInterrupted(true)} marker set by the filter's stopped channel prevents route A's running handler from
+ * logging the same cut-off again.</li>
+ * <li>{@code multicast+split} — a {@code split} nested inside a {@code multicast} creates a sub-exchange copy.
+ * {@code MulticastProcessor.doDone()} propagates the {@code interrupted} flag from the sub-exchange to the original so
+ * that neither the original exchange's channel nor the caller's error handler logs a second WARN.</li>
+ * </ol>
  *
  * <p>
- * Design: route A ({@code seda:start}) forwards to route B ({@code direct:nested}) via {@code direct} (same exchange
- * object, no thread switch). A {@code .process()} inside B's filter counts down an {@code entered} latch and waits on a
- * {@code release} latch. The test waits for {@code entered}, stops route B (whose error-handler wrappers are now in
- * stopped state), then releases the latch. The processor exits normally; the {@code .process()} step's own stopped
- * channel handler re-enters {@code run()}, which sets the {@code RouteStoppingException}. The filter's stopped channel
- * handler then finds the exception already set and logs the WARN, marking {@code interrupted=true}. The outer pipeline
- * channel sees the flag and skips its own log. Route A is kept running; the WARN count is asserted after the exchange
+ * Design (both tests): route A ({@code seda:start} or {@code seda:start-ms}) forwards to route B via {@code direct}
+ * (same exchange object, no thread switch). A {@code .process()} inside B's nested EIP counts down an {@code entered}
+ * latch and waits on a {@code release} latch. The test waits for {@code entered}, stops route B (whose error-handler
+ * wrappers are now in stopped state), then releases the latch. The processor exits normally; the {@code .process()}
+ * step's own stopped channel handler re-enters {@code run()}, which sets the {@code RouteStoppingException} on the
+ * (sub-)exchange. The next stopped handler logs the WARN and marks {@code interrupted=true}. Subsequent stopped
+ * handlers and the caller's running handler see the flag and skip. The WARN count is asserted after the exchange
  * completes.
  */
 public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
@@ -73,9 +80,9 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
     }
 
     /**
-     * A filter wrapping the blocked processor gives the exchange three nested error-handler channels when route B is
-     * stopped mid-exchange. The single-WARN guarantee should hold: only one WARN line per exchange, not one per
-     * channel.
+     * A filter wrapping the blocked processor gives the exchange two stopped error-handler channels in route B (the
+     * {@code .process()} step's channel and the filter's channel). The single-WARN guarantee should hold: only one WARN
+     * line per exchange, not one per stopped channel or per route.
      */
     @Test
     public void nestedEipCutOffIsOneWarnLine() throws Exception {
@@ -107,8 +114,7 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
         // Release the latch: the processor exits normally (no interrupt, no manually thrown exception).
         // The .process() step's own stopped channel handler re-enters run(), which sets a
         // RouteStoppingException. The filter's stopped channel handler finds the exception already set,
-        // logs the WARN, and marks interrupted=true. The outer pipeline channel sees the flag and
-        // skips its own log.
+        // logs the WARN, and marks interrupted=true. Route A's running channel sees the flag and skips.
         release.countDown();
 
         // Wait for the exchange to complete fully.
@@ -120,8 +126,60 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
             fail("Exchange did not complete within 10 seconds — likely a hang in the error handler chain", e);
         }
 
-        // Exactly one WARN should be emitted, even though the exchange passed through three nested
-        // stopped error-handler channels (process step, filter, outer pipeline).
+        // Exactly one WARN should be emitted, even though the exchange passed through two nested
+        // stopped error-handler channels in route B (process step, filter) plus route A's running channel.
+        assertEquals(1, messages.size(), messages.toString());
+        String message = messages.peek();
+        assertTrue(message.startsWith("WARN Exchange cut off (MessageId: "), message);
+        assertTrue(message.contains(": its route is being stopped or reloaded, so it is not continued."), message);
+        assertFalse(message.contains("Exhausted"), message);
+        assertFalse(message.contains("Message History"), message);
+        assertFalse(message.endsWith("THROWN"), message);
+    }
+
+    /**
+     * A {@code split} nested inside a {@code multicast} creates a sub-exchange copy for each split item.
+     * {@code MulticastProcessor.doDone()} propagates the {@code interrupted} flag from the sub-exchange to the original
+     * exchange, so the original exchange's channel and route A's running error handler also skip logging. The
+     * single-WARN guarantee holds across the sub-exchange copy boundary.
+     */
+    @Test
+    public void multicastSplitCutOffIsOneWarnLine() throws Exception {
+        String threadMarker = "(" + context.getName() + ")";
+        ConsumingAppender.newAppender(LOGGER, "RouteStopCutOffLogNestedTest", Level.DEBUG, event -> {
+            if (event.getThreadName() != null && event.getThreadName().contains(threadMarker)) {
+                messages.add(event.getLevel() + " " + event.getMessage().getFormattedMessage()
+                             + (event.getThrown() != null ? " THROWN" : ""));
+            }
+        });
+        context.getShutdownStrategy().setTimeout(1);
+        context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
+
+        // Send a single-item body so the split produces exactly one sub-exchange.
+        Future<Object> future = template.asyncRequestBody("seda:start-ms", "x", Object.class);
+
+        assertTrue(entered.await(5, TimeUnit.SECONDS), "Processor did not enter within 5 seconds");
+
+        // Stop route B: MulticastProcessor.doStop() stops the nested error-handler wrappers.
+        // The seda:start-ms consumer thread is NOT interrupted.
+        context.getRouteController().stopRoute("nested-ms");
+
+        // Release the latch: the processor exits normally. The .process() step's stopped channel
+        // handler sets the RouteStoppingException on the sub-exchange. The split's stopped channel
+        // handler logs the WARN and marks the sub-exchange interrupted=true. MulticastProcessor.doDone()
+        // propagates interrupted=true to the original exchange. The multicast's channel and route A's
+        // running channel see the flag and skip logging.
+        release.countDown();
+
+        try {
+            future.get(10, TimeUnit.SECONDS);
+        } catch (ExecutionException e) {
+            // expected: RouteStoppingException propagated back
+        } catch (TimeoutException e) {
+            fail("Exchange did not complete within 10 seconds — likely a hang in the error handler chain", e);
+        }
+
+        // Exactly one WARN even though the cut-off crosses a sub-exchange copy boundary.
         assertEquals(1, messages.size(), messages.toString());
         String message = messages.peek();
         assertTrue(message.startsWith("WARN Exchange cut off (MessageId: "), message);
@@ -136,16 +194,16 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // Route A: forwards to route B via direct (same exchange object, no thread switch).
+                // Route A (filter test): forwards to route B via direct (same exchange object, no thread switch).
                 // Route A is NOT stopped during the test — it stays running throughout.
                 from("seda:start").routeId("caller-nested")
                         .to("direct:nested");
 
-                // Route B: a filter wrapping the processor gives the exchange three nested error-handler
-                // channels. The processor counts down the entered latch and waits on the release latch.
-                // After the processor exits, the .process() step's stopped channel sets the exception;
-                // the filter's stopped channel logs the WARN and marks interrupted=true; the outer
-                // pipeline channel sees the flag and skips.
+                // Route B (filter test): a filter wrapping the processor gives the exchange two stopped
+                // error-handler channels in route B. The processor counts down the entered latch and
+                // waits on the release latch. After the processor exits, the .process() step's stopped
+                // channel sets the RouteStoppingException; the filter's stopped channel logs the WARN
+                // and marks interrupted=true; route A's running channel sees the flag and skips.
                 from("direct:nested").routeId("nested")
                         .filter(constant(true))
                         .process(new Processor() {
@@ -162,6 +220,33 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
                         .to("mock:afterBlock")
                         .end()
                         .to("mock:result");
+
+                // Route A (multicast+split test): forwards to route B via direct (same exchange object).
+                // Route A is NOT stopped — it stays running throughout.
+                from("seda:start-ms").routeId("caller-nested-ms")
+                        .to("direct:nested-ms");
+
+                // Route B (multicast+split test): a split nested inside a multicast.
+                // The split creates a sub-exchange copy. After the processor exits, the .process() step's
+                // stopped channel sets the RouteStoppingException on the sub-exchange; the split's stopped
+                // channel logs the WARN and marks the sub-exchange interrupted=true.
+                // MulticastProcessor.doDone() propagates interrupted=true to the original exchange,
+                // so the multicast's channel and route A's running channel both skip logging.
+                from("direct:nested-ms").routeId("nested-ms")
+                        .multicast()
+                        .split(body())
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                entered.countDown();
+                                if (!release.await(30, TimeUnit.SECONDS)) {
+                                    fail("Release latch timed out after 30 seconds");
+                                }
+                            }
+                        })
+                        .to("mock:afterBlock-ms")
+                        .end()
+                        .end();
             }
         };
     }

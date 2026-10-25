@@ -979,6 +979,14 @@ public class MulticastProcessor extends BaseProcessorSupport
                     original.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
                 }
             }
+            // Propagate the interrupted flag from the sub-exchange to the original.
+            // When a stopped error handler in a nested EIP (split, multicast) marks the sub-exchange
+            // as interrupted after logging the cut-off WARN, that flag must travel to the original so
+            // that the original exchange's error handler (or a running caller route's handler) also
+            // skips redelivery, onException, and the dead letter channel without logging a second WARN.
+            if (subExchange.getExchangeExtension().isInterrupted()) {
+                original.getExchangeExtension().setInterrupted(true);
+            }
         }
 
         if (processorExchangeFactory != null && pairs instanceof Collection) {

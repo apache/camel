@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * CAMEL-25823: when route B is force-stopped while an inflight exchange is inside a nested EIP (split inside
  * multicast), the {@code .process()} step's own stopped channel handler re-enters {@code run()}, which sets a
- * {@code RouteStoppingException} on the exchange and calls {@code logCutOffByRouteStop()}. An outer stopped handler
- * then finds the exception already set and marks the exchange as interrupted
+ * {@code RouteStoppingException} on the exchange (exchange had no exception yet). The next outer stopped handler finds
+ * the exception already set, logs the cut-off WARN, and marks the exchange as interrupted
  * ({@code exchange.getExchangeExtension().setInterrupted(true)}). A calling route A that is still running and passed
  * the same exchange into route B over {@code direct} then also skips its {@code onException}, redelivery, and dead
  * letter channel — the same behaviour as when {@code DirectProducer} is cut off while waiting for a consumer
@@ -52,9 +52,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * {@code release} latch (with a timeout). The test waits for {@code entered}, force-stops route B (setting its
  * error-handler wrappers to stopped state), then releases the latch. The processor exits normally; the
  * {@code .process()} step's own stopped channel handler re-enters {@code run()}, which sets a
- * {@code RouteStoppingException} and logs the WARN. An outer stopped handler finds the exception already set and marks
- * {@code interrupted=true}. Route A is kept running throughout; it has a DLC so it runs a {@code RedeliveryTask} whose
- * {@code isDone()} path sees the interrupted flag and skips redelivery and the dead letter channel.
+ * {@code RouteStoppingException}. The next outer stopped handler finds the exception already set, logs the WARN, and
+ * marks {@code interrupted=true}. Route A is kept running throughout; it has a DLC so it runs a {@code RedeliveryTask}
+ * whose {@code isDone()} path sees the interrupted flag and skips redelivery and the dead letter channel.
  */
 public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
 
@@ -65,9 +65,9 @@ public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
      * Route A has a dead letter channel and sends to route B over {@code direct}. Route B is stopped inside a split
      * nested in a multicast while a {@code .process()} is blocked on a latch. After the stop, the latch is released:
      * the processor exits normally and the {@code .process()} step's own stopped channel handler re-enters
-     * {@code run()}, which sets a {@code RouteStoppingException} and logs the WARN. An outer stopped handler finds the
-     * exception already set and marks {@code interrupted=true}. Route A is kept running; it has a DLC so it runs a
-     * {@code RedeliveryTask} whose {@code isDone()} path sees the interrupted flag and skips redelivery,
+     * {@code run()}, which sets a {@code RouteStoppingException}. The next outer stopped handler finds the exception
+     * already set, logs the WARN, and marks {@code interrupted=true}. Route A is kept running; it has a DLC so it runs
+     * a {@code RedeliveryTask} whose {@code isDone()} path sees the interrupted flag and skips redelivery,
      * {@code onException}, and the dead letter channel.
      */
     @Test
@@ -99,8 +99,8 @@ public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
 
         // 2. Release the latch: the processor exits normally (no interrupt, no manually thrown exception).
         //    The .process() step's own stopped channel handler re-enters run(), which sets a
-        //    RouteStoppingException and logs the WARN. An outer stopped handler finds the exception
-        //    already set and marks interrupted=true. Route A has a DLC so it runs a RedeliveryTask
+        //    RouteStoppingException. The next outer stopped handler finds the exception already set, logs
+        //    the WARN, and marks interrupted=true. Route A has a DLC so it runs a RedeliveryTask
         //    whose isDone() path sees the interrupted flag and skips redelivery and the dead letter channel.
         release.countDown();
 
@@ -142,8 +142,10 @@ public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
                 // Route B: split nested inside multicast. The processor counts down the entered latch
                 // and then waits on the release latch (with a timeout so the test cannot hang).
                 // After the processor exits, the .process() step's own stopped channel handler
-                // re-enters run(), which sets a RouteStoppingException and logs the WARN. An outer
-                // stopped handler finds the exception already set and marks interrupted=true.
+                // re-enters run(), which sets a RouteStoppingException. The next outer stopped handler
+                // finds the exception already set, logs the WARN, and marks interrupted=true.
+                // MulticastProcessor.doDone() propagates interrupted=true to the original exchange,
+                // so route A's running error handler (RedeliveryTask.isDone()) skips the DLC.
                 from("direct:b").routeId("nested-b")
                         .multicast()
                         .split(body())
