@@ -16,6 +16,6 @@ ifeval::[{bodytypecount} != 0]
 jsonpathTable::{body-types-module}:example$json/{shortname}.json['nodes$.bodyTypes.*','camel.bodySide(path[2])|camel.bodyCarriers(value)|camel.bodyDescription(value)','camel=xref:ROOT:js/camel.js']
 
 The bodies are the ones with the default options. A side that is not listed is not known, and tooling does not guess
-it. The carriers are described in the xref:manual::camel-catalog.adoc[Camel Catalog].
+it. The carriers, the sides and the tools that use them are described in xref:manual::body-types.adoc[Message Body Types].
 endif::[]
 // body types: END
