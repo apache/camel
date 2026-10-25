@@ -1022,8 +1022,9 @@ public class RouteDiagramWidget implements Widget {
 
         String linkedRouteId = findLinkedRouteId(node);
         if (linkedRouteId != null) {
-            markers.add(new Marker(row, end, " ↵ " + linkName(node, linkedRouteId), Theme.label().bold()));
-            end += 3 + CharWidth.of(linkName(node, linkedRouteId));
+            String link = linkName(node, linkedRouteId);
+            markers.add(new Marker(row, end, " ↵ " + link, Theme.label().bold()));
+            end += 3 + CharWidth.of(link);
         }
         addFoldedMarker(node, row, end);
         nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row, col, col + 2 + CharWidth.of(text), node));

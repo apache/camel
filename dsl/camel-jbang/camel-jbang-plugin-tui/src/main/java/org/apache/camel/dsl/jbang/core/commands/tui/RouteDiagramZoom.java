@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -59,6 +60,10 @@ final class RouteDiagramZoom {
     record Restore(int index, int row, int screenRow) {
     }
 
+    /** The step to select again after the next layout, its row on the screen, and the layout it was selected on. */
+    private record Anchor(LayoutRoute layout, String nodeId, int screenRow) {
+    }
+
     /** The density until another is chosen: boxes of one line, about twice the steps of the detailed on a screen. */
     static final RouteDensity DEFAULT = RouteDensity.COMPACT;
 
@@ -73,10 +78,8 @@ final class RouteDiagramZoom {
     private final Map<LayoutRoute, RouteDensity> densities = Collections.synchronizedMap(new WeakHashMap<>());
     private final Map<LayoutRoute, Map<String, Integer>> foldedSteps
             = Collections.synchronizedMap(new WeakHashMap<>());
-    // the step to select again after the next layout, and the layout it was selected on
-    private LayoutRoute anchorLayout;
-    private String anchorNodeId;
-    private int anchorScreenRow;
+    // set on the UI thread, taken on the layout thread: one reference, so the layout never sees half an anchor
+    private final AtomicReference<Anchor> anchor = new AtomicReference<>();
 
     /** The zoom with the density or fit chosen last time, and the mini panels shown or hidden. */
     static RouteDiagramZoom persisted() {
@@ -289,26 +292,24 @@ final class RouteDiagramZoom {
 
     /** Remembers the selected step and its row on the screen, to keep it there once the route is laid out anew. */
     void anchor(LayoutRoute shown, String nodeId, int screenRow) {
-        anchorLayout = shown;
-        anchorNodeId = nodeId;
-        anchorScreenRow = screenRow;
+        anchor.set(nodeId != null ? new Anchor(shown, nodeId, screenRow) : null);
     }
 
     /** The step to select in the layout to draw, when it is the new layout the anchor waited for; else null. */
     Restore restore(LayoutRoute lr) {
-        if (anchorNodeId == null || lr == null || lr == anchorLayout) {
+        Anchor a = anchor.get();
+        // a newer anchor set meanwhile stays for the layout it waits for
+        if (a == null || lr == null || lr == a.layout() || !anchor.compareAndSet(a, null)) {
             return null;
         }
-        String id = anchorNodeId;
-        anchorNodeId = null;
-        anchorLayout = null;
+        String id = a.nodeId();
         int index = 0;
         for (LayoutNode ln : lr.nodes) {
             if ("route".equals(ln.type)) {
                 continue;
             }
             if (id.equals(ln.id)) {
-                return new Restore(index, ln.y / RouteDensity.ROW, anchorScreenRow);
+                return new Restore(index, ln.y / RouteDensity.ROW, a.screenRow());
             }
             index++;
         }
