@@ -67,6 +67,8 @@ public class SemanticLanguage extends LanguageSupport {
     // Nested Simple functions re-enter the language while compiling state selectors. Keep that scope private to
     // compilation; registry reads and expert callbacks must always observe published declarations.
     private final ThreadLocal<Validation> validation = new ThreadLocal<>();
+    @Metadata(defaultValue = "${body}",
+              description = "The Simple expression selecting the state of the evaluations that have no selector of their own. Defaults to the message body.")
     private String defaultState = "${body}";
 
     public String getDefaultState() {

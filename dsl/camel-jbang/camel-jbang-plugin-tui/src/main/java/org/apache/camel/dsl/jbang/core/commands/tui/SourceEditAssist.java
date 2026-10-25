@@ -522,11 +522,16 @@ final class SourceEditAssist {
                     });
         } else if (keyPrefix.startsWith("camel.language.")) {
             // camel.language.<name>. options
+            // only the languages that have options, as camel.language.<name>.<option> of any other fails at startup
             addPrefixedCompletions(items, catalog, keyPrefix, "camel.language.",
-                    catalog.findLanguageNames(),
+                    catalog.findLanguageNames().stream()
+                            .filter(name -> {
+                                LanguageModel m = catalog.languageModel(name);
+                                return m != null && !m.getConfigurationOptions().isEmpty();
+                            }).toList(),
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
-                        return m != null ? m.getOptions() : null;
+                        return m != null ? m.getConfigurationOptions() : null;
                     });
         } else if (!keyPrefix.isEmpty() && !keyPrefix.startsWith("camel.")
                 && springBootOptionsCache != null) {
@@ -790,7 +795,7 @@ final class SourceEditAssist {
             return lookupPrefixedOption(catalog, key, "camel.language.",
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
-                        return m != null ? m.getOptions() : null;
+                        return m != null ? m.getConfigurationOptions() : null;
                     });
         }
         // Spring Boot options
@@ -1896,7 +1901,7 @@ final class SourceEditAssist {
             return lookupPrefixedOption(key, "camel.language.", languageOptionsCache,
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
-                        return m != null ? m.getOptions() : null;
+                        return m != null ? m.getConfigurationOptions() : null;
                     });
         }
         if (key.startsWith("camel.dataformat.")) {

@@ -28,6 +28,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -52,13 +53,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
                                                             javaType = "org.w3c.dom.Node") },
                                      description = "The nodes the expression selects"))
 public class XPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
+    @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE",
+              description = "Sets the output type supported by XPath.")
     private QName resultQName;
+    @Metadata(label = "advanced", description = "Name of class for document type. The default value is org.w3c.dom.Document.")
     private Class<?> documentType;
+    @Metadata(label = "advanced", description = "A custom XPathFactory to use.")
     private XPathFactory xpathFactory;
+    @Metadata(label = "advanced", defaultValue = "false", description = "Whether to use Saxon.")
     private Boolean saxon;
+    @Metadata(label = "advanced", description = "The XPath object model to use.")
     private String objectModelUri;
+    @Metadata(label = "advanced", defaultValue = "false",
+              description = "Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type, and the returned set has multiple elements.")
     private Boolean threadSafety;
+    @Metadata(label = "advanced", defaultValue = "false",
+              description = "Whether to log namespaces which can assist during troubleshooting.")
     private Boolean logNamespaces;
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default.")
     private Boolean preCompile;
 
     @Override

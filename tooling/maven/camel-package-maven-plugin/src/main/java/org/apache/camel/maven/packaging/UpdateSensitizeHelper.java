@@ -179,6 +179,13 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                         collectSecretOption(o, secrets);
                         collectSecurityOption(o, securityOptions, securityOptionOwners, owners);
                     });
+                    // the options of the language itself, which camel.language.<name>.<option> sets
+                    if (lm.getLanguageOptions() != null) {
+                        lm.getLanguageOptions().forEach(o -> {
+                            collectSecretOption(o, secrets);
+                            collectSecurityOption(o, securityOptions, securityOptionOwners, owners);
+                        });
+                    }
                 }
             } catch (Exception e) {
                 throw new MojoExecutionException("Error loading json: " + name, e);

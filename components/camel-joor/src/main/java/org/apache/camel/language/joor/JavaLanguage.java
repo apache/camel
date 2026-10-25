@@ -29,6 +29,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
@@ -53,8 +54,14 @@ public class JavaLanguage extends TypedLanguageSupport implements ScriptingLangu
     private final Set<String> imports = new TreeSet<>();
     private final Map<String, String> aliases = new HashMap<>();
 
+    @Metadata(label = "advanced", defaultValue = "classpath:camel-joor.properties?optional=true",
+              description = "The resource with the configuration of the Java language, such as its imports and aliases. Can also be ref:name of a String bean with the configuration.")
     private String configResource = "classpath:camel-joor.properties?optional=true";
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.")
     private boolean preCompile = true;
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.")
     private boolean singleQuotes = true;
 
     public JavaLanguage() {

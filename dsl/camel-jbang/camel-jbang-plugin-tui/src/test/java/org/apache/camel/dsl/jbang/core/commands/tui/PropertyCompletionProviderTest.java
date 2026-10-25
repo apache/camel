@@ -223,7 +223,19 @@ class PropertyCompletionProviderTest {
         List<AutocompletePopup.CompletionItem> items = provideCompletions("camel.language.");
 
         assertThat(items).isNotEmpty();
-        assertThat(items).anyMatch(i -> i.key().contains("simple"));
+        assertThat(items).anyMatch(i -> i.key().equals("camel.language.quickjs."));
+        // simple has no options of its own: camel.language.simple.<option> fails at startup
+        assertThat(items).noneMatch(i -> i.key().equals("camel.language.simple."));
+    }
+
+    @Test
+    void camelLanguageShowsTheOptionsOfTheLanguageNotOfItsExpressions() {
+        List<AutocompletePopup.CompletionItem> items = provideCompletions("camel.language.quickjs.");
+
+        assertThat(items).anyMatch(i -> i.key().equals("camel.language.quickjs.engineMaxMemory"));
+        assertThat(items).noneMatch(i -> i.key().equals("camel.language.quickjs.resultType"));
+        assertThat(lookupOption("camel.language.quickjs.engineMaxEvaluations")).isNotNull();
+        assertThat(lookupOption("camel.language.simple.trim")).isNull();
     }
 
     // --- Value completions ---
@@ -323,11 +335,16 @@ class PropertyCompletionProviderTest {
                         return m != null ? m.getOptions() : null;
                     });
         } else if (keyPrefix.startsWith("camel.language.")) {
+            // only the languages that have options, as camel.language.<name>.<option> of any other fails at startup
             addPrefixedCompletions(items, keyPrefix, "camel.language.",
-                    catalog.findLanguageNames(),
+                    catalog.findLanguageNames().stream()
+                            .filter(name -> {
+                                LanguageModel m = catalog.languageModel(name);
+                                return m != null && !m.getConfigurationOptions().isEmpty();
+                            }).toList(),
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
-                        return m != null ? m.getOptions() : null;
+                        return m != null ? m.getConfigurationOptions() : null;
                     });
         } else {
             for (Map.Entry<String, String> entry : mainGroupsCache.entrySet()) {
@@ -412,7 +429,7 @@ class PropertyCompletionProviderTest {
             return lookupPrefixedOption(key, "camel.language.",
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
-                        return m != null ? m.getOptions() : null;
+                        return m != null ? m.getConfigurationOptions() : null;
                     });
         }
         return null;

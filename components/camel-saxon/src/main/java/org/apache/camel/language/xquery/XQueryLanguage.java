@@ -25,6 +25,7 @@ import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -41,6 +42,7 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
                                                    + " java.lang.String"))
 public class XQueryLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
 
+    @Metadata(label = "advanced", description = "To use an existing Saxon configuration, instead of default settings.")
     private Configuration configuration;
 
     public Configuration getConfiguration() {
