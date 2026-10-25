@@ -880,7 +880,8 @@ public interface GitHub2EndpointBuilderFactory {
             return this;
         }
         /**
-         * To use the given encoding when getting a git commit file.
+         * The charset of the content of the file for the getCommitFile producer
+         * (the default charset of the JVM if not set).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1246,16 +1247,30 @@ public interface GitHub2EndpointBuilderFactory {
             return "CamelGitHubCommitCommitter";
         }
         /**
-         * The commit sha.
+         * The commit sha. The getCommitFile producer reads the file at this
+         * commit (a commit id of 40 hexadecimal characters).
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GitHubCommitSha}.
          */
         public String gitHubCommitSha() {
             return "CamelGitHubCommitSha";
+        }
+        /**
+         * The path of the file in the repository for the getCommitFile
+         * producer. If not set, the body is the path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitHubFilePath}.
+         */
+        public String gitHubFilePath() {
+            return "CamelGitHubFilePath";
         }
         /**
          * The commit URL.
