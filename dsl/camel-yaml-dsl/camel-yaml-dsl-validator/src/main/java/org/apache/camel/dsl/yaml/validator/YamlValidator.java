@@ -192,16 +192,33 @@ public class YamlValidator {
      *              (CAMEL-25762)
      */
     public List<Error> validate(String content, ProjectFacts facts) throws Exception {
+        return validate(content, facts, false);
+    }
+
+    /**
+     * The checks of the routes of a file whose YAML passes the schema: Simple syntax in a script, a dynamic uri, and
+     * the message body through the steps (CAMEL-24844). Empty when the YAML does not pass the schema, as for a file
+     * being typed: an editor says the errors of the schema when the file is saved, and these as soon as they are there
+     * (CAMEL-26295).
+     */
+    public List<Error> validateRoutes(String content) throws Exception {
+        return validate(content, ProjectFacts.NONE, true);
+    }
+
+    private List<Error> validate(String content, ProjectFacts facts, boolean routesOnly) throws Exception {
         if (schema == null) {
             init();
         }
+        if (routesOnly && (content == null || content.isBlank())) {
+            return List.of();
+        }
         Error extra = extraDocument(content);
         if (extra != null) {
-            return List.of(extra);
+            return routesOnly ? List.of() : List.of(extra);
         }
         Error deps = jbangDirective(content);
         if (deps != null) {
-            return List.of(deps);
+            return routesOnly ? List.of() : List.of(deps);
         }
         if (content == null || content.isBlank() || content.lines().allMatch(l -> l.isBlank() || l.trim().startsWith("#"))) {
             return List.of(Error.builder().messageKey("empty").format(new MessageFormat("{0}"))
@@ -211,7 +228,10 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE);
+            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly);
+            if (routesOnly) {
+                return errors;
+            }
             // CAMEL-25560: the tree keeps the last of two equal keys, so a key given twice is only seen in the YAML nodes
             List<String> duplicates = DuplicateKeys.find(YamlPointerLines.root(content));
             if (duplicates.isEmpty()) {
@@ -222,7 +242,7 @@ public class YamlValidator {
             answer.addAll(errors);
             return answer;
         } catch (Exception e) {
-            return List.of(parseError(e, content));
+            return routesOnly ? List.of() : List.of(parseError(e, content));
         }
     }
 
@@ -788,7 +808,7 @@ public class YamlValidator {
         return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
     }
 
-    private List<Error> validate(JsonNode target, ProjectFacts facts) {
+    private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
         // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
         var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
@@ -847,6 +867,10 @@ public class YamlValidator {
         if (!hinted.isEmpty()) {
             errors.removeIf(e -> hinted.contains(String.valueOf(e.getInstanceLocation()))
                     && ("oneOf".equals(e.getKeyword()) || "required".equals(e.getKeyword())));
+        }
+        if (routesOnly && !errors.isEmpty()) {
+            // the YAML does not pass the schema, whose errors are not asked for: the routes are not checked either
+            return List.of();
         }
         if (errors.isEmpty()) {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);

@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.Buffer;
@@ -29,13 +31,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.security.DigestInputStream;
+import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -346,31 +349,26 @@ public class FileOperations implements GenericFileOperations<File> {
                 }
             }
 
-            // if we use checksum them we need to use an input stream to calculate while writing the file
-            DigestInputStream dis = null;
+            // the checksum is calculated from the bytes written to the file, which are not the bytes of the body
+            // when they are encoded with the charset of the endpoint or followed by the appendChars
+            MessageDigest digest = null;
             if (endpoint.getChecksumFileAlgorithm() != null) {
-                MessageDigest digest = MessageDigest.getInstance(endpoint.getChecksumFileAlgorithm());
-                // prefer FileInputStream over general stream
-                InputStream is = exchange.getMessage().getBody(FileInputStream.class);
-                if (is == null) {
-                    is = mandatoryBodyStream(exchange, exchange.getMessage(), file);
-                }
-                dis = new DigestInputStream(is, digest);
+                digest = MessageDigest.getInstance(endpoint.getChecksumFileAlgorithm());
             }
             if (charset != null) {
                 // charset configured so we must use a reader so we can write
                 // with encoding
-                handleReaderAsFileSource(exchange, file, charset, dis);
-            } else if (dis == null && exchange.getIn().getBody() instanceof String) {
+                handleReaderAsFileSource(exchange, file, charset, digest);
+            } else if (digest == null && exchange.getIn().getBody() instanceof String) {
                 // If the body is a string, write it directly
                 handleStringAsFileSource(exchange, file);
             } else {
                 // fallback and use stream based
-                handleStreamAsFileSource(exchange, file, dis);
+                handleStreamAsFileSource(exchange, file, digest);
             }
 
-            if (dis != null) {
-                String hash = StringHelper.bytesToHex(dis.getMessageDigest().digest());
+            if (digest != null) {
+                String hash = StringHelper.bytesToHex(digest.digest());
                 exchange.getMessage().setHeader(FileConstants.FILE_CHECKSUM, hash);
             }
 
@@ -423,12 +421,17 @@ public class FileOperations implements GenericFileOperations<File> {
         return true;
     }
 
-    private void handleStreamAsFileSource(Exchange exchange, File file, InputStream is)
+    private void handleStreamAsFileSource(Exchange exchange, File file, MessageDigest digest)
             throws InvalidPayloadException, IOException {
+        InputStream is = null;
+        if (digest != null) {
+            // prefer FileInputStream over general stream
+            is = exchange.getMessage().getBody(FileInputStream.class);
+        }
         if (is == null) {
             is = mandatoryBodyStream(exchange, exchange.getIn(), file);
         }
-        writeFileByStream(is, file);
+        writeFileByStream(is, file, digest);
     }
 
     private void handleStringAsFileSource(Exchange exchange, File file) throws IOException {
@@ -436,24 +439,18 @@ public class FileOperations implements GenericFileOperations<File> {
         writeFileByString(stringBody, file);
     }
 
-    private void handleReaderAsFileSource(Exchange exchange, File file, String charset, InputStream is)
+    private void handleReaderAsFileSource(Exchange exchange, File file, String charset, MessageDigest digest)
             throws InvalidPayloadException, IOException {
-        Reader in = null;
-        if (is == null) {
-            in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange,
-                    exchange.getIn().getBody());
-        }
+        Reader in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange,
+                exchange.getIn().getBody());
         if (in == null) {
             // okay no direct reader conversion, so use an input stream
             // (which a lot can be converted as)
-            if (is == null) {
-                is = mandatoryBodyStream(exchange, exchange.getIn(), file);
-            }
-            in = new InputStreamReader(is);
+            in = new InputStreamReader(mandatoryBodyStream(exchange, exchange.getIn(), file));
         }
         // buffer the reader
         in = IOHelper.buffered(in);
-        writeFileByReaderWithCharset(in, file, charset);
+        writeFileByReaderWithCharset(in, file, charset, digest);
     }
 
     private boolean handleFileAsFileSource(Exchange exchange, File file, File source) throws IOException {
@@ -597,7 +594,7 @@ public class FileOperations implements GenericFileOperations<File> {
         }
     }
 
-    private void writeFileByStream(InputStream in, File target) throws IOException {
+    private void writeFileByStream(InputStream in, File target, MessageDigest digest) throws IOException {
         try (SeekableByteChannel out = prepareOutputFileChannel(target)) {
             LOG.debug("Using InputStream to write file: {}", target);
             int size = endpoint.getBufferSize();
@@ -610,12 +607,19 @@ public class FileOperations implements GenericFileOperations<File> {
                 }
                 out.write(byteBuffer);
                 ((Buffer) byteBuffer).clear();
+                if (digest != null) {
+                    digest.update(buffer, 0, bytesRead);
+                }
             }
 
             boolean append = endpoint.getFileExist() == GenericFileExist.Append;
             if (append && endpoint.getAppendChars() != null) {
-                byteBuffer = ByteBuffer.wrap(endpoint.getAppendChars().getBytes());
+                byte[] appendBytes = endpoint.getAppendChars().getBytes();
+                byteBuffer = ByteBuffer.wrap(appendBytes);
                 out.write(byteBuffer);
+                if (digest != null) {
+                    digest.update(appendBytes);
+                }
                 Buffer buf = byteBuffer;
                 buf.clear();
             }
@@ -624,10 +628,17 @@ public class FileOperations implements GenericFileOperations<File> {
         }
     }
 
-    private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
+    private void writeFileByReaderWithCharset(Reader in, File target, String charset, MessageDigest digest)
+            throws IOException {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-        try (Writer out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), StandardOpenOption.WRITE,
-                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+        // an encoder that reports characters the charset cannot encode, as Files.newBufferedWriter does
+        CharsetEncoder encoder = Charset.forName(charset).newEncoder();
+        OutputStream os = Files.newOutputStream(target.toPath(), StandardOpenOption.WRITE,
+                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        if (digest != null) {
+            os = new DigestOutputStream(os, digest);
+        }
+        try (Writer out = IOHelper.buffered(new OutputStreamWriter(os, encoder))) {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);

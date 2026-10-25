@@ -65,6 +65,8 @@ public class NatsConsumer extends DefaultConsumer {
     private ExecutorService executor;
     private Connection connection;
     private Dispatcher dispatcher;
+    // the message handler of the dispatcher, which keeps the messages in flight of that dispatcher (one per start)
+    private volatile NatsConsumingTask.CamelNatsMessageHandler dispatcherHandler;
     private boolean active;
     // set by the consuming task, and again by the push consumer keeper, and read when the consumer stops
     private volatile JetStreamSubscription jetStreamSubscription;
@@ -127,6 +129,33 @@ public class NatsConsumer extends DefaultConsumer {
             } catch (final Exception e) {
                 this.getExceptionHandler().handleException("Error during unsubscribing", e);
             }
+            // a JetStream push subscription belongs to the dispatcher (it cannot unsubscribe directly) and is on its
+            // deliver subject, not on the topic: end it through the dispatcher, which matters when the connection is
+            // shared and stays open. This does not interrupt the dispatcher thread, which may still run an exchange
+            JetStreamSubscription pushSubscription = this.jetStreamSubscription;
+            if (pushSubscription != null && pushSubscription.isActive()) {
+                try {
+                    this.dispatcher.unsubscribe(pushSubscription);
+                } catch (final Exception e) {
+                    this.getExceptionHandler().handleException("Error during unsubscribing", e);
+                }
+            }
+            // the dispatcher was created by this consumer: close it (which ends its thread) once no message is in
+            // flight, as closing it interrupts its thread, and Camel stops a consumer before it waits for the exchanges
+            // in flight
+            final Dispatcher stoppedDispatcher = this.dispatcher;
+            final Connection stoppedConnection = this.connection;
+            Runnable close = () -> closeDispatcher(stoppedConnection, stoppedDispatcher);
+            NatsConsumingTask.CamelNatsMessageHandler handler = this.dispatcherHandler;
+            if (handler != null) {
+                // the handler of this dispatcher only: a message of an earlier run that is still in flight (after a
+                // forced stop) closes the dispatcher of its own run
+                handler.closeWhenIdle(close);
+            } else {
+                close.run();
+            }
+            this.dispatcher = null;
+            this.dispatcherHandler = null;
         }
 
         if (ObjectHelper.isNotEmpty(this.jetStreamSubscription) && this.jetStreamSubscription.isActive()) {
@@ -154,6 +183,19 @@ public class NatsConsumer extends DefaultConsumer {
             }
         }
         super.doStop();
+    }
+
+    /**
+     * Closes a dispatcher of this consumer, unless its connection is closed (which closed it).
+     */
+    private void closeDispatcher(Connection c, Dispatcher d) {
+        if (c != null && c.getStatus() != Connection.Status.CLOSED) {
+            try {
+                c.closeDispatcher(d);
+            } catch (final Exception e) {
+                LOG.debug("Error closing the dispatcher of the stopped consumer", e);
+            }
+        }
     }
 
     public boolean isActive() {
@@ -204,7 +246,14 @@ public class NatsConsumer extends DefaultConsumer {
                     setupStandardNatsConsumer(topic, queueName, maxMessages);
                 }
             } catch (final Exception e) {
-                NatsConsumer.this.getExceptionHandler().handleException("Error during processing", e);
+                if (!NatsConsumer.this.isRunAllowed()) {
+                    // the consumer stopped meanwhile (its stop closes the dispatcher that a JetStream push subscribe
+                    // uses, which then fails): nothing to report
+                    LOG.debug("Not consuming from topic {} as the consumer is stopping",
+                            getEndpoint().getConfiguration().getTopic(), e);
+                } else {
+                    NatsConsumer.this.getExceptionHandler().handleException("Error during processing", e);
+                }
             }
 
         }
@@ -276,6 +325,7 @@ public class NatsConsumer extends DefaultConsumer {
                 runPullFetchLoop(NatsConsumer.this.jetStreamSubscription, messageHandler, cc);
             } else {
                 NatsConsumer.this.dispatcher = this.connection.createDispatcher(messageHandler);
+                NatsConsumer.this.dispatcherHandler = messageHandler;
 
                 PushSubscribeOptions pushOptions = PushSubscribeOptions.builder()
                         .configuration(cc)
@@ -538,7 +588,9 @@ public class NatsConsumer extends DefaultConsumer {
         }
 
         private void setupStandardNatsConsumer(String topic, String queueName, Integer maxMessages) {
-            NatsConsumer.this.dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
+            CamelNatsMessageHandler messageHandler = new CamelNatsMessageHandler();
+            NatsConsumer.this.dispatcher = connection.createDispatcher(messageHandler);
+            NatsConsumer.this.dispatcherHandler = messageHandler;
             if (ObjectHelper.isNotEmpty(queueName)) {
                 NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher.subscribe(topic, queueName);
             } else {
@@ -556,9 +608,51 @@ public class NatsConsumer extends DefaultConsumer {
 
             final boolean ackPolicyNone = configuration.getAckPolicy() == AckPolicy.None;
             final boolean manualAckEnabled = configuration.isManualAck() && configuration.isJetstreamEnabled();
+            // the messages that this handler is processing, and the close of its dispatcher (the consumer stopped)
+            // that waits until none is: closing a dispatcher interrupts its thread, which runs the route
+            private final Object inFlightLock = new Object();
+            private int messagesInFlight;
+            private Runnable pendingClose;
+
+            /**
+             * Closes the dispatcher of this handler now, or once the message in flight is done.
+             */
+            void closeWhenIdle(Runnable close) {
+                synchronized (inFlightLock) {
+                    if (messagesInFlight > 0) {
+                        // closed by onMessage once the message is done
+                        pendingClose = close;
+                        return;
+                    }
+                }
+                // no message in flight: close now (outside the lock, as the close may block)
+                close.run();
+            }
 
             @Override
             public void onMessage(Message msg) throws InterruptedException {
+                synchronized (inFlightLock) {
+                    messagesInFlight++;
+                }
+                try {
+                    processMessage(msg);
+                } finally {
+                    Runnable close = null;
+                    synchronized (inFlightLock) {
+                        if (--messagesInFlight == 0) {
+                            close = pendingClose;
+                            pendingClose = null;
+                        }
+                    }
+                    if (close != null) {
+                        // the consumer stopped while this message was processed: close its dispatcher now (on this
+                        // thread, which the close interrupts once the message is done)
+                        close.run();
+                    }
+                }
+            }
+
+            private void processMessage(Message msg) throws InterruptedException {
                 LOG.debug("Received Message: {}", msg);
                 final Exchange exchange = NatsConsumer.this.createExchange(false);
 
