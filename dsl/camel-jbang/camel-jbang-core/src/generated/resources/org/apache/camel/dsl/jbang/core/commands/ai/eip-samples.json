@@ -1224,7 +1224,7 @@
     },
     {
       "source": "route-configuration.adoc",
-      "yaml": "- route:\n    # refer to the route configuration by the id to use for this route\n    routeConfigurationId: \"yamlError\"\n    from:\n      uri: timer:yaml\n      parameters:\n        period: 3s\n      steps:\n        - setBody:\n            expression:\n              simple:\n                expression: \"Timer fired ${header.CamelTimerCounter} times\"\n        - to:\n            uri: \"log:yaml\"\n            parameters:\n              showBodyType: false\n              showExchangePattern: false\n        - throwException:\n            exceptionType: \"java.lang.IllegalArgumentException\"\n            message: \"Error from yaml\"\n"
+      "yaml": "- route:\n    # refer to the route configuration by the id to use for this route\n    routeConfigurationId: \"yamlError\"\n    from:\n      uri: timer:yaml\n      parameters:\n        period: 3s\n        includeMetadata: true\n      steps:\n        - setBody:\n            expression:\n              simple:\n                expression: \"Timer fired ${exchangeProperty.CamelTimerCounter} times\"\n        - to:\n            uri: \"log:yaml\"\n            parameters:\n              showBodyType: false\n              showExchangePattern: false\n        - throwException:\n            exceptionType: \"java.lang.IllegalArgumentException\"\n            message: \"Error from yaml\"\n"
     },
     {
       "source": "route-configuration.adoc",
