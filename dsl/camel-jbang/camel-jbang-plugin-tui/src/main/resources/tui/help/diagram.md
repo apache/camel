@@ -212,6 +212,9 @@ you an at-a-glance view of where you are in the route.
   one line, the count in the border, the layers closer together) and
   bare (a mark, the name and the count of each route on one row)
 - `z` — fit: the most detail in which the whole topology fits the screen
+- `Space` — fold the group of the selected route (as `g` shows it) into
+  one box, which says how many routes it has; `Space` or `Enter` on the
+  box unfolds it; `f` folds every group, `F` unfolds them all
 - `p` — show or hide the mini panels over the diagram: the map of the
   topology (top right of a route) and the tree of the route (bottom right)
 - `v` — next level: architecture, topology, route
@@ -262,7 +265,8 @@ you an at-a-glance view of where you are in the route.
 - `z` — fit: the most detail in which the whole route fits the screen
 - `Space` — fold the block of the selected step (a choice, a branch,
   a split, a doTry...) into its first step, which says how many steps
-  are folded; `Space` on a folded step unfolds it
+  are folded; `Space` on a folded step unfolds it, as does a click on
+  its `▸ 12 steps folded`; the folds are kept for the next start
 - `f` — fold all the blocks of the route, the blocks in other blocks too
   (`Space` on one then shows its steps with the blocks in it folded)
 - `F` — expand all the blocks of the route

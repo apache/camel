@@ -23,6 +23,7 @@ import java.util.Map;
 
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 
 /**
  * A tab that shows the route diagram: the topology of the routes, and a route drilled down into. The Diagram tab shows
@@ -220,13 +221,10 @@ abstract class AbstractDiagramTab extends AbstractTab {
         String anchorId = selected != null ? selected.nodeId() : null;
         if (ke.isChar('+') || ke.isChar('=')) {
             zoom.zoomIn();
-            ctx.backgroundExecutor.execute(zoom::persist);
         } else if (ke.isChar('-')) {
             zoom.zoomOut();
-            ctx.backgroundExecutor.execute(zoom::persist);
         } else if (ke.isCharIgnoreCase('z')) {
             zoom.toggleFit();
-            ctx.backgroundExecutor.execute(zoom::persist);
         } else if (topologyMode) {
             // the topology zooms, its blocks are the routes' own
             return false;
@@ -244,6 +242,8 @@ abstract class AbstractDiagramTab extends AbstractTab {
         } else {
             return false;
         }
+        // the zoom and the folds are kept for the next start
+        ctx.backgroundExecutor.execute(zoom::persist);
         if (topologyMode) {
             // the route selected stays selected (the topology keeps its selection when it is laid out again)
             diagram.endLoad();
@@ -258,6 +258,28 @@ abstract class AbstractDiagramTab extends AbstractTab {
             }
         }
         zoom.anchor(diagram.getRouteLayout(drillDownRouteId), anchorId, screenRow);
+        diagram.endLoad();
+        reloadDiagram();
+        return true;
+    }
+
+    /**
+     * A click on the fold marker of a step (▸ 12 steps folded) unfolds it, the step selected where it is.
+     *
+     * @return whether the click was on a fold marker
+     */
+    protected final boolean handleFoldMarkerClick(MouseEvent me) {
+        String nodeId = !topologyMode && me.isClick() ? diagram.zoom.foldMarkerAt(me.x(), me.y()) : null;
+        if (nodeId == null || !diagram.zoom.unfold(drillDownRouteId, nodeId)) {
+            return false;
+        }
+        ctx.backgroundExecutor.execute(diagram.zoom::persist);
+        for (var box : diagram.getEipNodeBoxes()) {
+            if (nodeId.equals(box.nodeId())) {
+                diagram.zoom.anchor(diagram.getRouteLayout(drillDownRouteId), nodeId,
+                        box.startRow() - diagram.getScrollY());
+            }
+        }
         diagram.endLoad();
         reloadDiagram();
         return true;

@@ -133,10 +133,52 @@ class DiagramTab extends AbstractDiagramTab {
         if (handleSourceKey(ke)) {
             return true;
         }
+        if (topologyMode && handleGroupFoldKeys(ke)) {
+            return true;
+        }
         if (handleDiagramKeys(ke)) {
             return true;
         }
         return handleViewKeys(ke);
+    }
+
+    /**
+     * The groups of the topology folded into a box each: Space on a route folds its group (or unfolds the box
+     * selected), Enter on a box unfolds it, f folds every group and F unfolds them all.
+     */
+    private boolean handleGroupFoldKeys(KeyEvent ke) {
+        if (!diagram.isShowDiagram() || !(ke.isChar(' ') || ke.isChar('f') || ke.isChar('F') || ke.isConfirm())) {
+            return false;
+        }
+        Map<String, RouteGroups.Tag> all = RouteGroups.of(selectedSourceDirectory(), diagram.isShowErrorPaths());
+        String selected = diagram.getSelectedRouteId();
+        String box = TopologyGroupFolds.groupOf(selected);
+        RouteDiagramZoom zoom = diagram.zoom;
+        if (box != null && (ke.isChar(' ') || ke.isConfirm())) {
+            zoom.toggleGroup(box);
+            // the first route of the group selected once it is unfolded
+            all.entrySet().stream().filter(e -> box.equals(e.getValue().group())).findFirst()
+                    .ifPresent(e -> diagram.setPendingSelectionRouteId(e.getKey()));
+        } else if (ke.isChar(' ')) {
+            RouteGroups.Tag tag = selected != null ? all.get(selected) : null;
+            if (tag == null) {
+                // a route in no group
+                return true;
+            }
+            zoom.toggleGroup(tag.group());
+            diagram.setPendingSelectionRouteId(TopologyGroupFolds.PREFIX + tag.group());
+        } else if (ke.isChar('f')) {
+            all.values().forEach(t -> zoom.foldedGroups().add(t.group()));
+        } else if (ke.isChar('F')) {
+            zoom.foldedGroups().clear();
+        } else {
+            // Enter on a route: down to its diagram
+            return false;
+        }
+        ctx.backgroundExecutor.execute(zoom::persist);
+        diagram.endLoad();
+        reloadDiagram();
+        return true;
     }
 
     /**
@@ -211,6 +253,9 @@ class DiagramTab extends AbstractDiagramTab {
             return true;
         }
         if (diagram.handleMouseScroll(me)) {
+            return true;
+        }
+        if (handleFoldMarkerClick(me)) {
             return true;
         }
         if (me.isClick()) {
@@ -423,6 +468,7 @@ class DiagramTab extends AbstractDiagramTab {
         diagram.setGroups(RouteGroups.tagLines(tags), RouteGroups.colors(tags));
         diagram.setGroupLegend(RouteGroups.legend(tags, hidden));
         diagram.setHiddenRoutes(hidden);
+        diagram.setRouteGroups(all);
         if (diagram.isTopologyStale() && !diagram.isLoading()) {
             reloadDiagram();
         }
@@ -662,6 +708,7 @@ class DiagramTab extends AbstractDiagramTab {
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "c", "source");
                 hint(spans, "+/-", "zoom");
+                hint(spans, "Space", "fold group");
                 hint(spans, "s", "summary");
             } else {
                 diagram.renderFooterHints(spans);

@@ -88,13 +88,19 @@ its count on one row, and the layers come closer together and the boxes narrower
 detailed level in which it fits the screen. The architecture zooms too, from detailed at first, as its groups are few and their facts are
 what it shows: a compact group is a box with its name, a bare group a mark in its colour and its name. The History tab replays a message on its route diagram at the same zoom.
 
+In the topology, *Space* folds the group of the selected route (a route group, an AI capability, shared services or
+utility, as *g* shows them) into one box, which names the group and says how many routes it has, with the links of its
+routes; *Space* or *Enter* on the box unfolds it, *f* folds every group and *F* unfolds them all. With the utility
+routes shown, folding the utility group keeps them one box out of the way.
+
 The mini panels over the diagram, the map of the topology at the top right of a route and the tree of the route at the
 bottom right, cover a corner of it: *p* hides them, and shows them again. Their titles say so, and the setting is kept
 for the next start.
 
 Press *Space* to fold a block (a choice, one of its branches, a split, a doTry, a filter...) into its first step,
 which then says how many steps are folded (`▸ 12 steps folded`); *Space* on a step inside a block folds that block, and
-*Space* on a folded step unfolds it. A folded block gives its rows and its columns back to the rest of the route.
+*Space* on a folded step, or a click on its marker, unfolds it. A folded block gives its rows and its columns back to
+the rest of the route. The folds are kept for the next start.
 Press *f* to fold all the blocks of the route, the blocks in other blocks too: *Space* on a folded block then shows
 its own steps, with the blocks in it still folded. Press *F* to expand all the blocks again.
 
@@ -295,9 +301,9 @@ camel-xml-io, while a Spring Boot or Quarkus application may not.
 | *+* / *-* | In a route, the topology and the architecture: zoom in or out (detailed, compact, bare, and in a route overview)
 | *z* | In a route, the topology and the architecture: fit, the most detail in which it fits the screen
 | *p* | Show or hide the mini panels over the diagram: the map of the topology and the tree of the route
-| *Space* | In a route: fold the block of the selected step, or unfold a folded step
-| *f* | In a route: fold all the blocks
-| *F* | In a route: expand all the blocks
+| *Space* | In a route: fold the block of the selected step, or unfold a folded step; in the topology: fold the group of the selected route, or unfold a folded group
+| *f* | In a route: fold all the blocks; in the topology: fold all the groups
+| *F* | In a route: expand all the blocks; in the topology: unfold all the groups
 | *e* | External systems: in the topology off, edges, all; in the architecture off or edges
 | *a* | AI-assisted parts shown, or the facts alone; without a `camel-summary.md` yet, has the AI write one
 | *b* (or *n*) | Business view (labels, what capabilities achieve) or technical view (route ids, endpoints)

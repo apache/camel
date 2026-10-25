@@ -41,6 +41,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.apache.camel.diagram.RouteErrorFrame;
 import org.apache.camel.diagram.TopologyErrorFrame;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 
 /**
  * The zoom of the route diagram: how much room a step takes ({@link RouteDensity}), or the most detail that fits the
@@ -53,8 +54,12 @@ import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
  */
 final class RouteDiagramZoom {
 
-    /** The zoom chosen last: a density, or fit; the folded blocks are not kept. */
+    /** The zoom chosen last: a density, or fit. */
     static final String PROP_ROUTE_ZOOM = "camel.tui.routeZoom";
+    /** The folded blocks of each route, by route id: route:step,step;route:step. */
+    static final String PROP_ROUTE_FOLDS = "camel.tui.routeFolds";
+    /** The groups of routes folded in the topology, by group id: group,group. */
+    static final String PROP_GROUP_FOLDS = "camel.tui.groupFolds";
     /** Whether the mini panels over the diagram (the map and the route tree) are shown: false when hidden. */
     static final String PROP_DIAGRAM_PANELS = "camel.tui.diagramPanels";
 
@@ -93,6 +98,11 @@ final class RouteDiagramZoom {
         try {
             zoom.setting(TuiUserConfig.read(PROP_ROUTE_ZOOM));
             zoom.panels = !"false".equals(TuiUserConfig.read(PROP_DIAGRAM_PANELS));
+            zoom.foldSetting(TuiUserConfig.read(PROP_ROUTE_FOLDS));
+            String groups = TuiUserConfig.read(PROP_GROUP_FOLDS);
+            if (groups != null && !groups.isBlank()) {
+                zoom.foldedGroups.addAll(List.of(groups.split(",")));
+            }
         } catch (RuntimeException e) {
             // best-effort: the default zoom
         }
@@ -104,6 +114,8 @@ final class RouteDiagramZoom {
         try {
             TuiUserConfig.write(PROP_ROUTE_ZOOM, setting());
             TuiUserConfig.write(PROP_DIAGRAM_PANELS, panels ? null : "false");
+            TuiUserConfig.write(PROP_ROUTE_FOLDS, foldSetting());
+            TuiUserConfig.write(PROP_GROUP_FOLDS, foldedGroups.isEmpty() ? null : String.join(",", foldedGroups));
         } catch (RuntimeException e) {
             // best-effort: a persist failure must not disrupt the TUI
         }
@@ -115,6 +127,31 @@ final class RouteDiagramZoom {
             return "fit";
         }
         return density == DEFAULT ? null : density.label();
+    }
+
+    /** The folded blocks as a setting, route:step,step;route:step; null when none is folded. */
+    String foldSetting() {
+        StringBuilder sb = new StringBuilder();
+        folded.forEach((route, ids) -> {
+            if (!ids.isEmpty()) {
+                sb.append(sb.isEmpty() ? "" : ";").append(route).append(':').append(String.join(",", ids));
+            }
+        });
+        return sb.isEmpty() ? null : sb.toString();
+    }
+
+    void foldSetting(String value) {
+        folded.clear();
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        for (String entry : value.split(";")) {
+            int colon = entry.lastIndexOf(':');
+            if (colon > 0 && colon < entry.length() - 1) {
+                Set<String> ids = folded.computeIfAbsent(entry.substring(0, colon), k -> ConcurrentHashMap.newKeySet());
+                ids.addAll(List.of(entry.substring(colon + 1).split(",")));
+            }
+        }
     }
 
     void setting(String value) {
@@ -302,6 +339,46 @@ final class RouteDiagramZoom {
                 && !RouteDiagramLayoutEngine.TABLE_EIPS.contains(type);
     }
 
+    /** Where the fold markers were drawn on the screen last, for a click on one to unfold its step. */
+    private volatile List<RouteDiagramWidget.FoldHit> foldHits = List.of();
+
+    /** The fold markers as drawn, and where the diagram is on the screen (its top left, less the scroll). */
+    void foldHits(List<RouteDiagramWidget.FoldHit> hits, int x, int y) {
+        foldHits = hits.stream()
+                .map(h -> new RouteDiagramWidget.FoldHit(h.nodeId(), h.row() + y, h.startCol() + x, h.endCol() + x))
+                .toList();
+    }
+
+    /** The step whose fold marker is at the point of the screen, or null. */
+    String foldMarkerAt(int x, int y) {
+        for (RouteDiagramWidget.FoldHit h : foldHits) {
+            if (h.row() == y && x >= h.startCol() && x <= h.endCol()) {
+                return h.nodeId();
+            }
+        }
+        return null;
+    }
+
+    /** The groups of routes folded in the topology, each into a box of its own. */
+    private final Set<String> foldedGroups = ConcurrentHashMap.newKeySet();
+
+    Set<String> foldedGroups() {
+        return foldedGroups;
+    }
+
+    /** Folds the group into a box, or unfolds it when folded. */
+    void toggleGroup(String group) {
+        if (!foldedGroups.remove(group)) {
+            foldedGroups.add(group);
+        }
+    }
+
+    /** Unfolds a step of the route; false when it is not folded. */
+    boolean unfold(String routeId, String nodeId) {
+        Set<String> ids = folded.get(routeId);
+        return ids != null && ids.remove(nodeId);
+    }
+
     /** Remembers the selected step and its row on the screen, to keep it there once the route is laid out anew. */
     void anchor(LayoutRoute shown, String nodeId, int screenRow) {
         anchor.set(nodeId != null ? new Anchor(shown, nodeId, screenRow) : null);
@@ -376,11 +453,11 @@ final class RouteDiagramZoom {
 
     /**
      * The routes last laid out whole, laid out again at the zoom as it is now: the History tab zooms without loading
-     * the message again, so its view stays where it is. Null when there are none.
+     * the message again, so its view stays where it is; the layouts as they are when there are none.
      */
-    Map<String, LayoutRoute> layoutWholeAgain(int visibleRows) {
+    Map<String, LayoutRoute> layoutWholeAgain(int visibleRows, Map<String, LayoutRoute> current) {
         List<RouteInfo> routes = wholeRoutes;
-        return routes != null ? layoutWhole(routes, wholeLabelMode, visibleRows) : null;
+        return routes != null ? layoutWhole(routes, wholeLabelMode, visibleRows) : current;
     }
 
     /** A route laid out, the density it was placed with, and the engine that laid it out. */

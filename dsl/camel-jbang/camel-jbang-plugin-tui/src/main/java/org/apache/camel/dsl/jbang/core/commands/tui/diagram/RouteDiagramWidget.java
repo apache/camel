@@ -159,6 +159,7 @@ public class RouteDiagramWidget implements Widget {
     @Override
     public void render(Rect area, Buffer buffer) {
         nodeBoxes.clear();
+        foldHits.clear();
         arrowCells.clear();
         arrowEnds.clear();
 
@@ -1013,10 +1014,20 @@ public class RouteDiagramWidget implements Widget {
     private void addFoldedMarker(LayoutNode node, int row, int col) {
         Integer steps = node.id != null ? foldedSteps.get(node.id) : null;
         if (steps != null) {
-            markers.add(new Marker(
-                    row, col, " ▸ " + steps + (steps == 1 ? " step" : " steps") + " folded",
-                    Theme.muted()));
+            String text = " ▸ " + steps + (steps == 1 ? " step" : " steps") + " folded";
+            markers.add(new Marker(row, col, text, Theme.muted()));
+            foldHits.add(new FoldHit(node.id, row, col + 1, col + CharWidth.of(text) - 1));
         }
+    }
+
+    /** Where a fold marker is drawn (row and columns of the diagram), for a click on it to unfold its step. */
+    public record FoldHit(String nodeId, int row, int startCol, int endCol) {
+    }
+
+    private final List<FoldHit> foldHits = new ArrayList<>();
+
+    public List<FoldHit> getFoldHits() {
+        return foldHits;
     }
 
     /** A text with its EIP (up to its first bracket) in the EIP's colour, and the rest as a label. */

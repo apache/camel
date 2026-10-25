@@ -27,6 +27,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -226,5 +227,36 @@ class RouteDiagramZoomTest {
         again.setting("nonsense");
         assertThat(again.density()).isEqualTo(RouteDensity.COMPACT);
         assertThat(again.isFit()).isFalse();
+    }
+
+    @Test
+    void theFoldsAreKeptAsASetting() {
+        RouteDiagramZoom zoom = new RouteDiagramZoom();
+        LayoutRoute lr = layout(zoom, 0);
+        assertThat(zoom.foldSetting()).isNull();
+        zoom.toggleFold("orders", find(lr, "choice1"));
+        zoom.toggleFold("orders", find(lr, "split1"));
+        assertThat(zoom.foldSetting()).startsWith("orders:").contains("choice1").contains("split1");
+
+        RouteDiagramZoom again = new RouteDiagramZoom();
+        again.foldSetting(zoom.foldSetting());
+        assertThat(again.foldedStepsOf(layout(again, 0))).containsOnlyKeys("choice1", "split1");
+        again.foldSetting(null);
+        assertThat(again.foldSetting()).isNull();
+    }
+
+    @Test
+    void aClickOnAFoldMarkerFindsItsStep() {
+        RouteDiagramZoom zoom = new RouteDiagramZoom();
+        // drawn at row 4, columns 30 to 50 of the diagram, which is at 10,2 on the screen, scrolled by 3 rows
+        zoom.foldHits(List.of(new RouteDiagramWidget.FoldHit("choice1", 4, 30, 50)), 10, 2 - 3);
+        assertThat(zoom.foldMarkerAt(45, 3)).isEqualTo("choice1");
+        assertThat(zoom.foldMarkerAt(39, 3)).isNull();
+        assertThat(zoom.foldMarkerAt(45, 4)).isNull();
+
+        LayoutRoute lr = layout(zoom, 0);
+        zoom.toggleFold("orders", find(lr, "choice1"));
+        assertThat(zoom.unfold("orders", "choice1")).isTrue();
+        assertThat(zoom.unfold("orders", "choice1")).isFalse();
     }
 }

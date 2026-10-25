@@ -179,7 +179,8 @@ in the diagram.
 - `z` — fit: the most detail in which the whole route fits the screen
 - `Space` — fold the block of the selected step (a choice, a branch,
   a split, a doTry...) into its first step, which says how many steps
-  are folded; `Space` on a folded step unfolds it
+  are folded; `Space` on a folded step unfolds it, as does a click on
+  its `▸ 12 steps folded`; the folds are kept for the next start
 - `f` — fold all the blocks of the route, the blocks in other blocks too
   (`Space` on one then shows its steps with the blocks in it folded)
 - `F` — expand all the blocks of the route

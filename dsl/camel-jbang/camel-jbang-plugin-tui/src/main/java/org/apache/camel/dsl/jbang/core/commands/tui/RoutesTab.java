@@ -255,6 +255,9 @@ class RoutesTab extends AbstractDiagramTab {
             if (diagram.handleMouseScroll(me)) {
                 return true;
             }
+            if (handleFoldMarkerClick(me)) {
+                return true;
+            }
             if (me.isClick()) {
                 if (topologyMode) {
                     int clicked = diagram.handleNodeClick(me);

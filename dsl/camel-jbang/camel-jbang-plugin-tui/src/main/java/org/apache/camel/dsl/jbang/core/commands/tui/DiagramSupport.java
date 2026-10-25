@@ -131,6 +131,13 @@ class DiagramSupport {
     private TopologyLayoutResult topologyLayout;
     private int topologyNodeWidth;
     private java.util.Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeLayouts = Collections.emptyMap();
+    /** The group of each route, for folding a group into a box; the Diagram tab sets them as it draws. */
+    private volatile Map<String, RouteGroups.Tag> routeGroups = Map.of();
+
+    void setRouteGroups(Map<String, RouteGroups.Tag> groups) {
+        this.routeGroups = groups;
+    }
+
     /** The density the topology was laid out with: the zoom's, or with fit the one chosen for the screen. */
     private RouteDensity topologyDensity = RouteDensity.DETAILED;
 
@@ -398,10 +405,7 @@ class DiagramSupport {
 
     /** The routes of the message history at the zoom as it is now (+, -, z), without loading them again. */
     void zoomHistoryRoutes() {
-        Map<String, RouteDiagramLayoutEngine.LayoutRoute> layouts = zoom.layoutWholeAgain(lastVisibleHeight);
-        if (layouts != null) {
-            routeLayouts = layouts;
-        }
+        routeLayouts = zoom.layoutWholeAgain(lastVisibleHeight, routeLayouts);
     }
 
     RouteDiagramLayoutEngine.LayoutRoute getRouteLayout(String routeId) {
@@ -915,6 +919,16 @@ class DiagramSupport {
         showDiagram = true;
     }
 
+    /** The topology as it is laid out and scrolled now. */
+    private TopologyDiagramWidget topologyWidget(boolean metrics) {
+        return new TopologyDiagramWidget(
+                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
+                highlightRouteIds(), false)
+                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted()).withNodeLines(nodeLines)
+                .withGroups(groupTags, groupColors).withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
+                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity);
+    }
+
     /** A layout engine whose boxes the widget draws the given number of columns wide. */
     static TopologyLayoutEngine engineFor(int columns) {
         // the engine scales the width it is given; the widget draws its node width / 15 columns
@@ -1100,14 +1114,7 @@ class DiagramSupport {
 
         Rect inner = block.inner(area);
 
-        var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
-                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
-                highlightRouteIds(), false)
-                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
-                .withNodeLines(nodeLines)
-                .withGroups(groupTags, groupColors)
-                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
-                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity);
+        var widget = topologyWidget(metrics);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1122,14 +1129,7 @@ class DiagramSupport {
         scrollX = Math.min(scrollX, maxHScroll);
 
         // Re-create widget with clamped scroll
-        var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
-                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
-                highlightRouteIds(), false)
-                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
-                .withNodeLines(nodeLines)
-                .withGroups(groupTags, groupColors)
-                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
-                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity);
+        var finalWidget = topologyWidget(metrics);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -1171,12 +1171,8 @@ class DiagramSupport {
         }
 
         if (zoom.isPanels()) {
-            renderTreePreview(frame, hChunks.get(0));
+            renderTreePreview(frame, hChunks.get(0), getSelectedRouteId());
         }
-    }
-
-    private void renderTreePreview(Frame frame, Rect area) {
-        renderTreePreview(frame, area, getSelectedRouteId());
     }
 
     private void renderTreePreview(Frame frame, Rect area, String routeId) {
@@ -1601,6 +1597,7 @@ class DiagramSupport {
         lastAreaY = widgetArea.y();
 
         eipNodeBoxes = new ArrayList<>(finalWidget.getNodeBoxes());
+        zoom.foldHits(finalWidget.getFoldHits(), lastAreaX - scrollX, lastAreaY - scrollY);
         if (selectedEipNodeIndex < 0 && !eipNodeBoxes.isEmpty()) {
             selectedEipNodeIndex = 0;
         } else if (restore != null) {
@@ -2092,10 +2089,12 @@ class DiagramSupport {
         Map<String, String> linkable = computeLinkableEndpoints(routeId);
         Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
 
-        var widget = new RouteDiagramWidget(
-                routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
-                showDescription, routeDescs, activeHighlight, historyFailed)
-                .withDensity(zoom.densityOf(routeLayout));
+        int sel = selIdx;
+        // built again once the scroll is clamped to its size, and follows the step
+        Supplier<RouteDiagramWidget> widgets = () -> new RouteDiagramWidget(
+                routeLayout, nw, sel, scrollX, scrollY, false,
+                linkable, showDescription, routeDescs, activeHighlight, historyFailed).withDensity(zoom.densityOf(routeLayout));
+        var widget = widgets.get();
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -2124,10 +2123,7 @@ class DiagramSupport {
             }
         }
 
-        var finalWidget = new RouteDiagramWidget(
-                routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
-                showDescription, routeDescs, activeHighlight, historyFailed)
-                .withDensity(zoom.densityOf(routeLayout));
+        var finalWidget = widgets.get();
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -2183,6 +2179,7 @@ class DiagramSupport {
         boolean showErrors = showErrorPaths;
         List<TopologyErrorFrame.ErrorPath> loadedErrorPaths = List.of();
         TopologyErrorFrame loadedErrorLayer = null;
+        Map<String, List<TopologyDiagramWidget.NodeLine>> foldedLines = Map.of();
         RouteDensity topoDensity = RouteDensity.DETAILED;
         boolean loadedErrorPathsKnown = true;
         if (topoJson != null) {
@@ -2211,6 +2208,8 @@ class DiagramSupport {
                     : new TopologyErrorFrame.Taken(List.of(), TopologyErrorFrame.Externals.NONE);
             List<TopologyNodeInfo> errorNodes = frameRoutes.routes();
             removeRoutes(nodes, edges, hidden);
+            // the folded groups of routes: a box each (Space)
+            foldedLines = TopologyGroupFolds.fold(nodes, edges, routeGroups, zoom.foldedGroups());
             // the zoom: a density, or with fit the most detail in which the topology fits the screen
             topoDensity = zoom.isFit() ? RouteDensity.DETAILED : zoom.density().forTopology();
             while (true) {
@@ -2240,7 +2239,6 @@ class DiagramSupport {
         if (topoJson != null) {
             List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(topoJson);
             if (!routes.isEmpty()) {
-                // Enrich route nodes with remote flag from topology external endpoints
                 DiagramLayouts.markRemote(routes, parseExternalUris(topoJson));
                 stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
                 if (showDescription) {
@@ -2255,7 +2253,6 @@ class DiagramSupport {
             }
         }
 
-        // Apply results on render thread
         TopologyLayoutResult finalTopoResult = topoResult;
         int finalNodeW = nodeW;
         List<TopologyLayoutNode> finalTopoNodes = topoNodes;
@@ -2267,6 +2264,7 @@ class DiagramSupport {
         List<TopologyErrorFrame.ErrorPath> finalErrorPaths = loadedErrorPaths;
         TopologyErrorFrame finalErrorLayer = loadedErrorLayer;
         boolean finalErrorPathsKnown = loadedErrorPathsKnown;
+        Map<String, List<TopologyDiagramWidget.NodeLine>> finalFoldedLines = foldedLines;
         RouteDensity finalTopoDensity = topoDensity;
         ctx.runner.runOnRenderThread(() -> {
             layoutHidden = hidden;
@@ -2283,16 +2281,14 @@ class DiagramSupport {
             cachedPid = pid;
             topologyLayout = finalTopoResult;
             topologyDensity = finalTopoDensity;
+            nodeLines = finalFoldedLines;
             topologyNodeWidth = finalNodeW;
             topologyNodes = finalTopoNodes;
             topologyEdges = finalTopoEdges;
             routeLayouts = routeMap;
 
-            // Preserve selection
-            String prevRouteId = getSelectedRouteId();
-            if (prevRouteId == null && pendingSelectionRouteId != null) {
-                prevRouteId = pendingSelectionRouteId;
-            }
+            // Preserve selection, or select the route asked for (the route left, the box of a folded group)
+            String prevRouteId = pendingSelectionRouteId != null ? pendingSelectionRouteId : getSelectedRouteId();
             pendingSelectionRouteId = null;
 
             if (finalTopoResult != null) {
