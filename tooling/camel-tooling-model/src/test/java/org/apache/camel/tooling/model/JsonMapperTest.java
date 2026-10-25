@@ -191,7 +191,9 @@ class JsonMapperTest {
         assertTrue(out2.getCarriers().isEmpty());
         assertFalse(out2.isUnknown());
         assertEquals(List.of("variableReceive"), out2.getDependsOn());
+        assertEquals("from:marshalOut", out2.toString());
         assertTrue(model2.getBodyType(BodyTypeModel.EIP_STEPS).isUnchanged());
+        assertEquals("unchanged", model2.getBodyType(BodyTypeModel.EIP_STEPS).toString());
     }
 
     @Test

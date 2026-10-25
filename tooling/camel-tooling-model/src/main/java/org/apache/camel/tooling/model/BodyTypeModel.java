@@ -163,7 +163,11 @@ public class BodyTypeModel {
 
     @Override
     public String toString() {
-        return String.join(", ", carriers) + (javaType != null ? " (" + javaType + ")" : "");
+        String answer = String.join(", ", carriers) + (javaType != null ? " (" + javaType + ")" : "");
+        if (from != null) {
+            answer = answer.isEmpty() ? "from:" + from : answer + " (from:" + from + ")";
+        }
+        return answer;
     }
 
     /**
