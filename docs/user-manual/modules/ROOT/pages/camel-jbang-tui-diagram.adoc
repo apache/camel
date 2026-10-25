@@ -66,6 +66,12 @@ steps fit
 * *bare*: no boxes, each step is a mark and its text on one row (`▶` the from, `◆` a step with steps in it, `◇` a
 branch, `●` a step), with the counts beside the lines between them
 
+image::jbang/camel-tui-diagram-route-bare.png[The order-flow route at the bare level: each step a mark and its text on one row, the counts on the lines between them, and the three branches of the choice side by side]
+
+NOTE: The bare level is the one for finding your way around a large route: a branch is a column of short lines, so
+the whole of a choice fits beside the steps before and after it. The text of a step is cut to the room up to the next
+branch; the Info panel on the left has all of the selected step, and *+* zooms back in on it where it is.
+
 Press *z* for fit: the most detailed level in which the whole route fits the screen. The level you choose is kept for
 the next start. The view bar shows the level and where it is among the three, counted up as *+* zooms in
 (`zoom: bare 1/3`, `compact 2/3`, `detailed 3/3`, or `zoom: fit bare 1/3`). The title of the diagram says how many
