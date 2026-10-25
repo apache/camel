@@ -33,20 +33,29 @@ import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Send messages to WhatsApp.
+ * Send messages to WhatsApp, and receive its events in webhook mode.
  */
 @UriEndpoint(firstVersion = "3.19.0", scheme = "whatsapp", title = "WhatsApp", syntax = "whatsapp:phoneNumberId",
-             producerOnly = true,
              category = {
                      Category.CLOUD, Category.API,
                      Category.CHAT },
              headersClass = WhatsAppConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
+                                   description = "In webhook mode (webhook:whatsapp:...), the event that WhatsApp posts, as JSON"
+                                                 + " text. The verification request of WhatsApp (a GET) also reaches the route,"
+                                                 + " with the hub.challenge as the body when hub.mode is subscribe and"
+                                                 + " hub.verify_token matches webhookVerifyToken, else with no body (403, or 400"
+                                                 + " when the parameters are missing). With webhookSecret, an event without a"
+                                                 + " valid X-Hub-Signature-256 is answered with 403 and does not reach the route"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     description = "The body at the end of the route is not sent: the reply is the body the route"
+                                                   + " got, the event or the hub.challenge"),
+           producerIn = @BodyType(value = { Carrier.POJO, Carrier.NULL },
                                   description = "A request of org.apache.camel.component.whatsapp.model: a TextMessageRequest,"
                                                 + " MediaMessageRequest, LocationMessageRequest, ContactMessageRequest,"
                                                 + " InteractiveMessageRequest or TemplateMessageRequest to send a message, or an"
@@ -55,7 +64,7 @@ import org.slf4j.LoggerFactory;
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.UNCHANGED },
                                    description = "The org.apache.camel.component.whatsapp.model.MessageResponse of WhatsApp, with the ids of the messages sent, or the id"
                                                  + " of the media uploaded. No body is left as it is"))
-public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
+public class WhatsAppEndpoint extends DefaultEndpoint implements WebhookCapableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(WhatsAppEndpoint.class);
 
     @UriParam
@@ -104,7 +113,7 @@ public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("consumer not supported");
+        throw new UnsupportedOperationException("Use webhook component to wrap this endpoint");
     }
 
     @Override

@@ -3530,3 +3530,11 @@ exception as before.
 The `CamelFileLastModified` header is now the last modified time of the file, as its documentation says.
 Before, it was the time of the event. The header is not set when the file no longer exists, for example for a `DELETE` event.
 The time of the event is in the `CamelMessageTimestamp` header.
+
+=== camel-whatsapp - the component is no longer marked producer only
+
+The whatsapp component receives events in webhook mode (`webhook:whatsapp:...`), so its metadata no longer marks it as
+producer only, and the catalog now describes the body that the webhook route gets. Tools that read the catalog, such as
+the YAML DSL validator and the Endpoint DSL, now accept a whatsapp endpoint as a consumer, and the Endpoint DSL builder
+of whatsapp gets the consumer options `bridgeErrorHandler`, `exceptionHandler` and `exchangePattern`. A whatsapp
+endpoint used directly in `from` still fails at startup: wrap it with the webhook component, as before.
