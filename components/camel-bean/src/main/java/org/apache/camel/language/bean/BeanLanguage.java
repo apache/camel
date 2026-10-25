@@ -39,6 +39,7 @@ import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
@@ -71,6 +72,8 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
     private volatile ParameterMappingStrategy parameterMappingStrategy;
     private volatile Language simple;
 
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether to validate the bean has the configured method.")
     private boolean validate = true;
 
     public BeanLanguage() {

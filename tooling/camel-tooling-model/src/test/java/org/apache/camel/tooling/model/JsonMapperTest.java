@@ -326,4 +326,43 @@ class JsonMapperTest {
         assertEquals(List.of("text"), language2.getBodyType(BodyTypeModel.EXPRESSION_OUT).getCarriers());
         assertNull(language2.getBodyType(BodyTypeModel.EXPRESSION_IN));
     }
+
+    @Test
+    void testShouldTellALanguageWithoutOptionsFromAnOlderCatalog() {
+        LanguageModel language = new LanguageModel();
+        language.setName("quickjs");
+        LanguageModel.LanguageOptionModel expression = new LanguageModel.LanguageOptionModel();
+        expression.setName("resultType");
+        expression.setKind("attribute");
+        expression.setType("string");
+        expression.setJavaType("java.lang.String");
+        language.addOption(expression);
+
+        // a catalog older than the language options does not have them, and falls back to the expression options
+        String json = JsonMapper.createParameterJsonSchema(language);
+        assertFalse(json.contains("languageProperties"));
+        LanguageModel older = JsonMapper.generateLanguageModel(json);
+        assertNull(older.getLanguageOptions());
+        assertEquals(List.of("resultType"), older.getConfigurationOptions().stream().map(BaseOptionModel::getName).toList());
+
+        // a language without options says so
+        language.setLanguageOptions(List.of());
+        LanguageModel none = JsonMapper.generateLanguageModel(JsonMapper.createParameterJsonSchema(language));
+        assertEquals(List.of(), none.getLanguageOptions());
+        assertTrue(none.getConfigurationOptions().isEmpty());
+
+        LanguageModel.LanguageOptionModel memory = new LanguageModel.LanguageOptionModel();
+        memory.setName("engineMaxMemory");
+        memory.setKind("property");
+        memory.setType("integer");
+        memory.setJavaType("long");
+        memory.setDefaultValue(67108864L);
+        memory.setDescription("The memory");
+        language.setLanguageOptions(List.of(memory));
+        LanguageModel some = JsonMapper.generateLanguageModel(JsonMapper.createParameterJsonSchema(language));
+        assertEquals(1, some.getLanguageOptions().size());
+        assertEquals("engineMaxMemory", some.getConfigurationOptions().get(0).getName());
+        assertEquals("long", some.getLanguageOptions().get(0).getJavaType());
+        assertEquals(List.of("resultType"), some.getOptions().stream().map(BaseOptionModel::getName).toList());
+    }
 }

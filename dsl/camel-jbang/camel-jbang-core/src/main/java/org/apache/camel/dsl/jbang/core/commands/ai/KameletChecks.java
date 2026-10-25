@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -174,11 +175,13 @@ public final class KameletChecks {
             return;
         }
         Map<String, Integer> given = new LinkedHashMap<>();
+        Map<String, String> values = new HashMap<>();
         if (query != null) {
             for (String part : query.split("&")) {
                 String key = part.contains("=") ? part.substring(0, part.indexOf('=')) : part;
                 if (!key.isBlank()) {
                     given.put(key, line);
+                    values.put(key, part.contains("=") ? part.substring(part.indexOf('=') + 1) : "");
                 }
             }
         }
@@ -186,13 +189,18 @@ public final class KameletChecks {
             for (NodeTuple t : parameters.getValue()) {
                 if (t.getKeyNode() instanceof ScalarNode k) {
                     given.put(k.getValue(), k.getStartMark().getLine());
+                    if (t.getValueNode() instanceof ScalarNode v) {
+                        values.put(k.getValue(), v.getValue());
+                    }
                 }
             }
         }
+        // with advancedOptions, the options that are not properties of the Kamelet go to the endpoint it wraps
+        boolean forwarded = !"false".equals(advancedOptions(values, properties));
         String where = def.source().startsWith("the project") ? " (" + def.source() + ")" : "";
         Set<String> componentOptions = kameletComponentOptions();
         for (Map.Entry<String, Integer> e : given.entrySet()) {
-            if (def.property(e.getKey()) == null && !componentOptions.contains(e.getKey())) {
+            if (def.property(e.getKey()) == null && !componentOptions.contains(e.getKey()) && !forwarded) {
                 List<String> close = KameletDefinitions.suggestProperty(e.getKey(), def);
                 StringBuilder sb = new StringBuilder(EndpointChecks.linePrefix(e.getValue())).append("kamelet:")
                         .append(name).append(": unknown property '").append(e.getKey()).append("'");
@@ -225,6 +233,28 @@ public final class KameletChecks {
                        + (missing.size() == 1 ? "it" : "them") + " under parameters. The properties of " + name
                        + where + ": " + KameletDefinitions.propertyList(def));
         }
+    }
+
+    /**
+     * The advancedOptions of a kamelet: endpoint: of the endpoint when it sets it, otherwise of the kamelet component
+     * in the properties of the project (camel.component.kamelet.advanced-options). "false" when neither sets it, and
+     * null when it is not known before the route runs, as with a placeholder.
+     */
+    static String advancedOptions(Map<String, String> endpoint, Map<String, String> properties) {
+        String value = endpoint.get("advancedOptions");
+        if (value == null) {
+            for (Map.Entry<String, String> e : properties.entrySet()) {
+                String key = e.getKey().replace("-", "").toLowerCase(Locale.ROOT);
+                if ("camel.component.kamelet.advancedoptions".equals(key)) {
+                    value = e.getValue();
+                }
+            }
+        }
+        if (value == null) {
+            return "false";
+        }
+        value = value.trim();
+        return value.contains("{{") || value.contains("${") ? null : Boolean.toString(Boolean.parseBoolean(value));
     }
 
     private static volatile Set<String> componentOptions;

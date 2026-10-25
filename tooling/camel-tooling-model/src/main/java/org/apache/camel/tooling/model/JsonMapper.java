@@ -490,6 +490,17 @@ public final class JsonMapper {
         model.setModelName(mobj.getString("modelName"));
         model.setModelJavaType(mobj.getString("modelJavaType"));
         parseArtifact(mobj, model);
+        JsonObject mlprp = (JsonObject) obj.get("languageProperties");
+        if (mlprp != null) {
+            List<LanguageOptionModel> languageOptions = new ArrayList<>();
+            for (Map.Entry<String, Object> entry : mlprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                LanguageOptionModel option = new LanguageOptionModel();
+                parseOption(mp, option, entry.getKey());
+                languageOptions.add(option);
+            }
+            model.setLanguageOptions(languageOptions);
+        }
         JsonObject mprp = (JsonObject) obj.get("properties");
         for (Map.Entry<String, Object> entry : mprp.entrySet()) {
             JsonObject mp = (JsonObject) entry.getValue();
@@ -533,6 +544,10 @@ public final class JsonMapper {
         JsonObject wrapper = new JsonObject();
         wrapper.put("language", obj);
         bodyTypesToJson(model, wrapper);
+        // written as {} when the language has none, so a catalog without it reads as older than these options
+        if (model.getLanguageOptions() != null) {
+            wrapper.put("languageProperties", asJsonObject(model.getLanguageOptions()));
+        }
         wrapper.put("properties", asJsonObject(model.getOptions()));
         final List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
         if (!functions.isEmpty()) {

@@ -19,6 +19,9 @@
     "expressionIn": { "carriers": [ "any" ] },
     "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "A text with functions gives text. A single function, such as ${body} or ${header.foo}, gives its value as it is" }
   },
+  "languageProperties": {
+    
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },
