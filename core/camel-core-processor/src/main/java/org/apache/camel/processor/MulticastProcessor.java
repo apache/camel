@@ -704,6 +704,16 @@ public class MulticastProcessor extends BaseProcessorSupport
                             return;
                         }
 
+                        // Propagate the interrupted flag from the sub-exchange to the original exchange
+                        // immediately, before the outer error handler's callback fires. When a stopped
+                        // error handler in a nested EIP (e.g. split inside multicast) marks the sub-exchange
+                        // as interrupted after logging the cut-off WARN, that flag must reach the original
+                        // exchange before the outer error handler runs, so that the outer runNotAllowed()
+                        // sees interrupted=true and skips logging a second WARN for the same cut-off.
+                        if (exchange.getExchangeExtension().isInterrupted()) {
+                            original.getExchangeExtension().setInterrupted(true);
+                        }
+
                         exchangeResult.accept(exchange);
 
                         // aggregate exchanges if any
