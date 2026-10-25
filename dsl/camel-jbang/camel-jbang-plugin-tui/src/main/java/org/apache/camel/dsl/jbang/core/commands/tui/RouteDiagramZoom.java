@@ -56,7 +56,10 @@ final class RouteDiagramZoom {
     record Restore(int index, int row, int screenRow) {
     }
 
-    private volatile RouteDensity density = RouteDensity.DETAILED;
+    /** The density until another is chosen: boxes of one line, about twice the steps of the detailed on a screen. */
+    static final RouteDensity DEFAULT = RouteDensity.COMPACT;
+
+    private volatile RouteDensity density = DEFAULT;
     private volatile boolean fit;
     /** The folded blocks of each route: the ids of their first steps. */
     private final Map<String, Set<String>> folded = new ConcurrentHashMap<>();
@@ -91,17 +94,17 @@ final class RouteDiagramZoom {
         }
     }
 
-    /** The density, or fit; null for the default (detailed), so the file does not carry it. */
+    /** The density, or fit; null for the default (compact), so the file does not carry it. */
     String setting() {
         if (fit) {
             return "fit";
         }
-        return density == RouteDensity.DETAILED ? null : density.label();
+        return density == DEFAULT ? null : density.label();
     }
 
     void setting(String value) {
         fit = "fit".equals(value);
-        density = RouteDensity.DETAILED;
+        density = DEFAULT;
         for (RouteDensity d : RouteDensity.values()) {
             if (d.label().equals(value)) {
                 density = d;
@@ -143,6 +146,7 @@ final class RouteDiagramZoom {
 
     RouteDensity densityOf(LayoutRoute lr) {
         RouteDensity d = densities.get(lr);
+        // a layout the zoom did not make is the engine's
         return d != null ? d : RouteDensity.DETAILED;
     }
 

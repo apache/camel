@@ -242,7 +242,7 @@ you an at-a-glance view of where you are in the route.
   arrows into the steps
 - `g` — go to node (fuzzy search popup)
 - `+` / `-` — zoom in or out: detailed (boxes with up to three lines),
-  compact (boxes with one line, the steps closer together) and bare (a
+  compact (the default: boxes with one line, the steps closer together) and bare (a
   mark and the text of each step on one row, no boxes); the view bar
   shows the level and where it is (`compact 2/3`), the title how many
   steps the route has and how many are folded (`38 steps · 12 folded`);

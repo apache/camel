@@ -60,11 +60,12 @@ image::jbang/camel-tui-diagram-route.png[The checkout route drilled into, with t
 A large route takes a lot of screen. Press *-* to zoom out and *+* to zoom in, through three levels:
 
 * *detailed*: a box per step, with up to three lines of text
-* *compact*: a box per step with one line of text, and the steps closer together: about twice as many steps fit
+* *compact* (the default): a box per step with one line of text, and the steps closer together: about twice as many
+steps fit
 * *bare*: no boxes, each step is a mark and its text on one row (`▶` the from, `◆` a step with steps in it, `◇` a
 branch, `●` a step), with the counts beside the lines between them
 
-Press *z* for fit: the most detailed level in which the whole route fits the screen. The view bar shows the level and
+The level you choose is kept for the next start. Press *z* for fit: the most detailed level in which the whole route fits the screen. The view bar shows the level and
 where it is among the three (`zoom: compact 2/3`, or `zoom: fit bare 3/3`), and the title of the diagram how many steps
 the route has, so you can tell a large route at a glance, and how many of them are folded (`38 steps · 12 folded`). Zooming keeps the selected step selected, on the same row of the screen, and
 the Info panel has the whole text of the selected step at every level.

@@ -143,8 +143,19 @@ class RouteDiagramZoomTest {
     }
 
     @Test
+    void theDefaultIsCompact() {
+        RouteDiagramZoom zoom = new RouteDiagramZoom();
+        assertThat(zoom.density()).isEqualTo(RouteDensity.COMPACT);
+        LayoutRoute lr = layout(zoom, 0);
+        assertThat(zoom.densityOf(lr)).isEqualTo(RouteDensity.COMPACT);
+        assertThat(zoom.label(lr)).isEqualTo("compact 2/3");
+    }
+
+    @Test
     void zoomOutAndFit() {
         RouteDiagramZoom zoom = new RouteDiagramZoom();
+        zoom.zoomIn();
+        assertThat(zoom.density()).isEqualTo(RouteDensity.DETAILED);
         int detailed = RouteDensity.rows(layout(zoom, 0));
         zoom.zoomOut();
         LayoutRoute compact = layout(zoom, 0);
@@ -195,7 +206,10 @@ class RouteDiagramZoomTest {
         RouteDiagramZoom zoom = new RouteDiagramZoom();
         assertThat(zoom.setting()).isNull();
         zoom.zoomOut();
-        assertThat(zoom.setting()).isEqualTo("compact");
+        assertThat(zoom.setting()).isEqualTo("bare");
+        zoom.zoomIn();
+        zoom.zoomIn();
+        assertThat(zoom.setting()).isEqualTo("detailed");
         zoom.toggleFit();
         assertThat(zoom.setting()).isEqualTo("fit");
 
@@ -205,7 +219,7 @@ class RouteDiagramZoomTest {
         again.setting("fit");
         assertThat(again.isFit()).isTrue();
         again.setting("nonsense");
-        assertThat(again.density()).isEqualTo(RouteDensity.DETAILED);
+        assertThat(again.density()).isEqualTo(RouteDensity.COMPACT);
         assertThat(again.isFit()).isFalse();
     }
 }
