@@ -386,7 +386,7 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=false"
                             + "&conversationMemory=true&storeFullResponse=true&toolSearch=true&tags=search&baseUrl=" + base)
                         .loopDoWhile(header(OpenAIConstants.FINISH_REASON).isEqualTo("tool_calls"))
-                        .to("openai:tool-execution?toolSearch=true&conversationMemory=false&tags=search&baseUrl=" + base)
+                        .to("openai:tool-execution?toolSearch=true&conversationMemory=false&apiKey=dummy&tags=search&baseUrl=" + base)
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=false"
                             + "&conversationMemory=true&storeFullResponse=true&toolSearch=true&tags=search&baseUrl=" + base)
                         .end();
