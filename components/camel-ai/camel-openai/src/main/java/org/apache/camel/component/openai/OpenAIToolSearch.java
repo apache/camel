@@ -44,11 +44,12 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Selects the OpenAI tool definitions for one model call when tool search is enabled.
  * <p>
- * The shared {@link McpToolState} snapshot is not modified. Discovered names are retained by conversation id when a
- * conversation-memory chat-completion request hands a search call to {@code openai:tool-execution}; the handoff reuses
- * that session even when conversation memory is disabled on the tool-execution endpoint. Otherwise discoveries remain
- * exchange-scoped, so unrelated requests do not share them. Full definitions are read again from the latest snapshot on
- * every call. MCP {@code tools/list} is unchanged: search only changes which definitions are sent to the model.
+ * The shared {@link McpToolState} snapshot is not modified. Discovered names are retained by tool-search session ID
+ * across exchanges when {@code conversationMemory=true} and {@link OpenAIConstants#TOOL_SEARCH_SESSION_ID} is supplied.
+ * Without an ID, {@code conversationMemory=true} keeps the session on the exchange across manual tool-loop steps,
+ * including tool-execution endpoints with conversation memory disabled. Otherwise discoveries remain request-scoped.
+ * Full definitions are read again from the latest snapshot on every call. MCP {@code tools/list} is unchanged: search
+ * only changes which definitions are sent to the model.
  */
 final class OpenAIToolSearch {
 
@@ -113,18 +114,9 @@ final class OpenAIToolSearch {
     }
 
     AiToolSearchSession openSession(Exchange exchange, OpenAIConfiguration configuration) {
-        String conversationId = exchange.getIn().getHeader(
-                OpenAIConstants.CONVERSATION_ID, String.class);
-        if (ObjectHelper.isEmpty(conversationId)) {
-            conversationId = configuration.getConversationId();
-        }
-        return openSession(exchange, configuration, conversationId);
-    }
-
-    AiToolSearchSession openSession(
-            Exchange exchange, OpenAIConfiguration configuration, String conversationId) {
-        if (configuration.isConversationMemory() && ObjectHelper.isNotEmpty(conversationId)) {
-            AiToolSearchSession session = sessions.session(conversationId);
+        String sessionId = resolveSessionId(exchange);
+        if (configuration.isConversationMemory() && ObjectHelper.isNotEmpty(sessionId)) {
+            AiToolSearchSession session = sessions.session(sessionId);
             exchange.setProperty(SESSION_PROPERTY, session);
             return session;
         }
@@ -141,26 +133,17 @@ final class OpenAIToolSearch {
 
     /**
      * Opens a tool-execution session, preferring discoveries retained by the chat-completion endpoint for the same
-     * conversation id.
+     * tool-search session ID.
      */
     AiToolSearchSession openSessionForExecution(Exchange exchange, OpenAIConfiguration configuration) {
-        String conversationId = exchange.getIn().getHeader(
-                OpenAIConstants.CONVERSATION_ID, String.class);
-        if (ObjectHelper.isEmpty(conversationId)) {
-            conversationId = configuration.getConversationId();
-        }
-        return openSessionForExecution(exchange, configuration, conversationId);
-    }
-
-    AiToolSearchSession openSessionForExecution(
-            Exchange exchange, OpenAIConfiguration configuration, String conversationId) {
+        String sessionId = resolveSessionId(exchange);
         AiToolSearchSession current = exchange.getProperty(SESSION_PROPERTY, AiToolSearchSession.class);
         if (current != null) {
             return current;
         }
 
-        if (ObjectHelper.isNotEmpty(conversationId)) {
-            AiToolSearchSession retained = sessions.find(conversationId);
+        if (ObjectHelper.isNotEmpty(sessionId)) {
+            AiToolSearchSession retained = sessions.find(sessionId);
             if (retained != null) {
                 exchange.setProperty(SESSION_PROPERTY, retained);
                 return retained;
@@ -169,16 +152,24 @@ final class OpenAIToolSearch {
             // A manual loop can reach tool execution before a search result has registered a retained session.
             // Use a session linked to the shared registry even if this tool-execution endpoint has
             // conversationMemory=false. The session is retained only if the search discovers tools.
-            AiToolSearchSession session = sessions.session(conversationId);
+            AiToolSearchSession session = sessions.session(sessionId);
             exchange.setProperty(SESSION_PROPERTY, session);
             return session;
         }
 
-        return openSession(exchange, configuration, conversationId);
+        return openSession(exchange, configuration);
     }
 
     void closeSession(Exchange exchange, OpenAIConfiguration configuration) {
+        if (configuration.isConversationMemory() && ObjectHelper.isEmpty(resolveSessionId(exchange))) {
+            // Without an identifier, the exchange is the only state shared by manual tool-loop steps.
+            return;
+        }
         exchange.removeProperty(SESSION_PROPERTY);
+    }
+
+    private static String resolveSessionId(Exchange exchange) {
+        return exchange.getIn().getHeader(OpenAIConstants.TOOL_SEARCH_SESSION_ID, String.class);
     }
 
     void clearSessions() {
@@ -191,24 +182,13 @@ final class OpenAIToolSearch {
         return select(endpoint.getConfiguration(), state, session).stream().map(ChatCompletionTool::ofFunction).toList();
     }
 
-    McpToolCallExecutor.ToolResult execute(OpenAIEndpoint endpoint, ChatCompletionMessageToolCall toolCall, Exchange exchange)
-            throws Exception {
-        OpenAIConfiguration configuration = endpoint.getConfiguration();
-        String conversationId = exchange.getIn().getHeader(
-                OpenAIConstants.CONVERSATION_ID, String.class);
-        if (ObjectHelper.isEmpty(conversationId)) {
-            conversationId = configuration.getConversationId();
-        }
-        return execute(endpoint, toolCall, exchange, conversationId);
-    }
-
     McpToolCallExecutor.ToolResult execute(
-            OpenAIEndpoint endpoint, ChatCompletionMessageToolCall toolCall, Exchange exchange, String conversationId)
+            OpenAIEndpoint endpoint, ChatCompletionMessageToolCall toolCall, Exchange exchange)
             throws Exception {
         OpenAIConfiguration configuration = endpoint.getConfiguration();
         AiToolSearchSession session = exchange.getProperty(SESSION_PROPERTY, AiToolSearchSession.class);
         if (session == null) {
-            session = openSessionForExecution(exchange, configuration, conversationId);
+            session = openSessionForExecution(exchange, configuration);
         }
         McpToolState state = endpoint.getMcpToolState();
         String arguments = toolCall.asFunction().function().arguments();

@@ -152,6 +152,8 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
         }
 
         boolean toolSearchEnabled = config.isToolSearch();
+        boolean sessionAlreadyPresent = toolSearchEnabled
+                && exchange.getProperty(OpenAIToolSearch.SESSION_PROPERTY) != null;
         if (toolSearchEnabled) {
             toolSearch.openSessionForExecution(exchange, config);
         }
@@ -163,7 +165,9 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                             null)
                     : toolCallExecutor.execute(toolCalls, exchange);
         } finally {
-            if (toolSearchEnabled) {
+            // The preceding chat-completion step may own an exchange-scoped session. Do not remove it
+            // merely because this endpoint has conversationMemory=false.
+            if (toolSearchEnabled && !sessionAlreadyPresent) {
                 toolSearch.closeSession(exchange, config);
             }
         }

@@ -188,7 +188,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
         boolean toolSearchEnabled = config.isToolSearch();
         if (toolSearchEnabled) {
-            toolSearch.openSession(exchange, config, conversationId);
+            toolSearch.openSession(exchange, config);
         }
         try {
             if (toolSearchEnabled) {
@@ -282,7 +282,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                     AiToolSearchSession session = exchange.getProperty(
                             OpenAIToolSearch.SESSION_PROPERTY, AiToolSearchSession.class);
                     if (session == null) {
-                        session = toolSearch.openSession(exchange, config, conversationId);
+                        session = toolSearch.openSession(exchange, config);
                     }
                     selectedTools = OpenAIToolSearch.select(
                             config, getEndpoint().getMcpToolState(), session);
@@ -331,7 +331,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 List<ChatCompletionMessageToolCall> toolCalls = OpenAIResponsesSupport.toChatToolCalls(functionCalls);
                 List<McpToolCallExecutor.ToolResult> results = config.isToolSearch()
                         ? toolCallExecutor.execute(toolCalls, exchange,
-                                call -> toolSearch.execute(getEndpoint(), call, exchange, conversationId),
+                                call -> toolSearch.execute(getEndpoint(), call, exchange),
                                 conversationId)
                         : toolCallExecutor.execute(toolCalls, exchange, null, conversationId);
                 observability.recordIteration(

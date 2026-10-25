@@ -18,6 +18,7 @@ package org.apache.camel.component.springai.chat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -184,7 +185,7 @@ class SpringAiChatToolSearchTest extends CamelTestSupport {
     }
 
     private static float[] vectorFor(String text) {
-        if (text != null && text.toLowerCase(java.util.Locale.ROOT).contains("invoice")) {
+        if (text != null && text.toLowerCase(Locale.ROOT).contains("invoice")) {
             return new float[] { 1.0f, 0.0f };
         }
         return new float[] { 0.0f, 1.0f };

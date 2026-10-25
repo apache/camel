@@ -133,110 +133,35 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
         }
 
         if (strategy == AiToolSearchStrategy.VECTOR && embeddingModel != null) {
-            List<AiToolSearchCandidate> searchable = searchableCandidates(candidates);
             Set<String> currentToolKeys = new LinkedHashSet<>();
-            for (AiToolSearchCandidate candidate : searchable) {
+            for (AiToolSearchCandidate candidate : searchableCandidates(candidates)) {
                 currentToolKeys.add(embeddingText(candidate));
             }
 
-            List<String> missingTexts;
             synchronized (embeddingCacheLock) {
-                /*
-                 * Reserve enough capacity for all current tool vectors plus query-cache
-                 * headroom. Keep the map and its access order protected by this lock.
-                 */
+                // Keep enough room for the active catalogue and query embeddings.
                 maxCachedEmbeddings = Math.max(
                         MIN_CACHED_EMBEDDINGS,
                         currentToolKeys.size() + CACHE_HEADROOM);
-
                 for (String previousKey : cachedToolEmbeddingKeys) {
                     if (!currentToolKeys.contains(previousKey)) {
                         embeddingCache.remove(previousKey);
                     }
                 }
                 cachedToolEmbeddingKeys = Set.copyOf(currentToolKeys);
-
-                missingTexts = new ArrayList<>();
-                for (String text : currentToolKeys) {
-                    if (!embeddingCache.containsKey(text)) {
-                        missingTexts.add(text);
-                    }
-                }
-            }
-
-            /*
-             * Do not hold embeddingCacheLock during embedAll(). A concurrent search may
-             * compute the same missing vectors; putIfAbsent below safely reconciles the
-             * results, while both searches can progress independently.
-             */
-            if (!missingTexts.isEmpty()) {
-                try {
-                    List<TextSegment> segments = missingTexts.stream()
-                            .map(TextSegment::from)
-                            .toList();
-                    var response = embeddingModel.embedAll(segments);
-                    if (response != null && response.content() != null
-                            && response.content().size() == missingTexts.size()) {
-                        boolean valid = true;
-                        List<float[]> vectors = new ArrayList<>(missingTexts.size());
-                        for (int i = 0; i < missingTexts.size(); i++) {
-                            var embedding = response.content().get(i);
-                            if (embedding == null
-                                    || embedding.vector() == null
-                                    || embedding.vector().length == 0) {
-                                valid = false;
-                                break;
-                            }
-                            vectors.add(embedding.vector());
-                        }
-
-                        if (valid) {
-                            synchronized (embeddingCacheLock) {
-                                for (int i = 0; i < missingTexts.size(); i++) {
-                                    embeddingCache.putIfAbsent(
-                                            missingTexts.get(i), vectors.get(i));
-                                }
-                            }
-                        } else {
-                            LOG.debug(
-                                    "Batch embedding returned invalid or empty vectors, falling back to individual embedding");
-                        }
-                    } else {
-                        LOG.debug(
-                                "Batch embedding returned null or mismatched size, falling back to individual embedding");
-                    }
-                } catch (UnsupportedOperationException e) {
-                    LOG.debug(
-                            "Batch embedding (embedAll) not supported by embedding model, falling back to individual embedding");
-                } catch (Exception e) {
-                    LOG.warn(
-                            "Batch embedding failed unexpectedly, falling back to individual embedding: {}",
-                            e.getMessage());
-                }
             }
         }
 
-        AiToolSearchEmbedder embedder = embeddingModel == null ? null : text -> {
-            float[] cached;
-            synchronized (embeddingCacheLock) {
-                cached = embeddingCache.get(text);
-            }
-            if (cached != null) {
-                return cached;
+        AiToolSearchEmbedder embedder = embeddingModel == null ? null : new AiToolSearchEmbedder() {
+            @Override
+            public float[] embed(String text) {
+                return CamelToolSearchStrategy.this.embed(text);
             }
 
-            var response = embeddingModel.embed(text);
-            if (response == null || response.content() == null || response.content().vector() == null) {
-                throw new IllegalStateException("Embedding model returned no vector");
+            @Override
+            public List<float[]> embedAll(List<String> texts) {
+                return CamelToolSearchStrategy.this.embedAll(texts);
             }
-            float[] vector = response.content().vector();
-            if (vector.length == 0) {
-                throw new IllegalStateException("Embedding model returned an empty vector");
-            }
-            synchronized (embeddingCacheLock) {
-                embeddingCache.put(text, vector);
-            }
-            return vector;
         };
 
         AiToolSearchIndex index = AiToolSearchIndex.create(strategy, candidates, maxResults, embedder);
@@ -244,6 +169,112 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
             return result(index.searchVector(query));
         }
         return result(index.searchKeyword(terms));
+    }
+
+    private float[] embed(String text) {
+        synchronized (embeddingCacheLock) {
+            float[] cached = embeddingCache.get(text);
+            if (cached != null) {
+                return cached;
+            }
+        }
+
+        var response = embeddingModel.embed(text);
+        if (response == null || response.content() == null || response.content().vector() == null) {
+            throw new IllegalStateException("Embedding model returned no vector");
+        }
+        float[] vector = response.content().vector();
+        if (vector.length == 0) {
+            throw new IllegalStateException("Embedding model returned an empty vector");
+        }
+
+        synchronized (embeddingCacheLock) {
+            float[] cached = embeddingCache.get(text);
+            if (cached != null) {
+                return cached;
+            }
+            embeddingCache.put(text, vector);
+        }
+        return vector;
+    }
+
+    private List<float[]> embedAll(List<String> texts) {
+        if (texts == null || texts.isEmpty()) {
+            return List.of();
+        }
+
+        List<float[]> ordered = new ArrayList<>(texts.size());
+        for (int i = 0; i < texts.size(); i++) {
+            ordered.add(null);
+        }
+        Map<String, List<Integer>> missingIndexes = new LinkedHashMap<>();
+        synchronized (embeddingCacheLock) {
+            for (int i = 0; i < texts.size(); i++) {
+                String text = texts.get(i);
+                float[] cached = embeddingCache.get(text);
+                if (cached != null) {
+                    ordered.set(i, cached);
+                } else {
+                    missingIndexes.computeIfAbsent(text, ignored -> new ArrayList<>()).add(i);
+                }
+            }
+        }
+
+        if (!missingIndexes.isEmpty()) {
+            List<String> missingTexts = List.copyOf(missingIndexes.keySet());
+            List<float[]> calculated = embedBatchOrFallback(missingTexts);
+            synchronized (embeddingCacheLock) {
+                for (int i = 0; i < missingTexts.size(); i++) {
+                    String text = missingTexts.get(i);
+                    float[] vector = embeddingCache.get(text);
+                    if (vector == null) {
+                        vector = calculated.get(i);
+                        embeddingCache.put(text, vector);
+                    }
+                    for (int resultIndex : missingIndexes.get(text)) {
+                        ordered.set(resultIndex, vector);
+                    }
+                }
+            }
+        }
+
+        if (ordered.stream().anyMatch(vector -> vector == null || vector.length == 0)) {
+            throw new IllegalStateException("Embedding model did not return a vector for every input");
+        }
+        return List.copyOf(ordered);
+    }
+
+    private List<float[]> embedBatchOrFallback(List<String> texts) {
+        try {
+            List<TextSegment> segments = texts.stream().map(TextSegment::from).toList();
+            var response = embeddingModel.embedAll(segments);
+            if (response != null && response.content() != null && response.content().size() == texts.size()) {
+                List<float[]> vectors = new ArrayList<>(texts.size());
+                boolean valid = true;
+                for (var embedding : response.content()) {
+                    if (embedding == null || embedding.vector() == null || embedding.vector().length == 0) {
+                        valid = false;
+                        break;
+                    }
+                    vectors.add(embedding.vector());
+                }
+                if (valid) {
+                    return vectors;
+                }
+            }
+            LOG.debug(
+                    "Batch embedding returned null, mismatched size, or invalid vectors; falling back to individual embedding");
+        } catch (UnsupportedOperationException e) {
+            LOG.debug("Batch embedding (embedAll) not supported by embedding model, falling back to individual embedding");
+        } catch (Exception e) {
+            LOG.warn("Batch embedding failed unexpectedly, falling back to individual embedding: {}", e.getMessage());
+        }
+
+        List<float[]> vectors = new ArrayList<>(texts.size());
+        for (String text : texts) {
+            vectors.add(embed(text));
+        }
+        return vectors;
     }
 
     private ToolSpecification synthetic() {

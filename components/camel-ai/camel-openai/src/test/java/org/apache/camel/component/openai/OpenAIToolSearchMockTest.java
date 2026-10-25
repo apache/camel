@@ -72,6 +72,12 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
             .invokeTool("invoice")
             .replyWith("manual-loop-invoiced")
             .end()
+            .when("manual loop find invoice without id")
+            .invokeTool(AiToolSearch.TOOL_NAME)
+            .withParam("terms", List.of("invoice"))
+            .invokeTool("invoice")
+            .replyWith("manual-loop-invoiced-without-id")
+            .end()
             .when("mixed batch")
             .invokeTool(AiToolSearch.TOOL_NAME)
             .withParam("terms", List.of("invoice"))
@@ -160,11 +166,25 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
         String prompt = "manual loop find invoice";
         Exchange exchange = template.request("direct:manual", e -> {
             e.getIn().setBody(prompt);
-            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "manual-search-conversation");
+            e.getIn().setHeader(OpenAIConstants.TOOL_SEARCH_SESSION_ID, "manual-search-conversation");
         });
 
         assertNull(exchange.getException());
         assertEquals("manual-loop-invoiced", exchange.getMessage().getBody(String.class));
+        List<List<String>> turns = toolNamesFor(prompt);
+        assertTrue(turns.size() >= 3);
+        assertTrue(turns.get(0).contains(AiToolSearch.TOOL_NAME));
+        assertFalse(turns.get(0).contains("invoice"));
+        assertTrue(turns.get(1).contains("invoice"));
+    }
+
+    @Test
+    void manualToolExecutionReusesSearchDiscoveryWithoutConversationId() {
+        String prompt = "manual loop find invoice without id";
+        Exchange exchange = template.request("direct:manual-no-id", e -> e.getIn().setBody(prompt));
+
+        assertNull(exchange.getException());
+        assertEquals("manual-loop-invoiced-without-id", exchange.getMessage().getBody(String.class));
         List<List<String>> turns = toolNamesFor(prompt);
         assertTrue(turns.size() >= 3);
         assertTrue(turns.get(0).contains(AiToolSearch.TOOL_NAME));
@@ -266,7 +286,7 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
 
         Exchange first = template.request(endpointUri, e -> {
             e.getIn().setBody("find invoice");
-            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv-shared");
+            e.getIn().setHeader(OpenAIConstants.TOOL_SEARCH_SESSION_ID, "conv-shared");
         });
         assertNull(first.getException());
 
@@ -277,7 +297,7 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
 
         Exchange second = template.request(endpointUri, e -> {
             e.getIn().setBody("call invoice directly");
-            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv-shared");
+            e.getIn().setHeader(OpenAIConstants.TOOL_SEARCH_SESSION_ID, "conv-shared");
         });
         assertNull(second.getException());
         assertEquals("invoiced-direct", second.getMessage().getBody(String.class));
@@ -292,7 +312,7 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
         int thirdExchangeStart = afterSecond.size();
         Exchange third = template.request(endpointUri, e -> {
             e.getIn().setBody("find invoice");
-            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv-other");
+            e.getIn().setHeader(OpenAIConstants.TOOL_SEARCH_SESSION_ID, "conv-other");
         });
         assertEquals(null, third.getException());
 
@@ -382,6 +402,10 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
                             + "&toolSearchEmbeddingModel=text-embedding-ada-002&toolSearchMaxResults=1"
                             + "&tags=search&baseUrl=" + base);
                 from("direct:manual")
+                        .to("direct:manual-loop");
+                from("direct:manual-no-id")
+                        .to("direct:manual-loop");
+                from("direct:manual-loop")
                         .setProperty("originalPrompt", body())
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=false"
                             + "&conversationMemory=true&storeFullResponse=true&toolSearch=true&tags=search&baseUrl=" + base)
