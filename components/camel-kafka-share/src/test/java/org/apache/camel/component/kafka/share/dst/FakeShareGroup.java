@@ -59,14 +59,22 @@ import org.apache.kafka.common.record.TimestampType;
  * <li>[E] explicit acknowledgement: "each record ... must be acknowledged ... using acknowledge(ConsumerRecord,
  * AcknowledgeType) before the next call to poll", otherwise poll throws IllegalStateException ("All records must be
  * acknowledged in explicit acknowledgement mode."). A record that is not waiting for an acknowledgement throws
- * IllegalStateException ("The record cannot be acknowledged.").</li>
+ * IllegalStateException ("The record cannot be acknowledged."). As kafka-clients 4.3.1 ShareInFlightBatch.acknowledge
+ * does, a record of the last poll can be acknowledged again until its acknowledgement is sent, and the last type wins;
+ * once it was sent (by a poll, commit or close), it is no longer waiting and throws.</li>
  * <li>[C] the acknowledgements are sent with the next poll, commitSync, commitAsync or close. commitSync returns the
  * result per partition; an acknowledgement of a record whose lock expired fails (InvalidRecordStateException).</li>
  * <li>[K] the acknowledgement commit callback gets the result of the acknowledgements that were sent, with their
- * offsets, at the start of a later poll, commitSync or commitAsync, as kafka-clients 4.3.1 ShareConsumerImpl calls it
- * from handleCompletedAcknowledgements (not from within commitAsync, and not at close).</li>
+ * offsets, where kafka-clients 4.3.1 ShareConsumerImpl calls handleCompletedAcknowledgements: at the start of poll,
+ * commitSync and commitAsync, before poll returns (the acknowledgements sent with that poll have their result by then
+ * in the fake), after commitSync has its own result, and at close after the acknowledgements were sent. Not from within
+ * commitAsync.</li>
  * <li>[W] wakeup: "the thread which is blocking in an operation will throw WakeupException. If no thread is blocking
- * ... the next call will raise it" (poll and commitSync).</li>
+ * ... the next call will raise it". As in kafka-clients 4.3.1: poll checks for a wakeup before it fetches; a wakeup
+ * while poll waits for the fetch wakes the fetch buffer and stays pending, so poll throws WakeupException when no
+ * records were fetched, and otherwise the seed chooses whether the records arrived (poll returns them) or not (poll
+ * throws). commitSync with acknowledgements to send sends them, then throws a pending WakeupException; commitSync with
+ * nothing to send returns an empty map and leaves the wakeup pending. commitAsync does not check for a wakeup.</li>
  * <li>[X] close: the pending acknowledgements are sent; acquired records that were not acknowledged are released (the
  * delivery count is kept).</li>
  * <li>ACCEPT: done. RELEASE: available again (or archived at the delivery limit). REJECT: archived.</li>
@@ -99,6 +107,8 @@ final class FakeShareGroup {
         final String id;
         State state = State.AVAILABLE;
         int deliveries;
+        // the delivery that was rejected (archived by REJECT), 0 if none
+        int rejected;
         long lockUntil;
         Fake owner;
 
@@ -113,6 +123,8 @@ final class FakeShareGroup {
         final int number;
         final ConsumerRecord<Object, Object> record;
         AcknowledgeType ack;
+        // the acknowledgement was sent (with a poll, commit or close)
+        boolean sent;
 
         Delivery(Rec rec, int number, ConsumerRecord<Object, Object> record) {
             this.rec = rec;
@@ -217,10 +229,6 @@ final class FakeShareGroup {
 
         private ConsumerRecords<Object, Object> poll(Duration timeout) {
             handleCompletedAcknowledgements();
-            if (wakeup) {
-                wakeup = false;
-                throw new WakeupException();
-            }
             // [E]
             for (Delivery d : lastBatch) {
                 if (d.ack == null) {
@@ -228,6 +236,11 @@ final class FakeShareGroup {
                     dst.block(10, "poll refused");
                     throw new IllegalStateException("All records must be acknowledged in explicit acknowledgement mode.");
                 }
+            }
+            // [W] a pending wakeup, before the fetch
+            if (wakeup) {
+                wakeup = false;
+                throw new WakeupException();
             }
             lastBatch.clear();
             // [C] the acknowledgements go with the poll
@@ -248,8 +261,13 @@ final class FakeShareGroup {
                 throw new IllegalStateException("This consumer has already been closed.");
             }
             if (wakeup) {
-                wakeup = false;
-                throw new WakeupException();
+                // [W] the wakeup woke the fetch and stays pending: without records the next fetch throws it, and
+                // with records the seed chooses whether they were fetched before the wakeup
+                if (!hasAvailable() || dst.chance(0.5)) {
+                    wakeup = false;
+                    throw new WakeupException();
+                }
+                dst.trace("fake: " + name + " woken up during the fetch, the records arrived, the wakeup stays pending");
             }
             expire();
             Map<TopicPartition, List<ConsumerRecord<Object, Object>>> map = new LinkedHashMap<>();
@@ -275,18 +293,28 @@ final class FakeShareGroup {
                 map.put(new TopicPartition(TOPIC, 0), list);
                 dst.trace("fake: " + name + " poll returns " + list.size() + " records");
             }
+            // [K] before poll returns
+            handleCompletedAcknowledgements();
             return new ConsumerRecords<>(map, Map.of());
         }
 
         private void acknowledge(ConsumerRecord<Object, Object> record, AcknowledgeType type) {
             for (Delivery d : lastBatch) {
-                if (d.record == record || d.rec.offset == record.offset() && d.ack == null) {
-                    if (d.ack != null) {
-                        violations.add(name + " acknowledged " + d.rec.id + "#" + d.number + " twice");
+                if (d.rec.offset == record.offset()) {
+                    // [E] no longer waiting for an acknowledgement once it was sent
+                    if (d.sent) {
+                        violations.add(name + " acknowledged " + d.rec.id + "#" + d.number + " after its " + d.ack.name()
+                                       + " was sent");
                         throw new IllegalStateException("The record cannot be acknowledged.");
                     }
+                    if (d.ack == null) {
+                        pendingAcks.add(d);
+                    } else {
+                        // [E] not sent yet: the last type wins
+                        dst.trace("fake: " + name + " " + d.rec.id + "#" + d.number + " acknowledged again, "
+                                  + d.ack.name() + " -> " + type.name());
+                    }
                     d.ack = type;
-                    pendingAcks.add(d);
                     return;
                 }
             }
@@ -296,13 +324,20 @@ final class FakeShareGroup {
 
         private Map<TopicIdPartition, Optional<KafkaException>> commitSync() {
             handleCompletedAcknowledgements();
+            if (pendingAcks.isEmpty()) {
+                // [W] nothing to send: no wakeup check
+                return Map.of();
+            }
+            KafkaException error = send(true);
+            // [W] the acknowledgements were sent before the wait for their result is woken up
             if (wakeup) {
                 wakeup = false;
                 throw new WakeupException();
             }
-            KafkaException error = send(true);
             Map<TopicIdPartition, Optional<KafkaException>> result = new LinkedHashMap<>();
             result.put(PARTITION, Optional.ofNullable(error));
+            // [K] after its own result
+            handleCompletedAcknowledgements();
             return result;
         }
 
@@ -321,6 +356,7 @@ final class FakeShareGroup {
             pendingAcks.clear();
             Set<Long> offsets = new TreeSet<>();
             for (Delivery d : acks) {
+                d.sent = true;
                 offsets.add(d.rec.offset);
             }
             if (mayFail && faults && dst.chance(commitFailRate)) {
@@ -364,6 +400,8 @@ final class FakeShareGroup {
             lastBatch.clear();
             closed = true;
             open.remove(this);
+            // [K] at close, after the acknowledgements were sent
+            handleCompletedAcknowledgements();
         }
     }
 
@@ -372,11 +410,20 @@ final class FakeShareGroup {
     final List<Rec> log = new ArrayList<>();
     final List<String> violations = new ArrayList<>();
     final Set<Fake> open = new HashSet<>();
+    // the deliveries (id#deliveryCount) whose exchange completed, and those whose exchange failed
     final Set<String> completedDeliveries = new HashSet<>();
+    final Set<String> failedDeliveries = new HashSet<>();
+    // the acknowledgement type of a failed exchange (the onFailure option of the endpoint)
+    AcknowledgeType expectedOnFailure = AcknowledgeType.RELEASE;
     long lockDurationMillis = 30000;
     int deliveryLimit = 5;
     int maxPollRecords = 500;
     double createFailRate;
+    // the createConsumerBackoffMaxAttempts of the component (0: retry for ever), and how often the creation failed that
+    // many times in a row
+    int createConsumerBackoffMaxAttempts;
+    int createGiveUps;
+    private int createFaultsInARow;
     double pollFailRate;
     double commitFailRate;
     boolean faults = true;
@@ -392,8 +439,16 @@ final class FakeShareGroup {
     ShareConsumer<Object, Object> newConsumer() {
         if (faults && dst.chance(createFailRate)) {
             ledger.record("createFault", "c", "c" + created);
+            createFaultsInARow++;
+            if (createConsumerBackoffMaxAttempts > 0 && createFaultsInARow == createConsumerBackoffMaxAttempts) {
+                // as many failed attempts in a row as the consumer makes before it gives up
+                createGiveUps++;
+                createFaultsInARow = 0;
+                dst.trace("fake: " + createConsumerBackoffMaxAttempts + " creation failures in a row");
+            }
             throw Dst.injected(new KafkaException("dst: Failed to construct kafka share consumer"));
         }
+        createFaultsInARow = 0;
         Fake fake = new Fake("c" + created++);
         open.add(fake);
         dst.trace("fake: created " + fake.name);
@@ -427,16 +482,32 @@ final class FakeShareGroup {
         }
     }
 
+    /**
+     * Applies an acknowledgement that the group took. The route never sets the acknowledge header, so the type is
+     * exact: ACCEPT for a delivery the route completed, onFailure for one that failed, and RELEASE only for one the
+     * consumer did not route (it was stopping).
+     */
     private void apply(Rec r, int number, AcknowledgeType type) {
+        String key = r.id + "#" + number;
+        if (type == AcknowledgeType.ACCEPT && !completedDeliveries.contains(key)) {
+            violations.add("accepted " + key + " but the route did not complete that delivery");
+        }
+        if (type != AcknowledgeType.ACCEPT && completedDeliveries.contains(key)) {
+            violations.add(type.name() + " for " + key + " which the route completed");
+        }
+        if (failedDeliveries.contains(key) && type != expectedOnFailure) {
+            violations.add(type.name() + " for failed " + key + ", onFailure is " + expectedOnFailure.name());
+        }
+        if (type == AcknowledgeType.REJECT && !failedDeliveries.contains(key)) {
+            violations.add("rejected " + key + " which did not fail");
+        }
         if (type == AcknowledgeType.ACCEPT) {
-            if (!completedDeliveries.contains(r.id + "#" + number)) {
-                violations.add("accepted " + r.id + "#" + number + " but the route did not complete that delivery");
-            }
             r.state = State.ACKNOWLEDGED;
             r.owner = null;
             ledger.record("accepted", "t", r.id);
         } else if (type == AcknowledgeType.REJECT) {
             r.state = State.ARCHIVED;
+            r.rejected = number;
             r.owner = null;
             ledger.record("rejected", "t", r.id);
         } else if (type == AcknowledgeType.RELEASE) {

@@ -22,9 +22,10 @@ import org.apache.camel.test.dst.DstTest;
 
 /**
  * Deterministic simulation test of the camel-kafka-share consumer against a fake share group, with consumer creation
- * failures, poll and commit failures, acquisition locks that expire under slow processing, route restarts, and suspend
- * and resume: every published record completes in the route at least once or is archived by the group, and a record is
- * accepted only for a delivery the route completed. A failing seed is replayed with {@code -Ddst.seed=<seed>};
+ * failures, poll and commit failures, acquisition locks that expire under slow processing, route restarts, suspend and
+ * resume of the route and of the CamelContext: every published record completes in the route at least once or is
+ * archived by the group as it should be, and each delivery is acknowledged with the type its exchange calls for (ACCEPT
+ * when it completed, onFailure when it failed). A failing seed is replayed with {@code -Ddst.seed=<seed>};
  * {@code -Ddst.seeds=5000} runs more seeds; {@code -Ddst.share.pollOnError=RECONNECT} runs one pollOnError strategy.
  */
 @DstInstrument(value = "org.apache.camel.component.kafka.share",

@@ -23,23 +23,27 @@ import java.util.Properties;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConsumerFatalException;
+import org.apache.camel.component.kafka.TaskHealthState;
 import org.apache.camel.component.kafka.share.KafkaShareClientFactory;
 import org.apache.camel.component.kafka.share.KafkaShareComponent;
 import org.apache.camel.component.kafka.share.KafkaShareConfiguration;
 import org.apache.camel.component.kafka.share.KafkaShareConstants;
+import org.apache.camel.component.kafka.share.KafkaShareConsumer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstCamel;
 import org.apache.camel.test.dst.DstExecutor;
 import org.apache.camel.test.dst.DstLedger;
 import org.apache.camel.test.dst.Invariants;
+import org.apache.kafka.clients.consumer.AcknowledgeType;
 import org.apache.kafka.clients.consumer.ShareConsumer;
 
 /**
  * The world around a camel-kafka-share consumer: a fake share group ({@link FakeShareGroup}), a producer, a route whose
  * processing is sometimes slow (longer than the acquisition lock) and sometimes fails, and an operator that starts,
- * restarts, suspends and resumes the route. Faults: the share consumer cannot be created, polls fail, commits fail,
- * locks expire.
+ * restarts, suspends and resumes the route, and suspends and resumes the CamelContext. Faults: the share consumer
+ * cannot be created, polls fail, commits fail, locks expire, a wakeup arrives while a poll fetches.
  * <p>
  * consumersCount is 1: a consumer thread loops for ever, and with the one-stack model a second looping thread nested
  * above the first would never let it resume. For the same reason a route stop that runs while the consumer thread waits
@@ -48,10 +52,15 @@ import org.apache.kafka.clients.consumer.ShareConsumer;
  * acquisition lock) only once the operations are done. The locks of the consumer do not exclude on the one stack, so a
  * stop never waits for the processing lock of the consumer thread.
  * <p>
- * Properties: every published record completes in the route at least once, unless the share group archived it (delivery
- * limit, REJECT); a record is accepted only for a delivery the route completed; the group is drained once the faults
- * cleared; a started route holds one open share consumer, a stopped one none; the consumer uses the client as the
- * Javadoc requires.
+ * Properties: every published record completes in the route at least once, unless the share group archived it at the
+ * delivery limit, or rejected a delivery that failed with onFailure=REJECT; the acknowledgement type is exact (ACCEPT
+ * for a delivery the route completed, onFailure for one that failed, REJECT for no other); the group is drained once
+ * the faults cleared; a started route holds one open share consumer, a stopped one none; the consumer uses the client
+ * as the Javadoc requires.
+ * <p>
+ * When the seed sets createConsumerBackoffMaxAttempts and the creation failed that many times in a row, the consumer
+ * thread gives up and the route has no share consumer: once the faults cleared, the operator restarts the route, once
+ * for each such run of failures.
  */
 final class KafkaShareWorld {
 
@@ -66,10 +75,14 @@ final class KafkaShareWorld {
     private final long pollTimeoutMs;
     private final long shutdownTimeout;
     private final long backoffInterval;
+    private final int backoffMaxAttempts;
+    private int restartsAfterGiveUp;
     private final List<String> violations = new ArrayList<>();
     private boolean faults = true;
     private int sendsLeft;
     private int opsLeft;
+    // exchanges that block in the route
+    private int blocked;
     private boolean finished;
     private String finalStatus;
     private String finalOpen;
@@ -81,12 +94,16 @@ final class KafkaShareWorld {
         this.ledger = new DstLedger(dst);
         this.group = new FakeShareGroup(dst, ledger);
         this.onFailure = dst.pick(List.of("RELEASE", "REJECT"));
+        group.expectedOnFailure = AcknowledgeType.valueOf(onFailure);
         this.commitMode = dst.pick(List.of("SYNC", "ASYNC"));
+        // not STOP: it ends the consumer thread by design, so "a started route holds one share consumer" cannot hold
         this.pollOnError = dst.pick(Arrays.asList(
                 System.getProperty("dst.share.pollOnError", "ERROR_HANDLER,RECONNECT,RETRY,DISCARD").split(",")));
         this.pollTimeoutMs = dst.pick(List.of(100L, 1000L, 5000L));
         this.shutdownTimeout = dst.pick(List.of(1000L, 30000L));
         this.backoffInterval = dst.pick(List.of(500L, 5000L));
+        this.backoffMaxAttempts = dst.pick(List.of(0, 3));
+        group.createConsumerBackoffMaxAttempts = backoffMaxAttempts;
         group.maxPollRecords = dst.pick(List.of(1, 3, 10));
         group.lockDurationMillis = dst.pick(List.of(5000L, 15000L, 30000L));
         group.deliveryLimit = dst.pick(List.of(5, 10));
@@ -99,6 +116,7 @@ final class KafkaShareWorld {
     private String config() {
         return "onFailure=" + onFailure + " commitMode=" + commitMode + " pollOnError=" + pollOnError
                + " pollTimeoutMs=" + pollTimeoutMs + " shutdownTimeout=" + shutdownTimeout + " backoff=" + backoffInterval
+               + " backoffMaxAttempts=" + backoffMaxAttempts
                + " maxPollRecords=" + group.maxPollRecords + " lock=" + group.lockDurationMillis + " deliveryLimit="
                + group.deliveryLimit + " createFail=" + group.createFailRate + " pollFail=" + group.pollFailRate
                + " commitFail=" + group.commitFailRate;
@@ -108,6 +126,7 @@ final class KafkaShareWorld {
         DefaultCamelContext context = DstCamel.newContext(dst);
         KafkaShareComponent component = new KafkaShareComponent();
         component.setCreateConsumerBackoffInterval(backoffInterval);
+        component.setCreateConsumerBackoffMaxAttempts(backoffMaxAttempts);
         component.setKafkaShareClientFactory(new KafkaShareClientFactory() {
             @Override
             public ShareConsumer<Object, Object> getShareConsumer(Properties kafkaProps) {
@@ -134,14 +153,20 @@ final class KafkaShareWorld {
                             ledger.record("routed", "t", id);
                             // a route stop cannot see an exchange that blocks below it on the one stack finish (the
                             // shutdown strategy waits for it for ever), so the processing takes time only once the
-                            // operations are done
+                            // operations are done, and the finisher stops the route only when no exchange blocks
                             if (faults && opsLeft == 0) {
                                 long latency = dst.chance(0.1)
                                         ? group.lockDurationMillis + dst.between(0, group.lockDurationMillis)
                                         : dst.between(0, 300);
-                                dst.block(latency, "process " + id + "#" + d);
+                                blocked++;
+                                try {
+                                    dst.block(latency, "process " + id + "#" + d);
+                                } finally {
+                                    blocked--;
+                                }
                             }
                             if (faults && dst.chance(0.05)) {
+                                group.failedDeliveries.add(id + "#" + d);
                                 ledger.record("failed", "t", id);
                                 throw Dst.injected(new IllegalStateException("dst: processing failed for " + id));
                             }
@@ -169,7 +194,7 @@ final class KafkaShareWorld {
                     Invariants.of("a started route holds one share consumer",
                             () -> finalOpenCount == 1
                                     ? null : "open share consumers " + finalOpen + " (" + config() + ")"),
-                    Invariants.of("every published record completes at least once, or the group archived it",
+                    Invariants.of("every published record completes at least once, or the group archived it as it should",
                             this::everyRecordCompletedOrArchived),
                     Invariants.of("the share group is drained once the faults cleared",
                             () -> finalSettled ? null : "not settled at the end (" + config() + ")"),
@@ -186,11 +211,43 @@ final class KafkaShareWorld {
         List<String> missing = new ArrayList<>();
         List<String> completed = ledger.of("completed").stream().map(DstLedger.Entry::key).toList();
         for (FakeShareGroup.Rec r : group.log) {
-            if (!completed.contains(r.id) && r.state != FakeShareGroup.State.ARCHIVED) {
-                missing.add(r.id + "=" + r.state + "/d" + r.deliveries);
+            if (!completed.contains(r.id) && !archivedAsItShould(r)) {
+                missing.add(r.id + "=" + r.state + "/d" + r.deliveries + (r.rejected > 0 ? "/rejected#" + r.rejected : ""));
             }
         }
         return missing.isEmpty() ? null : "never completed: " + missing + " (" + config() + ")";
+    }
+
+    /**
+     * The excuse for a record that never completed: the group archived it at the delivery limit (the deliveries failed
+     * with onFailure=RELEASE, or their locks expired, or they were released when the consumer stopped), or it rejected
+     * a delivery that failed, with onFailure=REJECT.
+     */
+    private boolean archivedAsItShould(FakeShareGroup.Rec r) {
+        if (r.state != FakeShareGroup.State.ARCHIVED) {
+            return false;
+        }
+        if (r.rejected == 0) {
+            return r.deliveries >= group.deliveryLimit;
+        }
+        return "REJECT".equals(onFailure) && group.failedDeliveries.contains(r.id + "#" + r.rejected);
+    }
+
+    /**
+     * Whether the share consumer thread of the route gave up creating its share consumer, after as many creation
+     * failures in a row as createConsumerBackoffMaxAttempts, and the operator has not restarted the route for that yet.
+     */
+    private boolean consumerGaveUp(DefaultCamelContext context) {
+        if (restartsAfterGiveUp >= group.createGiveUps || context.getRoute(ROUTE) == null
+                || !(context.getRoute(ROUTE).getConsumer() instanceof KafkaShareConsumer consumer)) {
+            return false;
+        }
+        for (TaskHealthState state : consumer.healthStates()) {
+            if (state.isTerminated() && state.getLastError() instanceof KafkaConsumerFatalException) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -217,8 +274,23 @@ final class KafkaShareWorld {
             return;
         }
         ServiceStatus status = context.getRouteController().getRouteStatus(ROUTE);
+        if (status == ServiceStatus.Started && group.open.isEmpty() && consumerGaveUp(context)) {
+            restartsAfterGiveUp++;
+            dst.trace("world: the consumer gave up creating its share consumer, restart the route");
+            try {
+                context.getRouteController().stopRoute(ROUTE);
+                ledger.record("routeStopped", "r", ROUTE);
+            } catch (Exception e) {
+                violations.add("restart after the give up failed: " + e);
+            }
+            startRoute(context, operator);
+            operator.schedule("finisher", 500, () -> finisher(context, operator, deadline));
+            return;
+        }
         boolean settled = group.settled();
-        if ((!settled || status != ServiceStatus.Started || group.open.size() != 1) && dst.now() < deadline) {
+        // the locks of a slow exchange can expire and settle the group (delivery limit) while it still blocks below
+        if ((!settled || status != ServiceStatus.Started || group.open.size() != 1 || blocked > 0)
+                && dst.now() < deadline) {
             operator.schedule("finisher", 500, () -> finisher(context, operator, deadline));
             return;
         }
@@ -273,7 +345,7 @@ final class KafkaShareWorld {
         int ops = (int) dst.between(0, 4);
         long t = dst.between(500, 3000);
         for (int i = 0; i < ops; i++) {
-            int kind = dst.nextInt(2);
+            int kind = dst.nextInt(3);
             opsLeft++;
             if (kind == 0) {
                 operator.schedule("restart route", t, () -> {
@@ -288,7 +360,7 @@ final class KafkaShareWorld {
                     }
                     opsLeft--;
                 });
-            } else {
+            } else if (kind == 1) {
                 operator.schedule("suspend and resume route", t, () -> {
                     try {
                         if (context.getRouteController().getRouteStatus(ROUTE) == ServiceStatus.Started) {
@@ -298,6 +370,21 @@ final class KafkaShareWorld {
                         }
                     } catch (Exception e) {
                         violations.add("suspend/resume failed: " + e);
+                    }
+                    opsLeft--;
+                });
+            } else {
+                operator.schedule("suspend and resume the CamelContext", t, () -> {
+                    try {
+                        if (context.getRouteController().getRouteStatus(ROUTE) == ServiceStatus.Started) {
+                            context.suspend();
+                            ledger.record("contextSuspended", "r", ROUTE);
+                            dst.block(dst.between(100, 3000), "CamelContext suspended");
+                            context.resume();
+                            ledger.record("contextResumed", "r", ROUTE);
+                        }
+                    } catch (Exception e) {
+                        violations.add("CamelContext suspend/resume failed: " + e);
                     }
                     opsLeft--;
                 });
