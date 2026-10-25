@@ -70,7 +70,7 @@ public abstract class AbstractAgent<S> implements Agent {
     private static void validateToolSearchCompensation(
             AgentConfiguration configuration) {
         if (configuration == null
-                || configuration.getToolSearchStrategy() == null
+                || !configuration.isToolSearchEnabled()
                 || !Boolean.TRUE.equals(
                         configuration.getCompensateOnToolErrors())) {
             return;
@@ -215,7 +215,7 @@ public abstract class AbstractAgent<S> implements Agent {
         // Additional custom LangChain4j Tool Instances (objects with @Tool methods).
         // These are not an MCP catalogue: when tool search is enabled they stay directly visible.
         if (configuration.getCustomTools() != null && !configuration.getCustomTools().isEmpty()) {
-            if (configuration.getToolSearchStrategy() != null) {
+            if (configuration.isToolSearchEnabled()) {
                 builder.tools(alwaysVisibleCustomTools(configuration.getCustomTools()));
             } else {
                 builder.tools(configuration.getCustomTools());
@@ -268,12 +268,8 @@ public abstract class AbstractAgent<S> implements Agent {
         }
 
         // Custom AiServices builder customizer (escape hatch for any builder option not directly exposed).
-        // It does not replace the shared tool ranker: the producer strategy is applied after this callback.
         if (configuration.getAiServicesCustomizer() != null) {
             configuration.getAiServicesCustomizer().accept(builder);
-        }
-        if (configuration.getToolSearchStrategy() != null) {
-            builder.toolSearchStrategy(configuration.getToolSearchStrategy());
         }
     }
 

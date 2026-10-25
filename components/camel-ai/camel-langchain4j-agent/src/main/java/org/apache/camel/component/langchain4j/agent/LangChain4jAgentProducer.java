@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -41,6 +42,7 @@ import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.request.ResponseFormatType;
 import dev.langchain4j.model.chat.request.json.JsonRawSchema;
 import dev.langchain4j.model.chat.request.json.JsonSchema;
+import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.ModerationException;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.output.JsonSchemas;
@@ -308,16 +310,22 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                 throw new IllegalArgumentException(
                         "toolSearchStrategy=vector requires toolSearchEmbeddingModel and does not fall back to keyword search");
             }
-            agentConfiguration.withToolSearchStrategy(new CamelToolSearchStrategy(
+            CamelToolSearchStrategy strategy = new CamelToolSearchStrategy(
                     endpointConfiguration.getToolSearchStrategy(),
                     endpointConfiguration.getToolSearchMaxResults(),
-                    endpointConfiguration.getToolSearchEmbeddingModel()));
+                    endpointConfiguration.getToolSearchEmbeddingModel());
+            Consumer<AiServices<?>> customizer = agentConfiguration.getAiServicesCustomizer();
+            agentConfiguration.withToolSearchEnabled(true);
+            agentConfiguration.withAiServicesCustomizer(builder -> {
+                if (customizer != null) {
+                    customizer.accept(builder);
+                }
+                // The endpoint strategy wins over a strategy set by the customizer.
+                builder.toolSearchStrategy(strategy);
+            });
         } else {
-            // The endpoint option controls Camel tool-search behavior.
-            // A strategy on the supplied bean must not hide route tools when
-            // toolSearch=false, because searchable metadata is only applied
-            // when the endpoint option is enabled.
-            agentConfiguration.withToolSearchStrategy(null);
+            // Keep the API configuration independent of LangChain4j's experimental strategy type.
+            agentConfiguration.withToolSearchEnabled(false);
         }
     }
 

@@ -195,7 +195,15 @@ public final class AiToolSearchIndex {
         return List.copyOf(hits);
     }
 
-    private static List<AiToolSearchCandidate> searchableInOrder(List<AiToolSearchCandidate> candidates) {
+    /**
+     * Returns searchable candidates in catalogue order, keeping the first non-blank candidate for each name. This is
+     * shared with consumers that maintain derived state for the same effective catalogue.
+     *
+     * @param  candidates the candidate catalogue
+     * @return            searchable candidates in their original order
+     * @since             4.24
+     */
+    public static List<AiToolSearchCandidate> searchableInOrder(List<AiToolSearchCandidate> candidates) {
         if (candidates == null || candidates.isEmpty()) {
             return List.of();
         }
@@ -228,7 +236,14 @@ public final class AiToolSearchIndex {
         return List.copyOf(distinct.values());
     }
 
-    private static String embeddingText(AiToolSearchCandidate candidate) {
+    /**
+     * Builds the text embedded for a tool, using its name and optional description.
+     *
+     * @param  candidate the tool candidate
+     * @return           the text used for embedding
+     * @since            4.24
+     */
+    public static String embeddingText(AiToolSearchCandidate candidate) {
         String description = candidate.description();
         if (description == null || description.isBlank()) {
             return candidate.name();

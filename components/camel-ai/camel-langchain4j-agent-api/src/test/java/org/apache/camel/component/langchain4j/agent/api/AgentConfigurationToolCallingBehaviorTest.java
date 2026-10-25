@@ -32,7 +32,6 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.tool.ToolErrorHandlerResult;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
-import dev.langchain4j.service.tool.search.simple.SimpleToolSearchStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -126,7 +125,7 @@ class AgentConfigurationToolCallingBehaviorTest {
         AgentConfiguration configuration = new AgentConfiguration()
                 .withCustomTools(List.of(new CompensatingCustomTool()))
                 .withCompensateOnToolErrors(true)
-                .withToolSearchStrategy(new SimpleToolSearchStrategy());
+                .withToolSearchEnabled(true);
 
         assertThatThrownBy(() -> new AgentWithoutMemory(configuration))
                 .isInstanceOf(IllegalArgumentException.class)

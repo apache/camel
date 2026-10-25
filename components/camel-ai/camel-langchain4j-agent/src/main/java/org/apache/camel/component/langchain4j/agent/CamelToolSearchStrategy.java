@@ -134,8 +134,8 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
 
         if (strategy == AiToolSearchStrategy.VECTOR && embeddingModel != null) {
             Set<String> currentToolKeys = new LinkedHashSet<>();
-            for (AiToolSearchCandidate candidate : searchableCandidates(candidates)) {
-                currentToolKeys.add(embeddingText(candidate));
+            for (AiToolSearchCandidate candidate : AiToolSearchIndex.searchableInOrder(candidates)) {
+                currentToolKeys.add(AiToolSearchIndex.embeddingText(candidate));
             }
 
             synchronized (embeddingCacheLock) {
@@ -305,28 +305,6 @@ final class CamelToolSearchStrategy implements ToolSearchStrategy {
     private static ToolSearchResult result(List<AiToolSearchCandidate> hits) {
         List<String> names = hits.stream().map(AiToolSearchCandidate::name).toList();
         return new ToolSearchResult(names, AiToolSearch.resultMessage(names));
-    }
-
-    private static List<AiToolSearchCandidate> searchableCandidates(List<AiToolSearchCandidate> candidates) {
-        if (candidates == null || candidates.isEmpty()) {
-            return List.of();
-        }
-        Map<String, AiToolSearchCandidate> byName = new LinkedHashMap<>();
-        for (AiToolSearchCandidate candidate : candidates) {
-            if (candidate == null || !candidate.searchable() || candidate.name().isBlank()) {
-                continue;
-            }
-            byName.putIfAbsent(candidate.name(), candidate);
-        }
-        return List.copyOf(byName.values());
-    }
-
-    private static String embeddingText(AiToolSearchCandidate candidate) {
-        String description = candidate.description();
-        if (description == null || description.isBlank()) {
-            return candidate.name();
-        }
-        return candidate.name() + "\n" + description;
     }
 
     private static Map<String, Object> readArguments(String argumentsJson) {

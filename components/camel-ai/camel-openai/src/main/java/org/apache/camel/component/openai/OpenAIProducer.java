@@ -213,6 +213,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpToolState().tools();
         boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
         boolean toolSearchEnabled = config.isToolSearch();
+        boolean sessionAlreadyPresent = toolSearchEnabled
+                && exchange.getProperty(OpenAIToolSearch.SESSION_PROPERTY) != null;
         if (toolSearchEnabled) {
             toolSearch.openSession(exchange, config);
         }
@@ -243,7 +245,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 processNonStreaming(exchange, params, config);
             }
         } finally {
-            if (toolSearchEnabled) {
+            // Do not remove a session that an earlier step placed on the exchange.
+            if (toolSearchEnabled && !sessionAlreadyPresent) {
                 toolSearch.closeSession(exchange, config);
             }
         }

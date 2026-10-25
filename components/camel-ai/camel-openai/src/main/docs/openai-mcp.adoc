@@ -787,3 +787,7 @@ Two endpoint options control what happens when a tool call fails:
 | Max iterations exceeded | `IllegalStateException` is thrown with the tool call log
 | Streaming + MCP tools with autoToolExecution | Falls back to non-streaming (logged as INFO)
 |===
+
+== Tool-search session isolation
+
+Endpoints that use the same `CamelOpenAIToolSearchSessionId` share discovered-tool session state. If those endpoints have different `tags`, one endpoint may remove discoveries made by another endpoint when it prunes tools that are unavailable under its own tags. Use distinct session IDs when endpoints need independent discovery state.

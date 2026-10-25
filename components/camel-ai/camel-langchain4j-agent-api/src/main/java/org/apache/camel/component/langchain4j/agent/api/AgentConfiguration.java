@@ -38,7 +38,6 @@ import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
-import dev.langchain4j.service.tool.search.ToolSearchStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +87,7 @@ public class AgentConfiguration {
     private Boolean executeToolsConcurrently;
     private Executor executeToolsExecutor;
     private Consumer<AiServices<?>> aiServicesCustomizer;
-    private ToolSearchStrategy toolSearchStrategy;
+    private boolean toolSearchEnabled;
 
     /**
      * Gets the configured chat model.
@@ -584,30 +583,30 @@ public class AgentConfiguration {
         copy.executeToolsConcurrently = executeToolsConcurrently;
         copy.executeToolsExecutor = executeToolsExecutor;
         copy.aiServicesCustomizer = aiServicesCustomizer;
-        copy.toolSearchStrategy = toolSearchStrategy;
+        copy.toolSearchEnabled = toolSearchEnabled;
         return copy;
     }
 
     /**
-     * Strategy that ranks route and MCP tools together when tool search is enabled.
+     * Indicates whether Camel's endpoint configuration enables tool search for this agent.
      *
-     * @return the strategy, or {@code null} when tool search is disabled
+     * @return {@code true} when tool search is enabled by the endpoint
      * @since  4.24
      */
-    public ToolSearchStrategy getToolSearchStrategy() {
-        return toolSearchStrategy;
+    public boolean isToolSearchEnabled() {
+        return toolSearchEnabled;
     }
 
     /**
-     * Installs the tool search strategy applied after {@link #withAiServicesCustomizer(Consumer)}, so the producer
-     * option wins over a customizer that also sets a strategy.
+     * Records whether Camel's endpoint configuration enables tool search for this agent. The LangChain4j strategy
+     * implementation is installed internally by the component.
      *
-     * @param  toolSearchStrategy the strategy, or {@code null} to disable tool search
-     * @return                    this configuration instance for method chaining
-     * @since                     4.24
+     * @param  toolSearchEnabled whether endpoint-configured tool search is enabled
+     * @return                   this configuration instance for method chaining
+     * @since                    4.24
      */
-    public AgentConfiguration withToolSearchStrategy(ToolSearchStrategy toolSearchStrategy) {
-        this.toolSearchStrategy = toolSearchStrategy;
+    public AgentConfiguration withToolSearchEnabled(boolean toolSearchEnabled) {
+        this.toolSearchEnabled = toolSearchEnabled;
         return this;
     }
 
