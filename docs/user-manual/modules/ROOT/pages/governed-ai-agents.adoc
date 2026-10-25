@@ -223,8 +223,10 @@ A https://typesafe.ai/blog/introducing-system-one-models-and-jev[System One mode
 xref:next@components::typesafe-ai-component.adoc[TypeSafe AI], is built for exactly that: fast, structured decisions
 instead of generated text. Give it the state and a question, and it returns a yes/no, one category or a score.
 
-The xref:next@components:languages:semantic-language.adoc[Semantic] language declares the questions once, by name, and
-uses them anywhere Camel accepts a predicate or an expression:
+The xref:next@components:languages:semantic-language.adoc[Semantic] language declares the evaluations once, by name, and
+uses them anywhere Camel accepts a predicate or an expression. Each evaluation names its expert, a registry bean; here
+`decisions` is the TypeSafe AI adapter
+(`camel.beans.decisions=#class:org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter`):
 
 [tabs]
 ====
@@ -232,14 +234,14 @@ Java::
 +
 [source,java]
 ----
-semanticQuestions(this)
-    .question("actionable")
+semanticEvaluations(this)
+    .evaluation("actionable").expert("decisions")
         .type("boolean")
         .instructions("Does this message contain an actionable request?")
         .threshold(0.8)
         .uncertainty(0.1)
         .uncertaintyPolicy("fail")
-    .end().question("department")
+    .end().evaluation("department").expert("decisions")
         .type("choice")
         .instructions("Which department should handle this message?")
         .criterion("billing", "Invoices, payments and refunds")
@@ -257,14 +259,16 @@ YAML::
 [source,yaml]
 ----
 - semantic:
-    question:
+    evaluation:
       actionable:
+        expert: decisions
         type: boolean
         instructions: Does this message contain an actionable request?
         threshold: 0.8
         uncertainty: 0.1
         uncertaintyPolicy: fail
       department:
+        expert: decisions
         type: choice
         instructions: Which department should handle this message?
         criteria:
