@@ -13,18 +13,18 @@ route, and the route that does the work also checks:
 |Question |Building block
 
 |Who is calling?
-|xref:components::spiffe-component.adoc[SPIFFE] workload identity and mutual TLS
+|xref:next@components::spiffe-component.adoc[SPIFFE] workload identity and mutual TLS
 
 |May they do this?
 |An `authorizationPolicy` on every xref:components::ai-tool-component.adoc[AI Tool] call, with
-xref:components::opa-component.adoc[Open Policy Agent] or xref:components::openfga-component.adoc[OpenFGA]
+xref:next@components::opa-component.adoc[Open Policy Agent] or xref:next@components::openfga-component.adoc[OpenFGA]
 
 |Does this action make sense?
-|A fast guard decision with the xref:components:languages:semantic-language.adoc[Semantic] language and a
+|A fast guard decision with the xref:next@components:languages:semantic-language.adoc[Semantic] language and a
 System One model
 
 |What happened?
-|xref:components:others:ai-observability.adoc[AI Observability]: OpenTelemetry spans and Micrometer metrics for
+|xref:next@components:others:ai-observability.adoc[AI Observability]: OpenTelemetry spans and Micrometer metrics for
 every LLM call
 |===
 
@@ -83,7 +83,7 @@ circuit breakers, tracing, and the checks below.
 https://spiffe.io/[SPIFFE] gives every workload a cryptographic identity, issued and rotated by the local SPIRE
 agent, with no passwords or API keys to manage.
 
-The xref:components::spiffe-component.adoc[SPIFFE] component validates a caller's JWT-SVID on an incoming request,
+The xref:next@components::spiffe-component.adoc[SPIFFE] component validates a caller's JWT-SVID on an incoming request,
 fetches one for outbound calls, and backs `SSLContextParameters` with rotating mutual TLS for every component that
 already supports TLS:
 
@@ -198,9 +198,9 @@ refusal it can relay to the user, not a stack trace.
 
 The policy can be:
 
-* xref:components::opa-component.adoc[Open Policy Agent]: rules in Rego, versioned and tested apart from the route.
+* xref:next@components::opa-component.adoc[Open Policy Agent]: rules in Rego, versioned and tested apart from the route.
   Evaluate a WebAssembly bundle in-process, so a tool call costs no network hop.
-* xref:components::openfga-component.adoc[OpenFGA]: relationship-based authorization ("may this user refund this
+* xref:next@components::openfga-component.adoc[OpenFGA]: relationship-based authorization ("may this user refund this
   order?"). It fails closed.
 * The policies Camel already has: SPIFFE, xref:components::keycloak-component.adoc[Keycloak],
   xref:components:others:shiro.adoc[Shiro] or xref:components:others:spring-security.adoc[Spring Security].
@@ -220,10 +220,10 @@ Authorization answers "may this caller use this tool". Some questions are about 
 actionable, which team should handle it, does this answer stay on topic.
 
 A https://typesafe.ai/blog/introducing-system-one-models-and-jev[System One model], such as Jev from
-xref:components::typesafe-ai-component.adoc[TypeSafe AI], is built for exactly that: fast, structured decisions
+xref:next@components::typesafe-ai-component.adoc[TypeSafe AI], is built for exactly that: fast, structured decisions
 instead of generated text. Give it the state and a question, and it returns a yes/no, one category or a score.
 
-The xref:components:languages:semantic-language.adoc[Semantic] language declares the questions once, by name, and
+The xref:next@components:languages:semantic-language.adoc[Semantic] language declares the questions once, by name, and
 uses them anywhere Camel accepts a predicate or an expression:
 
 [tabs]
