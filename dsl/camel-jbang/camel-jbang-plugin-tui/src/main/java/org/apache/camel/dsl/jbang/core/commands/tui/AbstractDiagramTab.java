@@ -18,9 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 
 /**
  * A tab that shows the route diagram: the topology of the routes, and a route drilled down into. The Diagram tab shows
@@ -53,11 +56,22 @@ abstract class AbstractDiagramTab extends AbstractTab {
     protected String drillDownRouteId;
     /** The routes followed from a node that calls another route, for Esc to walk back. */
     protected final Deque<String> routeNavigationStack = new ArrayDeque<>();
+    /**
+     * The step each route on the trail was left from (the one calling the next route), for Esc to select it again on
+     * its row of the screen. Following a link sets the entry of the route it leaves, so an old entry is never used.
+     */
+    protected final Map<String, LinkOrigin> linkOrigins = new HashMap<>();
+
+    /** Where a route was left by following a link: the step the link is on, and its row on the screen. */
+    record LinkOrigin(String nodeId, int screenRow) {
+    }
+
     /** Whether the detail panel of the selected node is shown, beside the route diagram. */
     protected boolean detailMode;
 
     protected AbstractDiagramTab(MonitorContext ctx) {
         super(ctx);
+        diagram.zoom = ctx.routeZoom;
     }
 
     boolean isShowDiagram() {
@@ -131,6 +145,15 @@ abstract class AbstractDiagramTab extends AbstractTab {
             gotoNodePopup.open(diagram.getEipNodeBoxes(), diagram.getSelectedEipNodeIndex());
             return true;
         }
+        if ((routeNodes || topologyMode) && handleZoomKeys(ke)) {
+            return true;
+        }
+        if (ke.isChar('p')) {
+            // the mini panels cover a corner of the diagram: the map and the tree of the route
+            diagram.zoom.togglePanels();
+            ctx.backgroundExecutor.execute(diagram.zoom::persist);
+            return true;
+        }
         if (!topologyMode && detailMode) {
             if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
                 detail.scrollBy(-10);
@@ -188,6 +211,81 @@ abstract class AbstractDiagramTab extends AbstractTab {
     }
 
     /**
+     * The zoom of the route diagram: + and - give the steps more or less room, z the most detail that fits the screen,
+     * space folds the block of the selected step (or unfolds it), f folds all the blocks and F expands them all. The
+     * selected step stays selected (or the folded block it is in), on the same row of the screen.
+     */
+    private boolean handleZoomKeys(KeyEvent ke) {
+        RouteDiagramZoom zoom = diagram.zoom;
+        var selected = diagram.getSelectedEipNodeBox();
+        String anchorId = selected != null ? selected.nodeId() : null;
+        if (ke.isChar('+') || ke.isChar('=')) {
+            zoom.zoomIn();
+        } else if (ke.isChar('-')) {
+            zoom.zoomOut();
+        } else if (ke.isCharIgnoreCase('z')) {
+            zoom.toggleFit();
+        } else if (topologyMode) {
+            // the topology zooms, its blocks are the routes' own
+            return false;
+        } else if (ke.isChar(' ')) {
+            String folded = zoom.toggleFold(drillDownRouteId, selected != null ? selected.layoutNode() : null);
+            if (folded == null) {
+                // no block to fold
+                return true;
+            }
+            anchorId = folded;
+        } else if (ke.isChar('f')) {
+            anchorId = zoom.foldAll(drillDownRouteId, selected != null ? selected.layoutNode() : null);
+        } else if (ke.isChar('F')) {
+            zoom.expandAll(drillDownRouteId);
+        } else {
+            return false;
+        }
+        // the zoom and the folds are kept for the next start
+        ctx.backgroundExecutor.execute(zoom::persist);
+        if (topologyMode) {
+            // the route selected stays selected (the topology keeps its selection when it is laid out again)
+            diagram.endLoad();
+            reloadDiagram();
+            return true;
+        }
+        int screenRow = 0;
+        for (var box : diagram.getEipNodeBoxes()) {
+            if (anchorId != null && anchorId.equals(box.nodeId())) {
+                screenRow = box.startRow() - diagram.getScrollY();
+                break;
+            }
+        }
+        zoom.anchor(diagram.getRouteLayout(drillDownRouteId), anchorId, screenRow);
+        diagram.endLoad();
+        reloadDiagram();
+        return true;
+    }
+
+    /**
+     * A click on the fold marker of a step (▸ 12 steps folded) unfolds it, the step selected where it is.
+     *
+     * @return whether the click was on a fold marker
+     */
+    protected final boolean handleFoldMarkerClick(MouseEvent me) {
+        String nodeId = !topologyMode && me.isClick() ? diagram.zoom.foldMarkerAt(me.x(), me.y()) : null;
+        if (nodeId == null || !diagram.zoom.unfold(drillDownRouteId, nodeId)) {
+            return false;
+        }
+        ctx.backgroundExecutor.execute(diagram.zoom::persist);
+        for (var box : diagram.getEipNodeBoxes()) {
+            if (nodeId.equals(box.nodeId())) {
+                diagram.zoom.anchor(diagram.getRouteLayout(drillDownRouteId), nodeId,
+                        box.startRow() - diagram.getScrollY());
+            }
+        }
+        diagram.endLoad();
+        reloadDiagram();
+        return true;
+    }
+
+    /**
      * Esc on the diagram: closes the go to node popup or the source, else from a route goes back along the routes
      * followed, then to the topology. Returns false in the topology, where each tab has its own.
      */
@@ -202,9 +300,15 @@ abstract class AbstractDiagramTab extends AbstractTab {
         }
         if (!topologyMode) {
             if (!routeNavigationStack.isEmpty()) {
+                var left = diagram.getRouteLayout(drillDownRouteId);
                 drillDownRouteId = routeNavigationStack.pop();
                 diagram.selectFromNode(drillDownRouteId);
                 diagram.resetScroll();
+                LinkOrigin origin = linkOrigins.remove(drillDownRouteId);
+                if (origin != null) {
+                    // back on the step the link was followed from, where it was on the screen
+                    diagram.zoom.anchor(left, origin.nodeId(), origin.screenRow());
+                }
                 return true;
             }
             leaveRoute();
@@ -262,9 +366,12 @@ abstract class AbstractDiagramTab extends AbstractTab {
         }
     }
 
-    /** The diagram again with the numbers and the body types of the status file, while they are shown. */
+    /**
+     * The diagram again with the numbers and the body types of the status file, while they are shown; and with fit, as
+     * the screen may have changed (a resize, the detail panel), so the level fit chose is chosen again.
+     */
     void refreshDiagramIfNeeded() {
-        if (diagram.isShowDiagram() && (diagramMetrics || diagram.isShowBodyTypes())) {
+        if (diagram.isShowDiagram() && (diagramMetrics || diagram.isShowBodyTypes() || diagram.zoom.isFit())) {
             reloadDiagram();
         }
     }
@@ -318,6 +425,12 @@ abstract class AbstractDiagramTab extends AbstractTab {
             routeNavigationStack.pop();
         } else {
             routeNavigationStack.push(drillDownRouteId);
+            var from = diagram.getSelectedEipNodeBox();
+            if (from != null && from.nodeId() != null) {
+                linkOrigins.put(drillDownRouteId, new LinkOrigin(from.nodeId(), from.startRow() - diagram.getScrollY()));
+            } else {
+                linkOrigins.remove(drillDownRouteId);
+            }
         }
         drillDownRouteId = linkedRouteId;
         diagram.selectFromNode(linkedRouteId);
