@@ -683,6 +683,9 @@ class DiagramTab extends AbstractDiagramTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (renderGotoNodeFooter(spans)) {
+            return;
+        }
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
             return;

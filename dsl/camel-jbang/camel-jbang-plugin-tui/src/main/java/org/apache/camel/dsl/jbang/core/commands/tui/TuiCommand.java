@@ -41,7 +41,8 @@ public class TuiCommand extends CamelCommand {
     int mcpPort = 8123;
 
     @CommandLine.Option(names = { "--web" },
-                        description = "Enable browser-accessible terminal (WebSocket) server")
+                        description = "Enable browser-accessible terminal (WebSocket) server; without an interactive"
+                                      + " terminal it serves browsers only")
     boolean web;
 
     @CommandLine.Option(names = { "--web-port" },
@@ -85,6 +86,11 @@ public class TuiCommand extends CamelCommand {
                         completionCandidates = ThemeModeCompletionCandidates.class)
     String panelTheme;
 
+    @CommandLine.Option(names = { "--defaults" },
+                        description = "Start with the default settings, as a new user sees the TUI; changes last for the"
+                                      + " session and are not saved")
+    boolean defaults;
+
     public TuiCommand(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
         this.classLoader = classLoader;
@@ -92,8 +98,8 @@ public class TuiCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        if (record == null) {
-            // a recording plays a tape headless
+        if (record == null && !web) {
+            // a recording plays a tape headless, and --web without a terminal serves browsers only
             requireInteractiveTerminal("camel tui");
         }
         CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
@@ -152,6 +158,9 @@ public class TuiCommand extends CamelCommand {
         if (panelTheme != null) {
             args.add("--panel-theme");
             args.add(panelTheme);
+        }
+        if (defaults) {
+            args.add("--defaults");
         }
         return args;
     }

@@ -66,6 +66,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -141,7 +142,8 @@ public class CamelMonitor extends CamelCommand {
     volatile int mcpPort = 8123;
 
     @CommandLine.Option(names = { "--web" },
-                        description = "Enable browser-accessible terminal (WebSocket) server")
+                        description = "Enable browser-accessible terminal (WebSocket) server; without an interactive"
+                                      + " terminal it serves browsers only")
     boolean web;
 
     @CommandLine.Option(names = { "--web-port" },
@@ -159,6 +161,11 @@ public class CamelMonitor extends CamelCommand {
                                       + " (overrides the Panel Theme setting for this session)",
                         completionCandidates = ThemeModeCompletionCandidates.class)
     String panelTheme;
+
+    @CommandLine.Option(names = { "--defaults" },
+                        description = "Start with the default settings, as a new user sees the TUI; changes last for the"
+                                      + " session and are not saved")
+    boolean defaults;
 
     // State
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
@@ -390,8 +397,16 @@ public class CamelMonitor extends CamelCommand {
             // the directory is a project to open, not a name filter
             name = "*";
         }
+        if (defaults) {
+            TuiUserConfig.useDefaults();
+        }
         applyThemeOption();
         configureRecording();
+        if (MonitorStartup.browserOnly(web, webBackend != null, record != null, EnvironmentHelper.isInteractiveTerminal())) {
+            MonitorStartup.serveBrowserOnly(
+                    new TuiWebServer(webPort, getMain(), classLoader, name, refreshInterval, theme), webPort, mcp, printer());
+            return 0;
+        }
         MonitorStartup.requireTerminal(webBackend != null, record != null);
         recordingManager.init(record != null);
 
@@ -426,29 +441,9 @@ public class CamelMonitor extends CamelCommand {
         return 0;
     }
 
-    /**
-     * Validates and applies the --theme and --panel-theme options.
-     */
+    /** Validates and applies the --theme and --panel-theme options. */
     void applyThemeOption() {
-        if (theme != null) {
-            if (!Theme.isValidMode(theme)) {
-                String expected = String.join("' or '", ThemeMode.ids());
-                throw new CommandLine.ParameterException(
-                        new CommandLine(this),
-                        "Invalid value for option '--theme': expected '" + expected + "', was '" + theme + "'");
-            }
-            Theme.applyStartupMode(theme);
-        }
-        if (panelTheme != null) {
-            if (!Theme.isValidMode(panelTheme) && !Theme.PANEL_THEME_SAME.equalsIgnoreCase(panelTheme.strip())) {
-                String expected = String.join("' or '", ThemeMode.ids());
-                throw new CommandLine.ParameterException(
-                        new CommandLine(this),
-                        "Invalid value for option '--panel-theme': expected '" + Theme.PANEL_THEME_SAME + "' or '" + expected
-                                               + "', was '" + panelTheme + "'");
-            }
-            Theme.setPanelTheme(panelTheme);
-        }
+        MonitorStartup.applyThemeOptions(new CommandLine(this), theme, panelTheme);
     }
 
     /**

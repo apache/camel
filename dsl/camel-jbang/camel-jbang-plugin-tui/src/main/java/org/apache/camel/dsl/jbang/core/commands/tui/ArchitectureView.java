@@ -102,7 +102,8 @@ final class ArchitectureView {
     private Capabilities picked;
     private Capabilities aiCapabilities;
     private Capabilities factCapabilities;
-    private boolean showUtility;
+    /** Whether the utility routes are shown: on out of the box, so a new project shows all its routes (u). */
+    private boolean showUtility = true;
     /** Whether the external systems are drawn as boxes linked to the groups that use them (e). */
     private boolean showExternal;
     /** The kinds of an external system box when it is selected: messages come in from it, or go out to it. */
