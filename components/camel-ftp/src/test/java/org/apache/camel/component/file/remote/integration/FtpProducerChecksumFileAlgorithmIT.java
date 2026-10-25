@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.integration;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,15 +26,19 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConstants;
+import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.util.StringHelper;
+import org.apache.commons.net.ftp.FTPFile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -166,5 +171,64 @@ class FtpProducerChecksumFileAlgorithmIT extends FtpServerTestSupport {
         assertEquals("Hello World", Files.readString(service.ftpFile("checksum/kept.txt")));
         assertNull(out.getMessage().getHeader(FileConstants.FILE_CHECKSUM),
                 "no checksum of a file that was not written");
+    }
+
+    @Test
+    void testChecksumOfRemoteFileStreamIsCalculatedWhileUploading() throws Exception {
+        // the body of from("ftp:...?streamDownload=true"): a RemoteFile that wraps the download stream, which the
+        // upload must read through the digest in one pass, not after a copy of the whole file in a stream cache
+        RemoteFile<FTPFile> download = new RemoteFile<>();
+        download.setFile(new FTPFile());
+        download.setFileName("relay.txt");
+        download.setBody(new ByteArrayInputStream("Hello Relay".getBytes(StandardCharsets.UTF_8)) {
+            @Override
+            public boolean markSupported() {
+                return false;
+            }
+        });
+
+        Exchange out = template.request(getFtpUrl(), exchange -> {
+            exchange.getIn().setHeader(Exchange.FILE_NAME, "relay.txt");
+            exchange.getIn().setBody(download);
+        });
+
+        assertNull(out.getException());
+        assertEquals("Hello Relay", Files.readString(service.ftpFile("checksum/relay.txt")));
+        assertChecksumOfUploadedFile("relay.txt");
+        Object body = out.getMessage().getBody();
+        assertFalse(body instanceof StreamCache, "the download stream was cached: " + body.getClass());
+        // and the digest stream does not offer mark/reset, which would count the bytes read again twice
+        assertFalse(assertInstanceOf(InputStream.class, body).markSupported());
+    }
+
+    @Test
+    void testNoChecksumOfNullBody() throws Exception {
+        // allowNullBody writes an empty file: no checksum, as with the file component
+        Exchange out = template.request(getFtpUrl() + "&allowNullBody=true", exchange -> {
+            exchange.getIn().setHeader(Exchange.FILE_NAME, "empty.txt");
+            exchange.getIn().setHeader(FileConstants.FILE_CHECKSUM, "stale");
+            exchange.getIn().setBody(null);
+        });
+
+        assertNull(out.getException());
+        assertTrue(service.ftpFile("checksum/empty.txt").toFile().exists(), "File should exist");
+        assertFalse(service.ftpFile("checksum/empty.txt.sha256").toFile().exists(), "No checksum file");
+        assertNull(out.getMessage().getHeader(FileConstants.FILE_CHECKSUM));
+    }
+
+    @Test
+    void testNoEarlierChecksumHeaderWhenTheExistingFileIsKeptEagerly() throws Exception {
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "eager.txt");
+
+        // the existing target is found before the temporary file is written (eagerDeleteTargetFile=true by default)
+        Exchange out = template.request(getFtpUrl() + "&tempFileName=tmp-${file:name}&fileExist=Ignore", exchange -> {
+            exchange.getIn().setHeader(Exchange.FILE_NAME, "eager.txt");
+            exchange.getIn().setHeader(FileConstants.FILE_CHECKSUM, "stale");
+            exchange.getIn().setBody("Bye World");
+        });
+
+        assertEquals("Hello World", Files.readString(service.ftpFile("checksum/eager.txt")));
+        assertNull(out.getMessage().getHeader(FileConstants.FILE_CHECKSUM),
+                "no checksum header of an earlier producer");
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.DigestInputStream;
@@ -132,6 +133,12 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
 
         try {
             preWriteCheck(exchange);
+
+            if (endpoint.getChecksumFileAlgorithm() != null) {
+                // a checksum header of an earlier producer of the route is not the checksum of this file (also when the
+                // existing target is kept below and nothing is written)
+                exchange.getMessage().removeHeader(FileConstants.FILE_CHECKSUM);
+            }
 
             // should we write to a temporary name and then afterwards rename to
             // real target
@@ -308,8 +315,7 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
     }
 
     /**
-     * A checksum header of an earlier producer of the route is not the checksum of this file, so it is removed. The
-     * {@link FileOperations} calculate the checksum while they write the file; the operations of the remote file
+     * The {@link FileOperations} calculate the checksum while they write the file; the operations of the remote file
      * components do not, so for them the checksum is calculated here, from the bytes they upload: most of them read the
      * body as an InputStream, or with {@link GenericFileHelper#toInputStream(Exchange, String)} when a charset is set
      * (scp and azure-files ignore the charset).
@@ -318,25 +324,27 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
      *         upload), or null when there is no checksum to set here
      */
     protected MessageDigest prepareChecksum(Exchange exchange, String fileName, String algorithm) throws Exception {
-        exchange.getMessage().removeHeader(FileConstants.FILE_CHECKSUM);
         if (operations instanceof FileOperations) {
             return null;
         }
+        // fileName can only exist here without a temp file name: a temp file was deleted before (processExchange)
         if (endpoint.getFileExist() == GenericFileExist.Ignore && operations.existsFile(fileName)) {
             // the existing file is kept and nothing is uploaded, so there is no checksum (as with the file component)
             return null;
         }
-        MessageDigest digest = MessageDigest.getInstance(algorithm);
         Message in = exchange.getIn();
         Object body = in.getBody();
         if (body == null) {
-            // an empty file (allowNullBody): the digest of no bytes
-            return digest;
+            // an empty file (allowNullBody): no checksum, as the file component writes none for it
+            return null;
         }
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
         String charset = endpoint.getCharset();
         if (!isReadableAgain(body)) {
-            // the body can be read once (a stream, a reader, ...): the upload must read it as well
-            if (!(body instanceof InputStream)) {
+            // the body can be read once (a stream, a reader, ...): the upload must read it as well. A WrappedFile (the
+            // RemoteFile of a streamDownload consumer, say) is judged by its content: its stream is read once as well
+            Object content = body instanceof WrappedFile<?> wrapped ? wrapped.getBody() : body;
+            if (!(content instanceof InputStream)) {
                 // keep its content first if possible (a reader becomes a reader cache), so that the upload reads it as it
                 // would without a checksum
                 StreamCache cache = exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, body);
@@ -346,10 +354,10 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
                 }
             }
             if (!isReadableAgain(body)) {
-                InputStream stream = body instanceof InputStream is ? is : in.getMandatoryBody(InputStream.class);
+                InputStream stream = content instanceof InputStream is ? is : in.getMandatoryBody(InputStream.class);
                 if (charset == null) {
                     // the upload reads the stream through the digest, in one pass
-                    in.setBody(new DigestInputStream(stream, digest));
+                    in.setBody(new OnePassDigestInputStream(stream, digest));
                     return digest;
                 }
                 // the upload encodes it with the charset: keep its content so it can be read for the checksum first
@@ -376,6 +384,31 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
             }
         }
         return digest;
+    }
+
+    /**
+     * A digest stream without mark and reset: bytes read again after a reset would be counted twice in the checksum.
+     */
+    private static final class OnePassDigestInputStream extends DigestInputStream {
+
+        OnePassDigestInputStream(InputStream stream, MessageDigest digest) {
+            super(stream, digest);
+        }
+
+        @Override
+        public boolean markSupported() {
+            return false;
+        }
+
+        @Override
+        public synchronized void mark(int readlimit) {
+            // not supported
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            throw new IOException("mark/reset not supported");
+        }
     }
 
     /**
