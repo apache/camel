@@ -328,6 +328,17 @@ The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are
 `openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
 `openstackSwiftContainerWrite()`).
 
+=== camel-file - the checksum of checksumFileAlgorithm is the checksum of the written file
+
+With `checksumFileAlgorithm`, the file producer calculated the checksum from the body before it was written. With
+`charset` set, it also decoded that body with the default charset of the JVM instead of the charset of the exchange.
+So with `charset`, the checksum (the `CamelFileChecksum` header and the checksum file) did not match the written file
+as soon as the encoding changed a byte, a body read with another charset (such as the bytes of a file consumed with
+`charset=ISO-8859-1`) was written with its non-ASCII characters replaced, and a String body could fail with an
+`UnmappableCharacterException`; with `fileExist=Append` and `appendChars`, the checksum left out the appended
+characters. The checksum is now calculated from the bytes written to the file, and the body is decoded as it is
+without `checksumFileAlgorithm`. Checksums of such files differ from the ones written before.
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
