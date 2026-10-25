@@ -53,6 +53,11 @@ public final class BodyTypeResolver {
      * What a side says for a step: the carriers of the body, and its Java type and format when it has them.
      */
     public record Resolved(List<String> carriers, String javaType, String format) {
+
+        public Resolved {
+            // a copy, not the list of the model the caller could change
+            carriers = List.copyOf(carriers);
+        }
     }
 
     /**

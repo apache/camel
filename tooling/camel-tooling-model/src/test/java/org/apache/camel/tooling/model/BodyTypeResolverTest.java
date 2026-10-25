@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tooling.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,9 +98,19 @@ class BodyTypeResolverTest {
         assertEquals(List.of("map", "value", "null"), resolve(side, Map.of("outputType", "SelectOne")).carriers());
         assertEquals(new Resolved(List.of("pojo", "null"), "com.acme.Order", null),
                 resolve(side, Map.of("outputType", "SelectOne", "outputClass", "com.acme.Order")));
+        // Object can be anything, also for an option value
+        assertNull(resolve(side, Map.of("outputType", "SelectOne", "outputClass", "java.lang.Object")));
         // the class does not change the List of the default outputType
         assertEquals(List.of("list", "unchanged"), resolve(side, Map.of("outputClass", "com.acme.Order")).carriers());
         assertEquals(List.of("iterator"), resolve(side, Map.of("outputType", "stream-list")).carriers());
+    }
+
+    @Test
+    void theCarriersAreACopy() {
+        BodyTypeModel side = side(new ArrayList<>(List.of("text")));
+        Resolved resolved = resolve(side, Map.of());
+        side.getCarriers().add("bytes");
+        assertEquals(List.of("text"), resolved.carriers());
     }
 
     @Test
