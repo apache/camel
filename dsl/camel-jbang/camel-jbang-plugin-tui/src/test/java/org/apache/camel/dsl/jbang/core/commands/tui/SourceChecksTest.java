@@ -70,6 +70,34 @@ class SourceChecksTest {
     }
 
     @Test
+    void aStepThatCannotTakeTheBodyWhileTyping() {
+        // CAMEL-26295: the body through the steps of a route is checked as soon as the file passes the schema
+        SourceChecks checks = new SourceChecks();
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: file:outbox
+                """;
+        SourceChecks.Found found = checks.check(SourceChecks.Kind.YAML, yaml);
+        assertThat(found.errors()).singleElement().satisfies(e -> assertThat(e).startsWith("Line 8: ")
+                .contains("to: file needs the body as text, bytes, a stream or a file")
+                .contains("add marshal: json before this step"));
+        assertThat(found.blocksSave(SourceChecks.Kind.YAML)).isTrue();
+        // the save says the same
+        assertThat(checks.checkOnSave(SourceChecks.Kind.YAML, yaml).errors()).isEqualTo(found.errors());
+        // with the marshal the body is text again
+        String fixed = yaml.replace("        - to:", "        - marshal:\n            json: {}\n        - to:");
+        assertThat(checks.check(SourceChecks.Kind.YAML, fixed).errors()).isEmpty();
+        // a file that does not pass the schema yet, as while typing: its routes wait for the save as well
+        assertThat(checks.check(SourceChecks.Kind.YAML, yaml.replace("steps:", "stepz:")).errors()).isEmpty();
+    }
+
+    @Test
     void theErrorsOfAJavaFileDoNotBlockItsSave() {
         SourceChecks checks = new SourceChecks();
         checks.setRouteValidator(content -> List.of("Line 1: direct: unknown option"));

@@ -31,7 +31,9 @@ import org.apache.camel.dsl.yaml.validator.YamlValidator;
  * with its errors said. A note is something that works but is not right: marked and said, never blocking a save.
  * <p/>
  * The same checks run when a file opens, while typing and on save. A save also checks a YAML file against the YAML DSL
- * schema, and leaves out the notes of a file whose errors keep it from being saved.
+ * schema, and leaves out the notes of a file whose errors keep it from being saved. The checks of the routes of a YAML
+ * file that passes the schema, such as a step that cannot take the message body it gets, run while typing too
+ * (CAMEL-26295): a file being typed is often not valid YAML yet, so its schema errors wait for the save.
  */
 final class SourceChecks {
 
@@ -138,9 +140,8 @@ final class SourceChecks {
     private Found check(Kind kind, String content, boolean save) {
         List<String> errors = new ArrayList<>();
         if (kind == Kind.YAML) {
-            if (save) {
-                errors.addAll(SourceValidationSupport.formatSchemaErrors(validateYaml(content), content));
-            }
+            errors.addAll(SourceValidationSupport.formatSchemaErrors(
+                    save ? validateYaml(content) : validateYamlRoutes(content), content));
             addAll(errors, endpointValidator, content);
             addAll(errors, simpleValidator, content);
             addAll(errors, kameletValidator, content);
@@ -170,12 +171,25 @@ final class SourceChecks {
 
     private List<Error> validateYaml(String content) {
         try {
-            if (yamlValidator == null) {
-                yamlValidator = new YamlValidator();
-            }
-            return yamlValidator.validate(content);
+            return yamlValidator().validate(content);
         } catch (Exception e) {
             return List.of();
         }
+    }
+
+    /** The checks of the routes of a YAML file that passes the schema; none while it does not. */
+    private List<Error> validateYamlRoutes(String content) {
+        try {
+            return yamlValidator().validateRoutes(content);
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    private YamlValidator yamlValidator() {
+        if (yamlValidator == null) {
+            yamlValidator = new YamlValidator();
+        }
+        return yamlValidator;
     }
 }
