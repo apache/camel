@@ -29,6 +29,10 @@ This proposal adds an opt-in *payload mode*. With `payloadMode=json` the body in
 the JSON text. The payload mode is an SPI: JSON is the first plugin, and other text and binary formats (CSV, XML, CBOR,
 Avro, ...) can follow as plugins.
 
+The same route with both modes, as a visual route editor could show it with the body types of the catalog:
+
+image::payload-mode-route-diagram.svg[The same five-step route twice. With payloadMode default the body is a GenericFile, then a LinkedHashMap, then an InputStream, and the groovy mapping, the http call and the header sent to JMS are marked with warnings. With payloadMode json every arrow carries JSON data (JsonObject), and the callouts say the file is parsed, the http call gets the JSON text, and the header is sent as JSON text.]
+
 == Motivation
 
 Low-code users, and AI models writing routes, think of the payload as JSON and write data mappings in Groovy and simple
