@@ -47,7 +47,10 @@ final class SubViewBar {
     record View(String label, boolean active, boolean enabled, Runnable select) {
     }
 
-    /** A view setting: its key, name and state (on, off, or a mode such as a filter value). */
+    /**
+     * A view setting: its key, name and state (on, off, or a mode such as a filter value). A setting with modes and no
+     * name shows its mode alone ({@code b  business}), where the mode says what it is.
+     */
     record Toggle(String key, String label, String state) {
 
         boolean on() {
@@ -115,7 +118,9 @@ final class SubViewBar {
             // an on/off setting shows its state as a mark, a setting with modes names the mode
             boolean onOff = "on".equals(t.state()) || "off".equals(t.state());
             String chip = " " + t.key() + " ";
-            String label = " " + t.label() + (onOff ? "" : ": " + t.state()) + " ";
+            String label = " " + (t.label().isEmpty() && !onOff
+                    ? t.state()
+                    : t.label() + (onOff ? "" : ": " + t.state())) + " ";
             String mark = (onOff ? (t.on() ? "●" : "○") : "") + "  ";
             int w = CharWidth.of(chip) + CharWidth.of(label) + CharWidth.of(mark);
             if (used + rightWidth + w + 2 > area.width()) {

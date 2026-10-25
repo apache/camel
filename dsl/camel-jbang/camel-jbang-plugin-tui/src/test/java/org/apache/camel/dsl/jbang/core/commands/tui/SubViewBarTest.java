@@ -69,6 +69,21 @@ class SubViewBarTest {
     }
 
     @Test
+    void aSettingWithoutANameShowsItsModeAlone() {
+        SubViewBar bar = new SubViewBar();
+        Spec spec = new Spec(
+                null, List.of(),
+                List.of(new Toggle("b", "", "business"), new Toggle("+/-", "", "compact 2/3"),
+                        new Toggle("m", "", "on")),
+                true);
+        String line = render(bar, spec, 0);
+
+        assertThat(line).contains(" b  business ", " +/-  compact 2/3 ").doesNotContain(":");
+        // an on/off setting needs its name
+        assertThat(line).contains(" m   ●");
+    }
+
+    @Test
     void settingsThatDoNotFitEndInAnEllipsis() {
         SubViewBar bar = new SubViewBar();
         Rect area = new Rect(0, 0, 90, 1);

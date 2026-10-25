@@ -33,7 +33,7 @@ public final class TopologyZoom {
     /** The rows from one layer to the next in the engine's layout: its box and the gap below it. */
     private static final int ENGINE_STEP = 9;
     /** The widest a box is drawn at the compact density, and the width of a bare step. */
-    private static final int COMPACT_COLUMNS = 22;
+    private static final int COMPACT_COLUMNS = 26;
     private static final int BARE_COLUMNS = 16;
 
     private TopologyZoom() {

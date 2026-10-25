@@ -344,9 +344,12 @@ abstract class AbstractDiagramTab extends AbstractTab {
         }
     }
 
-    /** The diagram again with the numbers and the body types of the status file, while they are shown. */
+    /**
+     * The diagram again with the numbers and the body types of the status file, while they are shown; and with fit, as
+     * the screen may have changed (a resize, the detail panel), so the level fit chose is chosen again.
+     */
     void refreshDiagramIfNeeded() {
-        if (diagram.isShowDiagram() && (diagramMetrics || diagram.isShowBodyTypes())) {
+        if (diagram.isShowDiagram() && (diagramMetrics || diagram.isShowBodyTypes() || diagram.zoom.isFit())) {
             reloadDiagram();
         }
     }

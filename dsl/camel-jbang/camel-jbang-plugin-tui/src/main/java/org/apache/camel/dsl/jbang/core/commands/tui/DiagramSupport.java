@@ -1555,7 +1555,7 @@ class DiagramSupport {
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
-        int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
+        int nw = zoom.nodeWidthOf(routeLayout);
         Map<String, String> linkable = computeLinkableEndpoints(currentRouteId);
         Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
 

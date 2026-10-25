@@ -733,13 +733,13 @@ class RoutesTab extends AbstractDiagramTab {
         if (diagramShown) {
             toggles.add(new SubViewBar.Toggle("m", "metrics", diagramMetrics ? "on" : "off"));
             if (topologyMode) {
-                toggles.add(new SubViewBar.Toggle("+/-", "zoom", diagram.zoom.label(diagram.getTopologyDensity())));
+                toggles.add(new SubViewBar.Toggle("+/-", "", diagram.zoom.label(diagram.getTopologyDensity())));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
                         EXTERNAL_LABELS[externalMode].trim().replace("[", "").replace("]", "")));
             } else if (!diagram.getEipNodeBoxes().isEmpty()) {
                 toggles.add(new SubViewBar.Toggle(
-                        "+/-", "zoom", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))));
+                        "+/-", "", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))));
                 toggles.add(new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"));
                 toggles.add(new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
             }

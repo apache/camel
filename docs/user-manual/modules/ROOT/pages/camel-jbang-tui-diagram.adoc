@@ -96,10 +96,12 @@ its own steps, with the blocks in it still folded. Press *F* to expand all the b
 
 === Diagram levels
 
-The Diagram tab shows one diagram at three zoom levels, and the line above it says which one you see:
+The Diagram tab shows one diagram at three levels, and the line above it says which one you see (zooming with *+* and
+*-* is something else: how much room the steps of the topology or a route take, see
+<<_zoom_and_folding,Zoom and Folding>>):
 
 ----
- v  ◇ Architecture  ›  ◆ Topology  ›  ◇ Route: order-intake   b  view: business   g  group ●   m  metrics ●   e  external ○
+ v  ◇ Architecture ›  ◆ Topology  › ◇ Route    b  business   g  group ●   +/-  compact 2/3   m  metrics ●   e  external ○
 ----
 
 * *Architecture* -- the routes grouped by what they do for the business (see below);
@@ -108,7 +110,7 @@ The Diagram tab shows one diagram at three zoom levels, and the line above it sa
 * *Route* -- the steps of one route.
 
 The level shown is highlighted; the others stay visible, and one that does not apply yet (Route,
-until a route is selected) is greyed out. *Enter* zooms in and *Esc* zooms out, from a route to its
+until a route is selected) is greyed out. *Enter* goes down a level and *Esc* up a level, from a route to its
 topology and from the topology to the architecture (at the architecture, *Esc* goes back to the Overview
 tab as on any tab). *v*, shown at the start of the line, moves to the next level and round again, and a
 click on a level goes there.

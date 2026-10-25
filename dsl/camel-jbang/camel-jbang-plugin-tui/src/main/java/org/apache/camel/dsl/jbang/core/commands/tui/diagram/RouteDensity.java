@@ -65,6 +65,14 @@ public enum RouteDensity {
         return label;
     }
 
+    /**
+     * The width the engine lays a step out with (its box width, before its scale): a compact box has one line, so it is
+     * wider than a detailed one, which wraps its text on three.
+     */
+    public int boxWidth() {
+        return this == COMPACT ? 220 : RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH;
+    }
+
     /** Where the density is among the levels, counted up as + zooms in: bare 1/3, compact 2/3, detailed 3/3. */
     public String position() {
         return (values().length - ordinal()) + "/" + values().length;

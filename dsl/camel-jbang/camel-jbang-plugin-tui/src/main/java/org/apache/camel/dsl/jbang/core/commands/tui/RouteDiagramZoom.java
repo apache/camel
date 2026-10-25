@@ -78,6 +78,7 @@ final class RouteDiagramZoom {
     private final Map<LayoutRoute, RouteDensity> densities = Collections.synchronizedMap(new WeakHashMap<>());
     private final Map<LayoutRoute, Map<String, Integer>> foldedSteps
             = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Map<LayoutRoute, Integer> nodeWidths = Collections.synchronizedMap(new WeakHashMap<>());
     // set on the UI thread, taken on the layout thread: one reference, so the layout never sees half an anchor
     private final AtomicReference<Anchor> anchor = new AtomicReference<>();
 
@@ -170,6 +171,12 @@ final class RouteDiagramZoom {
         RouteDensity d = densities.get(lr);
         // a layout the zoom did not make is the engine's
         return d != null ? d : RouteDensity.DETAILED;
+    }
+
+    /** The width of a step in the layout (the engine's pixels), which the widget turns into columns. */
+    int nodeWidthOf(LayoutRoute lr) {
+        Integer w = nodeWidths.get(lr);
+        return w != null ? w : RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
     }
 
     Map<String, Integer> foldedStepsOf(LayoutRoute lr) {
@@ -323,27 +330,22 @@ final class RouteDiagramZoom {
     Map<String, LayoutRoute> layoutRoutes(
             List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode labelMode, boolean showErrors,
             List<TopologyErrorFrame.ErrorPath> errorPaths, Map<String, RouteErrorFrame> frames, int visibleRows) {
-        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE, labelMode);
-        // a Switch is drawn as a decision table, a row per case
-        engine.setTableLayout(true);
+        // an engine for each box width a density lays the steps out with
+        Map<Integer, RouteDiagramLayoutEngine> engines = new HashMap<>();
         Map<String, LayoutRoute> answer = new LinkedHashMap<>();
         for (RouteInfo r : routes) {
             // the happy path; the onException clauses are not its steps, and are shown in the error frame
             RouteErrorFrame.Split split = RouteErrorFrame.split(r);
             unfolded.put(r.routeId, split.happy());
             Map<String, Integer> steps = new HashMap<>();
-            LayoutRoute lr = engine.layoutRoute(fold(split.happy(), steps), 0);
+            RouteInfo happy = fold(split.happy(), steps);
             RouteDensity d = fit ? RouteDensity.DETAILED : density;
-            // each density places the steps from where the engine put the route, before it was moved to the top
-            int rootY = lr.nodes.isEmpty() ? 0 : lr.nodes.get(0).y;
-            d.apply(lr);
-            DiagramLayouts.normalizeRouteLayoutY(lr);
-            while (fit && d != RouteDensity.BARE && visibleRows > 0 && RouteDensity.rows(lr) > visibleRows) {
+            RouteDiagramLayoutEngine engine = engine(engines, d, labelMode);
+            LayoutRoute lr = layout(engine, d, happy);
+            while (fit && d.zoomOut() != d && visibleRows > 0 && RouteDensity.rows(lr) > visibleRows) {
                 d = d.zoomOut();
-                lr.nodes.get(0).y = rootY;
-                d.apply(lr);
-                DiagramLayouts.normalizeRouteLayoutY(lr);
+                engine = engine(engines, d, labelMode);
+                lr = layout(engine, d, happy);
             }
             if (showErrors) {
                 RouteErrorFrame frame = DiagramSupport.errorFrame(engine, lr, split.blocks(), r.routeId, errorPaths);
@@ -352,10 +354,31 @@ final class RouteDiagramZoom {
                 }
             }
             densities.put(lr, d);
+            nodeWidths.put(lr, engine.getNodeWidth());
             foldedSteps.put(lr, steps);
             answer.put(r.routeId, lr);
         }
         return answer;
+    }
+
+    private static RouteDiagramLayoutEngine engine(
+            Map<Integer, RouteDiagramLayoutEngine> engines, RouteDensity density,
+            RouteDiagramLayoutEngine.NodeLabelMode labelMode) {
+        return engines.computeIfAbsent(density.boxWidth(), w -> {
+            RouteDiagramLayoutEngine engine
+                    = new RouteDiagramLayoutEngine(w, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE, labelMode);
+            // a Switch is drawn as a decision table, a row per case
+            engine.setTableLayout(true);
+            return engine;
+        });
+    }
+
+    /** A route laid out by the engine, its steps placed on the rows of the density, moved to the top. */
+    private static LayoutRoute layout(RouteDiagramLayoutEngine engine, RouteDensity density, RouteInfo route) {
+        LayoutRoute lr = engine.layoutRoute(route, 0);
+        density.apply(lr);
+        DiagramLayouts.normalizeRouteLayoutY(lr);
+        return lr;
     }
 
     /** The route without the steps of its folded blocks; counts the steps left out of each. */

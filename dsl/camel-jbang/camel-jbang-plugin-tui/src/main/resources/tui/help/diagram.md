@@ -80,11 +80,13 @@ return to the topology view.
 
 ## Levels
 
-The line above the diagram shows its three zoom levels:
+The line above the diagram shows its three levels:
 Architecture › Topology › Route. The level shown is highlighted,
-one that does not apply yet is greyed out. `Enter` zooms in, `Esc`
-zooms out (route, topology, architecture), `v` (at the start of
-the line) moves to the next level, a click goes to a level.
+one that does not apply yet is greyed out. `Enter` goes down a
+level, `Esc` up a level (route, topology, architecture), `v` (at
+the start of the line) moves to the next level, a click goes to a
+level. Zooming (`+` and `-`) is something else: how much room the
+steps of the topology or a route take.
 The right side shows the view settings of the level with their
 state: `a` ai (off shows only what the sources and the runtime
 say: no AI labels, notes or capabilities; it does not change the AI

@@ -474,7 +474,7 @@ class DiagramTab extends AbstractDiagramTab {
 
     private List<SubViewBar.Toggle> levelToggles() {
         SubViewBar.Toggle view
-                = new SubViewBar.Toggle("b", "view", diagram.isShowDescription() ? "business" : "technical");
+                = new SubViewBar.Toggle("b", "", diagram.isShowDescription() ? "business" : "technical");
         String metrics = diagramMetrics ? "on" : "off";
         return switch (level()) {
             case ARCHITECTURE -> List.of(view,
@@ -489,7 +489,6 @@ class DiagramTab extends AbstractDiagramTab {
                     toggles.add(new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"));
                 }
                 toggles.add(new SubViewBar.Toggle("x", "errors", errorsToggle()));
-                toggles.add(new SubViewBar.Toggle("+/-", "zoom", diagram.zoom.label(diagram.getTopologyDensity())));
                 toggles.add(new SubViewBar.Toggle("m", "metrics", metrics));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
@@ -498,11 +497,13 @@ class DiagramTab extends AbstractDiagramTab {
                             case 2 -> "all";
                             default -> "off";
                         }));
+                // the zoom and the panels last: their keys are in the footer and in the titles of the panels too
+                toggles.add(new SubViewBar.Toggle("+/-", "", diagram.zoom.label(diagram.getTopologyDensity())));
                 toggles.add(panelsToggle());
                 yield toggles;
             }
             case ROUTE -> List.of(view, new SubViewBar.Toggle("x", "errors", errorsToggle()),
-                    new SubViewBar.Toggle("+/-", "zoom", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))),
+                    new SubViewBar.Toggle("+/-", "", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))),
                     new SubViewBar.Toggle("m", "metrics", metrics),
                     new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"),
                     new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"), panelsToggle());
