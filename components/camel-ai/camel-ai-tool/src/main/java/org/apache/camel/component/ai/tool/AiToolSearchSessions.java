@@ -98,13 +98,10 @@ public final class AiToolSearchSessions {
     }
 
     /**
-     * Removes the retained session for a conversation.
-     *
-     * @param  conversationId conversation id
-     * @return                true if a retained session was removed
-     */
-    /**
      * Finds an existing retained session without creating a new one.
+     *
+     * @param  conversationId conversation id; returns {@code null} when blank or unknown
+     * @return                the retained session, or {@code null} if absent or expired
      */
     public synchronized AiToolSearchSession find(String conversationId) {
         if (conversationId == null || conversationId.isBlank()) {
@@ -123,6 +120,12 @@ public final class AiToolSearchSessions {
         return entry.session;
     }
 
+    /**
+     * Removes the retained session for a conversation.
+     *
+     * @param  conversationId conversation id
+     * @return                true if a retained session was removed
+     */
     public synchronized boolean remove(String conversationId) {
         if (conversationId == null || conversationId.isBlank()) {
             return false;

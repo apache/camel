@@ -64,9 +64,8 @@ public abstract class AbstractAgent<S> implements Agent {
     }
 
     /**
-     * LangChain4j's tools(List<AiServiceTool>) overload does not register
-     *
-     * @CompensateFor methods. Reject this unsupported combination before the agent starts handling requests.
+     * LangChain4j's {@code tools(List<AiServiceTool>)} overload does not register {@code @CompensateFor} methods.
+     * Reject this unsupported combination before the agent starts handling requests.
      */
     private static void validateToolSearchCompensation(
             AgentConfiguration configuration) {

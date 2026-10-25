@@ -421,13 +421,6 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         }
     }
 
-    private static void rejectReservedToolName(ToolSpecification specification) {
-        if (AiToolSearch.TOOL_NAME.equals(specification.name())) {
-            throw new IllegalArgumentException(
-                    "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
-        }
-    }
-
     /**
      * Resolves the MCP tool filter configured on the endpoint {@link AgentConfiguration} or, when the agent is an
      * {@link AbstractAgent}, from the agent's own configuration.
