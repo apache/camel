@@ -246,7 +246,11 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, index);
             }
-            return MiscExpressionBuilder.iifExpression(tokens[0].trim(), tokens[1].trim(), tokens[2].trim());
+            // the predicate keeps its quotes (CAMEL-22204); a quoted literal value is the text inside the quotes, as
+            // with the ternary operator
+            return MiscExpressionBuilder.iifExpression(tokens[0].trim(),
+                    StringHelper.removeLeadingAndEndingQuotes(tokens[1].trim()),
+                    StringHelper.removeLeadingAndEndingQuotes(tokens[2].trim()));
         }
 
         remainder = ifStartsWithReturnRemainder("load(", function);
