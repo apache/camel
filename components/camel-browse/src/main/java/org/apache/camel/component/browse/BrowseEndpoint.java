@@ -118,9 +118,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        this.onExchangeProcessor = processor;
-
-        Consumer answer = new DefaultConsumer(this, processor);
+        Consumer answer = new BrowseConsumer(processor);
         configureConsumer(answer);
         return answer;
     }
@@ -171,8 +169,34 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         }
 
         // now fire the consumer
-        if (onExchangeProcessor != null) {
-            onExchangeProcessor.process(exchange);
+        Processor processor = onExchangeProcessor;
+        if (processor != null) {
+            processor.process(exchange);
+        }
+    }
+
+    /**
+     * The route of the consumer gets the exchanges only while the consumer is started: a stopped or removed route no
+     * longer gets them, and the producers that send to this endpoint keep working.
+     */
+    private final class BrowseConsumer extends DefaultConsumer {
+
+        BrowseConsumer(Processor processor) {
+            super(BrowseEndpoint.this, processor);
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            super.doStart();
+            onExchangeProcessor = getProcessor();
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            if (onExchangeProcessor == getProcessor()) {
+                onExchangeProcessor = null;
+            }
+            super.doStop();
         }
     }
 
@@ -184,9 +208,10 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
 
     @Override
     protected void doStop() throws Exception {
+        // the endpoint is stopped when the route that consumes from it is removed, while the routes that send to it
+        // keep sending: the list is cleared but kept for them
         if (exchanges != null) {
             exchanges.clear();
-            exchanges = null;
         }
         super.doStop();
     }
