@@ -31,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.task.budget.TimeBoundedBudget;
 import org.apache.camel.support.task.budget.TimeBudget;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +129,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             return;
         }
 
-        lastAttemptTime = System.currentTimeMillis();
+        lastAttemptTime = TimeSource.currentTimeMillis();
         if (firstAttemptTime < 0) {
             firstAttemptTime = lastAttemptTime;
         }
@@ -156,7 +157,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             throw e;
         }
         // scheduleWithFixedDelay waits interval after this run finishes, so compute from now
-        nextAttemptTime = System.currentTimeMillis() + budget.interval();
+        nextAttemptTime = TimeSource.currentTimeMillis() + budget.interval();
     }
 
     /**

@@ -82,6 +82,10 @@ public class Kinesis2Component extends HealthCheckComponent {
         IOHelper.close(connection);
     }
 
+    /**
+     * The connection with the client set on this component (if any). The endpoints do not use it: each endpoint has a
+     * connection of its own, with the client of its own configuration.
+     */
     public KinesisConnection getConnection() {
         return connection;
     }

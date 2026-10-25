@@ -47,6 +47,28 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheRoutesOfAFileThatPassesTheSchema() throws Exception {
+        // CAMEL-26295: what an editor checks while typing, the routes, and only once the YAML passes the schema
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: file:outbox
+                """;
+        assertThat(validator.validateRoutes(yaml)).singleElement()
+                .satisfies(e -> assertThat(e.getMessage()).contains("to: file needs the body as text"));
+        // not the schema: a misspelled key, YAML that does not parse, or no YAML at all
+        assertThat(validator.validateRoutes(yaml.replace("steps:", "stepz:"))).isEmpty();
+        assertThat(validator.validateRoutes(yaml + "  - : [")).isEmpty();
+        assertThat(validator.validateRoutes("")).isEmpty();
+        assertThat(validator.validate(yaml.replace("steps:", "stepz:"))).isNotEmpty();
+    }
+
+    @Test
     public void testMarshalInsteadOfUnmarshal() {
         // what the benchmark wrote: the file is loaded, then marshalled, then read with Groovy
         String yaml = """
