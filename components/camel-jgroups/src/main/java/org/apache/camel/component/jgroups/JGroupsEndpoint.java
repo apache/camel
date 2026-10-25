@@ -171,7 +171,16 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        resolvedChannel = resolveChannel();
+        connectLock.lock();
+        try {
+            // the channel this endpoint created is kept when the endpoint was stopped while producers or consumers
+            // still used it (such as when another route that consumes from this endpoint was removed)
+            if (resolvedChannel == null || !isOwnChannel() || resolvedChannel.isClosed()) {
+                resolvedChannel = resolveChannel();
+            }
+        } finally {
+            connectLock.unlock();
+        }
         resolvedDeserializationFilter = resolveDeserializationFilter();
     }
 
@@ -180,8 +189,17 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         // a channel this endpoint did not create (such as the channel of the component) is used by other endpoints,
         // and is closed by the component
         if (resolvedChannel != null && isOwnChannel()) {
-            LOG.trace("Closing JGroups Channel {}", getEndpointUri());
-            resolvedChannel.close();
+            connectLock.lock();
+            try {
+                // the endpoint is stopped when a route that consumes from it is removed, also when the producers and
+                // consumers of other routes still use its channel: then the last of them that disconnects closes it
+                if (connectCount == 0) {
+                    LOG.trace("Closing JGroups Channel {}", getEndpointUri());
+                    resolvedChannel.close();
+                }
+            } finally {
+                connectLock.unlock();
+            }
         }
         super.doStop();
     }
@@ -289,6 +307,11 @@ public class JGroupsEndpoint extends DefaultEndpoint {
             if (--connectCount == 0) {
                 LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
                 resolvedChannel.disconnect();
+                if (isStoppingOrStopped()) {
+                    // the endpoint was stopped while this producer or consumer still used the channel
+                    LOG.trace("Closing JGroups Channel {}", getEndpointUri());
+                    resolvedChannel.close();
+                }
             }
         } finally {
             connectLock.unlock();
