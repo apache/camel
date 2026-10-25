@@ -26,21 +26,21 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 
 /**
- * CAMEL-25823: when route B is force-stopped while an inflight exchange is inside a nested EIP (split
- * inside multicast), the exchange is marked as interrupted after the cut-off WARN is logged. A calling
- * route A that is still running and passed the same exchange into route B over {@code direct} then also
- * skips its {@code onException}, redelivery, and dead letter channel — the same behaviour as
- * {@code DirectProducer} cuts off a blocked {@code direct} producer (CAMEL-25502). This test pins down
- * that behaviour: the DLC mock is NOT called when the nested-EIP cut-off propagates back to the caller.
+ * CAMEL-25823: when route B is force-stopped while an inflight exchange is inside a nested EIP (split inside
+ * multicast), the exchange is marked as interrupted after the cut-off WARN is logged. A calling route A that is still
+ * running and passed the same exchange into route B over {@code direct} then also skips its {@code onException},
+ * redelivery, and dead letter channel — the same behaviour as {@code DirectProducer} cuts off a blocked {@code direct}
+ * producer (CAMEL-25502). This test pins down that behaviour: the DLC mock is NOT called when the nested-EIP cut-off
+ * propagates back to the caller.
  */
 public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
 
     /**
-     * Route A has a dead letter channel and sends to route B over {@code direct}. Route B is stopped inside
-     * a split nested in a multicast while the sub-exchange is blocked waiting for a consumer on
-     * {@code direct:shipment}. Because the cut-off happens inside a nested EIP of route B,
-     * {@code setInterrupted(true)} is set on the shared exchange. Route A's error handler then sees the
-     * interrupted flag and skips redelivery, onException, and the dead letter channel.
+     * Route A has a dead letter channel and sends to route B over {@code direct}. Route B is stopped inside a split
+     * nested in a multicast while the sub-exchange is blocked waiting for a consumer on {@code direct:shipment}.
+     * Because the cut-off happens inside a nested EIP of route B, {@code setInterrupted(true)} is set on the shared
+     * exchange. Route A's error handler then sees the interrupted flag and skips redelivery, onException, and the dead
+     * letter channel.
      */
     @Test
     public void callerRouteDlcNotCalledOnNestedEipCutOff() throws Exception {
