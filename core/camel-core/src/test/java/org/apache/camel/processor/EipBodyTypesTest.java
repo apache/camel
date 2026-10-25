@@ -18,7 +18,9 @@ package org.apache.camel.processor;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,15 +51,21 @@ import org.apache.camel.model.ClaimCheckOperation;
 import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.ConvertHeaderDefinition;
 import org.apache.camel.model.ConvertVariableDefinition;
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DelayDefinition;
+import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.LoopDefinition;
+import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
+import org.apache.camel.model.PollDefinition;
+import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemoveHeaderDefinition;
 import org.apache.camel.model.RemoveHeadersDefinition;
@@ -79,16 +87,21 @@ import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
+import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
+import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.Builder.body;
@@ -97,6 +110,7 @@ import static org.apache.camel.builder.Builder.simple;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -240,6 +254,66 @@ public class EipBodyTypesTest extends ContextTestSupport {
         assertJavaType(run(r -> r.setBody(five), new Order()), Long.class);
     }
 
+    @Test
+    public void variableReceiveKeepsTheBody() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:reply").setBody(constant("reply"));
+            }
+        });
+        context.start();
+        anyValue(ToDefinition.class, r -> r.toV("language:constant:reply", null, "v"));
+        // toD takes language: as the language of its uri
+        anyValue(ToDynamicDefinition.class,
+                r -> r.setVariable("name", constant("reply")).toD("direct:${variable.name}", null, "v"));
+        anyValue(EnrichDefinition.class, r -> r.enrich().constant("language:constant:reply").variableReceive("v"));
+        // the reply goes into the variable, whatever the aggregation strategy does
+        anyValue(EnrichDefinition.class, r -> r.enrich().constant("language:constant:reply")
+                .aggregationStrategy(AggregationStrategies.useLatest()).variableReceive("v"));
+        template.sendBody("seda:polled", "reply");
+        anyValue(PollEnrichDefinition.class,
+                r -> r.pollEnrich().constant("seda:polled").timeout(5000).variableReceive("v"));
+        template.sendBody("seda:polled", "reply");
+        anyValue(PollDefinition.class, r -> r.pollV("seda:polled", 5000, "v"));
+        anyValue(MarshalDefinition.class,
+                r -> r.addOutput(new MarshalDefinition(new DataFormatDefinition(new Reply())).variableReceive("v")));
+        // unmarshal reads the body as a stream
+        anyValue(UnmarshalDefinition.class,
+                r -> r.addOutput(new UnmarshalDefinition(new DataFormatDefinition(new Reply())).variableReceive("v")),
+                "Hello");
+    }
+
+    @Test
+    public void variableSendSendsTheVariable() throws Exception {
+        for (Class<?> model : List.of(ToDefinition.class, ToDynamicDefinition.class, MarshalDefinition.class,
+                UnmarshalDefinition.class)) {
+            assertEquals(Carrier.ANY, anyValueOf(bodyTypes(model).eipIn(), "variableSend", model), model.getSimpleName());
+        }
+        Exchange out = run(r -> r.setVariable("v", constant("sent")).toV("language:simple:${body}", "v", null), new Order());
+        // the endpoint got the variable, not the body
+        assertEquals("sent", out.getMessage().getBody());
+    }
+
+    @Test
+    public void variableReceiveOfFromStartsWithNoBody() throws Exception {
+        assertEquals(Carrier.NULL, anyValueOf(bodyTypes(FromDefinition.class).eipOut(), "variableReceive",
+                FromDefinition.class));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                fromV("direct:fromV", "v").process(EipBodyTypesTest.this::inside);
+            }
+        });
+        context.start();
+        Order body = new Order();
+        inside.clear();
+        Exchange out = template.send("direct:fromV", e -> e.getMessage().setBody(body));
+        assertEquals(1, inside.size());
+        assertNull(inside.get(0));
+        assertSame(body, out.getVariable("v"));
+    }
+
     // the checks of a side
 
     private void unchanged(Class<?> model, Consumer<ProcessorDefinition<?>> eip) throws Exception {
@@ -247,6 +321,28 @@ public class EipBodyTypesTest extends ContextTestSupport {
         Exchange out = run(eip, body);
         assertOut(model, body, out.getMessage().getBody());
         assertEquals(Carrier.UNCHANGED, bodyTypes(model).eipOut().value()[0], model.getSimpleName());
+    }
+
+    /** The EIP with variableReceive set: the body stays as it was, and the reply is in the variable. */
+    private void anyValue(Class<?> model, Consumer<ProcessorDefinition<?>> eip) throws Exception {
+        anyValue(model, eip, new Order());
+    }
+
+    private void anyValue(Class<?> model, Consumer<ProcessorDefinition<?>> eip, Object body) throws Exception {
+        assertEquals(Carrier.UNCHANGED, anyValueOf(bodyTypes(model).eipOut(), "variableReceive", model),
+                model.getSimpleName());
+        Exchange out = run(eip, body);
+        assertNull(out.getException(), model.getSimpleName());
+        assertSame(body, out.getMessage().getBody(), model.getSimpleName() + " with variableReceive keeps the body");
+        assertEquals("reply", out.getVariable("v", String.class), model.getSimpleName());
+    }
+
+    private static Carrier anyValueOf(BodyType side, String option, Class<?> model) {
+        return Arrays.stream(side.byOption())
+                .filter(w -> w.option().equals(option) && w.value().equals("*"))
+                .map(w -> w.carriers()[0])
+                .findFirst()
+                .orElseThrow(() -> new AssertionError(model.getSimpleName() + " has no body for any value of " + option));
     }
 
     private void block(Class<?> model, Block eip) throws Exception {
@@ -369,6 +465,19 @@ public class EipBodyTypesTest extends ContextTestSupport {
     private static final class BodyTypeSides {
         static final String EXPRESSION_OUT = "expressionOut";
         static final String STEPS = "steps";
+    }
+
+    /** A data format that marshals and unmarshals anything to reply. */
+    private static final class Reply extends ServiceSupport implements DataFormat {
+        @Override
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+            stream.write("reply".getBytes(StandardCharsets.UTF_8));
+        }
+
+        @Override
+        public Object unmarshal(Exchange exchange, InputStream stream) {
+            return "reply";
+        }
     }
 
     /** A body that no converter knows: an EIP that keeps it gives the same instance. */

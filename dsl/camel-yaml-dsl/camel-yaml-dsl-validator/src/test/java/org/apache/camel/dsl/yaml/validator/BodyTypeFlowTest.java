@@ -287,4 +287,63 @@ public class BodyTypeFlowTest {
                 """;
         assertThat(messages(logged)).anyMatch(m -> m.contains("reads the message body"));
     }
+
+    @Test
+    public void testVariableReceiveOfFromStartsWithNoBody() {
+        // the body of the caller goes into the variable: the route starts with none
+        String yaml = """
+                - route:
+                    id: caller
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - to:
+                            uri: direct:lookup
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      variableReceive: stock
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).anyMatch(m -> m.contains("reads the message body"));
+    }
+
+    @Test
+    public void testAToWithVariableReceiveSetsNoBody() {
+        // the reply goes into the variable, so the timer route still has no body
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: language:constant:stock
+                            variableReceive: stock
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).anyMatch(m -> m.contains("reads the message body"));
+        // marshal of a variable needs no body
+        String marshal = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setVariable:
+                            name: order
+                            constant: "{}"
+                        - marshal:
+                            json: {}
+                            variableSend: order
+                            variableReceive: json
+                """;
+        assertThat(messages(marshal)).noneMatch(m -> m.contains("works on the message body"));
+    }
 }

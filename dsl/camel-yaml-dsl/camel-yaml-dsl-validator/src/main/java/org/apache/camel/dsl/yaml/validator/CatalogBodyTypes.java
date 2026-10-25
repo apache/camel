@@ -312,6 +312,26 @@ final class CatalogBodyTypes {
     }
 
     /**
+     * Whether the EIP sends or reads a variable instead of the body, as with variableSend, for the options the step
+     * sets: it needs no body then.
+     */
+    boolean needsNoBody(String name, JsonNode step) {
+        Answer in = eipSide(name, step, BodyTypeModel.EIP_IN);
+        return in != null && in.carriers().equals(List.of("any"));
+    }
+
+    /**
+     * Whether a route starts with no body, as with variableReceive on its from, which puts the message the consumer
+     * receives into the variable.
+     */
+    boolean startsWithNoBody(JsonNode from) {
+        EipModel model = model("from");
+        BodyTypeModel out = model != null ? model.getBodyType(BodyTypeModel.EIP_OUT) : null;
+        Answer answer = out != null ? answer(out, values(from), Set.of()) : null;
+        return answer != null && answer.none();
+    }
+
+    /**
      * Whether the EIP may put a body in the message, whatever its options: everything but leaving the body as it was,
      * or the body its own steps leave, which are looked at by themselves. An EIP the catalog does not say counts, as
      * does one whose body depends on an option (a split with an aggregationStrategy), and one that gives its own steps
@@ -348,6 +368,12 @@ final class CatalogBodyTypes {
     }
 
     private EipModel eip(String name) {
+        EipModel model = model(name);
+        // the languages and data formats have models too, but no input: they are not steps, nor is from
+        return model != null && model.isInput() ? model : null;
+    }
+
+    private EipModel model(String name) {
         if (name == null) {
             return null;
         }
@@ -359,8 +385,7 @@ final class CatalogBodyTypes {
                     model = other;
                 }
             }
-            // the languages and data formats have models too, but no input: they are not steps
-            return Optional.ofNullable(model != null && model.isInput() ? model : null);
+            return Optional.ofNullable(model);
         }).orElse(null);
     }
 

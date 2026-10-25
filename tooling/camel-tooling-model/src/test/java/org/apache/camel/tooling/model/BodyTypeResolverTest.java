@@ -123,6 +123,34 @@ class BodyTypeResolverTest {
     }
 
     @Test
+    void anyValueOfAnOptionWinsOverTheRest() {
+        // the body after an enrich: the reply of the endpoint, unless variableReceive keeps the body
+        BodyTypeModel side = new BodyTypeModel();
+        side.setFrom(BodyTypeModel.PRODUCER_OUT);
+        side.setDependsOn(List.of("aggregationStrategy"));
+        side.getByOption().add(when("variableReceive", BodyTypeModel.ANY_VALUE, List.of("unchanged"), null));
+        assertEquals(List.of("unchanged"), resolve(side, Map.of("variableReceive", "reply")).carriers());
+        assertEquals(List.of("unchanged"), resolve(side, Map.of("variableReceive", "{{name}}")).carriers());
+        assertEquals(List.of("unchanged"),
+                resolve(side, Map.of("variableReceive", "reply", "aggregationStrategy", "#myStrategy")).carriers());
+        // not set: the caller follows from
+        assertNull(resolve(side, Map.of()));
+        assertNull(resolve(side, Map.of("aggregationStrategy", "#myStrategy")));
+        // it may be set elsewhere
+        assertNull(BodyTypeResolver.resolve(side, Map.of(), Set.of("variableReceive")));
+    }
+
+    @Test
+    void anyValueIsNotAValueOfAnotherOption() {
+        BodyTypeModel side = side(List.of("text"));
+        side.getByOption().add(when("variableReceive", BodyTypeModel.ANY_VALUE, List.of("unchanged"), null));
+        assertEquals(List.of("text"), resolve(side, Map.of("other", "*")).carriers());
+        side.getByOption().add(when("variableSend", BodyTypeModel.ANY_VALUE, List.of("null"), null));
+        // two options set that say different bodies
+        assertNull(resolve(side, Map.of("variableReceive", "a", "variableSend", "b")));
+    }
+
+    @Test
     void theValuesOfAnEnumInAnyStyle() {
         assertTrue(BodyTypeResolver.isSameValue("convert-to-json", "CONVERT_TO_JSON"));
         assertTrue(BodyTypeResolver.isSameValue("convertToJson", "CONVERT_TO_JSON"));

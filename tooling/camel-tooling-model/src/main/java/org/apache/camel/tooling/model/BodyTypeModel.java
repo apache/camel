@@ -59,6 +59,8 @@ public class BodyTypeModel {
     public static final String EIP_STEPS = "eipSteps";
     /** The value of {@link #getFrom()} for the body the steps of an EIP end with. */
     public static final String FROM_STEPS = "steps";
+    /** The value of an option body for any value of the option: the body when the option is set at all. */
+    public static final String ANY_VALUE = "*";
 
     /**
      * The carriers of the classes a type option often names, by name, the short names Camel takes as well: java.lang

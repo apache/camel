@@ -46,6 +46,29 @@ class BodyTypesHelperEipTest {
     static class StepsFromSteps {
     }
 
+    @BodyTypes(eipIn = @BodyType(from = "producerIn",
+                                 byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY)),
+               eipOut = @BodyType(from = "producerOut",
+                                  byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                            carriers = Carrier.UNCHANGED)))
+    static class AnyValue {
+    }
+
+    @BodyTypes(eipOut = @BodyType(from = "producerOut", dependsOn = "variableReceive",
+                                  byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                            carriers = Carrier.UNCHANGED)))
+    static class AnyValueAndDependsOn {
+    }
+
+    @BodyTypes(eipOut = @BodyType(from = "producerOut",
+                                  byOption = {
+                                          @BodyType.When(option = "variableReceive", value = "*",
+                                                         carriers = Carrier.UNCHANGED),
+                                          @BodyType.When(option = "variableReceive", value = "a",
+                                                         carriers = Carrier.TEXT) }))
+    static class AnyValueAndAValue {
+    }
+
     @BodyTypes(eipOut = @BodyType(value = Carrier.TEXT, from = "expressionOut"))
     static class FromWithCarriers {
     }
@@ -77,6 +100,26 @@ class BodyTypesHelperEipTest {
     }
 
     @Test
+    void aBodyForAnyValueOfAnOption() {
+        EipModel model = eip();
+        BodyTypesHelper.addBodyTypes(model, AnyValue.class.getAnnotation(BodyTypes.class), AnyValue.class);
+
+        BodyTypeModel.OptionBodyTypeModel in = model.getBodyType(BodyTypeModel.EIP_IN).getByOption().get(0);
+        assertEquals("variableSend", in.getOption());
+        assertEquals(BodyTypeModel.ANY_VALUE, in.getValue());
+        assertEquals(List.of("any"), in.getCarriers());
+        BodyTypeModel out = model.getBodyType(BodyTypeModel.EIP_OUT);
+        assertEquals("producerOut", out.getFrom());
+        assertEquals(List.of("unchanged"), out.getByOption().get(0).getCarriers());
+    }
+
+    @Test
+    void aBodyForAnyValueIsTheOnlyBodyOfTheOption() {
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), AnyValueAndDependsOn.class));
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), AnyValueAndAValue.class));
+    }
+
+    @Test
     void stepsCannotComeFromAnotherModel() {
         assertThrows(IllegalArgumentException.class, () -> add(eip(), StepsFromSteps.class));
     }
@@ -104,6 +147,10 @@ class BodyTypesHelperEipTest {
         option.setName("variableReceive");
         option.setType("string");
         model.addOption(option);
+        EipModel.EipOptionModel send = new EipModel.EipOptionModel();
+        send.setName("variableSend");
+        send.setType("string");
+        model.addOption(send);
         return model;
     }
 

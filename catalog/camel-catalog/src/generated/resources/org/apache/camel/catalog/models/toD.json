@@ -31,7 +31,7 @@
     "CamelToEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "To Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
   },
   "bodyTypes": {
-    "eipIn": { "dependsOn": [ "variableSend" ], "from": "producerIn" },
-    "eipOut": { "dependsOn": [ "variableReceive" ], "from": "producerOut", "description": "What the producer of the endpoint leaves. With variableReceive the reply goes into the variable, and the body stays as it was" }
+    "eipIn": { "byOption": [ { "option": "variableSend", "value": "*", "carriers": [ "any" ] } ], "from": "producerIn", "description": "With variableSend the variable is sent, and the body is not read" },
+    "eipOut": { "byOption": [ { "option": "variableReceive", "value": "*", "carriers": [ "unchanged" ] } ], "from": "producerOut", "description": "What the producer of the endpoint leaves. With variableReceive the reply goes into the variable, and the body stays as it was" }
   }
 }

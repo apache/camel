@@ -1671,8 +1671,10 @@ public final class CatalogDocs {
             if (!side.getByOption().isEmpty()) {
                 List<String> values = new ArrayList<>();
                 for (BodyTypeModel.OptionBodyTypeModel option : side.getByOption()) {
-                    String value = option.getOption() + "=" + option.getValue() + ": "
-                                   + carriers(option.getCarriers(), option.getJavaType());
+                    // * is any value of the option, as variableReceive (CAMEL-25928)
+                    String value = option.getOption()
+                                   + (BodyTypeModel.ANY_VALUE.equals(option.getValue()) ? " set" : "=" + option.getValue())
+                                   + ": " + carriers(option.getCarriers(), option.getJavaType());
                     if (option.getJavaTypeOption() != null) {
                         value += ", or an object of the class " + option.getJavaTypeOption() + " names when it is set";
                     }

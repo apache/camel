@@ -2355,4 +2355,79 @@ public class TextBodyFlowTest {
                 """;
         assertThat(lines(aggregating)).isEmpty();
     }
+
+    @Test
+    public void testVariableReceiveKeepsTheBody() {
+        // the result of the unmarshal goes into the variable, and the body stays text
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                            variableReceive: order
+                        - to: file:outbox
+                """;
+        assertThat(lines(yaml)).isEmpty();
+        // the reply of the to goes into the variable, and the body stays parsed data
+        String parsed = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: language:constant:reply
+                            variableReceive: reply
+                        - to: file:outbox
+                """;
+        assertThat(lines(parsed)).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file needs the body as text"));
+    }
+
+    @Test
+    public void testVariableSendSendsTheVariable() {
+        // the to writes the variable, not the parsed body
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: file:outbox
+                            variableSend: text
+                """;
+        assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testVariableReceiveOfFromStartsWithNoBody() {
+        // the file goes into the variable, so the body is not the text of the file
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      variableReceive: file
+                      steps:
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(yaml)).isEmpty();
+        String text = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(text)).singleElement()
+                .satisfies(m -> assertThat(m).contains("simple reads a field of the body (${body[status]})"));
+    }
 }

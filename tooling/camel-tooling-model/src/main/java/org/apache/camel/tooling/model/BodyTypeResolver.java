@@ -31,6 +31,10 @@ import org.apache.camel.tooling.model.BodyTypeModel.OptionBodyTypeModel;
  * <p/>
  * The rule, in order:
  * <ol>
+ * <li>An option of byOption for any value ({@code *}) the step sets: that body, whatever the rest says, even for a side
+ * with from, as variableReceive leaves the body as it was; when two say different bodies, not known. Such an option
+ * that the step does not set but can be set elsewhere: not known.</li>
+ * <li>A side with from: not known here, the caller follows from.</li>
  * <li>An option the side names (in dependsOn, byOption or javaTypeOption) whose value is only known when the route
  * runs, a {@code {{placeholder}}} or a {@code ${expression}}, or that the step does not set but can be set elsewhere,
  * such as on the component: not known.</li>
@@ -42,7 +46,7 @@ import org.apache.camel.tooling.model.BodyTypeModel.OptionBodyTypeModel;
  * </ol>
  * A body of byOption that has a javaTypeOption the step sets is an object of that class, or null. The values of an
  * option compare in any case, and in any style of an enum constant, as Camel takes them: convert-to-json is
- * CONVERT_TO_JSON. A side with from is the body of a side of another model, which the caller resolves.
+ * CONVERT_TO_JSON.
  */
 public final class BodyTypeResolver {
 
@@ -61,7 +65,9 @@ public final class BodyTypeResolver {
     }
 
     /**
-     * What a side says for the options a step sets.
+     * What a side says for the options a step sets. An option the body is for any value of ({@code *}) says it when the
+     * step sets the option, whatever the other options say, even for a side whose body comes from another model;
+     * otherwise such a side says nothing here, and the caller follows {@link BodyTypeModel#getFrom()}.
      *
      * @param  side    the side, null when the catalog has none
      * @param  options the options the step sets, by name: the endpoint uri, the parameters or the options of a data
@@ -71,7 +77,32 @@ public final class BodyTypeResolver {
      * @return         the body, or null when it is not known for the step
      */
     public static Resolved resolve(BodyTypeModel side, Map<String, String> options, Set<String> hidden) {
-        if (side == null || side.getFrom() != null) {
+        if (side == null) {
+            return null;
+        }
+        Resolved matched = null;
+        for (OptionBodyTypeModel when : side.getByOption()) {
+            if (!BodyTypeModel.ANY_VALUE.equals(when.getValue())) {
+                continue;
+            }
+            String value = options.get(when.getOption());
+            if (value == null && hidden.contains(when.getOption())) {
+                // it may be set elsewhere
+                return null;
+            }
+            if (value != null) {
+                // any value, whatever the other options and the side of the other model say, as variableReceive
+                Resolved resolved = bodyOf(side, when, options);
+                if (resolved == null || matched != null && !matched.carriers().equals(resolved.carriers())) {
+                    return null;
+                }
+                matched = resolved;
+            }
+        }
+        if (matched != null) {
+            return matched;
+        }
+        if (side.getFrom() != null) {
             return null;
         }
         Set<String> names = new LinkedHashSet<>(side.getDependsOn());
@@ -103,13 +134,10 @@ public final class BodyTypeResolver {
         if (!dependsOnSet && side.getJavaTypeOption() != null && options.containsKey(side.getJavaTypeOption())) {
             return ofClass(options.get(side.getJavaTypeOption()));
         }
-        Resolved matched = null;
         for (OptionBodyTypeModel when : side.getByOption()) {
             String value = options.get(when.getOption());
             if (value != null && isSameValue(value, when.getValue())) {
-                Resolved resolved = when.getJavaTypeOption() != null && options.containsKey(when.getJavaTypeOption())
-                        ? ofClass(options.get(when.getJavaTypeOption()))
-                        : new Resolved(when.getCarriers(), when.getJavaType(), side.getFormat());
+                Resolved resolved = bodyOf(side, when, options);
                 if (resolved == null || matched != null && !matched.carriers().equals(resolved.carriers())) {
                     // two options the step sets say different bodies
                     return null;
@@ -124,6 +152,13 @@ public final class BodyTypeResolver {
             return null;
         }
         return new Resolved(side.getCarriers(), side.getJavaType(), side.getFormat());
+    }
+
+    /** The body an option value says: of the class its javaTypeOption names when the step sets that. */
+    private static Resolved bodyOf(BodyTypeModel side, OptionBodyTypeModel when, Map<String, String> options) {
+        return when.getJavaTypeOption() != null && options.containsKey(when.getJavaTypeOption())
+                ? ofClass(options.get(when.getJavaTypeOption()))
+                : new Resolved(when.getCarriers(), when.getJavaType(), side.getFormat());
     }
 
     /**

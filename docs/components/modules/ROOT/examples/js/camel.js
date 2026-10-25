@@ -98,7 +98,10 @@ module.exports = {
       parts.push(`With \`${value.javaTypeOption}\` set: an object of the class it names, or null.`)
     }
     if (value.byOption && value.byOption.length) {
-      parts.push(value.byOption.map((option) => `* With \`${option.option}=${option.value}\`: `
+      // the value * is any value of the option
+      parts.push(value.byOption.map((option) => (option.value === '*'
+        ? `* With \`${option.option}\` set: `
+        : `* With \`${option.option}=${option.value}\`: `)
         + module.exports.bodyCarriers(option)
         + (option.javaTypeOption ? `, or an object of the class \`${option.javaTypeOption}\` names when it is set` : ''))
         .join('\n'))
