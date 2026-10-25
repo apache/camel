@@ -78,8 +78,15 @@ final class RouteDiagramZoom {
     private volatile boolean fit;
     private volatile boolean panels = true;
     // the routes the History tab laid out whole, to lay them out again when the zoom changes
-    private volatile List<RouteInfo> wholeRoutes;
-    private volatile RouteDiagramLayoutEngine.NodeLabelMode wholeLabelMode;
+    private volatile Whole whole;
+
+    /**
+     * The routes last laid out whole and their label mode, in one reference: the layout thread sets them, the UI thread
+     * reads them, and two fields could be read half new.
+     */
+    private record Whole(List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode labelMode) {
+    }
+
     /** The folded blocks of each route: the ids of their first steps. */
     private final Map<String, Set<String>> folded = new ConcurrentHashMap<>();
     /** The steps of each route as last laid out, without its folds: fold all folds the blocks hidden in others too. */
@@ -441,8 +448,7 @@ final class RouteDiagramZoom {
      */
     Map<String, LayoutRoute> layoutWhole(
             List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode labelMode, int visibleRows) {
-        wholeRoutes = routes;
-        wholeLabelMode = labelMode;
+        whole = new Whole(routes, labelMode);
         Map<Integer, RouteDiagramLayoutEngine> engines = new HashMap<>();
         Map<String, LayoutRoute> answer = new LinkedHashMap<>();
         for (RouteInfo r : routes) {
@@ -456,8 +462,8 @@ final class RouteDiagramZoom {
      * the message again, so its view stays where it is; the layouts as they are when there are none.
      */
     Map<String, LayoutRoute> layoutWholeAgain(int visibleRows, Map<String, LayoutRoute> current) {
-        List<RouteInfo> routes = wholeRoutes;
-        return routes != null ? layoutWhole(routes, wholeLabelMode, visibleRows) : current;
+        Whole w = whole;
+        return w != null ? layoutWhole(w.routes(), w.labelMode(), visibleRows) : current;
     }
 
     /** A route laid out, the density it was placed with, and the engine that laid it out. */
