@@ -20,7 +20,7 @@
     "expressionOut": { "carriers": [ "value", "text", "list", "map" ], "description": "What the operation of the expert gives: a Boolean, a category as text, a score or a Set of labels, and with refs: a Map of the results by name" }
   },
   "languageProperties": {
-    "defaultState": { "index": 0, "kind": "property", "displayName": "Default State", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "${body}", "description": "The Simple expression selecting the state of the evaluations that have no selector of their own. Defaults to the message body." }
+    "defaultState": { "index": 0, "kind": "property", "displayName": "Default State", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The Simple expression selecting the state of the evaluations that have no selector of their own. Defaults to the message body." }
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
