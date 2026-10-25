@@ -1,0 +1,292 @@
+---
+title: Payload mode
+authors:
+  - "@davsclaus"
+reviewers: []
+approvers: []
+creation-date: 2026-10-25
+last-updated: 2026-10-25
+status: proposed
+see-also:
+  - "CAMEL-25334"
+  - "CAMEL-24844"
+  - "CAMEL-25330"
+  - "CAMEL-25329"
+  - "CAMEL-25746"
+  - "CAMEL-25749"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+A route carries the body as the Java type that each component and each step happens to produce: a `GenericFile`, a
+`byte[]`, an `InputStream`, a `Map`, a `String`. Users who think of the payload as JSON (or CSV, or XML) write their
+mappings for that shape, and the gap between the two shows up as runtime errors.
+
+This proposal adds an opt-in *payload mode*. With `payloadMode=json` the body inside the route is JSON data (a
+`JsonObject` or a `JsonArray`), whatever the component or the step before gave, and at the edges of the route it is
+the JSON text. The payload mode is an SPI: JSON is the first plugin, and other text and binary formats (CSV, XML, CBOR,
+Avro, ...) can follow as plugins.
+
+== Motivation
+
+Low-code users, and AI models writing routes, think of the payload as JSON and write data mappings in Groovy and simple
+accordingly. Camel carries the native Java type of each component instead, and that type changes during routing and
+from component to component. Examples:
+
+- Groovy `body.find { it.sku == headers.sku }` on JSON that was not unmarshalled fails with
+  `No such property: sku for class: java.lang.Byte`.
+- simple `${body[amount]}` on the body of the file consumer fails with
+  `Key: amount not found in bean: GenericFile[...]`.
+- A mapping that returns a `Map`, sent to an http producer, fails: there is no type converter from `LinkedHashMap` to
+  `InputStream`.
+- A jsonpath result stored in a header as a `LinkedList` disappears when the message crosses a JMS broker.
+
+Raymond Meester described the same from the Fluxygen low-code platform built on Camel, where users write Groovy and
+simple without knowing Java (Zulip thread "Text-orientated vs. Object-orientated in integration"). In the local-model
+benchmark, 19 of 156 attempts in one series failed on such a body type collision.
+
+The hints of CAMEL-25330, CAMEL-25746 and CAMEL-25749 now say what to do in each of these cases ("unmarshal it
+first"), but nothing does it: a user still has to know which step gives which Java type, and where to unmarshal and
+marshal.
+
+== Goals
+
+- A route can opt in to work on the payload as data of one format: JSON first.
+- Inside such a route, the body has one predictable shape: Groovy `body.sku`, simple `${body.sku}` and
+  `${body[sku]}`, split and aggregate work on it without unmarshal and marshal steps.
+- At the edges (producers, header values, what users see in logs and tooling) the payload is its text, or its bytes
+  for a binary format.
+- Formats are plugins of one SPI, so CSV, XML and binary formats can be added without changing the engine.
+- Routes that do not opt in behave exactly as today.
+
+== Non-goals
+
+- Changing the default behaviour of Camel. The mode is opt-in, per `CamelContext` and per route.
+- The lowest overhead. The mode parses and writes payloads that a hand-written route might pass through untouched; it
+  is for routes where predictability matters more than raw speed.
+- Mapping arbitrary Java objects (SDK objects, entities) to JSON. They stay as they are; a JSON writer SPI can come
+  later.
+- Schemas and validation of the payload.
+
+== Current design
+
+- The body is whatever the last step set. Consumers and producers document their body types in the catalog
+  (CAMEL-24961), and the validator follows them through a route (CAMEL-24844, CAMEL-25928), but at runtime nothing
+  normalizes the body.
+- Reading fields needs an `unmarshal` step first. When it is missing, the Groovy language, the bean OGNL of simple,
+  jsonpath, jq and several producers say so in their error (`BodyFacts`, CAMEL-25749).
+- Some JSON support already exists in core without Jackson: camel-util-json (`JsonObject` extends `LinkedHashMap`,
+  `JsonArray` extends `ArrayList`, `Jsoner` parses and writes), type converters from a `String`, `byte[]`,
+  `InputStream`, `File` and `WrappedFile` to `JsonObject` / `JsonArray` in camel-support (`JsonConverter`; there are
+  none in the other direction), and the `${simpleJsonpath(...)}` function of simple.
+- Stream caching is the precedent for an opt-in mode that changes the body: it is enabled per `CamelContext` and per
+  route (`RuntimeConfiguration#setStreamCaching`, the `streamCache` option of a route), and works through an advice
+  where the consumer hands the message to the route (`CamelInternalProcessor`) and around every step
+  (`DefaultChannel`).
+
+== Proposal
+
+=== The option
+
+`payloadMode` is a new option of the `CamelContext` and of a route, like stream caching:
+
+- `camel.main.payloadMode = json` for all the routes, and a route can set its own `payloadMode` to opt in or out.
+- The value is the name of a payload mode plugin. `default` (the default) means no payload mode: today's behaviour.
+- A route has one payload mode. The value is a single name, so a list (`json,csv`) can be added later without
+  breaking it.
+
+=== The SPI
+
+A payload mode is a plugin found by its name, like data formats and languages
+(`META-INF/services/org/apache/camel/payload-mode/<name>`), or bound in the registry. It is marked preview in its first
+release, so the interface can still change when the second plugin arrives.
+
+[source,java]
+----
+public interface PayloadMode {
+
+    /** The name, such as json, csv, cbor. */
+    String getName();
+
+    /** The content type of the payload this mode writes, such as application/json. */
+    String getContentType();
+
+    /** Whether the value is data of this mode (for json: a JsonObject or a JsonArray). */
+    boolean isData(Object value);
+
+    /** The body as data of this mode, or null when it is not a payload of this mode (the body is left as it is). */
+    Object toData(Exchange exchange, Object body);
+
+    /** The wire form of the data: a String for a text format, a byte[] for a binary one. */
+    Object toPayload(Exchange exchange, Object data);
+
+    /** The data as readable text, for logs, tracing, tooling and header values. */
+    String toDisplay(Exchange exchange, Object data);
+}
+----
+
+A base class in camel-support holds the rule that is the same for every format, so a plugin declares its content
+types and file extensions, and brings its parser and writer:
+
+- the `Content-Type` header (and its `charset`), the file name through `MimeTypeHelper` when there is no
+  `Content-Type`, and a sniff of the content that a plugin can override (the first character for a text format, magic
+  bytes for a binary one)
+- a payload that does not parse is left as it is, logged at DEBUG: the mode never fails a message
+- a stream that stream caching has spooled to disk is left as it is: the spool threshold is the size limit, so the
+  mode has no size option of its own
+
+A plugin can have options (an Avro or Protobuf schema), configured like a data format.
+
+=== The engine
+
+The engine part does not depend on the format.
+
+*Which bodies become data.* Where the consumer hands the message to the route, and after every step, the body is
+given to `toData` of the route's mode (where stream caching works today). So one rule covers the body of a consumer,
+the reply of a producer and the result of any step, including a language, `process`, `bean`, split and aggregate. A
+body that `isData` already is left alone, so a route that stays in its data costs a type check per step.
+
+*The edges.* Producers get the payload through the type converter, not by replacing the body before them:
+
+- a fallback type converter gives `toPayload` (and `toDisplay` for a `String` from a binary format) when the target is
+  a `String`, `byte[]` or `InputStream` and the value is data of the exchange's payload mode. So http, file, kafka and
+  the other producers that read text, bytes or a stream get the payload.
+- producers that take a `Map` as their API use the data: sql named parameters (`:#sku`, `SqlHelper` converts the body
+  to a `Map`), mongodb documents.
+- producers that would turn a `Map` into something that is not the payload are fixed to ask the payload mode first:
+  JMS and SJMS send a `Map` as a `MapMessage` (`JmsBinding`), and send data of a payload mode as a `TextMessage`
+  (`BytesMessage` for a binary mode). Other producers of this kind are found by a survey of the components.
+- before a remote producer (`Endpoint#isRemote()`), header values that are data of the mode, a `Map` or a `List`
+  become their `toDisplay` text (not the `Camel*` headers, some of which are maps on purpose), so they survive a JMS
+  or Kafka hop; and the `Content-Type` header is set to the mode's content type unless it is already one of the
+  plugin's content types.
+- local endpoints (`direct`, `seda`) pass the data as it is to the next route.
+
+*What users see.* `MessageHelper` (the body in logs, tracing, the backlog tracer and the dev consoles, so also Camel
+TUI and the MCP tools) shows `toDisplay` of data of a payload mode, so users see the JSON text, not
+`{sku=CAMEL-MUG, qty=3}`.
+
+=== The json plugin
+
+In camel-support, with camel-util-json, so it needs no new dependency.
+
+- Data: `JsonObject` (a `LinkedHashMap`, so the field order is kept) and `JsonArray`; numbers are `BigDecimal`.
+- `toData`: parses a `String`, `byte[]`, stream or file whose `Content-Type` is `application/json` or `*+json`, or
+  with no `Content-Type` whose file name ends with `.json` or whose text starts with `{` or `[`. A `Map` becomes a
+  `JsonObject` and a `List` a `JsonArray`, their nested values too. Any other body is left as it is.
+- `toPayload` and `toDisplay`: the JSON text (`Jsoner`).
+
+So in a route with `payloadMode=json`, with no change to the languages or the EIPs:
+
+- Groovy `body.sku`, `body.items.each { ... }`, `body.find { ... }` work on the `Map` and `List`
+- simple `${body.sku}` and `${body[sku]}` work (the bean OGNL reads a key of a `Map`)
+- split of a `JsonArray` gives its elements, each a `JsonObject`; aggregating them gives a `List`, which becomes a
+  `JsonArray`
+
+=== Other formats, on paper
+
+These are not part of the first work. They are here to check that the SPI does not only fit JSON.
+
+[cols="1,2,2,3"]
+|===
+|Format |Module |Data in the route |What it tells the SPI
+
+|CSV
+|camel-csv (commons-csv)
+|the rows as a list of maps, keyed by the header line
+|A plain `List` is not specific enough for `isData`: the plugin needs a marker type (such as a `CsvRows` that extends
+`ArrayList`). Detection needs the `Content-Type` or the file name, the text cannot be sniffed reliably.
+
+|XML
+|camel-xml-jaxp
+|a DOM `Document` (Groovy GPath, xpath)
+|XML does not fit the JSON data model (attributes, namespaces, mixed content), so the data type must be per plugin.
+
+|CBOR, MessagePack, Smile, BSON, Ion
+|camel-cbor, and new ones
+|the JSON data model, so `JsonObject` / `JsonArray` too
+|A binary wire form: `toPayload` gives a `byte[]` and `toDisplay` the JSON text. Two plugins can share a data type, so
+writing at an edge uses the route's mode, not the type of the data. Detection by `Content-Type` and magic bytes.
+
+|Avro, Protobuf, Thrift, ASN.1
+|camel-avro, camel-protobuf, camel-thrift, camel-asn1
+|a `GenericRecord` / `DynamicMessage`, or the JSON data model through the format's JSON mapping
+|A plugin needs options (the schema).
+|===
+
+Parquet is a file format of many rows, not a message payload, and is not a candidate.
+
+=== What changes for route authors in a payload mode
+
+- A step that produces JSON text has it parsed back into data, `convertBodyTo: String` too. The text inside the route
+  is `${bodyAs(String)}`, or `body.toJson()` in Groovy.
+- `unmarshal: json` gives a `Map`, which becomes data; `marshal: json` gives text, which becomes data again. Both are
+  no longer needed, and harmless.
+- An `unmarshal` to a class (a POJO) stays a POJO: other Java objects are left as they are.
+- Java code (`process`, `bean`) that expects the Java type of a component gets the data of the mode.
+
+=== Tooling
+
+- The body flow of the validator (CAMEL-24844) knows the payload mode: in `json` mode the body of a file consumer is
+  JSON data, and the "unmarshal it first" warnings do not apply.
+- The catalog documents the `payloadMode` option, and the body types of the payload modes.
+- Camel TUI and the MCP tools show the mode of a route.
+
+=== Order of work
+
+. camel-core: the `payloadMode` option (camel-api, camel-main, the model and the YAML and XML DSLs), the SPI and its
+  base class, the engine (the hooks, the fallback converter, header values, display), the json plugin, a user manual
+  page, and tests that run the examples of the motivation in both modes.
+. Components: JMS and SJMS, and the survey of the producers that turn a `Map` into something else.
+. Tooling: the validator, the catalog, Camel TUI and the MCP tools.
+. Measure: the local-model benchmark with the mode off and on, comparing the body type collisions and the pass rate.
+
+== Alternatives considered
+
+- *The body as JSON text (a `String`), parsed by each language when it reads it.* Every read parses again (or needs a
+  cache), split of a `String` splits on commas, and the languages, split and aggregate all need to learn the mode.
+  JSON data in the route gives the same to users with no change to them.
+- *Converting only at the endpoints.* Most of the drift happens inside the route: a Groovy or `process` step that
+  returns a `Map`, split, aggregate. Those would keep the drift.
+- *Not converting the body, and letting each reader see a text view of it.* Cheapest, but the body's type is not
+  predictable, and logs and tooling show whatever type it has.
+- *Replacing the body with its text before every producer.* Breaks the producers that take a `Map` as their API, such
+  as sql named parameters.
+- *A switch per language.* The problem is the body between the steps, not one language.
+
+== Compatibility
+
+- Nothing changes for routes without a payload mode.
+- The fallback type converter only acts on exchanges of a route with a payload mode. Whether a `JsonObject` should
+  also convert to its JSON text outside the mode (today it gives `{sku=CAMEL-MUG}` through `toString`) is an open
+  question.
+- The JMS and SJMS change only applies to data of a payload mode.
+
+== Risks
+
+- The data is mutable and shared: exchange copies (multicast, recipient list, wire tap, split with a shared body) refer
+  to the same `JsonObject`, so a branch that changes it changes the others. This is the same as with a `Map` body
+  today, but low-code users are less likely to expect it. A `copy` method on the SPI, used when an exchange is copied,
+  is a possible answer.
+- Producers that turn a `Map` into something other than the payload, and are not found by the survey, send the wrong
+  thing in the mode.
+- Detection by sniffing can be wrong (a text that starts with `[`). The `Content-Type` wins, and a parse failure leaves
+  the body as it is.
+- The SPI is designed with one plugin. Marking it preview, and the formats on paper above, keep it open to change.
+
+== Open questions
+
+- Should a route be able to have more than one payload mode (`payloadMode=json,csv`), each claiming its payloads by
+  content type, with a `Map` from a step going to the first?
+- Should a `JsonObject` convert to its JSON text outside a payload mode too?
+- Do exchange copies need a deep copy of the data (the `copy` method above)?
+- The marker type for CSV rows, and the data type of XML (DOM, or a Groovy-friendly view).
+
+== Related tickets
+
+- CAMEL-25334: the payload mode (this proposal).
+- CAMEL-24844: the body type flow of the validator.
+- CAMEL-25330, CAMEL-25746, CAMEL-25749: the hints when a body is not the data a step reads.
+- CAMEL-25329: marshal json writes JSON text as it is.
