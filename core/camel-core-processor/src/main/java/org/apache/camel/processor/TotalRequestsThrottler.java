@@ -193,7 +193,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
         try {
             if (LOG.isTraceEnabled()) {
-                exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, TimeSource.nanoTime());
+                exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, TimeSource.currentTimeMillis());
             }
             exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC);
             ThrottlePermit next = throttlingState.peek();

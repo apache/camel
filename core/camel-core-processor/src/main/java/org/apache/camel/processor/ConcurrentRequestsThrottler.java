@@ -159,11 +159,11 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
         }
         throttlingState.acquire(exchange);
         if (LOG.isTraceEnabled()) {
-            elapsed = TimeSource.nanoTime() - start;
+            elapsed = Duration.ofNanos(TimeSource.nanoTime() - start).toMillis();
         }
         if (state == State.ASYNC) {
             if (LOG.isTraceEnabled()) {
-                long queuedTime = start - queuedStart;
+                long queuedTime = Duration.ofNanos(start - queuedStart).toMillis();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed,
                             exchange.getExchangeId());

@@ -99,7 +99,7 @@ developer consoles stay on `System`. The durations they measure with `StopWatch`
 message history times (`MessageHistory.getTime()`) are virtual in a DST run. `@DstInstrument(alsoRewrite = ...)` applies the
 rewriting of the code under test to classes outside it, for example `org.apache.camel.support.ResetableClock` (the
 clock of an exchange) or a library the component calls. It is not needed for the core classes listed above, except for
-the permit queue of `TotalRequestsThrottler` and the `Semaphore` of `ConcurrentRequestsThrottler` (see below).
+the permit queue of `TotalRequestsThrottler` (see below).
 
 === Escapes and strict mode
 
@@ -127,9 +127,9 @@ core:
   queue. Add `org.apache.camel.processor.TotalRequestsThrottler` to `@DstInstrument(alsoRewrite)`: the permit wait is
   then a virtual wait.
 * `ConcurrentRequestsThrottler` blocks on its `Semaphore` once `maxConcurrentRequests` exchanges are in flight. No task
-  of the run releases a permit while the loop thread waits, so the seed ends on the watchdog. Add
-  `org.apache.camel.processor.ConcurrentRequestsThrottler` to `@DstInstrument(alsoRewrite)`: the `Semaphore` wait is
-  then a virtual wait.
+  of the run releases a permit while the loop thread waits, so the seed ends on the watchdog. `alsoRewrite` does not
+  help here (the call goes through a `Semaphore` subclass): keep `maxConcurrentRequests` above the number of exchanges
+  the world has in flight.
 * The route `delayer` option (`CamelInternalProcessor.DelayerAdvice`) calls `Thread.sleep` directly, not through
   `TimeSource`: the delay takes real time on the loop thread and the virtual clock does not move. Use the `delay` EIP
   in a world instead.
