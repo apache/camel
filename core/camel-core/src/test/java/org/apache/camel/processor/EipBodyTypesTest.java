@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -43,6 +44,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CacheDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
@@ -53,8 +55,10 @@ import org.apache.camel.model.ConvertHeaderDefinition;
 import org.apache.camel.model.ConvertVariableDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DelayDefinition;
+import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
@@ -62,18 +66,27 @@ import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.MulticastDefinition;
+import org.apache.camel.model.OtherwiseDefinition;
+import org.apache.camel.model.PausableDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
+import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.RemoveHeaderDefinition;
 import org.apache.camel.model.RemoveHeadersDefinition;
 import org.apache.camel.model.RemovePropertiesDefinition;
 import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.model.RemoveVariableDefinition;
+import org.apache.camel.model.ResequenceDefinition;
+import org.apache.camel.model.ResumableDefinition;
 import org.apache.camel.model.RollbackDefinition;
+import org.apache.camel.model.RoutingSlipDefinition;
+import org.apache.camel.model.SagaDefinition;
 import org.apache.camel.model.SamplingDefinition;
+import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetHeadersDefinition;
@@ -84,22 +97,31 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.model.TransformDataTypeDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
+import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.processor.resume.TransientResumeStrategy;
+import org.apache.camel.resume.ConsumerListener;
+import org.apache.camel.saga.InMemorySagaService;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Policy;
+import org.apache.camel.spi.TransactedPolicy;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
@@ -317,6 +339,93 @@ public class EipBodyTypesTest extends ContextTestSupport {
         assertSame(body, out.getVariable("v"));
     }
 
+    @Test
+    public void theBlocksOfChoiceDoTrySagaAndTransacted() throws Exception {
+        block(WhenDefinition.class, (r, s) -> r.choice().when(constant(true)).process(s).setBody(constant(END)).end());
+        block(OtherwiseDefinition.class, (r, s) -> r.choice().when(constant(false)).to("mock:other").otherwise()
+                .process(s).setBody(constant(END)).end());
+        context.addService(new InMemorySagaService());
+        block(SagaDefinition.class, (r, s) -> r.saga().process(s).setBody(constant(END)).end());
+        context.getRegistry().bind("myPolicy", new NoTransactedPolicy());
+        block(TransactedDefinition.class, (r, s) -> r.transacted("myPolicy").process(s).setBody(constant(END)).end());
+    }
+
+    @Test
+    public void doFinallyStartsWithTheBodyTheTryEndedWith() throws Exception {
+        assertFrom(FinallyDefinition.class, BodyTypeSides.STEPS);
+        assertEquals(Carrier.UNKNOWN, bodyTypes(FinallyDefinition.class).eipSteps().value()[0]);
+        inside.clear();
+        Exchange out = run(r -> r.doTry().setBody(constant("tried")).doFinally().process(this::inside)
+                .setBody(constant(END)).end(), new Order());
+        assertEquals(List.of("tried"), inside);
+        assertEquals(END, out.getMessage().getBody());
+    }
+
+    @Test
+    public void resequenceGivesItsStepsEachMessage() throws Exception {
+        assertEquals(Carrier.UNCHANGED, bodyTypes(ResequenceDefinition.class).eipSteps().value()[0]);
+        Order body = new Order();
+        inside.clear();
+        run(r -> r.resequence(constant(1)).batch().size(1).timeout(10).process(this::inside).end(), body);
+        // the steps get the messages on another thread
+        await().atMost(5, TimeUnit.SECONDS).until(() -> inside.size() == 1);
+        assertSame(body, inside.get(0));
+    }
+
+    @Test
+    public void theConsumerEipsKeepTheBody() throws Exception {
+        unchanged(PausableDefinition.class,
+                r -> r.pausable().consumerListener(new NoConsumerListener()).untilCheck(e -> true));
+        unchanged(ResumableDefinition.class,
+                r -> r.resumable().resumeStrategy(new TransientResumeStrategy(() -> {
+                })).intermittent(true));
+    }
+
+    @Test
+    public void theBodyIsWhatTheBeanOrTheEndpointLeaves() throws Exception {
+        // unknown: what these leave depends on the bean, the processor, the script or the endpoint they call
+        for (Class<?> model : List.of(BeanDefinition.class, ProcessDefinition.class, ScriptDefinition.class,
+                RecipientListDefinition.class, RoutingSlipDefinition.class, DynamicRouterDefinition.class,
+                SwitchDefinition.class)) {
+            assertEquals(Carrier.UNKNOWN, bodyTypes(model).eipOut().value()[0], model.getSimpleName());
+        }
+        Order body = new Order();
+        assertEquals("reply", run(r -> r.bean(new Greeter(), "reply"), body).getMessage().getBody());
+        // a void method leaves the body as it was
+        assertSame(body, run(r -> r.bean(new Greeter(), "nothing"), body).getMessage().getBody());
+        assertEquals("reply", run(r -> r.process(e -> e.getMessage().setBody("reply")), body).getMessage().getBody());
+        // the result of the script is not used, but the script can set the body
+        assertSame(body, run(r -> r.script(constant("ignored")), body).getMessage().getBody());
+        assertEquals("scripted", run(r -> r.script(new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                exchange.getMessage().setBody("scripted");
+                return null;
+            }
+        }), body).getMessage().getBody());
+        assertEquals("reply", run(r -> r.recipientList(constant("language:constant:reply")), body).getMessage().getBody());
+        assertEquals("b", run(r -> r.routingSlip(constant("language:constant:a,language:constant:b")), body)
+                .getMessage().getBody());
+        assertEquals("reply", run(r -> r.dynamicRouter(new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                // one endpoint, then the end of the slip
+                return exchange.getProperty(Exchange.SLIP_ENDPOINT) == null ? "language:constant:reply" : null;
+            }
+        }), body).getMessage().getBody());
+        assertEquals("reply", run(r -> r.doSwitch(constant("a")).doCase("a", "language:constant:reply").end(), body)
+                .getMessage().getBody());
+    }
+
+    @Test
+    public void transformDataTypeLeavesWhatItsTransformerMakes() throws Exception {
+        assertEquals("transformerIn", bodyTypes(TransformDataTypeDefinition.class).eipIn().from());
+        assertFrom(TransformDataTypeDefinition.class, "transformerOut");
+        // text-plain makes text, as the body types of the transformer say
+        assertJavaType(run(r -> r.transformDataType("text-plain"), 5), String.class);
+        assertJavaType(run(r -> r.transformDataType("application-octet-stream"), "Hello"), byte[].class);
+    }
+
     // the checks of a side
 
     private void unchanged(Class<?> model, Consumer<ProcessorDefinition<?>> eip) throws Exception {
@@ -480,6 +589,45 @@ public class EipBodyTypesTest extends ContextTestSupport {
         @Override
         public Object unmarshal(Exchange exchange, InputStream stream) {
             return "reply";
+        }
+    }
+
+    /** A bean with a method that returns the body, and one that returns nothing. */
+    public static final class Greeter {
+        public String reply() {
+            return "reply";
+        }
+
+        public void nothing() {
+        }
+    }
+
+    /** A transacted policy that wraps nothing, as a transaction manager would wrap the steps. */
+    private static final class NoTransactedPolicy implements TransactedPolicy {
+        @Override
+        public void beforeWrap(Route route, NamedNode definition) {
+        }
+
+        @Override
+        public Processor wrap(Route route, Processor processor) {
+            return processor;
+        }
+    }
+
+    /** A consumer listener that never pauses the consumer. */
+    private static final class NoConsumerListener implements ConsumerListener<Object, Object> {
+        @Override
+        public void setResumableCheck(Predicate<?> afterConsumeEval) {
+        }
+
+        @Override
+        public boolean afterConsume(Object consumePayload) {
+            return true;
+        }
+
+        @Override
+        public boolean afterProcess(Object processingPayload) {
+            return true;
         }
     }
 
