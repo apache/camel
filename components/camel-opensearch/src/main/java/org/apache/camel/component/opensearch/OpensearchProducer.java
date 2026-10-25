@@ -95,6 +95,9 @@ class OpensearchProducer extends DefaultAsyncProducer {
     protected final OpensearchConfiguration configuration;
     private final OpenSearchClient openSearchClient;
     private volatile RestClient client;
+    // true when this producer created the client, false when the client is the one of the component, which is
+    // shared by every endpoint of the component and is not this producer's to close
+    private volatile boolean clientCreated;
     private Sniffer sniffer;
 
     public OpensearchProducer(OpensearchEndpoint endpoint, OpensearchConfiguration configuration) {
@@ -456,14 +459,9 @@ class OpensearchProducer extends DefaultAsyncProducer {
             if (ctx.configFrom()) {
                 message.removeHeader(OpensearchConstants.PARAM_FROM);
             }
-            if (configuration.isDisconnect() && openSearchClient == null) {
+            if (configuration.isDisconnect() && clientCreated) {
+                closeClient();
                 IOHelper.close(ctx.transport());
-                if (configuration.isEnableSniffer()) {
-                    IOHelper.close(sniffer);
-                    sniffer = null;
-                }
-                IOHelper.close(client);
-                client = null;
             }
         } catch (Exception e) {
             LOG.warn("Could not execute the cleanup task", e);
@@ -487,6 +485,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
                     if (ObjectHelper.isNotEmpty(configuration.getHostAddressesList())
                             && !configuration.getHostAddressesList().isEmpty()) {
                         client = createClient();
+                        clientCreated = true;
                     } else {
                         LOG.warn("Incorrect ip address and port parameters settings for OpenSearch cluster");
                     }
@@ -592,14 +591,28 @@ class OpensearchProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (client != null && openSearchClient == null) {
+        if (clientCreated) {
             LOG.info("Disconnecting from OpenSearch cluster: {}", configuration.getClusterName());
-            client.close();
-            if (sniffer != null) {
-                sniffer.close();
-            }
+            closeClient();
         }
         super.doStop();
+    }
+
+    /**
+     * Closes the client this producer created, so that a start creates a new one.
+     */
+    private void closeClient() {
+        lock.lock();
+        try {
+            // the sniffer is closed first, it uses the client
+            IOHelper.close(sniffer);
+            sniffer = null;
+            IOHelper.close(client);
+            client = null;
+            clientCreated = false;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public RestClient getClient() {

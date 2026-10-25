@@ -69,8 +69,10 @@ import net.bytebuddy.jar.asm.Opcodes;
  * seed.</li>
  * </ul>
  * {@link #alsoRewrite(String...)} applies the same rewriting, without the report, to classes outside the code under
- * test, for example {@code org.apache.camel.support.MonotonicClock} and {@code org.apache.camel.util.StopWatch} of
- * Camel core. That is a stop-gap until Camel core has a time source the harness can replace.
+ * test, for example {@code org.apache.camel.support.ResetableClock} of Camel core. The core code that waits, times
+ * tasks or throttles reads the clock and sleeps through {@code org.apache.camel.util.TimeSource}, whose provider is the
+ * virtual clock while a run is open (see {@link Dst}); only its blocking waits, such as the permit queue of
+ * {@code org.apache.camel.processor.TotalRequestsThrottler}, still need the rewriting.
  * <p>
  * Uses a runtime-attached agent (as Mockito's inline mock maker does) and the ASM copy shipped in Byte Buddy.
  */
@@ -139,11 +141,11 @@ public final class DstInstrumentation {
     }
 
     /**
-     * Rewrites the time reads of these classes or packages too, without reporting their escape points: a stop-gap for
-     * code outside the code under test that reads the clock, such as {@code org.apache.camel.support.MonotonicClock} or
-     * {@code org.apache.camel.util.StopWatch}. An entry whose last segment starts with an upper case letter is a class
-     * (with its nested classes), else a package (with its sub packages). The rewriting stays for the rest of the JVM;
-     * outside a run the rewritten calls read the real clock.
+     * Rewrites the time reads of these classes or packages too, without reporting their escape points: for code outside
+     * the code under test that reads the clock and does not use {@code org.apache.camel.util.TimeSource}, such as
+     * {@code org.apache.camel.support.ResetableClock}. An entry whose last segment starts with an upper case letter is
+     * a class (with its nested classes), else a package (with its sub packages). The rewriting stays for the rest of
+     * the JVM; outside a run the rewritten calls read the real clock.
      */
     public static synchronized void alsoRewrite(String... classesOrPackages) {
         List<String> added = new ArrayList<>();

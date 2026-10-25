@@ -220,12 +220,11 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         LOG.debug("Payload size >= partSize ({} > {}). Uploading payload using multi-part operation", contentLength, partSize);
-        objectMetadata.put("Content-Length", "" + contentLength);
 
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                = CreateMultipartUploadRequest.builder().bucket(bucketName).key(keyName);
+                = CreateMultipartUploadRequest.builder().bucket(bucketName).key(keyName).metadata(objectMetadata);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (ObjectHelper.isNotEmpty(storageClass)) {

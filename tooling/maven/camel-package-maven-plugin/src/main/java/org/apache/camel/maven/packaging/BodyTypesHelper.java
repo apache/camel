@@ -170,7 +170,7 @@ final class BodyTypesHelper {
                 || Arrays.stream(bodyType.byOption()).anyMatch(w -> w.option().equals(option))) {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " has the javaTypeOption " + option
-                                               + ", which is not in dependsOn or byOption as well");
+                                               + ", which must not also be in dependsOn or byOption");
         }
     }
 

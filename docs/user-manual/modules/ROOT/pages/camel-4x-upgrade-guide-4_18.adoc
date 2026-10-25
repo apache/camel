@@ -398,6 +398,21 @@ framing, are still allowed. Routes that put a percent-encoded control character 
 `CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
 likely to be affected.
 
+=== camel-aws2-athena - the queryString option takes precedence over the message body
+
+The `startQueryExecution` operation of the `aws2-athena` producer, which is its default operation, now takes the SQL to
+run from the `CamelAwsAthenaQueryString` header, then from the `queryString` option, and from the message body only
+when neither the header nor the option is set. Previously the message body came first, so an endpoint configured with
+`queryString` used the message body as the SQL whenever the message had one.
+
+Routes that set the SQL in the message body and configure no `queryString` option, as the examples in the component
+documentation do, keep working. Routes that set both now run the `queryString` option; remove the option, or set the
+SQL in the `CamelAwsAthenaQueryString` header, to keep running the SQL of the message body.
+
+With `includeTrace=true`, the URI of the from endpoint in the SQL comment is now sanitized, as Camel does when it logs
+an endpoint URI, and it is left out when the exchange has no from endpoint, which failed with a `NullPointerException`
+before.
+
 === camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
 
 When `pollEnrich` (or `poll`) times out and no `aggregationStrategy` is configured, the body is set to `null`, and with
@@ -449,15 +464,6 @@ When the call of an API component fails, such as one of fhir, box, google-drive 
 the arguments of the call, as in `Error invoking resourceById with [password, resourceClass, serverUrl, stringId,
 username]: ...`, and no longer shows their values. The arguments hold the options of the endpoint, such as a password or
 a token, and the message data. The debug log of the call masks the values of the sensitive options.
-
-=== camel-solr - the operation of the header or the endpoint wins over the type of the body
-
-The solr producer now runs the operation of the `CamelSolrOperation` header, or else of the `operation` option, whatever
-the body is. Before, the type of the body came first: a Map, a file or a collection that is not all Strings ran an
-insert, and a collection of Strings ran a delete by id, even when the header or the option named another operation. The
-body decides only when neither is set, and a body that is a request of SolrJ, such as a `SolrQuery` or an
-`UpdateRequest`, still runs its own operation. The `CamelSolrQueryString` header makes a search only when no operation
-is set, and a `CamelSolrOperation` header with a value that is not an operation now fails.
 
 == Upgrading from 4.18.4 to 4.18.5
 
