@@ -20,9 +20,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
+import org.apache.camel.Expression;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -166,6 +168,31 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertEquals(false, context.resolveLanguage("simple").createPredicate("${body.length() > 3}").matches(exchange));
     }
 
+    /**
+     * An operator inside brackets or parentheses belongs to an index or an argument: a predicate inside ${ } is split
+     * at an operator outside them only, so the error quotes the text as written (a local model wrote ${body.?[qty <
+     * 1].size() > 0 ? ...} and was told about ${body.?[qty} < 1], text it never wrote).
+     */
+    @Test
+    public void testAnOperatorInsideBracketsOrParenthesesIsNotSplit() {
+        assertEquals("${body.?[qty < 1].size()} > 0", SimpleSyntaxHints.wrapFunctions("body.?[qty < 1].size() > 0"));
+        assertEquals("iif(header.a > 0 && header.b > 0, 'x', 'y')",
+                SimpleSyntaxHints.wrapFunctions("iif(header.a > 0 && header.b > 0, 'x', 'y')"));
+        assertEquals("${header.x} > 0 && ${body.size()} > 1",
+                SimpleSyntaxHints.wrapFunctions("header.x > 0 && body.size() > 1"));
+        assertEquals("${header.list[0]} == 'a'", SimpleSyntaxHints.wrapFunctions("header.list[0] == 'a'"));
+
+        // the expression parses as written now; what the index means is the runtime's to say, about the text as written
+        Expression expression = context.resolveLanguage("simple")
+                .createExpression("${body.?[qty < 1].size() > 0 ? 'not enough' : 'reserved'}");
+        exchange.getIn().setBody(List.of(Map.of("qty", 0)));
+        try {
+            expression.evaluate(exchange, String.class);
+        } catch (Exception e) {
+            assertThat(e.getMessage()).doesNotContain("[qty}");
+        }
+    }
+
     @Test
     public void testOgnlRuntimeMessages() {
         exchange.getIn().setBody("hello");
@@ -268,8 +295,8 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         // the lookup by a field first: given [0] first, models took the first element
         assertThat(e.getMessage()).contains("(a List has no method or key orderId: to pick the element whose orderId"
                                             + " has a given value, use jsonpath: \"$[?(@.orderId == '${header.orderId}')]\""
-                                            + " with resultType java.util.Map (the element, or null when none matches);"
-                                            + " [0].orderId reads the first element; or split it)");
+                                            + " with resultType java.util.Map (the element, or null when none or several"
+                                            + " match); [0].orderId reads the first element; or split it)");
     }
 
     @Test

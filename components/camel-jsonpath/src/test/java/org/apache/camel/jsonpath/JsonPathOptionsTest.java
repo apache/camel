@@ -16,18 +16,23 @@
  */
 package org.apache.camel.jsonpath;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.jayway.jsonpath.Option;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -64,6 +69,20 @@ public class JsonPathOptionsTest extends CamelTestSupport {
         // the options apply to the expressions of the language: a missing path is an empty list, not an error
         Expression expression = language.createExpression("$.missing");
         assertEquals(List.of(), expression.evaluate(exchange(), List.class));
+    }
+
+    @Test
+    public void testTheConfigurerOfTheLanguage() {
+        // camel-main finds the configurer of camel.language.jsonpath.* by the name of the language
+        PropertyConfigurer configurer
+                = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer("jsonpath-language", context);
+        assertInstanceOf(JsonPathLanguageConfigurer.class, configurer);
+
+        JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
+        PropertyBindingSupport.build().withConfigurer(configurer).withReflection(false)
+                .bind(context, language, new HashMap<>(Map.of("options", "SUPPRESS_EXCEPTIONS", "writeAsString", "true")));
+        assertArrayEquals(new Option[] { Option.SUPPRESS_EXCEPTIONS }, language.getOptions());
+        assertTrue(language.isWriteAsString());
     }
 
     @Test
