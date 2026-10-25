@@ -2262,4 +2262,97 @@ public class TextBodyFlowTest {
             throw new AssertionError("Failed to validate:\n" + yaml, e);
         }
     }
+
+    @Test
+    public void testAnEipTheCatalogSaysKeepsTheBody() {
+        // threads leaves the body as it was, as the body types of the EIPs in the catalog say
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - threads: {}
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m).contains("simple reads a field of the body (${body[status]})"));
+    }
+
+    @Test
+    public void testTheStepsOfALoopHaveTheBody() {
+        // the steps of a loop start with the body at the loop, as the body types of the EIPs in the catalog say
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - loop:
+                            constant: "2"
+                            steps:
+                              - to: file:outbox
+                """;
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file needs the body as text"));
+    }
+
+    @Test
+    public void testTheStepsOfADoCatchHaveTheBodyOfTheFailedStep() {
+        // the body in a doCatch is the one of the step that failed, which the walk does not know
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - doTry:
+                            steps:
+                              - to: mock:work
+                            doCatch:
+                              - exception:
+                                  - java.io.IOException
+                                steps:
+                                  - setHeader:
+                                      name: status
+                                      simple: "${body[status]}"
+                """;
+        assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testASplitKeepsTheBodyUnlessItAggregates() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - split:
+                            tokenize: "\\n"
+                            steps:
+                              - to: mock:line
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m).contains("simple reads a field of the body (${body[status]})"));
+        // with an aggregation strategy the body after the split is what it aggregates
+        String aggregating = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - split:
+                            aggregationStrategy: myStrategy
+                            tokenize: "\\n"
+                            steps:
+                              - to: mock:line
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(aggregating)).isEmpty();
+    }
 }

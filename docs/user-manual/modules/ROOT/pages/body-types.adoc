@@ -245,6 +245,10 @@ that cannot take the body it gets (see xref:camel-jbang-validation.adoc[Validati
 know the body, such as after an HTTP consumer, it says nothing, unless a running integration has shown what the body
 is.
 
+The EIPs come from the catalog as well: their `eipOut` says which ones leave the body as it was (`log`, `setHeader`,
+`threads`, a `split` without an aggregation strategy), and their `eipSteps` whose steps start with the body at the EIP
+(`choice`, `filter`, `loop`), not with another body (`aggregate`, `split`) or one the validator cannot know (`doCatch`).
+
 === Asking an AI assistant
 
 An AI assistant with the xref:camel-jbang-mcp.adoc[MCP server] of the Camel CLI can answer "is something wrong with

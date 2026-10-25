@@ -59,6 +59,7 @@ final class CatalogBodyTypes {
     private final CamelCatalog fallback;
     private final Map<String, Optional<ComponentModel>> components = new ConcurrentHashMap<>();
     private final Map<String, Optional<DataFormatModel>> dataFormats = new ConcurrentHashMap<>();
+    private final Map<String, Optional<EipModel>> eips = new ConcurrentHashMap<>();
     private volatile Map<String, List<String>> byModelName;
 
     /**
@@ -284,6 +285,83 @@ final class CatalogBodyTypes {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Whether the name is an EIP, a step of a route: not a language or a data format, which have a model in the catalog
+     * as well, nor an option.
+     */
+    boolean isEip(String name) {
+        return eip(name) != null;
+    }
+
+    /** Whether the EIP leaves the body as it was, as log and setHeader do, for the options the step sets. */
+    boolean keepsTheBody(String name, JsonNode step) {
+        Answer out = eipSide(name, step, BodyTypeModel.EIP_OUT);
+        return out != null && out.unchanged();
+    }
+
+    /**
+     * Whether the steps of the EIP start with the body the message has at the EIP, as those of a choice, a filter or a
+     * loop do, for the options the step sets. Not those of an aggregate or a split, nor of a doCatch, whose body is the
+     * one of the failed step.
+     */
+    boolean stepsHaveTheBody(String name, JsonNode step) {
+        Answer steps = eipSide(name, step, BodyTypeModel.EIP_STEPS);
+        return steps != null && steps.unchanged();
+    }
+
+    /**
+     * Whether the EIP may put a body in the message, whatever its options: everything but leaving the body as it was,
+     * or the body its own steps leave, which are looked at by themselves. An EIP the catalog does not say counts, as
+     * does one whose body depends on an option (a split with an aggregationStrategy), and one that gives its own steps
+     * another body (aggregate, split).
+     */
+    boolean maySetTheBody(String name) {
+        EipModel model = eip(name);
+        if (model == null) {
+            return false;
+        }
+        BodyTypeModel out = model.getBodyType(BodyTypeModel.EIP_OUT);
+        BodyTypeModel steps = model.getBodyType(BodyTypeModel.EIP_STEPS);
+        if (out == null || out.getDependsOn() != null && !out.getDependsOn().isEmpty()
+                || out.getByOption() != null && !out.getByOption().isEmpty()) {
+            return true;
+        }
+        boolean keeps = BodyTypeModel.FROM_STEPS.equals(out.getFrom())
+                || out.getFrom() == null && out.getCarriers().equals(List.of("unchanged"));
+        boolean stepsKeep = steps == null || steps.getFrom() == null && steps.getCarriers().equals(List.of("unchanged"));
+        return !keeps || !stepsKeep;
+    }
+
+    /**
+     * A side of an EIP for the options the step sets; null when it is not known for the step, or it is the body of
+     * another side (from), such as the steps of a choice or the producer of a to.
+     */
+    private Answer eipSide(String name, JsonNode step, String side) {
+        EipModel model = eip(name);
+        BodyTypeModel type = model != null ? model.getBodyType(side) : null;
+        if (type == null) {
+            return null;
+        }
+        return answer(type, values(step), Set.of());
+    }
+
+    private EipModel eip(String name) {
+        if (name == null) {
+            return null;
+        }
+        return eips.computeIfAbsent(name, n -> {
+            EipModel model = catalog.eipModel(n);
+            if (model != null && model.getBodyTypes().isEmpty() && fallback != null) {
+                EipModel other = fallback.eipModel(n);
+                if (other != null && !other.getBodyTypes().isEmpty()) {
+                    model = other;
+                }
+            }
+            // the languages and data formats have models too, but no input: they are not steps
+            return Optional.ofNullable(model != null && model.isInput() ? model : null);
+        }).orElse(null);
     }
 
     private ComponentModel component(String scheme) {
