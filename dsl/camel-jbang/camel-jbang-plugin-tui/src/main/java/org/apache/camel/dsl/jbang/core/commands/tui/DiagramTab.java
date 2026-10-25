@@ -480,7 +480,8 @@ class DiagramTab extends AbstractDiagramTab {
             case ARCHITECTURE -> List.of(view,
                     new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"),
                     new SubViewBar.Toggle("x", "errors", diagram.isShowErrorPaths() ? "on" : "off"),
-                    new SubViewBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"));
+                    new SubViewBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"),
+                    new SubViewBar.Toggle("+/-", "", architecture.zoomLabel()));
             case TOPOLOGY -> {
                 List<SubViewBar.Toggle> toggles = new ArrayList<>();
                 toggles.add(view);

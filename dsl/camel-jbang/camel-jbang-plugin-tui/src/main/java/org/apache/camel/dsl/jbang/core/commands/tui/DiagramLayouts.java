@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
@@ -28,6 +29,9 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyZoom;
 
 /**
  * What {@link DiagramSupport} does to a layout before it draws it: the diagram moved up to the top, the steps a
@@ -99,6 +103,44 @@ final class DiagramLayouts {
         }
         return TopologyErrorFrame.place(result, errorNodes, externals, paths, engine.getNodeWidth(),
                 engine.getNodeHeight(), TopologyAsciiRenderer.ROW_HEIGHT);
+    }
+
+    /** A topology whose nodes are not routes (the architecture): its layout, its density, and the width of a node. */
+    record Custom(TopologyLayoutResult layout, RouteDensity density, int nodeWidth) {
+    }
+
+    /**
+     * Lays out a topology whose boxes show the given lines, such as the groups of the architecture, at the zoom: a box
+     * is as wide as its longest line, or zoomed out as its first line (its name), as it shows only that; with fit, the
+     * most detailed density in which it fits the rows and columns of the screen.
+     */
+    static Custom layoutCustom(
+            List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges,
+            Map<String, List<TopologyDiagramWidget.NodeLine>> lines, RouteDiagramZoom zoom, int rows, int cols) {
+        // the widget draws nodeWidth / 15 columns: two border columns and a space of padding each side, one to spare
+        int longest = lines.values().stream().flatMap(List::stream).mapToInt(l -> l.text().length()).max().orElse(12);
+        int box = Math.max(16, Math.min(44, longest + 5));
+        int names = lines.values().stream().filter(l -> !l.isEmpty()).mapToInt(l -> l.get(0).text().length()).max()
+                .orElse(12);
+        int nameBox = Math.max(16, Math.min(44, names + 5));
+        RouteDensity density = zoom.isFit() ? RouteDensity.DETAILED : zoom.density();
+        TopologyLayoutEngine engine = DiagramSupport.engineFor(density == RouteDensity.DETAILED ? box : nameBox);
+        TopologyLayoutResult result = zoomed(engine, density, nodes, edges);
+        while (zoom.isFit() && density != RouteDensity.BARE
+                && !TopologyZoom.fits(result, engine.getNodeWidth(), rows, cols)) {
+            density = density.zoomOut();
+            engine = DiagramSupport.engineFor(nameBox);
+            result = zoomed(engine, density, nodes, edges);
+        }
+        return new Custom(result, density, engine.getNodeWidth());
+    }
+
+    private static TopologyLayoutResult zoomed(
+            TopologyLayoutEngine engine, RouteDensity density, List<TopologyNodeInfo> nodes,
+            List<TopologyEdgeInfo> edges) {
+        TopologyLayoutResult result = engine.layout(nodes, edges);
+        normalizeTopologyLayoutY(result);
+        return TopologyZoom.apply(density, result, null).layout();
     }
 
     static void normalizeTopologyLayoutY(TopologyLayoutResult result) {

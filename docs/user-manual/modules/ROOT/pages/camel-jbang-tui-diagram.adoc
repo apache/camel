@@ -82,7 +82,8 @@ has the whole text of the selected step at every level.
 The topology zooms the same way, which helps when it has many routes, such as with the utility routes shown: a compact
 route is a box of one line with its count in the border, a bare route a mark in the colour of its group, its name and
 its count on one row, and the layers come closer together and the boxes narrower. With fit, the topology takes the most
-detailed level in which it fits the screen.
+detailed level in which it fits the screen. The architecture zooms too, from detailed at first, as its groups are few and their facts are
+what it shows: a compact group is a box with its name, a bare group a mark in its colour and its name. The History tab replays a message on its route diagram at the same zoom.
 
 The mini panels over the diagram, the map of the topology at the top right of a route and the tree of the route at the
 bottom right, cover a corner of it: *p* hides them, and shows them again. Their titles say so, and the setting is kept
@@ -288,8 +289,8 @@ camel-xml-io, while a Spring Boot or Quarkus application may not.
 | *t* | Jump to topology view
 | *m* | Toggle metrics overlay
 | *y* | In a route: show the body types each step has been reached with, beside the arrows into the steps
-| *+* / *-* | In a route and the topology: zoom in or out (detailed, compact, bare)
-| *z* | In a route and the topology: fit, the most detail in which it fits the screen
+| *+* / *-* | In a route, the topology and the architecture: zoom in or out (detailed, compact, bare)
+| *z* | In a route, the topology and the architecture: fit, the most detail in which it fits the screen
 | *p* | Show or hide the mini panels over the diagram: the map of the topology and the tree of the route
 | *Space* | In a route: fold the block of the selected step, or unfold a folded step
 | *f* | In a route: fold all the blocks

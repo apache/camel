@@ -71,7 +71,6 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.addParentNodes;
-import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.normalizeRouteLayoutY;
 import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.normalizeTopologyLayoutY;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
@@ -395,6 +394,14 @@ class DiagramSupport {
         m.put("width", endCol - startCol + 1);
         m.put("height", endRow - startRow + 1);
         return m;
+    }
+
+    /** The routes of the message history at the zoom as it is now (+, -, z), without loading them again. */
+    void zoomHistoryRoutes() {
+        Map<String, RouteDiagramLayoutEngine.LayoutRoute> layouts = zoom.layoutWholeAgain(lastVisibleHeight);
+        if (layouts != null) {
+            routeLayouts = layouts;
+        }
     }
 
     RouteDiagramLayoutEngine.LayoutRoute getRouteLayout(String routeId) {
@@ -890,15 +897,12 @@ class DiagramSupport {
     void showCustomTopology(
             List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges,
             Map<String, List<TopologyDiagramWidget.NodeLine>> lines, String select) {
-        // boxes as wide as their longest line (the widget draws nodeWidth / 15 columns), within reason
-        int longest = lines.values().stream().flatMap(List::stream).mapToInt(l -> l.text().length()).max().orElse(12);
-        // two border columns and a space of padding each side, one to spare
-        int box = Math.max(16, Math.min(44, longest + 5));
-        TopologyLayoutEngine engine = engineFor(box);
-        TopologyLayoutResult result = engine.layout(nodes, edges);
-        normalizeTopologyLayoutY(result);
+        DiagramLayouts.Custom custom
+                = DiagramLayouts.layoutCustom(nodes, edges, lines, zoom, lastVisibleHeight, lastVisibleWidth);
+        TopologyLayoutResult result = custom.layout();
+        topologyDensity = custom.density();
         topologyLayout = result;
-        topologyNodeWidth = engine.getNodeWidth();
+        topologyNodeWidth = custom.nodeWidth();
         topologyNodes = result.nodes;
         topologyEdges = result.edges;
         nodeLines = lines;
@@ -1684,18 +1688,9 @@ class DiagramSupport {
         RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                 ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                 : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
-        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                labelMode);
-        // a Switch is drawn as a decision table, a row per case
-        engine.setTableLayout(true);
-
-        Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeMap = new LinkedHashMap<>();
-        for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, 0);
-            normalizeRouteLayoutY(lr);
-            routeMap.put(r.routeId, lr);
-        }
+        // whole and not folded, at the zoom of the route diagram: the history highlights the steps a message took
+        Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeMap
+                = zoom.layoutWhole(routes, labelMode, lastVisibleHeight);
 
         // Parse message history: build nodeId visit order and nodeId→routeId mapping
         RouteDiagramHelper.HighlightStyle hlStyle = failed
@@ -2056,7 +2051,7 @@ class DiagramSupport {
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
-        int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
+        int nw = zoom.nodeWidthOf(routeLayout);
 
         // Build progressive highlight set filtered to this route
         Set<String> activeHighlight = new LinkedHashSet<>();
@@ -2099,7 +2094,8 @@ class DiagramSupport {
 
         var widget = new RouteDiagramWidget(
                 routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
-                showDescription, routeDescs, activeHighlight, historyFailed);
+                showDescription, routeDescs, activeHighlight, historyFailed)
+                .withDensity(zoom.densityOf(routeLayout));
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -2130,7 +2126,8 @@ class DiagramSupport {
 
         var finalWidget = new RouteDiagramWidget(
                 routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
-                showDescription, routeDescs, activeHighlight, historyFailed);
+                showDescription, routeDescs, activeHighlight, historyFailed)
+                .withDensity(zoom.densityOf(routeLayout));
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))

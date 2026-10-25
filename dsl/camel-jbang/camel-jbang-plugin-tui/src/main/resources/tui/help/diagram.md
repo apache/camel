@@ -232,6 +232,8 @@ you an at-a-glance view of where you are in the route.
 **Architecture view:**
 - `↑↓←→` — navigate between groups or routes
 - `Enter` — the topology of all routes, the group's highlighted
+- `+` / `-` — zoom in or out: at compact a group is a box with its
+  name, at bare a mark in its colour and its name; `z` — fit
 - `u` — show or hide utility routes
 - `x` — show or hide the error handling: the routes reached only on
   error in a box of their own, linked from the groups whose failures

@@ -26,10 +26,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyEvent;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
@@ -70,6 +72,9 @@ final class RouteDiagramZoom {
     private volatile RouteDensity density = DEFAULT;
     private volatile boolean fit;
     private volatile boolean panels = true;
+    // the routes the History tab laid out whole, to lay them out again when the zoom changes
+    private volatile List<RouteInfo> wholeRoutes;
+    private volatile RouteDiagramLayoutEngine.NodeLabelMode wholeLabelMode;
     /** The folded blocks of each route: the ids of their first steps. */
     private final Map<String, Set<String>> folded = new ConcurrentHashMap<>();
     /** The steps of each route as last laid out, without its folds: fold all folds the blocks hidden in others too. */
@@ -338,28 +343,84 @@ final class RouteDiagramZoom {
             RouteErrorFrame.Split split = RouteErrorFrame.split(r);
             unfolded.put(r.routeId, split.happy());
             Map<String, Integer> steps = new HashMap<>();
-            RouteInfo happy = fold(split.happy(), steps);
-            RouteDensity d = fit ? RouteDensity.DETAILED : density;
-            RouteDiagramLayoutEngine engine = engine(engines, d, labelMode);
-            LayoutRoute lr = layout(engine, d, happy);
-            while (fit && d.zoomOut() != d && visibleRows > 0 && RouteDensity.rows(lr) > visibleRows) {
-                d = d.zoomOut();
-                engine = engine(engines, d, labelMode);
-                lr = layout(engine, d, happy);
-            }
+            Laid laid = layoutFit(engines, labelMode, fold(split.happy(), steps), visibleRows);
+            LayoutRoute lr = laid.layout();
             if (showErrors) {
-                RouteErrorFrame frame = addErrorFrame(engine, d, lr, split.blocks(),
+                RouteErrorFrame frame = addErrorFrame(laid.engine(), laid.density(), lr, split.blocks(),
                         RouteErrorFrame.lines(r.routeId, errorPaths, TopologyErrorFrame.LineStyle.UNICODE));
                 if (frame != null) {
                     frames.put(r.routeId, frame);
                 }
             }
-            densities.put(lr, d);
-            nodeWidths.put(lr, engine.getNodeWidth());
             foldedSteps.put(lr, steps);
             answer.put(r.routeId, lr);
         }
         return answer;
+    }
+
+    /**
+     * Lays out the routes whole, their onException clauses with their steps, with the zoom's density (or fit) and no
+     * folds: the History tab highlights the steps a message took, wherever they are.
+     */
+    Map<String, LayoutRoute> layoutWhole(
+            List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode labelMode, int visibleRows) {
+        wholeRoutes = routes;
+        wholeLabelMode = labelMode;
+        Map<Integer, RouteDiagramLayoutEngine> engines = new HashMap<>();
+        Map<String, LayoutRoute> answer = new LinkedHashMap<>();
+        for (RouteInfo r : routes) {
+            answer.put(r.routeId, layoutFit(engines, labelMode, r, visibleRows).layout());
+        }
+        return answer;
+    }
+
+    /**
+     * The routes last laid out whole, laid out again at the zoom as it is now: the History tab zooms without loading
+     * the message again, so its view stays where it is. Null when there are none.
+     */
+    Map<String, LayoutRoute> layoutWholeAgain(int visibleRows) {
+        List<RouteInfo> routes = wholeRoutes;
+        return routes != null ? layoutWhole(routes, wholeLabelMode, visibleRows) : null;
+    }
+
+    /** A route laid out, the density it was placed with, and the engine that laid it out. */
+    private record Laid(LayoutRoute layout, RouteDensity density, RouteDiagramLayoutEngine engine) {
+    }
+
+    /** A route at the zoom's density, or with fit at the most detailed one in which it fits the rows of the screen. */
+    private Laid layoutFit(
+            Map<Integer, RouteDiagramLayoutEngine> engines, RouteDiagramLayoutEngine.NodeLabelMode labelMode,
+            RouteInfo route, int visibleRows) {
+        RouteDensity d = fit ? RouteDensity.DETAILED : density;
+        RouteDiagramLayoutEngine engine = engine(engines, d, labelMode);
+        LayoutRoute lr = layout(engine, d, route);
+        while (fit && d.zoomOut() != d && visibleRows > 0 && RouteDensity.rows(lr) > visibleRows) {
+            d = d.zoomOut();
+            engine = engine(engines, d, labelMode);
+            lr = layout(engine, d, route);
+        }
+        densities.put(lr, d);
+        nodeWidths.put(lr, engine.getNodeWidth());
+        return new Laid(lr, d, engine);
+    }
+
+    /**
+     * The zoom keys where a diagram has no others: + and - (and =), z for fit. The caller lays the diagram out again.
+     *
+     * @return whether the key changed the zoom
+     */
+    boolean handleZoomKey(KeyEvent ke, Executor background) {
+        if (ke.isChar('+') || ke.isChar('=')) {
+            zoomIn();
+        } else if (ke.isChar('-')) {
+            zoomOut();
+        } else if (ke.isCharIgnoreCase('z')) {
+            toggleFit();
+        } else {
+            return false;
+        }
+        background.execute(this::persist);
+        return true;
     }
 
     /**

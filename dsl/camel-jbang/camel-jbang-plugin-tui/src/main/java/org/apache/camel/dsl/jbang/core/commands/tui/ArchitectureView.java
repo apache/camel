@@ -55,6 +55,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.Capabilit
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.Group;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.GroupLink;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget.NodeLine;
 
@@ -130,6 +131,13 @@ final class ArchitectureView {
         this.openGroup = openGroup;
         this.labels = labels;
         this.errors = errors;
+        // a zoom of its own, detailed at first: its boxes are few, and their facts are what it shows
+        support.zoom.setting(RouteDensity.DETAILED.label());
+    }
+
+    /** What the zoom setting of the level bar says: the density the groups are drawn with. */
+    String zoomLabel() {
+        return support.zoom.label(support.getTopologyDensity());
     }
 
     /** Draws the groups again, after the view setting changed. */
@@ -513,6 +521,12 @@ final class ArchitectureView {
         if (support.handleScrollKeys(ke)) {
             return true;
         }
+        if (support.zoom.handleZoomKey(ke, keep -> {
+            // not kept: the setting is the route diagram's
+        })) {
+            showMap(support.getSelectedRouteId());
+            return true;
+        }
         if (ke.isCharIgnoreCase('u')) {
             showUtility = !showUtility;
             showMap(support.getSelectedRouteId());
@@ -767,6 +781,7 @@ final class ArchitectureView {
     void renderFooter(List<Span> spans) {
         // actions only: the levels are on the level bar, the settings beside it
         hint(spans, "Enter", "topology");
+        hint(spans, "+/-", "zoom");
         hint(spans, "s", "summary");
     }
 
