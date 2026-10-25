@@ -89,7 +89,9 @@ import org.slf4j.LoggerFactory;
                                    format = "xml",
                                    description = "The XML: text, bytes, a stream, a file, a DOM Document, a DOMSource or a"
                                                  + " StreamSource"),
-           unmarshalOut = @BodyType(value = Carrier.POJO,
+           unmarshalOut = @BodyType(value = Carrier.POJO, dependsOn = "ignoreJAXBElement", javaTypeOption = "partClass",
+                                    byOption = @BodyType.When(option = "ignoreJAXBElement", value = "true",
+                                                              carriers = Carrier.POJO, javaTypeOption = "partClass"),
                                     description = "The object of the root element, of a JAXB class of contextPath, or of"
                                                   + " partClass when set; a JAXBElement, where JAXB gives one, when"
                                                   + " ignoreJAXBElement is false"))

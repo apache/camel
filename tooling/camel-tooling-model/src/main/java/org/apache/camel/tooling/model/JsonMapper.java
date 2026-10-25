@@ -724,6 +724,7 @@ public final class JsonMapper {
                     option.setValue(when.getString("value"));
                     option.setCarriers(stringList(when.getCollection("carriers")));
                     option.setJavaType(when.getString("javaType"));
+                    option.setJavaTypeOption(when.getString("javaTypeOption"));
                     bodyType.getByOption().add(option);
                 }
             }
@@ -773,6 +774,7 @@ public final class JsonMapper {
                     when.put("value", option.getValue());
                     when.put("carriers", option.getCarriers());
                     when.put("javaType", option.getJavaType());
+                    when.put("javaTypeOption", option.getJavaTypeOption());
                     when.entrySet().removeIf(e -> e.getValue() == null);
                     byOption.add(when);
                 }

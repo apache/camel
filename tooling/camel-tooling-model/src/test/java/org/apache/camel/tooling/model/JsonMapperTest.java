@@ -212,6 +212,19 @@ class JsonMapperTest {
         assertEquals("resultType", out2.getJavaTypeOption());
         assertTrue(out2.isUnknown());
         assertEquals("unknown (javaTypeOption:resultType)", out2.toString());
+
+        // and for an option value: the class of the one row with outputType=SelectOne
+        BodyTypeModel.OptionBodyTypeModel selectOne = new BodyTypeModel.OptionBodyTypeModel();
+        selectOne.setOption("outputType");
+        selectOne.setValue("SelectOne");
+        selectOne.setCarriers(List.of("map", "null"));
+        selectOne.setJavaTypeOption("outputClass");
+        out.getByOption().add(selectOne);
+        BodyTypeModel.OptionBodyTypeModel selectOne2 = JsonMapper
+                .generateLanguageModel(JsonMapper.createParameterJsonSchema(model))
+                .getBodyType(BodyTypeModel.EXPRESSION_OUT).getByOption().get(0);
+        assertEquals("outputClass", selectOne2.getJavaTypeOption());
+        assertEquals("outputType=SelectOne: map, null (javaTypeOption:outputClass)", selectOne2.toString());
     }
 
     @Test

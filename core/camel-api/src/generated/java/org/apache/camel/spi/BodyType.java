@@ -116,6 +116,13 @@ public @interface BodyType {
          * The Java type of the body with this value, when it is always of this type.
          */
         String javaType() default "";
+
+        /**
+         * The option that names the Java type of the body with this value, such as {@code outputClass} with
+         * {@code outputType=SelectOne}: when it is set, the body is of the class it names, or null, and the carriers
+         * say the body when it is not set.
+         */
+        String javaTypeOption() default "";
     }
 
     /**

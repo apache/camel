@@ -56,7 +56,8 @@ import org.apache.camel.util.IOHelper;
                                   description = "The body as the language of the script reads it. The script is in the uri,"
                                                 + " the script option or a resource, or in the CamelLanguageScript header with"
                                                 + " allowTemplateFromHeader=true, and never in the body"),
-           producerOut = @BodyType(value = Carrier.UNKNOWN,
+           producerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = { "transform", "binary" },
+                                   javaTypeOption = "resultType",
                                    byOption = {
                                            @BodyType.When(option = "transform", value = "false", carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "binary", value = "true", carriers = Carrier.STREAM) },

@@ -199,6 +199,15 @@ class CatalogDocsTest {
     }
 
     @Test
+    void anOptionValueCanNameTheClassOfTheBody() throws Exception {
+        // CAMEL-25928: the class of the one row of sql with outputType=SelectOne
+        JsonObject sql = catalogDoc(Map.of("name", "sql", "kind", "component", "includeOptions", false));
+        assertTrue(((JsonObject) sql.get("bodyTypes")).getString("producerOut")
+                .contains("outputType=SelectOne: map, value or null, or an object of the class outputClass names when it is"
+                          + " set"));
+    }
+
+    @Test
     void endpointArgumentValidatesAUriAgainstTheComponent() throws Exception {
         JsonObject bad = catalogDoc(Map.of("endpoint", "timer:tick?period=5s&fixedRte=true&repeatCount=abc"));
         assertEquals("timer", bad.getString("name"));

@@ -235,7 +235,9 @@ final class CatalogBodyTypes {
 
     /**
      * What a side says for the options a step sets: the body for an option value it names, or its body when the options
-     * it depends on keep their defaults; null when it is not known for the step.
+     * it depends on keep their defaults; null when it is not known for the step. An option the side depends on decides
+     * first; then the option that names the class of the body (CAMEL-25928), and then the bodies for the values of the
+     * other options.
      */
     private static Answer answer(BodyTypeModel side, Map<String, String> set, Set<String> configurable) {
         if (side == null) {
@@ -243,6 +245,11 @@ final class CatalogBodyTypes {
         }
         Set<String> options = new LinkedHashSet<>(side.getDependsOn());
         side.getByOption().forEach(o -> options.add(o.getOption()));
+        if (side.getJavaTypeOption() != null) {
+            options.add(side.getJavaTypeOption());
+        }
+        side.getByOption().stream().map(OptionBodyTypeModel::getJavaTypeOption).filter(o -> o != null)
+                .forEach(options::add);
         for (String option : options) {
             String value = set.get(option);
             if (value == null ? configurable.contains(option) : value.contains("{{") || value.contains("${")) {
@@ -259,15 +266,23 @@ final class CatalogBodyTypes {
                 return null;
             }
         }
+        boolean dependsOnSet = side.getDependsOn().stream().anyMatch(set::containsKey);
+        if (!dependsOnSet && side.getJavaTypeOption() != null && set.containsKey(side.getJavaTypeOption())) {
+            // the option names the class of the body, whatever the values of the other options say
+            return ofClass(set.get(side.getJavaTypeOption()));
+        }
         Answer matched = null;
         for (OptionBodyTypeModel when : side.getByOption()) {
             String value = set.get(when.getOption());
             if (value != null && isSameValue(value, when.getValue())) {
-                if (matched != null && !matched.carriers().equals(when.getCarriers())) {
+                Answer answer = when.getJavaTypeOption() != null && set.containsKey(when.getJavaTypeOption())
+                        ? ofClass(set.get(when.getJavaTypeOption()))
+                        : new Answer(when.getCarriers(), when.getJavaType(), side.getFormat());
+                if (answer == null || matched != null && !matched.carriers().equals(answer.carriers())) {
                     // two options the step sets say different bodies
                     return null;
                 }
-                matched = new Answer(when.getCarriers(), when.getJavaType(), side.getFormat());
+                matched = answer;
             }
         }
         if (matched != null) {
@@ -277,6 +292,18 @@ final class CatalogBodyTypes {
             return null;
         }
         return new Answer(side.getCarriers(), side.getJavaType(), side.getFormat());
+    }
+
+    /**
+     * The body of the class an option names, such as unmarshalType: an object of it, or null when it does not convert.
+     * Object says nothing.
+     */
+    private static Answer ofClass(String javaType) {
+        String carrier = BodyTypeModel.carrierOf(javaType);
+        if ("unknown".equals(carrier)) {
+            return null;
+        }
+        return new Answer(List.of(carrier, "null"), javaType.trim(), null);
     }
 
     /**
