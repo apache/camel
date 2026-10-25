@@ -536,7 +536,8 @@ client to the next.
 
 | `camel_catalog_kamelet_doc`
 | Get detailed documentation for a specific Kamelet including all properties/options, their types, defaults,
-  examples, and the Kamelet's Maven dependencies.
+  examples, and the Kamelet's Maven dependencies. For a Kamelet with data types, each data type with its data type
+  transformer and the body it takes or gives (see xref:body-types.adoc[Message Body Types]).
 |===
 
 === Example Catalog

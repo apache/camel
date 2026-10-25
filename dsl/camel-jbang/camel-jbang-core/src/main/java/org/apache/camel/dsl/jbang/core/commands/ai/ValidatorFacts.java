@@ -19,8 +19,11 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,13 +56,45 @@ final class ValidatorFacts {
      * the file saw at the endpoints of its routes (CAMEL-25750).
      */
     static ProjectFacts read(String fileName, String content, Path directory) {
-        if (content == null || directory == null) {
+        if (content == null) {
             return ProjectFacts.NONE;
+        }
+        Map<String, ProjectFacts.KameletDataTypes> kamelets = kameletDataTypes(content, directory);
+        if (directory == null) {
+            return new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(), kamelets);
         }
         return new ProjectFacts(
                 OpenApiVerbs.bodylessEndpoints(content, directory), OpenApiVerbs.operations(content, directory),
                 restBindingMode(directory), OpenApiVerbs.requestFields(content, directory),
-                ObservedBodies.read(fileName, directory));
+                ObservedBodies.read(fileName, directory), kamelets);
+    }
+
+    /**
+     * The data types of the Kamelets of the catalog and of the project that declare them (CAMEL-25928): the data type
+     * transformers of their default in and out data types, which say the body a Kamelet takes and gives. Only read when
+     * the file uses a Kamelet.
+     */
+    static Map<String, ProjectFacts.KameletDataTypes> kameletDataTypes(String content, Path directory) {
+        if (!content.contains("kamelet")) {
+            return Map.of();
+        }
+        Map<String, ProjectFacts.KameletDataTypes> answer = new HashMap<>();
+        List<Map<String, KameletDefinitions.Definition>> sources = new ArrayList<>();
+        sources.add(KameletDefinitions.catalog());
+        if (directory != null) {
+            // the project's own Kamelets win over those of the catalog
+            sources.add(KameletDefinitions.projectKamelets(directory));
+        }
+        for (Map<String, KameletDefinitions.Definition> definitions : sources) {
+            for (KameletDefinitions.Definition def : definitions.values()) {
+                String in = def.defaultFormat("in");
+                String out = def.defaultFormat("out");
+                if (in != null || out != null) {
+                    answer.put(def.name(), new ProjectFacts.KameletDataTypes(in, out));
+                }
+            }
+        }
+        return answer;
     }
 
     /**

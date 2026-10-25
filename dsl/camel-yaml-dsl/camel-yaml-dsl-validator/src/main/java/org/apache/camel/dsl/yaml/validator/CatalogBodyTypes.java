@@ -194,9 +194,26 @@ final class CatalogBodyTypes {
         return transformerSide(step, BodyTypeModel.TRANSFORMER_OUT);
     }
 
+    /**
+     * The bodies the data type transformer of a data type can transform, such as the in data type of a Kamelet; null
+     * when it is not known.
+     */
+    Answer transformerIn(String dataType) {
+        return transformerSide(dataType, BodyTypeModel.TRANSFORMER_IN);
+    }
+
+    /** The body after the data type transformer of a data type, such as the out data type of a Kamelet. */
+    Answer transformerOut(String dataType) {
+        return transformerSide(dataType, BodyTypeModel.TRANSFORMER_OUT);
+    }
+
     private Answer transformerSide(JsonNode step, String side) {
-        String toType = step != null && step.isObject() && step.has("toType") ? step.get("toType").asText() : null;
-        TransformerModel model = transformer(toType);
+        return transformerSide(step != null && step.isObject() && step.has("toType") ? step.get("toType").asText() : null,
+                side);
+    }
+
+    private Answer transformerSide(String dataType, String side) {
+        TransformerModel model = transformer(dataType);
         return model != null ? answer(model.getBodyType(side), Map.of(), Set.of()) : null;
     }
 

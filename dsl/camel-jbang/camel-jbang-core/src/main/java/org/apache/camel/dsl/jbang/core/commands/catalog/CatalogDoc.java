@@ -298,7 +298,7 @@ public class CatalogDoc extends CamelCommand {
             // the Kamelets of the version and repositories asked for, not only the ones of the CLI
             KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
             if (km != null) {
-                return CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + kameletsVersion));
+                return CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + kameletsVersion), catalog);
             }
         }
         return null;

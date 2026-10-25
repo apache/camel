@@ -175,11 +175,12 @@ final class TextBodyFlow {
      */
     private record Walk(String routeId, Map<String, JsonNode> byFrom, List<Error> errors, Set<String> seen, boolean post,
             Map<String, Map<String, String>> operations, Map<String, Map<String, List<String>>> requestFields,
-            Map<String, ProjectFacts.Observed> observed, CatalogBodyTypes bodyTypes) {
+            Map<String, ProjectFacts.Observed> observed, CatalogBodyTypes bodyTypes,
+            Map<String, ProjectFacts.KameletDataTypes> kamelets) {
 
         /** The walk of a route a step calls: for its outcome alone. */
         Walk called() {
-            return new Walk(null, byFrom, null, seen, false, operations, requestFields, observed, bodyTypes);
+            return new Walk(null, byFrom, null, seen, false, operations, requestFields, observed, bodyTypes, kamelets);
         }
     }
 
@@ -193,6 +194,7 @@ final class TextBodyFlow {
         Map<String, Map<String, List<String>>> requestFields = unbound ? facts.requestFields() : Map.of();
         Set<String> restReplies = unbound ? restReplies(target, facts) : Set.of();
         Map<String, ProjectFacts.Observed> observed = facts != null ? facts.observed() : Map.of();
+        Map<String, ProjectFacts.KameletDataTypes> kamelets = facts != null ? facts.kamelets() : Map.of();
         Map<String, JsonNode> byFrom = new HashMap<>();
         for (JsonNode entry : target) {
             JsonNode from = from(entry);
@@ -226,14 +228,17 @@ final class TextBodyFlow {
             boolean post = NO_HTTP_HEADERS.contains(consumer) && !setsHttpHeaders(steps);
             // with variableReceive the message goes into the variable, and the route starts with no body
             boolean variable = bodyTypes.startsWithNoBody(from);
-            Body start = uri != null && !variable ? consumerBody(uri, from, bodyTypes) : null;
+            Body start = uri == null || variable ? null
+                    : "kamelet".equals(consumer)
+                            ? kameletBody(kameletName(uri), kamelets, bodyTypes, "from: " + normalize(uri))
+                    : consumerBody(uri, from, bodyTypes);
             if (start == null && uri != null && !variable) {
                 // what the consumer gave in a running integration of the route
                 start = observed(observed, ProjectFacts.consumerKey(uri), "from: " + normalize(uri) + " gave");
             }
             Body end = walk(steps, start, at, new Walk(
                     id, byFrom, errors, new HashSet<>(), post, operations,
-                    requestFields, observed, bodyTypes));
+                    requestFields, observed, bodyTypes, kamelets));
             // the body at the end of the route of a consumer that replies with text (platform-http), or of the route of
             // a REST call, is the reply
             boolean rest = uri != null && restReplies.contains(normalize(uri));
@@ -432,8 +437,16 @@ final class TextBodyFlow {
                 }
                 return producerBody(out, "transformDataType: " + toTypeOf(value) + " makes it");
             }
+            case "kamelet" -> {
+                // what the Kamelet leaves, as the transformer of its out data type says
+                String kamelet = kameletName(value);
+                return kamelet != null ? kameletAfter(kamelet, body, w, "kamelet: " + kamelet) : null;
+            }
             case "to", "toD" -> {
                 String uri = endpointOf(value);
+                if ("kamelet".equals(scheme(uri))) {
+                    return kameletAfter(kameletName(uri), body, w, name + ": " + normalize(uri));
+                }
                 CatalogBodyTypes.Answer out = uri != null ? w.bodyTypes().producerOut(uri, value) : null;
                 if (out != null && out.unchanged()) {
                     // log, a file write
@@ -683,6 +696,51 @@ final class TextBodyFlow {
     private record Operation(String spec, String id) {
     }
 
+    /**
+     * The name of the Kamelet of a kamelet: endpoint (aws-s3-source of kamelet:aws-s3-source?bucketNameOrArn=x, or of
+     * kamelet:my/route), or of a kamelet step ({@code kamelet: my-action} or with a name option).
+     */
+    private static String kameletName(String uri) {
+        if (uri == null || !uri.startsWith("kamelet:")) {
+            return null;
+        }
+        String name = uri.substring("kamelet:".length());
+        for (char c : new char[] { '?', '/' }) {
+            int i = name.indexOf(c);
+            if (i >= 0) {
+                name = name.substring(0, i);
+            }
+        }
+        return name.isBlank() || name.contains("{{") ? null : name;
+    }
+
+    private static String kameletName(JsonNode value) {
+        JsonNode name = value != null && value.isObject() ? value.get("name") : value;
+        return name != null && name.isTextual() ? kameletName("kamelet:" + name.asText()) : null;
+    }
+
+    /** The body a Kamelet gives, as the transformer of its out data type says; null when it is not known. */
+    private static Body kameletBody(
+            String kamelet, Map<String, ProjectFacts.KameletDataTypes> kamelets, CatalogBodyTypes bodyTypes,
+            String origin) {
+        ProjectFacts.KameletDataTypes types = kamelet != null ? kamelets.get(kamelet) : null;
+        if (types == null || types.out() == null) {
+            return null;
+        }
+        return producerBody(bodyTypes.transformerOut(types.out()),
+                origin + " gives it as its out data type " + types.out());
+    }
+
+    /** The body after a step that runs a Kamelet: its out data type may keep the body, as the CloudEvent ones do. */
+    private static Body kameletAfter(String kamelet, Body body, Walk w, String origin) {
+        ProjectFacts.KameletDataTypes types = kamelet != null ? w.kamelets().get(kamelet) : null;
+        CatalogBodyTypes.Answer out = types != null && types.out() != null ? w.bodyTypes().transformerOut(types.out()) : null;
+        if (out != null && out.unchanged()) {
+            return body;
+        }
+        return kameletBody(kamelet, w.kamelets(), w.bodyTypes(), origin);
+    }
+
     private static String toTypeOf(JsonNode value) {
         return value != null && value.isObject() && value.has("toType") ? value.get("toType").asText() : "";
     }
@@ -694,6 +752,21 @@ final class TextBodyFlow {
      * producer sends the body, and a REST binding may write it for rest-openapi: they keep their own rule.
      */
     private static Need needsText(String name, JsonNode value, Walk w) {
+        String kamelet = "kamelet".equals(name) ? kameletName(value)
+                : ("to".equals(name) || "toD".equals(name)) && "kamelet".equals(scheme(endpointOf(value)))
+                        ? kameletName(endpointOf(value))
+                : null;
+        if (kamelet != null) {
+            // what the transformer of the in data type of the Kamelet takes
+            ProjectFacts.KameletDataTypes types = w.kamelets().get(kamelet);
+            CatalogBodyTypes.Answer in = types != null && types.in() != null ? w.bodyTypes().transformerIn(types.in()) : null;
+            return in != null && in.onlyPayload()
+                    ? new Need(
+                            name + ": the Kamelet " + kamelet + " needs the body as " + in.inWords() + " (its in data type "
+                               + types.in() + ")",
+                            "before this step")
+                    : null;
+        }
         if ("transformDataType".equals(name)) {
             CatalogBodyTypes.Answer in = w.bodyTypes().transformerIn(value);
             return in != null && in.onlyPayload()

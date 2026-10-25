@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
+import org.apache.camel.dsl.jbang.core.commands.catalog.KameletDataTypeModel;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletModel;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletOptionModel;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -48,9 +49,32 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
  */
 public final class KameletDefinitions {
 
-    /** A Kamelet and its properties. */
+    /** A Kamelet, its properties, and its data types (spec.dataTypes). */
     public record Definition(String name, String type, String title, String description, String source,
-            List<Property> properties) {
+            List<Property> properties, List<KameletDataTypeModel> dataTypes) {
+
+        public Definition {
+            dataTypes = dataTypes != null ? List.copyOf(dataTypes) : List.of();
+        }
+
+        /** Without data types. */
+        public Definition(String name, String type, String title, String description, String source,
+                          List<Property> properties) {
+            this(name, type, title, description, source, properties, List.of());
+        }
+
+        /**
+         * The data type transformer of the default data type of a direction (in or out), which Camel runs at the start
+         * or the end of the Kamelet route; null when the Kamelet has none.
+         */
+        public String defaultFormat(String direction) {
+            for (KameletDataTypeModel dt : dataTypes) {
+                if (dt.direction.equals(direction) && dt.defaultType) {
+                    return dt.format;
+                }
+            }
+            return null;
+        }
 
         public Property property(String name) {
             for (Property p : properties) {
@@ -133,7 +157,7 @@ public final class KameletDefinitions {
                         om.enumValues != null ? om.enumValues : List.of()));
             }
         }
-        return new Definition(km.name, km.type, null, km.description, source, props);
+        return new Definition(km.name, km.type, null, km.description, source, props, km.dataTypes);
     }
 
     /** The project's own Kamelets: the *.kamelet.yaml files of the directory and its subdirectories. */
@@ -228,7 +252,38 @@ public final class KameletDefinitions {
                 }
             }
         }
-        return new Definition(name, type, title, description, "the project file " + fileName, props);
+        List<KameletDataTypeModel> dataTypes = map.get("spec") instanceof Map<?, ?> spec
+                ? dataTypes(spec.get("dataTypes")) : List.of();
+        return new Definition(name, type, title, description, "the project file " + fileName, props, dataTypes);
+    }
+
+    /** The data types of a Kamelet file, as the Kamelet catalog reads them (KameletCatalogHelper). */
+    private static List<KameletDataTypeModel> dataTypes(Object node) {
+        List<KameletDataTypeModel> answer = new ArrayList<>();
+        if (!(node instanceof Map<?, ?> directions)) {
+            return answer;
+        }
+        for (Map.Entry<?, ?> direction : directions.entrySet()) {
+            if (!(direction.getValue() instanceof Map<?, ?> dt) || !(dt.get("types") instanceof Map<?, ?> types)) {
+                continue;
+            }
+            for (Map.Entry<?, ?> type : types.entrySet()) {
+                if (!(type.getValue() instanceof Map<?, ?> t)) {
+                    continue;
+                }
+                String scheme = t.get("scheme") instanceof String sc ? sc : null;
+                String format = t.get("format") instanceof String f ? f : null;
+                KameletDataTypeModel model = new KameletDataTypeModel();
+                model.direction = String.valueOf(direction.getKey());
+                model.name = String.valueOf(type.getKey());
+                model.format = format != null && scheme != null ? scheme + ":" + format : format;
+                model.mediaType = t.get("mediaType") instanceof String mt ? mt : null;
+                model.description = t.get("description") instanceof String d ? d : null;
+                model.defaultType = model.name.equals(String.valueOf(dt.get("default")));
+                answer.add(model);
+            }
+        }
+        return answer;
     }
 
     /**
