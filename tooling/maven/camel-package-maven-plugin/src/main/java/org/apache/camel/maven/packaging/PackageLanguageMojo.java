@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -283,6 +285,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
             model.addOption(option);
         }
 
+        // the options of the language itself, which camel.language.<name>.<option> sets
+        model.setLanguageOptions(languageOptions(javaType));
+
         // read class and find functionClass and add each field as a function in the model
         Class<?> classElement = loadClass(javaType.getName());
         final Language lan = classElement.getAnnotation(Language.class);
@@ -322,6 +327,69 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         }
 
         return model;
+    }
+
+    /**
+     * The options of the language itself: the fields of the language class, and of its super classes, declared with
+     * {@link Metadata}. camel.language.<name>.<option> sets them on the language, and they apply to all its
+     * expressions, unlike the options of an expression that come from the model.
+     */
+    static List<LanguageOptionModel> languageOptions(Class<?> javaType) {
+        List<LanguageOptionModel> answer = new ArrayList<>();
+        for (Class<?> clazz = javaType; clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
+            for (Field field : clazz.getDeclaredFields()) {
+                Metadata metadata = field.getAnnotation(Metadata.class);
+                String name = field.getName();
+                if (metadata == null || metadata.skip() || isStatic(field.getModifiers())
+                        || answer.stream().anyMatch(o -> name.equals(o.getName()))) {
+                    continue;
+                }
+                if (metadata.description().isBlank()) {
+                    throw new IllegalArgumentException(
+                            "The language option " + name + " of " + javaType.getName()
+                                                       + " requires @Metadata with a description");
+                }
+                String fieldTypeName = EndpointSchemaGeneratorMojo.getTypeName(field.getGenericType());
+                boolean isDuration = false;
+                if (!metadata.javaType().isEmpty()) {
+                    if ("java.time.Duration".equals(metadata.javaType())) {
+                        isDuration = true;
+                    } else {
+                        fieldTypeName = metadata.javaType();
+                    }
+                }
+                // an array of an enum, such as the options of jsonpath, is set as a comma separated list of its values
+                Class<?> type = field.getType().isArray() ? field.getType().getComponentType() : field.getType();
+                List<String> enums = EndpointSchemaGeneratorMojo.getEnums(metadata, type);
+                boolean isEnum = enums != null && !enums.isEmpty();
+
+                LanguageOptionModel option = new LanguageOptionModel();
+                option.setKind("property");
+                option.setName(name);
+                option.setDisplayName(metadata.displayName().isEmpty() ? Strings.asTitle(name) : metadata.displayName());
+                option.setGroup(EndpointHelper.labelAsGroupName(metadata.label(), false, false));
+                option.setLabel(emptyAsNull(metadata.label()));
+                option.setRequired(metadata.required());
+                option.setType(MojoHelper.getType(fieldTypeName, isEnum, isDuration));
+                option.setJavaType(fieldTypeName);
+                option.setEnums(enums);
+                option.setMultiEnum(isEnum && (metadata.multiEnum() || field.getType().isArray()));
+                option.setDeprecated(field.isAnnotationPresent(Deprecated.class));
+                option.setDeprecationNote(emptyAsNull(metadata.deprecationNote()));
+                option.setSecret(metadata.secret());
+                option.setSecurity(emptyAsNull(metadata.security()));
+                option.setInsecureValue(emptyAsNull(metadata.insecureValue()));
+                option.setDefaultValue(
+                        EndpointSchemaGeneratorMojo.getDefaultValue(metadata.defaultValue(), fieldTypeName, isDuration));
+                option.setDescription(metadata.description().trim());
+                answer.add(option);
+            }
+        }
+        return answer;
+    }
+
+    private static String emptyAsNull(String value) {
+        return value.isEmpty() ? null : value;
     }
 
     static String modelName(String name, Class<?> javaType) {

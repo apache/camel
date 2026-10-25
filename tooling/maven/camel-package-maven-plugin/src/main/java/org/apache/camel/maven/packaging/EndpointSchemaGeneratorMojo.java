@@ -1176,7 +1176,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private List<String> getEnums(Metadata metadata, Class<?> fieldType) {
+    static List<String> getEnums(Metadata metadata, Class<?> fieldType) {
         List<String> enums = null;
         if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
             String[] values = metadata.enums().split(",");
@@ -2012,7 +2012,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private static String getTypeName(Type fieldType) {
+    static String getTypeName(Type fieldType) {
         String fieldTypeName = new GenericType(fieldType).toString();
         fieldTypeName = fieldTypeName.replace('$', '.');
         return fieldTypeName;
@@ -2037,7 +2037,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return "org.apache.camel.Expression".equals(name) || "org.apache.camel.Predicate".equals(name);
     }
 
-    private static Object getDefaultValue(Object defaultValue, String fieldTypeName, boolean isDuration) {
+    static Object getDefaultValue(Object defaultValue, String fieldTypeName, boolean isDuration) {
         // special for boolean as it should not be literal
         if ("boolean".equals(fieldTypeName)) {
             if (isNullOrEmpty(defaultValue)) {

@@ -37,6 +37,7 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.TypedLanguageSupport;
@@ -82,7 +83,11 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
      * {@link #getEngineMaxEvaluations()} evaluations: it is closed and the thread creates a fresh one, which recompiles
      * its scripts on demand.
      */
+    @Metadata(label = "advanced", defaultValue = "67108864",
+              description = "Recycle a worker thread's engine once its WebAssembly memory exceeds this many bytes (default 64 MB).")
     private volatile long engineMaxMemory = 64L * 1024 * 1024;
+    @Metadata(label = "advanced", defaultValue = "50000",
+              description = "Recycle a worker thread's engine after this many evaluations.")
     private volatile int engineMaxEvaluations = 50_000;
 
     private final AtomicInteger generation = new AtomicInteger();

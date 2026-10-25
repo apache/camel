@@ -18,6 +18,9 @@
   "bodyTypes": {
     "expressionOut": { "carriers": [ "unknown" ], "description": "The value of the exchange property as it is, null when there is none" }
   },
+  "languageProperties": {
+    
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },
