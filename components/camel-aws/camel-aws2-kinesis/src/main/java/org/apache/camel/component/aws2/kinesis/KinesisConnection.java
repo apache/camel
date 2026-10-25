@@ -33,15 +33,21 @@ public class KinesisConnection implements Closeable {
 
     private KinesisClient kinesisClient;
     private KinesisAsyncClient kinesisAsyncClient;
+    // whether the clients were created here (and are closed here), rather than given by the user
+    private boolean kinesisClientCreated;
+    private boolean kinesisAsyncClientCreated;
     private final Lock lock = new ReentrantLock();
 
     public KinesisClient getClient(final Kinesis2Endpoint endpoint) {
         lock.lock();
         try {
             if (ObjectHelper.isEmpty(kinesisClient)) {
-                kinesisClient = ObjectHelper.isNotEmpty(endpoint.getConfiguration().getAmazonKinesisClient())
-                        ? endpoint.getConfiguration().getAmazonKinesisClient()
-                        : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration());
+                if (ObjectHelper.isNotEmpty(endpoint.getConfiguration().getAmazonKinesisClient())) {
+                    kinesisClient = endpoint.getConfiguration().getAmazonKinesisClient();
+                } else {
+                    kinesisClient = KinesisClientFactory.getKinesisClient(endpoint.getConfiguration());
+                    kinesisClientCreated = true;
+                }
             }
             return kinesisClient;
         } finally {
@@ -53,9 +59,12 @@ public class KinesisConnection implements Closeable {
         lock.lock();
         try {
             if (ObjectHelper.isEmpty(kinesisAsyncClient)) {
-                kinesisAsyncClient = ObjectHelper.isNotEmpty(endpoint.getConfiguration().getAmazonKinesisAsyncClient())
-                        ? endpoint.getConfiguration().getAmazonKinesisAsyncClient()
-                        : KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration());
+                if (ObjectHelper.isNotEmpty(endpoint.getConfiguration().getAmazonKinesisAsyncClient())) {
+                    kinesisAsyncClient = endpoint.getConfiguration().getAmazonKinesisAsyncClient();
+                } else {
+                    kinesisAsyncClient = KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration());
+                    kinesisAsyncClientCreated = true;
+                }
             }
             return kinesisAsyncClient;
         } finally {
@@ -64,25 +73,39 @@ public class KinesisConnection implements Closeable {
     }
 
     public void setKinesisClient(final KinesisClient kinesisClient) {
-        this.kinesisClient = kinesisClient;
+        lock.lock();
+        try {
+            this.kinesisClient = kinesisClient;
+            this.kinesisClientCreated = false;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void setKinesisAsyncClient(final KinesisAsyncClient kinesisAsyncClient) {
-        this.kinesisAsyncClient = kinesisAsyncClient;
+        lock.lock();
+        try {
+            this.kinesisAsyncClient = kinesisAsyncClient;
+            this.kinesisAsyncClientCreated = false;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public void close() throws IOException {
         lock.lock();
         try {
-            if (ObjectHelper.isNotEmpty(kinesisClient)) {
+            if (kinesisClientCreated && ObjectHelper.isNotEmpty(kinesisClient)) {
                 kinesisClient.close();
-                kinesisClient = null;
             }
-            if (ObjectHelper.isNotEmpty(kinesisAsyncClient)) {
+            if (kinesisAsyncClientCreated && ObjectHelper.isNotEmpty(kinesisAsyncClient)) {
                 kinesisAsyncClient.close();
-                kinesisAsyncClient = null;
             }
+            kinesisClient = null;
+            kinesisAsyncClient = null;
+            kinesisClientCreated = false;
+            kinesisAsyncClientCreated = false;
         } finally {
             lock.unlock();
         }
