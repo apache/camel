@@ -184,7 +184,7 @@ Each route has one role:
   every group that uses them.
 * *Utility* -- plumbing with little business meaning: a route reached only while handling a failure
   (from a `doCatch`, an `onException` or a dead letter channel), a route that only logs, or one the
-  AI marked as utility. Hidden until you press *u*; with *x* on, the routes reached only on error are shown
+  AI marked as utility. Shown out of the box, so a project shows all its routes; *u* hides them; with *x* on, the routes reached only on error are shown
   in the error handling frame of the topology instead, and in the *Error handling* box of the architecture.
 * *Error handling* -- with *x* on, the routes reached only on error, out of Utility into a box of their
   own, drawn dashed, with a dashed arrow from each group whose failures go there: a route of the group

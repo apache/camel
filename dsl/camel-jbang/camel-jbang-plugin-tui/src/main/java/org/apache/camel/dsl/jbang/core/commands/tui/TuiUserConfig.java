@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -38,7 +40,25 @@ import org.apache.camel.dsl.jbang.core.common.Printer;
  */
 final class TuiUserConfig {
 
+    /** The settings of a session started with --defaults, kept in memory only; null for the files. */
+    private static volatile Map<String, String> session;
+
     private TuiUserConfig() {
+    }
+
+    /**
+     * Starts from the default settings and saves nothing (--defaults): a key reads as unset until the session sets it,
+     * and stays set for the session only. It holds for the whole JVM, so the browser sessions of --web follow it too.
+     */
+    static void useDefaults() {
+        if (session == null) {
+            session = new ConcurrentHashMap<>();
+        }
+    }
+
+    /** Back to the files, after a test of {@link #useDefaults()}. */
+    static void resetForTesting() {
+        session = null;
     }
 
     /**
@@ -47,6 +67,10 @@ final class TuiUserConfig {
      * the caller can decide whether to fall back or log.
      */
     static String read(String key) {
+        Map<String, String> inMemory = session;
+        if (inMemory != null) {
+            return inMemory.get(key);
+        }
         boolean local = livesInLocal(key);
         String[] holder = { null };
         CommandLineHelper.loadProperties(props -> holder[0] = props.getProperty(key), local);
@@ -59,6 +83,16 @@ final class TuiUserConfig {
      * file are preserved. Propagates a {@link RuntimeException} on failure so the caller can log.
      */
     static void write(String key, String value) {
+        Map<String, String> inMemory = session;
+        if (inMemory != null) {
+            String trimmed = trimToNull(value);
+            if (trimmed == null) {
+                inMemory.remove(key);
+            } else {
+                inMemory.put(key, trimmed);
+            }
+            return;
+        }
         boolean local = livesInLocal(key);
         try {
             CommandLineHelper.createPropertyFile(local);
