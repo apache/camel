@@ -22,6 +22,29 @@ The body types help you:
 * *See what the body was when the routes ran.* With the message history on, Camel records the body each step has been
   reached with. A step reached with bodies of more than one kind is a part of the route that needs attention.
 
+== How it works, in a picture
+
+Each step has two body types: the bodies it needs, and the body it leaves. A tool lines them up along a route, step by
+step, before the route runs:
+
+[source,text]
+----
+  from: file:inbox
+      │   file          the file consumer gives the file it read
+      ▼
+  unmarshal: json       needs text, bytes, a stream or a file       ✓
+      │   Map or List   the parsed JSON
+      ▼
+  log                   needs any body                              ✓
+      │   Map or List   log leaves the body as it was
+      ▼
+  to: file:outbox       needs text, bytes, a stream or a file       ✗
+                        ⚠ the body is a Map or a List: add marshal: json before this step
+----
+
+The same body types tell what the body is where a route is not wrong: after `marshal: json` the body is JSON text
+again, which the `file` producer writes.
+
 == Carriers: the kinds of body
 
 A body type names the _carriers_ of the body: the kinds of Java object it can be in. They are coarse on purpose: a
@@ -103,6 +126,12 @@ reports the `to`:
 to: file needs the body as text, bytes, a stream or a file, but the body here is parsed data (a Map or a List), not
 text - unmarshal: json turns the text into data: add marshal: json before this step
 ----
+
+The source editor of the Camel CLI checks a file when you save it, and does not save a YAML file with a problem. The
+`to` line is marked, and the Error panel says what is wrong, with *Shift+F8* to fix it with AI (the notes on the right
+were added for this page):
+
+image::jbang/camel-tui-source-body-type-problem.png[The orders route in the source editor of the Camel CLI: the to line is marked, and the Error panel says that the file producer needs text, bytes, a stream or a file, but the body is parsed data after unmarshal json]
 
 With a `marshal` before it, the body is JSON text again, which the `file` producer writes:
 
@@ -216,6 +245,37 @@ that cannot take the body it gets (see xref:camel-jbang-validation.adoc[Validati
 know the body, such as after an HTTP consumer, it says nothing, unless a running integration has shown what the body
 is.
 
+=== Asking an AI assistant
+
+An AI assistant with the xref:camel-jbang-mcp.adoc[MCP server] of the Camel CLI can answer "is something wrong with
+my route?". It validates the file with the `camel_validate_source` tool, which follows the body with the body types:
+
+[source,text]
+----
+You:        Is something wrong with my route in orders.camel.yaml? The files never show up in outbox.
+
+Assistant:  (calls camel_validate_source on orders.camel.yaml)
+            {"valid": false, "errors": ["Line 8: to: to: file needs the body as text, bytes, a stream or a file,
+             but the body here is parsed data (a Map or a List), not text - unmarshal: json turns the text into
+             data: add marshal: json before this step"]}
+
+            Yes. unmarshal: json turns each file into a Map (or a List for a JSON array), and the file producer
+            cannot write a Map, so the exchange fails at the to step and nothing reaches outbox. Add
+            marshal: json before the to to write the JSON again. If the route only moves the files, remove the
+            unmarshal instead, as the file consumer gives the file as it is.
+----
+
+The assistant can also read the body types of a step with `camel_catalog_doc`, such as what `unmarshal: json` leaves
+with `useList`, and it validates a route before it writes the file. In the source editor of the Camel CLI, *Shift+F8*
+asks the AI of the Camel CLI to fix the problem of a line.
+
+=== In a visual route editor
+
+As the body types are in the catalog, a visual route editor can show them too: the body on each arrow, and a warning
+on the step that cannot take it, with the step to add. An illustration of the route above:
+
+image::body-types-route-diagram.svg[An illustration of a route diagram: from file, unmarshal json, log and to file, with the body on each arrow, and a yellow warning triangle on the to step, whose callout says that the body is parsed data and offers to add marshal json before it]
+
 === At runtime
 
 With the message history on, such as with `camel run --dev`, Camel records the types and kinds of the bodies each
@@ -228,6 +288,26 @@ step has been reached with:
   xref:camel-jbang-tui-source-editor.adoc#_body_types[source editor] of the Camel CLI.
 * The route coverage report of the xref:camel-report-maven-plugin.adoc[Camel Report Maven Plugin] shows the body types
   the tests reached each step with, and can fail the build on a step reached with bodies of more than one kind.
+
+For example, the route coverage report of tests that sent two messages, where only one was parsed before the `to`:
+
+[source,bash]
+----
+mvn camel-report:route-coverage -Dcamel.bodyTypes=true
+----
+
+[source,text]
+----
+  Line #       Count    Route          Body types
+  ------       -----    -----          ----------
+       3           2    from
+       4           2      unmarshal    String
+       7           2      to           LinkedHashMap | String (data and payload)
+----
+
+The `to` has been reached with a `LinkedHashMap` (data) by one message and a `String` (a payload) by the other, so it
+works for some messages only. The body types in the catalog tell this before the route runs; the ones recorded at
+runtime show what the messages really brought.
 
 == Declaring body types
 
