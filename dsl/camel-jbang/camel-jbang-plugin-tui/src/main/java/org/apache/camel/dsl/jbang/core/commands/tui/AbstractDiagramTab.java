@@ -19,8 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
@@ -111,6 +113,20 @@ abstract class AbstractDiagramTab extends AbstractTab {
             diagram.setSelectedEipNodeIndex(sel);
             diagram.scrollToSelectedEipNode();
         }
+        return true;
+    }
+
+    /**
+     * The footer of the go to node popup while it is open, in place of the diagram's: what is typed goes into the
+     * popup, so the keys of the diagram do not apply.
+     */
+    protected final boolean renderGotoNodeFooter(List<Span> spans) {
+        if (!gotoNodePopup.isVisible()) {
+            return false;
+        }
+        TuiHelper.hint(spans, "type", "filter");
+        TuiHelper.hint(spans, "Enter", "go to");
+        TuiHelper.hintLast(spans, "Esc", "back");
         return true;
     }
 
