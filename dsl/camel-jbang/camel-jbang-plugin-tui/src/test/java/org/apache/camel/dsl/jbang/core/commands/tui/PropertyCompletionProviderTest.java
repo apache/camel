@@ -335,13 +335,8 @@ class PropertyCompletionProviderTest {
                         return m != null ? m.getOptions() : null;
                     });
         } else if (keyPrefix.startsWith("camel.language.")) {
-            // only the languages that have options, as camel.language.<name>.<option> of any other fails at startup
             addPrefixedCompletions(items, keyPrefix, "camel.language.",
-                    catalog.findLanguageNames().stream()
-                            .filter(name -> {
-                                LanguageModel m = catalog.languageModel(name);
-                                return m != null && !m.getConfigurationOptions().isEmpty();
-                            }).toList(),
+                    LanguageNames.withOptions(catalog),
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
                         return m != null ? m.getConfigurationOptions() : null;
