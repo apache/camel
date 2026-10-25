@@ -62,6 +62,25 @@ class BodyTypesHelperJavaTypeOptionTest {
     static class WithFrom {
     }
 
+    @BodyTypes(expressionOut = @BodyType(value = Carrier.LIST,
+                                         byOption = @BodyType.When(option = "single", value = "true",
+                                                                   carriers = { Carrier.MAP, Carrier.NULL },
+                                                                   javaTypeOption = "resultType")))
+    static class ForAnOptionValue {
+    }
+
+    @BodyTypes(expressionOut = @BodyType(value = Carrier.LIST,
+                                         byOption = @BodyType.When(option = "single", value = "true",
+                                                                   carriers = Carrier.MAP, javaTypeOption = "single")))
+    static class ItsOwnOption {
+    }
+
+    @BodyTypes(expressionOut = @BodyType(value = Carrier.LIST,
+                                         byOption = @BodyType.When(option = "single", value = "true",
+                                                                   carriers = Carrier.MAP, javaTypeOption = "rowClass")))
+    static class ForAnOptionValueNotAnOption {
+    }
+
     @Test
     void javaTypeOption() {
         LanguageModel model = language();
@@ -100,6 +119,18 @@ class BodyTypesHelperJavaTypeOptionTest {
         assertThrows(IllegalArgumentException.class, () -> add(model, WithFrom.class));
     }
 
+    @Test
+    void javaTypeOptionForAnOptionValue() {
+        LanguageModel model = language();
+        add(model, ForAnOptionValue.class);
+
+        BodyTypeModel.OptionBodyTypeModel single = model.getBodyType(BodyTypeModel.EXPRESSION_OUT).getByOption().get(0);
+        assertEquals("resultType", single.getJavaTypeOption());
+        assertNull(model.getBodyType(BodyTypeModel.EXPRESSION_OUT).getJavaTypeOption());
+        assertThrows(IllegalArgumentException.class, () -> add(language(), ItsOwnOption.class));
+        assertThrows(IllegalArgumentException.class, () -> add(language(), ForAnOptionValueNotAnOption.class));
+    }
+
     private static LanguageModel language() {
         LanguageModel model = new LanguageModel();
         model.setName("someLanguage");
@@ -107,6 +138,10 @@ class BodyTypesHelperJavaTypeOptionTest {
         option.setName("resultType");
         option.setType("string");
         model.addOption(option);
+        LanguageModel.LanguageOptionModel single = new LanguageModel.LanguageOptionModel();
+        single.setName("single");
+        single.setType("boolean");
+        model.addOption(single);
         return model;
     }
 

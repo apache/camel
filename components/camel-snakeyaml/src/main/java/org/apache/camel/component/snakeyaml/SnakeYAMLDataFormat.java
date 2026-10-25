@@ -54,7 +54,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
            marshalOut = @BodyType(value = Carrier.STREAM, format = "yaml",
                                   description = "The YAML in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "yaml"),
-           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, dependsOn = "unmarshalType",
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, javaTypeOption = "unmarshalType",
                                     description = "A Map (LinkedHashMap) for a mapping, a List (ArrayList) for a sequence; a"
                                                   + " document that is a single value gives that value"))
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {

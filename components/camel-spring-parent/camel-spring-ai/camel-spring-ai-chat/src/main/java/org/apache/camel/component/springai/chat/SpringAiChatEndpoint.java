@@ -51,10 +51,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                                 + " body fails. CHAT_SINGLE_MESSAGE_WITH_PROMPT takes the variables of"
                                                 + " the template in the CamelSpringAiChatPromptTemplate header as a Map,"
                                                 + " and CHAT_MULTIPLE_MESSAGES a List of Message"),
-           producerOut = @BodyType(value = Carrier.TEXT,
-                                   dependsOn = { "entityClass", "structuredOutputConverter" },
+           producerOut = @BodyType(value = Carrier.TEXT, dependsOn = "structuredOutputConverter",
+                                   javaTypeOption = "entityClass",
                                    byOption = {
-                                           @BodyType.When(option = "outputFormat", value = "BEAN", carriers = Carrier.POJO),
+                                           @BodyType.When(option = "outputFormat", value = "BEAN", carriers = Carrier.POJO,
+                                                          javaTypeOption = "outputClass"),
                                            @BodyType.When(option = "outputFormat", value = "MAP", carriers = Carrier.MAP),
                                            @BodyType.When(option = "outputFormat", value = "LIST",
                                                           carriers = Carrier.LIST) },

@@ -119,6 +119,9 @@ final class BodyTypesHelper {
                 checkOption(owner, side, when.option(), options);
                 checkValue(owner, side, when, options.get(when.option()));
                 check(owner, side + " " + when.option() + "=" + when.value(), when.carriers());
+                if (!when.javaTypeOption().isEmpty()) {
+                    checkWhenJavaTypeOption(owner, side, when, options);
+                }
             }
             if (!bodyType.javaTypeOption().isEmpty()) {
                 checkJavaTypeOption(owner, side, bodyType, options);
@@ -168,6 +171,24 @@ final class BodyTypesHelper {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " has the javaTypeOption " + option
                                                + ", which is not in dependsOn or byOption as well");
+        }
+    }
+
+    /**
+     * The option that names the Java type of the body for an option value is another option of the body after a step:
+     * outputClass for outputType=SelectOne.
+     */
+    private static void checkWhenJavaTypeOption(
+            Class<?> owner, String side, BodyType.When when, Map<String, BaseOptionModel> options) {
+        String what = side + " " + when.option() + "=" + when.value();
+        checkOption(owner, what, when.javaTypeOption(), options);
+        if (IN.contains(side)) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + what + " is what a step needs, which has no javaTypeOption");
+        }
+        if (when.javaTypeOption().equals(when.option())) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + what + " has its own option as the javaTypeOption");
         }
     }
 
@@ -279,6 +300,7 @@ final class BodyTypesHelper {
             option.setValue(when.value());
             option.setCarriers(names(when.carriers()));
             option.setJavaType(emptyAsNull(when.javaType()));
+            option.setJavaTypeOption(emptyAsNull(when.javaTypeOption()));
             model.getByOption().add(option);
         }
         model.setFrom(emptyAsNull(bodyType.from()));

@@ -42,10 +42,11 @@ import org.apache.camel.spi.annotations.Dataformat;
            unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
                                    description = "Avro binary data of the schema of the schemaResolver. A String fails"),
            unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
-                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" },
+                                    dependsOn = { "collectionType", "useList", "allowUnmarshallType", "allowJmsType" },
+                                    javaTypeOption = "unmarshalType",
                                     byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
                                     description = "A Map (LinkedHashMap) for an Avro record, a List (ArrayList) for an array;"
-                                                  + " an object of the class unmarshalType names, such as JsonNode"))
+                                                  + " with unmarshalType an object of that class, such as JsonNode"))
 public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
 
     /**

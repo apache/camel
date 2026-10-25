@@ -269,6 +269,7 @@ public class BodyTypeModel {
         private String value;
         private List<String> carriers = new ArrayList<>();
         private String javaType;
+        private String javaTypeOption;
 
         public String getOption() {
             return option;
@@ -302,9 +303,22 @@ public class BodyTypeModel {
             this.javaType = javaType;
         }
 
+        /**
+         * The option that names the Java type of the body with this value: when it is set, the body is of the class it
+         * names, or null, and the carriers say the body when it is not set.
+         */
+        public String getJavaTypeOption() {
+            return javaTypeOption;
+        }
+
+        public void setJavaTypeOption(String javaTypeOption) {
+            this.javaTypeOption = javaTypeOption;
+        }
+
         @Override
         public String toString() {
-            return option + "=" + value + ": " + String.join(", ", carriers);
+            return option + "=" + value + ": " + String.join(", ", carriers)
+                   + (javaTypeOption != null ? " (javaTypeOption:" + javaTypeOption + ")" : "");
         }
     }
 }

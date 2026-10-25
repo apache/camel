@@ -99,7 +99,9 @@ module.exports = {
     }
     if (value.byOption && value.byOption.length) {
       parts.push(value.byOption.map((option) => `* With \`${option.option}=${option.value}\`: `
-        + module.exports.bodyCarriers(option)).join('\n'))
+        + module.exports.bodyCarriers(option)
+        + (option.javaTypeOption ? `, or an object of the class \`${option.javaTypeOption}\` names when it is set` : ''))
+        .join('\n'))
     }
     if (value.dependsOn && value.dependsOn.length) {
       parts.push('Not known when ' + value.dependsOn.map((option) => '`' + option + '`').join(' or ') + ' is set.')

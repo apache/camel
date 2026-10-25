@@ -17,6 +17,9 @@
 package org.apache.camel.component.jackson3.protobuf;
 
 import org.apache.camel.component.jackson3.JacksonDataFormat;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import tools.jackson.databind.ObjectMapper;
@@ -28,6 +31,20 @@ import tools.jackson.dataformat.protobuf.ProtobufMapper;
 @Dataformat("protobufJackson")
 @Metadata(firstVersion = "4.18.0", title = "Protobuf Jackson",
           excludeProperties = "library,permissions,dateFormatPattern,instanceClass,contentTypeFormat,defaultInstance")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.POJO },
+                                 description = "A POJO, a Map or a JsonNode to write as the message of the protobuf schema of"
+                                               + " the schemaResolver. Text, bytes or a stream are not written as they are:"
+                                               + " marshal fails for them"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The protobuf binary data in the stream cache, or a byte array when stream"
+                                                + " caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "Protobuf binary data of the schema of the schemaResolver. A String fails"),
+           unmarshalOut = @BodyType(value = Carrier.MAP,
+                                    dependsOn = { "collectionType", "useList", "allowUnmarshallType", "allowJmsType" },
+                                    javaTypeOption = "unmarshalType",
+                                    description = "A Map (LinkedHashMap) of the fields of the message; with unmarshalType an"
+                                                  + " object of that class, such as JsonNode"))
 public class JacksonProtobufDataFormat extends JacksonDataFormat {
 
     /**

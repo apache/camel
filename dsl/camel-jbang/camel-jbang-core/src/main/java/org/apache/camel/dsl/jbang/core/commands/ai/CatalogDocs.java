@@ -1671,8 +1671,12 @@ public final class CatalogDocs {
             if (!side.getByOption().isEmpty()) {
                 List<String> values = new ArrayList<>();
                 for (BodyTypeModel.OptionBodyTypeModel option : side.getByOption()) {
-                    values.add(option.getOption() + "=" + option.getValue() + ": "
-                               + carriers(option.getCarriers(), option.getJavaType()));
+                    String value = option.getOption() + "=" + option.getValue() + ": "
+                                   + carriers(option.getCarriers(), option.getJavaType());
+                    if (option.getJavaTypeOption() != null) {
+                        value += ", or an object of the class " + option.getJavaTypeOption() + " names when it is set";
+                    }
+                    values.add(value);
                 }
                 line.append(". With ").append(String.join("; ", values));
             }
