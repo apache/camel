@@ -40,7 +40,7 @@ module.exports = {
       }
   },
 
-  // the body types of the catalog (CAMEL-24961): one row per side of the bodyTypes section
+  // the body types of the catalog (CAMEL-24961, CAMEL-25928): one row per side of the bodyTypes section
   bodySide: (side) => {
     const sides = {
       consumerOut: 'Consumer',
@@ -53,12 +53,31 @@ module.exports = {
       unmarshalOut: 'Unmarshal output',
       expressionIn: 'Expression input',
       expressionOut: 'Expression result',
+      eipIn: 'EIP input',
+      eipOut: 'EIP output',
+      eipSteps: 'Steps',
     }
     return `*${sides[side] || side}*`
   },
 
-  // text, bytes or stream, with the Java type when the body is always of that type
+  // text, bytes or stream, with the Java type when the body is always of that type; or the side of another model an
+  // EIP takes its body from
   bodyCarriers: (value) => {
+    const from = {
+      expressionIn: 'what its expression reads',
+      expressionOut: 'the result of its expression',
+      marshalIn: 'what its data format marshals',
+      marshalOut: 'what its data format marshals to',
+      unmarshalIn: 'what its data format unmarshals',
+      unmarshalOut: 'what its data format unmarshals to',
+      producerIn: 'what the producer of its endpoint sends',
+      producerOut: 'what the producer of its endpoint leaves',
+      consumerOut: 'what the consumer of its endpoint receives',
+      steps: 'what its steps end with',
+    }
+    if (value.from) {
+      return from[value.from] || value.from
+    }
     const carriers = (value.carriers || []).map((carrier) => '`' + carrier + '`')
     const words = carriers.length === 0 ? '`unknown`'
       : carriers.length === 1 ? carriers[0]

@@ -23,12 +23,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The message body a component, data format or language works with: the body it needs, and the body it leaves after it.
- * The build carries it into the catalog, so tooling can say what the body is after a step without running the route:
- * the validators, the catalog tools and the documentation.
+ * The message body a component, data format, language or EIP works with: the body it needs, and the body it leaves
+ * after it. The build carries it into the catalog, so tooling can say what the body is after a step without running the
+ * route: the validators, the catalog tools and the documentation.
  * <p/>
- * Put it on the endpoint class (the class with {@link UriEndpoint}), the data format class or the language class. A
- * subclass does not have the body types of its superclass, as it may change the body: it declares its own.
+ * Put it on the endpoint class (the class with {@link UriEndpoint}), the data format class, the language class or the
+ * model class of an EIP. A subclass does not have the body types of its superclass, as it may change the body: it
+ * declares its own. An EIP whose processor is in another module, such as a circuit breaker, still has its body types on
+ * its model class: they are the contract of every implementation.
  * <p/>
  * Each side that is given says what the body is with the default options. A side that is not given is not known, and
  * tooling must not guess it. A side whose body depends on what the other system sends, or on a class the user
@@ -101,5 +103,22 @@ public @interface BodyTypes {
      * The result of an expression of a language, which becomes the body in setBody and transform.
      */
     BodyType expressionOut() default @BodyType;
+
+    /**
+     * The bodies an EIP needs, such as text for a tokenizer.
+     */
+    BodyType eipIn() default @BodyType;
+
+    /**
+     * The body after an EIP: {@link BodyType.Carrier#UNCHANGED} when it leaves the body as it was, or
+     * {@link BodyType#from()} the side of the model the body comes from, such as the data format of marshal.
+     */
+    BodyType eipOut() default @BodyType;
+
+    /**
+     * The body the steps of an EIP start with: {@link BodyType.Carrier#UNCHANGED} when they get the body the EIP got,
+     * such as the steps of a filter, otherwise what they get, such as each part of a split.
+     */
+    BodyType eipSteps() default @BodyType;
 
 }

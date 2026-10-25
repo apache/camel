@@ -24,6 +24,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.URISupport;
@@ -37,6 +39,11 @@ import org.apache.camel.util.URISupport;
                         + " Useful for fetching data on-demand from file, database, or messaging endpoints.")
 @XmlRootElement(name = "poll")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "consumerOut",
+                              dependsOn = "variableReceive",
+                              description = "The message the consumer of the endpoint receives, or null when none came before"
+                                            + " the timeout. With variableReceive it goes into the variable, and the body stays"
+                                            + " as it was"))
 public class PollDefinition extends NoOutputDefinition<PollDefinition> implements EndpointRequiredDefinition {
 
     @XmlTransient
