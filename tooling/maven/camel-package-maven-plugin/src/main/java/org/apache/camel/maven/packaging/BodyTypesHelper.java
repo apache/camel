@@ -95,7 +95,8 @@ final class BodyTypesHelper {
             BodyType bodyType = entry.getValue();
             if (bodyType.value().length == 0 && bodyType.from().isEmpty()) {
                 if (!bodyType.javaType().isEmpty() || !bodyType.format().isEmpty() || bodyType.dependsOn().length > 0
-                        || bodyType.byOption().length > 0 || !bodyType.description().isEmpty()) {
+                        || bodyType.byOption().length > 0 || !bodyType.javaTypeOption().isEmpty()
+                        || !bodyType.description().isEmpty()) {
                     throw new IllegalArgumentException(
                             owner.getName() + ": the @BodyTypes " + side + " has no carriers, but other attributes");
                 }
@@ -119,6 +120,9 @@ final class BodyTypesHelper {
                 checkValue(owner, side, when, options.get(when.option()));
                 check(owner, side + " " + when.option() + "=" + when.value(), when.carriers());
             }
+            if (!bodyType.javaTypeOption().isEmpty()) {
+                checkJavaTypeOption(owner, side, bodyType, options);
+            }
             model.getBodyTypes().put(side, asModel(bodyType));
         }
     }
@@ -138,6 +142,32 @@ final class BodyTypesHelper {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " is from " + bodyType.from()
                                                + ", so it has no carriers, Java type or format of its own");
+        }
+    }
+
+    /**
+     * The option that names the Java type says the body after a step when it is set, whatever other options say: the
+     * class of what a step needs is not a choice of the step, and an option that is also one the body depends on, or
+     * has bodies for its values, would say two things.
+     */
+    private static void checkJavaTypeOption(
+            Class<?> owner, String side, BodyType bodyType, Map<String, BaseOptionModel> options) {
+        String option = bodyType.javaTypeOption();
+        checkOption(owner, side, option, options);
+        if (IN.contains(side)) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " is what a step needs, which has no javaTypeOption");
+        }
+        if (!bodyType.from().isEmpty()) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " is from " + bodyType.from()
+                                               + ", so it has no javaTypeOption of its own");
+        }
+        if (Arrays.asList(bodyType.dependsOn()).contains(option)
+                || Arrays.stream(bodyType.byOption()).anyMatch(w -> w.option().equals(option))) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " has the javaTypeOption " + option
+                                               + ", which must not also be in dependsOn or byOption");
         }
     }
 
@@ -252,6 +282,7 @@ final class BodyTypesHelper {
             model.getByOption().add(option);
         }
         model.setFrom(emptyAsNull(bodyType.from()));
+        model.setJavaTypeOption(emptyAsNull(bodyType.javaTypeOption()));
         model.setDescription(emptyAsNull(bodyType.description()));
         return model;
     }

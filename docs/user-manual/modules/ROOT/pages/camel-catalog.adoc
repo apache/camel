@@ -178,6 +178,24 @@ expression (`expressionOut`), and a `filter` what its own steps end with (`steps
 }
 ----
 
+An option that names the class of the body is the `javaTypeOption` of a side: the `resultType` of a language, whose
+result is converted to that class, and the `type` of `convertBodyTo`. When the option is set, the body is an object of
+the class it names, or null when it does not convert. That holds while the options the side depends on keep their
+defaults (an option that makes the body a collection of that class is one of them), and it wins over the bodies `byOption` gives
+for other options. The carrier follows the class: `String` is `text`, `byte[]` is `bytes`, an `InputStream` or a
+`Reader` is a `stream`, a `File` or a `Path` is a `file`, a number, a boolean or a character is a `value`, a `Map` is a
+`map`, a `Collection` or an array is a `list`, an `Iterator` is an `iterator`, `Object` is `unknown`, and any other
+class is a `pojo`. `BodyTypeModel.carrierOf` gives
+it for a class name, also for the short names Camel takes, such as `String` and `int`:
+
+[source,json]
+----
+"bodyTypes": {
+  "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType",
+    "description": "A text with functions gives text. A single function, such as ${body} or ${header.foo}, gives its value as it is" }
+}
+----
+
 The sides say what the body is with the default options. A side that is not in the catalog is not known, and tooling
 should not guess it. The documentation page of a component, data format, language or EIP shows them in its _Message
 Body_ section, and `camel catalog doc` prints them. The Java API gives them on the model:
@@ -206,8 +224,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
 The build checks that each side belongs to the kind (a consumer-only component has no producer sides), that the
 options a side names exist, that a value of an option is one the option can have (such as `chat-completion` for the
-`operation` of openai), that `unchanged` is only on the body after a step and `any` only on what a step needs, and
-that `from` names a side the body can come from.
+`operation` of openai), that `unchanged` is only on the body after a step and `any` only on what a step needs,
+that `from` names a side the body can come from, and that a `javaTypeOption` is an option of the body after a step
+that the side does not also depend on.
 The values are read from the code that sets the body, and checked against the body types the message history records
 when the routes run.
 

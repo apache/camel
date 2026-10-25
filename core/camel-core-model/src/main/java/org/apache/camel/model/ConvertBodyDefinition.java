@@ -35,20 +35,7 @@ import org.apache.camel.spi.annotations.DslArg;
           description = "Converts the message body to a specified Java type using Camel's built-in type converters")
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
-@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
-                              byOption = {
-                                      @BodyType.When(option = "type", value = "String", carriers = Carrier.TEXT,
-                                                     javaType = "java.lang.String"),
-                                      @BodyType.When(option = "type", value = "java.lang.String", carriers = Carrier.TEXT,
-                                                     javaType = "java.lang.String"),
-                                      @BodyType.When(option = "type", value = "byte[]", carriers = Carrier.BYTES,
-                                                     javaType = "byte[]"),
-                                      @BodyType.When(option = "type", value = "java.io.InputStream", carriers = Carrier.STREAM,
-                                                     javaType = "java.io.InputStream"),
-                                      @BodyType.When(option = "type", value = "java.util.Map", carriers = Carrier.MAP,
-                                                     javaType = "java.util.Map"),
-                                      @BodyType.When(option = "type", value = "java.util.List", carriers = Carrier.LIST,
-                                                     javaType = "java.util.List") },
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN, javaTypeOption = "type",
                               description = "An object of the type the type option names; null when there is no conversion"
                                             + " and mandatory is false"))
 public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {

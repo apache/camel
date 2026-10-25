@@ -85,13 +85,17 @@ module.exports = {
     return words + (value.javaType ? ' (`' + value.javaType + '`)' : '') + (value.format ? ', as ' + value.format : '')
   },
 
-  // the description, the bodies for other values of an option, and the options the body depends on
+  // the description, the option that names the class of the body, the bodies for other values of an option, and the
+  // options the body depends on
   bodyDescription: (value) => {
     // only what reads as an attribute reference ({body}, not {header.foo}, which keeps a backslash), and the cell separator
     const escape = (text) => text.replace(/\{(\w[\w-]*)\}/g, '\\{$1}').split('|').join('\\|')
     const parts = []
     if (value.description) {
       parts.push(escape(value.description) + (value.description.endsWith('.') ? '' : '.'))
+    }
+    if (value.javaTypeOption) {
+      parts.push(`With \`${value.javaTypeOption}\` set: an object of the class it names, or null.`)
     }
     if (value.byOption && value.byOption.length) {
       parts.push(value.byOption.map((option) => `* With \`${option.option}=${option.value}\`: `

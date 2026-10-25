@@ -40,6 +40,7 @@ import org.python.util.PythonInterpreter;
                                     description = "The body as it is, in the variable body: a String is a Python unicode"
                                                   + " string, and other Java objects keep their methods"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     javaTypeOption = "resultType",
                                      description = "The Java value of what the script returns: a dict as a Map, a list or a"
                                                    + " tuple as a List, a set as a Set, and None as null"))
 public class PythonLanguage extends TypedLanguageSupport implements ScriptingLanguage {

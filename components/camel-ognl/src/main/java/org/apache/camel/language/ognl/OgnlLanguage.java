@@ -34,7 +34,8 @@ import org.apache.camel.support.TypedLanguageSupport;
 @Language("ognl")
 @BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
                                     description = "The body as it is, in message.body or request.body: there is no variable body"),
-           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the expression returns"))
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, javaTypeOption = "resultType",
+                                     description = "What the expression returns"))
 public class OgnlLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     @Override

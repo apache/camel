@@ -32,7 +32,8 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * A language for constant expressions.
  */
 @Language("constant")
-@BodyTypes(expressionOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "resultType",
+@BodyTypes(expressionOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                     javaTypeOption = "resultType",
                                      description = "The text as it is written; resource:classpath:name loads the text of the"
                                                    + " resource"))
 public class ConstantLanguage extends LanguageSupport {

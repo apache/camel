@@ -46,10 +46,10 @@ import org.slf4j.LoggerFactory;
                                                   + " that format only with bodyMediaType or a Content-Type header, and"
                                                   + " without them a stream is read as text"),
            expressionOut = @BodyType(value = { Carrier.POJO, Carrier.NULL }, javaType = "com.datasonnet.document.Document",
-                                     dependsOn = { "resultType", "outputMediaType" },
+                                     dependsOn = "outputMediaType",
+                                     javaTypeOption = "resultType",
                                      description = "A Document with the result: a Java object, or text in outputMediaType"
-                                                   + " when it is set, and null when the result is null. With resultType, the"
-                                                   + " result converted to that type"))
+                                                   + " when it is set, and null when the result is null"))
 public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DatasonnetLanguage.class);
     private final Map<String, String> classpathImports;

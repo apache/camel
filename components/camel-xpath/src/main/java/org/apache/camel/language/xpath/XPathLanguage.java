@@ -40,7 +40,7 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
                                     format = "xml", dependsOn = "source",
                                     description = "XML as text, bytes, a stream or a file, or a DOM"),
-           expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.NodeList", dependsOn = "resultType",
+           expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.NodeList",
                                      byOption = {
                                              @BodyType.When(option = "resultQName", value = "STRING", carriers = Carrier.TEXT,
                                                             javaType = "java.lang.String"),
@@ -50,6 +50,7 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
                                                             javaType = "java.lang.Boolean"),
                                              @BodyType.When(option = "resultQName", value = "NODE", carriers = Carrier.POJO,
                                                             javaType = "org.w3c.dom.Node") },
+                                     javaTypeOption = "resultType",
                                      description = "The nodes the expression selects"))
 public class XPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
     private QName resultQName;

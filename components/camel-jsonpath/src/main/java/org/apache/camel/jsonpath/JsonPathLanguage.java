@@ -41,6 +41,7 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
                                      byOption = @BodyType.When(option = "writeAsString", value = "true",
                                                                carriers = { Carrier.TEXT, Carrier.LIST }),
+                                     javaTypeOption = "resultType",
                                      description = "The value the path selects: a Map for an object, a List for an array or"
                                                    + " for a path with a wildcard or a filter, otherwise text, a number or a"
                                                    + " boolean"))

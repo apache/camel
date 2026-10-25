@@ -1648,7 +1648,8 @@ public final class CatalogDocs {
 
     /**
      * The body types a line per side, as compact as the options are: the carriers, the Java type, the format, the
-     * description, the body for other option values, and the options that make it not known (CAMEL-24961).
+     * description, the option that names its class, the body for other option values, and the options that make it not
+     * known (CAMEL-24961).
      */
     public static JsonObject bodyTypes(Map<String, BodyTypeModel> bodyTypes) {
         JsonObject answer = new JsonObject();
@@ -1661,6 +1662,11 @@ public final class CatalogDocs {
             }
             if (side.getDescription() != null) {
                 line.append(". ").append(side.getDescription());
+            }
+            if (side.getJavaTypeOption() != null) {
+                // the option names the class of the body, whatever the other options say (CAMEL-25928)
+                line.append(". With ").append(side.getJavaTypeOption())
+                        .append(" set: an object of the class it names, or null");
             }
             if (!side.getByOption().isEmpty()) {
                 List<String> values = new ArrayList<>();

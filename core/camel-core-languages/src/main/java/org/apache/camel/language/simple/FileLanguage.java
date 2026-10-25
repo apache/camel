@@ -29,6 +29,7 @@ import org.apache.camel.spi.annotations.Language;
                                     description = "The body as it is, for ${body}: the file functions read the headers the file"
                                                   + " consumers set"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     javaTypeOption = "resultType",
                                      description = "A text with functions gives text, such as a file name. A single function"
                                                    + " gives its value as it is: ${file:size}, ${file:length} and"
                                                    + " ${file:modified} a Long, ${file:absolute} a Boolean, the other file"
