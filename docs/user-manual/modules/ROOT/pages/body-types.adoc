@@ -240,6 +240,28 @@ writes any object as JSON bytes, and the CloudEvent transformers of the componen
 `transformDataType` takes its body from them, by the name of its `toType`: `aws2-s3:application-cloudevents` is the
 transformer `aws2-s3-application-cloudevents` of the catalog.
 
+=== Kamelets
+
+A Kamelet says the body it takes and gives with its data types (`spec.dataTypes`), whose `format` names a data type
+transformer. Camel runs the transformer of the default `in` data type at the start of the Kamelet route, and of the
+default `out` one at its end, so the body of a Kamelet is what that transformer takes and leaves:
+
+[source,yaml]
+----
+spec:
+  dataTypes:
+    out:
+      default: binary
+      types:
+        binary:
+          format: application-octet-stream
+----
+
+The Camel CLI reads the data types of the Kamelets of the Kamelet catalog and of the project's own `.kamelet.yaml`
+files. The YAML validator walks a route that starts with `from: kamelet:aws-s3-source` with bytes. It reports a body
+that a Kamelet sink cannot take before a `to: kamelet:...`. `camel_catalog_kamelet_doc` lists the data types of a
+Kamelet with the body of each. A Kamelet without data types says nothing about its body.
+
 == Tooling
 
 === Documentation

@@ -2508,4 +2508,78 @@ public class TextBodyFlowTest {
                         .contains(
                                 "transformDataType: camel:application-octet-stream needs the body as text, bytes, a stream or a file"));
     }
+
+    /** The data types of the Kamelets of a project: the transformers of their default in and out data type. */
+    private static final ProjectFacts KAMELETS = new ProjectFacts(
+            Set.of(), Map.of(), null, Map.of(), Map.of(),
+            Map.of("my-source", new ProjectFacts.KameletDataTypes(null, "application-octet-stream"),
+                    "my-sink", new ProjectFacts.KameletDataTypes("application-octet-stream", null),
+                    "my-action", new ProjectFacts.KameletDataTypes("application-x-struct", "text-plain"),
+                    "my-events", new ProjectFacts.KameletDataTypes(null, "aws2-s3:application-cloudevents")));
+
+    @Test
+    public void testAKameletSourceGivesItsOutDataType() {
+        // application-octet-stream gives bytes: a field of the body cannot be read
+        String yaml = """
+                - route:
+                    from:
+                      uri: kamelet:my-source?bucket=orders
+                      steps:
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(yaml, KAMELETS)).singleElement()
+                .satisfies(m -> assertThat(m).contains("simple reads a field of the body (${body[status]})"));
+        // a Kamelet without data types says nothing
+        assertThat(lines(yaml.replace("my-source", "other-source"), KAMELETS)).isEmpty();
+    }
+
+    @Test
+    public void testAKameletSinkNeedsItsInDataType() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: kamelet:my-sink
+                """;
+        assertThat(lines(yaml, KAMELETS)).singleElement()
+                .satisfies(m -> assertThat(m).contains(
+                        "to: the Kamelet my-sink needs the body as text, bytes, a stream or a file (its in data type"
+                                                       + " application-octet-stream)"));
+    }
+
+    @Test
+    public void testAKameletStepLeavesItsOutDataType() {
+        // text-plain makes the parsed data text again
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - kamelet:
+                            name: my-action
+                        - to: file:outbox
+                """;
+        assertThat(lines(yaml, KAMELETS)).isEmpty();
+        // a CloudEvent data type sets headers only: the body is still parsed data
+        String events = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to: kamelet:my-events
+                        - to: file:outbox
+                """;
+        assertThat(lines(events, KAMELETS)).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file needs the body as text"));
+    }
 }

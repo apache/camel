@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,5 +28,7 @@ public class KameletModel {
     public String description;
     public Map<String, KameletOptionModel> properties;
     public List<String> dependencies;
+    /** The data types of the Kamelet (spec.dataTypes), in, out and error; empty when it has none. */
+    public List<KameletDataTypeModel> dataTypes = new ArrayList<>();
 
 }

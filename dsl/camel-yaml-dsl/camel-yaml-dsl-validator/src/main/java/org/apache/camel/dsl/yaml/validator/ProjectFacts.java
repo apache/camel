@@ -37,9 +37,12 @@ import java.util.Set;
  * @param observed          what a running integration of the routes saw at their endpoints (CAMEL-25750): the body a
  *                          consumer gave, keyed as {@link #consumerKey(String)}, and the body a producer returned,
  *                          keyed as {@link #producerKey(String)}: the types the step after it was reached with
+ * @param kamelets          the data types of the Kamelets the routes use, by name (CAMEL-25928): the data type
+ *                          transformers Camel runs at the start and the end of their route
  */
 public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
-        String restBindingMode, Map<String, Map<String, List<String>>> requestFields, Map<String, Observed> observed) {
+        String restBindingMode, Map<String, Map<String, List<String>>> requestFields, Map<String, Observed> observed,
+        Map<String, KameletDataTypes> kamelets) {
 
     /** Nothing known about the project. */
     public static final ProjectFacts NONE = new ProjectFacts(Set.of(), Map.of(), null);
@@ -56,11 +59,26 @@ public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String
         }
     }
 
+    /**
+     * The data types of a Kamelet: the data type transformer of its default in and out data type (spec.dataTypes), as
+     * application-octet-stream or aws2-s3:application-cloudevents; null for a direction it has none for.
+     */
+    public record KameletDataTypes(String in, String out) {
+    }
+
     public ProjectFacts {
         bodylessEndpoints = bodylessEndpoints != null ? bodylessEndpoints : Set.of();
         operations = operations != null ? operations : Map.of();
         requestFields = requestFields != null ? requestFields : Map.of();
         observed = observed != null ? observed : Map.of();
+        kamelets = kamelets != null ? kamelets : Map.of();
+    }
+
+    /** Without the data types of the Kamelets. */
+    public ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
+                        String restBindingMode, Map<String, Map<String, List<String>>> requestFields,
+                        Map<String, Observed> observed) {
+        this(bodylessEndpoints, operations, restBindingMode, requestFields, observed, Map.of());
     }
 
     /** Without what a running integration saw. */

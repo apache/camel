@@ -36,6 +36,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
+import org.apache.camel.dsl.jbang.core.commands.catalog.KameletDataTypeModel;
 import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -46,6 +47,7 @@ import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -443,7 +445,7 @@ public final class CatalogDocs {
         if (kind == null || "kamelet".equals(kind)) {
             KameletDefinitions.Definition def = KameletDefinitions.catalog().get(name);
             if (def != null) {
-                return kameletDoc(def);
+                return kameletDoc(def, catalog);
             }
             if (kind != null) {
                 JsonObject err = notFound("Kamelet", name,
@@ -553,6 +555,14 @@ public final class CatalogDocs {
      * bootstrapServers), as it knows those from years of examples.
      */
     public static JsonObject kameletDoc(KameletDefinitions.Definition def) {
+        return kameletDoc(def, null);
+    }
+
+    /**
+     * As {@link #kameletDoc(KameletDefinitions.Definition)}, with the body each data type of the Kamelet takes or
+     * gives, as the body types of its data type transformer in the catalog say (CAMEL-25928).
+     */
+    public static JsonObject kameletDoc(KameletDefinitions.Definition def, CamelCatalog catalog) {
         JsonObject result = new JsonObject();
         result.put("kind", "kamelet");
         result.put("name", def.name());
@@ -595,7 +605,55 @@ public final class CatalogDocs {
             props.add(o);
         }
         result.put("properties", props);
+        if (!def.dataTypes().isEmpty()) {
+            result.put("dataTypes", kameletDataTypes(def, catalog));
+        }
         return result;
+    }
+
+    /**
+     * The data types of a Kamelet: the data type transformer of each (format), whether it is the default Camel uses,
+     * and the body it takes (in) or gives (out).
+     */
+    private static JsonArray kameletDataTypes(KameletDefinitions.Definition def, CamelCatalog catalog) {
+        JsonArray answer = new JsonArray();
+        for (KameletDataTypeModel dt : def.dataTypes()) {
+            JsonObject o = new JsonObject();
+            o.put("direction", dt.direction);
+            o.put("name", dt.name);
+            if (dt.defaultType) {
+                o.put("default", true);
+            }
+            if (dt.format != null) {
+                o.put("format", dt.format);
+            }
+            if (dt.mediaType != null) {
+                o.put("mediaType", dt.mediaType);
+            }
+            if (dt.description != null) {
+                o.put("description", dt.description);
+            }
+            String side = "in".equals(dt.direction) ? BodyTypeModel.TRANSFORMER_IN
+                    : "out".equals(dt.direction) ? BodyTypeModel.TRANSFORMER_OUT : null;
+            TransformerModel transformer = catalog != null && side != null && dt.format != null
+                    ? catalog.transformerModel(transformerName(dt.format)) : null;
+            BodyTypeModel body = transformer != null ? transformer.getBodyType(side) : null;
+            if (body != null) {
+                o.put("body", bodyTypes(Map.of(side, body)).getString(side));
+            }
+            answer.add(o);
+        }
+        return answer;
+    }
+
+    /**
+     * The name of the data type transformer of a data type, as Camel resolves it (TransformerResolver): without the
+     * camel scheme, and with : _ . / and \ as -, so aws2-s3:application-cloudevents is aws2-s3-application-cloudevents.
+     */
+    static String transformerName(String dataType) {
+        String name = dataType.startsWith("camel:") ? dataType.substring("camel:".length()) : dataType;
+        return name.replace(':', '-').replace('_', '-').replace('.', '-').replace('/', '-').replace('\\', '-')
+                .toLowerCase(Locale.ROOT);
     }
 
     /**
