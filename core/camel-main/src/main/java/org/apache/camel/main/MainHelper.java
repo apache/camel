@@ -423,7 +423,7 @@ public final class MainHelper {
      * their name cannot always be told from their type.
      *
      * @param  target the data format or language
-     * @return        the configurer, or <tt>null</tt> for any other prefix, when there is none, or when it is not the
+     * @return        the configurer, or {@code null} for any other prefix, when there is none, or when it is not the
      *                configurer of the type of the target (such as a custom bean with the name of a data format)
      */
     public static PropertyConfigurer configurerByName(CamelContext context, String optionPrefix, Object target) {
@@ -441,7 +441,7 @@ public final class MainHelper {
         }
         PropertyConfigurer configurer
                 = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name + "-" + kind, context);
-        // the generated configurer of a type is named after it
+        // the configurer that PackageDataFormatMojo or PackageLanguageMojo generates for a type is named after it
         if (configurer != null && configurer.getClass().getName().equals(target.getClass().getName() + "Configurer")) {
             return configurer;
         }
