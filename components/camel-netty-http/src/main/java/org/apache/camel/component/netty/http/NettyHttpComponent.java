@@ -209,9 +209,9 @@ public class NettyHttpComponent extends NettyComponent
         }
 
         if (securityConfiguration != null) {
-            answer.setSecurityConfiguration(securityConfiguration);
-        } else if (answer.getSecurityConfiguration() == null) {
-            answer.setSecurityConfiguration(getSecurityConfiguration());
+            answer.setSecurityConfiguration(securityConfiguration.copy());
+        } else if (answer.getSecurityConfiguration() == null && getSecurityConfiguration() != null) {
+            answer.setSecurityConfiguration(getSecurityConfiguration().copy());
         }
 
         // configure any security options
