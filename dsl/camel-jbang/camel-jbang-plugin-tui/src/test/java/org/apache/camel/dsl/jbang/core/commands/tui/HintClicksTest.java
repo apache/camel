@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.layout.Rect;
+import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -126,5 +127,16 @@ class HintClicksTest {
 
         clicks.clear();
         assertThat(clicks.keyAt(line.indexOf("back"), 9)).as("a footer without hints").isNull();
+    }
+
+    @Test
+    void tabAtFindsTheTabUnderAClick() {
+        Line[] labels = { Line.from("1 Overview"), Line.from("2 Log") };
+        assertThat(HintClicks.tabAt(labels, " | ", 0)).isZero();
+        assertThat(HintClicks.tabAt(labels, " | ", 9)).isZero();
+        assertThat(HintClicks.tabAt(labels, " | ", 11)).as("the divider").isEqualTo(-1);
+        assertThat(HintClicks.tabAt(labels, " | ", 13)).isEqualTo(1);
+        assertThat(HintClicks.tabAt(labels, " | ", 18)).as("past the last tab").isEqualTo(-1);
+        assertThat(HintClicks.tabAt(null, " | ", 0)).isEqualTo(-1);
     }
 }

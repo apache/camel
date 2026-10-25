@@ -22,6 +22,7 @@ import java.util.List;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
+import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -122,6 +123,35 @@ final class HintClicks {
             if (mouseX >= startX[i] && mouseX < endX[i]) {
                 return i;
             }
+        }
+        return -1;
+    }
+
+    /**
+     * The tab of the tab bar under a click, or -1 on a divider or past the last tab.
+     *
+     * @param labels  the labels of the tabs, as drawn
+     * @param divider what is drawn between two tabs
+     * @param xOffset the column of the click, from the start of the bar
+     */
+    static int tabAt(Line[] labels, String divider, int xOffset) {
+        if (labels == null || divider == null) {
+            return -1;
+        }
+        int dividerW = CharWidth.of(divider);
+        int x = 0;
+        for (int i = 0; i < labels.length; i++) {
+            if (i > 0) {
+                if (xOffset >= x && xOffset < x + dividerW) {
+                    return -1;
+                }
+                x += dividerW;
+            }
+            int tabW = labels[i].width();
+            if (xOffset >= x && xOffset < x + tabW) {
+                return i;
+            }
+            x += tabW;
         }
         return -1;
     }

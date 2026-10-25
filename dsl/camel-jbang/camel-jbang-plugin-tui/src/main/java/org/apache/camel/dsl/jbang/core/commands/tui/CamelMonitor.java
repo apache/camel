@@ -1563,12 +1563,17 @@ public class CamelMonitor extends CamelCommand {
             }
             return result;
         }
+        // The confirm dialogs (quit, kill) too: the footer lists their keys
+        if (popupManager.isConfirmVisible() || popupManager.isKillConfirmVisible()) {
+            return me.isClick() && handleFooterClick(me, runner)
+                    || popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
+        }
 
         // Tab bar clicks: detect which tab was clicked and switch to it
         if (me.isClick() && lastTabsArea != null && lastTabLabels != null) {
             int tabsY = lastTabsArea.height() >= 2 ? lastTabsArea.y() + 1 : lastTabsArea.y();
             if (me.y() == tabsY && lastTabsArea.contains(me.x(), me.y())) {
-                int clickedTab = findClickedTab(me.x() - lastTabsArea.x());
+                int clickedTab = HintClicks.tabAt(lastTabLabels, lastTabDivider, me.x() - lastTabsArea.x());
                 if (clickedTab >= 0) {
                     if (isInfraSelected()) {
                         int realTab = clickedTab == 1 ? TAB_LOG : TAB_OVERVIEW;
@@ -1629,33 +1634,6 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         return false;
-    }
-
-    /**
-     * Given a click x-offset within the tab bar, determine which tab index was clicked. Returns -1 if the click falls
-     * on a divider or outside tab labels.
-     */
-    private int findClickedTab(int xOffset) {
-        if (lastTabLabels == null || lastTabDivider == null) {
-            return -1;
-        }
-        int dividerW = CharWidth.of(lastTabDivider);
-        int x = 0;
-        for (int i = 0; i < lastTabLabels.length; i++) {
-            if (i > 0) {
-                // Skip divider region
-                if (xOffset >= x && xOffset < x + dividerW) {
-                    return -1;
-                }
-                x += dividerW;
-            }
-            int tabW = lastTabLabels[i].width();
-            if (xOffset >= x && xOffset < x + tabW) {
-                return i;
-            }
-            x += tabW;
-        }
-        return -1;
     }
 
     /** A click on a key hint of the footer presses its key, as if it was typed. */
