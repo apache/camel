@@ -821,12 +821,80 @@ class DiagramTab extends AbstractDiagramTab {
         }
     }
 
+    /** The zoom for an agent: the level chosen and the one shown, fit, the folds and the mini panels. */
+    JsonObject zoomStateAsJson() {
+        RouteDiagramZoom zoom = diagram.zoom;
+        JsonObject z = new JsonObject();
+        z.put("level", zoom.density().label());
+        z.put("fit", zoom.isFit());
+        z.put("shown", topologyMode
+                ? zoom.label(diagram.getTopologyDensity())
+                : zoom.label(diagram.getRouteLayout(drillDownRouteId)));
+        if (!topologyMode && drillDownRouteId != null) {
+            z.put("foldedSteps", new JsonObject(zoom.foldedStepsOf(diagram.getRouteLayout(drillDownRouteId))));
+        }
+        z.put("foldedGroups", new JsonArray(new ArrayList<>(zoom.foldedGroups())));
+        z.put("panels", zoom.isPanels());
+        return z;
+    }
+
+    /**
+     * Zooms the diagram as an agent asks (tui_diagram_zoom): a level or fit, a step (route) or group (topology) folded
+     * or unfolded, all folded or expanded, the mini panels shown or hidden; what is not given stays as it is.
+     */
+    JsonObject zoomForAgent(
+            String level, String fold, String unfold, boolean foldAll, boolean expandAll, Boolean panels) {
+        RouteDiagramZoom zoom = diagram.zoom;
+        if ("fit".equals(level)) {
+            if (!zoom.isFit()) {
+                zoom.toggleFit();
+            }
+        } else if (level != null) {
+            zoom.setting(level);
+        }
+        String route = topologyMode ? null : drillDownRouteId;
+        var layout = route != null ? diagram.getRouteLayout(route) : null;
+        if (fold != null && layout != null && !zoom.foldedStepsOf(layout).containsKey(fold)) {
+            layout.nodes.stream().filter(n -> fold.equals(n.id)).findFirst().ifPresent(n -> zoom.toggleFold(route, n));
+        } else if (fold != null && route == null) {
+            zoom.foldedGroups().add(fold);
+        }
+        if (unfold != null && route != null) {
+            zoom.unfold(route, unfold);
+        } else if (unfold != null) {
+            zoom.foldedGroups().remove(unfold);
+        }
+        if (foldAll) {
+            if (route != null) {
+                zoom.foldAll(route, null);
+            } else {
+                RouteGroups.of(selectedSourceDirectory(), diagram.isShowErrorPaths()).values()
+                        .forEach(t -> zoom.foldedGroups().add(t.group()));
+            }
+        }
+        if (expandAll) {
+            if (route != null) {
+                zoom.expandAll(route);
+            } else {
+                zoom.foldedGroups().clear();
+            }
+        }
+        if (panels != null && panels != zoom.isPanels()) {
+            zoom.togglePanels();
+        }
+        ctx.backgroundExecutor.execute(zoom::persist);
+        diagram.endLoad();
+        reloadDiagram();
+        return zoomStateAsJson();
+    }
+
     JsonObject getDiagramStateAsJson() {
         if (!diagram.isShowDiagram()) {
             return null;
         }
         JsonObject result = new JsonObject();
         result.put("diagramMode", topologyMode ? "topology" : "route");
+        result.put("zoom", zoomStateAsJson());
 
         if (!topologyMode && drillDownRouteId != null) {
             result.put("routeId", drillDownRouteId);

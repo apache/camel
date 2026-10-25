@@ -93,6 +93,10 @@ utility, as *g* shows them) into one box, which names the group and says how man
 routes; *Space* or *Enter* on the box unfolds it, *f* folds every group and *F* unfolds them all. With the utility
 routes shown, folding the utility group keeps them one box out of the way.
 
+An AI agent connected to the TUI over MCP (`camel tui --mcp`) zooms and folds the same way with the
+`tui_diagram_zoom` tool, which without arguments says how the diagram is zoomed; `tui_get_options` reports it too,
+with the rest of the diagram's state.
+
 The mini panels over the diagram, the map of the topology at the top right of a route and the tree of the route at the
 bottom right, cover a corner of it: *p* hides them, and shows them again. Their titles say so, and the setting is kept
 for the next start.
