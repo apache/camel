@@ -109,19 +109,30 @@ release, so the interface can still change when the second plugin arrives.
 
 [source,java]
 ----
-public interface PayloadMode {
+public interface PayloadMode extends Service, CamelContextAware {
 
     /** The name, such as json, csv, cbor. */
     String getName();
 
-    /** The content type of the payload this mode writes, such as application/json. */
-    String getContentType();
+    /**
+     * The content types of the payloads of this mode, such as application/cbor and application/x-cbor. The first is
+     * the one this mode writes.
+     */
+    List<String> getContentTypes();
 
     /** Whether the value is data of this mode (for json: a JsonObject or a JsonArray). */
     boolean isData(Object value);
 
-    /** The body as data of this mode, or null when it is not a payload of this mode (the body is left as it is). */
-    Object toData(Exchange exchange, Object body);
+    /** Whether the body is a payload of this mode, which toData turns into data. */
+    boolean isPayload(Exchange exchange, Object body);
+
+    /**
+     * The payload as data of this mode. Only called when isPayload is true; throws when the payload does not parse.
+     */
+    Object toData(Exchange exchange, Object body) throws Exception;
+
+    /** A copy of the data, so the branches of an EIP that copies the exchange do not share it. */
+    Object copy(Object data);
 
     /** The wire form of the data: a String for a text format, a byte[] for a binary one. */
     Object toPayload(Exchange exchange, Object data);
@@ -131,26 +142,39 @@ public interface PayloadMode {
 }
 ----
 
+A payload mode is a service with the lifecycle of a data format: it is started with the routes that use it and
+stopped with them, and it can have options (an Avro or Protobuf schema), configured like a data format. A plugin with
+nothing to start, such as json, gets the lifecycle from the base class.
+
 A base class in camel-support holds the rule that is the same for every format, so a plugin declares its content
-types and file extensions, and brings its parser and writer:
+types and file extensions, and brings its parser, its writer and its copy:
 
-- the `Content-Type` header (and its `charset`), the file name through `MimeTypeHelper` when there is no
-  `Content-Type`, and a sniff of the content that a plugin can override (the first character for a text format, magic
-  bytes for a binary one)
-- a payload that does not parse is left as it is, logged at DEBUG: the mode never fails a message
-- a stream that stream caching has spooled to disk is left as it is: the spool threshold is the size limit, so the
+- `isPayload` reads the `Content-Type` header (and its `charset`), the file name through `MimeTypeHelper` when there is
+  no `Content-Type`, and a sniff of the content that a plugin can override (the first character for a text format,
+  magic bytes for a binary one)
+- the engine calls `toData` only when `isPayload` is true, so there is no "not mine" result to check. When it throws,
+  the engine leaves the body as it is and logs at DEBUG: the mode never fails a message
+- a stream that stream caching has spooled to disk is not a payload: the spool threshold is the size limit, so the
   mode has no size option of its own
-
-A plugin can have options (an Avro or Protobuf schema), configured like a data format.
 
 === The engine
 
 The engine part does not depend on the format.
 
 *Which bodies become data.* Where the consumer hands the message to the route, and after every step, the body is
-given to `toData` of the route's mode (where stream caching works today). So one rule covers the body of a consumer,
-the reply of a producer and the result of any step, including a language, `process`, `bean`, split and aggregate. A
-body that `isData` already is left alone, so a route that stays in its data costs a type check per step.
+given to the route's mode (where stream caching works today): when it `isData` already it is left alone, and when it
+`isPayload` it is turned into data with `toData`. So one rule covers the body of a consumer, the reply of a producer and the result of
+any step, including a language, `process`, `bean`, split and aggregate, and a route that stays in its data costs a
+type check per step.
+
+The steps of the error paths are steps too: `onException`, `doTry` / `doCatch` / `doFinally` and the error handler
+have a channel like any other step, so the hook runs there as well. A body that is not a payload, such as an exception
+or an error text, is left as it is.
+
+*Copies of the exchange.* Multicast, recipient list, wire tap and split give each branch a copy of the exchange, and
+the copies would share the same mutable data, so a branch that changes a field would change it for the others. Where
+these EIPs copy a `StreamCache` body for each branch today (`MulticastProcessor`, `WireTapProcessor`), they call
+`copy` of the payload mode for data, so each branch gets its own.
 
 *The edges.* Producers get the payload through the type converter, not by replacing the body before them:
 
@@ -164,8 +188,8 @@ body that `isData` already is left alone, so a route that stays in its data cost
   (`BytesMessage` for a binary mode). Other producers of this kind are found by a survey of the components.
 - before a remote producer (`Endpoint#isRemote()`), header values that are data of the mode, a `Map` or a `List`
   become their `toDisplay` text (not the `Camel*` headers, some of which are maps on purpose), so they survive a JMS
-  or Kafka hop; and the `Content-Type` header is set to the mode's content type unless it is already one of the
-  plugin's content types.
+  or Kafka hop; and the `Content-Type` header is set to the first of the mode's content types unless it is already
+  one of them.
 - local endpoints (`direct`, `seda`) pass the data as it is to the next route.
 
 *What users see.* `MessageHelper` (the body in logs, tracing, the backlog tracer and the dev consoles, so also Camel
@@ -177,9 +201,19 @@ TUI and the MCP tools) shows `toDisplay` of data of a payload mode, so users see
 In camel-support, with camel-util-json, so it needs no new dependency.
 
 - Data: `JsonObject` (a `LinkedHashMap`, so the field order is kept) and `JsonArray`; numbers are `BigDecimal`.
-- `toData`: parses a `String`, `byte[]`, stream or file whose `Content-Type` is `application/json` or `*+json`, or
-  with no `Content-Type` whose file name ends with `.json` or whose text starts with `{` or `[`. A `Map` becomes a
-  `JsonObject` and a `List` a `JsonArray`, their nested values too. Any other body is left as it is.
+- Payloads: a `String`, `byte[]`, stream or file whose `Content-Type` is `application/json` or `*+json`, or with no
+  `Content-Type` whose file name ends with `.json` or whose text starts with `{` or `[`; and a `Map` or a `List` that
+  converts as below. Any other body is left as it is.
+- `toData` parses the text, and converts a `Map` to a `JsonObject` and a `List` (or an array) to a `JsonArray`, with
+  their nested values:
+** a `String`, `Number`, `Boolean` and null stay as they are
+** a nested `Map`, `List` or array is converted the same way
+** a `java.util.Date`, a `java.sql.Timestamp` and the `java.time` values become their ISO-8601 text, so the rows of
+   sql (with their `Timestamp` columns) become JSON data
+** an enum becomes its name, a `UUID` its text, and a `byte[]` its base64 text
+** any other object (a POJO), or a reference back to a map or list that contains it, is not JSON data: the whole
+   `Map` or `List` is then not a payload, and is left as it is
+- `copy`: a deep copy of the `JsonObject` or `JsonArray` (their values are JSON values, so the copy is plain).
 - `toPayload` and `toDisplay`: the JSON text (`Jsoner`).
 
 So in a route with `payloadMode=json`, with no change to the languages or the EIPs:
@@ -227,7 +261,8 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 - A step that produces JSON text has it parsed back into data, `convertBodyTo: String` too. The text inside the route
   is `${bodyAs(String)}`, or `body.toJson()` in Groovy.
 - `unmarshal: json` gives a `Map`, which becomes data; `marshal: json` gives text, which becomes data again. Both are
-  no longer needed, and harmless.
+  no longer needed. They do no harm to the result, but `marshal: json` costs a write and a parse back for nothing:
+  `${bodyAs(String)}` is the cheap way to the JSON text inside the route.
 - An `unmarshal` to a class (a POJO) stays a POJO: other Java objects are left as they are.
 - Java code (`process`, `bean`) that expects the Java type of a component gets the data of the mode.
 
@@ -241,7 +276,8 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 === Order of work
 
 . camel-core: the `payloadMode` option (camel-api, camel-main, the model and the YAML and XML DSLs), the SPI and its
-  base class, the engine (the hooks, the fallback converter, header values, display), the json plugin, a user manual
+  base class, the engine (the hooks, the fallback converter, the copy for the branches of an EIP, header values,
+  display), the json plugin, a user manual
   page, and tests that run the examples of the motivation in both modes.
 . Components: JMS and SJMS, and the survey of the producers that turn a `Map` into something else.
 . Tooling: the validator, the catalog, Camel TUI and the MCP tools.
@@ -270,10 +306,9 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 
 == Risks
 
-- The data is mutable and shared: exchange copies (multicast, recipient list, wire tap, split with a shared body) refer
-  to the same `JsonObject`, so a branch that changes it changes the others. This is the same as with a `Map` body
-  today, but low-code users are less likely to expect it. A `copy` method on the SPI, used when an exchange is copied,
-  is a possible answer.
+- The data is mutable. The EIPs that copy the exchange copy the data too (see the engine), but a Java `process` or a
+  custom `AggregationStrategy` that hands the same data to two exchanges still shares it, as with a `Map` body today.
+- Copying the data for each branch costs a deep copy per branch, which fits the non-goal of the lowest overhead.
 - Producers that turn a `Map` into something other than the payload, and are not found by the survey, send the wrong
   thing in the mode.
 - Detection by sniffing can be wrong (a text that starts with `[`). The `Content-Type` wins, and a parse failure leaves
@@ -285,7 +320,6 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 - Should a route be able to have more than one payload mode (`payloadMode=json,csv`), each claiming its payloads by
   content type, with a `Map` from a step going to the first?
 - Should a `JsonObject` convert to its JSON text outside a payload mode too?
-- Do exchange copies need a deep copy of the data (the `copy` method above)?
 - The marker type for CSV rows, and the data type of XML (DOM, or a Groovy-friendly view).
 
 == Related tickets
