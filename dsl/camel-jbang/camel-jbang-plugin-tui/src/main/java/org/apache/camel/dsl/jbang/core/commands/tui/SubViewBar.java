@@ -152,10 +152,26 @@ final class SubViewBar {
             spans.add(Span.raw(" ".repeat(area.width() - used - rightWidth)));
             spans.addAll(right);
             for (int i = 0; i < rightBoxes.size(); i++) {
-                hits.add(new Hit(start + rightBoxes.get(i)[0], start + rightBoxes.get(i)[1], null, rightKeys.get(i)));
+                addSettingHits(start + rightBoxes.get(i)[0], start + rightBoxes.get(i)[1], rightKeys.get(i));
             }
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(Line.from(spans))).build(), area);
+    }
+
+    /**
+     * A setting presses its key wherever it is clicked. A setting of two keys ({@code +/-} zoom) presses the key on the
+     * side of the slash that was clicked, and its label (the mode, such as {@code compact 3/4}) presses neither.
+     */
+    private void addSettingHits(int from, int to, String key) {
+        int slash = key.indexOf('/');
+        if (slash < 0 || HintClicks.keyPair(key) == null) {
+            hits.add(new Hit(from, to, null, key));
+            return;
+        }
+        // the chip is the key between two spaces
+        int split = from + 1 + CharWidth.of(key.substring(0, slash));
+        hits.add(new Hit(from, split, null, key.substring(0, slash)));
+        hits.add(new Hit(split + 1, from + CharWidth.of(key) + 2, null, key.substring(slash + 1)));
     }
 
     /** The view under a click on the bar, or null. */
