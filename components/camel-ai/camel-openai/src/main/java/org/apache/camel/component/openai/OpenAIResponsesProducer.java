@@ -27,6 +27,7 @@ import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseFunctionToolCall;
 import com.openai.models.responses.ResponseInputItem;
+import com.openai.models.responses.Tool;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -270,7 +271,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                         .inputOfResponse(requestInput);
 
                 // Preserve non-function tools and refresh function tools from the current search state.
-                List<com.openai.models.responses.Tool> tools = new ArrayList<>();
+                List<Tool> tools = new ArrayList<>();
                 initialParams.tools().ifPresent(existing -> existing.stream()
                         .filter(tool -> !tool.isFunction())
                         .forEach(tools::add));

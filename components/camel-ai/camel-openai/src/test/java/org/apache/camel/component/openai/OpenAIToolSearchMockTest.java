@@ -66,6 +66,12 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
             .invokeTool("invoice")
             .replyWith("invoiced")
             .end()
+            .when("manual loop find invoice")
+            .invokeTool(AiToolSearch.TOOL_NAME)
+            .withParam("terms", List.of("invoice"))
+            .invokeTool("invoice")
+            .replyWith("manual-loop-invoiced")
+            .end()
             .when("mixed batch")
             .invokeTool(AiToolSearch.TOOL_NAME)
             .withParam("terms", List.of("invoice"))
@@ -150,6 +156,23 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
     }
 
     @Test
+    void manualToolExecutionReusesSearchDiscoveryWithoutExecutionMemory() {
+        String prompt = "manual loop find invoice";
+        Exchange exchange = template.request("direct:manual", e -> {
+            e.getIn().setBody(prompt);
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "manual-search-conversation");
+        });
+
+        assertNull(exchange.getException());
+        assertEquals("manual-loop-invoiced", exchange.getMessage().getBody(String.class));
+        List<List<String>> turns = toolNamesFor(prompt);
+        assertTrue(turns.size() >= 3);
+        assertTrue(turns.get(0).contains(AiToolSearch.TOOL_NAME));
+        assertFalse(turns.get(0).contains("invoice"));
+        assertTrue(turns.get(1).contains("invoice"));
+    }
+
+    @Test
     void vectorSearchFindsAndExecutesTheSemanticallyMatchingMcpTool() {
         String endpointUri = "openai:chat-completion?model=gpt-4o-mini&apiKey=dummy"
                              + "&autoToolExecution=true&toolSearch=true"
@@ -168,6 +191,14 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
         assertFalse(turns.get(0).contains("invoice"));
         assertTrue(turns.get(1).contains("get_weather"));
         assertFalse(turns.get(1).contains("invoice"));
+
+        List<RecordedRequest> embeddingRequests = openAIMock.getReceivedRequests().stream()
+                .filter(request -> request.path().endsWith("/embeddings"))
+                .toList();
+        assertEquals(2, embeddingRequests.size(), "one batch request for tools and one request for the query");
+        JsonNode batchInput = embeddingRequests.get(0).bodyAsJson().path("input");
+        assertTrue(batchInput.isArray());
+        assertEquals(2, batchInput.size());
     }
 
     @Test
@@ -350,6 +381,16 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
                             + "&toolSearch=true&toolSearchStrategy=vector"
                             + "&toolSearchEmbeddingModel=text-embedding-ada-002&toolSearchMaxResults=1"
                             + "&tags=search&baseUrl=" + base);
+                from("direct:manual")
+                        .setProperty("originalPrompt", body())
+                        .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=false"
+                            + "&conversationMemory=true&storeFullResponse=true&toolSearch=true&tags=search&baseUrl=" + base)
+                        .loopDoWhile(header(OpenAIConstants.FINISH_REASON).isEqualTo("tool_calls"))
+                        .to("openai:tool-execution?toolSearch=true&conversationMemory=false&tags=search&baseUrl=" + base)
+                        .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=false"
+                            + "&conversationMemory=true&storeFullResponse=true&toolSearch=true&tags=search&baseUrl=" + base)
+                        .end();
+
                 from("direct:limited")
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true&toolSearch=true"
                             + "&maxToolIterations=1&tags=search&baseUrl=" + base);

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.ai.tool;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Framework-neutral embedding function used by {@link AiToolSearchStrategy#VECTOR}.
  * <p>
@@ -34,4 +37,19 @@ public interface AiToolSearchEmbedder {
      * @return      the embedding vector; must be non-empty and the same length for every call on one model
      */
     float[] embed(String text);
+
+    /**
+     * Embeds multiple pieces of text. Implementations can override this method to use the model's batch API. The
+     * default implementation preserves compatibility with single-text embedding adapters.
+     *
+     * @param  texts input texts; never {@code null}
+     * @return       vectors in the same order as {@code texts}
+     */
+    default List<float[]> embedAll(List<String> texts) {
+        List<float[]> vectors = new ArrayList<>(texts.size());
+        for (String text : texts) {
+            vectors.add(embed(text));
+        }
+        return vectors;
+    }
 }

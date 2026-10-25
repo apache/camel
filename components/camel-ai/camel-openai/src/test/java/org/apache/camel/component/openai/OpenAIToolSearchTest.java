@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
+import com.openai.models.embeddings.Embedding;
 import io.modelcontextprotocol.client.McpSyncClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ai.tool.AiToolSearch;
@@ -34,6 +35,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -133,6 +135,44 @@ class OpenAIToolSearchTest {
         AiToolSearchSession nextTurn = chatSearch.openSession(
                 nextChatExchange, chatConfiguration, conversationId);
         assertEquals(List.of("invoice"), nextTurn.discoveredNames());
+    }
+
+    @Test
+    void batchEmbeddingsAreReorderedByInputIndex() {
+        List<Embedding> response = List.of(
+                Embedding.builder().index(1).embedding(List.of(0.0f, 1.0f)).build(),
+                Embedding.builder().index(0).embedding(List.of(1.0f, 0.0f)).build());
+
+        List<float[]> vectors = OpenAIToolSearch.embeddingsInInputOrder(response, 2, "test-model");
+
+        assertArrayEquals(new float[] { 1.0f, 0.0f }, vectors.get(0));
+        assertArrayEquals(new float[] { 0.0f, 1.0f }, vectors.get(1));
+    }
+
+    @Test
+    void batchEmbeddingsRejectDuplicateInputIndices() {
+        List<Embedding> response = List.of(
+                Embedding.builder().index(0).embedding(List.of(1.0f, 0.0f)).build(),
+                Embedding.builder().index(0).embedding(List.of(0.0f, 1.0f)).build());
+
+        IllegalStateException error = assertThrows(
+                IllegalStateException.class,
+                () -> OpenAIToolSearch.embeddingsInInputOrder(response, 2, "test-model"));
+
+        assertTrue(error.getMessage().contains("duplicate embedding index 0"));
+    }
+
+    @Test
+    void batchEmbeddingsRejectOutOfRangeInputIndices() {
+        List<Embedding> response = List.of(
+                Embedding.builder().index(0).embedding(List.of(1.0f, 0.0f)).build(),
+                Embedding.builder().index(2).embedding(List.of(0.0f, 1.0f)).build());
+
+        IllegalStateException error = assertThrows(
+                IllegalStateException.class,
+                () -> OpenAIToolSearch.embeddingsInInputOrder(response, 2, "test-model"));
+
+        assertTrue(error.getMessage().contains("out-of-range embedding index 2"));
     }
 
     @Test

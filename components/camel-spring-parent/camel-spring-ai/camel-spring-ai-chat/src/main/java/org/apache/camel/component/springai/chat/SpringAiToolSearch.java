@@ -197,7 +197,32 @@ final class SpringAiToolSearch {
                 return cachedIndex;
             }
 
-            AiToolSearchEmbedder embedder = strategy == AiToolSearchStrategy.VECTOR ? this::embed : null;
+            AiToolSearchEmbedder embedder = strategy == AiToolSearchStrategy.VECTOR ? new AiToolSearchEmbedder() {
+                @Override
+                public float[] embed(String text) {
+                    return SpringAiToolSearch.this.embed(text);
+                }
+
+                @Override
+                public List<float[]> embedAll(List<String> texts) {
+                    if (texts.isEmpty()) {
+                        return List.of();
+                    }
+                    List<float[]> vectors = embeddingModel.embed(texts);
+                    if (vectors == null || vectors.size() != texts.size()) {
+                        throw new IllegalStateException(
+                                "Embedding model returned an unexpected number of vectors: expected "
+                                                        + texts.size() + ", got "
+                                                        + (vectors == null ? "null" : vectors.size()));
+                    }
+                    for (int i = 0; i < vectors.size(); i++) {
+                        if (vectors.get(i) == null || vectors.get(i).length == 0) {
+                            throw new IllegalStateException("Embedding model returned no vector for input " + i);
+                        }
+                    }
+                    return vectors;
+                }
+            } : null;
             AiToolSearchIndex built = AiToolSearchIndex.create(strategy, candidates, maxResults, embedder);
             cachedFingerprint = fingerprint;
             cachedIndex = built;

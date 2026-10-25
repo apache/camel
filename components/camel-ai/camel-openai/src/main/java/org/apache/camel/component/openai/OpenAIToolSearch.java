@@ -27,6 +27,7 @@ import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import com.openai.models.chat.completions.ChatCompletionTool;
 import com.openai.models.embeddings.CreateEmbeddingResponse;
+import com.openai.models.embeddings.Embedding;
 import com.openai.models.embeddings.EmbeddingCreateParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ai.tool.AiToolSearch;
@@ -43,10 +44,11 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Selects the OpenAI tool definitions for one model call when tool search is enabled.
  * <p>
- * The shared {@link McpToolState} snapshot is not modified. Discovered names live on the exchange, and only when
- * conversation memory is enabled, so concurrent requests do not share them. Full definitions are read again from the
- * latest snapshot on every call. MCP {@code tools/list} is unchanged: search only changes which definitions are sent to
- * the model.
+ * The shared {@link McpToolState} snapshot is not modified. Discovered names are retained by conversation id when a
+ * conversation-memory chat-completion request hands a search call to {@code openai:tool-execution}; the handoff reuses
+ * that session even when conversation memory is disabled on the tool-execution endpoint. Otherwise discoveries remain
+ * exchange-scoped, so unrelated requests do not share them. Full definitions are read again from the latest snapshot on
+ * every call. MCP {@code tools/list} is unchanged: search only changes which definitions are sent to the model.
  */
 final class OpenAIToolSearch {
 
@@ -163,6 +165,13 @@ final class OpenAIToolSearch {
                 exchange.setProperty(SESSION_PROPERTY, retained);
                 return retained;
             }
+
+            // A manual loop can reach tool execution before a search result has registered a retained session.
+            // Use a session linked to the shared registry even if this tool-execution endpoint has
+            // conversationMemory=false. The session is retained only if the search discovers tools.
+            AiToolSearchSession session = sessions.session(conversationId);
+            exchange.setProperty(SESSION_PROPERTY, session);
+            return session;
         }
 
         return openSession(exchange, configuration, conversationId);
@@ -306,23 +315,85 @@ final class OpenAIToolSearch {
 
     private static AiToolSearchEmbedder embedder(OpenAIEndpoint endpoint) {
         String model = endpoint.getConfiguration().getToolSearchEmbeddingModel();
-        return text -> {
-            EmbeddingCreateParams params = EmbeddingCreateParams.builder()
-                    .model(model)
-                    .input(text)
-                    .build();
-            CreateEmbeddingResponse response = endpoint.getClient().embeddings().create(params);
-            if (response.data().isEmpty() || response.data().get(0).embedding() == null) {
-                throw new IllegalStateException("Embedding model '" + model + "' returned no vector");
+        return new AiToolSearchEmbedder() {
+            @Override
+            public float[] embed(String text) {
+                EmbeddingCreateParams params = EmbeddingCreateParams.builder()
+                        .model(model)
+                        .input(text)
+                        .build();
+                CreateEmbeddingResponse response = endpoint.getClient().embeddings().create(params);
+                if (response.data().isEmpty()) {
+                    throw new IllegalStateException("Embedding model '" + model + "' returned no vector");
+                }
+                return toVector(response.data().get(0).embedding(), 0, model);
             }
-            List<Float> values = response.data().get(0).embedding();
-            float[] vector = new float[values.size()];
-            for (int i = 0; i < values.size(); i++) {
-                Float value = values.get(i);
-                vector[i] = value == null ? 0f : value;
+
+            @Override
+            public List<float[]> embedAll(List<String> texts) {
+                if (texts.isEmpty()) {
+                    return List.of();
+                }
+                EmbeddingCreateParams params = EmbeddingCreateParams.builder()
+                        .model(model)
+                        .inputOfArrayOfStrings(texts)
+                        .build();
+                CreateEmbeddingResponse response = endpoint.getClient().embeddings().create(params);
+                return embeddingsInInputOrder(response.data(), texts.size(), model);
             }
-            return vector;
         };
+    }
+
+    /**
+     * Converts a batch response into input order, validating the API-provided indices before associating vectors with
+     * tool descriptions. The embeddings API includes an index for each vector; do not assume response list order.
+     */
+    static List<float[]> embeddingsInInputOrder(List<Embedding> data, int expectedSize, String model) {
+        if (data == null || data.size() != expectedSize) {
+            throw new IllegalStateException(
+                    "Embedding model '" + model + "' returned "
+                                            + (data == null ? "null" : data.size()) + " vectors for " + expectedSize
+                                            + " inputs");
+        }
+
+        float[][] ordered = new float[expectedSize][];
+        for (Embedding embedding : data) {
+            long reportedIndex = embedding.index();
+            if (reportedIndex < 0 || reportedIndex >= expectedSize) {
+                throw new IllegalStateException(
+                        "Embedding model '" + model + "' returned out-of-range embedding index " + reportedIndex
+                                                + " for " + expectedSize + " inputs");
+            }
+            int index = (int) reportedIndex;
+            if (ordered[index] != null) {
+                throw new IllegalStateException(
+                        "Embedding model '" + model + "' returned duplicate embedding index " + index);
+            }
+            ordered[index] = toVector(embedding.embedding(), index, model);
+        }
+
+        List<float[]> vectors = new ArrayList<>(expectedSize);
+        for (int i = 0; i < ordered.length; i++) {
+            if (ordered[i] == null) {
+                throw new IllegalStateException(
+                        "Embedding model '" + model + "' did not return embedding index " + i);
+            }
+            vectors.add(ordered[i]);
+        }
+        return vectors;
+    }
+
+    private static float[] toVector(List<Float> values, int inputIndex, String model) {
+        if (values == null || values.isEmpty()) {
+            throw new IllegalStateException(
+                    "Embedding model '" + model + "' returned no vector for input " + inputIndex);
+        }
+        float[] vector = new float[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            Float value = values.get(i);
+            vector[i] = value == null ? 0f : value;
+        }
+        return vector;
     }
 
     private static String fingerprint(OpenAIConfiguration configuration, McpToolState state) {

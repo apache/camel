@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ai.tool;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -125,6 +126,63 @@ public class AiToolSearchIndexTest {
         List<AiToolSearchCandidate> hits = index.searchVector("billing document");
         assertThat(hits).containsExactly(invoice);
         assertThat(hits.get(0).parametersJsonSchema()).isEqualTo(INVOICE_SCHEMA);
+    }
+
+    @Test
+    public void vectorBatchEmbedsCandidateTextsInOneCall() {
+        List<List<String>> batches = new ArrayList<>();
+        AiToolSearchEmbedder embedder = new AiToolSearchEmbedder() {
+            @Override
+            public float[] embed(String text) {
+                if ("invoice query".equals(text)) {
+                    return new float[] { 1f, 0f };
+                }
+                throw new AssertionError("Candidate descriptions should be embedded using embedAll: " + text);
+            }
+
+            @Override
+            public List<float[]> embedAll(List<String> texts) {
+                batches.add(List.copyOf(texts));
+                return texts.stream()
+                        .map(text -> text.startsWith("invoice\n") ? new float[] { 1f, 0f } : new float[] { 0f, 1f })
+                        .toList();
+            }
+        };
+        AiToolSearchCandidate invoice = candidate("invoice", "billing document", INVOICE_SCHEMA, true, "route");
+        AiToolSearchCandidate weather = candidate("weather", "forecast", "{}", true, "mcp");
+
+        AiToolSearchIndex index = AiToolSearchIndex.create(
+                AiToolSearchStrategy.VECTOR, List.of(invoice, weather), 2, embedder);
+
+        assertThat(batches).containsExactly(List.of("invoice\nbilling document", "weather\nforecast"));
+        assertThat(index.searchVector("invoice query")).containsExactly(invoice, weather);
+    }
+
+    @Test
+    public void vectorEmbeddingBatchesAreBounded() {
+        List<List<String>> batches = new ArrayList<>();
+        AiToolSearchEmbedder embedder = new AiToolSearchEmbedder() {
+            @Override
+            public float[] embed(String text) {
+                return new float[] { 1f, 0f };
+            }
+
+            @Override
+            public List<float[]> embedAll(List<String> texts) {
+                batches.add(List.copyOf(texts));
+                return texts.stream().map(text -> new float[] { 1f, 0f }).toList();
+            }
+        };
+        List<AiToolSearchCandidate> candidates = new ArrayList<>();
+        for (int i = 0; i < 33; i++) {
+            candidates.add(candidate("tool-" + i, "description-" + i, null, true, "route"));
+        }
+
+        AiToolSearchIndex.create(AiToolSearchStrategy.VECTOR, candidates, 5, embedder);
+
+        assertThat(batches).hasSize(2);
+        assertThat(batches.get(0)).hasSize(32);
+        assertThat(batches.get(1)).hasSize(1);
     }
 
     @Test

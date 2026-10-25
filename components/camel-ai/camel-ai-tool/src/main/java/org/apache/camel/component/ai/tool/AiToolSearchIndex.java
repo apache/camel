@@ -85,13 +85,29 @@ public final class AiToolSearchIndex {
             for (AiToolSearchCandidate candidate : searchable) {
                 texts.add(embeddingText(candidate));
             }
-            for (int i = 0; i < searchable.size(); i++) {
-                float[] vector = embedder.embed(texts.get(i));
-                if (vector == null || vector.length == 0) {
+            List<float[]> vectors = new ArrayList<>(searchable.size());
+            final int batchSize = 32;
+            for (int start = 0; start < texts.size(); start += batchSize) {
+                int end = Math.min(start + batchSize, texts.size());
+                List<String> batchTexts = texts.subList(start, end);
+                List<float[]> batchVectors = embedder.embedAll(batchTexts);
+                if (batchVectors == null || batchVectors.size() != batchTexts.size()) {
                     throw new IllegalArgumentException(
-                            "Embedding model returned an empty vector for tool '" + searchable.get(i).name() + "'");
+                            "Embedding model returned "
+                                                       + (batchVectors == null ? "null" : batchVectors.size())
+                                                       + " vectors for a batch of " + batchTexts.size() + " tool descriptions");
                 }
-                entries.add(new Entry(searchable.get(i), null, null, vector));
+                for (int i = 0; i < batchVectors.size(); i++) {
+                    float[] vector = batchVectors.get(i);
+                    if (vector == null || vector.length == 0) {
+                        throw new IllegalArgumentException(
+                                "Embedding model returned an empty vector for tool '" + searchable.get(start + i).name() + "'");
+                    }
+                    vectors.add(vector);
+                }
+            }
+            for (int i = 0; i < searchable.size(); i++) {
+                entries.add(new Entry(searchable.get(i), null, null, vectors.get(i)));
             }
         } else {
             for (AiToolSearchCandidate candidate : searchable) {
