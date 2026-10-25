@@ -1597,6 +1597,9 @@ class DiagramSupport {
         eipNodeBoxes = new ArrayList<>(finalWidget.getNodeBoxes());
         if (selectedEipNodeIndex < 0 && !eipNodeBoxes.isEmpty()) {
             selectedEipNodeIndex = 0;
+        } else if (restore != null) {
+            // a step on a branch to the right is scrolled to as well
+            scrollToSelectedEipNode();
         }
 
         vScrollState.contentLength(totalRows);

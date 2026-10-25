@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -53,6 +55,16 @@ abstract class AbstractDiagramTab extends AbstractTab {
     protected String drillDownRouteId;
     /** The routes followed from a node that calls another route, for Esc to walk back. */
     protected final Deque<String> routeNavigationStack = new ArrayDeque<>();
+    /**
+     * The step each route on the trail was left from (the one calling the next route), for Esc to select it again on
+     * its row of the screen. Following a link sets the entry of the route it leaves, so an old entry is never used.
+     */
+    protected final Map<String, LinkOrigin> linkOrigins = new HashMap<>();
+
+    /** Where a route was left by following a link: the step the link is on, and its row on the screen. */
+    record LinkOrigin(String nodeId, int screenRow) {
+    }
+
     /** Whether the detail panel of the selected node is shown, beside the route diagram. */
     protected boolean detailMode;
 
@@ -251,9 +263,15 @@ abstract class AbstractDiagramTab extends AbstractTab {
         }
         if (!topologyMode) {
             if (!routeNavigationStack.isEmpty()) {
+                var left = diagram.getRouteLayout(drillDownRouteId);
                 drillDownRouteId = routeNavigationStack.pop();
                 diagram.selectFromNode(drillDownRouteId);
                 diagram.resetScroll();
+                LinkOrigin origin = linkOrigins.remove(drillDownRouteId);
+                if (origin != null) {
+                    // back on the step the link was followed from, where it was on the screen
+                    diagram.zoom.anchor(left, origin.nodeId(), origin.screenRow());
+                }
                 return true;
             }
             leaveRoute();
@@ -367,6 +385,12 @@ abstract class AbstractDiagramTab extends AbstractTab {
             routeNavigationStack.pop();
         } else {
             routeNavigationStack.push(drillDownRouteId);
+            var from = diagram.getSelectedEipNodeBox();
+            if (from != null && from.nodeId() != null) {
+                linkOrigins.put(drillDownRouteId, new LinkOrigin(from.nodeId(), from.startRow() - diagram.getScrollY()));
+            } else {
+                linkOrigins.remove(drillDownRouteId);
+            }
         }
         drillDownRouteId = linkedRouteId;
         diagram.selectFromNode(linkedRouteId);

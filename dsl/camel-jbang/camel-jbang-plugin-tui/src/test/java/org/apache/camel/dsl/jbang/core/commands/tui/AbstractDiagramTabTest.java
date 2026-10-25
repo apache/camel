@@ -22,6 +22,10 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import dev.tamboui.tui.event.KeyEvent;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -79,6 +83,39 @@ class AbstractDiagramTabTest {
         assertThat(tab.handleEscape()).isTrue();
         assertThat(tab.topologyMode).isTrue();
         assertThat(tab.detailMode).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("tabs")
+    void escSelectsTheStepTheLinkWasFollowedFrom(Function<MonitorContext, AbstractDiagramTab> factory) {
+        AbstractDiagramTab tab = inRoute(factory, true);
+        tab.linkOrigins.put("r0", new AbstractDiagramTab.LinkOrigin("to2", 7));
+
+        assertThat(tab.handleEscape()).isTrue();
+        assertThat(tab.drillDownRouteId).isEqualTo("r0");
+
+        // the diagram of r0, drawn next, selects the step that called r1, on its row of the screen
+        RouteInfo r0 = new RouteInfo();
+        r0.routeId = "r0";
+        r0.nodes.add(node("route", "r0", 0));
+        r0.nodes.add(node("from", "from1", 1));
+        r0.nodes.add(node("to", "to1", 2));
+        r0.nodes.add(node("to", "to2", 2));
+        LayoutRoute layout = new RouteDiagramLayoutEngine().layoutRoute(r0, 0);
+        RouteDiagramZoom.Restore restore = ctx.routeZoom.restore(layout);
+        assertThat(restore).isNotNull();
+        assertThat(restore.index()).isEqualTo(2);
+        assertThat(restore.screenRow()).isEqualTo(7);
+        assertThat(tab.linkOrigins).doesNotContainKey("r0");
+    }
+
+    private static NodeInfo node(String type, String id, int level) {
+        NodeInfo n = new NodeInfo();
+        n.type = type;
+        n.id = id;
+        n.level = level;
+        n.code = type + "[" + id + "]";
+        return n;
     }
 
     @ParameterizedTest
