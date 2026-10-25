@@ -86,6 +86,9 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
     protected final ElasticsearchConfiguration configuration;
     private volatile RestClient client;
+    // true when this producer created the client, false when the client is the one of the component, which is
+    // shared by every endpoint of the component and is not this producer's to close
+    private volatile boolean clientCreated;
     private Sniffer sniffer;
 
     public ElasticsearchProducer(ElasticsearchEndpoint endpoint, ElasticsearchConfiguration configuration) {
@@ -469,14 +472,9 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             if (ctx.isConfigFrom()) {
                 message.removeHeader(ElasticsearchConstants.PARAM_FROM);
             }
-            if (configuration.isDisconnect()) {
+            if (configuration.isDisconnect() && clientCreated) {
+                closeClient();
                 IOHelper.close(ctx.getTransport());
-                if (configuration.isEnableSniffer()) {
-                    IOHelper.close(sniffer);
-                    sniffer = null;
-                }
-                IOHelper.close(client);
-                client = null;
             }
         } catch (Exception e) {
             LOG.warn("Could not execute the cleanup task", e);
@@ -500,6 +498,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                     if (configuration.getHostAddressesList() != null
                             && !configuration.getHostAddressesList().isEmpty()) {
                         client = createClient();
+                        clientCreated = true;
                     } else {
                         LOG.warn("Incorrect ip address and port parameters settings for Elasticsearch cluster");
                     }
@@ -568,14 +567,28 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (client != null) {
+        if (clientCreated) {
             LOG.info("Disconnecting from Elasticsearch cluster: {}", configuration.getClusterName());
-            client.close();
-            if (sniffer != null) {
-                sniffer.close();
-            }
+            closeClient();
         }
         super.doStop();
+    }
+
+    /**
+     * Closes the client this producer created, so that a start creates a new one.
+     */
+    private void closeClient() {
+        lock.lock();
+        try {
+            // the sniffer is closed first, it uses the client
+            IOHelper.close(sniffer);
+            sniffer = null;
+            IOHelper.close(client);
+            client = null;
+            clientCreated = false;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public RestClient getClient() {
