@@ -105,7 +105,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
             @Override
             public void configure() {
                 int threshold = 2;
-                long failureWindow = 30;
+                long failureWindow = 60000;
                 long halfOpenAfter = 1000;
                 ThrottlingExceptionRoutePolicy policy
                         = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
