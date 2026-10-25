@@ -77,13 +77,20 @@ public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
 
         // Route A sends synchronously to route B via direct (same exchange object).
         // The Future lets us wait for the exchange to fully propagate back.
+        // Set a short shutdown timeout so stopRoute("nested-b") force-stops after 1 s instead of
+        // the default 300 s. route B is a direct: consumer with no executor of its own; the inflight
+        // thread belongs to seda:caller (route A) and is not interrupted by the force-stop.
+        context.getShutdownStrategy().setTimeout(1);
+        context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
+
         Future<Object> future = template.asyncRequestBody("seda:caller", "x", Object.class);
 
         // Wait until the processor inside route B's nested EIP has entered and is blocking.
         assertTrue(entered.await(5, TimeUnit.SECONDS), "Processor did not enter within 5 seconds");
 
-        // 1. Stop route B: sets MulticastProcessor and its nested error-handler wrappers to stopped
-        //    state (isStoppingOrStopped() returns true). The thread is still blocked on the release latch.
+        // 1. Stop route B: waits up to 1 s for the inflight exchange, then force-stops.
+        //    Force-stop calls MulticastProcessor.doStop(), which stops the nested error-handler wrappers
+        //    (isStoppingOrStopped() returns true). The seda:caller thread is NOT interrupted.
         //    Route A is NOT stopped — it stays running throughout the test.
         context.getRouteController().stopRoute("nested-b");
 
