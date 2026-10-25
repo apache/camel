@@ -36,25 +36,34 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 @UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query",
              category = { Category.DATABASE }, headersClass = SqlConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map<String, Object>",
-                                   dependsOn = { "outputClass", "outputHeader" },
+                                   dependsOn = { "outputHeader", "useIterator", "outputType" }, javaTypeOption = "outputClass",
                                    byOption = {
+                                           @BodyType.When(option = "useIterator", value = "true", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, Object>",
+                                                          javaTypeOption = "outputClass"),
                                            @BodyType.When(option = "useIterator", value = "false", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "outputType", value = "SelectList", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, Object>",
+                                                          javaTypeOption = "outputClass"),
                                            @BodyType.When(option = "outputType", value = "SelectOne",
-                                                          carriers = { Carrier.MAP, Carrier.VALUE }),
+                                                          carriers = { Carrier.MAP, Carrier.VALUE },
+                                                          javaTypeOption = "outputClass"),
                                            @BodyType.When(option = "outputType", value = "StreamList",
                                                           carriers = Carrier.ITERATOR) },
-                                   description = "A row of the query: a Map of the column names and their values"),
+                                   description = "A row of the query: a Map of the column names and their values, or an"
+                                                 + " object of outputClass; with useIterator=false the List of them"),
            producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The parameters of the query: a Map for the named ones, a List or an array"
                                                 + " for the # ones; the query itself with useMessageBodyForSql"),
-           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
-                                   dependsOn = { "outputClass", "outputHeader", "noop" },
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED }, dependsOn = { "outputHeader", "noop" },
                                    byOption = {
                                            @BodyType.When(option = "outputType", value = "SelectOne",
-                                                          carriers = { Carrier.MAP, Carrier.VALUE, Carrier.NULL }),
+                                                          carriers = { Carrier.MAP, Carrier.VALUE, Carrier.NULL },
+                                                          javaTypeOption = "outputClass"),
                                            @BodyType.When(option = "outputType", value = "StreamList",
                                                           carriers = Carrier.ITERATOR) },
-                                   description = "The rows of a select: a List of Maps of the column names and their values."
+                                   description = "The rows of a select: a List of Maps of the column names and their values"
+                                                 + " (objects of outputClass when set)."
                                                  + " A query that is not a select leaves the body unchanged, with the count"
                                                  + " in the CamelSqlUpdateCount header"))
 public class SqlEndpoint extends DefaultSqlEndpoint {

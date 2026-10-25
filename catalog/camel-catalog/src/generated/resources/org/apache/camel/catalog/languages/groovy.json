@@ -17,7 +17,7 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in the variable body" },
-    "expressionOut": { "carriers": [ "unknown" ], "description": "What the script returns" }
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the script returns" }
   },
   "languageProperties": {
     

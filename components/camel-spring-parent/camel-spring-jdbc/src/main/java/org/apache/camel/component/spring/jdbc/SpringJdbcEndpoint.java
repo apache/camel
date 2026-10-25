@@ -37,12 +37,13 @@ import org.apache.camel.spi.UriEndpoint;
                                                 + " is not a statement: set the SQL as the body. With useHeadersAsParameters,"
                                                 + " the values of its placeholders come from the CamelJdbcParameters header, or"
                                                 + " else from the headers"),
-           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED }, dependsOn = "outputClass",
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
                                    byOption = {
                                            @BodyType.When(option = "outputType", value = "SelectOne",
                                                           carriers = {
                                                                   Carrier.MAP, Carrier.TEXT, Carrier.VALUE, Carrier.BYTES,
-                                                                  Carrier.POJO, Carrier.NULL, Carrier.UNCHANGED }),
+                                                                  Carrier.POJO, Carrier.NULL, Carrier.UNCHANGED },
+                                                          javaTypeOption = "outputClass"),
                                            @BodyType.When(option = "outputType", value = "StreamList",
                                                           carriers = { Carrier.ITERATOR, Carrier.UNCHANGED }) },
                                    description = "The rows of a select: a List of Maps of the column names and their values"

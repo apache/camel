@@ -21,6 +21,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
@@ -33,6 +36,8 @@ import org.apache.camel.spi.annotations.DslArg;
                         + " using registered data type transformers")
 @XmlRootElement(name = "transformDataType")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "What the data type transformer makes"))
 public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDataTypeDefinition> {
 
     @XmlAttribute

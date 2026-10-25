@@ -45,7 +45,7 @@ import org.apache.camel.support.service.ServiceSupport;
                                   description = "The JSON:API document in the stream cache, or a byte array when stream"
                                                 + " caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
-           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.NULL }, javaTypeOption = "mainFormatType",
                                     description = "The primary data as an object of the class mainFormatType names, or no body"
                                                   + " when the data is null. A document whose data is an array fails"))
 public class JsonApiDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {

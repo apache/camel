@@ -63,10 +63,10 @@ import org.slf4j.LoggerFactory;
            unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
                                    description = "CBOR data. A String fails"),
            unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
-                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" },
+                                    dependsOn = { "collectionType", "useList", "allowUnmarshallType", "allowJmsType" },
+                                    javaTypeOption = "unmarshalType",
                                     byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
-                                    description = "A Map (LinkedHashMap) for a CBOR map, a List (ArrayList) for an array;"
-                                                  + " an object of the class unmarshalType names"))
+                                    description = "A Map (LinkedHashMap) for a CBOR map, a List (ArrayList) for an array"))
 public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CBORDataFormat.class);

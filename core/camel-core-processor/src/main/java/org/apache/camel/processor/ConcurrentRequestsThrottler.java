@@ -36,6 +36,7 @@ import org.apache.camel.RouteStoppingException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +134,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
             // permit acquired
             if (state == State.ASYNC) {
                 if (LOG.isTraceEnabled()) {
-                    long queuedTime = Duration.ofNanos(System.nanoTime() - queuedStart).toMillis();
+                    long queuedTime = Duration.ofNanos(TimeSource.nanoTime() - queuedStart).toMillis();
                     LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}",
                             queuedTime, exchange.getExchangeId());
                 }
@@ -154,15 +155,15 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
         long start = 0;
         long elapsed = 0;
         if (LOG.isTraceEnabled()) {
-            start = System.nanoTime();
+            start = TimeSource.nanoTime();
         }
         throttlingState.acquire(exchange);
         if (LOG.isTraceEnabled()) {
-            elapsed = System.nanoTime() - start;
+            elapsed = Duration.ofNanos(TimeSource.nanoTime() - start).toMillis();
         }
         if (state == State.ASYNC) {
             if (LOG.isTraceEnabled()) {
-                long queuedTime = start - queuedStart;
+                long queuedTime = Duration.ofNanos(start - queuedStart).toMillis();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed,
                             exchange.getExchangeId());
@@ -184,7 +185,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
             final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
         try {
             if (LOG.isTraceEnabled()) {
-                exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIME, System.nanoTime());
+                exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIME, TimeSource.nanoTime());
             }
             exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC);
             asyncExecutor.submit(() -> process(exchange, callback));

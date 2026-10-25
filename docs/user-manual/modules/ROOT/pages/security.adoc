@@ -489,7 +489,7 @@ With Environment variables:
 
 [source,bash]
 ----
-export CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER=accessKey
+export CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER=true
 export CAMEL_VAULT_AWS_REGION=region
 ----
 
@@ -497,7 +497,7 @@ or as plain Camel main properties:
 
 [source,properties]
 ----
-camel.vault.aws.useDefaultCredentialProvider = true
+camel.vault.aws.defaultCredentialsProvider = true
 camel.vault.aws.region = region
 ----
 
@@ -597,7 +597,7 @@ or as plain Camel main properties:
 [source,properties]
 ----
 camel.vault.gcp.useDefaultInstance = true
-camel.vault.aws.projectId = projectId
+camel.vault.gcp.projectId = projectId
 ----
 
 Or by specifying a path to a service account key file, instead of using the default instance.

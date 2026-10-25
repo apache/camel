@@ -17,11 +17,13 @@
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * One side of the body types of a component, data format or language: the body a step needs, or the body it leaves
- * after it, with the default options (CAMEL-24961).
+ * One side of the body types of a component, data format, language or EIP: the body a step needs, or the body it leaves
+ * after it, with the default options (CAMEL-24961, CAMEL-25928).
  * <p/>
  * The carriers are the kinds of Java object the body is in: null, text, bytes, stream, file, value, map, list, iterator
  * and pojo; unchanged for a step that leaves the body as it was, any for a step that takes any body, and unknown for a
@@ -49,12 +51,28 @@ public class BodyTypeModel {
     public static final String EXPRESSION_IN = "expressionIn";
     /** The result of an expression of a language. */
     public static final String EXPRESSION_OUT = "expressionOut";
+    /** The bodies an EIP needs. */
+    public static final String EIP_IN = "eipIn";
+    /** The body after an EIP. */
+    public static final String EIP_OUT = "eipOut";
+    /** The body the steps of an EIP start with. */
+    public static final String EIP_STEPS = "eipSteps";
+    /** The value of {@link #getFrom()} for the body the steps of an EIP end with. */
+    public static final String FROM_STEPS = "steps";
+
+    /**
+     * The carriers of the classes a type option often names, by name, the short names Camel takes as well: java.lang
+     * without the package, and the primitives.
+     */
+    private static final Map<String, String> CARRIERS = carriers();
 
     private List<String> carriers = new ArrayList<>();
     private String javaType;
     private String format;
     private List<String> dependsOn = new ArrayList<>();
     private List<OptionBodyTypeModel> byOption = new ArrayList<>();
+    private String from;
+    private String javaTypeOption;
     private String description;
 
     /**
@@ -125,6 +143,97 @@ public class BodyTypeModel {
     }
 
     /**
+     * The side of another model the body comes from, for an EIP: such as marshalOut, the side of its data format, or
+     * steps, the body its own steps end with. Null when the carriers say the body.
+     */
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    /**
+     * The option that names the Java type of the body, such as resultType of a language: when it is set, and the
+     * options of {@link #getDependsOn()} keep their defaults, the body is of the class it names, or null, and the
+     * bodies of {@link #getByOption()} for other options do not hold. The carriers say the body when it is not set.
+     */
+    public String getJavaTypeOption() {
+        return javaTypeOption;
+    }
+
+    public void setJavaTypeOption(String javaTypeOption) {
+        this.javaTypeOption = javaTypeOption;
+    }
+
+    /**
+     * The carrier of a body of a Java type, such as a type option names: text for String, bytes for byte[], stream,
+     * file, value, map, list (a Collection or an array) and iterator, unknown for Object, which can be anything, and
+     * pojo for any other class. The type is a class name, with or without generics, or a short name Camel takes, such
+     * as String or int.
+     */
+    public static String carrierOf(String javaType) {
+        if (javaType == null || javaType.isBlank()) {
+            return "unknown";
+        }
+        String name = javaType.trim();
+        int generic = name.indexOf('<');
+        if (generic > 0) {
+            name = name.substring(0, generic).trim();
+        }
+        String answer = CARRIERS.get(name);
+        if (answer != null) {
+            return answer;
+        }
+        if (name.endsWith("[]")) {
+            return "list";
+        }
+        return "pojo";
+    }
+
+    private static Map<String, String> carriers() {
+        Map<String, String> answer = new HashMap<>();
+        for (String name : List.of("String", "java.lang.String", "java.lang.CharSequence", "java.lang.StringBuilder")) {
+            answer.put(name, "text");
+        }
+        // java.lang.byte[] is a name Camel accepts for byte[] (ObjectHelper.loadSimpleType), as in convertBodyTo
+        for (String name : List.of("byte[]", "java.lang.byte[]")) {
+            answer.put(name, "bytes");
+        }
+        for (String name : List.of("java.io.InputStream", "java.io.ByteArrayInputStream", "java.io.Reader",
+                "org.apache.camel.StreamCache")) {
+            answer.put(name, "stream");
+        }
+        for (String name : List.of("java.io.File", "java.nio.file.Path", "org.apache.camel.WrappedFile",
+                "org.apache.camel.component.file.GenericFile")) {
+            answer.put(name, "file");
+        }
+        for (String name : List.of("Boolean", "Integer", "Long", "Short", "Byte", "Float", "Double", "Character",
+                "Number")) {
+            answer.put(name, "value");
+            answer.put("java.lang." + name, "value");
+        }
+        for (String name : List.of("boolean", "int", "long", "short", "byte", "float", "double", "char",
+                "java.math.BigDecimal", "java.math.BigInteger")) {
+            answer.put(name, "value");
+        }
+        for (String name : List.of("java.util.Map", "java.util.HashMap", "java.util.LinkedHashMap", "java.util.TreeMap",
+                "java.util.Properties")) {
+            answer.put(name, "map");
+        }
+        for (String name : List.of("java.util.Collection", "java.util.List", "java.util.ArrayList",
+                "java.util.LinkedList", "java.util.Set", "java.util.HashSet", "java.util.LinkedHashSet",
+                "java.util.TreeSet")) {
+            answer.put(name, "list");
+        }
+        answer.put("java.util.Iterator", "iterator");
+        answer.put("Object", "unknown");
+        answer.put("java.lang.Object", "unknown");
+        return Map.copyOf(answer);
+    }
+
+    /**
      * Whether the body is left as it was (for the body after a step).
      */
     public boolean isUnchanged() {
@@ -137,12 +246,19 @@ public class BodyTypeModel {
      * it.
      */
     public boolean isUnknown() {
-        return carriers.isEmpty() || carriers.contains("unknown");
+        return (from == null && carriers.isEmpty()) || carriers.contains("unknown");
     }
 
     @Override
     public String toString() {
-        return String.join(", ", carriers) + (javaType != null ? " (" + javaType + ")" : "");
+        String answer = String.join(", ", carriers) + (javaType != null ? " (" + javaType + ")" : "");
+        if (from != null) {
+            answer = answer.isEmpty() ? "from:" + from : answer + " (from:" + from + ")";
+        }
+        if (javaTypeOption != null) {
+            answer = answer + " (javaTypeOption:" + javaTypeOption + ")";
+        }
+        return answer;
     }
 
     /**
@@ -154,6 +270,7 @@ public class BodyTypeModel {
         private String value;
         private List<String> carriers = new ArrayList<>();
         private String javaType;
+        private String javaTypeOption;
 
         public String getOption() {
             return option;
@@ -187,9 +304,22 @@ public class BodyTypeModel {
             this.javaType = javaType;
         }
 
+        /**
+         * The option that names the Java type of the body with this value: when it is set, the body is of the class it
+         * names, or null, and the carriers say the body when it is not set.
+         */
+        public String getJavaTypeOption() {
+            return javaTypeOption;
+        }
+
+        public void setJavaTypeOption(String javaTypeOption) {
+            this.javaTypeOption = javaTypeOption;
+        }
+
         @Override
         public String toString() {
-            return option + "=" + value + ": " + String.join(", ", carriers);
+            return option + "=" + value + ": " + String.join(", ", carriers)
+                   + (javaTypeOption != null ? " (javaTypeOption:" + javaTypeOption + ")" : "");
         }
     }
 }

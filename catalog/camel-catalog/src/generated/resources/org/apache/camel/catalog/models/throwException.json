@@ -19,5 +19,8 @@
     "message": { "index": 4, "kind": "attribute", "displayName": "Message", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The message text for the exception to be thrown. Supports simple language expressions." },
     "exceptionType": { "index": 5, "kind": "attribute", "displayName": "Exception Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The fully qualified class name of the exception to throw. Used together with message." },
     "ref": { "index": 6, "kind": "attribute", "displayName": "Ref", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Reference to an existing exception instance to lookup from the registry and throw." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "description": "Fails the exchange with the exception: the body stays as it was" }
   }
 }

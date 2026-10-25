@@ -34,7 +34,7 @@
   },
   "bodyTypes": {
     "producerIn": { "carriers": [ "any" ], "description": "The body as the language of the script reads it. The script is in the uri, the script option or a resource, or in the CamelLanguageScript header with allowTemplateFromHeader=true, and never in the body" },
-    "producerOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "transform", "value": "false", "carriers": [ "unchanged" ] }, { "option": "binary", "value": "true", "carriers": [ "stream" ] } ], "description": "The result of the script, as the language gives it. Unchanged with transform=false. With binary=true the content of the resource as a stream, which is not evaluated" }
+    "producerOut": { "carriers": [ "unknown" ], "dependsOn": [ "transform", "binary" ], "byOption": [ { "option": "transform", "value": "false", "carriers": [ "unchanged" ] }, { "option": "binary", "value": "true", "carriers": [ "stream" ] } ], "javaTypeOption": "resultType", "description": "The result of the script, as the language gives it. Unchanged with transform=false. With binary=true the content of the resource as a stream, which is not evaluated" }
   },
   "properties": {
     "languageName": { "index": 0, "kind": "path", "displayName": "Language Name", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "bean", "constant", "datasonnet", "exchangeProperty", "file", "groovy", "header", "hl7terser", "java", "joor", "jq", "js", "jsonpath", "mvel", "ognl", "python", "python3", "quickjs", "ref", "simple", "spel", "tokenize", "variable", "xpath", "xquery", "xtokenize" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Sets the name of the language to use" },

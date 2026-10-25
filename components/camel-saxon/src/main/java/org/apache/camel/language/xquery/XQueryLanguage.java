@@ -36,7 +36,8 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
                                     format = "xml", dependsOn = "source",
                                     description = "XML as text, bytes, a stream or a file, or a DOM or another"
                                                   + " javax.xml.transform.Source. A Map or no body fails"),
-           expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.Document", dependsOn = "resultType",
+           expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.Document",
+                                     javaTypeOption = "resultType",
                                      description = "The result of the query as a DOM Document. A query that gives text, a"
                                                    + " number or more than one element fails unless resultType is"
                                                    + " java.lang.String"))

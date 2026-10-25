@@ -29,6 +29,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -40,6 +43,12 @@ import org.apache.camel.spi.Metadata;
                         + " Supports parallel processing and result aggregation.")
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              dependsOn = "aggregationStrategy",
+                              description = "The body as it was before the split, unless an aggregationStrategy is set"),
+           eipSteps = @BodyType(value = Carrier.UNKNOWN,
+                                description = "Each part of what the expression gives, such as an element of a List or a line"
+                                              + " of text"))
 public class SplitDefinition extends OutputExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {
 
     @XmlTransient

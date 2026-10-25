@@ -17,7 +17,7 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in the variable body of type Object: bodyAs(type) converts it" },
-    "expressionOut": { "carriers": [ "unknown" ], "description": "What the script returns" }
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the script returns" }
   },
   "languageProperties": {
     "configResource": { "index": 0, "kind": "property", "displayName": "Config Resource", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "classpath:camel-joor.properties?optional=true", "description": "The resource with the configuration of the Java language, such as its imports and aliases. Can also be ref:name of a String bean with the configuration." },

@@ -63,7 +63,8 @@ import org.apache.camel.util.URISupport;
 @org.apache.camel.spi.annotations.Language("bean")
 @BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
                                     description = "The first parameter of the method gets the body, converted to its type"),
-           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the method returns; null for a void method"))
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, javaTypeOption = "resultType",
+                                     description = "What the method returns; null for a void method"))
 public class BeanLanguage extends TypedLanguageSupport implements ScriptingLanguage, PropertyConfigurer, StaticService {
     public static final String LANGUAGE = "bean";
 

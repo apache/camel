@@ -17,7 +17,7 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in request.body or message.body: there is no variable body" },
-    "expressionOut": { "carriers": [ "unknown" ], "description": "What the expression returns" }
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the expression returns" }
   },
   "languageProperties": {
     

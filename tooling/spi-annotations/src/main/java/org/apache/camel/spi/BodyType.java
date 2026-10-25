@@ -64,6 +64,27 @@ public @interface BodyType {
     When[] byOption() default {};
 
     /**
+     * The side of another model the body comes from, for an EIP that works with one, such as {@code marshalOut} for
+     * marshal, whose body is what its data format leaves. The side names the model: {@code expressionIn} and
+     * {@code expressionOut} the language of the EIP's expression, {@code marshalIn}, {@code marshalOut},
+     * {@code unmarshalIn} and {@code unmarshalOut} its data format, {@code producerIn} and {@code producerOut} its
+     * endpoint as a producer, and {@code consumerOut} its endpoint as a consumer. {@code steps} is the body the steps
+     * of the EIP end with, such as for a filter. A side with this needs no carriers.
+     */
+    String from() default "";
+
+    /**
+     * The option that names the Java type of the body, such as {@code resultType} of a language, whose result is
+     * converted to the class the option names. When the option is set, and the options in {@link #dependsOn()} keep
+     * their default values, the body is of that class, or null when it does not convert; the bodies {@link #byOption()}
+     * gives for other options do not hold then. The carriers say the body when it is not set. The carrier follows the
+     * class: String is text, byte[] bytes, an InputStream or a Reader a stream, a File or a Path a file, a number, a
+     * boolean or a character a value, a Map map, a List, a Set, another Collection or an array list, an Iterator
+     * iterator, Object unknown, and any other class pojo.
+     */
+    String javaTypeOption() default "";
+
+    /**
      * What to know about the body, in a sentence for the documentation and the tools.
      */
     String description() default "";
@@ -95,6 +116,13 @@ public @interface BodyType {
          * The Java type of the body with this value, when it is always of this type.
          */
         String javaType() default "";
+
+        /**
+         * The option that names the Java type of the body with this value, such as {@code outputClass} with
+         * {@code outputType=SelectOne}: when it is set, the body is of the class it names, or null, and the carriers
+         * say the body when it is not set.
+         */
+        String javaTypeOption() default "";
     }
 
     /**

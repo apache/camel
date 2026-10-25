@@ -64,7 +64,7 @@ import org.apache.camel.util.ObjectHelper;
            unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
                                    description = "One record in Avro binary encoding, as marshal writes it: unmarshal fails"
                                                  + " without instanceClassName (or a schema set in Java)"),
-           unmarshalOut = @BodyType(value = Carrier.POJO,
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaTypeOption = "instanceClassName",
                                     description = "An object of the class instanceClassName names; a GenericRecord when a"
                                                   + " schema set in Java has no class on the classpath"))
 public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
