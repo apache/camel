@@ -735,6 +735,8 @@ class RoutesTab extends AbstractDiagramTab {
                         "e", "external",
                         EXTERNAL_LABELS[externalMode].trim().replace("[", "").replace("]", "")));
             } else if (!diagram.getEipNodeBoxes().isEmpty()) {
+                toggles.add(new SubViewBar.Toggle(
+                        "+/-", "zoom", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))));
                 toggles.add(new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"));
                 toggles.add(new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
             }
@@ -756,6 +758,8 @@ class RoutesTab extends AbstractDiagramTab {
                 hint(spans, "t", "topology");
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "g", "go to");
+                hint(spans, "+/-", "zoom");
+                hint(spans, "Space", "fold");
                 hint(spans, "PgUp/PgDn", detailMode ? "detail" : "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {

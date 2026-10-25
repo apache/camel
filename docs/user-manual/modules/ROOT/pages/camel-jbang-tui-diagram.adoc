@@ -55,6 +55,24 @@ Press *t* to jump straight back to the topology from any depth.
 
 image::jbang/camel-tui-diagram-route.png[The checkout route drilled into, with the level bar on top]
 
+=== Zoom and Folding
+
+A large route takes a lot of screen. Press *-* to zoom out and *+* to zoom in, through three levels:
+
+* *detailed*: a box per step, with up to three lines of text
+* *compact*: a box per step with one line of text, and the steps closer together: about twice as many steps fit
+* *bare*: no boxes, each step is a mark and its text on one row (`▶` the from, `◆` a step with steps in it, `◇` a
+branch, `●` a step), with the counts beside the lines between them
+
+Press *z* for fit: the most detailed level in which the whole route fits the screen. The view bar shows the level
+(`zoom: compact`, or `zoom: fit bare`). Zooming keeps the selected step selected, on the same row of the screen, and
+the Info panel has the whole text of the selected step at every level.
+
+Press *Space* to fold a block (a choice, one of its branches, a split, a doTry, a filter...) into its first step,
+which then says how many steps are folded (`▸ 12 steps folded`); *Space* on a step inside a block folds that block, and
+*Space* on a folded step unfolds it. A folded block gives its rows and its columns back to the rest of the route.
+Press *f* to fold the outermost blocks of the route, and *f* again to unfold them all.
+
 === Diagram levels
 
 The Diagram tab shows one diagram at three zoom levels, and the line above it says which one you see:
@@ -86,7 +104,7 @@ labels and what capabilities achieve (the AI-assisted parts marked ✦), or rout
 endpoints and the entry points and systems of each capability. The business view is the default when
 the routes have descriptions, from their source or the AI project overview; *n*, the key of the former
 description toggle, does the same. *m* metrics and *e* external systems apply to the topology, *m*,
-*y* body types and *d* detail to a route. *g* group, in the topology, shows the architecture one level down: each route
+*y* body types, *+/-* zoom (see <<_zoom_and_folding,Zoom and Folding>>) and *d* detail to a route. *g* group, in the topology, shows the architecture one level down: each route
 box names its group (a route group, an AI capability marked ✦, shared services or utility), each group
 has the border colour of its box in the architecture, and a legend at the bottom of the topology lists
 the groups in their colours; it is on when the project has groups. *u* shows or hides the utility
@@ -247,6 +265,10 @@ camel-xml-io, while a Spring Boot or Quarkus application may not.
 | *t* | Jump to topology view
 | *m* | Toggle metrics overlay
 | *y* | In a route: show the body types each step has been reached with, beside the arrows into the steps
+| *+* / *-* | In a route: zoom in or out (detailed, compact, bare)
+| *z* | In a route: fit, the most detail in which the whole route fits the screen
+| *Space* | In a route: fold the block of the selected step, or unfold a folded step
+| *f* | In a route: fold the outermost blocks, or unfold all
 | *e* | External systems: in the topology off, edges, all; in the architecture off or edges
 | *a* | AI-assisted parts shown, or the facts alone; without a `camel-summary.md` yet, has the AI write one
 | *b* (or *n*) | Business view (labels, what capabilities achieve) or technical view (route ids, endpoints)

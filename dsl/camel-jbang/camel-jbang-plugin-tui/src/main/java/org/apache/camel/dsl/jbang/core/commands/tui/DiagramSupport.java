@@ -64,6 +64,7 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.util.json.JsonArray;
@@ -131,6 +132,8 @@ class DiagramSupport {
     private TopologyLayoutResult topologyLayout;
     private int topologyNodeWidth;
     private java.util.Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeLayouts = Collections.emptyMap();
+    /** The zoom of the route diagram, and its folded blocks; the tabs of the route diagram share theirs. */
+    RouteDiagramZoom zoom = new RouteDiagramZoom();
     private String cachedPid;
     private volatile boolean preloading;
 
@@ -979,7 +982,7 @@ class DiagramSupport {
     }
 
     /** The error frame of a route in the route view: its onException blocks, where its failures go and come from. */
-    private static RouteErrorFrame errorFrame(
+    static RouteErrorFrame errorFrame(
             RouteDiagramLayoutEngine engine, RouteDiagramLayoutEngine.LayoutRoute lr,
             List<RouteDiagramLayoutEngine.RouteInfo> blocks, String routeId, List<TopologyErrorFrame.ErrorPath> paths) {
         return RouteErrorFrame.add(engine, lr, blocks,
@@ -1547,10 +1550,18 @@ class DiagramSupport {
         Map<String, String> linkable = computeLinkableEndpoints(currentRouteId);
         Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
 
+        RouteDiagramZoom.Restore restore = zoom.restore(routeLayout);
+        if (restore != null) {
+            // zoomed or folded: the selected step stays on its row of the screen, unless the whole route fits on it
+            selectedEipNodeIndex = restore.index();
+            boolean fits = RouteDensity.rows(routeLayout) <= lastVisibleHeight;
+            scrollY = fits ? 0 : Math.max(0, restore.row() - restore.screenRow());
+        }
         // built again once the scroll is clamped to its size
         Supplier<RouteDiagramWidget> widgets = () -> new RouteDiagramWidget(
                 routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
                 showDescription, routeDescs)
+                .withDensity(zoom.densityOf(routeLayout)).withFoldedSteps(zoom.foldedStepsOf(routeLayout))
                 .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null)
                 .withErrorMark(errorMarkRouteIds().contains(currentRouteId))
                 .withBodyTypes(showBodyTypes).withBodyKindMarks(true);
@@ -2286,23 +2297,9 @@ class DiagramSupport {
                 RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                         ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                         : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
-                RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                        RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                        labelMode);
-                engine.setTableLayout(true);
-                for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                    // the happy path; the onException clauses are not its steps, and are shown in the error frame
-                    RouteErrorFrame.Split split = RouteErrorFrame.split(r);
-                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(split.happy(), 0);
-                    normalizeRouteLayoutY(lr);
-                    if (showErrors) {
-                        RouteErrorFrame frame = errorFrame(engine, lr, split.blocks(), r.routeId, loadedErrorPaths);
-                        if (frame != null) {
-                            loadedRouteFrames.put(r.routeId, frame);
-                        }
-                    }
-                    routeMap.put(r.routeId, lr);
-                }
+                // folded and zoomed (+ - z space), with the error handling in its frame below
+                routeMap.putAll(zoom.layoutRoutes(
+                        routes, labelMode, showErrors, loadedErrorPaths, loadedRouteFrames, lastVisibleHeight));
             }
         }
 

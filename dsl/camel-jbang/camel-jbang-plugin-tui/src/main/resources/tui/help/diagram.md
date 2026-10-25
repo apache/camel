@@ -91,7 +91,8 @@ say: no AI labels, notes or capabilities; it does not change the AI
 overview setting; with no summary yet it has the AI write one, as
 `/overview` does), `b` view (business: labels and what capabilities achieve;
 technical: route ids and endpoints), `m` metrics, `e` external, `y` types
-(the body types on the arrows of a route), `d` detail, `g` group, `u` utility (one setting for the architecture
+(the body types on the arrows of a route), `+/-` zoom (how much room a step of a route takes;
+fit when `z` chose it for the screen), `d` detail, `g` group, `u` utility (one setting for the architecture
 and the topology, so both show the same groups), `x` errors (the
 error handling in a frame below the routes; in the architecture
 a box of the routes reached only on error). The footer lists
@@ -240,6 +241,15 @@ you an at-a-glance view of where you are in the route.
 - `y` — show the body types each step has been reached with, beside the
   arrows into the steps
 - `g` — go to node (fuzzy search popup)
+- `+` / `-` — zoom in or out: detailed (boxes with up to three lines),
+  compact (boxes with one line, the steps closer together) and bare (a
+  mark and the text of each step on one row, no boxes); the selected
+  step stays where it is on the screen
+- `z` — fit: the most detail in which the whole route fits the screen
+- `Space` — fold the block of the selected step (a choice, a branch,
+  a split, a doTry...) into its first step, which says how many steps
+  are folded; `Space` on a folded step unfolds it
+- `f` — fold the outermost blocks of the route, or unfold all
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
 

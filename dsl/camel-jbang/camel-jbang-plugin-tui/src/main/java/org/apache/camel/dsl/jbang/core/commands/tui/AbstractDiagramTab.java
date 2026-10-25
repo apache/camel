@@ -58,6 +58,7 @@ abstract class AbstractDiagramTab extends AbstractTab {
 
     protected AbstractDiagramTab(MonitorContext ctx) {
         super(ctx);
+        diagram.zoom = ctx.routeZoom;
     }
 
     boolean isShowDiagram() {
@@ -131,6 +132,9 @@ abstract class AbstractDiagramTab extends AbstractTab {
             gotoNodePopup.open(diagram.getEipNodeBoxes(), diagram.getSelectedEipNodeIndex());
             return true;
         }
+        if (routeNodes && handleZoomKeys(ke)) {
+            return true;
+        }
         if (!topologyMode && detailMode) {
             if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
                 detail.scrollBy(-10);
@@ -185,6 +189,49 @@ abstract class AbstractDiagramTab extends AbstractTab {
             }
         }
         return false;
+    }
+
+    /**
+     * The zoom of the route diagram: + and - give the steps more or less room, z the most detail that fits the screen,
+     * space folds the block of the selected step (or unfolds it), f folds the outermost blocks or unfolds all. The
+     * selected step stays selected, on the same row of the screen.
+     */
+    private boolean handleZoomKeys(KeyEvent ke) {
+        RouteDiagramZoom zoom = diagram.zoom;
+        var selected = diagram.getSelectedEipNodeBox();
+        String anchorId = selected != null ? selected.nodeId() : null;
+        if (ke.isChar('+') || ke.isChar('=')) {
+            zoom.zoomIn();
+            ctx.backgroundExecutor.execute(zoom::persist);
+        } else if (ke.isChar('-')) {
+            zoom.zoomOut();
+            ctx.backgroundExecutor.execute(zoom::persist);
+        } else if (ke.isCharIgnoreCase('z')) {
+            zoom.toggleFit();
+            ctx.backgroundExecutor.execute(zoom::persist);
+        } else if (ke.isChar(' ')) {
+            String folded = zoom.toggleFold(drillDownRouteId, selected != null ? selected.layoutNode() : null);
+            if (folded == null) {
+                // no block to fold
+                return true;
+            }
+            anchorId = folded;
+        } else if (ke.isChar('f')) {
+            zoom.toggleFoldAll(drillDownRouteId, diagram.getRouteLayout(drillDownRouteId));
+        } else {
+            return false;
+        }
+        int screenRow = 0;
+        for (var box : diagram.getEipNodeBoxes()) {
+            if (anchorId != null && anchorId.equals(box.nodeId())) {
+                screenRow = box.startRow() - diagram.getScrollY();
+                break;
+            }
+        }
+        zoom.anchor(diagram.getRouteLayout(drillDownRouteId), anchorId, screenRow);
+        diagram.endLoad();
+        reloadDiagram();
+        return true;
     }
 
     /**

@@ -511,6 +511,7 @@ class DiagramTab extends AbstractDiagramTab {
                 yield toggles;
             }
             case ROUTE -> List.of(view, new SubViewBar.Toggle("x", "errors", errorsToggle()),
+                    new SubViewBar.Toggle("+/-", "zoom", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))),
                     new SubViewBar.Toggle("m", "metrics", metrics),
                     new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"),
                     new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
@@ -661,6 +662,8 @@ class DiagramTab extends AbstractDiagramTab {
                 hint(spans, "Esc", "back");
                 hint(spans, "c", "source");
                 hint(spans, "g", "go to");
+                hint(spans, "+/-", "zoom");
+                hint(spans, "Space", "fold");
                 hint(spans, "s", "summary");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
