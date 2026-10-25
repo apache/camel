@@ -393,38 +393,22 @@ class DiagramTab extends AbstractDiagramTab {
         if (ctx.findSelectedIntegration() == null || sourceViewer.isVisible() || !diagram.isShowDiagram()) {
             return null;
         }
-        // the levels are in the title of the diagram, as the DSLs of the Source tab are (v moves through them); the
-        // bar has the view settings of the level shown
-        return new SubViewBar.Spec(null, List.of(), viewToggles(), true);
+        // the levels lead the bar, with v that moves through them, so it is plain there are three; the view settings of
+        // the level shown are at its right
+        return new SubViewBar.Spec("v", levelViews(), viewToggles(), true);
     }
 
-    /**
-     * The levels for the title of the diagram: Architecture │ Topology │ Route, the one shown bold and the others dim,
-     * as the Source tab shows YAML │ Java │ XML. The Route level is dimmer when no route is selected to go to.
-     */
-    List<Span> levelSpans() {
+    /** The levels for the bar: the one shown highlighted, Route greyed out while no route is selected to go to. */
+    List<SubViewBar.View> levelViews() {
         Level current = level();
-        List<Span> spans = new ArrayList<>();
-        spans.add(Span.raw(" "));
-        String[] labels = { "Architecture", "Topology", "Route" };
-        Level[] levels = { Level.ARCHITECTURE, Level.TOPOLOGY, Level.ROUTE };
-        for (int i = 0; i < levels.length; i++) {
-            if (i > 0) {
-                spans.add(Span.styled(" \u2502 ", Style.EMPTY.dim()));
-            }
-            Style style = levels[i] == current ? Style.EMPTY.bold()
-                    : levels[i] == Level.ROUTE && routeCandidate() == null ? Theme.muted().dim() : Style.EMPTY.dim();
-            spans.add(Span.styled(labels[i], style));
-        }
-        spans.add(Span.raw(" "));
-        return spans;
-    }
-
-    /** The title with the levels after it. */
-    private Line withLevels(Line title) {
-        List<Span> spans = new ArrayList<>(title.spans());
-        spans.addAll(levelSpans());
-        return Line.from(spans);
+        return List.of(
+                new SubViewBar.View(
+                        "Architecture", current == Level.ARCHITECTURE, true,
+                        () -> goToLevel(Level.ARCHITECTURE)),
+                new SubViewBar.View("Topology", current == Level.TOPOLOGY, true, () -> goToLevel(Level.TOPOLOGY)),
+                new SubViewBar.View(
+                        "Route", current == Level.ROUTE, routeCandidate() != null,
+                        () -> goToLevel(Level.ROUTE)));
     }
 
     /**
@@ -547,7 +531,7 @@ class DiagramTab extends AbstractDiagramTab {
         }
 
         if (architecture.isActive()) {
-            architecture.render(frame, area, info.name, levelSpans());
+            architecture.render(frame, area, info.name, List.of());
             return;
         }
 
@@ -557,7 +541,7 @@ class DiagramTab extends AbstractDiagramTab {
             if (topologyMode && diagram.hasNativeLayout()) {
                 Line title;
                 if (info.name != null) {
-                    // the level is named by the levels after it, as on the Source tab
+                    // the level is named by the bar above
                     title = Line.from(
                             Span.raw(" Diagram ["),
                             Span.styled(info.name, Theme.label().bold()),
@@ -565,7 +549,6 @@ class DiagramTab extends AbstractDiagramTab {
                 } else {
                     title = Line.from(Span.raw(" Diagram "));
                 }
-                title = withLevels(title);
                 if (selectedRouteId != null && area.width() > 60) {
                     infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
@@ -583,10 +566,10 @@ class DiagramTab extends AbstractDiagramTab {
             } else if (!topologyMode && drillDownRouteId != null
                     && diagram.getRouteLayout(drillDownRouteId) != null) {
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
-                Line title = withLevels(diagram.zoom.withStepCount(DiagramDetailSupport.withRouteContext(
+                Line title = diagram.zoom.withStepCount(DiagramDetailSupport.withRouteContext(
                         DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), info,
                         drillDownRouteId, selectedSourceDirectory(), isShowGroups(), diagram.isShowErrorPaths()),
-                        drillDownRouteId, routeLayout));
+                        drillDownRouteId, routeLayout);
                 if (area.width() > 60) {
                     infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
@@ -648,10 +631,6 @@ class DiagramTab extends AbstractDiagramTab {
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
             return;
-        }
-        if (diagram.isShowDiagram() && ctx.findSelectedIntegration() != null) {
-            // the levels are in the title of the diagram
-            hint(spans, "v", "level");
         }
         if (architecture.isActive()) {
             architecture.renderFooter(spans);

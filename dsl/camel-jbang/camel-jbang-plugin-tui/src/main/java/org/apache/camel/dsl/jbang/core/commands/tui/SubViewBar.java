@@ -85,7 +85,7 @@ final class SubViewBar {
             spans.add(Span.raw(" "));
             x += CharWidth.of(key) + 1;
         }
-        String separator = spec.levels() ? "  ›  " : "  │  ";
+        String separator = spec.levels() ? " › " : "  │  ";
         List<View> views = spec.views();
         for (int i = 0; i < views.size(); i++) {
             View v = views.get(i);

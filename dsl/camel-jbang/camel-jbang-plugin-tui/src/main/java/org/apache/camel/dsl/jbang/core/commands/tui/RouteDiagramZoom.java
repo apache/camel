@@ -245,7 +245,7 @@ final class RouteDiagramZoom {
         for (int n : foldedStepsOf(shown).values()) {
             hidden += n;
         }
-        String text = steps + (steps == 1 ? " step" : " steps") + (hidden > 0 ? " · " + hidden + " folded" : "") + " ";
+        String text = "· " + steps + (steps == 1 ? " step" : " steps") + (hidden > 0 ? " · " + hidden + " folded" : "") + " ";
         List<Span> spans = new ArrayList<>(title.spans());
         spans.add(Span.styled(text, Theme.muted()));
         return Line.from(spans);

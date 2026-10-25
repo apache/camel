@@ -126,12 +126,12 @@ class RouteDiagramZoomTest {
         LayoutRoute lr = layout(zoom, 0);
         assertThat(zoom.stepCount("orders")).isEqualTo(9);
         assertThat(text(zoom.withStepCount(Line.from(" Route [orders] "), "orders", lr)))
-                .isEqualTo(" Route [orders] 9 steps ");
+                .isEqualTo(" Route [orders] · 9 steps ");
 
         zoom.toggleFold("orders", find(lr, "choice1"));
         lr = layout(zoom, 0);
         assertThat(text(zoom.withStepCount(Line.from(" Route [orders] "), "orders", lr)))
-                .isEqualTo(" Route [orders] 9 steps · 5 folded ");
+                .isEqualTo(" Route [orders] · 9 steps · 5 folded ");
         // a route not laid out yet: the title as it is
         assertThat(text(zoom.withStepCount(Line.from(" Route [other] "), "other", lr))).isEqualTo(" Route [other] ");
     }
