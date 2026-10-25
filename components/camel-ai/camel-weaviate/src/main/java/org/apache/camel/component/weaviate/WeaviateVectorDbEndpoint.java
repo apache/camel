@@ -48,21 +48,61 @@ import org.apache.camel.support.DefaultEndpoint;
              },
              headersClass = WeaviateVectorDbHeaders.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.LIST, Carrier.TEXT, Carrier.NULL },
-                                  description = "By the action in the CamelWeaviateAction header: the vector as a List of"
-                                                + " Float or a float array for CREATE, UPDATE_BY_ID and QUERY, with the"
-                                                + " properties in the CamelWeaviateProperties header, a List of"
-                                                + " WeaviateObject for BATCH_CREATE, and the query text for HYBRID_QUERY"
-                                                + " and BM25_QUERY. CREATE_COLLECTION, DELETE_COLLECTION, QUERY_BY_ID,"
-                                                + " DELETE_BY_ID and AGGREGATE do not read the body, the id is in the"
-                                                + " CamelWeaviateIndexId header. Another body fails, a List of Double too:"
-                                                + " the weaviate:embeddings data type transformer builds the vector from"
-                                                + " the output of langchain4j-embeddings"),
+                                  byOption = {
+                                          @BodyType.When(option = "action", value = "CREATE", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "BATCH_CREATE", carriers = Carrier.LIST,
+                                                         javaType = "java.util.List<io.weaviate.client6.v1.api.collections.WeaviateObject<java.util.Map<java.lang.String, java.lang.Object>>>"),
+                                          @BodyType.When(option = "action", value = "UPDATE_BY_ID", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "QUERY", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "HYBRID_QUERY", carriers = Carrier.TEXT,
+                                                         javaType = "java.lang.String"),
+                                          @BodyType.When(option = "action", value = "BM25_QUERY", carriers = Carrier.TEXT,
+                                                         javaType = "java.lang.String"),
+                                          @BodyType.When(option = "action", value = "CREATE_COLLECTION",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "DELETE_COLLECTION",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "QUERY_BY_ID", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "DELETE_BY_ID", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "AGGREGATE", carriers = Carrier.ANY) },
+                                  description = "By the action in the action option or the CamelWeaviateAction header: the vector as a"
+                                                + " List of Float or a float array for CREATE, UPDATE_BY_ID and QUERY, with the properties"
+                                                + " in the CamelWeaviateProperties header, a List of WeaviateObject for BATCH_CREATE, and"
+                                                + " the query text for HYBRID_QUERY and BM25_QUERY. CREATE_COLLECTION, DELETE_COLLECTION,"
+                                                + " QUERY_BY_ID, DELETE_BY_ID and AGGREGATE do not read the body, the id is in the"
+                                                + " CamelWeaviateIndexId header. Another body fails, a List of Double too: the"
+                                                + " weaviate:embeddings data type transformer builds the vector from the output of"
+                                                + " langchain4j-embeddings"),
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.VALUE },
-                                   description = "By the action: a WeaviateObject for CREATE, an InsertManyResponse for"
-                                                 + " BATCH_CREATE, a QueryResponse for QUERY, HYBRID_QUERY and BM25_QUERY,"
-                                                 + " an Optional of WeaviateObject for QUERY_BY_ID, an AggregateResponse"
-                                                 + " for AGGREGATE, and a Boolean for CREATE_COLLECTION, UPDATE_BY_ID,"
-                                                 + " DELETE_BY_ID and DELETE_COLLECTION"))
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "CREATE", carriers = Carrier.POJO,
+                                                          javaType = "io.weaviate.client6.v1.api.collections.WeaviateObject<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "action", value = "BATCH_CREATE", carriers = Carrier.POJO,
+                                                          javaType = "io.weaviate.client6.v1.api.collections.data.InsertManyResponse"),
+                                           @BodyType.When(option = "action", value = "QUERY", carriers = Carrier.POJO,
+                                                          javaType = "io.weaviate.client6.v1.api.collections.query.QueryResponse<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "action", value = "HYBRID_QUERY", carriers = Carrier.POJO,
+                                                          javaType = "io.weaviate.client6.v1.api.collections.query.QueryResponse<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "action", value = "BM25_QUERY", carriers = Carrier.POJO,
+                                                          javaType = "io.weaviate.client6.v1.api.collections.query.QueryResponse<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "action", value = "QUERY_BY_ID", carriers = Carrier.POJO,
+                                                          javaType = "java.util.Optional<io.weaviate.client6.v1.api.collections.WeaviateObject<java.util.Map<java.lang.String, java.lang.Object>>>"),
+                                           @BodyType.When(option = "action", value = "AGGREGATE", carriers = Carrier.POJO,
+                                                          javaType = "io.weaviate.client6.v1.api.collections.aggregate.AggregateResponse"),
+                                           @BodyType.When(option = "action", value = "CREATE_COLLECTION",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "action", value = "UPDATE_BY_ID", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "action", value = "DELETE_BY_ID", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "action", value = "DELETE_COLLECTION",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "By the action: a WeaviateObject for CREATE, an InsertManyResponse for BATCH_CREATE, a"
+                                                 + " QueryResponse for QUERY, HYBRID_QUERY and BM25_QUERY, an Optional of WeaviateObject for"
+                                                 + " QUERY_BY_ID, an AggregateResponse for AGGREGATE, and a Boolean for CREATE_COLLECTION,"
+                                                 + " UPDATE_BY_ID, DELETE_BY_ID and DELETE_COLLECTION"))
 public class WeaviateVectorDbEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

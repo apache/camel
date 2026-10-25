@@ -47,18 +47,38 @@ import org.apache.camel.support.DefaultEndpoint;
              },
              headersClass = PgVectorHeaders.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.LIST, Carrier.NULL },
-                                  description = "By the action in the CamelPgVectorAction header: the vector as a List of"
-                                                + " Float or a float array for UPSERT and SIMILARITY_SEARCH, with the id,"
-                                                + " text and metadata of UPSERT in headers. CREATE_TABLE, CREATE_INDEX,"
-                                                + " DROP_TABLE and DELETE do not read the body, DELETE takes the id from"
-                                                + " the CamelPgVectorRecordId header. Another body fails, a List of Double"
-                                                + " too: the pgvector:embeddings data type transformer builds the vector"
-                                                + " from the output of langchain4j-embeddings"),
+                                  byOption = {
+                                          @BodyType.When(option = "action", value = "UPSERT", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "SIMILARITY_SEARCH",
+                                                         carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "CREATE_TABLE", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "CREATE_INDEX", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "DROP_TABLE", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "DELETE", carriers = Carrier.ANY) },
+                                  description = "By the action in the action option or the CamelPgVectorAction header: the vector as a"
+                                                + " List of Float or a float array for UPSERT and SIMILARITY_SEARCH, with the id, text and"
+                                                + " metadata of UPSERT in headers. CREATE_TABLE, CREATE_INDEX, DROP_TABLE and DELETE do not"
+                                                + " read the body, DELETE takes the id from the CamelPgVectorRecordId header. Another body"
+                                                + " fails, a List of Double too: the pgvector:embeddings data type transformer builds the"
+                                                + " vector from the output of langchain4j-embeddings"),
            producerOut = @BodyType(value = { Carrier.VALUE, Carrier.TEXT, Carrier.LIST },
-                                   description = "By the action: a Boolean for CREATE_TABLE, CREATE_INDEX, DROP_TABLE and"
-                                                 + " DELETE (false when no record had the id), the record id as a String"
-                                                 + " for UPSERT, and a List of Map with the keys id, text_content, metadata"
-                                                 + " and distance for SIMILARITY_SEARCH"))
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "CREATE_TABLE", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "action", value = "CREATE_INDEX", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "action", value = "DROP_TABLE", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "action", value = "DELETE", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "action", value = "UPSERT", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "action", value = "SIMILARITY_SEARCH",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>") },
+                                   description = "By the action: a Boolean for CREATE_TABLE, CREATE_INDEX, DROP_TABLE and DELETE (false"
+                                                 + " when no record had the id), the record id as a String for UPSERT, and a List of Map with"
+                                                 + " the keys id, text_content, metadata and distance for SIMILARITY_SEARCH"))
 public class PgVectorEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

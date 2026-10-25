@@ -24,6 +24,9 @@ milvus:collection[?options]
 
 Where *collection* represents a named set of points (vectors with a payload) defined in your database.
 
+The `action` option of the endpoint, or the `CamelMilvusAction` header, selects the action, such as `milvus:myCollection?action=SEARCH`.
+The header, when set, wins over the option, so one endpoint can also run several actions. Without either, the producer fails.
+
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -270,5 +273,6 @@ This is particularly important when you design your Milvus database.
 
 The transformer only supports insert/upsert objects, so the only operation you can set via header are INSERT and UPSERT,
 otherwise the transformer will fail with an error log.
+The transformer runs before the endpoint, so it reads the `CamelMilvusAction` header only, not the `action` option of the endpoint.
 
 

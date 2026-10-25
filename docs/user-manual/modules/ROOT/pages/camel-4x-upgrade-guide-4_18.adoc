@@ -465,6 +465,13 @@ the arguments of the call, as in `Error invoking resourceById with [password, re
 username]: ...`, and no longer shows their values. The arguments hold the options of the endpoint, such as a password or
 a token, and the message data. The debug log of the call masks the values of the sensitive options.
 
+=== camel-vertx - standalone TrustManager on SSLContextParameters is applied
+
+When configuring TLS through `SSLContextParameters` with a standalone `TrustManager` instance (via `TrustManagersParameters.setTrustManager(...)`), Vert.x components now wrap and apply the configured `TrustManager`. Previously, only `TrustAllTrustManager.INSTANCE` and KeyStore-backed configurations were applied, and other standalone `TrustManager` instances were not set on the underlying Vert.x options.
+
+When both a `TrustManager` and a keystore are configured on `TrustManagersParameters`, the `TrustManager` is now used,
+as with the other components that use `SSLContextParameters`; before, the keystore-based trust options were used.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs

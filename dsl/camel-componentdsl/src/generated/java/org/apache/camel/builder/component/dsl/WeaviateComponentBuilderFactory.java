@@ -51,6 +51,23 @@ public interface WeaviateComponentBuilderFactory {
     interface WeaviateComponentBuilder extends ComponentBuilder<WeaviateVectorDbComponent> {
     
         /**
+         * The action to perform. The CamelWeaviateAction header, when set, wins
+         * over this option.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.weaviate.WeaviateVectorDbAction&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default WeaviateComponentBuilder action(org.apache.camel.component.weaviate.WeaviateVectorDbAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+    
+        /**
          * API Key to authenticate to weaviate with.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -212,6 +229,7 @@ public interface WeaviateComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "action": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setAction((org.apache.camel.component.weaviate.WeaviateVectorDbAction) value); return true;
             case "apiKey": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setApiKey((java.lang.String) value); return true;
             case "configuration": ((WeaviateVectorDbComponent) component).setConfiguration((org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration) value); return true;
             case "grpcHost": getOrCreateConfiguration((WeaviateVectorDbComponent) component).setGrpcHost((java.lang.String) value); return true;

@@ -36,6 +36,7 @@
     <properties>
         <firstVersion>4.21.0</firstVersion>
         <label>ai</label>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>
