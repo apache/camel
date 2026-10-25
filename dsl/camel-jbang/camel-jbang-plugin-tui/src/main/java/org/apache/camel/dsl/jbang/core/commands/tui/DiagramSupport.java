@@ -2212,7 +2212,7 @@ class DiagramSupport {
             List<TopologyNodeInfo> errorNodes = frameRoutes.routes();
             removeRoutes(nodes, edges, hidden);
             // the zoom: a density, or with fit the most detail in which the topology fits the screen
-            topoDensity = zoom.isFit() ? RouteDensity.DETAILED : zoom.density();
+            topoDensity = zoom.isFit() ? RouteDensity.DETAILED : zoom.density().forTopology();
             while (true) {
                 int columns = TopologyZoom.columns(topoDensity, boxColumns);
                 nodeW = engineFor(columns).getNodeWidth();

@@ -123,7 +123,7 @@ final class DiagramLayouts {
         int names = lines.values().stream().filter(l -> !l.isEmpty()).mapToInt(l -> l.get(0).text().length()).max()
                 .orElse(12);
         int nameBox = Math.max(16, Math.min(44, names + 5));
-        RouteDensity density = zoom.isFit() ? RouteDensity.DETAILED : zoom.density();
+        RouteDensity density = zoom.isFit() ? RouteDensity.DETAILED : zoom.density().forTopology();
         TopologyLayoutEngine engine = DiagramSupport.engineFor(density == RouteDensity.DETAILED ? box : nameBox);
         TopologyLayoutResult result = zoomed(engine, density, nodes, edges);
         while (zoom.isFit() && density != RouteDensity.BARE

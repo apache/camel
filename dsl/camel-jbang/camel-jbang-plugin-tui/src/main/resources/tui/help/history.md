@@ -143,7 +143,7 @@ Press `Esc` to navigate back one route in drill-down mode.
 - `Tab` — switch focus between the table and the detail panel
 - `d` — toggle route diagram (open and close)
 - `+` / `-` — zoom the route diagram in or out (detailed, compact,
-  bare), `z` — fit; the zoom is the one of the Diagram and Routes tabs
+  bare, overview), `z` — fit; the zoom is the one of the Diagram and Routes tabs
 - `Esc` — back to list / back one route in diagram drill-down
 - `i` — cycle info panel size (narrow / wide / full) in diagram
 - `n` — toggle description mode

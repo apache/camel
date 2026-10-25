@@ -41,12 +41,12 @@ public final class TopologyZoom {
 
     /** The rows of a box at the density; the detailed box has as many as its lines need. */
     public static int boxRows(RouteDensity density) {
-        return density == RouteDensity.BARE ? 1 : 3;
+        return density.boxed() ? 3 : 1;
     }
 
     /** The rows from one layer to the next: a box, and room for the arrows that branch between them. */
     private static int step(RouteDensity density) {
-        return density == RouteDensity.BARE ? 4 : 6;
+        return density.boxed() ? 6 : 4;
     }
 
     /** How many columns wide the boxes are laid out: as wide as wanted when detailed, narrower when zoomed out. */
@@ -54,7 +54,7 @@ public final class TopologyZoom {
         return switch (density) {
             case DETAILED -> wanted;
             case COMPACT -> Math.min(wanted, COMPACT_COLUMNS);
-            case BARE -> BARE_COLUMNS;
+            case BARE, OVERVIEW -> BARE_COLUMNS;
         };
     }
 

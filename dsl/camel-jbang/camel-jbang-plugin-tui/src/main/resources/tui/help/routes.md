@@ -170,8 +170,10 @@ in the diagram.
 - `g` — go to node (fuzzy search popup)
 - `+` / `-` — zoom in or out: detailed (boxes with up to three lines),
   compact (the default: boxes with one line, the steps closer together) and bare (a
-  mark and the text of each step on one row, no boxes); the view bar
-  shows the level and where it is (`compact 2/3`), the title how many
+  mark and the text of each step on one row, no boxes) and overview
+  (a cell per step, to see the shape of a large route, only the
+  selected step with its text); the view bar
+  shows the level and where it is (`compact 3/4`), the title how many
   steps the route has and how many are folded (`38 steps · 12 folded`);
   the selected step stays where it is on the screen
 - `z` — fit: the most detail in which the whole route fits the screen

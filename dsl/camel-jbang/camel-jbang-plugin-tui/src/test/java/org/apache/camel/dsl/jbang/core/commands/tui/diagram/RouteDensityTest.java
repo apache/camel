@@ -115,6 +115,34 @@ class RouteDensityTest {
     }
 
     @Test
+    void anOverviewStepIsACellOnlyTheSelectedOneWithItsText() {
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        engine.setTableLayout(true);
+        LayoutRoute lr = engine.layoutRoute(route(), 0);
+        RouteDensity.OVERVIEW.apply(lr);
+        // the boxes: from (0), log (1), choice (2)
+        RouteDiagramWidget widget = new RouteDiagramWidget(
+                lr, engine.getNodeWidth(), 2, 0, 0, false, Map.of(), false, Map.of(), Set.of(), false)
+                .withDensity(RouteDensity.OVERVIEW);
+        Rect area = new Rect(0, 0, 100, 40);
+        Buffer buffer = Buffer.empty(area);
+        widget.render(area, buffer);
+        StringBuilder sb = new StringBuilder();
+        for (int y = 0; y < area.height(); y++) {
+            for (int x = 0; x < area.width(); x++) {
+                sb.append(buffer.get(x, y).symbol());
+            }
+            sb.append('\n');
+        }
+        String all = sb.toString();
+
+        assertThat(all).contains("▶").contains("■").contains("◆ choice");
+        assertThat(all).doesNotContain("kafka:orders").doesNotContain("jms:queue");
+        assertThat(all.lines().filter(l -> !l.isBlank()).count())
+                .isLessThan(render(RouteDensity.BARE).size());
+    }
+
+    @Test
     void aCompactStepIsABoxWithOneLine() {
         String all = String.join("\n", render(RouteDensity.COMPACT));
         assertThat(all).contains("┌").contains("▼");
@@ -180,8 +208,11 @@ class RouteDensityTest {
 
     @Test
     void thePositionCountsUpAsTheDiagramZoomsIn() {
-        assertThat(RouteDensity.BARE.position()).isEqualTo("1/3");
-        assertThat(RouteDensity.COMPACT.position()).isEqualTo("2/3");
-        assertThat(RouteDensity.DETAILED.position()).isEqualTo("3/3");
+        assertThat(RouteDensity.OVERVIEW.position()).isEqualTo("1/4");
+        assertThat(RouteDensity.BARE.position()).isEqualTo("2/4");
+        assertThat(RouteDensity.COMPACT.position()).isEqualTo("3/4");
+        assertThat(RouteDensity.DETAILED.position()).isEqualTo("4/4");
+        // the topology goes no further than bare: routes are names
+        assertThat(RouteDensity.OVERVIEW.forTopology()).isEqualTo(RouteDensity.BARE);
     }
 }

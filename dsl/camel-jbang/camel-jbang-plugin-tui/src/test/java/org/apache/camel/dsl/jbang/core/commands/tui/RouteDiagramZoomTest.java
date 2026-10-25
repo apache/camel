@@ -148,7 +148,7 @@ class RouteDiagramZoomTest {
         assertThat(zoom.density()).isEqualTo(RouteDensity.COMPACT);
         LayoutRoute lr = layout(zoom, 0);
         assertThat(zoom.densityOf(lr)).isEqualTo(RouteDensity.COMPACT);
-        assertThat(zoom.label(lr)).isEqualTo("compact 2/3");
+        assertThat(zoom.label(lr)).isEqualTo("compact 3/4");
     }
 
     @Test
@@ -162,9 +162,13 @@ class RouteDiagramZoomTest {
         assertThat(zoom.densityOf(compact)).isEqualTo(RouteDensity.COMPACT);
         assertThat(RouteDensity.rows(compact)).isLessThan(detailed);
         zoom.zoomOut();
-        zoom.zoomOut();
         assertThat(zoom.density()).isEqualTo(RouteDensity.BARE);
         int bare = RouteDensity.rows(layout(zoom, 0));
+        zoom.zoomOut();
+        zoom.zoomOut();
+        assertThat(zoom.density()).isEqualTo(RouteDensity.OVERVIEW);
+        int overview = RouteDensity.rows(layout(zoom, 0));
+        assertThat(overview).isLessThan(bare);
 
         // fit: the most detail that fits the rows
         zoom.toggleFit();
@@ -174,11 +178,12 @@ class RouteDiagramZoomTest {
         assertThat(zoom.densityOf(fitted)).isEqualTo(RouteDensity.BARE);
         // the route starts at the top, as without fit
         assertThat(find(fitted, "from1").y).isEqualTo(40);
-        assertThat(zoom.label(layout(zoom, bare))).isEqualTo("fit bare 1/3");
+        assertThat(zoom.label(layout(zoom, bare))).isEqualTo("fit bare 2/4");
+        assertThat(zoom.densityOf(layout(zoom, overview))).isEqualTo(RouteDensity.OVERVIEW);
         // a zoom key leaves fit
         zoom.zoomIn();
         assertThat(zoom.isFit()).isFalse();
-        assertThat(zoom.density()).isEqualTo(RouteDensity.COMPACT);
+        assertThat(zoom.density()).isEqualTo(RouteDensity.BARE);
     }
 
     @Test

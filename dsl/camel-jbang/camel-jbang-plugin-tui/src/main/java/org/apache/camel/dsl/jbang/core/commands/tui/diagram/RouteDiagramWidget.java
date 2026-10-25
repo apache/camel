@@ -52,6 +52,8 @@ public class RouteDiagramWidget implements Widget {
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
     private static final int MAX_WRAP_LINES = 3;
+    /** The columns of a step at the overview density: its cell, and the room to the next branch. */
+    private static final int OVERVIEW_COLUMNS = 2;
     /** The widest the body types beside an arrow are: the Info panel has them all. */
     private static final int MAX_BODY_TYPES_WIDTH = 48;
     /** The room a count at the head of an arrow takes before the body types, at most. */
@@ -63,7 +65,7 @@ public class RouteDiagramWidget implements Widget {
 
     private final LayoutRoute layoutRoute;
     private final int nodeWidth;
-    private final int boxWidth;
+    private int boxWidth;
     private final int selectedNodeIndex;
     private final int scrollX;
     private final int scrollY;
@@ -192,7 +194,11 @@ public class RouteDiagramWidget implements Widget {
                 continue;
             }
             if (ln.treeNode != null && ln.treeNode.table) {
-                drawTable(buffer, area, ln);
+                if (density == RouteDensity.OVERVIEW) {
+                    drawOverviewTable(buffer, area, ln);
+                } else {
+                    drawTable(buffer, area, ln);
+                }
             } else if (!"route".equals(ln.type)) {
                 drawNode(buffer, area, ln);
             }
@@ -272,6 +278,10 @@ public class RouteDiagramWidget implements Widget {
     /** How much room a step takes: the layout must have been placed with the same density. */
     public RouteDiagramWidget withDensity(RouteDensity density) {
         this.density = density != null ? density : RouteDensity.DETAILED;
+        if (this.density == RouteDensity.OVERVIEW) {
+            // a step is a cell: the branches a few columns apart
+            this.boxWidth = OVERVIEW_COLUMNS;
+        }
         return this;
     }
 
@@ -377,8 +387,19 @@ public class RouteDiagramWidget implements Widget {
 
     /** The mark on the top border of the from box, at its right end (the route has error handling). */
     private void drawErrorMark(Buffer buffer, Rect area) {
+        if (density == RouteDensity.OVERVIEW) {
+            // a cell has no room for it
+            return;
+        }
+        for (EipNodeBox box : density.boxed() ? List.<EipNodeBox> of() : nodeBoxes) {
+            if ("from".equals(box.type())) {
+                // after the text of a bare from
+                writeText(buffer, area, box.startRow(), box.endCol() + 2, "\u26a1", Theme.warning().dim());
+                return;
+            }
+        }
         for (LayoutNode ln : layoutRoute.nodes) {
-            if ("from".equals(ln.type)) {
+            if (density.boxed() && "from".equals(ln.type)) {
                 int col = toCol(ln.x) + boxWidth - 3;
                 writeText(buffer, area, toRow(ln.y), col, "\u26a1",
                         org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning().dim());
@@ -444,6 +465,10 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private void drawNode(Buffer buffer, Rect area, LayoutNode node) {
+        if (density == RouteDensity.OVERVIEW) {
+            drawOverviewNode(buffer, area, node);
+            return;
+        }
         if (!density.boxed()) {
             drawBareNode(buffer, area, node);
             return;
@@ -565,7 +590,10 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed, external, bothHighlighted);
-        addArrowEnd(to, fromCx, fromBottom, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
+        if (density != RouteDensity.OVERVIEW) {
+            // the steps of the overview are next to each other: no room for a count
+            addArrowEnd(to, fromCx, fromBottom, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
+        }
     }
 
     private void drawMergeArrow(Buffer buffer, Rect area, LayoutNode to) {
@@ -582,7 +610,9 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed, false, highlighted);
-        addArrowEnd(to, fromCx, fromRow, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
+        if (density != RouteDensity.OVERVIEW) {
+            addArrowEnd(to, fromCx, fromRow, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
+        }
     }
 
     private void drawArrowPath(
@@ -768,6 +798,9 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private int boxHeight(LayoutNode node) {
+        if (density == RouteDensity.OVERVIEW) {
+            return 1;
+        }
         if (node.treeNode != null && node.treeNode.table) {
             return 2 + tableVisibleRows(node.treeNode.children.size());
         }
@@ -1028,6 +1061,61 @@ public class RouteDiagramWidget implements Widget {
         }
         addFoldedMarker(node, row, end);
         nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row, col, col + 2 + CharWidth.of(text), node));
+    }
+
+    /**
+     * A step at the overview density: a cell in the colour of its EIP, red when the step has failed, where the arrows
+     * meet; the selected step has its text beside it, so the shape of a large route shows and where you are in it.
+     */
+    private void drawOverviewNode(Buffer buffer, Rect area, LayoutNode node) {
+        int col = centerCol(node);
+        int row = toRow(node.y);
+        boolean selected = nodeBoxes.size() == selectedNodeIndex;
+        boolean highlighted = node.id != null && highlightNodeIds.contains(node.id);
+        StatInfo stat = node.treeNode != null ? node.treeNode.info.stat : null;
+        Color color;
+        if (highlighted) {
+            color = highlightFailed ? highlightFailColor() : highlightOkColor();
+        } else if (stat != null && stat.exchangesFailed > 0) {
+            color = highlightFailColor();
+        } else {
+            color = isExternalEndpoint(node) ? externalColor() : getEipColor(node.type);
+        }
+        String cell;
+        if ("from".equals(node.type)) {
+            cell = "▶";
+        } else if (node.id != null && foldedSteps.containsKey(node.id)) {
+            cell = "⊞";
+        } else if (node.treeNode != null && (node.treeNode.table || !node.treeNode.children.isEmpty())) {
+            cell = "◆";
+        } else {
+            cell = "■";
+        }
+        writeText(buffer, area, row, col, cell, style(Style.EMPTY.fg(color).bold(), selected));
+        if (selected) {
+            markers.add(new Marker(row, col + 1, " " + labelText(node), Theme.label().bold()));
+        }
+        nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row, col, col, node));
+    }
+
+    /**
+     * A Switch at the overview density: one cell, its cases steps to select in it (in the order of its rows), the one
+     * selected with its text beside the cell.
+     */
+    private void drawOverviewTable(Buffer buffer, Rect area, LayoutNode table) {
+        drawOverviewNode(buffer, area, table);
+        EipNodeBox cell = nodeBoxes.get(nodeBoxes.size() - 1);
+        for (TreeNode row : table.treeNode.children) {
+            LayoutNode rowNode = row.layoutNode;
+            if (nodeBoxes.size() == selectedNodeIndex) {
+                markers.add(new Marker(
+                        cell.startRow(), cell.startCol() + 1, " " + labelText(rowNode),
+                        Theme.label().bold()));
+            }
+            nodeBoxes.add(new EipNodeBox(
+                    rowNode.id, rowNode.type, cell.startRow(), cell.endRow(), cell.startCol(),
+                    cell.endCol(), rowNode));
+        }
     }
 
     /** The mark of a bare step: where the route starts, a step that branches or has steps in it, a branch, a step. */

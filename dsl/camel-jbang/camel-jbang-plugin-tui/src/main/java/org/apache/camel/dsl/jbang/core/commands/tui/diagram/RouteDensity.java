@@ -30,6 +30,8 @@ import static org.apache.camel.diagram.RouteDiagramLayoutEngine.BRANCH_CHILD_TYP
  * <li>{@link #DETAILED}: a box with up to three lines of text, as the layout engine places it</li>
  * <li>{@link #COMPACT}: a box with one line of text, an arrow of a row between the boxes</li>
  * <li>{@link #BARE}: no box, a step is a mark and its text on one row</li>
+ * <li>{@link #OVERVIEW}: a step is a cell, the steps after each other in the rows below, to see the shape of a large
+ * route; only the selected step has its text beside it</li>
  * </ul>
  * The engine keeps the columns of the steps; {@link #apply} places them again on the rows of the density, top down as
  * the engine does, in its pixels (a row is {@link #ROW} of them). A block (a step with steps in it) takes a row above
@@ -40,7 +42,8 @@ public enum RouteDensity {
 
     DETAILED("detailed", 0, 0, 0, 0, 0),
     COMPACT("compact", 3, 1, 2, Px.ROW, Px.ROW),
-    BARE("bare", 1, 1, 2, 0, Px.ROW);
+    BARE("bare", 1, 1, 2, 0, Px.ROW),
+    OVERVIEW("overview", 1, 0, 2, 0, Px.ROW);
 
     /** The pixels of the layout in a row of the terminal (the widget divides by it). */
     public static final int ROW = Px.ROW;
@@ -85,12 +88,20 @@ public enum RouteDensity {
 
     /** One level less detail, or this one when it is the least. */
     public RouteDensity zoomOut() {
-        return this == BARE ? BARE : values()[ordinal() + 1];
+        return this == OVERVIEW ? OVERVIEW : values()[ordinal() + 1];
     }
 
-    /** Whether the steps are drawn in boxes; the bare steps are a mark and a text, with no box around their blocks. */
+    /**
+     * Whether the steps are drawn in boxes; bare steps are a mark and a text, overview steps a cell, with no box around
+     * their blocks.
+     */
     public boolean boxed() {
-        return this != BARE;
+        return this == DETAILED || this == COMPACT;
+    }
+
+    /** The density of the topology for this zoom: routes are names, so it goes no further than bare. */
+    public RouteDensity forTopology() {
+        return this == OVERVIEW ? BARE : this;
     }
 
     /** The rows the diagram of the route takes. */
@@ -150,7 +161,7 @@ public enum RouteDensity {
     }
 
     private int height(TreeNode node) {
-        if (node.table) {
+        if (node.table && this != OVERVIEW) {
             int rows = node.children.size();
             int shown = Math.min(rows, RouteDiagramLayoutEngine.MAX_TABLE_ROWS)
                         + (rows > RouteDiagramLayoutEngine.MAX_TABLE_ROWS ? 1 : 0);
