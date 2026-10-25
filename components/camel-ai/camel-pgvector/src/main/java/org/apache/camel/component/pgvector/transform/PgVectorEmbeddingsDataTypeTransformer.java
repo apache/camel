@@ -26,6 +26,9 @@ import dev.langchain4j.data.segment.TextSegment;
 import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.pgvector.PgVectorHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -36,6 +39,14 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "pgvector:embeddings",
                      description = "Prepares the message to become an object writable by PgVector component")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "A LangChain4j TextSegment, or a String the converter of"
+                                                   + " camel-langchain4j-embeddings turns into one, whose text and metadata"
+                                                   + " go in the CamelPgVectorTextContent and CamelPgVectorMetadata headers;"
+                                                   + " another body stores no text. The embedding comes from the"
+                                                   + " CamelLangChain4jEmbeddingsVector header, which must be set"),
+           transformerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.lang.Float>",
+                                      description = "The vector of the embedding"))
 public class PgVectorEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override

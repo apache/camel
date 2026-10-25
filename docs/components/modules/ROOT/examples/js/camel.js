@@ -53,6 +53,8 @@ module.exports = {
       unmarshalOut: 'Unmarshal output',
       expressionIn: 'Expression input',
       expressionOut: 'Expression result',
+      transformerIn: 'Transformer input',
+      transformerOut: 'Transformer output',
       eipIn: 'EIP input',
       eipOut: 'EIP output',
       eipSteps: 'Steps',
@@ -73,6 +75,8 @@ module.exports = {
       producerIn: 'what the producer of its endpoint sends',
       producerOut: 'what the producer of its endpoint leaves',
       consumerOut: 'what the consumer of its endpoint receives',
+      transformerIn: 'what its data type transformer transforms',
+      transformerOut: 'what its data type transformer makes',
       steps: 'what its steps end with',
     }
     if (value.from) {

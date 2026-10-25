@@ -197,6 +197,40 @@ class JsonMapperTest {
     }
 
     @Test
+    void testShouldReadAndWriteTransformerBodyTypes() {
+        // CAMEL-25928: the body a data type transformer takes and the body it leaves
+        TransformerModel model = new TransformerModel();
+        model.setName("application-json");
+        model.setFrom("text-plain");
+        model.setTo("application-json");
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"bodyTypes\""));
+        assertTrue(JsonMapper.generateTransformerModel(json).getBodyTypes().isEmpty());
+
+        BodyTypeModel in = new BodyTypeModel();
+        in.setCarriers(List.of("any"));
+        BodyTypeModel out = new BodyTypeModel();
+        out.setCarriers(List.of("bytes"));
+        out.setJavaType("byte[]");
+        out.setFormat("json");
+        model.getBodyTypes().put(BodyTypeModel.TRANSFORMER_IN, in);
+        model.getBodyTypes().put(BodyTypeModel.TRANSFORMER_OUT, out);
+
+        json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"bodyTypes\""), json);
+        TransformerModel model2 = JsonMapper.generateTransformerModel(json);
+        assertEquals("text-plain", model2.getFrom());
+        assertEquals("application-json", model2.getTo());
+        assertEquals(List.of(BodyTypeModel.TRANSFORMER_IN, BodyTypeModel.TRANSFORMER_OUT),
+                List.copyOf(model2.getBodyTypes().keySet()));
+        assertEquals(List.of("any"), model2.getBodyType(BodyTypeModel.TRANSFORMER_IN).getCarriers());
+        BodyTypeModel out2 = model2.getBodyType(BodyTypeModel.TRANSFORMER_OUT);
+        assertEquals(List.of("bytes"), out2.getCarriers());
+        assertEquals("byte[]", out2.getJavaType());
+        assertEquals("json", out2.getFormat());
+    }
+
+    @Test
     void testShouldReadAndWriteJavaTypeOption() {
         // CAMEL-25928: the option that names the Java type of the body, such as resultType of a language
         LanguageModel model = new LanguageModel();

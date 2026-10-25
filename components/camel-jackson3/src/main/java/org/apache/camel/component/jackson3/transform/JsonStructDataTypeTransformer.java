@@ -25,6 +25,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.jackson3.SchemaHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
@@ -37,6 +40,12 @@ import tools.jackson.databind.JsonNode;
  */
 @DataTypeTransformer(name = "application-x-struct",
                      description = "Transforms to generic JSonNode using Jackson 3")
+@BodyTypes(transformerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO, Carrier.NULL },
+                                     description = "Json, or a POJO written as Json: a JsonNode is kept, a null body is an"
+                                                   + " empty object, and a Map or a List fail; with the X-Content-Class"
+                                                   + " exchange property only a body of that class"),
+           transformerOut = @BodyType(value = Carrier.POJO, javaType = "tools.jackson.databind.JsonNode"))
 public class JsonStructDataTypeTransformer extends Transformer {
 
     private static final byte[] EMPTY = "{}".getBytes(StandardCharsets.UTF_8);

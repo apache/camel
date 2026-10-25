@@ -41,18 +41,20 @@ import org.apache.camel.tooling.model.ComponentModel;
 final class BodyTypesHelper {
 
     private static final Set<String> IN = Set.of(BodyTypeModel.CONSUMER_REPLY, BodyTypeModel.PRODUCER_IN,
-            BodyTypeModel.MARSHAL_IN, BodyTypeModel.UNMARSHAL_IN, BodyTypeModel.EXPRESSION_IN, BodyTypeModel.EIP_IN);
+            BodyTypeModel.MARSHAL_IN, BodyTypeModel.UNMARSHAL_IN, BodyTypeModel.EXPRESSION_IN, BodyTypeModel.TRANSFORMER_IN,
+            BodyTypeModel.EIP_IN);
 
     /**
      * The sides of other models an EIP side can take its body from: what an EIP needs comes from what its language,
-     * data format or endpoint needs, and the body after it from what they leave, or from what its own steps end with.
+     * data format, endpoint or data type transformer needs, and the body after it from what they leave, or from what
+     * its own steps end with.
      */
     private static final Map<String, Set<String>> FROM = Map.of(
             BodyTypeModel.EIP_IN, Set.of(BodyTypeModel.EXPRESSION_IN, BodyTypeModel.MARSHAL_IN,
-                    BodyTypeModel.UNMARSHAL_IN, BodyTypeModel.PRODUCER_IN),
+                    BodyTypeModel.UNMARSHAL_IN, BodyTypeModel.PRODUCER_IN, BodyTypeModel.TRANSFORMER_IN),
             BodyTypeModel.EIP_OUT, Set.of(BodyTypeModel.EXPRESSION_OUT, BodyTypeModel.MARSHAL_OUT,
                     BodyTypeModel.UNMARSHAL_OUT, BodyTypeModel.PRODUCER_OUT, BodyTypeModel.CONSUMER_OUT,
-                    BodyTypeModel.FROM_STEPS));
+                    BodyTypeModel.TRANSFORMER_OUT, BodyTypeModel.FROM_STEPS));
 
     private BodyTypesHelper() {
     }
@@ -60,7 +62,7 @@ final class BodyTypesHelper {
     /**
      * Adds the sides the annotation gives to the model, in the order of the annotation.
      *
-     * @param  model                    the model of the component, data format, language or EIP
+     * @param  model                    the model of the component, data format, language, data type transformer or EIP
      * @param  bodyTypes                the annotation, null when the class has none
      * @param  owner                    the class with the annotation, for the error message
      * @throws IllegalArgumentException when a side does not fit the model: a data format side on a component, a
@@ -83,6 +85,8 @@ final class BodyTypesHelper {
         sides.put(BodyTypeModel.UNMARSHAL_OUT, bodyTypes.unmarshalOut());
         sides.put(BodyTypeModel.EXPRESSION_IN, bodyTypes.expressionIn());
         sides.put(BodyTypeModel.EXPRESSION_OUT, bodyTypes.expressionOut());
+        sides.put(BodyTypeModel.TRANSFORMER_IN, bodyTypes.transformerIn());
+        sides.put(BodyTypeModel.TRANSFORMER_OUT, bodyTypes.transformerOut());
         sides.put(BodyTypeModel.EIP_IN, bodyTypes.eipIn());
         sides.put(BodyTypeModel.EIP_OUT, bodyTypes.eipOut());
         sides.put(BodyTypeModel.EIP_STEPS, bodyTypes.eipSteps());
@@ -210,6 +214,7 @@ final class BodyTypesHelper {
             case dataformat -> Set.of(BodyTypeModel.MARSHAL_IN, BodyTypeModel.MARSHAL_OUT, BodyTypeModel.UNMARSHAL_IN,
                     BodyTypeModel.UNMARSHAL_OUT);
             case language -> Set.of(BodyTypeModel.EXPRESSION_IN, BodyTypeModel.EXPRESSION_OUT);
+            case transformer -> Set.of(BodyTypeModel.TRANSFORMER_IN, BodyTypeModel.TRANSFORMER_OUT);
             case model -> Set.of(BodyTypeModel.EIP_IN, BodyTypeModel.EIP_OUT, BodyTypeModel.EIP_STEPS);
             default -> Set.of();
         };

@@ -28,6 +28,9 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.component.jackson.transform.Json;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
@@ -40,6 +43,11 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "protobuf-binary",
                      description = "Transforms from JSon to binary (byte array) using Jackson Protobuf (supports Protobuf schema)")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                     description = "Needs the Protobuf schema in the X-Content-Schema exchange property: a"
+                                                   + " Json object or array as text, Protobuf binary, a JsonNode or a POJO; a"
+                                                   + " Map or a null body fail"),
+           transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "binary"))
 public class ProtobufBinaryDataTypeTransformer extends Transformer {
 
     @Override

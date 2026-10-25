@@ -24,6 +24,9 @@ import org.apache.camel.Message;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
 import org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -34,6 +37,9 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "google-calendar-stream:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Google Calendar Stream consumer response details")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.POJO, javaType = "com.google.api.services.calendar.model.Event",
+                                     description = "The Event of the google-calendar-stream consumer: the subject is read from it, and another body fails"),
+           transformerOut = @BodyType(value = Carrier.UNCHANGED, description = "Only the CloudEvent headers are set"))
 public class GoogleCalendarStreamCloudEventDataTypeTransformer extends Transformer {
 
     @Override

@@ -23,6 +23,9 @@ import org.apache.camel.Message;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
 import org.apache.camel.component.google.mail.stream.GoogleMailStreamConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -33,6 +36,8 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "google-mail-stream:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Google Mail Stream consumer response details")
+@BodyTypes(transformerIn = @BodyType(Carrier.ANY),
+           transformerOut = @BodyType(value = Carrier.UNCHANGED, description = "Only the CloudEvent headers are set"))
 public class GoogleMailStreamCloudEventDataTypeTransformer extends Transformer {
 
     @Override

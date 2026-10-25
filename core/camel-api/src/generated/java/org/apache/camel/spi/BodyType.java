@@ -68,8 +68,9 @@ public @interface BodyType {
      * marshal, whose body is what its data format leaves. The side names the model: {@code expressionIn} and
      * {@code expressionOut} the language of the EIP's expression, {@code marshalIn}, {@code marshalOut},
      * {@code unmarshalIn} and {@code unmarshalOut} its data format, {@code producerIn} and {@code producerOut} its
-     * endpoint as a producer, and {@code consumerOut} its endpoint as a consumer. {@code steps} is the body the steps
-     * of the EIP end with, such as for a filter. A side with this needs no carriers.
+     * endpoint as a producer, {@code consumerOut} its endpoint as a consumer, and {@code transformerIn} and
+     * {@code transformerOut} the data type transformer of transformDataType. {@code steps} is the body the steps of the
+     * EIP end with, such as for a filter. A side with this needs no carriers.
      */
     String from() default "";
 

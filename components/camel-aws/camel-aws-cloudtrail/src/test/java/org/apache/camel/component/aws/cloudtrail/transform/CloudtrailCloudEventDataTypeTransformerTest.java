@@ -16,16 +16,24 @@
  */
 package org.apache.camel.component.aws.cloudtrail.transform;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.aws.cloudtrail.CloudtrailConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class CloudtrailCloudEventDataTypeTransformerTest {
 
@@ -50,5 +58,22 @@ public class CloudtrailCloudEventDataTypeTransformerTest {
         // the body is the JSON of the CloudTrail record
         Assertions.assertEquals("application/json",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE));
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: any body, as transformerIn says, and the same body after, as transformerOut says
+        BodyTypes bodyTypes = CloudtrailCloudEventDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertEquals(Carrier.ANY, bodyTypes.transformerIn().value()[0]);
+        assertEquals(Carrier.UNCHANGED, bodyTypes.transformerOut().value()[0]);
+        for (Object body : Arrays.asList("Test", "Test".getBytes(StandardCharsets.UTF_8),
+                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)), Map.of("key", "value"), 5, null)) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertSame(body, exchange.getMessage().getBody(), String.valueOf(body));
+            assertEquals("org.apache.camel.event.aws.cloudtrail.lookupEvents",
+                    exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
+        }
     }
 }

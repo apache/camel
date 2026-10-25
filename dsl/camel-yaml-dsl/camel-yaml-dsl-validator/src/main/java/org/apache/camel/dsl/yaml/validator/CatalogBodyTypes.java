@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.apache.camel.tooling.model.BodyTypeResolver;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.TransformerModel;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
 
@@ -60,6 +62,7 @@ final class CatalogBodyTypes {
     private final Map<String, Optional<ComponentModel>> components = new ConcurrentHashMap<>();
     private final Map<String, Optional<DataFormatModel>> dataFormats = new ConcurrentHashMap<>();
     private final Map<String, Optional<EipModel>> eips = new ConcurrentHashMap<>();
+    private final Map<String, Optional<TransformerModel>> transformers = new ConcurrentHashMap<>();
     private volatile Map<String, List<String>> byModelName;
 
     /**
@@ -179,6 +182,46 @@ final class CatalogBodyTypes {
         DataFormatModel model = dataFormat(key, options);
         return model != null
                 ? answer(model.getBodyType(BodyTypeModel.UNMARSHAL_OUT), values(options), Set.of()) : null;
+    }
+
+    /** The bodies the data type transformer of a transformDataType can transform. */
+    Answer transformerIn(JsonNode step) {
+        return transformerSide(step, BodyTypeModel.TRANSFORMER_IN);
+    }
+
+    /** The body after a transformDataType: what the data type transformer its toType names makes. */
+    Answer transformerOut(JsonNode step) {
+        return transformerSide(step, BodyTypeModel.TRANSFORMER_OUT);
+    }
+
+    private Answer transformerSide(JsonNode step, String side) {
+        String toType = step != null && step.isObject() && step.has("toType") ? step.get("toType").asText() : null;
+        TransformerModel model = transformer(toType);
+        return model != null ? answer(model.getBodyType(side), Map.of(), Set.of()) : null;
+    }
+
+    /**
+     * The data type transformer of a data type, by the name Camel resolves it with (TransformerResolver): without the
+     * camel scheme, and with : _ . / and \ as -, so aws2-s3:application-cloudevents is aws2-s3-application-cloudevents
+     * and text/plain is text-plain.
+     */
+    private TransformerModel transformer(String toType) {
+        if (toType == null || toType.contains("{{") || toType.contains("${")) {
+            return null;
+        }
+        String name = toType.startsWith("camel:") ? toType.substring(6) : toType;
+        String key = name.replace(':', '-').replace('_', '-').replace('.', '-').replace('/', '-').replace('\\', '-')
+                .toLowerCase(Locale.ROOT);
+        return transformers.computeIfAbsent(key, n -> {
+            TransformerModel model = catalog.transformerModel(n);
+            if ((model == null || model.getBodyTypes().isEmpty()) && fallback != null) {
+                TransformerModel other = fallback.transformerModel(n);
+                if (other != null && !other.getBodyTypes().isEmpty()) {
+                    model = other;
+                }
+            }
+            return Optional.ofNullable(model);
+        }).orElse(null);
     }
 
     private Answer componentSide(String uri, JsonNode node, String side) {

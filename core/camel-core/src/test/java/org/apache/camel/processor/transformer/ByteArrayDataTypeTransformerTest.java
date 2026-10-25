@@ -18,10 +18,14 @@ package org.apache.camel.processor.transformer;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultTransformerRegistry;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
@@ -30,6 +34,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ByteArrayDataTypeTransformerTest {
 
@@ -96,6 +102,28 @@ public class ByteArrayDataTypeTransformerTest {
 
         transformer = transformerRegistry.resolveTransformer(new TransformerKey("camel:application-octet-stream"));
         Assertions.assertNotNull(transformer);
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: a payload, as transformerIn says, and the body transformerOut says
+        BodyTypes bodyTypes = ByteArrayDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE),
+                List.of(bodyTypes.transformerIn().value()));
+        assertEquals(Carrier.BYTES, bodyTypes.transformerOut().value()[0]);
+        assertEquals(byte[].class.getCanonicalName(), bodyTypes.transformerOut().javaType());
+        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8),
+                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)))) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertInstanceOf(byte[].class, exchange.getMessage().getBody(), body.getClass().getName());
+        }
+        // a number is not a payload
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setBody(5);
+        assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY));
     }
 
     private static void assertBinaryBody(Exchange exchange, String key, String content) {

@@ -105,6 +105,16 @@ public @interface BodyTypes {
     BodyType expressionOut() default @BodyType;
 
     /**
+     * The bodies a data type transformer can transform.
+     */
+    BodyType transformerIn() default @BodyType;
+
+    /**
+     * The body after a data type transformer, such as bytes as json for application-json.
+     */
+    BodyType transformerOut() default @BodyType;
+
+    /**
      * The bodies an EIP needs, such as text for a tokenizer.
      */
     BodyType eipIn() default @BodyType;

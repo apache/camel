@@ -20,6 +20,7 @@
     "toType": { "index": 5, "kind": "attribute", "displayName": "To Type", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The target data type URN in the format 'scheme:name' (e.g. 'json:JsonOrder') that the message body should be transformed into." }
   },
   "bodyTypes": {
-    "eipOut": { "carriers": [ "unknown" ], "description": "What the data type transformer makes" }
+    "eipIn": { "from": "transformerIn" },
+    "eipOut": { "from": "transformerOut", "description": "What the data type transformer of toType makes" }
   }
 }

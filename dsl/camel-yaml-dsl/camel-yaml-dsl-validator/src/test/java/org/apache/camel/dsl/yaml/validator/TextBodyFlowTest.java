@@ -2430,4 +2430,82 @@ public class TextBodyFlowTest {
         assertThat(lines(text)).singleElement()
                 .satisfies(m -> assertThat(m).contains("simple reads a field of the body (${body[status]})"));
     }
+
+    @Test
+    public void testTransformDataTypeLeavesWhatItsTransformerMakes() {
+        // text-plain makes the parsed data text again, as the body types of the transformer in the catalog say
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - transformDataType:
+                            toType: text/plain
+                        - to: file:outbox
+                """;
+        assertThat(lines(yaml)).isEmpty();
+        String text = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - transformDataType:
+                            toType: text-plain
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(text)).singleElement()
+                .satisfies(m -> assertThat(m).contains("simple reads a field of the body (${body[status]})"));
+        // the transformer is not known: the body is not known either
+        String unknown = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - transformDataType:
+                            toType: my-type
+                        - to: file:outbox
+                """;
+        assertThat(lines(unknown)).isEmpty();
+        // the CloudEvent transformer of aws2-s3 sets headers only: the body is still parsed data
+        String cloudEvent = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - transformDataType:
+                            toType: aws2-s3:application-cloudevents
+                        - to: file:outbox
+                """;
+        assertThat(lines(cloudEvent)).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file needs the body as text"));
+    }
+
+    @Test
+    public void testTransformDataTypeNeedsWhatItsTransformerTakes() {
+        // application-octet-stream converts a payload to bytes, and a Map is not one
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - transformDataType:
+                            toType: camel:application-octet-stream
+                """;
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m)
+                        .contains(
+                                "transformDataType: camel:application-octet-stream needs the body as text, bytes, a stream or a file"));
+    }
 }

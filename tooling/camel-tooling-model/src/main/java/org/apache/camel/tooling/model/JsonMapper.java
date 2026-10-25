@@ -572,6 +572,7 @@ public final class JsonMapper {
         model.setFrom(mobj.getString("from"));
         model.setTo(mobj.getString("to"));
         parseArtifact(mobj, model);
+        model.setBodyTypes(parseBodyTypes(obj.getMap("bodyTypes")));
         return model;
     }
 
@@ -589,6 +590,7 @@ public final class JsonMapper {
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("transformer", obj);
+        bodyTypesToJson(model, wrapper);
         return wrapper;
     }
 

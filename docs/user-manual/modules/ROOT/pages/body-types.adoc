@@ -93,6 +93,8 @@ The body types of a model are a set of _sides_. A side that is not listed is not
 | `unmarshalOut` | The body after `unmarshal`.
 .2+| Language | `expressionIn` | The bodies the expressions of the language can read.
 | `expressionOut` | The result of an expression.
+.2+| Data type transformer | `transformerIn` | The bodies the transformer can transform.
+| `transformerOut` | The body after the transformer: what `transformDataType` leaves.
 .3+| EIP | `eipIn` | The bodies the EIP needs, such as text for `tokenizer`.
 | `eipOut` | The body after the EIP.
 | `eipSteps` | The body the steps of the EIP start with, such as each part for `split`.
@@ -224,6 +226,20 @@ it the body is as it was before the split:
   "description": "Each part of what the expression gives, such as an element of a List or a line of text" }
 ----
 
+=== Data type transformers
+
+A data type transformer, which `transformDataType` runs for its `toType`, has body types as well. `application-json`
+writes any object as JSON bytes, and the CloudEvent transformers of the components only set headers:
+
+[source,json]
+----
+"transformerIn": { "carriers": [ "any" ] },
+"transformerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "format": "json" }
+----
+
+`transformDataType` takes its body from them, by the name of its `toType`: `aws2-s3:application-cloudevents` is the
+transformer `aws2-s3-application-cloudevents` of the catalog.
+
 == Tooling
 
 === Documentation
@@ -322,7 +338,7 @@ runtime show what the messages really brought.
 == Declaring body types
 
 A component declares its body types with the `@BodyTypes` annotation on its endpoint class, a data format and a
-language on their class, and an EIP on its model class in `camel-core-model`. That is also where the EIPs that other
+language on their class, a data type transformer on its class, and an EIP on its model class in `camel-core-model`. That is also where the EIPs that other
 modules implement are declared, such as `circuitBreaker`. A subclass does not have the body types of its superclass,
 as it may change the body:
 
@@ -368,8 +384,8 @@ When the step sets one, only a `byOption` entry for that value says the body; wi
 it, the body is an object of that class, or null.
 | `from` | string | For an EIP, the side of another model the body is: `expressionIn`, `expressionOut` (the language
 of its expression), `marshalIn`, `marshalOut`, `unmarshalIn`, `unmarshalOut` (its data format), `producerIn`,
-`producerOut` (its endpoint as a producer), `consumerOut` (its endpoint as a consumer), or `steps` (what its own
-steps end with).
+`producerOut` (its endpoint as a producer), `consumerOut` (its endpoint as a consumer), `transformerIn`,
+`transformerOut` (the data type transformer of `transformDataType`), or `steps` (what its own steps end with).
 | `description` | string | What to know about the body, in a sentence.
 |===
 
@@ -382,8 +398,8 @@ To know the body a step leaves, or the bodies it needs, read its side with the o
 says, `from` and `dependsOn` too. When two of them say different bodies: not known. When the step does not set the
 option, but it can be set elsewhere: not known.
 . *A side with `from`:* when the step sets an option of `dependsOn`, not known. Otherwise, read the side `from` names on
-the model the step uses (the language of its expression, its data format or its endpoint), with the options of that
-model. `steps` is the body the steps of the EIP end with.
+the model the step uses (the language of its expression, its data format, its endpoint, or the data type transformer
+of its `toType`), with the options of that model. `steps` is the body the steps of the EIP end with.
 . *An option the side names whose value is not known before the route runs* (a `+{{placeholder}}+` or a `+${expression}+`),
 or an option the step does not set but that can be set elsewhere, such as on the component: not known.
 . *An option of `dependsOn` the step sets:* the `byOption` entry for that value says the body. When it has a

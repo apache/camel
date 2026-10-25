@@ -51,6 +51,10 @@ public class BodyTypeModel {
     public static final String EXPRESSION_IN = "expressionIn";
     /** The result of an expression of a language. */
     public static final String EXPRESSION_OUT = "expressionOut";
+    /** The bodies a data type transformer can transform. */
+    public static final String TRANSFORMER_IN = "transformerIn";
+    /** The body after a data type transformer. */
+    public static final String TRANSFORMER_OUT = "transformerOut";
     /** The bodies an EIP needs. */
     public static final String EIP_IN = "eipIn";
     /** The body after an EIP. */

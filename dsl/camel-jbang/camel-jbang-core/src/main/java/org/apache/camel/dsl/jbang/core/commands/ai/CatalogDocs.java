@@ -1702,6 +1702,8 @@ public final class CatalogDocs {
             case BodyTypeModel.PRODUCER_IN -> "what the producer of its endpoint sends";
             case BodyTypeModel.PRODUCER_OUT -> "what the producer of its endpoint leaves";
             case BodyTypeModel.CONSUMER_OUT -> "what the consumer of its endpoint receives";
+            case BodyTypeModel.TRANSFORMER_IN -> "what its data type transformer transforms";
+            case BodyTypeModel.TRANSFORMER_OUT -> "what its data type transformer makes";
             case BodyTypeModel.FROM_STEPS -> "what its steps end with";
             default -> "the " + side + " of another model";
         };
