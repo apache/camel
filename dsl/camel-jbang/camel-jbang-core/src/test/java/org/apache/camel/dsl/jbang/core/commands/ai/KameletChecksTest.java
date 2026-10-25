@@ -193,6 +193,43 @@ class KameletChecksTest {
     }
 
     @Test
+    void theOptionsAdvancedOptionsForwards(@TempDir Path dir) throws Exception {
+        // CAMEL-26294: with advancedOptions, an option that is not a property of the Kamelet goes to the endpoint it
+        // wraps, such as maxConnections of aws2-s3
+        String yaml = """
+                - route:
+                    from:
+                      uri: kamelet:timer-source
+                      parameters:
+                        advancedOptions: true
+                        message: hello
+                        includeMetadata: true
+                      steps:
+                        - to: kamelet:log-sink?advancedOptions=true&showAll=true
+                """;
+        assertThat(KameletChecks.validateYaml(yaml, null)).isEmpty();
+
+        // on the component, for every kamelet: endpoint; and the endpoint setting wins
+        String component = """
+                - route:
+                    from:
+                      uri: kamelet:timer-source
+                      parameters:
+                        message: hello
+                        includeMetadata: true
+                      steps:
+                        - to: kamelet:log-sink?advancedOptions=false&showAll=true
+                """;
+        Files.writeString(dir.resolve("application.properties"), "camel.component.kamelet.advanced-options = true\n");
+        List<String> errors = KameletChecks.validateYaml(component, dir);
+        assertThat(errors).singleElement()
+                .satisfies(e -> assertThat(e).contains("kamelet:log-sink: unknown property 'showAll'"));
+
+        // without it, the option is not one the Kamelet has
+        assertThat(KameletChecks.validateYaml(component, null)).hasSize(2);
+    }
+
+    @Test
     void aRequiredPropertyFromApplicationProperties(@TempDir Path dir) throws Exception {
         Files.writeString(dir.resolve("application.properties"), "camel.kamelet.timer-source.message=hello\n");
         String yaml = """
