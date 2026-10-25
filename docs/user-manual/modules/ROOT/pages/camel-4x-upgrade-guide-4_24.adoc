@@ -239,6 +239,16 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
+=== camel-aws2-kinesis - each endpoint uses its own client
+
+Each `aws2-kinesis` endpoint now uses the Kinesis client of its own configuration (`region`, credentials,
+`uriEndpointOverride`, or `amazonKinesisClient` / `amazonKinesisAsyncClient`). Before, all endpoints of the component
+used the client of the endpoint that started first, and stopping one endpoint (for example by removing its route)
+closed that client for every other endpoint.
+
+Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
+the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
@@ -327,6 +337,17 @@ The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are
 (`xContainerMeta()` -> `openstackSwiftContainerMetadata()`, `xVersionsLocation()` ->
 `openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
 `openstackSwiftContainerWrite()`).
+
+=== camel-file - the checksum of checksumFileAlgorithm is the checksum of the written file
+
+With `checksumFileAlgorithm`, the file producer calculated the checksum from the body before it was written. With
+`charset` set, it also decoded that body with the default charset of the JVM instead of the charset of the exchange.
+So with `charset`, the checksum (the `CamelFileChecksum` header and the checksum file) did not match the written file
+as soon as the encoding changed a byte, a body read with another charset (such as the bytes of a file consumed with
+`charset=ISO-8859-1`) was written with its non-ASCII characters replaced, and a String body could fail with an
+`UnmappableCharacterException`; with `fileExist=Append` and `appendChars`, the checksum left out the appended
+characters. The checksum is now calculated from the bytes written to the file, and the body is decoded as it is
+without `checksumFileAlgorithm`. Checksums of such files differ from the ones written before.
 
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
@@ -1202,6 +1223,16 @@ The `aws2-ddbstream` consumer now reads a closed shard to its end before it read
 shard rotation the consumer started again from `streamIteratorType`: with `FROM_START` it routed records of the stream
 again, and with `FROM_LATEST` it skipped records already written to the new shards.
 
+=== camel-beanio - BeanIOSplitter decodes files and streams with the charset of the exchange or its encoding
+
+`BeanIOSplitter` read a file body with the default charset of the JVM, and a stream or byte array body with the
+charset of the exchange or the default charset of the JVM; its `encoding` option was not used. A file consumed with
+`charset=ISO-8859-1`, or a splitter with `setEncoding(StandardCharsets.ISO_8859_1)`, had every non-ASCII character
+replaced. The splitter now decodes a file, stream or byte array body with the charset of the exchange (the
+`CamelCharsetName` header or exchange property, as set by the `charset` option of the file consumer), else with its
+`encoding` (default: the default charset of the JVM). A `String` or `Reader` body is read as before, and other text
+(such as a `StringBuilder`, which failed before) is read as text.
+
 === camel-bindy - a number field without precision keeps all its decimals when marshalled
 
 A `BigDecimal`, `Double` or `Float` field whose `@DataField` (or `@KeyValuePairField`) has no `precision` and no
@@ -1248,6 +1279,17 @@ Camel now fails to start when the management server shares the port and one of t
 that lists them. Set `camel.management.port` to another port, so that the management server runs a server of its own
 and applies them. To keep a single port, remove them and configure the HTTP server instead: for example,
 authentication configured on the HTTP server for `/*` also applies to the management endpoints.
+
+=== camel-ibm-cos - the producer takes the bucket from the CamelIBMCOSOverrideBucketName header (Breaking change)
+
+The producer used the bucket named in the `CamelIBMCOSBucketName` header instead of the bucket of its endpoint. The
+consumer sets that header to the bucket an object was consumed from, so a route from one bucket to another
+(`from("ibm-cos:source...").to("ibm-cos:target...")`) stored each object back in the source bucket, and with the
+default `deleteAfterRead=true` the consumer then deleted it there. The producer now ignores `CamelIBMCOSBucketName`
+and uses the bucket of the endpoint, or the bucket named in the new `CamelIBMCOSOverrideBucketName` header
+(`IBMCOSConstants.OVERRIDE_BUCKET_NAME`), as camel-aws2-s3, camel-minio and camel-google-storage do since 4.10. A route
+that sets `CamelIBMCOSBucketName` to choose the bucket of a producer operation (for example `createBucket` or
+`deleteBucket`) must set `CamelIBMCOSOverrideBucketName` instead.
 
 === camel-ical - each unmarshal parses with its own calendar builder
 
@@ -1901,6 +1943,14 @@ The `user` and `password` are now offered only to the nodes the client talks to:
 when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
 registered for any host. A request to another host, including the host of a node with another scheme or port, is now
 sent without them. A client set with the `client` option is not changed.
+
+=== camel-elasticsearch, camel-opensearch - the client set on the component is not closed by Camel
+
+A `RestClient` set with the `client` option of the component, or autowired from the registry, is shared by all the
+endpoints of the component. A producer that stopped (its route stopped or removed, or Camel stopped), and with
+`disconnect=true` every request, closed it, and from then on every endpoint of the component failed its requests
+until the application was restarted. Camel now closes only the clients its producers create from `hostAddresses`. Close a client you set on
+the component yourself when the application no longer needs it (a client that is a Spring bean is closed by Spring).
 
 === camel-jetty - a multipart text field that occurs several times
 
@@ -3463,6 +3513,12 @@ The server/listen and receipt/receive consumers have the new `muteException` opt
 route fails, the HTTP 500 that the partner gets says only that the message (or the receipt) could not be processed.
 Before, its body was the message of the exception of the route. Set `muteException=false` to send the message of the
 exception as before.
+
+=== camel-file-watch - CamelFileLastModified is the last modified time of the file
+
+The `CamelFileLastModified` header is now the last modified time of the file, as its documentation says.
+Before, it was the time of the event. The header is not set when the file no longer exists, for example for a `DELETE` event.
+The time of the event is in the `CamelMessageTimestamp` header.
 
 === camel-whatsapp - the component is no longer marked producer only
 

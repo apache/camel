@@ -33,6 +33,9 @@ public class JGroupsRaftConsumer extends DefaultConsumer {
 
     private final CamelRoleChangeListener roleListener;
     private final JGroupsRaftEndpoint endpoint;
+    // whether this consumer connected the handle, so that only a consumer that connected it disconnects it (a consumer
+    // that never started, or failed to start, is stopped as well, while the handle can be used by other endpoints)
+    private volatile boolean connected;
 
     public JGroupsRaftConsumer(JGroupsRaftEndpoint endpoint, Processor processor, String clusterName,
                                boolean enableRoleChangeEvents) {
@@ -53,6 +56,7 @@ public class JGroupsRaftConsumer extends DefaultConsumer {
             endpoint.getResolvedRaftHandle().addRoleListener(roleListener);
         }
         endpoint.connect();
+        connected = true;
     }
 
     @Override
@@ -61,7 +65,10 @@ public class JGroupsRaftConsumer extends DefaultConsumer {
             LOG.debug("Closing connection to cluster: {} from roleListener: {}.", clusterName, roleListener);
             endpoint.getResolvedRaftHandle().removeRoleListener(roleListener);
         }
-        endpoint.disconnect();
+        if (connected) {
+            connected = false;
+            endpoint.disconnect();
+        }
         super.doStop();
     }
 }

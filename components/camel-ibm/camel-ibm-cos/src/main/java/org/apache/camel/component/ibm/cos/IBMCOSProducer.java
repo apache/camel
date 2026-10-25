@@ -355,7 +355,9 @@ public class IBMCOSProducer extends DefaultProducer {
     }
 
     private String determineBucketName(Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(IBMCOSConstants.BUCKET_NAME, String.class);
+        // not the bucket name header the consumer sets, so an object routed from one bucket to another is not written
+        // back to the bucket it was consumed from
+        String bucketName = exchange.getIn().getHeader(IBMCOSConstants.OVERRIDE_BUCKET_NAME, String.class);
         if (bucketName == null) {
             bucketName = getConfiguration().getBucketName();
         }

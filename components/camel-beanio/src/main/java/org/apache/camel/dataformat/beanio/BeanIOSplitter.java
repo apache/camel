@@ -17,8 +17,11 @@
 package org.apache.camel.dataformat.beanio;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
@@ -28,6 +31,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -86,19 +90,41 @@ public class BeanIOSplitter implements Expression {
             factory = createStreamFactory(exchange.getContext());
         }
 
-        BeanReader beanReader = null;
         if (body instanceof WrappedFile wrappedfile) {
             body = wrappedfile.getFile();
         }
-        if (body instanceof File file) {
-            beanReader = factory.createReader(getStreamName(), file);
+        Reader reader;
+        if (body instanceof CharSequence text) {
+            // text is read as it is, without a round trip through bytes (also a StringBuilder, which has no converter
+            // to a Reader)
+            reader = new StringReader(text.toString());
+        } else if (body instanceof Reader) {
+            reader = msg.getMandatoryBody(Reader.class);
+        } else {
+            // the bytes of a file or a stream are decoded with the charset of the exchange (such as the charset of the
+            // file consumer), else with the encoding of this splitter
+            String charsetName = ExchangeHelper.getCharsetName(exchange, false);
+            Charset charset = charsetName != null ? Charset.forName(charsetName) : getEncoding();
+            InputStream is = body instanceof File file
+                    ? new FileInputStream(file) : msg.getMandatoryBody(InputStream.class);
+            reader = IOHelper.buffered(new InputStreamReader(is, charset));
         }
-        if (beanReader == null) {
-            Reader reader = msg.getMandatoryBody(Reader.class);
+        BeanReader beanReader;
+        try {
             beanReader = factory.createReader(getStreamName(), reader);
+        } catch (RuntimeException e) {
+            IOHelper.close(reader);
+            throw e;
         }
 
-        BeanIOIterator iterator = new BeanIOIterator(beanReader);
+        BeanIOIterator iterator;
+        try {
+            // reads the first record, which can fail
+            iterator = new BeanIOIterator(beanReader);
+        } catch (RuntimeException e) {
+            IOHelper.close(reader);
+            throw e;
+        }
 
         BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, null, iterator);
         beanReader.setErrorHandler(errorHandler);
