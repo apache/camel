@@ -7664,6 +7664,19 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIConversationId";
         }
         /**
+         * Stable identifier used to retain OpenAI tool-search discoveries
+         * across exchanges, independently of Responses API conversation state.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code OpenAIToolSearchSessionId}.
+         */
+        public String openAIToolSearchSessionId() {
+            return "CamelOpenAIToolSearchSessionId";
+        }
+        /**
          * Whether to stream the response back incrementally.
          * 
          * The option is a: {@code Boolean} type.
