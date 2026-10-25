@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,11 +30,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
-import org.apache.camel.tooling.model.BodyTypeModel.OptionBodyTypeModel;
+import org.apache.camel.tooling.model.BodyTypeResolver;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
 
@@ -234,85 +232,12 @@ final class CatalogBodyTypes {
     }
 
     /**
-     * What a side says for the options a step sets: the body for an option value it names, or its body when the options
-     * it depends on keep their defaults; null when it is not known for the step. An option the side depends on decides
-     * first; then the option that names the class of the body (CAMEL-25928), and then the bodies for the values of the
-     * other options.
+     * What a side says for the options a step sets, by the rule the tools share (BodyTypeResolver of the tooling
+     * model); null when it is not known for the step.
      */
     private static Answer answer(BodyTypeModel side, Map<String, String> set, Set<String> configurable) {
-        if (side == null) {
-            return null;
-        }
-        Set<String> options = new LinkedHashSet<>(side.getDependsOn());
-        side.getByOption().forEach(o -> options.add(o.getOption()));
-        if (side.getJavaTypeOption() != null) {
-            options.add(side.getJavaTypeOption());
-        }
-        side.getByOption().stream().map(OptionBodyTypeModel::getJavaTypeOption).filter(o -> o != null)
-                .forEach(options::add);
-        for (String option : options) {
-            String value = set.get(option);
-            if (value == null ? configurable.contains(option) : value.contains("{{") || value.contains("${")) {
-                // the component may set it, or its value is only known when the route runs
-                return null;
-            }
-        }
-        for (String option : side.getDependsOn()) {
-            String value = set.get(option);
-            if (value != null && side.getByOption().stream()
-                    .noneMatch(w -> w.getOption().equals(option) && isSameValue(value, w.getValue()))) {
-                // the body depends on this option, and no option value of the side says the body for its value: the
-                // value another option names does not hold then, such as output=bytes with a resultHandlerFactory
-                return null;
-            }
-        }
-        boolean dependsOnSet = side.getDependsOn().stream().anyMatch(set::containsKey);
-        if (!dependsOnSet && side.getJavaTypeOption() != null && set.containsKey(side.getJavaTypeOption())) {
-            // the option names the class of the body, whatever the values of the other options say
-            return ofClass(set.get(side.getJavaTypeOption()));
-        }
-        Answer matched = null;
-        for (OptionBodyTypeModel when : side.getByOption()) {
-            String value = set.get(when.getOption());
-            if (value != null && isSameValue(value, when.getValue())) {
-                Answer answer = when.getJavaTypeOption() != null && set.containsKey(when.getJavaTypeOption())
-                        ? ofClass(set.get(when.getJavaTypeOption()))
-                        : new Answer(when.getCarriers(), when.getJavaType(), side.getFormat());
-                if (answer == null || matched != null && !matched.carriers().equals(answer.carriers())) {
-                    // two options the step sets say different bodies
-                    return null;
-                }
-                matched = answer;
-            }
-        }
-        if (matched != null) {
-            return matched;
-        }
-        if (side.isUnknown() || side.getDependsOn().stream().anyMatch(set::containsKey)) {
-            return null;
-        }
-        return new Answer(side.getCarriers(), side.getJavaType(), side.getFormat());
-    }
-
-    /**
-     * The body of the class an option names, such as unmarshalType: an object of it, or null when it does not convert.
-     * Object says nothing.
-     */
-    private static Answer ofClass(String javaType) {
-        String carrier = BodyTypeModel.carrierOf(javaType);
-        if ("unknown".equals(carrier)) {
-            return null;
-        }
-        return new Answer(List.of(carrier, "null"), javaType.trim(), null);
-    }
-
-    /**
-     * Whether the value a step sets is the value of an option body: in any case, and in any style of an enum constant,
-     * as the catalog and the enum type converter take it, so operation=convert-to-json is CONVERT_TO_JSON.
-     */
-    private static boolean isSameValue(String value, String other) {
-        return value.equalsIgnoreCase(other)
-                || StringHelper.asEnumConstantValue(value).equals(StringHelper.asEnumConstantValue(other));
+        BodyTypeResolver.Resolved resolved = BodyTypeResolver.resolve(side, set, configurable);
+        return resolved != null ? new Answer(resolved.carriers(), resolved.javaType(), resolved.format()) : null;
     }
 
     /** The options of a node, by name in camel case: allowNullBody as well for allow-null-body. */
