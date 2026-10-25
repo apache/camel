@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * CAMEL-25823: when route B is force-stopped while an inflight exchange is inside a nested EIP (split inside
@@ -74,7 +76,7 @@ public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
         Future<Object> future = template.asyncRequestBody("seda:caller", "x", Object.class);
 
         // Wait until the processor inside route B's nested EIP has entered and is blocking.
-        entered.await(5, TimeUnit.SECONDS);
+        assertTrue(entered.await(5, TimeUnit.SECONDS), "Processor did not enter within 5 seconds");
 
         // 1. Stop route B: sets MulticastProcessor and its nested error-handler wrappers to stopped
         //    state (isStoppingOrStopped() returns true). The thread is still blocked in the processor.
@@ -94,6 +96,8 @@ public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
             future.get(10, TimeUnit.SECONDS);
         } catch (ExecutionException e) {
             ex = e;
+        } catch (java.util.concurrent.TimeoutException e) {
+            fail("Exchange did not complete within 10 seconds — likely a hang in the error handler chain", e);
         }
         assertNotNull(ex, "Expected the exchange to fail with a RouteStoppingException");
         assertInstanceOf(CamelExecutionException.class, ex.getCause());
