@@ -110,21 +110,31 @@ public class EasyPredicateParser {
         List<String> list = new ArrayList<>();
 
         StringBuilder part = new StringBuilder();
+        // an operator inside a quoted value (such as 'Java in Action') is part of the value
+        char quote = 0;
         for (int i = 0; i < predicate.length(); i++) {
 
             // is there a new operator
             String s = predicate.substring(i);
-            String op = EasyPredicateOperators.getOperatorAtStart(s);
+            String op = quote == 0 ? EasyPredicateOperators.getOperatorAtStart(s) : null;
             if (op != null) {
                 if (part.length() > 0) {
                     list.add(part.toString());
                     part.setLength(0);
                 }
                 list.add(op.trim());
-                // move i ahead
-                i = i + op.length() + 1;
+                // move i to the last char of the operator, and past the space after it (if any)
+                i = i + op.length();
+                if (i + 1 < predicate.length() && predicate.charAt(i + 1) == ' ') {
+                    i++;
+                }
             } else {
                 char ch = predicate.charAt(i);
+                if (quote == 0 && (ch == '\'' || ch == '"')) {
+                    quote = ch;
+                } else if (ch == quote) {
+                    quote = 0;
+                }
                 part.append(ch);
             }
         }

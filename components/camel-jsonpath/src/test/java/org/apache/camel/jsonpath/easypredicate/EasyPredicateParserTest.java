@@ -38,6 +38,34 @@ public class EasyPredicateParserTest {
     }
 
     @Test
+    void testOperatorsThatStartWithAnotherOperator() {
+        // <= and >= start with < and >: the whole operator must be read
+        assertEquals("$..*[?(@.price <= 10)]", parser.parse("price <= 10"));
+        assertEquals("$..*[?(@.price >= 10)]", parser.parse("price >= 10"));
+        assertEquals("$.store.book[?(@.price <= 10)]", parser.parse("store.book.price <= 10"));
+        assertEquals("$.store.book[?(@.price >= 10)]", parser.parse("$.store.book.price >= 10"));
+        assertEquals("$.store.book[?(@.category nin ['fiction'])]", parser.parse("store.book.category nin ['fiction']"));
+        // without a space after the operator: the value is kept whole
+        assertEquals("$..*[?(@.price < 20)]", parser.parse("price <20"));
+        assertEquals("$..*[?(@.price >= 20)]", parser.parse("price >=20"));
+    }
+
+    @Test
+    void testOperatorWordsInsideAQuotedValue() {
+        assertEquals("$.store.book[?(@.title == 'Java in Action')]",
+                parser.parse("store.book.title == 'Java in Action'"));
+        assertEquals("$.store.book[?(@.title != \"size < empty\")]",
+                parser.parse("store.book.title != \"size < empty\""));
+        assertEquals("$[?(@.status == 'a == b')]", parser.parse("$.status == 'a == b'"));
+    }
+
+    @Test
+    void testOperatorWordAtTheStartOfAWord() {
+        // " index" is not the operator in: a word operator must be followed by a space
+        assertEquals("$.store.book[?(@.title =~ /.* index/)]", parser.parse("store.book.title =~ /.* index/"));
+    }
+
+    @Test
     public void testRegularPathsAreKept() {
         assertEquals("$.status", parser.parse("$.status"));
         assertEquals("$..book[?(@.price < 10)]", parser.parse("$..book[?(@.price < 10)]"));
