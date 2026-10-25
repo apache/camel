@@ -57,7 +57,7 @@ public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
 
         // wait until the sub-exchange is blocked at the direct:shipment step (no consumer registered)
         await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().browse().stream()
-                .anyMatch(e -> "shipment".equals(e.getNodeId())));
+                .anyMatch(e -> "direct:shipment".equals(e.getToUri())));
 
         // force-stop route B while the exchange is inside its nested EIP
         context.getRouteController().stopRoute("nested-b");
