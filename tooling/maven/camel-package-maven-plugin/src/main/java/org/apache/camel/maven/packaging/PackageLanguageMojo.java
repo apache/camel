@@ -73,6 +73,18 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     protected File schemaOutDir;
 
     /**
+     * The output directory for the generated language configurer java classes
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
+    protected File configurerSourceOutDir;
+
+    /**
+     * The output directory for the generated language configurer resources
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
+    protected File configurerResourceOutDir;
+
+    /**
      * The project build directory
      */
     @Parameter(defaultValue = "${project.build.directory}")
@@ -81,6 +93,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     @Inject
     public PackageLanguageMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
                                File buildDir, File languageOutDir, File schemaOutDir,
+                               File configurerSourceOutDir, File configurerResourceOutDir,
                                BuildContext buildContext) {
         super(projectHelper, buildContext);
 
@@ -89,6 +102,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         this.buildDir = buildDir;
         this.languageOutDir = languageOutDir;
         this.schemaOutDir = schemaOutDir;
+        this.configurerSourceOutDir = configurerSourceOutDir;
+        this.configurerResourceOutDir = configurerResourceOutDir;
     }
 
     /**
@@ -187,6 +202,18 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         if (log.isDebugEnabled()) {
                             log.debug("Generated " + out + " containing JSON schema for " + name + " language");
                         }
+
+                        // the configurer that sets the options of the language (camel.language.<name>.<option>)
+                        // without reflection, found by its name as the configurer of a data format is
+                        String cn = javaType.getSimpleName() + "Configurer";
+                        String pn = javaType.getPackageName();
+                        updateResource(configurerSourceOutDir.toPath(), pn.replace('.', '/') + "/" + cn + ".java",
+                                generatePropertyConfigurer(pn, cn,
+                                        "org.apache.camel.support.component.PropertyConfigurerSupport",
+                                        javaType.getSimpleName(), false, languageModel.getLanguageOptions()));
+                        updateResource(configurerResourceOutDir.toPath(),
+                                "META-INF/services/org/apache/camel/configurer/" + name + "-language",
+                                generateMetaInfConfigurer(pn + "." + cn));
                     }
                 } else {
                     throw new MojoExecutionException(
