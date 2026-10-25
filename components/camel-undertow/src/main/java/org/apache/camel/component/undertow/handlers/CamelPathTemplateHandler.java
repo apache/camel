@@ -47,7 +47,7 @@ public class CamelPathTemplateHandler implements HttpHandler {
      */
     public CamelPathTemplateHandler(CamelMethodHandler defaultHandler, HttpHandler fallbackHandler) {
         defaultHandlerWrapper.set(defaultHandler);
-        defaultHandlerWrapper.fallback = fallbackHandler;
+        defaultHandlerWrapper.setFallback(fallbackHandler);
         delegate = new PathTemplateHandler(defaultHandlerWrapper);
     }
 
@@ -117,10 +117,18 @@ public class CamelPathTemplateHandler implements HttpHandler {
 
     static class Wrapper implements HttpHandler {
         private CamelMethodHandler handler;
+        /**
+         * The handler for a request when {@link #handler} has no handler for any method (no static base path is set),
+         * or null to let {@link #handler} answer 405. It is set once, when the template handler is created.
+         */
         private HttpHandler fallback;
 
         public void set(CamelMethodHandler handler) {
             this.handler = handler;
+        }
+
+        public void setFallback(HttpHandler fallback) {
+            this.fallback = fallback;
         }
 
         public CamelMethodHandler get() {
