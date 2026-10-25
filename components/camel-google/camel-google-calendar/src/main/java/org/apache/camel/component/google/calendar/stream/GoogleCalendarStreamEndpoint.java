@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.calendar.stream;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
@@ -46,6 +48,8 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implemen
 
     @UriParam
     private GoogleCalendarStreamConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Calendar client;
 
     public GoogleCalendarStreamEndpoint(String uri, GoogleCalendarStreamComponent component,
                                         GoogleCalendarStreamConfiguration endpointConfiguration) {
@@ -75,8 +79,24 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implemen
         return consumer;
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Calendar getClient() {
-        return ((GoogleCalendarStreamComponent) getComponent()).getClient(configuration);
+        Calendar answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleCalendarStreamComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     public GoogleCalendarStreamConfiguration getConfiguration() {

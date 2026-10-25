@@ -34,8 +34,6 @@ import org.apache.camel.support.HealthCheckComponent;
 public class GoogleMailStreamComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced")
-    private Gmail client;
-    @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
     @Metadata(label = "advanced")
     private GoogleMailStreamConfiguration configuration;
@@ -49,20 +47,24 @@ public class GoogleMailStreamComponent extends HealthCheckComponent {
         this.configuration = new GoogleMailStreamConfiguration();
     }
 
-    public Gmail getClient(GoogleMailStreamConfiguration googleMailConfiguration) {
-        if (client == null) {
-            if (googleMailConfiguration.getClientSecret() != null) {
-                client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
-                        googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopesAsList(),
-                        googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
-                        googleMailConfiguration.getAccessToken());
-            } else if (googleMailConfiguration.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getServiceAccountKey(),
-                        googleMailConfiguration.getScopesAsList(), googleMailConfiguration.getApplicationName(),
-                        googleMailConfiguration.getDelegate());
-            }
+    /**
+     * Creates a client for the given configuration with the client factory of the component. Each endpoint creates its
+     * own client from its own options and keeps it for its lifetime.
+     */
+    public Gmail getClient(GoogleMailStreamConfiguration config) {
+        if (config.getClientSecret() != null) {
+            return getClientFactory().makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(),
+                    config.getAccessToken());
+        } else if (config.getServiceAccountKey() != null) {
+            return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(), config.getApplicationName(),
+                    config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
         }
-        return client;
     }
 
     /**

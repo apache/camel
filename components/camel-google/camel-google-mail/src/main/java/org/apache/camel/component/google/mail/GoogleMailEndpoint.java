@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.mail;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.services.gmail.Gmail;
 import org.apache.camel.Category;
@@ -52,6 +54,8 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
 
     @UriParam
     private GoogleMailConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Gmail client;
 
     public GoogleMailEndpoint(String uri, GoogleMailComponent component, GoogleMailApiName apiName, String methodName,
                               GoogleMailConfiguration endpointConfiguration) {
@@ -116,8 +120,24 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
         }
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Gmail getClient() {
-        return ((GoogleMailComponent) getComponent()).getClient(configuration);
+        Gmail answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleMailComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     @Override
