@@ -307,14 +307,25 @@ public final class MainHelper {
             CamelContext context, Object target, OrderedLocationProperties properties,
             String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
             OrderedLocationProperties autoConfiguredProperties) {
+        return setPropertiesOnTarget(context, target, properties, optionPrefix, failIfNotSet, ignoreCase,
+                autoConfiguredProperties, null);
+    }
+
+    /**
+     * Sets the properties on the target, with the given configurer, or when null, the configurer of the target found by
+     * its type.
+     */
+    public static boolean setPropertiesOnTarget(
+            CamelContext context, Object target, OrderedLocationProperties properties,
+            String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
+            OrderedLocationProperties autoConfiguredProperties, PropertyConfigurer configurer) {
 
         ObjectHelper.notNull(context, "context");
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
 
         boolean rc = false;
-        PropertyConfigurer configurer = null;
-        if (target instanceof Component component) {
+        if (configurer == null && target instanceof Component component) {
             // the component needs to be initialized to have the configurer ready
             ServiceHelper.initService(target);
             configurer = component.getComponentPropertyConfigurer();
@@ -404,6 +415,37 @@ public final class MainHelper {
         }
 
         return rc;
+    }
+
+    /**
+     * The configurer of the data format or language that the option prefix, such as camel.dataformat.jacksonXml. or
+     * camel.language.jsonpath., is about. They are found by their name (jacksonXml-dataformat, jsonpath-language), as
+     * their name cannot always be told from their type.
+     *
+     * @param  target the data format or language
+     * @return        the configurer, or <tt>null</tt> for any other prefix, when there is none, or when it is not the
+     *                configurer of the type of the target (such as a custom bean with the name of a data format)
+     */
+    public static PropertyConfigurer configurerByName(CamelContext context, String optionPrefix, Object target) {
+        String kind;
+        if (optionPrefix.startsWith("camel.dataformat.")) {
+            kind = "dataformat";
+        } else if (optionPrefix.startsWith("camel.language.")) {
+            kind = "language";
+        } else {
+            return null;
+        }
+        String name = StringHelper.between(optionPrefix, "camel." + kind + ".", ".");
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+        PropertyConfigurer configurer
+                = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name + "-" + kind, context);
+        // the generated configurer of a type is named after it
+        if (configurer != null && configurer.getClass().getName().equals(target.getClass().getName() + "Configurer")) {
+            return configurer;
+        }
+        return null;
     }
 
     public static void computeProperties(

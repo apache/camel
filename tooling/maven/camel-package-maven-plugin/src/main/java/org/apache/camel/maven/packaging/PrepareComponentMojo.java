@@ -150,7 +150,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                 configurerResourceOutDir, schemaOutDir, buildContext).prepareDataFormat();
         count += new PackageLanguageMojo(
                 getLog(), project, projectHelper, buildDir, languageOutDir,
-                schemaOutDir, buildContext).prepareLanguage();
+                schemaOutDir, configurerSourceOutDir, configurerResourceOutDir, buildContext).prepareLanguage();
         if (count == 0 && new File(project.getBasedir(), "src/main/java").isDirectory()) {
             // okay its not any of the above then its other
             new PackageOtherMojo(
