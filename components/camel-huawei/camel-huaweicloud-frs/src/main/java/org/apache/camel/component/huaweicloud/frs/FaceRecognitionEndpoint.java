@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,17 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "3.15.0", scheme = "hwcloud-frs", title = "Huawei Cloud Face Recognition Service (FRS)",
              syntax = "hwcloud-frs:operation",
              category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used, not even for the image: the image comes from the options or the"
+                                                + " exchange properties as base64 (CamelHwCloudFrsImageBase64), a URL"
+                                                + " (CamelHwCloudFrsImageUrl) or a local file path (CamelHwCloudFrsImageFilePath),"
+                                                + " the second image of faceVerification from the CamelHwCloudFrsAnotherImage"
+                                                + " properties, and the video of faceLiveDetection from the CamelHwCloudFrsVideo"
+                                                + " properties"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the Huawei Cloud SDK for the operation and the source of the"
+                                                 + " image, such as the DetectFaceByBase64Response of faceDetection with base64,"
+                                                 + " which holds the faces found"))
 public class FaceRecognitionEndpoint extends DefaultEndpoint {
     @UriPath(
              description = "Name of Face Recognition operation to perform, including faceDetection, faceVerification and faceLiveDetection",

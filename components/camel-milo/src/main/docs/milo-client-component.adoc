@@ -239,7 +239,11 @@ or detects changes must tolerate this. A value that did not change during the lo
 
 Routes run while communication is lost. An OPC UA request that a route makes while the client reconnects, for example
 a write, waits for the next reconnect attempt and is sent if that attempt succeeds, so it can take effect after
-communication is restored. A request that fails rebuilds the connection.
+communication is restored. A request that fails completes with its failure; the connection is kept, and a lost
+session is recovered by the client as described above. The client recovers it with the endpoint and the server
+certificate it found when it connected, so a server that changes either while it cannot be reached is reached again
+only when Camel rebuilds the connection, for example when the Camel context restarts. A request does not wait while a
+consumer of the same connection creates or deletes its monitored items.
 
 Camel keeps no last value. A route that needs one keeps the last good value of each node itself. To recognise the
 status, check the status code of the `DataValue` body, for example with `${body.statusCode.bad}`.

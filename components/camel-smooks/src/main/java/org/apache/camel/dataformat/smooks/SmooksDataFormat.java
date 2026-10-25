@@ -30,6 +30,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.smooks.SmooksComponent;
 import org.apache.camel.component.smooks.SmooksProcessor;
 import org.apache.camel.component.smooks.SmooksSecuritySupport;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.CamelContextHelper;
@@ -60,6 +63,22 @@ import org.smooks.io.source.StreamSource;
  * <p/>
  */
 @Dataformat("smooks")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                 description = "A Java object graph, such as the beans unmarshal gives, which Smooks reads as a"
+                                               + " JavaSource. Text, bytes or a stream are not parsed: Smooks reads them as a"
+                                               + " Java object too"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The text Smooks writes in UTF-8, such as the XML of the object graph or the"
+                                                + " output of a template of the config, in the stream cache, or a byte array"
+                                                + " when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                   description = "The data the reader of the smooks config reads: XML by default, or EDI, CSV"
+                                                 + " or JSON with a reader"),
+           unmarshalOut = @BodyType(value = Carrier.UNKNOWN,
+                                    description = "What the exports of the smooks config give: the bean a JavaSink export"
+                                                  + " extracts (a Map of the beans when it extracts several or none), the text"
+                                                  + " of a StringSink, or a List of the results of several exports (empty"
+                                                  + " without exports)"))
 public class SmooksDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
     private Smooks smooks;

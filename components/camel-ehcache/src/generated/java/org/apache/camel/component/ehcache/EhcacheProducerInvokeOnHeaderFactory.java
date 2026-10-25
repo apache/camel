@@ -37,7 +37,7 @@ public class EhcacheProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrat
         case "REMOVE_ALL": target.onRemoveAll(exchange.getMessage()); return null;
         case "replace":
         case "REPLACE": target.onReplace(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

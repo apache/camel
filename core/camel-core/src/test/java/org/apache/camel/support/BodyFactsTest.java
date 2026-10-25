@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,6 +160,24 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals(Kind.COLLECTION, BodyFacts.kindOf(new String[] { "a" }));
         assertEquals(Kind.DATA, BodyFacts.kindOf(new Object()));
         assertEquals(Kind.COLLECTION, BodyFacts.kindOf(List.of(1, 2).iterator()));
+    }
+
+    @Test
+    public void testAMapThatIsIterableIsData() {
+        // such as the response of solr (a SimpleOrderedMap), which describe calls a Map too
+        IterableMap map = new IterableMap();
+        map.put("id", 1);
+
+        assertEquals(Kind.DATA, BodyFacts.kindOf(map));
+        assertTrue(BodyFacts.describe(exchange(map)).contains("a Map (IterableMap)"), BodyFacts.describe(exchange(map)));
+    }
+
+    private static final class IterableMap extends LinkedHashMap<String, Object>
+            implements Iterable<Map.Entry<String, Object>> {
+        @Override
+        public Iterator<Map.Entry<String, Object>> iterator() {
+            return entrySet().iterator();
+        }
     }
 
     @Test

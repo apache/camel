@@ -26,6 +26,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -39,6 +42,30 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "4.22.0", scheme = "duckdb", title = "DuckDB",
              syntax = "duckdb:databasePath", category = { Category.DATABASE, Category.BIGDATA },
              producerOnly = true, headersClass = DuckDbConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "query",
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "INSERT", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "operation", value = "COPY",
+                                                         carriers = { Carrier.FILE, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "PING", carriers = Carrier.ANY) },
+                                  description = "The SQL statement as text, or bytes, a stream or a file of it; the query"
+                                                + " option or the CamelDuckDbQuery header takes its place. Insert takes a List"
+                                                + " of Maps of the column names and their values (a Map alone fails), copy a"
+                                                + " File or the path of the csv, parquet or json file to load"),
+           producerOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Long",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "QUERY", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<String, Object>>"),
+                                           @BodyType.When(option = "operation", value = "PING", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "resultFormat", value = "JSON",
+                                                          carriers = { Carrier.TEXT, Carrier.VALUE }) },
+                                   description = "The count of rows written or affected as a Long, also in the"
+                                                 + " CamelDuckDbRowsWritten header. Query gives the rows as a List of Maps"
+                                                 + " of the column names and their values (a JSON array String with"
+                                                 + " resultFormat=JSON), ping a Boolean. The CamelDuckDbOperation header"
+                                                 + " overrides the operation"))
 public class DuckDbEndpoint extends DefaultEndpoint {
 
     private final ReentrantLock connectionLock = new ReentrantLock();

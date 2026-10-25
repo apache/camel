@@ -30,6 +30,9 @@ import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.azure.strategy.FilesProcessStrategyFactory;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -51,6 +54,21 @@ import org.apache.camel.util.ObjectHelper;
                               + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
                               + "bufferSize,moveExisting,username,host")
 @ManagedResource(description = "Camel Azure Files endpoint")
+@BodyTypes(consumerOut = @BodyType(value = Carrier.FILE, dependsOn = "preMove",
+                                   byOption = {
+                                           @BodyType.When(option = "streamDownload", value = "true", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "download", value = "false", carriers = Carrier.NULL) },
+                                   description = "The file as read: a RemoteFile with its content loaded as bytes, which converts"
+                                                 + " to text, bytes or a stream; a stream with streamDownload; with preMove its"
+                                                 + " content, a byte array"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "allowNullBody", value = "true",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE }),
+                                  description = "What converts to an InputStream or a byte array: text, bytes, a stream or a"
+                                                + " file. A Map or a List fails: marshal it first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> implements EndpointServiceLocation {
 
     // without hiding configuration field from type GenericFileEndpoint<ShareFileItem>

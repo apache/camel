@@ -70,6 +70,14 @@ The host key is checked against a known hosts file:
               strictHostKeyChecking: "yes"
 ----
 
+The directory of the endpoint (`/upload` above) must exist on the remote host, as scp does not create it:
+when it does not exist, each file is written to a file named like the directory, and the last one wins.
+The sub directories in the `CamelFileName` header (such as `mysub/hello.txt`) are created in that directory.
+
+Without a known hosts file (`useUserKnownHostsFile=false` and no `knownHostsFile`), no host is known,
+so the option `strictHostKeyChecking` decides: with `yes` the connection fails, with `no` (the default)
+the host key is not checked.
+
 
 == OpenSSH Certificate Authentication
 

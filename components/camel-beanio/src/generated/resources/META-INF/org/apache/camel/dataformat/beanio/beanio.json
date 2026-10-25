@@ -15,6 +15,12 @@
     "modelName": "beanio",
     "modelJavaType": "org.apache.camel.model.dataformat.BeanioDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo", "list" ], "byOption": [ { "option": "unmarshalSingleObject", "value": "true", "carriers": [ "pojo", "map", "list" ] } ], "description": "A bean of a record of the mapping file, or a List (or an Iterator) of them; a Map is one record only with unmarshalSingleObject" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "The records in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ] },
+    "unmarshalOut": { "carriers": [ "list" ], "byOption": [ { "option": "unmarshalSingleObject", "value": "true", "carriers": [ "pojo", "map" ] } ], "description": "A List with the bean of each record, of the class the mapping file names (a Map for a map record); with unmarshalSingleObject, the one bean" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "mapping": { "index": 1, "kind": "attribute", "displayName": "Mapping", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file." },

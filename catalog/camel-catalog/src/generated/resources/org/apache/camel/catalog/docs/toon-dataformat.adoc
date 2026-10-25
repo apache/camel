@@ -37,6 +37,9 @@ Marshalling converts a JSON-compatible message body to TOON text:
 * A Java `String` body is always treated as a JSON document and encoded with
   JToon `encodeJson`. This is the path to use when transforming existing JSON
   text to TOON.
+* A `byte[]`, an `InputStream` or a file (`java.io.File`, or the file of a file
+  consumer) holds JSON text as well: it is read in the exchange charset and
+  encoded as a `String` body is.
 
 IMPORTANT: A plain (non-JSON) `String` such as `hello world` is *not* encoded
 as a TOON string scalar. JToon rejects it with `IllegalArgumentException`.

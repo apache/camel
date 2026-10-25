@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.couchbase.client.core.error.DecodingFailureException;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
@@ -245,11 +247,13 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
 
         for (ViewRow row : result.rows()) {
             Object doc;
-            String id = row.id().get();
-            if (removeOnCompletion && isInFlight(id)) {
+            // the rows of a reduce view have no document ID: there is no document to fetch or to remove, so the
+            // value of the row is the body
+            String id = row.id().orElse(null);
+            if (id != null && removeOnCompletion && isInFlight(id)) {
                 continue;
             }
-            if (endpoint.isFullDocument()) {
+            if (id != null && endpoint.isFullDocument()) {
                 doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout(),
                         endpoint.getConsumerRetryPause());
             } else {
@@ -257,22 +261,22 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
                 doc = row.valueAs(Object.class).orElse(null);
             }
 
-            // Use String.class instead of the shaded JsonNode class to avoid conflicts
-            // when Jackson is on the classpath (CAMEL-22090). The Couchbase SDK's
-            // auto-detection of non-shaded Jackson would otherwise cause deserialization
-            // failures when trying to deserialize into the shaded JsonNode class.
-            String key = row.keyAs(String.class).orElse(null);
+            String key = viewKey(row);
             String designDocumentName = endpoint.getDesignDocumentName();
             String viewName = endpoint.getViewName();
 
             Exchange exchange = createExchange(true);
             exchange.getIn().setBody(doc);
-            exchange.getIn().setHeader(HEADER_ID, id);
+            if (id != null) {
+                exchange.getIn().setHeader(HEADER_ID, id);
+            }
             exchange.getIn().setHeader(HEADER_KEY, key);
             exchange.getIn().setHeader(HEADER_DESIGN_DOCUMENT_NAME, designDocumentName);
             exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
 
-            if (removeOnCompletion) {
+            if (id == null) {
+                LOG.trace("View row without a document ID, such as a row of a reduce view: no strategy applies");
+            } else if (removeOnCompletion) {
                 removeDocumentOnCompletion(exchange, id);
             } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                 if (LOG.isTraceEnabled()) {
@@ -285,6 +289,23 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
 
             logDetails(id, doc, key, designDocumentName, viewName, exchange);
             exchanges.add(exchange);
+        }
+    }
+
+    /**
+     * The key of the view row as text: a string key as it is, any other key, such as the compound key
+     * {@code [2024, "orders"]}, as its JSON text.
+     * <p/>
+     * Uses String.class instead of the shaded JsonNode class to avoid conflicts when Jackson is on the classpath
+     * (CAMEL-22090). The Couchbase SDK's auto-detection of non-shaded Jackson would otherwise cause deserialization
+     * failures when trying to deserialize into the shaded JsonNode class.
+     */
+    private static String viewKey(ViewRow row) {
+        try {
+            return row.keyAs(String.class).orElse(null);
+        } catch (DecodingFailureException e) {
+            // an array or an object is not a JSON string. The serializer hands byte[] over as it is, the JSON text
+            return row.keyAs(byte[].class).map(bytes -> new String(bytes, StandardCharsets.UTF_8)).orElse(null);
         }
     }
 

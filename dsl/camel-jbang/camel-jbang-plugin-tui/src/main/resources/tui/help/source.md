@@ -31,6 +31,10 @@ explorer on the left and a source viewer on the right.
 - The problems of a Camel file are marked as soon as it opens: a red ✗ on
   their lines and the count in the title; the panel at the bottom says the
   problem of the selected line, and **F9** goes to the next one
+- A note, something that works but is not right, is a yellow ⚠ instead, counted
+  apart as `notes`, and does not keep the file from being saved: a `direct:` or
+  `seda:` endpoint no route of the project consumes, a dependency a Kamelet does
+  not use
 - **u** — usages: the routes that consume from the endpoint of the line and the
   steps that send to it (direct:, seda:...), across the project; **Enter** goes there
 - **/** — search in source
@@ -47,6 +51,18 @@ processors on each line do: the exchanges they handled (`79`), how many failed
 its width, so the code does not move as the numbers grow. The source reads as
 a heat map of the route: where messages go, where they fail.
 
+With the message history on (such as `camel run --dev`), the body types each
+step has been reached with go at the end of its line, dimmed and lined up
+(`ByteArrayInputStreamCache`, `String | byte[]`). A step reached with bodies of
+more than one kind (null, payload, data or collection) needs attention, as its
+body depends on the path a message takes: it has a `⚠` in the gutter and its
+types in the warning color (`⚠ byte[] | LinkedHashMap (payload and data)`). The quick
+documentation of the line lists them all.
+
+The live run data and the body types are of the version of the file the
+integration runs: while it is not running as saved (see below), the numbers
+are dimmed and the body types are left out, as the lines may be others.
+
 ## Running as Saved
 The bottom border of the source says whether the integration runs the routes
 of the file as it is saved:
@@ -57,6 +73,9 @@ of the file as it is saved:
   reload the file
 - `⚠ the reload failed` — the integration runs what it ran before the reload,
   until a reload succeeds
+- `○ the routes of this file are stopped` — stopped (or suspended) by hand: the
+  live run data and the body types still show when the integration loaded the
+  file as saved, which is not known for a route stopped after a reload
 
 It compares when the file was saved with when the integration loaded the
 routes it has from it, and shows nothing for a file it has no route from.

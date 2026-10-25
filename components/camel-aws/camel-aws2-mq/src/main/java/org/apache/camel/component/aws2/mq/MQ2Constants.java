@@ -35,14 +35,15 @@ public interface MQ2Constants {
     String BROKER_ENGINE_VERSION = "CamelAwsMQBrokerEngineVersion";
     @Metadata(description = "The broker id", javaType = "String")
     String BROKER_ID = "CamelAwsMQBrokerID";
-    @Metadata(description = "A list of information about the configuration.",
+    @Metadata(description = "The configuration of the broker for the updateBroker operation: a ConfigurationId of the AWS SDK, or the id of the configuration as a String.",
               javaType = "software.amazon.awssdk.services.mq.model.ConfigurationId")
     String CONFIGURATION_ID = "CamelAwsMQConfigurationID";
     @Metadata(description = "The deployment mode for the broker in the createBroker operation", javaType = "String")
     String BROKER_DEPLOYMENT_MODE = "CamelAwsMQBrokerDeploymentMode";
     @Metadata(description = "The instance type for the MQ machine in the createBroker operation", javaType = "String")
     String BROKER_INSTANCE_TYPE = "CamelAwsMQBrokerInstanceType";
-    @Metadata(description = "The list of users for MQ", javaType = "List<User>")
+    @Metadata(description = "The list of users for MQ in the createBroker operation, as User objects of the AWS SDK",
+              javaType = "List<User>")
     String BROKER_USERS = "CamelAwsMQBrokerUsers";
     @Metadata(description = "If the MQ instance must be publicly available or not.", javaType = "Boolean",
               defaultValue = "false")
@@ -57,7 +58,7 @@ public interface MQ2Constants {
     String IS_TRUNCATED = "CamelAwsMQIsTruncated";
 
     // Response metadata
-    @Metadata(label = "createBroker",
+    @Metadata(label = "createBroker describeBroker",
               description = "The Amazon Resource Name (ARN) of the broker.", javaType = "String")
     String BROKER_ARN = "CamelAwsMQBrokerArn";
     @Metadata(label = "describeBroker",

@@ -15,6 +15,12 @@
     "modelName": "fhirJson",
     "modelJavaType": "org.apache.camel.model.dataformat.FhirJsonDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo" ], "javaType": "org.hl7.fhir.instance.model.api.IBaseResource", "description": "A HAPI FHIR resource of the fhirVersion, such as a Patient or a Bundle. Text fails: no type converter makes a resource of it" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "json", "description": "The FHIR JSON in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "json" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "javaType": "org.hl7.fhir.instance.model.api.IBaseResource", "description": "The HAPI FHIR resource of the model of the fhirVersion, such as an org.hl7.fhir.r4.model.Patient with R4" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "fhirVersion": { "index": 1, "kind": "attribute", "displayName": "Fhir Version", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "DSTU2", "DSTU2_HL7ORG", "DSTU2_1", "DSTU3", "R4", "R5" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "R4", "description": "The version of FHIR to use. Possible values are: DSTU2, DSTU2_HL7ORG, DSTU2_1, DSTU3, R4, R5." },

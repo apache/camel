@@ -53,26 +53,26 @@ public final class MailConvertersLoader implements TypeConverterLoader, CamelCon
                 }
                 return answer;
             });
-        addTypeConverter(registry, java.io.InputStream.class, jakarta.mail.Multipart.class, false,
+        addTypeConverter(registry, java.io.InputStream.class, jakarta.mail.Multipart.class, true,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.mail.MailConverters.toInputStream((jakarta.mail.Multipart) value, exchange);
-                if (false && answer == null) {
+                if (true && answer == null) {
                     answer = Void.class;
                 }
                 return answer;
             });
-        addTypeConverter(registry, java.lang.String.class, jakarta.mail.Message.class, false,
+        addTypeConverter(registry, java.lang.String.class, jakarta.mail.Message.class, true,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.mail.MailConverters.toString((jakarta.mail.Message) value);
-                if (false && answer == null) {
+                if (true && answer == null) {
                     answer = Void.class;
                 }
                 return answer;
             });
-        addTypeConverter(registry, java.lang.String.class, jakarta.mail.Multipart.class, false,
+        addTypeConverter(registry, java.lang.String.class, jakarta.mail.Multipart.class, true,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.mail.MailConverters.toString((jakarta.mail.Multipart) value);
-                if (false && answer == null) {
+                if (true && answer == null) {
                     answer = Void.class;
                 }
                 return answer;

@@ -59,6 +59,10 @@
   "headers": {
     "CamelMiloNodeIds": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "List", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The node ids.", "constantName": "org.apache.camel.component.milo.MiloConstants#HEADER_NODE_IDS" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "The body is not read: the nodes to browse are the node IDs of the CamelMiloNodeIds header, or else the node option" },
+    "producerOut": { "carriers": [ "map" ], "description": "A Map of the browsed ExpandedNodeId to its Milo BrowseResult; the node IDs found are also in the CamelMiloNodeIds header, as a List of Strings for the milo-client producer" }
+  },
   "properties": {
     "endpointUri": { "index": 0, "kind": "path", "displayName": "Endpoint Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The OPC UA server endpoint" },
     "clientId": { "index": 1, "kind": "parameter", "displayName": "Client Id", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.milo.client.MiloClientConfiguration", "configurationField": "configuration", "description": "A virtual client id to force the creation of a new connection instance" },

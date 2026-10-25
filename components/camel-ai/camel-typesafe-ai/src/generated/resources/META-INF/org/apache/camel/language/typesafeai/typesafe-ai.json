@@ -15,6 +15,10 @@
     "modelName": "language",
     "modelJavaType": "org.apache.camel.model.language.LanguageExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "map", "list" ], "description": "The state, the body unless the state option selects another: text, or a Map or a List of JSON values. Another body fails: select ${bodyAs(String)}" },
+    "expressionOut": { "carriers": [ "value" ], "javaType": "java.lang.Boolean", "description": "Whether the Noul probability reaches the threshold" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "language": { "index": 1, "kind": "attribute", "displayName": "Language", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the language to use." },

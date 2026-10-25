@@ -138,15 +138,14 @@ public class MiloClientConnection implements AutoCloseable, CamelContextAware {
     protected void init() {
         ObjectHelper.notNull(this.camelContext, "camelContext");
 
-        // A failed request disconnects the client, which can wait for a reconnect attempt that Milo schedules on its shared
-        // scheduled executor, so this connection handles its requests and reconnects on executors of its own.
+        // The outcome of a request continues its route, and a reconnect waits for the server; neither may hold a thread of
+        // Milo, whose shared scheduled executor runs the reconnect attempts of the clients. So this connection handles its
+        // requests and reconnects on executors of its own.
         final ExecutorServiceManager executorServiceManager = this.camelContext.getExecutorServiceManager();
         final ThreadPoolProfile profile = new ThreadPoolProfile("MiloClient");
         // as many threads as that executor, but they end when they are idle; with virtual threads and more than one
-        // processor, a virtual thread for each task. Not more platform threads, because when the connection is lost,
-        // every request in flight fails and waits for the disconnect of the first failure. With one processor this is
-        // one thread, so a route that continues on it after an awaited request must not wait for another request of
-        // this connection.
+        // processor, a virtual thread for each task. With one processor this is one thread, so a route that continues on
+        // it after an awaited request must not wait for another request of this connection.
         final int threads = Runtime.getRuntime().availableProcessors();
         profile.setPoolSize(threads);
         profile.setMaxPoolSize(threads);
@@ -156,8 +155,8 @@ public class MiloClientConnection implements AutoCloseable, CamelContextAware {
         // a request that completes after the connection is closed fails instead of being dropped
         profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
         this.executor = executorServiceManager.newThreadPool(this, "MiloClient", profile);
-        // the reconnects of the connection run one after the other, on a thread that starts with the first one and ends
-        // when the connection is closed
+        // the reconnects of the connection and its attempts to create the refused monitored items again run one after
+        // the other, on a thread that starts with the first one and ends when the connection is closed
         this.reconnectExecutor = executorServiceManager.newSingleThreadScheduledExecutor(this, "MiloClientReconnect");
 
         this.manager = new SubscriptionManager(

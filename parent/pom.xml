@@ -106,7 +106,7 @@
         <californium-scandium-version>3.14.0</californium-scandium-version>
         <!-- jbang edit command which uses embedded kamelets catalog -->
         <camel-lsp-version>1.34.0</camel-lsp-version>
-        <camel-kamelets-catalog-version>4.22.1</camel-kamelets-catalog-version>
+        <camel-kamelets-catalog-version>4.23.0</camel-kamelets-catalog-version>
         <camunda-version>7.24.0</camunda-version>
         <camunda-client-java-version>8.10.4</camunda-client-java-version>
         <cassandra-driver-version>4.19.4</cassandra-driver-version>
@@ -219,7 +219,7 @@
         <graphql-java-version>26.1</graphql-java-version>
         <greenmail-version>2.1.14</greenmail-version>
         <groovy-version>5.1.2</groovy-version>
-        <grpc-version>1.85.0</grpc-version>
+        <grpc-version>1.85.1</grpc-version>
         <grpc-java-jwt-version>4.6.1</grpc-java-jwt-version>
         <gson-version>2.14.0</gson-version>
         <guava-version>33.7.2-jre</guava-version>
@@ -243,7 +243,7 @@
         <mariadb-version>3.5.10</mariadb-version>
         <mariadb4j-version>3.3.1</mariadb4j-version>
         <httpcore-version>5.4.4</httpcore-version>
-        <httpclient-version>5.6.4</httpclient-version>
+        <httpclient-version>5.6.5</httpclient-version>
         <httpcore4-version>4.4.16</httpcore4-version>
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
@@ -265,7 +265,7 @@
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
-        <jackson2-version>2.22.3</jackson2-version>
+        <jackson2-version>2.22.4</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.4</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>

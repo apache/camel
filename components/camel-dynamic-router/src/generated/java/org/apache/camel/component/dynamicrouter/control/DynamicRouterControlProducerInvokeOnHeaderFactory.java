@@ -24,7 +24,7 @@ public class DynamicRouterControlProducerInvokeOnHeaderFactory implements Invoke
         case "subscribe": target.performSubscribe(exchange.getMessage(), callback); return callback;
         case "unsubscribe": target.performUnsubscribe(exchange.getMessage(), callback); return callback;
         case "update": target.performUpdate(exchange.getMessage(), callback); return callback;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

@@ -19,11 +19,9 @@ package org.apache.camel.component.solr.converter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -50,6 +48,8 @@ import org.apache.solr.common.util.ContentStreamBase;
 public final class SolrRequestConverter {
 
     public static final String DEFAULT_UPDATE_REQUEST_HANDLER = "/update";
+
+    private static final String XML_DECLARATION_START = "<?xml";
 
     private SolrRequestConverter() {
     }
@@ -251,39 +251,71 @@ public final class SolrRequestConverter {
             return updateRequest;
         } catch (BindingException ignored) {
         }
-        // when "invalid" body with solr params, allow processing (e.g. commit) without "body"
-        if (ctx.solrParams().size() > 0) {
-            return updateRequest;
-        }
         throw new NoTypeConversionAvailableException(body, SolrRequestConverter.class);
     }
 
+    /**
+     * An update with no message body: the document to insert comes from the CamelSolrField.xxx headers, or the request
+     * has only solr parameters (such as a commit).
+     *
+     * @return the update request, or null when there are neither solr fields (for an insert) nor solr parameters
+     */
+    public static UpdateRequest createUpdateRequestWithoutBody(SolrProducer.ActionContext ctx) {
+        UpdateRequest updateRequest = createNewUpdateRequest(ctx);
+        Optional<SolrInputDocument> doc = SolrOperation.INSERT.equals(ctx.operation())
+                ? getOptionalSolrInputDocumentFromMap(getMapFromHeaderSolrFields(ctx.exchange()), ctx.exchange())
+                : Optional.empty();
+        if (doc.isPresent()) {
+            updateRequest.add(doc.get());
+            return updateRequest;
+        }
+        if (ctx.solrParams().size() > 0) {
+            return updateRequest;
+        }
+        return null;
+    }
+
     private static void appendAddCommandToXML(SolrProducer.ActionContext ctx, String bodyAsString, String contentType) {
-        if ((contentType.startsWith(ContentStreamBase.TEXT_XML)
-                || contentType.startsWith(ContentStreamBase.APPLICATION_XML))
-                && !(bodyAsString.startsWith("<add"))) {
-            ctx.exchange().getMessage().setBody("<add>" + bodyAsString + "</add>");
+        if (!contentType.startsWith(ContentStreamBase.TEXT_XML)
+                && !contentType.startsWith(ContentStreamBase.APPLICATION_XML)) {
+            return;
+        }
+        // keep the xml declaration at the start, so the <add> command goes after it
+        String declaration = "";
+        String content = bodyAsString;
+        if (content.startsWith(XML_DECLARATION_START)) {
+            int end = content.indexOf("?>");
+            if (end > 0) {
+                declaration = content.substring(0, end + 2);
+                content = content.substring(end + 2).stripLeading();
+            }
+        }
+        if (!content.startsWith("<add")) {
+            ctx.exchange().getMessage().setBody(declaration + "<add>" + content + "</add>");
         }
     }
 
     private static Map<String, Object> getMapFromBody(Object body) {
-        if (body instanceof Map) {
-            return ((Map<?, ?>) body).entrySet().stream()
-                    .collect(
-                            Collectors.toMap(
-                                    entry -> String.valueOf(entry.getKey()),
-                                    Map.Entry::getValue));
+        Map<String, Object> answer = new LinkedHashMap<>();
+        if (body instanceof Map<?, ?> map) {
+            // a field with a null value is left out
+            map.forEach((key, value) -> {
+                if (value != null) {
+                    answer.put(String.valueOf(key), value);
+                }
+            });
         }
-        return Collections.emptyMap();
+        return answer;
     }
 
     private static Map<String, Object> getMapFromHeaderSolrFields(Exchange exchange) {
-        return exchange.getMessage().getHeaders().entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(SolrConstants.HEADER_FIELD_PREFIX))
-                .collect(
-                        Collectors.toMap(
-                                entry -> entry.getKey().substring(SolrConstants.HEADER_FIELD_PREFIX.length()),
-                                Map.Entry::getValue));
+        Map<String, Object> answer = new LinkedHashMap<>();
+        exchange.getMessage().getHeaders().forEach((key, value) -> {
+            if (key.startsWith(SolrConstants.HEADER_FIELD_PREFIX) && value != null) {
+                answer.put(key.substring(SolrConstants.HEADER_FIELD_PREFIX.length()), value);
+            }
+        });
+        return answer;
     }
 
     private static Optional<Collection<SolrInputDocument>> getOptionalCollectionOfSolrInputDocument(

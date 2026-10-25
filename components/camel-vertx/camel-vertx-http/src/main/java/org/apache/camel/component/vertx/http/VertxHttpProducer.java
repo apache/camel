@@ -20,8 +20,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.Serializable;
-import java.util.Map;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 import io.vertx.core.AsyncResult;
@@ -41,7 +45,6 @@ import org.apache.camel.component.vertx.common.VertxBufferConverter;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.MimeTypeHelper;
-import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_FORM_URLENCODED;
 import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
@@ -95,12 +98,23 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                     return false;
                 }
 
-                if (body instanceof File || body instanceof WrappedFile<?>) {
+                if (body instanceof Reader) {
+                    // send the text of the reader, as a String body
+                    body = message.getMandatoryBody(String.class);
+                }
+
+                if (body instanceof File || body instanceof Path || body instanceof WrappedFile<?>) {
                     // file based (could potentially also be a FTP file etc)
-                    File file = message.getBody(File.class);
+                    File file = body instanceof Path ? null : message.getBody(File.class);
                     Buffer buf;
                     String fileName;
-                    if (file != null) {
+                    if (body instanceof Path path) {
+                        try (InputStream is = Files.newInputStream(path)) {
+                            buf = VertxBufferConverter.toBuffer(is);
+                        }
+                        Path name = path.getFileName();
+                        fileName = name != null ? name.toString() : multipartName;
+                    } else if (file != null) {
                         try (InputStream is = new FileInputStream(file)) {
                             buf = VertxBufferConverter.toBuffer(is);
                         }
@@ -124,10 +138,7 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                 } else if (body instanceof String str) {
                     // Try to extract URL encoded form data from the message body
                     if (CONTENT_TYPE_FORM_URLENCODED.equals(contentType)) {
-                        MultiMap map = MultiMap.caseInsensitiveMultiMap();
-                        Map<String, Object> formParams = URISupport.parseQuery(str);
-                        formParams.forEach((key, o) -> map.add(key, String.valueOf(o)));
-                        request.sendForm(map).onComplete(resultHandler);
+                        request.sendForm(parseForm(str)).onComplete(resultHandler);
                     } else {
                         // Fallback to send as Buffer
                         Buffer buffer = VertxBufferConverter.toBuffer(str, exchange);
@@ -159,6 +170,24 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
         }
 
         return false;
+    }
+
+    /**
+     * Parses a URL encoded form, with its values decoded (Vert.x encodes them again) and all the values of a repeated
+     * name.
+     */
+    private static MultiMap parseForm(String form) {
+        MultiMap map = MultiMap.caseInsensitiveMultiMap();
+        for (String pair : form.split("&")) {
+            if (pair.isEmpty()) {
+                continue;
+            }
+            int pos = pair.indexOf('=');
+            String name = pos < 0 ? pair : pair.substring(0, pos);
+            String value = pos < 0 ? "" : pair.substring(pos + 1);
+            map.add(URLDecoder.decode(name, StandardCharsets.UTF_8), URLDecoder.decode(value, StandardCharsets.UTF_8));
+        }
+        return map;
     }
 
     private Handler<AsyncResult<HttpResponse<Buffer>>> createResultHandler(Exchange exchange, AsyncCallback callback) {

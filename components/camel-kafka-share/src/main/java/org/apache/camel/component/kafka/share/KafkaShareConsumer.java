@@ -106,13 +106,9 @@ public class KafkaShareConsumer extends DefaultConsumer {
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
         for (int i = 0; i < configuration.getConsumersCount(); i++) {
             KafkaShareFetchRecords task = new KafkaShareFetchRecords(this, bridge, Integer.toString(i), getProps());
-            if (!endpoint.getCamelContext().isStarted()) {
-                // if camel has not been fully started yet then delay starting this consumer to avoid
-                // process incoming message before camel is fully started
-                endpoint.getComponent().pendingConsumer(() -> executor.submit(task));
-            } else {
-                executor.submit(task);
-            }
+            // if camel has not been fully started yet then delay starting this consumer to avoid
+            // process incoming message before camel is fully started
+            endpoint.getComponent().startConsumer(() -> executor.submit(task));
             tasks.add(task);
         }
     }

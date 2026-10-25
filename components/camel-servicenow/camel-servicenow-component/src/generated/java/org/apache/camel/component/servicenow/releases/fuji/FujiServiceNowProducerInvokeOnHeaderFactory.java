@@ -22,7 +22,7 @@ public class FujiServiceNowProducerInvokeOnHeaderFactory implements InvokeOnHead
         case "aggregate": target.invokeProcessor2(exchange); return null;
         case "import": target.invokeProcessor3(exchange); return null;
         case "table": target.invokeProcessor1(exchange); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

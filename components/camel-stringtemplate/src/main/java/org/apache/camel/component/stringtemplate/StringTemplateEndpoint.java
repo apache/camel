@@ -24,6 +24,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -39,6 +42,16 @@ import org.stringtemplate.v4.STGroup;
              syntax = "string-template:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION, Category.SCRIPT },
              headersClass = StringTemplateConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The template gets the body as body, as it is: text, or a Map, a List or a"
+                                                + " POJO to read from; convert bytes or a stream to a String first. The"
+                                                + " template is the resource, or the CamelStringTemplateTemplate or"
+                                                + " CamelStringTemplateResourceUri header with allowTemplateFromHeader=true,"
+                                                + " and never the body"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The text the template writes, also when it is JSON or XML: unmarshal it to"
+                                                 + " read its fields. The headers are kept, and the"
+                                                 + " CamelStringTemplateResourceUri header is set to the uri of the resource"))
 public class StringTemplateEndpoint extends ResourceEndpoint {
 
     @UriParam

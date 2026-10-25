@@ -27,6 +27,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,6 +47,12 @@ import run.endive.wasm.WasmModule;
 @UriEndpoint(firstVersion = "4.4.0", scheme = Wasm.SCHEME, title = "Wasm", syntax = "wasm:module",
              producerOnly = true, remote = false, category = { Category.CORE, Category.SCRIPT },
              headersClass = Wasm.Headers.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The standard input of the module: text, bytes, a stream or a file; no body is"
+                                                + " an empty input. A Map, a List or a POJO fails: marshal it first"),
+           producerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The standard output of the module, with the exit code in the"
+                                                 + " CamelWasmExitCode header"))
 public class WasmEndpoint extends DefaultEndpoint {
 
     private static final String DEFAULT_PROGRAM_NAME = "module.wasm";

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.rekognition;
 
+import java.util.List;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,11 +28,14 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.rekognition.model.*;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Rekognition2ProducerTest extends CamelTestSupport {
 
@@ -60,13 +65,15 @@ public class Rekognition2ProducerTest extends CamelTestSupport {
 
     @Test
     public void compareFacesTest() throws Exception {
+        Image sourceImage = Image.builder().bytes(SdkBytes.fromUtf8String("source")).build();
+        Image targetImage = Image.builder().bytes(SdkBytes.fromUtf8String("target")).build();
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:compareFaces", new Processor() {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Rekognition2Constants.OPERATION, Rekognition2Operations.compareFaces);
-                exchange.getIn().setHeader(Rekognition2Constants.IMAGE, Image.builder().build());
-                exchange.getIn().setHeader(Rekognition2Constants.TARGET_IMAGE, Image.builder().build());
+                exchange.getIn().setHeader(Rekognition2Constants.SOURCE_IMAGE, sourceImage);
+                exchange.getIn().setHeader(Rekognition2Constants.TARGET_IMAGE, targetImage);
             }
         });
 
@@ -74,6 +81,73 @@ public class Rekognition2ProducerTest extends CamelTestSupport {
         CompareFacesResponse result = (CompareFacesResponse) exchange.getIn().getBody();
         assertEquals(1, result.faceMatches().size());
         assertEquals(98.0f, result.faceMatches().get(0).similarity());
+        assertEquals(sourceImage, clientMock.lastCompareFacesRequest.sourceImage());
+        assertEquals(targetImage, clientMock.lastCompareFacesRequest.targetImage());
+    }
+
+    @Test
+    public void noOperationTest() {
+        Exchange exchange = template.send("direct:noOperation", e -> e.getIn().setBody("test"));
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("Operation must be specified, either with the operation option or the CamelAwsRekognitionOperation header",
+                cause.getMessage());
+    }
+
+    @Test
+    public void detectFacesWithStringAttributesTest() {
+        template.send("direct:detectFaces", exchange -> {
+            exchange.getIn().setHeader(Rekognition2Constants.IMAGE, Image.builder().build());
+            exchange.getIn().setHeader(Rekognition2Constants.FACIAL_ATTRIBUTES, List.of("ALL"));
+        });
+
+        assertEquals(List.of("ALL"), clientMock.lastDetectFacesRequest.attributesAsStrings());
+    }
+
+    @Test
+    public void detectFacesWithAttributeValuesTest() {
+        template.send("direct:detectFaces", exchange -> {
+            exchange.getIn().setHeader(Rekognition2Constants.IMAGE, Image.builder().build());
+            exchange.getIn().setHeader(Rekognition2Constants.FACIAL_ATTRIBUTES,
+                    List.of(Attribute.DEFAULT, Attribute.AGE_RANGE));
+        });
+
+        assertEquals(List.of(Attribute.DEFAULT, Attribute.AGE_RANGE), clientMock.lastDetectFacesRequest.attributes());
+    }
+
+    @Test
+    public void indexFacesWithStringDetectionAttributesTest() {
+        template.send("direct:indexFaces", exchange -> {
+            exchange.getIn().setHeader(Rekognition2Constants.COLLECTION_ID, "test-collection");
+            exchange.getIn().setHeader(Rekognition2Constants.IMAGE, Image.builder().build());
+            exchange.getIn().setHeader(Rekognition2Constants.DETECTION_ATTRIBUTES, List.of("DEFAULT", "EMOTIONS"));
+        });
+
+        assertEquals(List.of("DEFAULT", "EMOTIONS"), clientMock.lastIndexFacesRequest.detectionAttributesAsStrings());
+    }
+
+    @Test
+    public void indexFacesWithCommaSeparatedDetectionAttributesTest() {
+        template.send("direct:indexFaces", exchange -> {
+            exchange.getIn().setHeader(Rekognition2Constants.COLLECTION_ID, "test-collection");
+            exchange.getIn().setHeader(Rekognition2Constants.IMAGE, Image.builder().build());
+            exchange.getIn().setHeader(Rekognition2Constants.DETECTION_ATTRIBUTES, "DEFAULT, EMOTIONS");
+        });
+
+        assertEquals(List.of(Attribute.DEFAULT, Attribute.EMOTIONS), clientMock.lastIndexFacesRequest.detectionAttributes());
+    }
+
+    @Test
+    public void indexFacesWithWrongDetectionAttributesTypeTest() {
+        Exchange exchange = template.send("direct:indexFaces", e -> {
+            e.getIn().setHeader(Rekognition2Constants.COLLECTION_ID, "test-collection");
+            e.getIn().setHeader(Rekognition2Constants.IMAGE, Image.builder().build());
+            e.getIn().setHeader(Rekognition2Constants.DETECTION_ATTRIBUTES, List.of(42));
+        });
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(cause.getMessage().startsWith("The CamelAwsRekognitionDetectionAttributes header must hold String or"),
+                cause.getMessage());
     }
 
     @Test
@@ -540,6 +614,8 @@ public class Rekognition2ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                from("direct:noOperation")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient");
                 from("direct:associateFaces")
                         .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=associateFaces")
                         .to("mock:result");

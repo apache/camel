@@ -310,7 +310,9 @@ public interface InfinispanEmbeddedComponentBuilderFactory {
         }
     
         /**
-         * Specifies the cache Container to connect.
+         * Specifies the cache Container to connect Read on the component only,
+         * as the cache manager is shared by all the endpoints of the component:
+         * set on an endpoint, this option is not used.
          * 
          * The option is a:
          * &lt;code&gt;org.infinispan.manager.EmbeddedCacheManager&lt;/code&gt;
@@ -328,7 +330,9 @@ public interface InfinispanEmbeddedComponentBuilderFactory {
     
         /**
          * The CacheContainer configuration. Used if the cacheContainer is not
-         * defined.
+         * defined. Read on the component only, as the cache manager is shared
+         * by all the endpoints of the component: set on an endpoint, this
+         * option is not used.
          * 
          * The option is a:
          * &lt;code&gt;org.infinispan.configuration.cache.Configuration&lt;/code&gt; type.
@@ -363,7 +367,9 @@ public interface InfinispanEmbeddedComponentBuilderFactory {
     
         /**
          * A comma separated list of org.infinispan.context.Flag to be applied
-         * by default on each cache invocation.
+         * by default on each cache invocation Read on the component only, as
+         * the cache manager is shared by all the endpoints of the component:
+         * set on an endpoint, this option is not used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

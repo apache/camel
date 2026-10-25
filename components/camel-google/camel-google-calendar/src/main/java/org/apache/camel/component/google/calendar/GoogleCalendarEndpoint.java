@@ -29,6 +29,9 @@ import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiColl
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarConstants;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarPropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +46,23 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar",
              syntax = "google-calendar:apiName/methodName", apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer", category = { Category.API, Category.CLOUD })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   description = "One message per poll with the return value of the method: a Google"
+                                                 + " Calendar model object, such as the Events of events/list, which is one"
+                                                 + " message and not split per event. The model classes are GenericJson,"
+                                                 + " which is also a Map of the JSON fields"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names a parameter of the method, and"
+                                                + " must then be of the type of that parameter: an Event for content of"
+                                                + " events/insert, or text for text of events/quickAdd. JSON text or a Map is"
+                                                + " not turned into a model object: build it first. Without inBody the"
+                                                + " arguments come from the options and the CamelGoogleCalendar. headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                   description = "The return value of the method: a Google Calendar model object, such as"
+                                                 + " the Event of events/insert and events/get or the Events of events/list;"
+                                                 + " null for the methods without a response: events/delete, acl/delete,"
+                                                 + " calendars/clear, calendars/delete, list/delete and channels/stop. The"
+                                                 + " model classes are GenericJson, which is also a Map of the JSON fields"))
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration>
         implements EndpointServiceLocation {
 

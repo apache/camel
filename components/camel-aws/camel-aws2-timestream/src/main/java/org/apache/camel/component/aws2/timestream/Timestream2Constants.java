@@ -22,10 +22,11 @@ public interface Timestream2Constants {
 
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsTimestreamOperation";
-    @Metadata(description = "Represents a time-series data point being written into Timestream",
+    @Metadata(description = "The common attributes of the writeRecords operation: the dimensions, measure and time values "
+                            + "that all the records of the CamelAwsTimestreamRecordList header share. It is not written as a record of its own.",
               javaType = "software.amazon.awssdk.services.timestreamwrite.model.Record")
     String RECORD = "CamelAwsTimestreamRecord";
-    @Metadata(description = "List of Records", javaType = "List")
+    @Metadata(description = "The records of the writeRecords operation", javaType = "List")
     String RECORD_LIST = "CamelAwsTimestreamRecordList";
     @Metadata(description = "Status of Batch Load Task", javaType = "String")
     String TASK_STATUS = "CamelAwsTimestreamTaskStatus";
@@ -39,7 +40,7 @@ public interface Timestream2Constants {
     String TARGET_DATABASE_NAME = "CamelAwsTimestreamTargetDatabaseName";
     @Metadata(description = "Name of Target Table", javaType = "String")
     String TARGET_TABLE_NAME = "CamelAwsTimestreamTargetTableName";
-    @Metadata(description = "Record version", javaType = "String")
+    @Metadata(description = "The record version of the createBatchLoadTask operation", javaType = "Long")
     String RECORD_VERSION = "CamelAwsTimestreamRecordVersion";
     @Metadata(description = "Configuration of Data Model",
               javaType = "software.amazon.awssdk.services.timestreamwrite.model.DataModelConfiguration")
@@ -56,7 +57,7 @@ public interface Timestream2Constants {
     @Metadata(description = "Timestream Table Retention Properties",
               javaType = "software.amazon.awssdk.services.timestreamwrite.model.RetentionProperties")
     String RETENTION_PROPERTIES = "CamelAwsTimestreamRetentionProperties";
-    @Metadata(description = "Timestream Table Magentic Store Write properties",
+    @Metadata(description = "Timestream Table Magnetic Store Write properties",
               javaType = "software.amazon.awssdk.services.timestreamwrite.model.MagneticStoreWriteProperties")
     String MAGNETIC_STORE_WRITE_PROPERTIES = "CamelAwsTimestreamMagneticStoreWriteProperties";
     @Metadata(description = "Name of Time column", javaType = "String")
@@ -99,7 +100,7 @@ public interface Timestream2Constants {
     String ERROR_REPORT_S3_OBJECT_KEY_PREFIX = "CamelAwsTimestreamErrorReportS3ObjectKeyPrefix";
     @Metadata(description = "S3 encryption option for error reporting.", javaType = "String")
     String ERROR_REPORT_S3_ENCRYPTION_OPTION = "CamelAwsTimestreamErrorReportS3EncryptionOption";
-    @Metadata(description = "he ARN for the IAM role that Timestream will assume when running the scheduled query.",
+    @Metadata(description = "The ARN for the IAM role that Timestream will assume when running the scheduled query.",
               javaType = "String")
     String SCHEDULED_QUERY_EXECUTION_ROLE_ARN = "CamelAwsTimestreamScheduledQueryExecutionRoleArn";
     @Metadata(description = "Using a ClientToken makes the call to CreateScheduledQuery idempotent", javaType = "String")

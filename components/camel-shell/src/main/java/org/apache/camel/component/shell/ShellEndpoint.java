@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -30,6 +33,14 @@ import org.jline.terminal.Terminal;
 
 @UriEndpoint(firstVersion = "4.21.0", category = { Category.API }, scheme = "shell", title = "Shell",
              syntax = "shell:prompt", consumerOnly = true, remote = false)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The line the user typed at the prompt, as typed (an empty line too);"
+                                                 + " exit or end of input stops the CamelContext"),
+           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.VALUE, Carrier.NULL },
+                                     description = "The body the route ends with, converted to text and printed to the"
+                                                   + " terminal; null prints nothing, and a failed exchange prints the"
+                                                   + " message of its exception. A Map or a List prints as its Java"
+                                                   + " toString: marshal it first"))
 public class ShellEndpoint extends DefaultEndpoint {
 
     @UriPath

@@ -60,7 +60,7 @@ public class KubernetesEventsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         eventWatcher = new EventsConsumerTask();
-        executor.submit(eventWatcher);
+        KubernetesHelper.watch(this, executor, eventWatcher);
     }
 
     @Override

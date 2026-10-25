@@ -36,6 +36,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.dataformat.ocsf.model.OcsfEvent;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -55,6 +58,17 @@ import org.slf4j.LoggerFactory;
  */
 @Dataformat("ocsf")
 @Metadata(excludeProperties = "library")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                 description = "An OCSF event such as a DetectionFinding, a Map or a List to write as JSON. A"
+                                               + " String is written as one JSON string and bytes as Base64, not as they are"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
+                                  description = "The JSON in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.dataformat.ocsf.model.OcsfEvent",
+                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType" },
+                                    byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
+                                    description = "The base OcsfEvent; an object of the class unmarshalType names, such as"
+                                                  + " DetectionFinding"))
 public class OcsfDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(OcsfDataFormat.class);

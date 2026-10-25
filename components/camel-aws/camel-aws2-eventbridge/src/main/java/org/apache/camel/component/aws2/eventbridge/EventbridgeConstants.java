@@ -60,7 +60,8 @@ public interface EventbridgeConstants {
               description = "The Amazon Resource Name (ARN) of the rule.", javaType = "String")
     String RULE_ARN = "CamelAwsEventbridgeRuleArn";
     @Metadata(label = "putEvent putTargets removeTargets",
-              description = "The number of failed entries in the response.", javaType = "Integer")
+              description = "The number of failed entries in the response. The putEvent operation fails the exchange when an entry failed.",
+              javaType = "Integer")
     String FAILED_ENTRY_COUNT = "CamelAwsEventbridgeFailedEntryCount";
 
     // Consumer constants

@@ -24,13 +24,18 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.Topic;
+import org.springframework.data.redis.serializer.SerializationException;
 
 public class RedisConsumer extends DefaultConsumer implements MessageListener {
+    private static final Logger LOG = LoggerFactory.getLogger(RedisConsumer.class);
+
     private final RedisConfiguration redisConfiguration;
 
     public RedisConsumer(RedisEndpoint redisEndpoint, Processor processor,
@@ -78,6 +83,9 @@ public class RedisConsumer extends DefaultConsumer implements MessageListener {
             setBody(exchange, message.getBody());
 
             getProcessor().process(exchange);
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
         } catch (Exception e) {
             getExceptionHandler().handleException("Error processing redis message", e);
         }
@@ -85,7 +93,15 @@ public class RedisConsumer extends DefaultConsumer implements MessageListener {
 
     private void setBody(Exchange exchange, byte[] body) {
         if (body != null) {
-            exchange.getIn().setBody(redisConfiguration.getSerializer().deserialize(body));
+            Object value;
+            try {
+                value = redisConfiguration.getSerializer().deserialize(body);
+            } catch (SerializationException e) {
+                // such as a message another client published as text: give the bytes as they are
+                LOG.debug("Cannot deserialize the message with the serializer, giving the raw bytes: {}", e.getMessage());
+                value = body;
+            }
+            exchange.getIn().setBody(value);
         }
     }
 

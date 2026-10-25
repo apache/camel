@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.oss.constants.OSSHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,30 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-oss", title = "Alibaba Object Storage Service (OSS)",
              syntax = "alibaba-oss:bucketName",
              category = { Category.CLOUD }, headersClass = OSSHeaders.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The content of the object as a byte array, one message per object, with"
+                                                 + " its bucket, key and metadata in headers"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "putObject",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "The content to upload for putObject: text, bytes, a stream or a file (a"
+                                                + " file without objectName is stored under its file name). A Map, a List"
+                                                + " or a POJO fails: marshal it first. The other operations do not read"
+                                                + " the body, they take their input from options and headers"),
+           producerOut = @BodyType(value = Carrier.MAP,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getObject", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "operation", value = "listObjects", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<String, Object>>"),
+                                           @BodyType.When(option = "operation", value = "listBuckets", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<String, Object>>") },
+                                   description = "A Map of the result for putObject, deleteObject, copyObject and"
+                                                 + " headObject, such as the eTag and the status code. getObject gives the"
+                                                 + " content of the object as a byte array with its metadata in headers,"
+                                                 + " listObjects and listBuckets a List of a Map per object or bucket"))
 public class OSSEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Name of bucket to perform operation on", displayName = "Bucket Name")

@@ -17,7 +17,7 @@
 package org.apache.camel.component.jgroups.raft.cluster;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
@@ -26,7 +26,6 @@ import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.component.master.MasterConsumer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.awaitility.Awaitility;
-import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
 
@@ -34,58 +33,45 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
 
-    private ArrayList<CamelContext> lcc = new ArrayList<>();
-    private ArrayList<String> rn = new ArrayList<>();
-
     @Test
     public void test() throws Exception {
-        @SuppressWarnings("resource")
-        // NOTE: to be closed by component lifecycle.
-        JChannel chA = new JChannel("raftABC.xml").name("A");
-        RaftHandle handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
+        RaftHandle handleA = createHandle("A", new NopStateMachine());
         CamelContext contextA = createContext("A", handleA);
 
-        @SuppressWarnings("resource")
-        // NOTE: to be closed by component lifecycle.
-        JChannel chB = new JChannel("raftABC.xml").name("B");
-        RaftHandle handleB = new RaftHandle(chB, new NopStateMachine()).raftId("B");
+        RaftHandle handleB = createHandle("B", new NopStateMachine());
         CamelContext contextB = createContext("B", handleB);
 
-        @SuppressWarnings("resource")
-        // NOTE: to be closed by component lifecycle.
-        JChannel chC = new JChannel("raftABC.xml").name("C");
-        RaftHandle handleC = new RaftHandle(chC, new NopStateMachine()).raftId("C");
+        RaftHandle handleC = createHandle("C", new NopStateMachine());
         CamelContext contextC = createContext("C", handleC);
 
-        lcc.add(contextA);
-        rn.add("route-A");
-        lcc.add(contextB);
-        rn.add("route-B");
-        lcc.add(contextC);
-        rn.add("route-C");
+        contexts.add(contextA);
+        routeNames.add("route-A");
+        contexts.add(contextB);
+        routeNames.add("route-B");
+        contexts.add(contextC);
+        routeNames.add("route-C");
 
         contextA.start();
         contextB.start();
         contextC.start();
         waitForLeader(50, handleA, handleB, handleC);
-        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
+        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(contexts, routeNames)));
 
         contextA.stop();
-        chA.close();
+        handleA.channel().close();
         waitForLeader(50, handleB, handleC);
-        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
+        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(contexts, routeNames)));
 
         contextB.stop();
-        chB.close();
-        waitForViewSize(chC, 1, 30);
+        handleB.channel().close();
+        waitForViewSize(handleC.channel(), 1, 30);
         // Create a completely new channel, handle and context for A
-        chA = new JChannel("raftABC.xml").name("A");
-        handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
+        handleA = createHandle("A", new NopStateMachine());
         contextA = createContext("A", handleA);
-        lcc.set(0, contextA);
+        contexts.set(0, contextA);
         contextA.start();
         waitForLeader(50, handleA, handleC);
-        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
+        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(contexts, routeNames)));
     }
 
     private CamelContext createContext(String id, RaftHandle rh) throws Exception {
@@ -111,15 +97,15 @@ public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
         return context;
     }
 
-    private int countActiveFromEndpoints(ArrayList<CamelContext> lcc, ArrayList<String> rn)
+    private int countActiveFromEndpoints(List<CamelContext> contexts, List<String> routeNames)
             throws NoSuchFieldException, IllegalAccessException {
         int result = 0;
-        if (lcc.size() != rn.size()) {
+        if (contexts.size() != routeNames.size()) {
             throw new UnsupportedOperationException(
                     "CamelContext list and Route ids list must have the same number of elements!");
         }
-        for (int i = 0; i < lcc.size(); i++) {
-            Route route = lcc.get(i).getRoute(rn.get(i));
+        for (int i = 0; i < contexts.size(); i++) {
+            Route route = contexts.get(i).getRoute(routeNames.get(i));
             if (route != null) {
                 MasterConsumer mc = (MasterConsumer) route.getConsumer();
                 Field delegatedConsumer = mc.getClass().getDeclaredField("delegatedConsumer");

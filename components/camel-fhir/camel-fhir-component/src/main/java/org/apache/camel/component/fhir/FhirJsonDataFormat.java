@@ -23,10 +23,23 @@ import java.io.OutputStreamWriter;
 
 import ca.uhn.fhir.parser.IParser;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 @Dataformat("fhirJson")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO, javaType = "org.hl7.fhir.instance.model.api.IBaseResource",
+                                 description = "A HAPI FHIR resource of the fhirVersion, such as a Patient or a Bundle. Text"
+                                               + " fails: no type converter makes a resource of it"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
+                                  description = "The FHIR JSON in the stream cache, or a byte array when stream caching"
+                                                + " is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "org.hl7.fhir.instance.model.api.IBaseResource",
+                                    description = "The HAPI FHIR resource of the model of the fhirVersion, such as an"
+                                                  + " org.hl7.fhir.r4.model.Patient with R4"))
 public class FhirJsonDataFormat extends FhirDataFormat {
 
     @Override

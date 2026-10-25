@@ -398,7 +398,7 @@ public class IAM2Producer extends DefaultProducer {
                             "Access Key status must be specified");
                     UpdateAccessKeyRequest.Builder builder = UpdateAccessKeyRequest.builder()
                             .accessKeyId(accessKeyId)
-                            .status(StatusType.fromValue(status));
+                            .status(toStatusType(status));
                     String userName = getOptionalHeader(exchange, IAM2Constants.USERNAME, String.class);
                     if (ObjectHelper.isNotEmpty(userName)) {
                         builder.userName(userName);
@@ -406,6 +406,19 @@ public class IAM2Producer extends DefaultProducer {
                     return iamClient.updateAccessKey(builder.build());
                 },
                 "Update Access Key");
+    }
+
+    /**
+     * The status of an access key, Active or Inactive in any case
+     */
+    private static StatusType toStatusType(String status) {
+        for (StatusType type : StatusType.knownValues()) {
+            if (type.toString().equalsIgnoreCase(status.trim())) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException(
+                "Unknown access key status " + status + ": use one of " + StatusType.ACTIVE + ", " + StatusType.INACTIVE);
     }
 
     private void createGroup(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
@@ -974,11 +987,14 @@ public class IAM2Producer extends DefaultProducer {
                     LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
+            } else if (ObjectHelper.isEmpty(payload)) {
+                throw new IllegalArgumentException(
+                        String.format("The message body is empty: with pojoRequest=true the body must be a %s",
+                                requestClass.getName()));
             } else {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
-                                requestClass.getName(),
-                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
+                                requestClass.getName(), payload.getClass().getName()));
             }
         } else {
             try {

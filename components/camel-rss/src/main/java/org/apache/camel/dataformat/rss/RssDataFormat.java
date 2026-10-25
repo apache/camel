@@ -21,6 +21,9 @@ import java.io.OutputStream;
 
 import com.rometools.rome.feed.synd.SyndFeed;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -40,6 +43,16 @@ import org.apache.camel.support.service.ServiceSupport;
  * <p/>
  */
 @Dataformat("rss")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO },
+                                 description = "A ROME SyndFeed, such as the rss consumer gives, or the XML text of an RSS or"
+                                               + " Atom feed, which is parsed first"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "xml",
+                                  description = "The RSS or Atom XML in the stream cache, or a byte array when stream caching"
+                                                + " is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "xml",
+                                   description = "An RSS or Atom feed"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "com.rometools.rome.feed.synd.SyndFeed",
+                                    description = "A ROME SyndFeed of the feed"))
 public class RssDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     @Override

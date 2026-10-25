@@ -265,7 +265,12 @@ from("direct:start")
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ----
 
-As result, you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examine to check what messages were successful and what not.
+An element of the `Iterable` that is not a `String` is converted to a `String`.
+
+SQS accepts at most 10 entries in a request, so a batch of more than 10 entries (from an `Iterable` or a `String` split with the `batchSeparator` option) is sent in requests of 10.
+
+As result, you'll get an exchange containing one `SendMessageBatchResponse` instance with the successful and the failed entries of all the requests, that you can examine to check what messages were successful and what not.
+The `CamelAwsSqsSuccessfulMessageCount` and `CamelAwsSqsFailedMessageCount` headers hold the number of successful and failed entries.
 The id set on each message of the batch will be a Random UUID.
 
 === Delete single Message

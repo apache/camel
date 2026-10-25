@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,19 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName",
              category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsRaftConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
+                                   description = "No body: an event for each change of the role of this member (only with"
+                                                 + " enableRoleChangeEvents), with LEADER or FOLLOWER in the"
+                                                 + " CamelJGroupsRaftEventType header and the state of the raft in the other"
+                                                 + " headers"),
+           producerIn = @BodyType(value = { Carrier.BYTES, Carrier.TEXT, Carrier.STREAM, Carrier.FILE },
+                                  description = "The bytes to set() in the replicated log: a byte array, or text, a stream or"
+                                                + " a file converted to bytes. A null body, a Map, a number or a POJO has no"
+                                                + " conversion to bytes and is skipped without an error: nothing is set"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.UNCHANGED },
+                                   description = "The byte array the state machine returns for the set (an empty array with"
+                                                 + " the default NopStateMachine), with the state of the raft in the headers. A"
+                                                 + " body that was skipped is left as it was"))
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 

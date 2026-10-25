@@ -34,6 +34,9 @@ import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Service;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.TypedLanguageSupport;
@@ -55,6 +58,16 @@ import run.endive.runtime.Memory;
  * </p>
  */
 @Language("quickjs")
+@BodyTypes(expressionIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
+        Carrier.POJO },
+                                    description = "A JSON copy of the body, in the variable body: bytes as Base64 text, and a"
+                                                  + " POJO through Jackson. A stream fails: convert it to text first"),
+           expressionOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.NULL },
+                                     dependsOn = "resultType",
+                                     description = "The JSON value the script returns: an object or a Map as a Map, an array, a"
+                                                   + " Set or a typed array as a List, a Date as its ISO text, and undefined, NaN"
+                                                   + " or a function as null"))
 public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     /**
@@ -156,7 +169,7 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
                 discard(state);
             }
         }
-        return convert(result, resultType, getCamelContext(), null);
+        return convert(QuickjsHelper.checkResult(result, null), resultType, getCamelContext(), null);
     }
 
     Object evaluateExpression(String script, Exchange exchange) {
@@ -186,7 +199,7 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
                     discard(state);
                 }
             }
-            return convert(result, Object.class, exchange.getContext(), exchange);
+            return convert(QuickjsHelper.checkResult(result, exchange), Object.class, exchange.getContext(), exchange);
         } finally {
             if (previous != null) {
                 currentExchange.set(previous);

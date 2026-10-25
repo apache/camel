@@ -607,6 +607,24 @@ class SourceValidatorEndpointTest {
                 .doesNotContain("did you mean"));
     }
 
+    /** CAMEL-26018: the smtp producer reads the alternative body of an HTML mail from CamelMailAlternativeBody. */
+    @Test
+    void aHeaderTheProducerReadsIsKnown() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setHeader:
+                          name: CamelMailAlternativeBody
+                          constant: Hello plain text
+                      - setBody:
+                          constant: <p>Hello HTML</p>
+                      - to:
+                          uri: smtp://localhost?to=info@acme.com&contentType=text/html
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
     /** The JMS request-reply hint is for JMS only: the reply headers of other components keep their "did you mean". */
     @Test
     void aReplyHeaderOfAnotherComponentGetsDidYouMean() {
@@ -621,6 +639,64 @@ class SourceValidatorEndpointTest {
                 .contains("header CamelFtpReplycode is not set by ftp")
                 .contains("did you mean CamelFtpReplyCode")
                 .doesNotContain("request-reply over JMS"));
+    }
+
+    /** CAMEL-26039: the short form of a to: names the component as well as to: {uri: ...} does. */
+    @Test
+    void aHeaderOfAComponentInTheShortFormOfAToIsKnown() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setHeader:
+                            name: CamelAwsSecretsManagerSecretId
+                            constant: my-secret
+                        - to: aws-secrets-manager:sm?operation=getSecret
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void theShortFormsOfTheEndpointStepsNameTheirComponents() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - interceptSendToEndpoint: "kafka:audit"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setHeader:
+                            name: CamelSqlQuery
+                            constant: select 1
+                        - setHeader:
+                            name: CamelKafkaKey
+                            constant: k
+                        - setHeader:
+                            name: CamelFtpReplyCode
+                            constant: 200
+                        - toD: 'sql:select 1'
+                        - poll: "ftp:localhost/inbox"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void aKeyAfterAnEndpointStepIsNotAComponent() {
+        // the long form of a to: has the uri on the next line; an option such as replyTo is not a to:
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: jms:queue:orders
+                            parameters:
+                              replyTo: "queue:stock"
+                        - to:
+                            steps: x
+                        - log: "${header.CamelInventedOne}"
+                """, catalog);
+        assertThat(msgs).singleElement().asString().contains("header CamelInventedOne is not set by timer, jms ");
     }
 
     @Test

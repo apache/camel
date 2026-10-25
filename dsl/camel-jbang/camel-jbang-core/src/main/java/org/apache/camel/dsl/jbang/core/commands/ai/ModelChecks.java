@@ -81,6 +81,19 @@ final class ModelChecks {
         return checks.errors;
     }
 
+    /**
+     * Only the direct: and seda: endpoints the routes send to and no route consumes, for an editor that marks them
+     * apart from the other problems: as notes, which do not keep a file from being saved.
+     *
+     * @param consumedElsewhere the endpoints the other route files consume; null says nothing
+     */
+    static List<String> consumers(
+            RouteModel model, List<Node> nodes, String content, CamelCatalog catalog, Set<String> consumedElsewhere) {
+        ModelChecks checks = new ModelChecks(model, nodes, content, catalog);
+        checks.consumers(consumedElsewhere);
+        return checks.errors;
+    }
+
     private void endpoint(Node n) {
         String uri = n.uri() != null ? n.uri().strip() : null;
         if (uri == null || uri.isEmpty() || RouteModel.hasUnknownValue(uri) || uri.startsWith("{{")) {

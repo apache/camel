@@ -82,7 +82,7 @@ programmatic objects (PageRange, BlobBlock, etc.) that cannot be expressed in XM
 | Use `CamelAzureStorageBlobPrefix` header to filter by blob name
 
 | `getBlob`
-| Download a blob. Returns an `InputStream`, or writes to an `OutputStream` if one is set in the body.
+| Download a blob. Writes to the body when the body is an `OutputStream`; any other body is replaced by an `InputStream` of the blob content.
 | See <<getBlob>>
 
 | `deleteBlob`
@@ -204,7 +204,9 @@ from("direct:start")
     .to("mock:result");
 ----
 
-If you don't set a body, then this operation will give you an `InputStream` instance which can be processed further downstream.
+Only a body that is an `OutputStream` is written to. Any other body, or no body, is replaced by an `InputStream` of the blob content,
+which can be processed further downstream. So a `File`, `Path` or the file of a file consumer in the body is not written to:
+to save a blob into a file, use the `downloadBlobToFile` operation, or a `file` endpoint after `getBlob`.
 
 [[uploadBlockBlobChunked]]
 === uploadBlockBlobChunked

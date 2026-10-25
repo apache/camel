@@ -29,6 +29,9 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -48,6 +51,20 @@ import static org.apache.parquet.hadoop.ParquetFileWriter.Mode.OVERWRITE;
 import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
 
 @Dataformat("parquetAvro")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.LIST,
+                                 description = "A List of Avro GenericRecords, or of objects of the class unmarshalType names."
+                                               + " A single record fails, and so does an empty List without unmarshalType"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The Parquet file in the stream cache, or a byte array when stream caching is"
+                                                + " off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "A Parquet file, which is read into memory"),
+           unmarshalOut = @BodyType(value = Carrier.LIST,
+                                    byOption = @BodyType.When(option = "lazyLoad", value = "true",
+                                                              carriers = Carrier.ITERATOR),
+                                    description = "A List (ArrayList) of the records: GenericRecords, or objects of the class"
+                                                  + " unmarshalType names. With lazyLoad, an Iterator of them for the split"
+                                                  + " EIP"))
 public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParquetAvroDataFormat.class);

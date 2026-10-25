@@ -237,7 +237,8 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether transactions are in use.
+         * Whether transactions are in use. Deprecation note: Not used: the
+         * producer does not read this option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -247,12 +248,14 @@ public interface JdbcEndpointBuilderFactory {
          * @param transacted the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default JdbcEndpointBuilder transacted(boolean transacted) {
             doSetProperty("transacted", transacted);
             return this;
         }
         /**
-         * Whether transactions are in use.
+         * Whether transactions are in use. Deprecation note: Not used: the
+         * producer does not read this option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -262,14 +265,16 @@ public interface JdbcEndpointBuilderFactory {
          * @param transacted the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default JdbcEndpointBuilder transacted(String transacted) {
             doSetProperty("transacted", transacted);
             return this;
         }
         /**
-         * To read BLOB columns as bytes instead of string data. This may be
-         * needed for certain databases such as Oracle where you must read BLOB
-         * columns as bytes.
+         * To read BLOB columns as bytes (a byte) instead of a java.sql.Blob,
+         * which cannot be read after the producer has closed the connection.
+         * This may be needed for certain databases such as Oracle where you
+         * must read BLOB columns as bytes.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -284,9 +289,10 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * To read BLOB columns as bytes instead of string data. This may be
-         * needed for certain databases such as Oracle where you must read BLOB
-         * columns as bytes.
+         * To read BLOB columns as bytes (a byte) instead of a java.sql.Blob,
+         * which cannot be read after the producer has closed the connection.
+         * This may be needed for certain databases such as Oracle where you
+         * must read BLOB columns as bytes.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -628,8 +634,8 @@ public interface JdbcEndpointBuilderFactory {
             return "CamelJdbcUpdateCount";
         }
         /**
-         * If the query is a SELECT, query the row count is returned in this OUT
-         * header.
+         * If the query is a SELECT and the outputType is SelectList, the row
+         * count is returned in this OUT header.
          * 
          * The option is a: {@code int} type.
          * 

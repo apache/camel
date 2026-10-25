@@ -15,6 +15,12 @@
     "modelName": "hl7",
     "modelJavaType": "org.apache.camel.model.dataformat.HL7DataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "pojo" ], "description": "A HAPI Message, or HL7 as text or bytes (ER7 or XML) or an HL7 XML DOM Document, which a type converter parses into a Message. A stream or a file fails: convert it to text first" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "HL7 in ER7 (pipe-delimited), or HL7 XML with targetFormat XML, in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "HL7 in ER7 (pipe-delimited) or XML, which the parser detects" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "javaType": "ca.uhn.hl7v2.model.Message", "byOption": [ { "option": "targetFormat", "value": "XML", "carriers": [ "pojo" ], "javaType": "org.w3c.dom.Document" } ], "description": "The HAPI Message of the structure for its type and version, such as ADT_A01 (a GenericMessage without the structures), with the MSH fields in CamelHL7 headers. With targetFormat XML, the HL7 XML as a DOM Document" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "parser": { "index": 1, "kind": "attribute", "displayName": "Parser", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "ca.uhn.hl7v2.parser.Parser", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom HL7 parser." },

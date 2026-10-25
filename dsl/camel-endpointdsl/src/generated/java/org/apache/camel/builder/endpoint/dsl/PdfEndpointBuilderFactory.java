@@ -210,7 +210,8 @@ public interface PdfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Page size.
+         * Page size: LETTER, LEGAL or A0 to A6. The older names PAGE_SIZE_A0 to
+         * PAGE_SIZE_A6 and PAGE_SIZE_LETTER are also accepted.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -444,9 +445,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Mandatory header for merge operation and ignored in all other
-         * operations. The array of pdf files that will be merged.
+         * operations. The list of pdf files that will be merged, each given as
+         * a java.io.File or a java.nio.file.Path.
          * 
-         * The option is a: {@code java.util.List<java.io.File>} type.
+         * The option is a: {@code java.util.List<java.lang.Object>} type.
          * 
          * Group: producer
          * 

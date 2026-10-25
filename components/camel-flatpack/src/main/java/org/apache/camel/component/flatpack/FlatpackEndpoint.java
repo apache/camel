@@ -35,6 +35,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -50,6 +53,17 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "flatpack", title = "Flatpack", syntax = "flatpack:type:resourceUri",
              remote = false, category = { Category.TRANSFORMATION }, headersClass = FlatpackConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "net.sf.flatpack.DataSet",
+                                   description = "The Flatpack DataSet the producer parsed. With splitRows, one message per row,"
+                                                 + " with the DataSet at that row: convert it to a Map before any asynchronous"
+                                                 + " step, as the next row moves it; a List reads all the rows and ends the"
+                                                 + " split. With splitRows=false, the whole DataSet: convert it to a List of"
+                                                 + " Maps"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text",
+                                  description = "The fixed-width or delimited data to parse, such as a file from the file"
+                                                + " consumer; a java.io.File, a Map or a List fails. The rows go to the"
+                                                + " consumer of the same endpoint"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED))
 public class FlatpackEndpoint extends DefaultPollingEndpoint {
 
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();

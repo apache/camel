@@ -3885,6 +3885,22 @@ public interface MailEndpointBuilderFactory {
             return "CamelMailDelete";
         }
         /**
+         * The alternative body of the mail, as plain text. When set, the mail
+         * is sent as multipart/alternative with this text and the body
+         * (typically HTML) as its two parts, so mail clients that cannot show
+         * HTML show the text. The alternativeBodyHeader option can change the
+         * name of this header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MailAlternativeBody}.
+         */
+        public String mailAlternativeBody() {
+            return "CamelMailAlternativeBody";
+        }
+        /**
          * The message ID.
          * 
          * The option is a: {@code String} type.

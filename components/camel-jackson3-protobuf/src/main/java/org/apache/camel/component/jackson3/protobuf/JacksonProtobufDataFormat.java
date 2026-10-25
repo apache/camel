@@ -96,4 +96,9 @@ public class JacksonProtobufDataFormat extends JacksonDataFormat {
         return ProtobufMapper.class;
     }
 
+    @Override
+    protected boolean isWriteJsonAsIs() {
+        // JSON text is not protobuf, so marshal it as any other body
+        return false;
+    }
 }

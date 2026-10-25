@@ -33,6 +33,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.core.document.Document;
 import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
 import software.amazon.awssdk.services.s3vectors.model.DeleteVectorsRequest;
 import software.amazon.awssdk.services.s3vectors.model.QueryOutputVector;
@@ -51,6 +52,8 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
     // deleteAfterRead), which a later poll must not consume again. It is updated from the threads that complete the
     // exchanges, so it must be thread-safe.
     private final Set<String> processedVectorIds = ConcurrentHashMap.newKeySet();
+    // the consumerMetadataFilter option parsed when the consumer starts
+    private Document metadataFilter;
 
     public AWS2S3VectorsConsumer(AWS2S3VectorsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -86,13 +89,11 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
                     .vectorBucketName(vectorBucketName)
                     .indexName(vectorIndexName)
                     .queryVector(VectorData.builder().float32(queryVector).build())
-                    .topK(resolveTopK());
-
-            // Add metadata filter if configured
-            String metadataFilter = getConfiguration().getConsumerMetadataFilter();
-            if (ObjectHelper.isNotEmpty(metadataFilter)) {
-                // Note: Metadata filter implementation depends on AWS SDK support
-                LOG.trace("Using metadata filter: {}", metadataFilter);
+                    .topK(resolveTopK())
+                    .returnMetadata(true)
+                    .returnDistance(true);
+            if (metadataFilter != null) {
+                requestBuilder.filter(metadataFilter);
             }
 
             // Execute query
@@ -119,10 +120,10 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
                     // Set vector data as body
                     message.setBody(vector);
 
-                    // Set headers
+                    // the bucket and the index are not set as headers: they are inputs of the producer, and would
+                    // redirect a producer later in the route to the bucket and index of this consumer
                     message.setHeader(AWS2S3VectorsConstants.VECTOR_ID, vectorId);
-                    message.setHeader(AWS2S3VectorsConstants.VECTOR_BUCKET_NAME, vectorBucketName);
-                    message.setHeader(AWS2S3VectorsConstants.VECTOR_INDEX_NAME, vectorIndexName);
+                    message.setHeader(AWS2S3VectorsConstants.DISTANCE, vector.distance());
 
                     // Add delete callback if deleteAfterRead is enabled
                     if (getConfiguration().isDeleteAfterRead()) {
@@ -185,6 +186,11 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        // parsed before the scheduler starts polling
+        String filter = getConfiguration().getConsumerMetadataFilter();
+        metadataFilter = ObjectHelper.isNotEmpty(filter)
+                ? AWS2S3VectorsHelper.parseMetadataFilter(filter, "consumerMetadataFilter option") : null;
+
         super.doStart();
         LOG.debug("Starting S3 Vectors consumer for bucket [{}]", getConfiguration().getVectorBucketName());
 

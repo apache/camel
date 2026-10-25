@@ -32,6 +32,8 @@ import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 import software.amazon.awssdk.services.eks.model.VpcConfigRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EKS2ProducerTest extends CamelTestSupport {
 
@@ -87,7 +89,7 @@ public class EKS2ProducerTest extends CamelTestSupport {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(EKS2Constants.OPERATION, EKS2Operations.createCluster);
                 exchange.getIn().setHeader(EKS2Constants.CLUSTER_NAME, "Test");
-                VpcConfigRequest req = VpcConfigRequest.builder().build();
+                VpcConfigRequest req = VpcConfigRequest.builder().subnetIds("subnet-1").build();
                 exchange.getIn().setHeader(EKS2Constants.VPC_CONFIG, req);
                 exchange.getIn().setHeader(EKS2Constants.ROLE_ARN, "arn:aws:eks::123456789012:user/Camel");
             }
@@ -97,6 +99,40 @@ public class EKS2ProducerTest extends CamelTestSupport {
 
         CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("Test", resultGet.cluster().name());
+        assertEquals("subnet-1", clientMock.getLastCreateClusterRequest().resourcesVpcConfig().subnetIds().get(0));
+    }
+
+    @Test
+    public void eksCreateClusterVpcConfigAsTextTest() {
+        Exchange exchange = template.send("direct:createCluster", e -> {
+            e.getIn().setHeader(EKS2Constants.CLUSTER_NAME, "Test");
+            e.getIn().setHeader(EKS2Constants.VPC_CONFIG, "subnet-1");
+        });
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("The CamelAwsEKSVPCConfig header must be of type " + VpcConfigRequest.class.getName()
+                     + " but was java.lang.String",
+                cause.getMessage());
+        assertNull(clientMock.getLastCreateClusterRequest());
+    }
+
+    @Test
+    public void eksNoOperationTest() {
+        Exchange exchange = template.send("direct:noOperation", e -> {
+        });
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("Operation must be specified, either with the operation option or the CamelAwsEKSOperation header",
+                cause.getMessage());
+    }
+
+    @Test
+    public void eksListClustersPojoEmptyBodyTest() {
+        Exchange exchange = template.send("direct:listPojoClusters", e -> e.getIn().setBody(""));
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("Expected body of type " + ListClustersRequest.class.getName() + " but was java.lang.String",
+                cause.getMessage());
     }
 
     @Test
@@ -140,6 +176,8 @@ public class EKS2ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                from("direct:noOperation").to("aws2-eks://test?eksClient=#amazonEksClient")
+                        .to("mock:result");
                 from("direct:listClusters").to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters")
                         .to("mock:result");
                 from("direct:listPojoClusters")

@@ -38,6 +38,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -80,6 +83,24 @@ import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDE
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri",
              category = { Category.IOT }, headersClass = CoAPConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The request payload as a byte array, empty for a request without a"
+                                                 + " payload, such as a GET; with observe, the payload of each"
+                                                 + " notification of the observed resource"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                     description = "The response payload: text, bytes, a stream, a file or no body. A Map,"
+                                                   + " a POJO or a number is sent as an empty payload: convert or marshal"
+                                                   + " it first"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The payload of a POST or a PUT: text, bytes, a stream or a file. A Map,"
+                                                + " a POJO or a number is sent as an empty payload: marshal it first."
+                                                + " Without CamelCoapMethod, no body sends a GET and a body a POST"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.VALUE },
+                                   byOption = @BodyType.When(option = "notify", value = "true",
+                                                             carriers = Carrier.UNCHANGED),
+                                   description = "The response payload as a byte array, empty for a response without a"
+                                                 + " payload; a Boolean for a PING (CamelCoapMethod=PING). The response"
+                                                 + " code is in the CamelCoapResponseCode header"))
 public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLocation, HeaderFilterStrategyAware {
     final static Logger LOGGER = LoggerFactory.getLogger(CoAPEndpoint.class);
     @UriPath

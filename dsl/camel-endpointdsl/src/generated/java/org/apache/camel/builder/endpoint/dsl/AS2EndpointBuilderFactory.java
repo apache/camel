@@ -259,6 +259,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -267,6 +269,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointConsumerBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
@@ -608,6 +611,42 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side
+         * (server listen or receipt receive), the HTTP response only says that
+         * the message or the receipt could not be processed, and not the
+         * message of the exception.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side
+         * (server listen or receipt receive), the HTTP response only says that
+         * the message or the receipt could not be processed, and not the
+         * message of the exception.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * The access token that is used by the client for bearer
          * authentication.
          * 
@@ -630,7 +669,9 @@ public interface AS2EndpointBuilderFactory {
          * the list is refused, and the configured
          * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
          * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached.
+         * sender-supplied address but no credentials are attached. The option
+         * applies to the consumer endpoint it is set on: consumers sharing a
+         * serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -762,7 +803,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The access token that is used by the server when it sends an async
-         * MDN.
+         * MDN. The option applies to the consumer endpoint it is set on, like
+         * mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -777,7 +819,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The password that is used by the server for basic authentication when
-         * it sends an async MDN.
+         * it sends an async MDN. The option applies to the consumer endpoint it
+         * is set on, like mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -794,7 +837,9 @@ public interface AS2EndpointBuilderFactory {
          * The user-name that is used by the server for basic authentication
          * when it sends an async MDN. If options for basic authentication and
          * bearer authentication are both set then basic authentication takes
-         * precedence.
+         * precedence. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each send their async MDNs with
+         * their own values.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1355,6 +1400,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1363,6 +1410,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointProducerBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
@@ -1744,6 +1792,81 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The password for basic authentication with the HTTP proxy.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthPassword the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyAuthPassword(String proxyAuthPassword) {
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
+            return this;
+        }
+        /**
+         * The user name for basic authentication with the HTTP proxy. The
+         * credentials are sent to the proxy only.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthUsername the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyAuthUsername(String proxyAuthUsername) {
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
+            return this;
+        }
+        /**
+         * The host name of an HTTP proxy the client sends its AS2 messages
+         * through. The connection to the proxy is plain http; when an SSL
+         * context is configured, the AS2 message goes through a CONNECT tunnel
+         * to the target.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The port number of the HTTP proxy.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The port number of the HTTP proxy.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
          * The access token that is used by the client for bearer
          * authentication.
          * 
@@ -1766,7 +1889,9 @@ public interface AS2EndpointBuilderFactory {
          * the list is refused, and the configured
          * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
          * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached.
+         * sender-supplied address but no credentials are attached. The option
+         * applies to the consumer endpoint it is set on: consumers sharing a
+         * serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1898,7 +2023,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The access token that is used by the server when it sends an async
-         * MDN.
+         * MDN. The option applies to the consumer endpoint it is set on, like
+         * mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1913,7 +2039,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The password that is used by the server for basic authentication when
-         * it sends an async MDN.
+         * it sends an async MDN. The option applies to the consumer endpoint it
+         * is set on, like mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1930,7 +2057,9 @@ public interface AS2EndpointBuilderFactory {
          * The user-name that is used by the server for basic authentication
          * when it sends an async MDN. If options for basic authentication and
          * bearer authentication are both set then basic authentication takes
-         * precedence.
+         * precedence. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each send their async MDNs with
+         * their own values.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2472,6 +2601,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
+         * client/send uses this value only when ediMessageContentType is not
+         * set. Deprecation note: Use ediMessageContentType instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2480,6 +2611,7 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AS2EndpointBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
@@ -2843,7 +2975,9 @@ public interface AS2EndpointBuilderFactory {
          * the list is refused, and the configured
          * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
          * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached.
+         * sender-supplied address but no credentials are attached. The option
+         * applies to the consumer endpoint it is set on: consumers sharing a
+         * serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2975,7 +3109,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The access token that is used by the server when it sends an async
-         * MDN.
+         * MDN. The option applies to the consumer endpoint it is set on, like
+         * mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2990,7 +3125,8 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The password that is used by the server for basic authentication when
-         * it sends an async MDN.
+         * it sends an async MDN. The option applies to the consumer endpoint it
+         * is set on, like mdnUserName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3007,7 +3143,9 @@ public interface AS2EndpointBuilderFactory {
          * The user-name that is used by the server for basic authentication
          * when it sends an async MDN. If options for basic authentication and
          * bearer authentication are both set then basic authentication takes
-         * precedence.
+         * precedence. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each send their async MDNs with
+         * their own values.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

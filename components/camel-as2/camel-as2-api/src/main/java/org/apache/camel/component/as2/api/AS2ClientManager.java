@@ -185,7 +185,7 @@ public class AS2ClientManager {
     /**
      * Send <code>ediMessage</code> to trading partner.
      *
-     * @param  ediMessage                 - EDI message to transport
+     * @param  ediMessage                 - EDI message to transport: a String, an InputStream or a byte array
      * @param  requestUri                 - resource location to deliver message
      * @param  subject                    - message subject
      * @param  from                       - RFC2822 address of sender
@@ -290,9 +290,12 @@ public class AS2ClientManager {
             } else if (ediMessage instanceof String strMsg) {
                 msgBytes = strMsg.getBytes(ct.getCharset() == null
                         ? StandardCharsets.US_ASCII : ct.getCharset());
+            } else if (ediMessage instanceof byte[] bytesMsg) {
+                msgBytes = bytesMsg;
             } else {
                 throw new IllegalArgumentException(
-                        "Message type not supported. Must be InputStream or String");
+                        "Message type " + ediMessage.getClass().getName()
+                                                   + " not supported. Must be InputStream, String or byte[]");
             }
             applicationEntity
                     = EntityUtils.createEDIEntity(msgBytes, ct, ediMessageTransferEncoding, false,

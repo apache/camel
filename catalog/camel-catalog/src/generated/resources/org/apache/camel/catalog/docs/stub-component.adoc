@@ -46,6 +46,17 @@ Stub won't, though, as it basically ignores all query
 parameters to let you quickly stub out one or more endpoints in your
 route temporarily.
 
+=== Stub endpoints without a consumer
+
+A stub endpoint that no route consumes from keeps the latest messages sent to it, so you can browse them,
+for example with `camel cmd stub --browse` from the xref:manual::camel-jbang.adoc[Camel CLI].
+It keeps up to `size` messages (1000 by default), and when the queue is full, it drops the oldest message
+to make room for the new one. Sending to a stub endpoint without a consumer therefore never fails with `Queue full`,
+and the memory it uses stays bounded.
+
+When a route consumes from the stub endpoint, the messages are queued as with xref:seda-component.adoc[Seda],
+and the `size`, `blockWhenFull` and `discardWhenFull` options apply as usual.
+
 == Examples
 
 Here are a few samples of stubbing endpoint uris

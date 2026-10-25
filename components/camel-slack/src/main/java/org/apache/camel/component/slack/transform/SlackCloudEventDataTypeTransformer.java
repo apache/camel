@@ -44,14 +44,12 @@ public class SlackCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.slack.consume");
 
-        if (ObjectHelper.isNotEmpty(message.getBody(com.slack.api.model.Message.class).getAppId())) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "slack." + ObjectHelper.isNotEmpty(message.getBody(com.slack.api.model.Message.class).getAppId()));
+        com.slack.api.model.Message body = message.getBody(com.slack.api.model.Message.class);
+        if (body != null && ObjectHelper.isNotEmpty(body.getAppId())) {
+            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "slack." + body.getAppId());
         }
-
-        if (ObjectHelper.isNotEmpty(message.getBody(com.slack.api.model.Message.class).getChannel())) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT,
-                    ObjectHelper.isNotEmpty(message.getBody(com.slack.api.model.Message.class).getChannel()));
+        if (body != null && ObjectHelper.isNotEmpty(body.getChannel())) {
+            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, body.getChannel());
         }
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));

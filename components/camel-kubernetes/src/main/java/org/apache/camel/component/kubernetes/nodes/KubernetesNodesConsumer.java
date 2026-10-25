@@ -59,7 +59,7 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         nodesWatcher = new NodesConsumerTask();
-        executor.submit(nodesWatcher);
+        KubernetesHelper.watch(this, executor, nodesWatcher);
     }
 
     @Override

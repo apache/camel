@@ -21,3 +21,7 @@ jsonpathTable::example$json/{shortname}.json['nodes$.headers.*',{cellformats},'u
 
 endif::[]
 // component headers: END
+
+:body-types-module: ROOT
+:body-types-intro: The message body at each side of the {doctitle} component: _Consumer_ is the body of the messages the consumer creates, _Consumer reply_ the bodies a consumer that answers its caller can reply with, _Producer input_ the bodies the producer can send or write, and _Producer output_ the body after the producer.
+include::partial$body-types.adoc[]

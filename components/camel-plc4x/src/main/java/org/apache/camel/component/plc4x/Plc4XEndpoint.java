@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -45,6 +48,16 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
              lenientProperties = true, syntax = "plc4x:driver", category = Category.IOT)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.MAP,
+                                   description = "A Map of the tag names and the values read from the PLC, such as an"
+                                                 + " Integer or a String, as the driver reads them; the polling consumer"
+                                                 + " and a trigger give the same Map"),
+           producerIn = @BodyType(value = Carrier.MAP,
+                                  description = "A Map of the tag names, each to a Map of the address of the tag and the"
+                                                + " value to write, such as {temperature: {\"%DB1:DINT\": 21}}; another body"
+                                                + " fails"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.plc4x.java.api.messages.PlcWriteResponse",
+                                   description = "The write response of PLC4X, with the response code of each tag"))
 public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
 

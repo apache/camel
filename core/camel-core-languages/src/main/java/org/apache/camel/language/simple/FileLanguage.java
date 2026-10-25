@@ -16,12 +16,23 @@
  */
 package org.apache.camel.language.simple;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 
 /**
  * The Camel file language.
  */
 @Language(value = "file", functionsClass = FileConstants.class)
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, for ${body}: the file functions read the headers the file"
+                                                  + " consumers set"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "A text with functions gives text, such as a file name. A single function"
+                                                   + " gives its value as it is: ${file:size}, ${file:length} and"
+                                                   + " ${file:modified} a Long, ${file:absolute} a Boolean, the other file"
+                                                   + " functions text, and null without the headers of a file"))
 public class FileLanguage extends SimpleLanguage {
 
     public FileLanguage() {

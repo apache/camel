@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -31,6 +34,23 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true,
              category = { Category.NETWORKING }, headersClass = DnsConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not used: the name to query is in a header, CamelDnsDomain for ip,"
+                                                + " CamelDnsName for lookup and dig, and CamelDnsTerm for wikipedia"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "dnsType", value = "ip", carriers = Carrier.POJO,
+                                                          javaType = "java.net.InetAddress"),
+                                           @BodyType.When(option = "dnsType", value = "lookup", carriers = Carrier.LIST,
+                                                          javaType = "org.xbill.DNS.Record[]"),
+                                           @BodyType.When(option = "dnsType", value = "dig", carriers = Carrier.POJO,
+                                                          javaType = "org.xbill.DNS.Message"),
+                                           @BodyType.When(option = "dnsType", value = "wikipedia",
+                                                          carriers = { Carrier.TEXT, Carrier.NULL }) },
+                                   description = "By the type: for ip the InetAddress of the domain, which converts to the"
+                                                 + " address as text; for lookup the records of the answer as an array of"
+                                                 + " Record, and the lookup fails when there are none; for dig the response"
+                                                 + " Message; for wikipedia the text of the first TXT record, or no body"))
 public class DnsEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -42,6 +62,7 @@ public class DnsEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Producer createProducer() throws Exception {
         if (DnsType.dig == dnsType) {
             return new DnsDigProducer(this);
@@ -66,7 +87,8 @@ public class DnsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The type of the lookup.
+     * The type of the lookup. The wikipedia type is deprecated, as the Wikipedia over DNS service it queries is no
+     * longer available.
      */
     public void setDnsType(DnsType dnsType) {
         this.dnsType = dnsType;

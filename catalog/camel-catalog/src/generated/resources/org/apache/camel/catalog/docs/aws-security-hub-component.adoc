@@ -73,10 +73,31 @@ Camel-AWS Security Hub component provides the following operation on the produce
 - getFindingHistory
 - describeHub
 - listEnabledProductsForImport
+- getFindingAggregator
+
+The SDK model headers (`CamelAwsSecurityHubFilters`, `CamelAwsSecurityHubNote`, `CamelAwsSecurityHubSeverity`
+and `CamelAwsSecurityHubWorkflow`) must hold the AWS SDK object of the type the header lists, such as
+`AwsSecurityFindingFilters`. A value of another type, such as JSON text, fails the exchange with an
+`IllegalArgumentException`, as there is no type converter for these classes. To send a request built
+elsewhere, set `pojoRequest=true` and put the request object, such as `GetFindingsRequest`, in the body.
+
+The `CamelAwsSecurityHubNextToken` header is both an input and an output of `getFindings`, `getFindingHistory`
+and `listEnabledProductsForImport`: the operation sends the token in the header, and then sets the header to the
+token of the next page. A route that calls a different list operation afterwards must remove the header first,
+for example with `removeHeader("CamelAwsSecurityHubNextToken")`, or that operation sends a token it does not know.
 
 ==== BatchImportFindings
 
 Import security findings into Security Hub. This is the primary way to send findings from custom integrations.
+
+The findings are taken from the `CamelAwsSecurityHubFindings` header, or else from the body, which can be a
+`Collection` or an array of `AwsSecurityFinding`, or one `AwsSecurityFinding`. An element of another type fails
+the exchange with an `IllegalArgumentException`.
+
+When Security Hub does not import some of the findings, the exchange fails with an `IllegalStateException`
+whose message names the failed finding ids with their error codes and messages. The
+`CamelAwsSecurityHubFailedCount` and `CamelAwsSecurityHubSuccessCount` headers, and the response in the body,
+are set before the exchange fails.
 
 ._Java-only: uses inline Processor with AWS SDK builder API_
 [source,java]

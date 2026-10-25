@@ -29,7 +29,6 @@ include::partial$language-options.adoc[]
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Variable |Type |Description
-|*this* |Exchange |the Exchange is the root object
 |exchange |Exchange |the Exchange
 |camelContext |CamelContext |the CamelContext
 |exchangeId |String |the exchange id

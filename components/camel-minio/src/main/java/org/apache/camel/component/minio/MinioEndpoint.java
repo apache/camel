@@ -28,6 +28,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,47 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio", syntax = "minio:bucketName",
              category = { Category.CLOUD, Category.FILE }, headersClass = MinioConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   byOption = @BodyType.When(option = "includeBody", value = "false", carriers = Carrier.NULL),
+                                   description = "The content of the object as a byte array, one message per object, with its"
+                                                 + " metadata in headers. No body with includeBody=false"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = { "operation", "pojoRequest" },
+                                  description = "The content to upload, when no operation is set: text, bytes, a stream or a"
+                                                + " file. A Map, a List or no body fails: marshal it first. The operations take"
+                                                + " their input from headers, or with pojoRequest=true from the builder of the"
+                                                + " request of the Minio SDK in the body, such as a GetObjectArgs.Builder;"
+                                                + " deleteObjects works only so"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getObject", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "getObjectRange",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "listObjects",
+                                                          carriers = Carrier.ITERATOR,
+                                                          javaType = "java.lang.Iterable<io.minio.Result<io.minio.messages.Item>>"),
+                                           @BodyType.When(option = "operation", value = "listBuckets",
+                                                          carriers = Carrier.ITERATOR,
+                                                          javaType = "java.util.Iterator<io.minio.messages.ListAllMyBucketsResult.Bucket>"),
+                                           @BodyType.When(option = "operation", value = "deleteObject",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deleteObjects",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deleteBucket", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "createDownloadLink",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "createUploadLink",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String") },
+                                   description = "Unchanged after an upload and a copyObject, with the ETag in a header. By the"
+                                                 + " operation: the stream of the object for getObject and getObjectRange, a"
+                                                 + " lazy Iterable of Result for listObjects, whose get() gives the Item, an"
+                                                 + " Iterator of Bucket for listBuckets, true for the deletes, ok for"
+                                                 + " deleteBucket and the URL as text for the links"))
 @Deprecated(since = "4.23")
 public class MinioEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 

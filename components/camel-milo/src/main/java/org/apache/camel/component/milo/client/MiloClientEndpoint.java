@@ -23,6 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.milo.MiloConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,24 @@ import static org.apache.camel.component.milo.MiloConstants.SCHEME_CLIENT;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_CLIENT, syntax = "milo-client:endpointUri", title = "OPC UA Client",
              category = { Category.IOT }, headersClass = MiloConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "org.eclipse.milo.opcua.stack.core.types.builtin.DataValue",
+                                   description = "The Milo DataValue of each change of a monitored node: its"
+                                                 + " getValue().getValue() is the value, and the status code tells a good"
+                                                 + " value from a lost connection. The node is in the CamelMiloNodeId header"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.POJO, Carrier.NULL },
+                                  description = "The value to write to the node, or the input arguments of the method: an"
+                                                + " OPC UA built-in value such as a String, a number, a boolean, a Variant"
+                                                + " or a DataValue. A stream, a file, a Map or a bean fails with"
+                                                + " Bad_EncodingError. With the CamelMiloNodeIds header the body is not read:"
+                                                + " the producer reads the values of those nodes"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "defaultAwaitWrites", value = "true",
+                                                             carriers = { Carrier.POJO, Carrier.LIST }),
+                                   description = "The producer does not wait, unless the CamelMiloAwait header or"
+                                                 + " defaultAwaitWrites says so; it then sets the result: the StatusCode"
+                                                 + " of a write, the CallMethodResult of a method call, or a List of"
+                                                 + " DataValue of the nodes read"))
 public class MiloClientEndpoint extends DefaultEndpoint {
 
     private final MiloClientConnectionManager connectionManager;

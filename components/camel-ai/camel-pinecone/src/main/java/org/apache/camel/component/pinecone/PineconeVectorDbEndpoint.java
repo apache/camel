@@ -22,6 +22,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,6 +44,60 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              },
              headersClass = PineconeVectorDbHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.LIST, Carrier.NULL },
+                                  byOption = {
+                                          @BodyType.When(option = "action", value = "UPSERT", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "UPDATE", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "QUERY", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "FETCH", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "DELETE_BY_ID", carriers = Carrier.LIST),
+                                          @BodyType.When(option = "action", value = "QUERY_BY_ID", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "CREATE_COLLECTION",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "CREATE_SERVERLESS_INDEX",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "CREATE_POD_INDEX",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "DELETE_INDEX", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "action", value = "DELETE_COLLECTION",
+                                                         carriers = Carrier.ANY) },
+                                  description = "By the action in the action option or the CamelPineconeAction header: the"
+                                                + " vector as a List of Float or a float array for UPSERT, UPDATE and QUERY,"
+                                                + " with the id in the CamelPineconeIndexId header, and the ids as a List"
+                                                + " of String for FETCH and DELETE_BY_ID. The other actions do not read the"
+                                                + " body. Another body fails, a List of Double too: the pinecone:embeddings"
+                                                + " data type transformer builds the vector from the output of"
+                                                + " langchain4j-embeddings"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "UPSERT", carriers = Carrier.POJO,
+                                                          javaType = "io.pinecone.proto.UpsertResponse"),
+                                           @BodyType.When(option = "action", value = "UPDATE", carriers = Carrier.POJO,
+                                                          javaType = "io.pinecone.proto.UpdateResponse"),
+                                           @BodyType.When(option = "action", value = "QUERY", carriers = Carrier.POJO,
+                                                          javaType = "io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices"),
+                                           @BodyType.When(option = "action", value = "QUERY_BY_ID", carriers = Carrier.POJO,
+                                                          javaType = "io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices"),
+                                           @BodyType.When(option = "action", value = "FETCH", carriers = Carrier.POJO,
+                                                          javaType = "io.pinecone.proto.FetchResponse"),
+                                           @BodyType.When(option = "action", value = "DELETE_BY_ID", carriers = Carrier.POJO,
+                                                          javaType = "io.pinecone.proto.DeleteResponse"),
+                                           @BodyType.When(option = "action", value = "CREATE_COLLECTION",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.openapitools.db_control.client.model.CollectionModel"),
+                                           @BodyType.When(option = "action", value = "CREATE_SERVERLESS_INDEX",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.openapitools.db_control.client.model.IndexModel"),
+                                           @BodyType.When(option = "action", value = "CREATE_POD_INDEX",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.openapitools.db_control.client.model.IndexModel"),
+                                           @BodyType.When(option = "action", value = "DELETE_INDEX",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "DELETE_COLLECTION",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "By the action: the response of the Pinecone SDK, such as an"
+                                                 + " UpsertResponse, a FetchResponse or a QueryResponseWithUnsignedIndices"
+                                                 + " with the matches. DELETE_INDEX and DELETE_COLLECTION keep the body"))
 public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

@@ -25,6 +25,11 @@ public enum MinioOperations {
     deleteBucket,
     listBuckets,
     getObject,
+    getObjectRange,
+    /**
+     * @deprecated use {@link #getObjectRange}, which this operation is the former name of.
+     */
+    @Deprecated(since = "4.24")
     getPartialObject,
     createDownloadLink,
     createUploadLink

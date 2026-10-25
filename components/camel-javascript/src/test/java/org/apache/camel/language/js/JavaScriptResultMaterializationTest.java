@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 
 /**
@@ -111,6 +113,34 @@ class JavaScriptResultMaterializationTest {
         assertThat(asList(map.get("list"))).containsExactly(2, 4);
         assertThat(asList(language.evaluate("[1, 2, 3]", bindings, List.class))).containsExactly(1, 2, 3);
         assertThat(language.evaluate("n + 1", bindings, String.class)).isEqualTo("3");
+    }
+
+    @Test
+    void arrayBufferBecomesByteArray() {
+        assertThat(evaluate("new Uint8Array([1, 2, 255]).buffer")).isEqualTo(new byte[] { 1, 2, -1 });
+        assertThat(evaluate("new ArrayBuffer(0)")).isEqualTo(new byte[0]);
+        assertThat(language.evaluate("new Uint8Array([n]).buffer", Map.of("n", 7), Object.class))
+                .isEqualTo(new byte[] { 7 });
+    }
+
+    @Test
+    void typedArrayStaysList() {
+        // GraalJS exposes a typed array as array elements, not as a buffer
+        assertThat(asList(evaluate("new Uint8Array([1, 2, 255])"))).containsExactly(1, 2, 255);
+    }
+
+    @Test
+    void returnedFunctionFailsAtEvaluation() {
+        String message = "The script returned a function, which cannot be used after the script ends: return a value instead";
+        assertThatThrownBy(() -> evaluate("() => 1"))
+                .isInstanceOf(ExpressionEvaluationException.class)
+                .hasMessage(message);
+        assertThatThrownBy(() -> evaluate("(class A {})"))
+                .isInstanceOf(ExpressionEvaluationException.class)
+                .hasMessage(message);
+        assertThatThrownBy(() -> language.evaluate("(function f() { return 1; })", Map.of(), Object.class))
+                .isInstanceOf(ExpressionEvaluationException.class)
+                .hasMessage(message);
     }
 
     private Object evaluate(String script) {

@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -46,6 +49,21 @@ import org.neo4j.driver.GraphDatabase;
                      Category.AI
              },
              headersClass = Neo4jHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "What the operation of the CamelNeo4jOperation header needs: CREATE_NODE the"
+                                                + " properties of the node as a Map or as JSON text (bytes, a stream, a POJO or"
+                                                + " no body fail); the two Cypher operations the query as text (bytes or a"
+                                                + " stream are read as text); CREATE_VECTOR a Neo4jEmbedding, or the text with"
+                                                + " the float[] vector in the CamelLangChain4jEmbeddingsVector header;"
+                                                + " VECTOR_SIMILARITY_SEARCH a Neo4jEmbedding, a float[] or a List of Float."
+                                                + " The other operations do not use the body"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
+                                   description = "RETRIEVE_NODES, RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and"
+                                                 + " VECTOR_SIMILARITY_SEARCH give a List of Maps, the properties of each node"
+                                                 + " found (empty when none; the first column a Cypher query returns must be a"
+                                                 + " node), with the Records of the driver in the"
+                                                 + " CamelNeo4jQueryResultListNeo4jNodes header. The other operations leave the"
+                                                 + " body unchanged, with the counts in the CamelNeo4jQueryResult headers"))
 public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

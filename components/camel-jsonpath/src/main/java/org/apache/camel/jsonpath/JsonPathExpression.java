@@ -187,7 +187,8 @@ public class JsonPathExpression extends ExpressionAdapter {
                         .collect(Collectors.toList());
             }
             if (result instanceof Collection<?> col && col.size() == 1) {
-                result = col.stream().findFirst().get();
+                // the element is null when it did not convert to the result type, and so is the result
+                result = col.iterator().next();
             }
             return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
         } catch (Exception e) {

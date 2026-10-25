@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.session.SMPPSession;
@@ -72,36 +75,35 @@ public enum SmppCommandType {
     public abstract SmppCommand createCommand(SMPPSession session, SmppConfiguration config);
 
     /**
-     * Tries to return an instance of {@link SmppCommandType} using {@link SmppConstants#COMMAND} header of the incoming
-     * message.
-     * <p/>
-     * Returns {@link #SUBMIT_SM} if there is no {@link SmppConstants#COMMAND} header in the incoming message or value
-     * of such a header cannot be recognized.
+     * Returns the {@link SmppCommandType} named by the {@link SmppConstants#COMMAND} header of the incoming message, or
+     * {@link #SUBMIT_SM} if the message has no such header.
      * <p/>
      * The valid values for the {@link SmppConstants#COMMAND} header are: <span style="font: bold;">SubmitSm</span>
      * <span style="font: bold;">ReplaceSm</span>, <span style="font: bold;">QuerySm</span>,
      * <span style="font: bold;">SubmitMulti</span>, <span style="font: bold;">CancelSm</span>,
      * <span style="font: bold;">DataSm</span>.
      *
-     * @param  exchange an exchange to get an incoming message from
-     * @return          an instance of {@link SmppCommandType}
+     * @param  exchange                 an exchange to get an incoming message from
+     * @return                          an instance of {@link SmppCommandType}
+     * @throws IllegalArgumentException if the header is not one of the valid values (they are case-sensitive)
      */
     public static SmppCommandType fromExchange(Exchange exchange) {
         Message in = exchange.getIn();
 
-        String commandName = null;
-        if (in.getHeaders().containsKey(SmppConstants.COMMAND)) {
-            commandName = in.getHeader(SmppConstants.COMMAND, String.class);
+        String commandName = in.getHeader(SmppConstants.COMMAND, String.class);
+        if (commandName == null) {
+            return SUBMIT_SM;
         }
 
-        SmppCommandType commandType = SUBMIT_SM;
         for (SmppCommandType nextCommandType : values()) {
             if (nextCommandType.commandName.equals(commandName)) {
-                commandType = nextCommandType;
-                break;
+                return nextCommandType;
             }
         }
 
-        return commandType;
+        throw new IllegalArgumentException(
+                "Unknown command " + commandName + " in the " + SmppConstants.COMMAND + " header: use one of "
+                                           + Arrays.stream(values()).map(SmppCommandType::getCommandName)
+                                                   .collect(Collectors.joining(", ")));
     }
 }

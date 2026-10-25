@@ -22,7 +22,9 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AthenaComponentConfigurationTest extends CamelTestSupport {
 
@@ -46,6 +48,22 @@ public class AthenaComponentConfigurationTest extends CamelTestSupport {
 
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+
+    @Test
+    public void createEndpointWithUseMessageBodyForSql() throws Exception {
+        Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
+        Athena2Endpoint endpoint
+                = (Athena2Endpoint) component.createEndpoint("aws2-athena://label?accessKey=xxxxx&secretKey=yyyyy");
+        assertFalse(endpoint.getConfiguration().isUseMessageBodyForSql());
+
+        endpoint = (Athena2Endpoint) component
+                .createEndpoint("aws2-athena://label?accessKey=xxxxx&secretKey=yyyyy&useMessageBodyForSql=true");
+        assertTrue(endpoint.getConfiguration().isUseMessageBodyForSql());
+
+        component.getConfiguration().setUseMessageBodyForSql(true);
+        endpoint = (Athena2Endpoint) component.createEndpoint("aws2-athena://label?accessKey=xxxxx&secretKey=yyyyy");
+        assertTrue(endpoint.getConfiguration().isUseMessageBodyForSql());
     }
 
     @Test

@@ -35,6 +35,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -52,6 +55,26 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace",
              category = { Category.DATABASE, Category.BIGDATA }, headersClass = CassandraConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.LIST, dependsOn = "resultSetConversionStrategy",
+                                   byOption = @BodyType.When(option = "resultSetConversionStrategy", value = "ONE",
+                                                             carriers = { Carrier.POJO, Carrier.NULL },
+                                                             javaType = "com.datastax.oss.driver.api.core.cql.Row"),
+                                   description = "One message per poll with the rows of the cql query: a List of the Row of"
+                                                 + " the Cassandra driver, empty when there is none. ONE gives the first Row"
+                                                 + " or null, LIMIT_n a List of at most n rows"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The values of the ? placeholders of the CQL (the cql option or the"
+                                                + " CamelCqlQuery header): an array or a Collection of them, or one value for"
+                                                + " one placeholder. No body, an empty array or an empty Collection binds"
+                                                + " none; any other body is one value, so a body left from an earlier step"
+                                                + " fails a CQL without placeholders"),
+           producerOut = @BodyType(value = Carrier.LIST, dependsOn = "resultSetConversionStrategy",
+                                   byOption = @BodyType.When(option = "resultSetConversionStrategy", value = "ONE",
+                                                             carriers = { Carrier.POJO, Carrier.NULL },
+                                                             javaType = "com.datastax.oss.driver.api.core.cql.Row"),
+                                   description = "The rows: a List of the Row of the Cassandra driver, empty for an insert,"
+                                                 + " update or delete. ONE gives the first Row or null, LIMIT_n a List of at"
+                                                 + " most n rows"))
 public class CassandraEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraEndpoint.class);
 

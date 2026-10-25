@@ -414,6 +414,9 @@ public final class BodyFacts {
             return BodyTypeRegistry.Kind.NULL;
         } else if (isPayload(body) || isValue(body)) {
             return BodyTypeRegistry.Kind.PAYLOAD;
+        } else if (body instanceof Map<?, ?>) {
+            // a Map that is also Iterable (such as a SimpleOrderedMap) is data, as describe calls it
+            return BodyTypeRegistry.Kind.DATA;
         } else if (body instanceof Collection<?> || body.getClass().isArray() || isIterator(body)) {
             return BodyTypeRegistry.Kind.COLLECTION;
         }

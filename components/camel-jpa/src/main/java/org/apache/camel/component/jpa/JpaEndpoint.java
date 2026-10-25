@@ -31,6 +31,9 @@ import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -48,6 +51,33 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType",
              category = { Category.DATABASE }, headersClass = JpaConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, dependsOn = { "query", "namedQuery", "nativeQuery" },
+                                   description = "One entity of the entityType class per message. A query that selects"
+                                                 + " columns gives one row per message: an Object array, or the value of a"
+                                                 + " single column; a nativeQuery gives an Object array unless resultClass"
+                                                 + " is set"),
+           producerIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                  dependsOn = { "query", "namedQuery", "nativeQuery" },
+                                  byOption = @BodyType.When(option = "findEntity", value = "true",
+                                                            carriers = { Carrier.VALUE, Carrier.TEXT }),
+                                  description = "The entity to persist, merge or remove, converted to the entityType class;"
+                                                + " a List or an array of entities needs entityType java.util.List (or"
+                                                + " java.lang.Object). Text, bytes or a Map fail. With findEntity, the primary"
+                                                + " key. With a query the body is not read: the parameters come from the"
+                                                + " parameters option or the CamelJpaParameters header"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                   dependsOn = { "query", "namedQuery", "nativeQuery", "outputTarget" },
+                                   byOption = {
+                                           @BodyType.When(option = "usePersist", value = "true",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "findEntity", value = "true",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }) },
+                                   description = "The managed entity that merge returns, or a List or array of them;"
+                                                 + " usePersist leaves the body as sent. findEntity gives the entity, or"
+                                                 + " null when there is none. A query gives the List of its results"
+                                                 + " (entities, Object arrays or values), the one result with singleResult,"
+                                                 + " or the count of an update or delete as an Integer; with outputTarget the"
+                                                 + " result goes to that header (or property:name) and the body is unchanged"))
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

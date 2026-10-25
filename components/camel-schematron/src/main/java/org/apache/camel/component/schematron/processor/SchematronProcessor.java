@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.schematron.processor;
 
+import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -29,7 +30,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,19 @@ public class SchematronProcessor {
      * @return
      */
     public String validate(final String xml) {
-        final Source source = new SAXSource(reader, new InputSource(IOUtils.toInputStream(xml, Charset.defaultCharset())));
+        // the text is already decoded, so the parser reads it as characters and ignores the encoding of the XML declaration
+        final Source source = new SAXSource(reader, new InputSource(new StringReader(xml)));
+        return validate(source);
+    }
+
+    /**
+     * Validates the given XML for given Rules. The parser decodes the bytes using the encoding of the XML declaration.
+     *
+     * @param  xml
+     * @return
+     */
+    public String validate(final InputStream xml) {
+        final Source source = new SAXSource(reader, new InputSource(xml));
         return validate(source);
     }
 

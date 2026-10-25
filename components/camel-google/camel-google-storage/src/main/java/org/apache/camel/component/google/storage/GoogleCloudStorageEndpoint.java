@@ -27,6 +27,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +46,42 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "3.9.0", scheme = "google-storage", title = "Google Storage", syntax = "google-storage:bucketName",
              category = { Category.CLOUD }, headersClass = GoogleCloudStorageConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.BYTES, Carrier.FILE },
+                                   byOption = @BodyType.When(option = "includeBody", value = "false", carriers = Carrier.POJO,
+                                                             javaType = "com.google.cloud.storage.Blob"),
+                                   description = "The content of the object, one message per object, with its metadata in"
+                                                 + " headers: a stream cache, or a byte array when stream caching is off. With"
+                                                 + " downloadFileName the java.io.File it is downloaded to, and with"
+                                                 + " includeBody=false the Blob, which has the metadata and not the content"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "operation",
+                                  description = "The content to upload, when no operation is set: text, bytes, a stream or a"
+                                                + " file. A Map, a List or no body fails: marshal it first. The operations take"
+                                                + " their input from options and headers"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "com.google.cloud.storage.Blob",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getObject", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "operation", value = "listObjects", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.google.cloud.storage.Blob>"),
+                                           @BodyType.When(option = "operation", value = "listBuckets", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.google.cloud.storage.Bucket>"),
+                                           @BodyType.When(option = "operation", value = "copyObject", carriers = Carrier.POJO,
+                                                          javaType = "com.google.cloud.storage.CopyWriter"),
+                                           @BodyType.When(option = "operation", value = "deleteObject",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deleteBucket",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "createDownloadLink",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String") },
+                                   description = "The Blob of the uploaded object. By the operation: the content as a byte array"
+                                                 + " for getObject, with its metadata in headers, a List of Blob or Bucket for the"
+                                                 + " lists, the CopyWriter for copyObject, whose getResult() gives the Blob of the"
+                                                 + " copy, true or false for the deletes and the signed URL as text for"
+                                                 + " createDownloadLink"))
 public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageEndpoint.class);

@@ -21,6 +21,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,28 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "4.22.0", scheme = "clickhouse", title = "ClickHouse",
              syntax = "clickhouse:database", category = { Category.DATABASE, Category.BIGDATA },
              producerOnly = true, headersClass = ClickHouseConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.LIST },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "QUERY",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "PING", carriers = Carrier.ANY) },
+                                  description = "The rows to insert, in the format option (JSONEachRow: one JSON object per"
+                                                + " line), as text, bytes, a stream or a file; or a List of objects whose"
+                                                + " class is registered on the Client. A Map or a List of Maps fails: marshal"
+                                                + " it first. Query takes the SQL statement"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "QUERY", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "PING", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "Insert leaves the body unchanged, with the count in the"
+                                                 + " CamelClickHouseWrittenRows header. Query gives the result as a String"
+                                                 + " in the format option (JSONEachRow: one JSON object per line); binary"
+                                                 + " formats such as RowBinary do not survive the String. Ping gives a"
+                                                 + " Boolean. The CamelClickHouseOperation header overrides the operation"))
 public class ClickHouseEndpoint extends DefaultEndpoint {
 
     private Client client;

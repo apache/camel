@@ -77,8 +77,9 @@ public class TelegramAsyncHandler {
     }
 
     /**
-     * Sets the result of a successful response as the message body. Throws for a response with an error status and for
-     * a body that cannot be read; the caller fails the exchange with that exception and completes it.
+     * Sets the result of a successful response as the message body. Throws for a response with an error status, for an
+     * answer that is not ok and for a body that cannot be read; the caller fails the exchange with that exception and
+     * completes it.
      */
     public Object handleCompressedResponse(HttpResponse<InputStream> response) {
         Object result;
@@ -103,6 +104,13 @@ public class TelegramAsyncHandler {
                     result = mapper.readValue(body, resultClass);
                 } else {
                     result = mapper.readValue(r, resultClass);
+                }
+
+                MessageResult messageResult = (MessageResult) result;
+                if (!messageResult.isOk()) {
+                    throw new RuntimeCamelException(
+                            request + " responded: ok=false, error_code=" + messageResult.getErrorCode() + ", description="
+                                                    + messageResult.getDescription());
                 }
 
                 exchange.getMessage().setBody(result);

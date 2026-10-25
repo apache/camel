@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.pulsar.utils.consumers;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.pulsar.PulsarConfiguration;
@@ -23,14 +26,54 @@ import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
 import org.apache.camel.component.pulsar.PulsarMessageListener;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
 import org.apache.pulsar.client.api.KeySharedPolicy;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.api.SubscriptionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CommonCreationStrategyImpl {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonCreationStrategyImpl.class);
+
     private CommonCreationStrategyImpl() {
+    }
+
+    /**
+     * Subscribes the configured number of consumers.
+     *
+     * When one of them cannot subscribe, the consumers subscribed so far are closed and the failure is thrown. The
+     * route then fails to start, so it can be started again (for example by the supervising route controller), instead
+     * of running with fewer consumers than configured, or with none, and never subscribing the missing ones.
+     */
+    static Collection<Consumer<byte[]>> createMultipleConsumers(
+            final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer, final SubscriptionType subscriptionType)
+            throws PulsarClientException {
+        final PulsarConfiguration configuration = pulsarEndpoint.getPulsarConfiguration();
+        final List<Consumer<byte[]>> consumers = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < configuration.getNumberOfConsumers(); i++) {
+                final String consumerName = configuration.getConsumerNamePrefix() + i;
+                consumers.add(getBuilder(consumerName, pulsarEndpoint, pulsarConsumer).subscriptionType(subscriptionType)
+                        .subscribe());
+            }
+        } catch (PulsarClientException | RuntimeException e) {
+            for (Consumer<byte[]> consumer : consumers) {
+                try {
+                    consumer.close();
+                } catch (Exception closeFailure) {
+                    LOGGER.debug("Error closing consumer {} after a failed subscribe. This exception is ignored.",
+                            consumer, closeFailure);
+                }
+            }
+            throw e;
+        }
+        return consumers;
     }
 
     protected static ConsumerBuilder<byte[]> getBuilder(

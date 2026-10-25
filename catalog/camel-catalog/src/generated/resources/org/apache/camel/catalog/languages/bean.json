@@ -15,6 +15,10 @@
     "modelName": "method",
     "modelJavaType": "org.apache.camel.model.language.MethodCallExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "The first parameter of the method gets the body, converted to its type" },
+    "expressionOut": { "carriers": [ "unknown" ], "description": "What the method returns; null for a void method" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "ref": { "index": 1, "kind": "attribute", "displayName": "Ref", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Reference to an existing bean (bean id) to lookup in the registry." },

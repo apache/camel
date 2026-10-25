@@ -118,6 +118,8 @@ YAML::
 == Marshal
 
 In this example, we marshal the messages read from a JMS queue in SWIFT format before storing the result into a file.
+The body must be a Prowide MX object, such as an `MxPacs00800108`, as unmarshal gives: it is not converted, so an MX
+message as text fails.
 
 [tabs]
 ====

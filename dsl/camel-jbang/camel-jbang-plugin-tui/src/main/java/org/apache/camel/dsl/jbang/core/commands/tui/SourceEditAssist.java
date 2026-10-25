@@ -1737,8 +1737,8 @@ final class SourceEditAssist {
 
     /**
      * The Camel checks of a Java or XML DSL route file (CAMEL-25208): the endpoint uris and simple expressions the
-     * compiler cannot see, as "Line N: message". The endpoints no route consumes are left to camel validate: the editor
-     * runs this while typing, and would read the whole project each time.
+     * compiler cannot see, as "Line N: message". The endpoints no route consumes are notes of their own, as finding
+     * them reads the whole project: ConsumedEndpoints reads it in the background.
      */
     List<String> validateRoutes(Path file, String content) {
         List<String> answer = new ArrayList<>();
@@ -1826,7 +1826,7 @@ final class SourceEditAssist {
     }
 
     /** The Java sources of the project, for the constants a route refers to in another class; kept for a while. */
-    private Map<String, Supplier<String>> javaSources() {
+    Map<String, Supplier<String>> javaSources() {
         long now = MonotonicClock.millis();
         if (javaSourcesCache == null || now - javaSourcesCacheTime > JAVA_SOURCES_TTL_MS
                 || !Objects.equals(javaSourcesCacheDir, rootDir)) {

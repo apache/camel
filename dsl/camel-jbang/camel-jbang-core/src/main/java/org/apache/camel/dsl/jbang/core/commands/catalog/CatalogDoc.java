@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -46,6 +47,7 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -123,6 +125,19 @@ public class CatalogDoc extends CamelCommand {
     @CommandLine.Option(names = { "--json" },
                         description = "Output in JSON Format: the documentation the MCP tool camel_catalog_doc gives")
     boolean jsonOutput;
+
+    /** The sides of the body types, as the documentation pages name them. */
+    private static final Map<String, String> BODY_SIDES = Map.of(
+            BodyTypeModel.CONSUMER_OUT, "Consumer",
+            BodyTypeModel.CONSUMER_REPLY, "Consumer reply",
+            BodyTypeModel.PRODUCER_IN, "Producer input",
+            BodyTypeModel.PRODUCER_OUT, "Producer output",
+            BodyTypeModel.MARSHAL_IN, "Marshal input",
+            BodyTypeModel.MARSHAL_OUT, "Marshal output",
+            BodyTypeModel.UNMARSHAL_IN, "Unmarshal input",
+            BodyTypeModel.UNMARSHAL_OUT, "Unmarshal output",
+            BodyTypeModel.EXPRESSION_IN, "Expression input",
+            BodyTypeModel.EXPRESSION_OUT, "Expression result");
 
     CamelCatalog catalog;
 
@@ -579,6 +594,7 @@ public class CatalogDoc extends CamelCommand {
             printer().println(optionTable(filtered));
             printer().println("");
         }
+        printBodyTypes(cm.getBodyTypes());
 
         if (link != null) {
             printer().println(link);
@@ -628,6 +644,7 @@ public class CatalogDoc extends CamelCommand {
         }
         printer().println(optionTable(filtered));
         printer().println("");
+        printBodyTypes(dm.getBodyTypes());
 
         if (link != null) {
             printer().println(link);
@@ -677,6 +694,7 @@ public class CatalogDoc extends CamelCommand {
         }
         printer().println(optionTable(filtered));
         printer().println("");
+        printBodyTypes(lm.getBodyTypes());
 
         if (link != null) {
             printer().println(link);
@@ -773,6 +791,29 @@ public class CatalogDoc extends CamelCommand {
                 TerminalWidthHelper.scaleWidth(tw, borders, defaultMax, 8, totalPreferred),
                 TerminalWidthHelper.scaleWidth(tw, borders, typeMax, 8, totalPreferred)
         };
+    }
+
+    /**
+     * The message body at each side, as the body types of the catalog say (CAMEL-24961) and the documentation page
+     * shows it: one line per side, with the default options. Nothing when the catalog does not say.
+     */
+    private void printBodyTypes(Map<String, BodyTypeModel> bodyTypes) {
+        if (bodyTypes.isEmpty()) {
+            return;
+        }
+        JsonObject lines = CatalogDocs.bodyTypes(bodyTypes);
+        // the side in one line (Expression result, with the padding of the cell), the body in the rest of the terminal
+        int sideWidth = BODY_SIDES.values().stream().mapToInt(String::length).max().orElse(17) + 2;
+        int bodyWidth = Math.max(15, Math.min(120, terminalWidth() - TerminalWidthHelper.fancyBorderOverhead(2) - sideWidth));
+        printer().println("Message body (with the default options; a side that is not listed is not known):");
+        printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, lines.entrySet(), Arrays.asList(
+                new Column().header("SIDE").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(sideWidth, OverflowBehaviour.NEWLINE)
+                        .with(e -> BODY_SIDES.getOrDefault(e.getKey(), e.getKey())),
+                new Column().header("BODY").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(bodyWidth, OverflowBehaviour.NEWLINE)
+                        .with(e -> String.valueOf(e.getValue())))));
+        printer().println("");
     }
 
     private String optionTable(List<? extends BaseOptionModel> options) {

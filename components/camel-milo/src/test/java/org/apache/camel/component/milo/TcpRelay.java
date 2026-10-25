@@ -23,16 +23,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A TCP relay to the server, whose connections a test can drop while it keeps listening, and which can be down while
- * the client tries to connect.
+ * A TCP relay to the server, whose connections a test can drop or silence while it keeps listening, and which can be
+ * down while the client tries to connect.
  */
 final class TcpRelay {
 
     private volatile ServerSocket listener;
 
     private final List<Socket> sockets = new ArrayList<>();
+
+    // the sockets whose data is dropped instead of relayed
+    private final Set<Socket> silenced = ConcurrentHashMap.newKeySet();
 
     void start(final int port, final int serverPort) throws IOException {
         final ServerSocket listener = new ServerSocket(port);
@@ -61,14 +66,16 @@ final class TcpRelay {
         acceptor.start();
     }
 
-    private static void pump(final Socket from, final Socket to) {
+    private void pump(final Socket from, final Socket to) {
         final Thread thread = new Thread(() -> {
             final byte[] buffer = new byte[8192];
             try (InputStream in = from.getInputStream(); OutputStream out = to.getOutputStream()) {
                 int read;
                 while ((read = in.read(buffer)) >= 0) {
-                    out.write(buffer, 0, read);
-                    out.flush();
+                    if (!silenced.contains(from)) {
+                        out.write(buffer, 0, read);
+                        out.flush();
+                    }
                 }
             } catch (final IOException e) {
                 // the connection was dropped
@@ -81,10 +88,21 @@ final class TcpRelay {
         thread.start();
     }
 
+    /**
+     * Drops what the current connections carry in both directions, without closing them: the link goes silent, as when
+     * the network drops it without a reset, until the connections are dropped. New connections are relayed.
+     */
+    void silence() {
+        synchronized (sockets) {
+            silenced.addAll(sockets);
+        }
+    }
+
     void dropConnections() {
         synchronized (sockets) {
             sockets.forEach(TcpRelay::close);
             sockets.clear();
+            silenced.clear();
         }
     }
 

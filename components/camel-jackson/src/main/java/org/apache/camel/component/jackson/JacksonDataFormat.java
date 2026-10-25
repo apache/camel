@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
                                   description = "The JSON in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
            unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
-                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType" },
+                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" },
                                     byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
                                     description = "A Map (LinkedHashMap) for a JSON object, a List (ArrayList) for an array;"
                                                   + " an object of the class unmarshalType names"))
@@ -129,13 +129,21 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
     }
 
     /**
+     * Whether a body that already is JSON text is written as it is. A subclass that writes another format than JSON,
+     * such as protobuf, returns false.
+     */
+    protected boolean isWriteJsonAsIs() {
+        return true;
+    }
+
+    /**
      * A body that is already the JSON text is written as it is (CAMEL-25329), see {@link JsonPayloadHelper}: a file, a
      * stream, bytes, or a String holding a JSON object or array. Any other String, and every object, is marshalled as
      * before.
      */
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        if (JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream) >= 0) {
+        if (isWriteJsonAsIs() && JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream) >= 0) {
             if (isContentTypeHeader()) {
                 exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
             }

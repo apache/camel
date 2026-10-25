@@ -23,6 +23,9 @@ import com.ning.compress.lzf.LZFInputStream;
 import com.ning.compress.lzf.LZFOutputStream;
 import com.ning.compress.lzf.parallel.PLZFOutputStream;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -34,6 +37,16 @@ import org.apache.camel.util.IOHelper;
  * LZF data format. See {@link org.apache.camel.model.dataformat.LZFDataFormat} for "deflate" compression.
  */
 @Dataformat("lzf")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The data to compress: text in the charset of the exchange, bytes, a stream"
+                                               + " or a file"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The LZF data in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "LZF data, such as marshal gives, with or without usingParallelCompression"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM,
+                                    description = "The decompressed data in the stream cache, or a byte array when stream"
+                                                  + " caching is off"))
 public class LZFDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private boolean usingParallelCompression;

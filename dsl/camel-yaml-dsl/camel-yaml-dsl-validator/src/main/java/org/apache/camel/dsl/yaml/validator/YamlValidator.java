@@ -87,6 +87,9 @@ public class YamlValidator {
     private final boolean canonical;
     private final String schemaJson;
     private CamelCatalog catalog;
+    /** The catalog of another Camel version than the one of the validator (CAMEL-24711), if given. */
+    private final boolean otherCatalog;
+    private CatalogBodyTypes bodyTypes;
     private Schema schema;
     /**
      * The schema for a Kamelet: the envelope, with its {@code spec.template} being one entry of the route schema. A
@@ -121,6 +124,7 @@ public class YamlValidator {
         this.canonical = canonical;
         this.schemaJson = schemaJson;
         this.catalog = catalog;
+        this.otherCatalog = catalog != null;
     }
 
     public boolean isCanonical() {
@@ -848,9 +852,10 @@ public class YamlValidator {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
-            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints());
+            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
+                    bodyTypes());
             // a field read on a body that is still text (CAMEL-24844)
-            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts);
+            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts, bodyTypes());
         }
         if (canonical) {
             checkOneOfCardinality(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
@@ -1562,6 +1567,17 @@ public class YamlValidator {
             catalog = new DefaultCamelCatalog();
         }
         return catalog;
+    }
+
+    /**
+     * The body types of the catalog (CAMEL-24961). The catalog of an older Camel version has none, so the body types of
+     * the validator's own catalog stand in for a model that has none.
+     */
+    private CatalogBodyTypes bodyTypes() {
+        if (bodyTypes == null) {
+            bodyTypes = new CatalogBodyTypes(catalog(), otherCatalog ? new DefaultCamelCatalog() : null);
+        }
+        return bodyTypes;
     }
 
     private void collectProperties(JsonNode node, Set<String> answer, int depth) {

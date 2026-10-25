@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.mq;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
@@ -99,6 +101,11 @@ public class MQ2Producer extends DefaultProducer {
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the " + MQ2Constants.OPERATION
+                                               + " header");
+        }
         return operation;
     }
 
@@ -162,7 +169,6 @@ public class MQ2Producer extends DefaultProducer {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void createBroker(MqClient mqClient, Exchange exchange) throws InvalidPayloadException {
         String brokerName;
         String brokerEngine;
@@ -183,6 +189,8 @@ public class MQ2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                message.setHeader(MQ2Constants.BROKER_ID, result.brokerId());
+                message.setHeader(MQ2Constants.BROKER_ARN, result.brokerArn());
             } else {
                 throw new IllegalArgumentException(
                         "createBroker operation requires CreateBrokerRequest in POJO mode");
@@ -219,8 +227,9 @@ public class MQ2Producer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Instance Type must be specified");
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.BROKER_USERS))) {
-                users = exchange.getIn().getHeader(MQ2Constants.BROKER_USERS, List.class);
+            Object brokerUsers = exchange.getIn().getHeader(MQ2Constants.BROKER_USERS);
+            if (ObjectHelper.isNotEmpty(brokerUsers)) {
+                users = toUsers(brokerUsers);
                 builder.users(users);
             } else {
                 throw new IllegalArgumentException("A Users list must be specified");
@@ -348,8 +357,18 @@ public class MQ2Producer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException(MISSING_BROKER_ID);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.CONFIGURATION_ID))) {
-                configurationId = exchange.getIn().getHeader(MQ2Constants.CONFIGURATION_ID, ConfigurationId.class);
+            Object configuration = exchange.getIn().getHeader(MQ2Constants.CONFIGURATION_ID);
+            if (ObjectHelper.isNotEmpty(configuration)) {
+                if (configuration instanceof ConfigurationId cId) {
+                    configurationId = cId;
+                } else if (configuration instanceof String id) {
+                    configurationId = ConfigurationId.builder().id(id).build();
+                } else {
+                    throw new IllegalArgumentException(
+                            "The " + MQ2Constants.CONFIGURATION_ID + " header must be a " + ConfigurationId.class.getName()
+                                                       + " or the id of the configuration as a String, but was "
+                                                       + configuration.getClass().getName());
+                }
                 builder.configuration(configurationId);
             } else {
                 throw new IllegalArgumentException(MISSING_CONFIGURATION_ID);
@@ -375,11 +394,13 @@ public class MQ2Producer extends DefaultProducer {
                 try {
                     result = mqClient.describeBroker(describeBrokerRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Reboot Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
+                    LOG.trace("Describe Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                message.setHeader(MQ2Constants.BROKER_ARN, result.brokerArn());
+                message.setHeader(MQ2Constants.BROKER_STATE, result.brokerStateAsString());
             } else {
                 throw new IllegalArgumentException(
                         "describeBroker operation requires DescribeBrokerRequest in POJO mode");
@@ -404,6 +425,26 @@ public class MQ2Producer extends DefaultProducer {
             message.setHeader(MQ2Constants.BROKER_ARN, result.brokerArn());
             message.setHeader(MQ2Constants.BROKER_STATE, result.brokerStateAsString());
         }
+    }
+
+    private static List<User> toUsers(Object brokerUsers) {
+        if (brokerUsers instanceof Collection<?> collection) {
+            List<User> users = new ArrayList<>(collection.size());
+            for (Object element : collection) {
+                if (element instanceof User user) {
+                    users.add(user);
+                } else {
+                    throw new IllegalArgumentException(
+                            "The " + MQ2Constants.BROKER_USERS + " header must be a List of " + User.class.getName()
+                                                       + ", but it contains a "
+                                                       + (element == null ? "null" : element.getClass().getName()));
+                }
+            }
+            return users;
+        }
+        throw new IllegalArgumentException(
+                "The " + MQ2Constants.BROKER_USERS + " header must be a List of " + User.class.getName() + ", but was a "
+                                           + brokerUsers.getClass().getName());
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

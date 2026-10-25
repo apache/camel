@@ -19,6 +19,9 @@ package org.apache.camel.component.beanclass;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.component.bean.BeanEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
@@ -26,6 +29,13 @@ import org.apache.camel.spi.UriEndpoint;
  */
 @UriEndpoint(firstVersion = "2.4.0", scheme = "class", title = "Class", syntax = "class:beanName", producerOnly = true,
              remote = false, category = { Category.CORE, Category.SCRIPT })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The first parameter of the method gets the body, converted to its type: a"
+                                                + " String parameter gets a Map or a POJO as its toString(), so marshal it"
+                                                + " first"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "What the method returns, also when it returns null. A void method leaves"
+                                                 + " the body unchanged"))
 public class ClassEndpoint extends BeanEndpoint {
 
     public ClassEndpoint(String endpointUri, Component component) {

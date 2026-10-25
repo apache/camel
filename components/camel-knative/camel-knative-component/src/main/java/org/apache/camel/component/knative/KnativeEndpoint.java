@@ -36,6 +36,9 @@ import org.apache.camel.component.knative.ce.CloudEventProcessors;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.component.knative.spi.KnativeTransportConfiguration;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -59,6 +62,23 @@ import org.slf4j.LoggerFactory;
 @Metadata(annotations = {
         "protocol=http",
 })
+@BodyTypes(consumerOut = @BodyType(value = {
+        Carrier.BYTES, Carrier.NULL, Carrier.MAP, Carrier.LIST, Carrier.TEXT,
+        Carrier.VALUE },
+                                   description = "The data of the event as a byte array, empty or null for an event without"
+                                                 + " data. A structured event (Content-Type application/cloudevents+json) gives"
+                                                 + " its data field parsed from JSON: a Map, a List, text or a value"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                     byOption = @BodyType.When(option = "reply", value = "false", carriers = Carrier.ANY),
+                                     description = "The data of the reply, sent as bytes: text, bytes, a stream or a file; no"
+                                                   + " body answers 204 No Content. A Map or a POJO fails: marshal it first."
+                                                   + " With reply=false the body is not sent"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The data of the event: text, bytes, a stream or a file, sent as bytes. No body"
+                                                + " fails, and so does a Map or a POJO: marshal it first"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.NULL },
+                                   description = "The body of the response, also for a message that expects no reply (InOnly):"
+                                                 + " a byte array, null for a response without a body"))
 public class KnativeEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KnativeEndpoint.class);

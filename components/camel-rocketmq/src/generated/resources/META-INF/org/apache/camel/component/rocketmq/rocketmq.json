@@ -67,6 +67,11 @@
     "CamelRockerMQReconsumeTimes": { "index": 18, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Reconsume times", "constantName": "org.apache.camel.component.rocketmq.RocketMQConstants#RECONSUME_TIMES" },
     "CamelRockerMQPreparedTransactionOffset": { "index": 19, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Prepard transaction offset", "constantName": "org.apache.camel.component.rocketmq.RocketMQConstants#PREPARED_TRANSACTION_OFFSET" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "The body of the RocketMQ message. The consumer does not reply: the body the route ends with is not sent back" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "What converts to a byte array: text, bytes, a stream or a file, sent as the body of the message. A Map, a POJO, a number or no body fails, and the broker rejects an empty body: marshal it first" },
+    "producerOut": { "carriers": [ "unchanged" ], "dependsOn": [ "replyToTopic" ], "description": "The body is left as it was. With the InOut pattern and a replyToTopic, the producer waits for the reply and the body is the reply as a byte array" }
+  },
   "properties": {
     "topicName": { "index": 0, "kind": "path", "displayName": "Topic Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Topic name of this endpoint." },
     "accessChannel": { "index": 1, "kind": "parameter", "displayName": "Access Channel", "group": "common", "label": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "LOCAL", "CLOUD" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "LOCAL", "description": "Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default" },

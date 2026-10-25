@@ -275,6 +275,7 @@ public final class SecurityUtils {
                 "component:awsbedrockagentruntime",
                 "component:awscloudtrail",
                 "component:awsconfig",
+                "component:awsparameterstore",
                 "component:awssecretsmanager",
                 "component:awssecurityhub",
                 "component:milobrowse",

@@ -26,6 +26,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
@@ -37,6 +40,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("java")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, in the variable body of type Object: bodyAs(type)"
+                                                  + " converts it"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the script returns"))
 public class JavaLanguage extends TypedLanguageSupport implements ScriptingLanguage, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaLanguage.class);

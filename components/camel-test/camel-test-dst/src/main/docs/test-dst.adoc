@@ -48,13 +48,15 @@ A `Dst` is one run. The extension creates one per seed and closes it after the s
 `new Dst` while another run is open throws `IllegalStateException` ("another run (seed N) is still active"), and a DST
 test refuses to start when JUnit runs tests in parallel (`junit.jupiter.execution.parallel.enabled=true`).
 
-Three worlds are in the Camel code base and are the examples to copy:
+These worlds are in the Camel code base and are the examples to copy:
 
 |===
 |Component |Test |Regression test for
 
 |camel-aws2-sqs |`SqsVisibilityDstTest` (the visibility timeout extender) |CAMEL-25700
 |camel-azure-eventhubs |`EventHubsCheckpointDstTest` (checkpointing by batch size and timeout) |CAMEL-25683
+|camel-pulsar |`PulsarConsumerDstTest` (subscribe failures, broker and route restarts while the route starts and
+consumes) |CAMEL-25869
 |camel-slack |`SlackSuspendDstTest` (route suspend in the middle of a poll) |CAMEL-25684
 |===
 

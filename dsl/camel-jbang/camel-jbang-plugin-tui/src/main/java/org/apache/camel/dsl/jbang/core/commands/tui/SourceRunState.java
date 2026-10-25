@@ -21,6 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
@@ -45,7 +47,9 @@ import org.apache.camel.util.json.JsonObject;
  * <li>after a reload, a route started after the save runs what is saved. The integration does not say when it loaded a
  * route, so a route stopped and started again by hand after a reload is taken as loaded then.</li>
  * </ul>
- * A failed reload puts back the routes that ran before it, so until a reload succeeds the state is the reload error.
+ * A failed reload puts back the routes that ran before it, so until a reload succeeds the state is the reload error. A
+ * file whose routes are all stopped is shown as such; the facts of its lines still hold when the integration loaded it
+ * as saved, which is known without a reload, but not for a route stopped after a reload.
  */
 final class SourceRunState {
 
@@ -60,13 +64,15 @@ final class SourceRunState {
         /** the last reload failed, so the routes that ran before it run */
         RELOAD_FAILED,
         /** saved after the routes were loaded, and the integration did not load it again */
-        NOT_RUNNING
+        NOT_RUNNING,
+        /** the routes the integration has from the file are all stopped (or suspended) */
+        STOPPED
     }
 
     /**
      * @param kind   the state
      * @param routes the routes the integration has from the file
-     * @param stale  how many of them were loaded before the file was saved
+     * @param stale  how many of them were loaded before the file was saved, or at a time not known
      * @param detail why not running, or the reload error; null when running
      */
     record State(Kind kind, int routes, int stale, String detail) {
@@ -90,21 +96,23 @@ final class SourceRunState {
         // an integration that has not reloaded loaded its routes when it started; after a reload, when each started
         boolean reloaded = info.reloaded > 0 || info.reloadError != null || info.uptime <= 0;
         int routes = 0;
+        int started = 0;
         int stale = 0;
+        int unknown = 0;
         for (RouteInfo r : info.routes) {
-            if (!"Started".equals(r.state) || LiveRunLines.lineOf(r.source, name) < 0) {
+            if (LiveRunLines.lineOf(r.source, name) < 0) {
                 continue;
             }
-            long loaded = info.uptime;
-            if (reloaded) {
-                long uptime = uptimeMillis(r.uptime);
-                if (uptime < 0) {
-                    continue;
-                }
-                loaded = Math.max(info.uptime, now - uptime);
-            }
             routes++;
-            if (loaded < fileModified) {
+            boolean running = "Started".equals(r.state);
+            if (running) {
+                started++;
+            }
+            long uptime = running ? uptimeMillis(r.uptime) : -1;
+            if (reloaded && uptime < 0) {
+                // a stopped route after a reload: when it was loaded is not known, so it may be of another version
+                unknown++;
+            } else if ((reloaded ? Math.max(info.uptime, now - uptime) : info.uptime) < fileModified) {
                 stale++;
             }
         }
@@ -112,11 +120,13 @@ final class SourceRunState {
             return null;
         }
         if (info.reloadError != null) {
-            return new State(Kind.RELOAD_FAILED, routes, stale, info.reloadError);
+            return new State(Kind.RELOAD_FAILED, routes, stale + unknown, info.reloadError);
         }
         if (stale == 0) {
-            return new State(Kind.RUNNING, routes, 0, null);
+            // what a route stopped by hand says of the lines holds when it is the version that was loaded
+            return new State(started == 0 ? Kind.STOPPED : Kind.RUNNING, routes, unknown, null);
         }
+        stale += unknown;
         if (info.devMode) {
             if (now - fileModified < RELOAD_GRACE_MILLIS) {
                 return new State(Kind.RELOADING, routes, stale, null);
@@ -150,6 +160,7 @@ final class SourceRunState {
             case NOT_RUNNING -> Line.from(
                     Span.styled(TuiIcons.IDLE + " not running yet", Theme.warning()),
                     Span.styled(": " + state.detail(), Theme.muted()));
+            case STOPPED -> Line.from(Span.styled(TuiIcons.IDLE + " the routes of this file are stopped", Theme.muted()));
         };
     }
 
@@ -161,6 +172,7 @@ final class SourceRunState {
             case RELOADING -> "reloading";
             case RELOAD_FAILED -> "reloadFailed";
             case NOT_RUNNING -> "notRunning";
+            case STOPPED -> "stopped";
         });
         jo.put("routes", state.routes());
         jo.put("routesLoadedBeforeSave", state.stale());
@@ -176,44 +188,101 @@ final class SourceRunState {
      */
     static final class Tracker {
 
+        /** The state computed for a file: null when the integration has no route from it. */
         private record Computed(String file, State state) {
         }
 
         private volatile String file;
         private volatile Computed computed;
+        // a save in the editor makes the state unknown until a refresh after it computes it again (written by the UI
+        // thread only)
+        private volatile int saves;
+        private volatile int computedSaves;
+        private boolean wasDirty;
+        // the refreshes in the order they started: a later one wins over one that ends after it (guarded by this)
+        private final AtomicLong refreshes = new AtomicLong();
+        private long written;
 
-        /** The file the source panel shows, on the UI thread when it draws; null when none is. */
-        void shown(String file) {
+        /**
+         * The file the source panel shows, on the UI thread when it draws; null when none is. Edits that are no longer
+         * unsaved were saved (or discarded): the state is unknown until the next refresh.
+         *
+         * @return whether the state is to be computed now: another file is shown, or the file was saved
+         */
+        boolean shown(String file, boolean dirty) {
+            boolean saved = wasDirty && !dirty;
+            if (saved) {
+                saves++;
+            }
+            wasDirty = dirty;
+            boolean other = !Objects.equals(file, this.file);
             this.file = file;
+            return file != null && (saved || other);
         }
 
-        /** Computes the state of the file shown, on the background thread of the data refresh. */
+        /**
+         * Computes the state of the file shown, off the UI thread: on the data refresh, when another file is shown or
+         * the file is saved, and when tui_get_table reads the tab.
+         */
         void refresh(IntegrationInfo info) {
+            long order = refreshes.incrementAndGet();
+            int at = saves;
             String shown = file;
-            if (shown == null || info == null) {
-                computed = null;
-                return;
+            Computed result = null;
+            if (shown != null && info != null) {
+                try {
+                    // the file system keeps the time of the save by the wall clock, so it is compared with the wall clock
+                    long modified = Files.getLastModifiedTime(Path.of(shown)).toMillis();
+                    result = new Computed(shown, of(info, shown, modified, System.currentTimeMillis()));
+                } catch (IOException | RuntimeException e) {
+                    // not known
+                }
             }
-            try {
-                // the file system keeps the time of the save by the wall clock, so it is compared with the wall clock
-                long modified = Files.getLastModifiedTime(Path.of(shown)).toMillis();
-                State state = of(info, shown, modified, System.currentTimeMillis());
-                computed = state != null ? new Computed(shown, state) : null;
-            } catch (IOException | RuntimeException e) {
-                computed = null;
+            synchronized (this) {
+                if (order > written) {
+                    written = order;
+                    computed = result;
+                    computedSaves = at;
+                }
             }
         }
 
         void reset() {
             file = null;
-            computed = null;
+            synchronized (this) {
+                // a refresh that started before does not write after
+                written = refreshes.incrementAndGet();
+                computed = null;
+                computedSaves = saves;
+            }
         }
 
-        /** The state of the file shown; null when unknown, or when it was computed for another file. */
+        /**
+         * The state of the file shown; null when unknown: computed for another file, or before the last save in the
+         * editor.
+         */
         State current() {
             Computed c = computed;
             String shown = file;
-            return c != null && c.file().equals(shown) ? c.state() : null;
+            return c != null && c.file().equals(shown) && computedSaves == saves ? c.state() : null;
+        }
+
+        /**
+         * Whether the integration may run another version of the file than the one shown, so the live run data is of
+         * other lines (CAMEL-25897): not known yet for the file shown (just opened, or saved in the editor since),
+         * saved after the integration loaded it, a failed reload, or a route stopped after a reload.
+         */
+        boolean stale() {
+            Computed c = computed;
+            String shown = file;
+            if (shown == null) {
+                return false;
+            }
+            if (c == null || !c.file().equals(shown) || computedSaves != saves) {
+                return true;
+            }
+            State state = c.state();
+            return state != null && (state.kind() == Kind.RELOAD_FAILED || state.stale() > 0);
         }
 
         /** The state on the bottom border of the source panel, left of the cursor position of the editor. */

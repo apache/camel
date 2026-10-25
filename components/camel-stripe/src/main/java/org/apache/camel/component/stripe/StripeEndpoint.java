@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -30,6 +33,16 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "stripe", title = "Stripe", syntax = "stripe:operation",
              category = { Category.SAAS, Category.FINANCE }, producerOnly = true, headersClass = StripeConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.TEXT, Carrier.NULL },
+                                  description = "The request parameters of the call: a Map, or a JSON object as"
+                                                + " text; null for none. Bytes, a stream or a POJO fails: convert it"
+                                                + " to a String first. retrieve, delete and cancel ignore the body;"
+                                                + " they and update and capture take the id of the object from the"
+                                                + " CamelStripeObjectId header"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The Stripe object the call returns, such as a"
+                                                 + " com.stripe.model.Customer; list gives a collection of them, such"
+                                                 + " as a CustomerCollection, with the objects in its data"))
 public class StripeEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

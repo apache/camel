@@ -21,6 +21,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,6 +47,12 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
 @UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_BIGQUERY, title = "Google BigQuery",
              syntax = "google-bigquery:projectId:datasetId:tableId",
              category = { Category.CLOUD, Category.BIGDATA }, producerOnly = true, headersClass = GoogleBigQueryConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                  description = "The row to insert as a Map of column names to values, or a List of such"
+                                                + " Maps for one row each; the exchanges of a grouped aggregation are"
+                                                + " inserted together. Text such as JSON, bytes, a stream, a POJO or no"
+                                                + " body fails: unmarshal it into a Map first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class GoogleBigQueryEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

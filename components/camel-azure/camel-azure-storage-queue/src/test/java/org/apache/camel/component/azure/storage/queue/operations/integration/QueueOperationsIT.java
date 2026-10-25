@@ -101,7 +101,7 @@ class QueueOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testSendMessageAndClearQueue() {
+    public void testSendMessageAndClearQueue() throws Exception {
         final String queueName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final QueueClientWrapper clientWrapper = serviceClientWrapper.getQueueClientWrapper(queueName);
         final QueueOperations operations = new QueueOperations(configuration, clientWrapper);
@@ -134,7 +134,7 @@ class QueueOperationsIT extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testReceiveAndPeekMessages() {
+    public void testReceiveAndPeekMessages() throws Exception {
         final QueueOperations operations = getQueueOperations();
 
         final Exchange exchange = new DefaultExchange(context);
@@ -172,7 +172,7 @@ class QueueOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testDeleteMessages() {
+    public void testDeleteMessages() throws Exception {
         final QueueOperations operations = getQueueOperations();
 
         final Exchange exchange = new DefaultExchange(context);
@@ -204,7 +204,7 @@ class QueueOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testUpdateMessage() {
+    public void testUpdateMessage() throws Exception {
         final QueueOperations operations = getQueueOperations();
 
         final Exchange exchange = new DefaultExchange(context);

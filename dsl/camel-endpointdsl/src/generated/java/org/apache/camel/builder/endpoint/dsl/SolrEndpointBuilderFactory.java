@@ -154,7 +154,7 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param deleteByQuery the value to set
@@ -170,7 +170,7 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param deleteByQuery the value to set

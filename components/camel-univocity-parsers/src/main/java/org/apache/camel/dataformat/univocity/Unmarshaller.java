@@ -52,14 +52,13 @@ final class Unmarshaller<P extends AbstractParser<?>> {
     /**
      * Unmarshal from the given reader.
      *
-     * @param  reader             reader to read from
-     * @param  parser             uniVocity parser to use
-     * @param  headerRowProcessor Row processor that retrieves the header
-     * @return                    Unmarshalled data
+     * @param  reader reader to read from
+     * @param  parser uniVocity parser to use
+     * @return        Unmarshalled data
      */
-    public Object unmarshal(Reader reader, P parser, HeaderRowProcessor headerRowProcessor) {
+    public Object unmarshal(Reader reader, P parser) {
         parser.beginParsing(reader);
-        Iterator<?> iterator = asMap ? new MapRowIterator<>(parser, headerRowProcessor) : new ListRowIterator<>(parser);
+        Iterator<?> iterator = asMap ? new MapRowIterator<>(parser) : new ListRowIterator<>(parser);
         return lazyLoad ? iterator : convertToList(iterator);
     }
 
@@ -145,12 +144,13 @@ final class Unmarshaller<P extends AbstractParser<?>> {
      * @param <P> Parser class
      */
     private static class MapRowIterator<P extends AbstractParser<?>> extends RowIterator<Map<String, String>, P> {
-        // Captured eagerly on the parsing thread to avoid ThreadLocal cross-thread issues
+        // Taken from the parsing context once the first row is parsed, and kept by the iterator, so they are
+        // available on any thread, and also when the parser has reached the end of the input while reading that row
         private final String[] headers;
 
-        protected MapRowIterator(P parser, HeaderRowProcessor headerRowProcessor) {
+        protected MapRowIterator(P parser) {
             super(parser);
-            this.headers = headerRowProcessor.getHeaders();
+            this.headers = parser.getContext().headers();
         }
 
         @Override

@@ -159,7 +159,7 @@ and by sending
 [source,java]
 ----
 template.send("direct:createFunction", ExchangePattern.InOut, exchange -> {
-    exchange.getIn().setHeader("CamelAwsLambdaRuntime", "nodejs6.10");
+    exchange.getIn().setHeader("CamelAwsLambdaRuntime", "nodejs22.x");
     exchange.getIn().setHeader("CamelAwsLambdaHandler", "GetHelloWithName.handler");
     exchange.getIn().setHeader("CamelAwsLambdaDescription", "Hello with node.js on Lambda");
     exchange.getIn().setHeader("CamelAwsLambdaRole",
@@ -173,6 +173,22 @@ template.send("direct:createFunction", ExchangePattern.InOut, exchange -> {
     exchange.getIn().setBody(new FileInputStream(file));
 });
 ----
+
+The code of the function is the zip file of the `CamelAwsLambdaZipFile` header, or the S3 location of the
+`CamelAwsLambdaS3Bucket` and `CamelAwsLambdaS3Key` headers (and optionally `CamelAwsLambdaS3ObjectVersion`).
+When neither is set, the message body is the zip, as bytes, a stream or a file. A body that does not convert to bytes
+fails the exchange, and text is sent as its bytes, which AWS rejects as not a zip.
+The `updateFunction` operation takes the code in the same way. The zip file header and the S3 headers cannot be used together,
+and the S3 location needs both the bucket and the key.
+
+- InvokeFunction: this operation invokes the function with the message body as the payload
+
+The body is sent as the payload: a `byte[]` or a stream as it is, any other body as text in UTF-8. Without a body the function is invoked without a payload.
+The body of the reply is the payload the function returned, as a String.
+
+An error of the function does not fail the exchange: the body is the JSON of the error that the function returned, and the
+`CamelAwsLambdaFunctionError` header is set (for example to `Unhandled`). Check this header, for example with a
+filter or a choice, to handle the error.
 
 === Function URL Operations
 

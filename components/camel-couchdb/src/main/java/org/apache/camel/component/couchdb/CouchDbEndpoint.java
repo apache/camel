@@ -28,6 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.*;
+import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
@@ -36,6 +37,21 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database",
              category = { Category.DATABASE }, headersClass = CouchDbConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.google.gson.JsonObject",
+                                   description = "One message per change of the database: the change as a Gson JsonObject"
+                                                 + " with its seq, id, changes (the revisions) and deleted, not the document"
+                                                 + " itself. The CamelCouchDbId and CamelCouchDbMethod (UPDATE or DELETE)"
+                                                 + " headers say which document and how"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO }, format = "json",
+                                  description = "The document to save as a JSON object: JSON text, a Gson JsonElement or a"
+                                                + " Cloudant Document, with _id and _rev to update it. A Map, bytes, a stream"
+                                                + " or no body fail: marshal it to JSON text first. The CamelCouchDbMethod"
+                                                + " header DELETE deletes the document of the body; GET reads the document of"
+                                                + " the CamelCouchDbId header, yet still needs one of these bodies"),
+           producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.POJO },
+                                   description = "Unchanged after a save or delete, with the id and the new revision in the"
+                                                 + " CamelCouchDbId and CamelCouchDbRev headers; the document read as a"
+                                                 + " Cloudant Document for the GET method"))
 public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     public static final String DEFAULT_STYLE = "main_only";

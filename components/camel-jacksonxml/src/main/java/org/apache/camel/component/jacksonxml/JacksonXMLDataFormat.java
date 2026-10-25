@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
                                   description = "The XML in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "xml"),
            unmarshalOut = @BodyType(value = Carrier.MAP,
-                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType" },
+                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" },
                                     byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
                                     description = "A Map (LinkedHashMap) of the XML; an object of the class unmarshalType"
                                                   + " names"))

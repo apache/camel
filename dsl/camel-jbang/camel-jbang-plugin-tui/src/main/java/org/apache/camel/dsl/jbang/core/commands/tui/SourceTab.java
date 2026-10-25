@@ -85,6 +85,11 @@ class SourceTab extends AbstractTab {
     private Rect rightArea;
 
     private final SourceEditAssist assist = new SourceEditAssist(ctx);
+    private final ConsumedEndpoints consumedEndpoints = new ConsumedEndpoints(ctx.backgroundExecutor, r -> {
+        if (ctx.runner != null) {
+            ctx.runner.runOnRenderThread(r);
+        }
+    });
 
     SourceEditAssist editAssist() {
         return assist;
@@ -160,11 +165,13 @@ class SourceTab extends AbstractTab {
             }
         });
         sourceViewer.setOnFileCreated(this::refreshFiles);
-        // the live run data of the selected integration at the end of the lines of its source
+        // the live run data of the selected integration at the end of the lines of its source, and the body types of
+        // its steps; dimmed and left out while it runs another version of the file (CAMEL-25897)
         sourceViewer.liveColumn().setLiveRunData(path -> {
             IntegrationInfo info = ctx.findSelectedIntegration();
             return info != null ? LiveRunLines.of(info.routes, path) : Map.of();
         });
+        sourceViewer.liveColumn().setStale(runState::stale);
         // the exception of the last failure on a line, for fix with AI (Shift+F8) on a line that fails at runtime
         sourceViewer.liveColumn().setLineFailures((path, line) -> {
             IntegrationInfo info = ctx.findSelectedIntegration();
@@ -916,15 +923,24 @@ class SourceTab extends AbstractTab {
         }
     }
 
+    /** The direct: and seda: endpoints the file sends to and no route of the project consumes, as notes. */
+    private List<String> consumerNotes(Path filePath, String content) {
+        return consumedEndpoints.notes(filePath, rootDir, content, assist.validationCatalog(), assist.javaSources(),
+                () -> sourceViewer.recheck(filePath));
+    }
+
     /**
      * Points the viewer's quick-doc, autocomplete, validation and deprecation hooks at the providers matching the file
      * type (Camel YAML, other Camel source, properties, or none).
      */
     private void configureEditAssist(Path filePath) {
+        consumedEndpoints.expire();
         // the Camel checks of a Java or XML DSL route file (CAMEL-25208); YAML has its own
         boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
                 && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
+        // a direct: or seda: endpoint no route consumes is a note (CAMEL-24955); a YAML file sets its notes below
+        sourceViewer.setNotes(routeFile ? content -> consumerNotes(filePath, content) : null);
         sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
         SourceCompletion completion = sourceViewer.completion();
@@ -958,7 +974,9 @@ class SourceTab extends AbstractTab {
                         name.toLowerCase(Locale.ROOT), content, assist.validateYamlSimple(content)));
                 // the shape of a Kamelet file and the kamelet: endpoints of a route (CAMEL-25411)
                 sourceViewer.setKameletValidator(content -> SourceEditAssist.validateKamelets(filePath, content));
-                sourceViewer.setKameletNotes(content -> SourceEditAssist.kameletNotes(filePath, content));
+                // the notes: a Kamelet's unused dependency, a direct: or seda: endpoint no route consumes (CAMEL-24955)
+                sourceViewer.setNotes(content -> SourceEditAssist.isKameletFile(filePath)
+                        ? SourceEditAssist.kameletNotes(filePath, content) : consumerNotes(filePath, content));
                 completion.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {
@@ -1127,55 +1145,6 @@ class SourceTab extends AbstractTab {
                 area);
     }
 
-    /**
-     * What the Source pane shows before a file is opened: the routes of the project and where they are, so a Maven
-     * project (whose routes are folders deep) shows what it holds and how to open one.
-     */
-    static List<Line> emptySourceLines(List<RouteEntry> routes, Path root) {
-        List<Line> lines = new ArrayList<>();
-        lines.add(Line.from(Span.raw("")));
-        if (routes.isEmpty()) {
-            lines.add(Line.from(Span.styled("   Select a file and press Enter to view source", Style.EMPTY.dim())));
-            return lines;
-        }
-        lines.add(Line.from(Span.styled("   " + routes.size() + (routes.size() == 1 ? " route" : " routes")
-                                        + " in this project",
-                Theme.label())));
-        lines.add(Line.from(Span.raw("")));
-        int idWidth = 4;
-        for (RouteEntry re : routes) {
-            idWidth = Math.max(idWidth, label(re).length());
-        }
-        idWidth = Math.min(idWidth, 30);
-        for (RouteEntry re : routes) {
-            String where = re.filePath();
-            if (root != null && where != null) {
-                try {
-                    where = root.relativize(Path.of(where)).toString();
-                } catch (IllegalArgumentException e) {
-                    // not under the project: keep the full path
-                }
-            }
-            lines.add(Line.from(
-                    Span.styled("   " + String.format("%-" + idWidth + "s", TuiHelper.truncate(label(re), idWidth)),
-                            Theme.info()),
-                    Span.styled("  " + where + ":" + re.fromLine(), Style.EMPTY.dim())));
-        }
-        lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(
-                Span.styled("   ", Style.EMPTY),
-                Span.styled(" g ", Theme.hintKey()),
-                Span.styled(" opens a route, or select a file and press Enter", Style.EMPTY.dim())));
-        return lines;
-    }
-
-    private static String label(RouteEntry re) {
-        if (re.routeId() != null && !re.routeId().isBlank()) {
-            return re.routeId();
-        }
-        return re.fromUri() != null ? re.fromUri() : "";
-    }
-
     // the Route Tree setting last given to the editor: it is given again only when it changes, so Ctrl+T holds
     private Boolean routeTreeDefault;
 
@@ -1192,11 +1161,14 @@ class SourceTab extends AbstractTab {
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
             // whether the integration runs the file shown as it is saved, in the view and in the editor (CAMEL-25771)
-            runState.shown(sourceViewer.getCurrentFilePath());
+            if (runState.shown(sourceViewer.getCurrentFilePath(), sourceViewer.isDirty())) {
+                // another file, or a save: its run state now, rather than at the next refresh
+                ctx.backgroundExecutor.execute(() -> runState.refresh(ctx.findSelectedIntegration()));
+            }
             runState.render(frame, area);
         } else {
-            runState.shown(null);
-            List<Line> lines = emptySourceLines(routeIndex, rootDir);
+            runState.shown(null, false);
+            List<Line> lines = SourceEmptyLines.of(routeIndex, rootDir);
 
             frame.renderWidget(
                     Paragraph.builder()
@@ -1625,8 +1597,8 @@ class SourceTab extends AbstractTab {
     }
 
     /**
-     * The quick doc of a line with what the project knows about it put first: the values of its property placeholders
-     * and where the bean it refers to is declared.
+     * The quick doc of a line with what the project knows about it put first: the body types its steps have been
+     * reached with, the values of its property placeholders and where the bean it refers to is declared.
      */
     private SourceViewer.EditQuickDocProvider withProjectDocs(SourceViewer.EditQuickDocProvider provider) {
         return (lines, row) -> {
@@ -1634,7 +1606,13 @@ class SourceTab extends AbstractTab {
             if (row < 0 || row >= lines.size()) {
                 return base;
             }
-            List<SourceViewer.DocEntry> extra = new ArrayList<>(assist.placeholderDocs(lines.get(row)));
+            List<SourceViewer.DocEntry> extra = new ArrayList<>();
+            // the body types the steps of the line have been reached with, while it runs as shown (CAMEL-25897)
+            SourceViewer.DocEntry bodyTypes = sourceViewer.liveColumn().bodyTypesDoc(row);
+            if (bodyTypes != null) {
+                extra.add(bodyTypes);
+            }
+            extra.addAll(assist.placeholderDocs(lines.get(row)));
             ProjectBeans.Location bean = projectBeans().refOn(lines.get(row));
             if (bean != null) {
                 extra.add(new SourceViewer.DocEntry(ProjectBeans.describe(bean), false, "Bean"));

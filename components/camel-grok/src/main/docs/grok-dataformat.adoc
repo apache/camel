@@ -10,7 +10,9 @@
 *Since Camel {since}*
 
 This component provides dataformat for processing inputs with grok patterns.
-Grok patterns are used to process unstructured data into structured objects - `List<Map<String, Object>>`.
+Grok patterns are used to process unstructured data into structured objects: a `Map<String, Object>` of the captures
+for one match, a `List` of such Maps for several matches, or no body when nothing matches. With a split, as in the
+examples below, an input with one match gives a `Map` whose entries are split one by one.
 
 This component is based on the https://github.com/thekrakken/java-grok[Java Grok library]
 
@@ -76,7 +78,7 @@ Java::
 [source,java]
 ----
 from("file://apacheLogs")
-    .unmarshal().grok("%{COMBINEDAPACHELOG")
+    .unmarshal().grok("%{COMBINEDAPACHELOG}")
     .split(body()).filter(simple("${body[response]} starts with '4'"))
     .to("log:4xx");
 ----
@@ -87,7 +89,7 @@ XML::
 ----
 <route>
   <from uri="file://apacheLogs"/>
-  <unmarshal><grok pattern="%{COMBINEDAPACHELOG"/></unmarshal>
+  <unmarshal><grok pattern="%{COMBINEDAPACHELOG}"/></unmarshal>
   <split>
     <simple>${body}</simple>
     <filter>
@@ -108,7 +110,7 @@ YAML::
       steps:
         - unmarshal:
             grok:
-              pattern: "%{COMBINEDAPACHELOG"
+              pattern: "%{COMBINEDAPACHELOG}"
         - split:
             simple: "${body}"
             steps:

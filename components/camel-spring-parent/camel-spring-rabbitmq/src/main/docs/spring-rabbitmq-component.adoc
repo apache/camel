@@ -192,6 +192,58 @@ Custom message headers are mapped from Camel Message headers to RabbitMQ headers
 This behaviour can be customized by configuring
 a new implementation of `HeaderFilterStrategy` on the Camel component.
 
+The content type of a sent message is taken from the `CamelSpringRabbitmqContentType` header when it is set,
+otherwise it is derived from the message body (`text/plain` for a `String`, `application/octet-stream` for other bodies).
+The consumer sets this header to the content type of the consumed message, so a route that forwards a consumed message
+to another queue keeps that content type. When the route changes the type of the body, such as turning a text message
+into a byte array, remove the header before sending, otherwise the receiver reads the body with the content type of the
+original message (a byte array sent as `text/plain` is received as a `String`):
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("spring-rabbitmq:orders?queues=incoming")
+    .convertBodyTo(byte[].class)
+    .removeHeader("CamelSpringRabbitmqContentType")
+    .to("spring-rabbitmq:orders?routingKey=binary");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="spring-rabbitmq:orders?queues=incoming"/>
+  <convertBodyTo type="byte[]"/>
+  <removeHeader name="CamelSpringRabbitmqContentType"/>
+  <to uri="spring-rabbitmq:orders?routingKey=binary"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: spring-rabbitmq:orders
+      parameters:
+        queues: incoming
+      steps:
+        - convertBodyTo:
+            type: "byte[]"
+        - removeHeader:
+            name: CamelSpringRabbitmqContentType
+        - to:
+            uri: spring-rabbitmq:orders
+            parameters:
+              routingKey: binary
+----
+====
+
 === Request / Reply
 
 Request and reply messaging is supported using https://www.rabbitmq.com/direct-reply-to.html[RabbitMQ direct reply-to].
@@ -217,6 +269,19 @@ from("spring-rabbitmq:cheese?queues=myqueue&routingKey=foo.bar")
     .to("log:input")
     .transform(body().prepend("Hello "));
 ----
+
+The consumer sets the `CamelSpringRabbitmqContentType` header to the content type of the request.
+When the route leaves this header unchanged, the reply inherits the content type of the request depending on the reply body:
+
+* A `String` reply keeps it, so a JSON `String` reply to an `application/json` request is sent as `application/json`.
+* A byte array or stream reply (such as the output of `marshal`) keeps it, unless it is a text content type such as `text/plain`.
+  Then the reply is sent as `application/octet-stream`, so a byte array reply to a text request is received as a byte array.
+* Any other reply body does not keep it, and the message converter derives the content type from the reply body.
+
+A content type the route sets in the `CamelSpringRabbitmqContentType` header, other than the one of the request, is always used.
+
+When the route ends with a Spring AMQP `org.springframework.amqp.core.Message` as the body, that message is sent as the reply as it is.
+If it has no correlation id, the correlation id of the request is set on it, so the requester can match the reply.
 
 === Reuse endpoint and send to different destinations computed at runtime
 

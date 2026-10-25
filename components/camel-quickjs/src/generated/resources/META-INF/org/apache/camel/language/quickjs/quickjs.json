@@ -15,6 +15,10 @@
     "modelName": "quickjs",
     "modelJavaType": "org.apache.camel.model.language.QuickjsExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "bytes", "value", "map", "list", "pojo" ], "description": "A JSON copy of the body, in the variable body: bytes as Base64 text, and a POJO through Jackson. A stream fails: convert it to text first" },
+    "expressionOut": { "carriers": [ "text", "value", "map", "list", "null" ], "dependsOn": [ "resultType" ], "description": "The JSON value the script returns: an object or a Map as a Map, an array, a Set or a typed array as a List, a Date as its ISO text, and undefined, NaN or a function as null" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

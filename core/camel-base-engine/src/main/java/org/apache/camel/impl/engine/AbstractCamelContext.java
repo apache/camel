@@ -3194,7 +3194,9 @@ public abstract class AbstractCamelContext extends BaseService
             try {
                 startService(entry.getValue());
             } catch (Exception e) {
-                throw new FailedToStartComponentException(entry.getKey(), e.getMessage(), e);
+                // an exception without a message, such as a NullPointerException, is named by its class
+                String msg = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+                throw new FailedToStartComponentException(entry.getKey(), msg, e);
             } finally {
                 startupStepRecorder.endStep(step);
             }

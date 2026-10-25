@@ -318,6 +318,16 @@ With this single bean in the registry:
 
 No explicit wiring is needed.
 
+NOTE: Every aggregator without an `aggregationRepository` wraps the same auto-discovered
+`KeyValueRepository`, and keeps its completed exchanges for recovery under its route id and
+aggregator id (`<routeId>/<id>`), so it recovers only its own. With a persistent store, set explicit
+route and aggregator ids: Camel generates them (`route1`, `aggregate1`) when they are not set, and
+they can change when routes are added or reordered between restarts. When several aggregators use one
+`KeyValueRepository` through explicit `KeyValueAggregationRepository` beans, create the beans with the
+`KeyValueAggregationRepository(repository, recoveryName)` constructor and a different name for each
+aggregator. Without a name, the completed exchanges of all the aggregators are kept under the same
+prefix, and each aggregator recovers, and sends again on its own route, the exchanges of the others.
+
 === Explicit wiring
 
 You can also wire the backend explicitly when you need more control:

@@ -15,6 +15,12 @@
     "modelName": "smooks",
     "modelJavaType": "org.apache.camel.model.dataformat.SmooksDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "map", "list", "pojo" ], "description": "A Java object graph, such as the beans unmarshal gives, which Smooks reads as a JavaSource. Text, bytes or a stream are not parsed: Smooks reads them as a Java object too" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "The text Smooks writes in UTF-8, such as the XML of the object graph or the output of a template of the config, in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The data the reader of the smooks config reads: XML by default, or EDI, CSV or JSON with a reader" },
+    "unmarshalOut": { "carriers": [ "unknown" ], "description": "What the exports of the smooks config give: the bean a JavaSink export extracts (a Map of the beans when it extracts several or none), the text of a StringSink, or a List of the results of several exports (empty without exports)" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "smooksConfig": { "index": 1, "kind": "attribute", "displayName": "Smooks Config", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Path to the Smooks configuration file." },

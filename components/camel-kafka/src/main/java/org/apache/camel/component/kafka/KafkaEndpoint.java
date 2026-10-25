@@ -64,7 +64,8 @@ import org.slf4j.LoggerFactory;
                                   description = "The value of the record, converted for the valueSerializer: text with the"
                                                 + " default StringSerializer, so a Map or a POJO is sent as its toString():"
                                                 + " marshal it first. With useIterator, an Iterable or an Iterator is sent"
-                                                + " as one record per element"),
+                                                + " as one record per element, but a Jackson JSON node only when it is an"
+                                                + " array: an object node is one record"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 

@@ -23,6 +23,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,16 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind",
              category = { Category.FILE, Category.CORE }, headersClass = StreamConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "groupLines",
+                                   byOption = @BodyType.When(option = "readLine", value = "false", carriers = Carrier.BYTES,
+                                                             javaType = "byte[]"),
+                                   description = "Each line of the stream as text. With groupLines, a List of the lines; with"
+                                                 + " readLine=false, all the bytes of the stream"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "Text in the encoding, or bytes, a stream or a file as bytes, followed by a new"
+                                                + " line; no body writes nothing. A Map or a POJO is written as its toString()"
+                                                + " and a List fails: marshal it first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class StreamEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
