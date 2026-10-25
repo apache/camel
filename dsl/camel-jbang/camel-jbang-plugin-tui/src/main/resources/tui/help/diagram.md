@@ -106,7 +106,7 @@ The Architecture level shows the routes grouped by what they
 do for the business, one box per group: route groups from the
 source, the capabilities the AI project overview proposed (`✦`,
 italic), shared services (routes several groups use), Other, and
-Utility (plumbing: error handling, logging; `u` shows it). With
+Utility (plumbing: error handling, logging; `u` hides it). With
 `x` on, the routes reached only on error leave Utility for a dashed
 Error handling box, with dashed arrows from the groups whose
 failures go there. A box lists its route count, entry points,
