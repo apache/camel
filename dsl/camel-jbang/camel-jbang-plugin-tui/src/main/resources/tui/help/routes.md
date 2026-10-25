@@ -164,13 +164,17 @@ in the diagram.
 - `g` — go to node (fuzzy search popup)
 - `+` / `-` — zoom in or out: detailed (boxes with up to three lines),
   compact (boxes with one line, the steps closer together) and bare (a
-  mark and the text of each step on one row, no boxes); the selected
-  step stays where it is on the screen
+  mark and the text of each step on one row, no boxes); the view bar
+  shows the level and where it is (`compact 2/3`), the title how many
+  steps the route has and how many are folded (`38 steps · 12 folded`);
+  the selected step stays where it is on the screen
 - `z` — fit: the most detail in which the whole route fits the screen
 - `Space` — fold the block of the selected step (a choice, a branch,
   a split, a doTry...) into its first step, which says how many steps
   are folded; `Space` on a folded step unfolds it
-- `f` — fold the outermost blocks of the route, or unfold all
+- `f` — fold all the blocks of the route, the blocks in other blocks too
+  (`Space` on one then shows its steps with the blocks in it folded)
+- `F` — expand all the blocks of the route
 - `c` — show source code at selected node
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view

@@ -65,6 +65,11 @@ public enum RouteDensity {
         return label;
     }
 
+    /** Where the density is among the levels, from the most detail: 2/3. */
+    public String position() {
+        return (ordinal() + 1) + "/" + values().length;
+    }
+
     /** One level more detail, or this one when it is the most. */
     public RouteDensity zoomIn() {
         return this == DETAILED ? DETAILED : values()[ordinal() - 1];

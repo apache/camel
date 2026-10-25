@@ -64,14 +64,16 @@ A large route takes a lot of screen. Press *-* to zoom out and *+* to zoom in, t
 * *bare*: no boxes, each step is a mark and its text on one row (`▶` the from, `◆` a step with steps in it, `◇` a
 branch, `●` a step), with the counts beside the lines between them
 
-Press *z* for fit: the most detailed level in which the whole route fits the screen. The view bar shows the level
-(`zoom: compact`, or `zoom: fit bare`). Zooming keeps the selected step selected, on the same row of the screen, and
+Press *z* for fit: the most detailed level in which the whole route fits the screen. The view bar shows the level and
+where it is among the three (`zoom: compact 2/3`, or `zoom: fit bare 3/3`), and the title of the diagram how many steps
+the route has, so you can tell a large route at a glance, and how many of them are folded (`38 steps · 12 folded`). Zooming keeps the selected step selected, on the same row of the screen, and
 the Info panel has the whole text of the selected step at every level.
 
 Press *Space* to fold a block (a choice, one of its branches, a split, a doTry, a filter...) into its first step,
 which then says how many steps are folded (`▸ 12 steps folded`); *Space* on a step inside a block folds that block, and
 *Space* on a folded step unfolds it. A folded block gives its rows and its columns back to the rest of the route.
-Press *f* to fold the outermost blocks of the route, and *f* again to unfold them all.
+Press *f* to fold all the blocks of the route, the blocks in other blocks too: *Space* on a folded block then shows
+its own steps, with the blocks in it still folded. Press *F* to expand all the blocks again.
 
 === Diagram levels
 
@@ -268,7 +270,8 @@ camel-xml-io, while a Spring Boot or Quarkus application may not.
 | *+* / *-* | In a route: zoom in or out (detailed, compact, bare)
 | *z* | In a route: fit, the most detail in which the whole route fits the screen
 | *Space* | In a route: fold the block of the selected step, or unfold a folded step
-| *f* | In a route: fold the outermost blocks, or unfold all
+| *f* | In a route: fold all the blocks
+| *F* | In a route: expand all the blocks
 | *e* | External systems: in the topology off, edges, all; in the architecture off or edges
 | *a* | AI-assisted parts shown, or the facts alone; without a `camel-summary.md` yet, has the AI write one
 | *b* (or *n*) | Business view (labels, what capabilities achieve) or technical view (route ids, endpoints)

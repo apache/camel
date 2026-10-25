@@ -193,8 +193,8 @@ abstract class AbstractDiagramTab extends AbstractTab {
 
     /**
      * The zoom of the route diagram: + and - give the steps more or less room, z the most detail that fits the screen,
-     * space folds the block of the selected step (or unfolds it), f folds the outermost blocks or unfolds all. The
-     * selected step stays selected, on the same row of the screen.
+     * space folds the block of the selected step (or unfolds it), f folds all the blocks and F expands them all. The
+     * selected step stays selected (or the folded block it is in), on the same row of the screen.
      */
     private boolean handleZoomKeys(KeyEvent ke) {
         RouteDiagramZoom zoom = diagram.zoom;
@@ -217,7 +217,9 @@ abstract class AbstractDiagramTab extends AbstractTab {
             }
             anchorId = folded;
         } else if (ke.isChar('f')) {
-            zoom.toggleFoldAll(drillDownRouteId, diagram.getRouteLayout(drillDownRouteId));
+            anchorId = zoom.foldAll(drillDownRouteId, selected != null ? selected.layoutNode() : null);
+        } else if (ke.isChar('F')) {
+            zoom.expandAll(drillDownRouteId);
         } else {
             return false;
         }

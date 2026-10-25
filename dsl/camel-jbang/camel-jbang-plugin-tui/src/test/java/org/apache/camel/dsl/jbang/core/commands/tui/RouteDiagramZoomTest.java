@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import dev.tamboui.text.Line;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
@@ -99,14 +100,46 @@ class RouteDiagramZoomTest {
     }
 
     @Test
-    void foldAllFoldsTheOutermostBlocksThenUnfoldsAll() {
+    void foldAllFoldsEveryBlockAndExpandAllOpensThemAgain() {
         RouteDiagramZoom zoom = new RouteDiagramZoom();
-        zoom.toggleFoldAll("orders", layout(zoom, 0));
         LayoutRoute lr = layout(zoom, 0);
+        // the selected step is in the when, in the choice: the choice is selected once folded
+        assertThat(zoom.foldAll("orders", find(lr, "log1"))).isEqualTo("choice1");
+        lr = layout(zoom, 0);
         assertThat(zoom.foldedStepsOf(lr)).isEqualTo(Map.of("choice1", 5, "split1", 1));
+        assertThat(zoom.foldedCount("orders")).isEqualTo(4);
 
-        zoom.toggleFoldAll("orders", lr);
+        // the blocks in the choice are folded too: opening it shows its branches folded
+        zoom.toggleFold("orders", find(lr, "choice1"));
+        lr = layout(zoom, 0);
+        assertThat(zoom.foldedStepsOf(lr)).isEqualTo(Map.of("when1", 2, "otherwise1", 1, "split1", 1));
+
+        zoom.expandAll("orders");
         assertThat(zoom.foldedStepsOf(layout(zoom, 0))).isEmpty();
+        // a step in no block stays selected
+        assertThat(zoom.foldAll("orders", find(lr, "to4"))).isEqualTo("to4");
+    }
+
+    @Test
+    void theTitleSaysHowManyStepsTheRouteHasAndHowManyAreFolded() {
+        RouteDiagramZoom zoom = new RouteDiagramZoom();
+        LayoutRoute lr = layout(zoom, 0);
+        assertThat(zoom.stepCount("orders")).isEqualTo(9);
+        assertThat(text(zoom.withStepCount(Line.from(" Route [orders] "), "orders", lr)))
+                .isEqualTo(" Route [orders] 9 steps ");
+
+        zoom.toggleFold("orders", find(lr, "choice1"));
+        lr = layout(zoom, 0);
+        assertThat(text(zoom.withStepCount(Line.from(" Route [orders] "), "orders", lr)))
+                .isEqualTo(" Route [orders] 9 steps · 5 folded ");
+        // a route not laid out yet: the title as it is
+        assertThat(text(zoom.withStepCount(Line.from(" Route [other] "), "other", lr))).isEqualTo(" Route [other] ");
+    }
+
+    private static String text(Line line) {
+        StringBuilder sb = new StringBuilder();
+        line.spans().forEach(span -> sb.append(span.content()));
+        return sb.toString();
     }
 
     @Test
@@ -130,7 +163,7 @@ class RouteDiagramZoomTest {
         assertThat(zoom.densityOf(fitted)).isEqualTo(RouteDensity.BARE);
         // the route starts at the top, as without fit
         assertThat(find(fitted, "from1").y).isEqualTo(40);
-        assertThat(zoom.label(layout(zoom, bare))).isEqualTo("fit bare");
+        assertThat(zoom.label(layout(zoom, bare))).isEqualTo("fit bare 3/3");
         // a zoom key leaves fit
         zoom.zoomIn();
         assertThat(zoom.isFit()).isFalse();

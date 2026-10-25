@@ -582,10 +582,11 @@ class DiagramTab extends AbstractDiagramTab {
                 return;
             } else if (!topologyMode && drillDownRouteId != null
                     && diagram.getRouteLayout(drillDownRouteId) != null) {
-                Line title = withLevels(DiagramDetailSupport.withRouteContext(
-                        DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), info,
-                        drillDownRouteId, selectedSourceDirectory(), isShowGroups(), diagram.isShowErrorPaths()));
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
+                Line title = withLevels(diagram.zoom.withStepCount(DiagramDetailSupport.withRouteContext(
+                        DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), info,
+                        drillDownRouteId, selectedSourceDirectory(), isShowGroups(), diagram.isShowErrorPaths()),
+                        drillDownRouteId, routeLayout));
                 if (area.width() > 60) {
                     infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
@@ -664,6 +665,7 @@ class DiagramTab extends AbstractDiagramTab {
                 hint(spans, "g", "go to");
                 hint(spans, "+/-", "zoom");
                 hint(spans, "Space", "fold");
+                hint(spans, "f/F", "fold/expand all");
                 hint(spans, "s", "summary");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");

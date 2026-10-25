@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +27,8 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
@@ -57,6 +60,8 @@ final class RouteDiagramZoom {
     private volatile boolean fit;
     /** The folded blocks of each route: the ids of their first steps. */
     private final Map<String, Set<String>> folded = new ConcurrentHashMap<>();
+    /** The steps of each route as last laid out, without its folds: fold all folds the blocks hidden in others too. */
+    private final Map<String, RouteInfo> unfolded = new ConcurrentHashMap<>();
     /** What each layout was made with: its density, and the steps folded into each folded step. */
     private final Map<LayoutRoute, RouteDensity> densities = Collections.synchronizedMap(new WeakHashMap<>());
     private final Map<LayoutRoute, Map<String, Integer>> foldedSteps
@@ -126,10 +131,14 @@ final class RouteDiagramZoom {
         fit = !fit;
     }
 
-    /** What the zoom toggle of the view bar says: the density, and fit when it is chosen for the screen. */
+    /**
+     * What the zoom toggle of the view bar says: the density and where it is among the levels (compact 2/3), and fit
+     * when it is chosen for the screen.
+     */
     String label(LayoutRoute shown) {
         RouteDensity d = shown != null ? densityOf(shown) : density;
-        return fit ? "fit " + d.label() : d.label();
+        String label = d.label() + " " + d.position();
+        return fit ? "fit " + label : label;
     }
 
     RouteDensity densityOf(LayoutRoute lr) {
@@ -167,32 +176,92 @@ final class RouteDiagramZoom {
         return block.info.id;
     }
 
-    /** Folds the outermost blocks of the route, or unfolds all of them when some are folded already. */
-    void toggleFoldAll(String routeId, LayoutRoute lr) {
-        Set<String> ids = folded.computeIfAbsent(routeId, k -> ConcurrentHashMap.newKeySet());
-        if (!ids.isEmpty()) {
-            ids.clear();
-            return;
+    /**
+     * Folds every block of the route, the blocks in other blocks too: unfolding a block shows its own steps, with the
+     * blocks in it folded.
+     *
+     * @return the id of the outermost block the step is in, which is the step to select; the step itself when it is in
+     *         no block
+     */
+    String foldAll(String routeId, LayoutNode selected) {
+        RouteInfo route = unfolded.get(routeId);
+        if (route == null) {
+            return selected != null ? selected.id : null;
         }
-        if (lr != null && !lr.nodes.isEmpty() && lr.nodes.get(0).treeNode != null) {
-            foldOutermost(lr.nodes.get(0).treeNode, ids);
+        Set<String> ids = folded.computeIfAbsent(routeId, k -> ConcurrentHashMap.newKeySet());
+        List<NodeInfo> nodes = route.nodes;
+        for (int i = 0; i + 1 < nodes.size(); i++) {
+            NodeInfo n = nodes.get(i);
+            if (n.id != null && nodes.get(i + 1).level > n.level && foldable(n.type)) {
+                ids.add(n.id);
+            }
+        }
+        String answer = selected != null ? selected.id : null;
+        TreeNode block = selected != null && selected.treeNode != null ? selected.treeNode.parent : null;
+        for (; block != null; block = block.parent) {
+            if (block.info.id != null && ids.contains(block.info.id)) {
+                answer = block.info.id;
+            }
+        }
+        return answer;
+    }
+
+    /** Unfolds every block of the route. */
+    void expandAll(String routeId) {
+        Set<String> ids = folded.get(routeId);
+        if (ids != null) {
+            ids.clear();
         }
     }
 
-    private static void foldOutermost(TreeNode node, Set<String> ids) {
-        for (TreeNode child : node.children) {
-            if (foldable(child) && child.info.id != null) {
-                ids.add(child.info.id);
-            } else {
-                foldOutermost(child, ids);
+    /** The steps of the route (not its from), as last laid out: how big the route is. */
+    int stepCount(String routeId) {
+        RouteInfo route = routeId != null ? unfolded.get(routeId) : null;
+        if (route == null) {
+            return 0;
+        }
+        int count = 0;
+        for (NodeInfo n : route.nodes) {
+            if (!"route".equals(n.type) && !"from".equals(n.type)) {
+                count++;
             }
         }
+        return count;
+    }
+
+    /**
+     * The title of a route's diagram with how many steps it has, and how many of them are folded: 38 steps · 12 folded.
+     */
+    Line withStepCount(Line title, String routeId, LayoutRoute shown) {
+        int steps = stepCount(routeId);
+        if (steps == 0) {
+            return title;
+        }
+        int hidden = 0;
+        for (int n : foldedStepsOf(shown).values()) {
+            hidden += n;
+        }
+        String text = steps + (steps == 1 ? " step" : " steps") + (hidden > 0 ? " · " + hidden + " folded" : "") + " ";
+        List<Span> spans = new ArrayList<>(title.spans());
+        spans.add(Span.styled(text, Theme.muted()));
+        return Line.from(spans);
+    }
+
+    /** How many blocks of the route are folded. */
+    int foldedCount(String routeId) {
+        Set<String> ids = folded.get(routeId);
+        return ids != null ? ids.size() : 0;
     }
 
     /** A step with steps in it, which is not the route or its from. */
     private static boolean foldable(TreeNode node) {
-        return !node.children.isEmpty() && !node.table && node.info.type != null
-                && !"route".equals(node.info.type) && !"from".equals(node.info.type);
+        return !node.children.isEmpty() && !node.table && foldable(node.info.type);
+    }
+
+    /** A step of this type with steps in it folds; a Switch is a table, its cases are not steps after it. */
+    private static boolean foldable(String type) {
+        return type != null && !"route".equals(type) && !"from".equals(type)
+                && !RouteDiagramLayoutEngine.TABLE_EIPS.contains(type);
     }
 
     /** Remembers the selected step and its row on the screen, to keep it there once the route is laid out anew. */
@@ -238,6 +307,7 @@ final class RouteDiagramZoom {
         for (RouteInfo r : routes) {
             // the happy path; the onException clauses are not its steps, and are shown in the error frame
             RouteErrorFrame.Split split = RouteErrorFrame.split(r);
+            unfolded.put(r.routeId, split.happy());
             Map<String, Integer> steps = new HashMap<>();
             LayoutRoute lr = engine.layoutRoute(fold(split.happy(), steps), 0);
             RouteDensity d = fit ? RouteDensity.DETAILED : density;

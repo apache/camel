@@ -392,8 +392,10 @@ class RoutesTab extends AbstractDiagramTab {
             return;
         } else if (!topologyMode && drillDownRouteId != null
                 && diagram.getRouteLayout(drillDownRouteId) != null) {
-            Line title = DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId);
             var routeLayout = diagram.getRouteLayout(drillDownRouteId);
+            Line title = diagram.zoom.withStepCount(
+                    DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), drillDownRouteId,
+                    routeLayout);
 
             // Split for detail panel when active
             Rect diagramArea = area;
@@ -760,6 +762,7 @@ class RoutesTab extends AbstractDiagramTab {
                 hint(spans, "g", "go to");
                 hint(spans, "+/-", "zoom");
                 hint(spans, "Space", "fold");
+                hint(spans, "f/F", "fold/expand all");
                 hint(spans, "PgUp/PgDn", detailMode ? "detail" : "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {
