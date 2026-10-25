@@ -53,6 +53,12 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
         Object keyValue = message.getHeader(MilvusHeaders.KEY_VALUE, () -> null);
         TextSegment text = message.getBody(TextSegment.class);
         final MilvusAction action = message.getHeader(MilvusHeaders.ACTION, MilvusAction.class);
+        if (action == null) {
+            // the transformer runs before the endpoint, so it cannot see the action option of the endpoint
+            throw new IllegalStateException(
+                    "The milvus:embeddings transformer needs the " + MilvusHeaders.ACTION
+                                            + " header, INSERT or UPSERT: it does not see the action option of the endpoint");
+        }
         switch (action) {
             case INSERT -> insertEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName,
                     keyValue, keyName);

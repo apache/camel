@@ -57,11 +57,16 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final WeaviateVectorDbAction action = in.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
+        // the header wins over the action option
+        final WeaviateVectorDbAction action
+                = in.getHeader(WeaviateVectorDbHeaders.ACTION, getEndpoint().getConfiguration().getAction(),
+                        WeaviateVectorDbAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, WeaviateVectorDbHeaders.ACTION);
+                throw new NoSuchHeaderException(
+                        "The action is required: set the action option or the header", exchange,
+                        WeaviateVectorDbHeaders.ACTION);
             }
 
             switch (action) {

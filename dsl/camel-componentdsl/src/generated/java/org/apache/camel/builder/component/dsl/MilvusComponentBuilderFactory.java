@@ -51,6 +51,23 @@ public interface MilvusComponentBuilderFactory {
     interface MilvusComponentBuilder extends ComponentBuilder<MilvusComponent> {
     
         /**
+         * The action to perform. The CamelMilvusAction header, when set, wins
+         * over this option.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.milvus.MilvusAction&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default MilvusComponentBuilder action(org.apache.camel.component.milvus.MilvusAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+    
+        /**
          * The configuration;.
          * 
          * The option is a:
@@ -197,6 +214,7 @@ public interface MilvusComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "action": getOrCreateConfiguration((MilvusComponent) component).setAction((org.apache.camel.component.milvus.MilvusAction) value); return true;
             case "configuration": ((MilvusComponent) component).setConfiguration((org.apache.camel.component.milvus.MilvusConfiguration) value); return true;
             case "host": getOrCreateConfiguration((MilvusComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((MilvusComponent) component).setLazyStartProducer((boolean) value); return true;

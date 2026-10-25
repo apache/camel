@@ -23,6 +23,7 @@ public class QdrantEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QdrantEndpoint target = (QdrantEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.getConfiguration().setAction(property(camelContext, org.apache.camel.component.qdrant.QdrantAction.class, value)); return true;
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "filter": target.getConfiguration().setFilter(property(camelContext, io.qdrant.client.grpc.Common.Filter.class, value)); return true;
@@ -46,6 +47,7 @@ public class QdrantEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.qdrant.QdrantAction.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "filter": return io.qdrant.client.grpc.Common.Filter.class;
@@ -65,6 +67,7 @@ public class QdrantEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         QdrantEndpoint target = (QdrantEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return target.getConfiguration().getAction();
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
         case "filter": return target.getConfiguration().getFilter();
