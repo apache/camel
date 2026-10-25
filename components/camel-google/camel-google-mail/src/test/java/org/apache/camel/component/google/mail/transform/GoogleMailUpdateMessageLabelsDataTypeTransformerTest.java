@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.mail.transform;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import com.google.api.services.gmail.model.ModifyMessageRequest;
@@ -28,6 +29,8 @@ import org.apache.camel.component.google.mail.GoogleMailConfiguration;
 import org.apache.camel.component.google.mail.MockGoogleMailClientFactory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -35,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -190,6 +194,22 @@ class GoogleMailUpdateMessageLabelsDataTypeTransformerTest extends CamelTestSupp
     @Test
     void testTransformerName() {
         assertEquals("google-mail:update-message-labels", transformer.getName());
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: any body, as transformerIn says, and the ModifyMessageRequest transformerOut says
+        BodyTypes bodyTypes = GoogleMailUpdateMessageLabelsDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertEquals(Carrier.ANY, bodyTypes.transformerIn().value()[0]);
+        assertEquals(Carrier.POJO, bodyTypes.transformerOut().value()[0]);
+        assertEquals(ModifyMessageRequest.class.getCanonicalName(), bodyTypes.transformerOut().javaType());
+        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8), 5)) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(body);
+            exchange.setVariable("addLabels", List.of("Work"));
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertInstanceOf(ModifyMessageRequest.class, exchange.getMessage().getBody(), body.getClass().getName());
+        }
     }
 
     // E2E tests via Camel route)

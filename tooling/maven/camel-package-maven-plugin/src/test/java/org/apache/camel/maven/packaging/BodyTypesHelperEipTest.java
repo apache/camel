@@ -25,6 +25,7 @@ import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,6 +82,19 @@ class BodyTypesHelperEipTest {
     static class ComponentSideOnEip {
     }
 
+    @BodyTypes(transformerIn = @BodyType(Carrier.ANY),
+               transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "json"))
+    static class SomeTransformer {
+    }
+
+    @BodyTypes(transformerOut = @BodyType(Carrier.ANY))
+    static class TransformerOutAny {
+    }
+
+    @BodyTypes(eipIn = @BodyType(from = "transformerIn"), eipOut = @BodyType(from = "transformerOut"))
+    static class FromTheTransformer {
+    }
+
     @BodyTypes(eipOut = @BodyType(Carrier.TEXT))
     static class EipSideOnComponent {
     }
@@ -117,6 +131,28 @@ class BodyTypesHelperEipTest {
     void aBodyForAnyValueIsTheOnlyBodyOfTheOption() {
         assertThrows(IllegalArgumentException.class, () -> add(eip(), AnyValueAndDependsOn.class));
         assertThrows(IllegalArgumentException.class, () -> add(eip(), AnyValueAndAValue.class));
+    }
+
+    @Test
+    void transformerSides() {
+        TransformerModel model = new TransformerModel();
+        model.setName("application-json");
+        add(model, SomeTransformer.class);
+        assertEquals(List.of(BodyTypeModel.TRANSFORMER_IN, BodyTypeModel.TRANSFORMER_OUT),
+                List.copyOf(model.getBodyTypes().keySet()));
+        assertEquals("json", model.getBodyType(BodyTypeModel.TRANSFORMER_OUT).getFormat());
+        // the body after a transformer is not any, and a transformer has no sides of an EIP
+        assertThrows(IllegalArgumentException.class, () -> add(new TransformerModel(), TransformerOutAny.class));
+        assertThrows(IllegalArgumentException.class, () -> add(new TransformerModel(), SomeEip.class));
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), SomeTransformer.class));
+    }
+
+    @Test
+    void transformDataTypeTakesItsBodyFromTheTransformer() {
+        EipModel model = eip();
+        add(model, FromTheTransformer.class);
+        assertEquals("transformerIn", model.getBodyType(BodyTypeModel.EIP_IN).getFrom());
+        assertEquals("transformerOut", model.getBodyType(BodyTypeModel.EIP_OUT).getFrom());
     }
 
     @Test

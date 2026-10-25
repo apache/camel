@@ -27,6 +27,9 @@ import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.weaviate.WeaviateVectorDbAction;
 import org.apache.camel.component.weaviate.WeaviateVectorDbHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -37,6 +40,15 @@ import org.apache.camel.util.ObjectHelper;
  */
 @DataTypeTransformer(name = "weaviate:embeddings",
                      description = "Prepares the message to become an object writable by Weaviate component")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "A LangChain4j TextSegment, or a String the converter of"
+                                                   + " camel-langchain4j-embeddings turns into one, whose text goes in the"
+                                                   + " CamelWeaviateProperties header for CREATE and UPDATE_BY_ID; another"
+                                                   + " body stores no text. The embedding comes from the"
+                                                   + " CamelLangChain4jEmbeddingsVector header, which must be set, and the"
+                                                   + " CamelWeaviateAction header must be CREATE, UPDATE_BY_ID or QUERY"),
+           transformerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.lang.Float>",
+                                      description = "The vector of the embedding"))
 public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override

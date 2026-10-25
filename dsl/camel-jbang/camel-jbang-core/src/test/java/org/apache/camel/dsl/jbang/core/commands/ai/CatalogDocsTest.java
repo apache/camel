@@ -175,6 +175,13 @@ class CatalogDocsTest {
         JsonObject marshal = catalogDoc(Map.of("name", "marshal", "kind", "eip", "includeOptions", false));
         assertTrue(((JsonObject) marshal.get("bodyTypes")).getString("eipOut")
                 .startsWith("what its data format marshals to. "));
+        // CAMEL-25928: transformDataType leaves what the data type transformer of its toType makes
+        JsonObject transformDataType
+                = catalogDoc(Map.of("name", "transformDataType", "kind", "eip", "includeOptions", false));
+        assertTrue(((JsonObject) transformDataType.get("bodyTypes")).getString("eipOut")
+                .startsWith("what its data type transformer makes. "));
+        assertEquals("what its data type transformer transforms",
+                ((JsonObject) transformDataType.get("bodyTypes")).getString("eipIn"));
         JsonObject convertBodyTo = catalogDoc(Map.of("name", "convertBodyTo", "kind", "eip", "includeOptions", false));
         assertTrue(((JsonObject) convertBodyTo.get("bodyTypes")).getString("eipOut")
                 .endsWith(". With type set: an object of the class it names, or null"));

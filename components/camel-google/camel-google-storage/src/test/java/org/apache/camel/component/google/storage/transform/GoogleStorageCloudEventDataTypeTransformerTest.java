@@ -19,11 +19,14 @@ package org.apache.camel.component.google.storage.transform;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
@@ -64,4 +67,20 @@ class GoogleStorageCloudEventDataTypeTransformerTest {
         Assertions.assertEquals(GoogleStorageCloudEventDataTypeTransformer.class, transformer.getClass());
     }
 
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: any body, as transformerIn says, which transformerOut says is left as it was
+        BodyTypes bodyTypes = GoogleStorageCloudEventDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertEquals(Carrier.ANY, bodyTypes.transformerIn().value()[0]);
+        assertEquals(Carrier.UNCHANGED, bodyTypes.transformerOut().value()[0]);
+        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8),
+                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)), 5)) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertSame(body, exchange.getMessage().getBody(), body.getClass().getName());
+            assertEquals("org.apache.camel.event.google.storage.downloadTo",
+                    exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
+        }
+    }
 }

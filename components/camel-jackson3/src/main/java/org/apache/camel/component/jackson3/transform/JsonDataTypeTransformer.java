@@ -22,6 +22,9 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.jackson3.SchemaHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
@@ -35,6 +38,11 @@ import tools.jackson.databind.JsonNode;
  */
 @DataTypeTransformer(name = "application-json",
                      description = "Transforms from JSon to binary (byte array) using Jackson 3")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO, Carrier.NULL },
+                                     description = "A Json object or array as text, a JsonNode or a POJO, of the class of"
+                                                   + " the X-Content-Class exchange property when set: other text, bytes, a"
+                                                   + " stream, a Map or a List fail, and a null body becomes null"),
+           transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "json"))
 public class JsonDataTypeTransformer extends Transformer {
 
     @Override

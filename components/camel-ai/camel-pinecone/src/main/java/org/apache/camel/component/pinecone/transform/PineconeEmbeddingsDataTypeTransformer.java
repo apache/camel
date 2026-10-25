@@ -23,6 +23,9 @@ import dev.langchain4j.data.embedding.Embedding;
 import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.pinecone.PineconeVectorDbHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -33,6 +36,12 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "pinecone:embeddings",
                      description = "Prepares the message to become an object writable by Pinecone component")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "The body is not read: the vector comes from the"
+                                                   + " CamelLangChain4jEmbeddingsVector header, which must be set, and the"
+                                                   + " text is not stored"),
+           transformerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.lang.Float>",
+                                      description = "The vector of the embedding"))
 public class PineconeEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override

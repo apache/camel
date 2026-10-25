@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.weaviate.transform;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import dev.langchain4j.data.embedding.Embedding;
@@ -26,11 +28,15 @@ import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.weaviate.WeaviateVectorDbAction;
 import org.apache.camel.component.weaviate.WeaviateVectorDbHeaders;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.SimpleTypeConverter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class WeaviateEmbeddingsDataTypeTransformerTest {
 
@@ -97,6 +103,59 @@ class WeaviateEmbeddingsDataTypeTransformerTest {
                     .containsEntry("sky", "blue")
                     .containsEntry("age", "34")
                     .containsEntry("text", "the source passage");
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: any body, as transformerIn says, of which a TextSegment or a String is stored as the text, with the
+        // embedding and the action in headers, and the List of Float transformerOut says
+        BodyTypes bodyTypes = WeaviateEmbeddingsDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertThat(bodyTypes.transformerIn().value()).containsExactly(Carrier.ANY);
+        assertThat(bodyTypes.transformerOut().value()).containsExactly(Carrier.LIST);
+        assertThat(bodyTypes.transformerOut().javaType()).isEqualTo("java.util.List<java.lang.Float>");
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            // the converter camel-langchain4j-embeddings brings, which is not on the classpath of this module
+            context.getTypeConverterRegistry().addTypeConverter(TextSegment.class, String.class,
+                    new SimpleTypeConverter(false, (type, exchange, value) -> TextSegment.from((String) value)));
+            context.start();
+
+            for (WeaviateVectorDbAction action : List.of(WeaviateVectorDbAction.CREATE, WeaviateVectorDbAction.UPDATE_BY_ID,
+                    WeaviateVectorDbAction.QUERY)) {
+                for (Object body : Arrays.asList(TextSegment.from("hello"), "hello", 5, null)) {
+                    Message in = new DefaultExchange(context).getMessage();
+                    in.setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
+                            new Embedding(new float[] { 0.1f, 0.2f, 0.3f }));
+                    in.setHeader(WeaviateVectorDbHeaders.ACTION, action);
+                    in.setBody(body);
+                    new WeaviateEmbeddingsDataTypeTransformer().transform(in, DataType.ANY, DataType.ANY);
+
+                    assertThat(in.getBody()).as(action + " " + body).isInstanceOf(List.class);
+                    assertThat(in.getBody(List.class)).containsExactly(0.1f, 0.2f, 0.3f);
+                    Map<String, Object> props = in.getHeader(WeaviateVectorDbHeaders.PROPERTIES, Map.class);
+                    if (action != WeaviateVectorDbAction.QUERY && (body instanceof TextSegment || body instanceof String)) {
+                        assertThat(props).containsEntry("text", "hello");
+                    } else {
+                        // another body, or a QUERY, stores no text
+                        assertThat(props).isNull();
+                    }
+                }
+            }
+
+            // a message without the action, or without the embedding, fails
+            Message noAction = new DefaultExchange(context).getMessage();
+            noAction.setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
+                    new Embedding(new float[] { 0.1f, 0.2f, 0.3f }));
+            noAction.setBody(TextSegment.from("hello"));
+            assertThatThrownBy(() -> new WeaviateEmbeddingsDataTypeTransformer().transform(noAction, DataType.ANY,
+                    DataType.ANY)).isInstanceOf(IllegalStateException.class);
+            Message noEmbedding = new DefaultExchange(context).getMessage();
+            noEmbedding.setHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.CREATE);
+            noEmbedding.setBody(TextSegment.from("hello"));
+            assertThatThrownBy(() -> new WeaviateEmbeddingsDataTypeTransformer().transform(noEmbedding, DataType.ANY,
+                    DataType.ANY)).isInstanceOf(NullPointerException.class);
         }
     }
 }

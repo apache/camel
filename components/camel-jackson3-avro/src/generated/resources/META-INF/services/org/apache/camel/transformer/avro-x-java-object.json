@@ -9,6 +9,24 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-jackson3-avro",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "text",
+        "bytes",
+        "stream",
+        "file",
+        "pojo"
+      ],
+      "description": "Json text, or Avro binary with the Avro schema in the X-Content-Schema exchange property, read into the class of the X-Content-Class exchange property, which a body other than a POJO needs: a POJO of that class, or any POJO without it, is kept, and a Map or a null body fail"
+    },
+    "transformerOut": {
+      "carriers": [
+        "unknown"
+      ],
+      "description": "An object of the class of the X-Content-Class exchange property"
+    }
   }
 }
 

@@ -9,6 +9,19 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ]
+    },
+    "transformerOut": {
+      "carriers": [
+        "unchanged"
+      ],
+      "description": "Only the CloudEvent headers are set"
+    }
   }
 }
 

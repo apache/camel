@@ -9,6 +9,21 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-qdrant",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "list"
+      ],
+      "javaType": "java.util.List<io.qdrant.client.grpc.Points.ScoredPoint>",
+      "description": "The points of a SIMILARITY_SEARCH, with the text in the text_segment payload. A null body fails"
+    },
+    "transformerOut": {
+      "carriers": [
+        "list"
+      ],
+      "javaType": "java.util.List<java.lang.String>"
+    }
   }
 }
 

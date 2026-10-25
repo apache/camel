@@ -23,6 +23,9 @@ import org.apache.camel.Message;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
 import org.apache.camel.component.azure.servicebus.ServiceBusConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -33,6 +36,9 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "azure-servicebus:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Azure Service bus receive messages response details")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "Any body: the CloudEvent headers come from the headers of the azure-servicebus consumer"),
+           transformerOut = @BodyType(value = Carrier.UNCHANGED, description = "Only the CloudEvent headers are set"))
 public class ServicebusCloudEventDataTypeTransformer extends Transformer {
 
     @Override

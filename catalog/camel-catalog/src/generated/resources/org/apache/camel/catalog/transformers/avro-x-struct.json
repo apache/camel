@@ -9,6 +9,23 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-jackson-avro",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "bytes",
+        "stream",
+        "file",
+        "pojo"
+      ],
+      "description": "Needs the Avro schema in the X-Content-Schema exchange property: Avro binary, a JsonNode or a POJO; Json text, a Map or a null body fail"
+    },
+    "transformerOut": {
+      "carriers": [
+        "pojo"
+      ],
+      "javaType": "com.fasterxml.jackson.databind.JsonNode"
+    }
   }
 }
 

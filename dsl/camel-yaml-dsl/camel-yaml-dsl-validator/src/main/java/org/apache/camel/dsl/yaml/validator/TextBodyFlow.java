@@ -293,8 +293,8 @@ final class TextBodyFlow {
     }
 
     /**
-     * The body a producer leaves as the catalog says it: text (the response of the http producer) or data (the List of
-     * a mongodb findAll); null when it is not known, or neither text nor data.
+     * The body a producer or a data type transformer leaves as the catalog says it: text (the response of the http
+     * producer) or data (the List of a mongodb findAll); null when it is not known, or neither text nor data.
      */
     private static Body producerBody(CatalogBodyTypes.Answer out, String origin) {
         if (out == null) {
@@ -422,6 +422,15 @@ final class TextBodyFlow {
                 return "String".equals(type) || "java.lang.String".equals(type) || "byte[]".equals(type)
                         ? new Text("convertBodyTo " + type + " makes it text", body != null ? body.format() : null)
                         : null;
+            }
+            case "transformDataType" -> {
+                // what the data type transformer of toType makes, as the catalog says
+                CatalogBodyTypes.Answer out = w.bodyTypes().transformerOut(value);
+                if (out != null && out.unchanged()) {
+                    // the CloudEvent transformers set headers only
+                    return body;
+                }
+                return producerBody(out, "transformDataType: " + toTypeOf(value) + " makes it");
             }
             case "to", "toD" -> {
                 String uri = endpointOf(value);
@@ -674,6 +683,10 @@ final class TextBodyFlow {
     private record Operation(String spec, String id) {
     }
 
+    private static String toTypeOf(JsonNode value) {
+        return value != null && value.isObject() && value.has("toType") ? value.get("toType").asText() : "";
+    }
+
     /**
      * A to: that needs the body as text: a producer that the catalog says can only send or write text, bytes, a stream
      * or a file (file, ftp), an http producer that sends it with POST, or a rest-openapi call to an operation whose
@@ -681,6 +694,14 @@ final class TextBodyFlow {
      * producer sends the body, and a REST binding may write it for rest-openapi: they keep their own rule.
      */
     private static Need needsText(String name, JsonNode value, Walk w) {
+        if ("transformDataType".equals(name)) {
+            CatalogBodyTypes.Answer in = w.bodyTypes().transformerIn(value);
+            return in != null && in.onlyPayload()
+                    ? new Need(
+                            "transformDataType: " + toTypeOf(value) + " needs the body as " + in.inWords(),
+                            "before this step")
+                    : null;
+        }
         if (!"to".equals(name) && !"toD".equals(name) || w.bodyTypes().needsNoBody(name, value)) {
             // with variableSend the variable is sent, not the body
             return null;
