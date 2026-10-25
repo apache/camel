@@ -120,6 +120,18 @@ class AbstractDiagramTabTest {
 
     @ParameterizedTest
     @MethodSource("tabs")
+    void pShowsOrHidesTheMiniPanels(Function<MonitorContext, AbstractDiagramTab> factory) {
+        AbstractDiagramTab tab = inRoute(factory, false);
+        assertThat(ctx.routeZoom.isPanels()).isTrue();
+
+        assertThat(tab.handleKeyEvent(KeyEvent.ofChar('p'))).isTrue();
+        assertThat(ctx.routeZoom.isPanels()).isFalse();
+        assertThat(tab.handleKeyEvent(KeyEvent.ofChar('p'))).isTrue();
+        assertThat(ctx.routeZoom.isPanels()).isTrue();
+    }
+
+    @ParameterizedTest
+    @MethodSource("tabs")
     void dTogglesTheDetailPanelOnlyWithNodesToShow(Function<MonitorContext, AbstractDiagramTab> factory) {
         AbstractDiagramTab tab = inRoute(factory, false);
         tab.detailMode = false;

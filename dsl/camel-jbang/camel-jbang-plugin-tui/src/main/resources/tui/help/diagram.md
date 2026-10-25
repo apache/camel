@@ -210,6 +210,8 @@ you an at-a-glance view of where you are in the route.
   one line, the count in the border, the layers closer together) and
   bare (a mark, the name and the count of each route on one row)
 - `z` — fit: the most detail in which the whole topology fits the screen
+- `p` — show or hide the mini panels over the diagram: the map of the
+  topology (top right of a route) and the tree of the route (bottom right)
 - `v` — next level: architecture, topology, route
 - `g` — show each route's group in the topology, its colour as in
   the architecture, with a legend of the groups at the bottom

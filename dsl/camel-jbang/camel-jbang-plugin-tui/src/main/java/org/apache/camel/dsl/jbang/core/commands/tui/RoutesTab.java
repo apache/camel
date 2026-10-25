@@ -744,6 +744,7 @@ class RoutesTab extends AbstractDiagramTab {
                 toggles.add(new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
             }
             toggles.add(new SubViewBar.Toggle("n", "description", diagram.isShowDescription() ? "on" : "off"));
+            toggles.add(new SubViewBar.Toggle("p", "panels", diagram.zoom.isPanels() ? "on" : "off"));
         } else {
             toggles.add(new SubViewBar.Toggle("n", "description", showDescription ? "on" : "off"));
             toggles.add(new SubViewBar.Toggle("t", "top", routeTopMode ? "on" : "off"));

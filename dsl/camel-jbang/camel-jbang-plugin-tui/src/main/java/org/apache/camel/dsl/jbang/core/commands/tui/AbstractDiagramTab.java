@@ -147,6 +147,12 @@ abstract class AbstractDiagramTab extends AbstractTab {
         if ((routeNodes || topologyMode) && handleZoomKeys(ke)) {
             return true;
         }
+        if (ke.isChar('p')) {
+            // the mini panels cover a corner of the diagram: the map and the tree of the route
+            diagram.zoom.togglePanels();
+            ctx.backgroundExecutor.execute(diagram.zoom::persist);
+            return true;
+        }
         if (!topologyMode && detailMode) {
             if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
                 detail.scrollBy(-10);

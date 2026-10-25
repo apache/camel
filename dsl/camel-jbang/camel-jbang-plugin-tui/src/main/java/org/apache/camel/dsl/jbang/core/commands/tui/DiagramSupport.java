@@ -35,7 +35,6 @@ import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
-import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -1174,7 +1173,9 @@ class DiagramSupport {
                     vChunks.get(1), hScrollState);
         }
 
-        renderTreePreview(frame, hChunks.get(0));
+        if (zoom.isPanels()) {
+            renderTreePreview(frame, hChunks.get(0));
+        }
     }
 
     private void renderTreePreview(Frame frame, Rect area) {
@@ -1204,7 +1205,7 @@ class DiagramSupport {
 
         Block previewBlock = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(" Route ", Style.EMPTY.dim()))))
+                .title(DiagramPanels.title("Route"))
                 .build();
         frame.renderWidget(previewBlock, previewRect);
 
@@ -1626,36 +1627,10 @@ class DiagramSupport {
                     vChunks.get(1), hScrollState);
         }
 
-        renderMinimap(frame, hChunks.get(0), currentRouteId);
-        renderTreePreview(frame, hChunks.get(0), currentRouteId);
-    }
-
-    private void renderMinimap(Frame frame, Rect area, String currentRouteId) {
-        if (topologyLayout == null || topologyLayout.nodes.size() < 2) {
-            return;
+        if (zoom.isPanels()) {
+            DiagramPanels.renderMinimap(frame, hChunks.get(0), topologyLayout, currentRouteId);
+            renderTreePreview(frame, hChunks.get(0), currentRouteId);
         }
-        int mapW = Math.min(22, area.width() / 3);
-        int mapH = Math.min(8, area.height() / 3);
-        if (mapW < 6 || mapH < 3 || area.width() < 40 || area.height() < 12) {
-            return;
-        }
-
-        int mapX = area.x() + area.width() - mapW - 1;
-        int mapY = area.y();
-        Rect mapRect = new Rect(mapX, mapY, mapW, mapH);
-
-        frame.renderWidget(Clear.INSTANCE, mapRect);
-
-        Block mapBlock = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(" Map ", Style.EMPTY.dim()))))
-                .build();
-        frame.renderWidget(mapBlock, mapRect);
-
-        Rect innerRect = mapBlock.inner(mapRect);
-        var minimap = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyMinimapWidget(
-                topologyLayout, currentRouteId);
-        frame.renderWidget(minimap, innerRect);
     }
 
     // ---- Async loading ----
@@ -2197,7 +2172,7 @@ class DiagramSupport {
         }
 
         if (!hideOverlays) {
-            renderMinimap(frame, hChunks.get(0), routeId);
+            DiagramPanels.renderMinimap(frame, hChunks.get(0), topologyLayout, routeId);
             renderTreePreview(frame, hChunks.get(0), routeId);
         }
     }

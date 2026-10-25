@@ -84,6 +84,10 @@ route is a box of one line with its count in the border, a bare route a mark in 
 its count on one row, and the layers come closer together and the boxes narrower. With fit, the topology takes the most
 detailed level in which it fits the screen.
 
+The mini panels over the diagram, the map of the topology at the top right of a route and the tree of the route at the
+bottom right, cover a corner of it: *p* hides them, and shows them again. Their titles say so, and the setting is kept
+for the next start.
+
 Press *Space* to fold a block (a choice, one of its branches, a split, a doTry, a filter...) into its first step,
 which then says how many steps are folded (`▸ 12 steps folded`); *Space* on a step inside a block folds that block, and
 *Space* on a folded step unfolds it. A folded block gives its rows and its columns back to the rest of the route.
@@ -284,6 +288,7 @@ camel-xml-io, while a Spring Boot or Quarkus application may not.
 | *y* | In a route: show the body types each step has been reached with, beside the arrows into the steps
 | *+* / *-* | In a route and the topology: zoom in or out (detailed, compact, bare)
 | *z* | In a route and the topology: fit, the most detail in which it fits the screen
+| *p* | Show or hide the mini panels over the diagram: the map of the topology and the tree of the route
 | *Space* | In a route: fold the block of the selected step, or unfold a folded step
 | *f* | In a route: fold all the blocks
 | *F* | In a route: expand all the blocks

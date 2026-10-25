@@ -459,6 +459,11 @@ class DiagramTab extends AbstractDiagramTab {
         return toggles;
     }
 
+    /** The mini panels over the diagram: the map and the tree of the route. */
+    private SubViewBar.Toggle panelsToggle() {
+        return new SubViewBar.Toggle("p", "panels", diagram.zoom.isPanels() ? "on" : "off");
+    }
+
     /** On or off; an integration on a Camel before 4.23 reports no error paths, and the toggle says so. */
     private String errorsToggle() {
         if (!diagram.isErrorPathsKnown()) {
@@ -493,13 +498,14 @@ class DiagramTab extends AbstractDiagramTab {
                             case 2 -> "all";
                             default -> "off";
                         }));
+                toggles.add(panelsToggle());
                 yield toggles;
             }
             case ROUTE -> List.of(view, new SubViewBar.Toggle("x", "errors", errorsToggle()),
                     new SubViewBar.Toggle("+/-", "zoom", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))),
                     new SubViewBar.Toggle("m", "metrics", metrics),
                     new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"),
-                    new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
+                    new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"), panelsToggle());
         };
     }
 

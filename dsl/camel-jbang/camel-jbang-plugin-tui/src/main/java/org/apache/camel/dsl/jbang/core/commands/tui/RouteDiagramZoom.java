@@ -42,7 +42,8 @@ import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 /**
  * The zoom of the route diagram: how much room a step takes ({@link RouteDensity}), or the most detail that fits the
  * screen, and the blocks folded into their first step. A folded block is left out of the route before the engine lays
- * it out, so the steps after it move up and its branches give their columns back.
+ * it out, so the steps after it move up and its branches give their columns back. It also has whether the mini panels
+ * over the diagram are shown (p), a view setting kept with the zoom.
  * <p>
  * The keys change the zoom on the UI thread; the layout reads it on the background thread, so the state is volatile or
  * concurrent. When the zoom changes, the selected step stays selected and on the same row of the screen.
@@ -51,6 +52,8 @@ final class RouteDiagramZoom {
 
     /** The zoom chosen last: a density, or fit; the folded blocks are not kept. */
     static final String PROP_ROUTE_ZOOM = "camel.tui.routeZoom";
+    /** Whether the mini panels over the diagram (the map and the route tree) are shown: false when hidden. */
+    static final String PROP_DIAGRAM_PANELS = "camel.tui.diagramPanels";
 
     /** The selected step to select again once the route is laid out anew, and its row on the screen. */
     record Restore(int index, int row, int screenRow) {
@@ -61,6 +64,7 @@ final class RouteDiagramZoom {
 
     private volatile RouteDensity density = DEFAULT;
     private volatile boolean fit;
+    private volatile boolean panels = true;
     /** The folded blocks of each route: the ids of their first steps. */
     private final Map<String, Set<String>> folded = new ConcurrentHashMap<>();
     /** The steps of each route as last laid out, without its folds: fold all folds the blocks hidden in others too. */
@@ -74,21 +78,23 @@ final class RouteDiagramZoom {
     private String anchorNodeId;
     private int anchorScreenRow;
 
-    /** The zoom with the density or fit chosen last time. */
+    /** The zoom with the density or fit chosen last time, and the mini panels shown or hidden. */
     static RouteDiagramZoom persisted() {
         RouteDiagramZoom zoom = new RouteDiagramZoom();
         try {
             zoom.setting(TuiUserConfig.read(PROP_ROUTE_ZOOM));
+            zoom.panels = !"false".equals(TuiUserConfig.read(PROP_DIAGRAM_PANELS));
         } catch (RuntimeException e) {
             // best-effort: the default zoom
         }
         return zoom;
     }
 
-    /** Keeps the density or fit for the next start; file work, so not on the UI thread. */
+    /** Keeps the density or fit, and the mini panels, for the next start; file work, so not on the UI thread. */
     void persist() {
         try {
             TuiUserConfig.write(PROP_ROUTE_ZOOM, setting());
+            TuiUserConfig.write(PROP_DIAGRAM_PANELS, panels ? null : "false");
         } catch (RuntimeException e) {
             // best-effort: a persist failure must not disrupt the TUI
         }
@@ -114,6 +120,15 @@ final class RouteDiagramZoom {
 
     RouteDensity density() {
         return density;
+    }
+
+    /** Whether the mini panels over the diagram are shown: the map of the topology and the tree of the route. */
+    boolean isPanels() {
+        return panels;
+    }
+
+    void togglePanels() {
+        panels = !panels;
     }
 
     boolean isFit() {
