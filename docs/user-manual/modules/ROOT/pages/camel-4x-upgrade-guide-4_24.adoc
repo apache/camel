@@ -349,7 +349,9 @@ The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are
 * The producers of an `autoStartup=false` route are no longer started when the context starts; they start when the
   route itself is started (regardless of which route controller is used).
 
-Additionally, an exchange that a forced route stop cuts off inside a nested EIP (`split`, `multicast`,
+=== camel-core - Forced route-stop cut-off marks exchange as interrupted in any nested EIP
+
+An exchange that a forced route stop cuts off inside a nested EIP (`split`, `multicast`,
 `filter`, `choice`, ...) of the stopped route is now marked as interrupted
 (`exchange.getExchangeExtension().setInterrupted(true)`) after the cut-off WARN is logged. This prevents
 nested stopped error handlers from each emitting their own WARN for the same exchange. The interrupted flag
