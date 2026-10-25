@@ -25,11 +25,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Red-team probe: a consumer of the shared component handle that was never started (autoStartup=false) is stopped
- * when its route is stopped or removed. Its doStop calls endpoint.disconnect() unconditionally, which decrements the
- * count of the running producer and disconnects the shared handle under it.
- */
-/**
  * A route whose consumer never started (autoStartup false) is stopped or removed: it must not disconnect the raftHandle
  * of the component, which the producer of another endpoint uses.
  */
