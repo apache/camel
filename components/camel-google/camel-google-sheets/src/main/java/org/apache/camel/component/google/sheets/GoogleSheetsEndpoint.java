@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.sheets;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.services.sheets.v4.Sheets;
 import org.apache.camel.Category;
@@ -46,6 +48,8 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
 
     @UriParam
     private GoogleSheetsConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Sheets client;
 
     private Object apiProxy;
 
@@ -96,8 +100,24 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
         }
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Sheets getClient() {
-        return ((GoogleSheetsComponent) getComponent()).getClient(configuration);
+        Sheets answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleSheetsComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     @Override
