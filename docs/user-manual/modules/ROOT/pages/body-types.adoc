@@ -209,8 +209,8 @@ instead of copying the body types of every data format, component and language:
 ----
 
 The value `*` is any value of the option: with `variableReceive` set to any name, the body stays as it was, whatever
-the data format writes. In the same way, with `variableSend` the steps that send send the variable, and do not need
-the body (`any`). A route starts with the body of the consumer of its `from` endpoint, and with no body (`null`) when
+the data format writes. In the same way, with `variableSend` a step sends the variable instead of the body, and does
+not need the body (`any`). A route starts with the body of the consumer of its `from` endpoint, and with no body (`null`) when
 `from` has `variableReceive`.
 
 An EIP with steps of its own also says what they start with. The steps of a `split` start with each part, and after
