@@ -2472,44 +2472,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+      "bom-ref" : "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
       "group" : "com.google.guava",
       "name" : "guava",
-      "version" : "33.5.0-jre",
+      "version" : "33.7.2-jre",
       "description" : "Guava is a suite of core and expanded libraries that include utility classes, Google's collections, I/O classes, and much more.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "d9fbf39a41a5bab891348f07668e18c5"
+          "content" : "b07f61705f717d9ae7946c7fdb1efd7a"
         },
         {
           "alg" : "SHA-1",
-          "content" : "8699de25f2f979108d6c1b804a7ba38cda1116bc"
+          "content" : "e70def5b06cfb109ea050de99870e79c8ce80dbc"
         },
         {
           "alg" : "SHA-256",
-          "content" : "1e301f0c52ac248b0b14fdc3d12283c77252d4d6f48521d572e7d8c4c2cc4ac7"
+          "content" : "b530942257fb935f8b2cfaa5f8eb5bd59c555fd8e8d01b8ce98912e077ea606c"
         },
         {
           "alg" : "SHA-512",
-          "content" : "994a4dbcbd8e528ad3b4a7acf49b631a40dcebb03d9a8f5e1d3b74351f805f77774e9a19f7233e42036cb415b7838710f207ac1e18335e4a219b7f99ea22a44f"
+          "content" : "bd663dc02f2293a552d82829518435b8cfcd77b7c73eeb638aef93918ef7613ad2a869003b09d1afb4446fa74308041daa7a6aea85c1bedb17db1f5f0c2c5c0b"
         },
         {
           "alg" : "SHA-384",
-          "content" : "9dabff6e543ead881b20d38a533e9151aaa83999239cf0ace3e712cf678e7976c3a50d79e3f3c57afc05a3b9ff14ad90"
+          "content" : "7c1d8db6504620e2feb70d56e4bffb479e5ba292c1d911da060cb66f2ac3d4050c718a72e6cfd6c82a36fd840c499942"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "9f65d4d942113facb2eb25229c1530b79dd3b8994574034b8d4a1c2b39ed8ee5bb4d415ec690d3d87cee0d8cb2283564"
+          "content" : "13dcb7e8318a75368b33e1abc3a5b9b674bed950d6cfe1e7ca8be8f42f642816e69ae5d39d5ddbe998fe2c9acbf6ee28"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "fedafab2279bdf6eff66314fc61b056e92312695678e66dc1e25fe1d18af5a36"
+          "content" : "adee2b0b99a4777a1fb04eb1a26d6b44aa47457c850dbf43d743d17801615c18"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "e64f3c49f9030358554bb0b8abdff729394988f1e3247b05a86302014eeff4a2855acf46d9bf1c683cbecc33a24173a20a103d3c82c94f8cabd6676a01b40fb6"
+          "content" : "5bff0e702aaa6bfbf3fdd8fb963b6242d5dbecd8b7601afc0bfe158314887352d48c79c4ef9e256a0510474ac39493c59ca277bd1989a04705a723c6045fe4b7"
         }
       ],
       "licenses" : [
@@ -2519,7 +2519,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+      "purl" : "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -2541,44 +2541,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
+      "bom-ref" : "pkg:maven/org.jspecify/jspecify@1.0.1?type=jar",
       "group" : "org.jspecify",
       "name" : "jspecify",
-      "version" : "1.0.0",
+      "version" : "1.0.1",
       "description" : "An artifact of well-named and well-specified annotations to power static analysis checks",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "9133aba420d0ca3b001dbb6ae9992cf6"
+          "content" : "d4fe1ea4d953b66fcb1d6043c22bffcf"
         },
         {
           "alg" : "SHA-1",
-          "content" : "7425a601c1c7ec76645a78d22b8c6a627edee507"
+          "content" : "3d60fd98eb8ade73004f4195c37b6317e02cf3d7"
         },
         {
           "alg" : "SHA-256",
-          "content" : "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab"
+          "content" : "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66"
         },
         {
           "alg" : "SHA-512",
-          "content" : "efded31ef5b342f09422935076e599789076431e93a746685c0607e7de5592719ba6aacde0be670b3f064d1e85630d58d5bce6b34aed2a288fdb34f745efb7bc"
+          "content" : "8f5ca6f5c25ee353bfbe3e5e5cd9847b3b3ed1e954a14a52c9aa016c673e02bfbc2e0f9308ad576c2a58720f8bf2139ad9883c7a881050fe96a2f87e2e623711"
         },
         {
           "alg" : "SHA-384",
-          "content" : "814f860e5a44ead6c457676841eef471a8b87be31b84c60a8a4477a18a9cbcb6e3c2ae700969d5c5e52309d961e0537a"
+          "content" : "f7c6aea402675ed6d9286e6107d4bf6c2d1f757f9fce4c74807cbd43d426569324cf4c7faed28dc777e90ddb3a63db68"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "c8844e5b71e5ecfbb7366097ce34af2f5863d86d5ccc3f9ec384d8ade4b60ccc8124c7fc88664f1afd2b0962fc8775bf"
+          "content" : "d462ead4749cc7b404b1699aedf472664e9bb38db769f2ec78a6457d2d080602f673af8b3114724dd92ee2262f464c41"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "4b4f08ad7606a3ac62997779484919a302267b26d26ee19125f8a7eea60e8a71"
+          "content" : "f9392a7b674c37a7617d7e5ab4a6197c235c0a036244eaf550291d6756c0f1c9"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "65c6845ebae981cb81b61107707ced39f5b377dae970b47606ef482aaf10e3729def0da40d9377c43abbfb483a5ceae039b0d51c129c50a6d36ad351a5d6b01e"
+          "content" : "3154b4940937103d74b77eede7abc7034168dc986284ef00ab4e4d5b537ed6370c6856787ae50711e62906b3011243c9a656b659ddd025c1e6b828c44b980855"
         }
       ],
       "licenses" : [
@@ -2588,11 +2588,11 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
+      "purl" : "pkg:maven/org.jspecify/jspecify@1.0.1?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
-          "url" : "http://jspecify.org/"
+          "url" : "https://jspecify.dev/"
         },
         {
           "type" : "vcs",
@@ -12140,45 +12140,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.41.0?type=jar",
+      "bom-ref" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.50.0?type=jar",
       "publisher" : "Google LLC",
       "group" : "com.google.errorprone",
       "name" : "error_prone_annotations",
-      "version" : "2.41.0",
+      "version" : "2.50.0",
       "description" : "Error Prone is a static analysis tool for Java that catches common programming mistakes at compile-time.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "75e3b25da8b8a2136463c4674f5e49bf"
+          "content" : "1ded1848cfd4f5167e00824faf9c4d3b"
         },
         {
           "alg" : "SHA-1",
-          "content" : "4381275efdef6ddfae38f002c31e84cd001c97f0"
+          "content" : "74ba43e49ab1184d41634af2ef0047e82c4064b0"
         },
         {
           "alg" : "SHA-256",
-          "content" : "a56e782b5b50811ac204073a355a21d915a2107fce13ec711331ad036f660fcc"
+          "content" : "4667724877f1d37a689202da191e23efa7657c62eef93ccdac406eccfe5cdd0a"
         },
         {
           "alg" : "SHA-512",
-          "content" : "e2eb4bf9f36f95a4d4c5ea344db5cd90a456e63bef8e52932b8f6f4ecfdd59cb2f6c2ce9e67b0070c82177e42885688b95afef591b16001f789b378f18afdf30"
+          "content" : "f867b1a1fbc057fcfc37c2fa86082f5965ad6a1c45373eac6cfa6ec058cedbf7b348ab4f3d4fea2d4d105ecc401c14f24d9b16f344507e126a221d50532cb8b2"
         },
         {
           "alg" : "SHA-384",
-          "content" : "43700b378624aa37197ef03a6b5ea40b5fbb6c0aa667eadf810ad36f0707dffaf3ea23471f2553327c3f5644cc875ee7"
+          "content" : "2986b161379c30e9805f3bcff197d7861b8c0690a021e2d7464707e57028b1953d24eefd1a36722f3c04665190b3cb48"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "8bf3293cf4b72c9a999948f8812190636ef3b0c35bab8dbf9a54c263eeab2a3b3d0774fdcab52c6d114551ff74a8aea2"
+          "content" : "597fe452ff7e21149da3c537b61d8e1b17df792f67bcd80fbccd6647acca571a94fa8bbcf4840826a37814bb2ef0249a"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "2ca1a59f4fdc37a3c83501542c63842fa4fe40c06f69a59a2a072e4af442a16a"
+          "content" : "5447d9786f79d7dc20e8f75ac93f3a05181f3707faf6e91696dd326cdd5f5754"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "6d1f419996b15e5a2bd9b268d166046e38fe9cc6c58fe56aaacbe71b95e3db8c8fe1d226e7f549ea227956feaf3087706bdfa79930fe432298bba9ec06c26a90"
+          "content" : "b51065218c88f5ce0b94e6607dee42d6c01aeb69a87b6e1c656dd406f2196cc999150ce87f56fbeeecbed7e1e354ed285589fa560012e9fb5858a97dc17d2129"
         }
       ],
       "licenses" : [
@@ -12188,7 +12188,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.41.0?type=jar",
+      "purl" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.50.0?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -13581,6 +13581,68 @@
         {
           "type" : "vcs",
           "url" : "https://github.com/google/gson/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.41.0?type=jar",
+      "publisher" : "Google LLC",
+      "group" : "com.google.errorprone",
+      "name" : "error_prone_annotations",
+      "version" : "2.41.0",
+      "description" : "Error Prone is a static analysis tool for Java that catches common programming mistakes at compile-time.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "75e3b25da8b8a2136463c4674f5e49bf"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "4381275efdef6ddfae38f002c31e84cd001c97f0"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "a56e782b5b50811ac204073a355a21d915a2107fce13ec711331ad036f660fcc"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "e2eb4bf9f36f95a4d4c5ea344db5cd90a456e63bef8e52932b8f6f4ecfdd59cb2f6c2ce9e67b0070c82177e42885688b95afef591b16001f789b378f18afdf30"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "43700b378624aa37197ef03a6b5ea40b5fbb6c0aa667eadf810ad36f0707dffaf3ea23471f2553327c3f5644cc875ee7"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "8bf3293cf4b72c9a999948f8812190636ef3b0c35bab8dbf9a54c263eeab2a3b3d0774fdcab52c6d114551ff74a8aea2"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "2ca1a59f4fdc37a3c83501542c63842fa4fe40c06f69a59a2a072e4af442a16a"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "6d1f419996b15e5a2bd9b268d166046e38fe9cc6c58fe56aaacbe71b95e3db8c8fe1d226e7f549ea227956feaf3087706bdfa79930fe432298bba9ec06c26a90"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.41.0?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://errorprone.info/error_prone_annotations"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/google/error-prone/error_prone_annotations"
         }
       ]
     },
@@ -26048,6 +26110,67 @@
         {
           "type" : "vcs",
           "url" : "https://github.com/couchbase/couchbase-jvm-clients/tree/master/core-io"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
+      "group" : "org.jspecify",
+      "name" : "jspecify",
+      "version" : "1.0.0",
+      "description" : "An artifact of well-named and well-specified annotations to power static analysis checks",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "9133aba420d0ca3b001dbb6ae9992cf6"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "7425a601c1c7ec76645a78d22b8c6a627edee507"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "efded31ef5b342f09422935076e599789076431e93a746685c0607e7de5592719ba6aacde0be670b3f064d1e85630d58d5bce6b34aed2a288fdb34f745efb7bc"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "814f860e5a44ead6c457676841eef471a8b87be31b84c60a8a4477a18a9cbcb6e3c2ae700969d5c5e52309d961e0537a"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "c8844e5b71e5ecfbb7366097ce34af2f5863d86d5ccc3f9ec384d8ade4b60ccc8124c7fc88664f1afd2b0962fc8775bf"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "4b4f08ad7606a3ac62997779484919a302267b26d26ee19125f8a7eea60e8a71"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "65c6845ebae981cb81b61107707ced39f5b377dae970b47606ef482aaf10e3729def0da40d9377c43abbfb483a5ceae039b0d51c129c50a6d36ad351a5d6b01e"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://jspecify.org/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/jspecify/jspecify/"
         }
       ]
     },
@@ -70761,6 +70884,204 @@
     },
     {
       "type" : "library",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "group" : "org.bouncycastle",
+      "name" : "bcpkix-jdk18on",
+      "version" : "1.85",
+      "description" : "The Bouncy Castle Java APIs for CMS, PKCS, EAC, TSP, CMP, CRMF, OCSP, and certificate generation. This jar contains APIs for Java 1.8 and later. The APIs are designed primarily to be used in conjunction with the BC Java provider but may also be used with other providers providing cryptographic services.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "8247f481c8eeef03925277ca33f72255"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "b33d047adc6801a1cfc8ffe1634b23b306a670c1"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "c9f82b2d4e99c4bbdfccf684e52cc06ea06a0b567bfd0d08f9c5a3f417055996"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "142ce817145f7348dc97f62872eac931280c578bc61ff4cfcff927d4247ab2bf15e858edf74f2549074c4685ebe8de1d815c42637eacdb65b344b741c2bf1415"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "1bb7f6d3c0e83cbefcd27828575a9554a087c19b5230817291fe979cf54890fbe7ccbd8134563011b4d409d7729c1ea5"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "fba8a68f6b52298e7634fc8f6363134ccd32f4c549bfbe9c3696aa74e6a41289ee6f09095f7c66f9df8736f83ec88cc7"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "b1d11ec6466b1789e093bb21a59eb51c83c7f7e1edc5e1aaaf407c36efb90e04"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "93b46f93a07037b8c774f337dc83f0652191fedfe1d66342360174c29c0030b7dbfc7b3d9b23de54f482697b274f2c36c8ce6139eb82df62eb7d7d7d96ea642e"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Bouncy Castle Licence",
+            "url" : "https://www.bouncycastle.org/licence.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://www.bouncycastle.org/download/bouncy-castle-java/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://github.com/bcgit/bc-java/issues"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/bcgit/bc-java"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "group" : "org.bouncycastle",
+      "name" : "bcprov-jdk18on",
+      "version" : "1.85",
+      "description" : "The Bouncy Castle Crypto package is a Java implementation of cryptographic algorithms. This jar contains the JCA/JCE provider and low-level API for the BC Java version 1.85 for Java 1.8 and later.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "e564b4f846cd76cca8253c7c9febb44e"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "2320b854dffe134687f7266bb22021b779e576d3"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "20af26bf6060bb8005cc2389916812c1e0e998dc48d2ced7131b89461b54cff7"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "33bbcbc3ad823898bda1fec8cea270fffa4688886b1c351afd93e713f41d29afd71aae9982cbe896d510aa98fece8b9a66c132536625801fe2c1af283a76e2b5"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "50a64acda277531b4aa2faa476eae6842c8505224b560c05f8a8fe4f5e4a9a245aed4622a4a1ad57da197b93fa2eafd6"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "d753d24ac69ee4f167d4d11c6094b2671e7990fa73471b6c34a7eb89c04f3c3f7b96756505e776a22c55acbdd32d2637"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "bcc230dbf643d7d4f758c31ba0762b2eb2f6bc0f565f4336eeb013e75b05a1ff"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "ebd7c353f357fbca7a7e596c79c9023dc37cbc48a0eacf6fd1644932214131eb02f164969f5b429e3bbc7f5bdff519833a5ed0ca934a2c172d9b49af2e7df7d7"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Bouncy Castle Licence",
+            "url" : "https://www.bouncycastle.org/licence.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://www.bouncycastle.org/download/bouncy-castle-java/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://github.com/bcgit/bc-java/issues"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/bcgit/bc-java"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "group" : "org.bouncycastle",
+      "name" : "bcutil-jdk18on",
+      "version" : "1.85",
+      "description" : "The Bouncy Castle Java APIs for ASN.1 extension and utility APIs used to support bcpkix and bctls. This jar contains APIs for Java 1.8 and later.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "7c90e18e7e709e7ceb14b2682e5ddcca"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "c41082d6f61628919b675970563f5615e4427c9f"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "590f55ed5d68529239898a4a5c4f730b6e37f45d1cfa3fbe51f8485abe32c42d"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "1cf5011448dfaed7daea587807b9513961bdfd7b41ee5ce42444254dfa3677fdba78fe5191bca4ecf2a51eb3883be59f0374affc1efae3fd1728a64fa094027d"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "fdab70a9a0fc9011214c1d484f315077bb68ef586669a2922e261df7e8ac8eae290fa90d411fbad04cc8642a9b7596d0"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "811f67ad491483f79e93827556db2cbe5c66eea384638259429617ed3ea06a42b0cf5e6bbb2d7ca13dd6a2c094164b93"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "990e116a1143574594f0ae6d134d4541d22e9551d48a3347f73c7bcef278b6cc"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "a969f3ae17dd9a6141572ae2da2eb3b6414abea4d6dc6e1139959475ba3e9ed3b5a4696832e7382bc1e256b839fe0bf30ba54fb2e8490dae36c046b374e78c89"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Bouncy Castle Licence",
+            "url" : "https://www.bouncycastle.org/licence.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://www.bouncycastle.org/download/bouncy-castle-java/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://github.com/bcgit/bc-java/issues"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/bcgit/bc-java"
+        }
+      ]
+    },
+    {
+      "type" : "library",
       "bom-ref" : "pkg:maven/org.eclipse.angus/angus-mail@2.0.4?type=jar",
       "publisher" : "Eclipse Foundation",
       "group" : "org.eclipse.angus",
@@ -82069,44 +82390,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.83?type=jar",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
       "group" : "org.bouncycastle",
       "name" : "bcpg-jdk18on",
-      "version" : "1.83",
+      "version" : "1.85",
       "description" : "The Bouncy Castle Java APIs for the OpenPGP Protocol. The APIs are designed primarily to be used in conjunction with the BC Java provider but may also be used with other providers providing cryptographic services. This jar is designed to work best with Java 1.8 and later.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "5a622f9aef7fba434fad454d6eea4294"
+          "content" : "ff4ffb39ea2a5731f0e7c7d3c24f4053"
         },
         {
           "alg" : "SHA-1",
-          "content" : "4369727b9b02e6c62c26fde862ac42d77ce8edef"
+          "content" : "0eb8822a019c29a5d205811367480ebe8c747714"
         },
         {
           "alg" : "SHA-256",
-          "content" : "4077fd4517761c98a81944c70a376ce73f4eb3e44c03db1eb5d699fc28ab48aa"
+          "content" : "39426367dc247dfaae9b1253457a39298b6b9a6c28a39b908bca829e315323dd"
         },
         {
           "alg" : "SHA-512",
-          "content" : "c6e9c6d95919d71e2d00485651417cbb6ba40716072811ad34f0ce00c2450f1ee93498ace080a16a99ada8c90c814049eb2a213687f094d3cf1af1116ef9a5aa"
+          "content" : "97de8b72ad0518342569475e6853555669e70cd9be0d46af465256fd8499b83586890cf8ba679ab89b5831e2e383e25a56c91a221e903e4beec75c496c0ecb1b"
         },
         {
           "alg" : "SHA-384",
-          "content" : "223d2d8feac4faa1550d7de45a4180b15e25635ae95688f43c59455fc6db8ab0b9db2225586c4e0b01102adde7c8636a"
+          "content" : "915ab5424f0b1465331b67d5ec5633378e5a6344b77d9b991c30a733dd57dc1c57469a58a00e5b228335f1069ccf853d"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "495e283af413fd7a37c8325a25bb2f1d1f335c25152ddf38f3668eff132a758c9a13ca486efeff4ed6df7361016d4bfb"
+          "content" : "1cd7f25673999adc0d771196206c04ec4737df6508c1984d3d7595127f0fabd9f22ad68a8ca81edbef5aef631ee19920"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "a36e76879ad28b1d50cdd7d6db054708c8fd82bf6cfefa971257e296264c1f21"
+          "content" : "554acd41d543f2b7ca1f6aa736ce89e7f9028b602f6def6fd6683a413a987c55"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "6cd1b1b192e2dcb595204304138ad354c58d810db278aae4c70ae0896f463f833a1103ffc88a0e5860b96faa93495b023e84d443f67e25469f8ec3f6a7678c4b"
+          "content" : "f7faee1215162a68d83e9af5a373003e99fae48366ec6ea16133f642adc85a9c45c132fb2086a8c6879d8a5c597fa9ce3e563cef06b85b553c012c3e5e8ac223"
         }
       ],
       "licenses" : [
@@ -82122,7 +82443,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.83?type=jar",
+      "purl" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -132204,44 +132525,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.83?type=jar",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.85?type=jar",
       "group" : "org.bouncycastle",
       "name" : "bcmail-jdk18on",
-      "version" : "1.83",
+      "version" : "1.85",
       "description" : "The Bouncy Castle Java APIs for doing S/MIME with JavaMail. The APIs are designed primarily to be used in conjunction with the BC Java provider for Java 1.8 and later.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "d934b165a93dd406989435d0d41dc141"
+          "content" : "e66891af9c4aa987ac14ae8d965d4f1e"
         },
         {
           "alg" : "SHA-1",
-          "content" : "8eeba6f34dfcd93d6e2e4c903496b8c43cf1c4c6"
+          "content" : "ccbba27802c33339afba3d34657ec5730cfc3178"
         },
         {
           "alg" : "SHA-256",
-          "content" : "69871454d381e2f7e3830ceddb3cb2a796cdb292be969c0dd9bded6d7daf83c8"
+          "content" : "ab87de929f8fb8d515143921580b60b7dcc6507f07939ca345b8ffa07d213837"
         },
         {
           "alg" : "SHA-512",
-          "content" : "356f3817c35ec7665831c9fa987d62d6f4bc55b1c43ce381c595f7bff84a9dcaed7ef2a2db8ca29843bba515ab17791bd02b804720b58ef85aad3c3198a5fb60"
+          "content" : "0b56a1b04bdf967c3c872dc491fe2264910ce6f5255ac936cd19e0208f2cb465af85552403ca36ca9f82db0a53554f449d0e6956a2c6431d2b6fffd97edfc654"
         },
         {
           "alg" : "SHA-384",
-          "content" : "115f3d4f431885a1492533414542ae650c1d3231f8a9a70b3aae141e1abb519a3f6b3fd65ebe3b980fe031adff35ebe9"
+          "content" : "630ecd37b47d13d153349c0f646f5df3b71948ac7a8548ecce178fcd0e385998cfeaf52ddaa67941337c13aa7bc90e1a"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "f139a700a007941f3b1a5a8d64f2c36dc3e62ce9bd3f8c8d8f7ff2ecaddb971556d27a6053eb4ce883fd8640069712c9"
+          "content" : "a010daa0e2e6e91bf7e4f97bddf3e72a0f33530ca7f535c78f5ad1dcf74ec8058b9c3ce16665ff4fac3a4ee943182b2a"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "2f34221a92b5141986b8eeabe7023d953c44a26f3e3c058a14f08ee21d32188c"
+          "content" : "975a91f65f5de653c8c94224a64616517f774ecab1be7126e19ec173e1127de2"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "2628b698e23d1ba4352945cdfe159cbbdf9c96b89cc6eb98c3ea5b440f9e9dadbe6541c3a2af0754d054de9b529a5e4fb34e7b3682d476ece56fde7b73ba159d"
+          "content" : "574da2f86c28510c76e4d7917d1dae0613be06a36f4e499abe502e89eb9caef4eabe82a6949d4267c49163d8636af7ac6f04b5c540783a30c7a785e3b35f5df1"
         }
       ],
       "licenses" : [
@@ -132252,7 +132573,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.83?type=jar",
+      "purl" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.85?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -147193,45 +147514,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-core",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "1dee4e8ba084eca9852f847638aebf46"
+          "content" : "54148cc6893f0896874113757af75c6f"
         },
         {
           "alg" : "SHA-1",
-          "content" : "435564149bbacfb576b2c284f86f4a24d701cc17"
+          "content" : "1bf4fdc087e3c617b4b429af935834d43400b665"
         },
         {
           "alg" : "SHA-256",
-          "content" : "409e5e5977cf8491ccf2500aeb054b24a543f4fa967fc1852d850dc1cf931e9f"
+          "content" : "1a274ba3739dc72506d5e801a8337ab734e07fbfd48ece7e77a518fbf40cea9a"
         },
         {
           "alg" : "SHA-512",
-          "content" : "b8003beb2e28a1f9ed71dd262e8448829b4fcabd89302530a58ec1178dd500c8dd86d840c962d731ae8054ba53463423094fcd7746141f78a9f7f3a61eeeabcd"
+          "content" : "a1807b3efbcd131176be30c0d566724b198449580a4cba681ba1957a4623042a9c7763a0bbe59280d3ced83bdcbab877cbacfb2f3a47c66c91340992e5480f06"
         },
         {
           "alg" : "SHA-384",
-          "content" : "c687bc932c631db620ececb7bc81f73d6c56de6ac42f8acd1080f9d7351b00331a8a86174b91ada66e7c9dad04bc1482"
+          "content" : "64bb6ee9df70eaa7d905b505790993eadaf3be095a4cfe2099b532dedc825407d0fdf5b693c1b6385d07c7e506a8ae3a"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "ca63c448257d3cb0e673d27b92097d89ec3fb877a755968493191aa5d46331e4b7473ccc961a794522f9d1c3c0e76254"
+          "content" : "7ada30fd5a2230abdbb28165c8adddefdc90b695bbf96f6ea504964ecce2aa9effbccc1c59e39b10cb9eafe3fb660a1d"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "3e249b2d5c3209ac85c95f4b7bfa96269b1f3f88c92aeb23c803a04fbb0c7bea"
+          "content" : "706d99481b95d70d0af11687a2cc2ad2ef2b2f2f3ac445ab19294785b6934934"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "920ee3e213307cf84afe6eb6f36cbbe2043185cf9ceee08554ae875bf7f3147bed460710de5ec3d163d5d1050d42b5ae4835eeec9a0dd74c77f93f708f9c76b8"
+          "content" : "51de66256048922852653c1beebe8ad62b68b2e1addb8e06a40b3c3cc768033747837bd7267d8ca6ecb650927898b947b54336114186ae3e7e360bfa496108a8"
         }
       ],
       "licenses" : [
@@ -147246,7 +147567,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -147296,45 +147617,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-web@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-web",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "97cbdee5092f2a44d213937d907345bb"
+          "content" : "3d8c1b26f15823145186539934e2ffaf"
         },
         {
           "alg" : "SHA-1",
-          "content" : "571c5a229c00397db8ee27539c0a5a49afee99a5"
+          "content" : "367b56676c239eab432dd2611ed5351888c95574"
         },
         {
           "alg" : "SHA-256",
-          "content" : "2f01d04fd07a7b08d63f3680ff9d05c4f7b4880f1bae10a8d2f30c6c2f407687"
+          "content" : "a8d9d06554e23286edb542d9adf15d057bda0399455a8f04ceb27e39bea1a0ac"
         },
         {
           "alg" : "SHA-512",
-          "content" : "cdcd2d74994ccdb4216c61d061e83b78f6040179d4478b31e0c573000bf20cc168e4760e3f92c6cf655629e448e1a421a52d091c2fe8fbfe5bc92fba8b6b3351"
+          "content" : "5d636df3cd433af7c97de5093044055946dd635418b2b25c41e6f66195eeac1889fe71bd18e62a174c7dacdbda4dc42ef3c0f800bd2655fb6d1937824be498b6"
         },
         {
           "alg" : "SHA-384",
-          "content" : "62b455850c60341e1c8373ca551e66866a67dec5eccb62bb2c3ed41318bd3a54e5851153ec9d514bcd86f1ca1be47248"
+          "content" : "c076fd6aa59bf8150979f2b332899c5ae0137944536fbb96e2eeec6426a296af0eecde5f5e7f9b8583ece730fa054fd6"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "2e497c39117d3d1045f2e3d9f0402a135f6db966de13b56c8e5863f61084a42e918c589999c6c726268fd601c6d791b1"
+          "content" : "34545e6034e48a9c3b0e348784a3c70a26c0c0ff13177d2cf8d0d93f1350f050fe7189db602d20931305631353d69873"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "bdea07b64fbdd44b97029333d2cf9de82882734eae5d022bfeec2981dfc0d7a2"
+          "content" : "6c096eaa5e97527a9a345821e313dca38c2e018d1453f2be71d04501ba3726a5"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "6f89ee3e9203b0cb27034c78238006bd8201f1469c5e5bdf318fefc95b04e5e9ed2161efeac5384b0abacbbecbf7accbe8be464fd067c6b6d48e93fc320ec4ba"
+          "content" : "8571cf3c48fca3c1a70f341890366a67607201eebac59cdc449abdf6be87139d483ee05969d4b8e926df5667f78013051b69e4d980eca205b4a133ec0f007b38"
         }
       ],
       "licenses" : [
@@ -147349,7 +147670,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-web@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -147359,45 +147680,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-web-common@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-web-common",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "236600e7e9e432139011be16b60b04bd"
+          "content" : "e990f7d95d4dc56d51b73b56ffc1747c"
         },
         {
           "alg" : "SHA-1",
-          "content" : "99f77a369f2cf586b6fb6a17c2efe62bf65ccfc9"
+          "content" : "63e398a0a9de83952f6d7a24498ee31b5ee98f82"
         },
         {
           "alg" : "SHA-256",
-          "content" : "382d78cefa8f5869d0448dcbb4b52dfeaa1ff9ed8e52b8995dd22e30c92a2ec7"
+          "content" : "e6938a7c555ae87ccde10af71cfb264483ea7f952e7d7724e4196bef21cec64d"
         },
         {
           "alg" : "SHA-512",
-          "content" : "8ab3151713a38df011a95e79ac0b9aff57126a03807f8c83631951e32d13e50f6b453232697b997ea344732c19ea3c3a5c328c74b7ea704a689656776f9ba26f"
+          "content" : "2d1c1afaa8b03d11041dd903c5d2a1e6ddaa4d499052da07d9eed6f8b2eacddac38846b419f1fa458c99628f633a0193cd197515234929c401c337825d83a0fb"
         },
         {
           "alg" : "SHA-384",
-          "content" : "a9af6e1fd664224bf448f3895a3f172401876075044037f0677bf239d7be4b0ac0a96166d52a0e576dbeadeac80198e7"
+          "content" : "7f4147684dffda6ee5f205d39a4dbfeb87e484a33523c2e4e32215bb56fec6dbb20ae2e5ac8da6aa1a6d32165dc02e94"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "3406b998a9c3118770201fb031783423c25934f41ac4f446f156a926b042a073059c1a30b49707ff6a4b0ae27bfec204"
+          "content" : "b1b6fb79b84f1adce6430c152fad667ac954053039c8850596de6247831e754fa97741c5eee29551250c645f67587b70"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "10c28e1fb69581018569b9d9a0f5176978d1e668e354c180d074a59ad9b6eccf"
+          "content" : "8fb4c38ff680e4776ee0f133b4a7a9ebc4fa83634ef31ade679f15e022c49e41"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "1226ede0533b9a695acd4e0e07739e2c29616795bbff6a59c4dc7383ca59cc3cffc5199a04897937aa29d1dfea30def8e23e7f9e6cd7ba9c2538e48ff3cc6f8b"
+          "content" : "3432e09b72501f0cec472cc297f71843d9adce330994b6a51459b81f7117a88828a1f3db8658dc7721ee1f59ca743939d920d1b0ce4ea3906e2fce6a673f8a75"
         }
       ],
       "licenses" : [
@@ -147412,7 +147733,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-web-common@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -147422,45 +147743,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-common@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-auth-common",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "273c65dd61147f959f90db9e61dd6c9f"
+          "content" : "bb8d73a1cf72cc8bcc9946aab2de3eb0"
         },
         {
           "alg" : "SHA-1",
-          "content" : "0c1180678e5dc47aa3db7d345288919301cef0ed"
+          "content" : "d0c234db26f16b65e2f7e952276d7ec5915eba37"
         },
         {
           "alg" : "SHA-256",
-          "content" : "d18e8c606f337083023fb954ca60ea5a06a4fe54196f683711469946e2540dce"
+          "content" : "5103b6ce5121aa783707278b4ec08a19a0405d87b91dced1d9f6054d7ffb5dc1"
         },
         {
           "alg" : "SHA-512",
-          "content" : "8a6c2dc1e5a1e347cbabc470b6802f162a3cf816b6de31b8995d31d8305141fea876ac684e7fd037519d02ab68cbdb5145515081946a2e2f86882357d1b2465c"
+          "content" : "0c1f70b1cd906d16e9c80461ebfe28b794b42e5f5c0eade27573c55dde170b6587eb9358294ca97fb0f486c28f5deaccd0f3881a1e7658c05aaeab5cef6e8649"
         },
         {
           "alg" : "SHA-384",
-          "content" : "46fd54d4005126477549ed55d800a65392084dd2fb4197456e16e296393cfb238301aa2fa5dd78a3705428fe3b9da3f1"
+          "content" : "a7fc06358b29dd65d3b00043990ff0d5d3eb649511a44b447cd1b1f898dd1f676d0cf3d0fe29c675d5f6a7ad98e5af5d"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "4a8482ecea18695adca82c2846e4e6ff64a93ff9badac84d9020a640e1cb062de20eb280adefd1ec812c7801cd169bf8"
+          "content" : "b09a1bffdadb0f759b76565d7b25f4d65c4746192cdb4d0fc90e2ce245ec7cc53c2bf9df158a92a3ba99d3b6e91ef6d2"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "2d6b177ba0e0fa57d7267d7a16eab5a8331c920756fbeca1f7ef1475d32bf95e"
+          "content" : "e8402743330da18585039c4421a70d34ed6084d7a7bfd06ec324cc0f6169f871"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "7f295352f713e7d6121d11b8af5b2eefd4d09fc92722a76e4a4ad97befa9de11fee3fbf5f68c55881f759f1ed69e612cdfb3396aee3e54e4b6c8d03848c49c5c"
+          "content" : "9579f13f63831c70ba51ef336cff7ab1582b251ce85a6fd10df65e2f3f7d668c2322c0add5698b6833d5d5f45df5992ead63a9029812ad94ad8b5e8039d1125e"
         }
       ],
       "licenses" : [
@@ -147475,7 +147796,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-auth-common@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -147485,45 +147806,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-bridge-common",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x 3 eventbus bridge common configuration",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "0122ea7e90dab2d122325fbbd713d572"
+          "content" : "87cfa0e8e2bc4047c1349027a20202ae"
         },
         {
           "alg" : "SHA-1",
-          "content" : "9ee7058a82d7e6e7ab8a1436641ac964497998f5"
+          "content" : "b9bb282c457c95d5de4bc3c7b92fdd57cbf2ac82"
         },
         {
           "alg" : "SHA-256",
-          "content" : "175fc6af72dbecae11019f562e40892094d4d3c1172c40315f855593cb562067"
+          "content" : "a004fef3622ce6db8ba11c502f2c752dd0975eaf7c8e940e71c4c4ca0ccbf4cd"
         },
         {
           "alg" : "SHA-512",
-          "content" : "47d843e03be61b725593fd5d8a3b0a87038a73a3e0d27bfab8ce1edd694430a75836f3a85b34ac806023c8a3df208a541b50fd16bbaf04e460ba4ad95a310b7c"
+          "content" : "792ba6fe6bd56a500586f8c4e5b6eb25e642fa5c440cb2d4e2c745f2f33071025d894031ab7a790ed8acd4763f03acdcbe799f09a7cc4ca8a119ddc2a6e97e17"
         },
         {
           "alg" : "SHA-384",
-          "content" : "dfd00428d228274732f703d25c444c17456fa273ca49a3680aa536f2ef5bed04b07e921d7922840da132ae068f14f445"
+          "content" : "1bc9f290693b41a88dccc056f147136b67dcf92fe1decd221fabf228700f15629f9d7f62da4d4cff97ec8728ee6e032f"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "ed6a9c5ea16f3ec615ab1d875fe0ecfc289c067828b13501ac42b2a1b20cf845e0575bd9fe9db266596ecc141c0ac062"
+          "content" : "5c1874df1dd31fc41147fed402589dd9ad11fb8b832d6df5aed32c8be02c600015f9b38ee29bfe994bd1f82e13be4513"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "af9be9c9e6686f57eee0be38ce2f313682da0c6d9c2a133240bcd0e4c7b8db29"
+          "content" : "daca0952e0ed33b29c9b59148ef8dc8ce4ab2928fb5abe20d83589bf88b065b7"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "b606be6820695f65724bd46dffe7fc11f57cf9f11c869d7f28122f70cd7965ebb1a333ec81e6ffbe8d97d88554ae291ff9c363243454bf0f8d225f6006e176ff"
+          "content" : "966c669a76b78a2a389ec7ba691135c620e9b7b142ed7df03023c570480651a2fe1d843f873d002d4c72f1c9fef8d2ee79adacbffbc4e81c3ab8b642401eeb72"
         }
       ],
       "licenses" : [
@@ -147538,7 +147859,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -156122,45 +156443,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-web-client@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-web-client",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "9fdedc0df122e839f68b71ad9b80a809"
+          "content" : "6224df074a985a3c78279604ba7d98bd"
         },
         {
           "alg" : "SHA-1",
-          "content" : "e2483a030edefd02493802856746358ac5a4f498"
+          "content" : "ed984446e2ce0c751488c65d3ca5c85fc51ca9c7"
         },
         {
           "alg" : "SHA-256",
-          "content" : "17ab04c1a702b11814949e0393b3051b4b8dce81c66b8c79e6333333bc340688"
+          "content" : "57ef54f7f385d5e43b7b8cb2847c42ebcf259f2a6972a37aa3dc80ff4f2799ec"
         },
         {
           "alg" : "SHA-512",
-          "content" : "3ce245c9584844820cb0f225a91d668661500419c20401176063364d8fbfb446cfc57097dd59bc10af14276c215481b23273647e1b9c349a47140ce630f45baa"
+          "content" : "9d87b893acf00b7623174437b295a9b08e51744ce683f7440882ce052be910daae0c72443f50a7caeb8036984b60ea1b88f867eb413af167cf2e13e7064d3388"
         },
         {
           "alg" : "SHA-384",
-          "content" : "0a646e928eaa21623e021e501284e2f3995bd0bba7316abd2e946a6561d139cd4ea44b0d768eb85a474357c7f8d3d8ac"
+          "content" : "d3c188977a62d41ba6c949e6d13eda76b321968819b8fc97cbd0af9832e388ad037f9bad4d1e9c5dbec20e88ff93a1cf"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "2edc0376247904c0aa0ec0f43e523bcc9c46211a084dc5b052b8bcb2d52e54c236c9d6d34ab381915325f8b5e5509319"
+          "content" : "eb1feceb1d4caff4257b6b21975166510435564ece0746f6b29e1772248aa09f6e7300901f136be00250a57b838ebf18"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "ad15a0f3d11a67294a1ba55e5b6d00383e9c368b50d039ef43f4419f5b144e16"
+          "content" : "dcff337494818dc071256a2e3e9dcff20a000ee722e557f245ab8dac1a4361cc"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "5c0bf7fb6bddf74ca3599846917da78fdb537c8c581b0dffafdd1a2666ae3bdce247beddf04450e2792166643484a236e0339f0016b8168b02de0075f2064a8d"
+          "content" : "d268baf2e6cff206bc7b5fa236b822ba4ed849857051cf385260ba6861ed3604d35243a689de17c45891bce07b265c040329704fad2d6c47442ee76fc22ef17f"
         }
       ],
       "licenses" : [
@@ -156175,7 +156496,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-web-client@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -156185,45 +156506,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-uri-template@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-uri-template@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-uri-template",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "cf2d211ae812463acef4bc9a763cbf48"
+          "content" : "0d5ce51e0836e18d27f15700d50675b5"
         },
         {
           "alg" : "SHA-1",
-          "content" : "fca5b7bdcb2ac231956e6bc88a6236167149afc3"
+          "content" : "47e380178351aca6f2a162e9facc031fdfdfd9b5"
         },
         {
           "alg" : "SHA-256",
-          "content" : "f35c63f032300c1598ec687c26bb27bb27e66b2a4cb5d564da6dd48e174baffb"
+          "content" : "4813ea6faa74899e5f317ad223608fef905c2b83cee9eca76393e9e2853f3b4d"
         },
         {
           "alg" : "SHA-512",
-          "content" : "5123a41d6140d005981ed2fb28aeebad6f3de7c64047430d158d1131af5b514f2cd4643595ebf48892c2a28c0f8906d679e5786f629b74d21cbe4a98192d53ea"
+          "content" : "46b351b1fe4cb5903267a57752a5fcbd47e6ae2d1db13344b33d8e5e3725a2ca618981825ed36328a08be99d356c7e5892eee701fb02f9b2b239e9a0ac0a27c6"
         },
         {
           "alg" : "SHA-384",
-          "content" : "d5670ef6b938db6694a213c245364e980c2517ba2b246f8ffbf416a6a27383399c7f2000b5717ff9cbbeab1dca1f9f98"
+          "content" : "837af8ccb57dd1b37a03293c8af2608a9804d35a77ae42584185e8f177209bc25665e761f2f4eb401fca435e678b3721"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "601e21b3225d5adb9053ca8d7ac933e106a5e15e22da1af055a6660bd8605c5e4a607a545d0d81aa1f317665cb3cffd9"
+          "content" : "6e5812307634ea6494c23dd66ea267c44bc9f6a34438fe9c3da54fa489213ef084a9bd56a5cdade2bbf7031c7abad7d0"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "4602b985115dba62a4894c26307a5e95bafecfb4e2608155b078449dec3bd88d"
+          "content" : "275543f08aa59393a6ddc0f9bc091942036dcaa1cd3361c5fbe52f971ded9148"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "d421f3bef493aa9211ac874a2e85194dbf30886748b827873b1d3c9b882c8fa3f66d1f6f30851509b05c6c491cc3211e1fc0dc79c81aeb19e2a2c32141fb1540"
+          "content" : "904ac8c04ca09c012eea9d9c20cf24227d41f93fecf7b8fa860ccbfffb4c1aaa3a8dd2c78d4ea5f42d12aefdb9ac5b043e5978dacf18e5672105b9a0a6e395b3"
         }
       ],
       "licenses" : [
@@ -156238,7 +156559,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-uri-template@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-uri-template@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -156328,45 +156649,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-auth-properties",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "3d02d0ff0c7fb66e290a6053d3486f59"
+          "content" : "56afa09c680395b0df2d2608f79dfefe"
         },
         {
           "alg" : "SHA-1",
-          "content" : "b30c59ad32111c67193aeac01d3ddf5785889ab9"
+          "content" : "a6159c4f01bc97a90ca4542f1b0bf05690cf9f23"
         },
         {
           "alg" : "SHA-256",
-          "content" : "17010224b102a3218f76c2c7bc87aa174bfe575946c191f879d45bbddae9b5ee"
+          "content" : "04eaadce90654d79057988432014822b9543dac2b59350b756260e2179748e4b"
         },
         {
           "alg" : "SHA-512",
-          "content" : "a6f2198931e2f2508cc3bce6fef329e5bf12d665c67561f86c753ed0bc925b19ccdcf8e1e1b71d45c88536b113ccc947be6c8b3ba38d59775a2e5585cff49312"
+          "content" : "759ed9b7fb624522dcd861e8b3af1a3e78bce5d1f4cea94d37ff27fc4058f11629c9e38eab2956e8e96dae99fa9ed7a41babef5ee6f67fc0310aecdecf82ebfa"
         },
         {
           "alg" : "SHA-384",
-          "content" : "6bbec0c3e3402534fd7e67c8331928d18afad539bca4d295a85c88e0bd8dae7401e9ddf303a6c70d387600097f76fb70"
+          "content" : "662d736fc15eaa986239f307fe9faabb953c833f7823b8a0837f99c0fbea9ab8cf781bed74abc8d165e53b0cae72e820"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "edc5546faec9fb6a157fcd906cc69561e1f7ecee2560a8e80abeed82f0451a8768a12cc741277d53e977cb941ba5835b"
+          "content" : "88e3353ce2edbcb562ebec6adbd1e3c60c60b54f3d1196f03d49fd4746acd72e66e2fcc5bdcda70e0fa7a06f24735d58"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "fabb882acd9045abed56f81d9e2353a383b0b90e0340d877a05dc26dfff0b2d5"
+          "content" : "96b48d9c0116e9e65aa5705e8ad6256d5a1684c8075e54abef9135f153f653fa"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "009de3efaa7082975fb018e4d31eceb94e534b07628553d523e1beeacf887d6ddf61e695c3357daf4862efbf3bc4aa5cb13131b710d8701dbbbf9801d79f4b64"
+          "content" : "99767191ea563c8bfb7c251e546a3d6629e224cf69b9689c5930be0b820f0a9b82ad650bcb24516ea3491508f2e5b7fc588b7d819c3e533de274dfb1c2bae958"
         }
       ],
       "licenses" : [
@@ -156381,7 +156702,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -156391,45 +156712,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-auth-jwt",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "c34852826f387b47ef21775d6a50ca7f"
+          "content" : "ef717e13b04ac3f9e9dfeaefe4a2111f"
         },
         {
           "alg" : "SHA-1",
-          "content" : "2e7e03b0d1a76ff8dd94aeea5103cdb8a8c8cdcc"
+          "content" : "dc71d684e1f00364386defcf4493ca36b176f991"
         },
         {
           "alg" : "SHA-256",
-          "content" : "82a85bc7170e30d2ddb7cbcdac6041848b1c56ecea80e252efa28502273fd093"
+          "content" : "2329b1cb728fe533ae77f711b00cde7649f616a7a6231cf7588c15e21315373e"
         },
         {
           "alg" : "SHA-512",
-          "content" : "880b9210c03e0ddb16d77241ae1e0ed4759acde380bda48dacefb6987b7949ac90580c158f5036a8b46ce8c031956570ddf45429a1a6bf89c357f555752c8f26"
+          "content" : "22f3685135c99184bcddfad12217c9b778f758429ea88f5f7fc1bb051e1f0edad14dc3aaae177ccfefe82c1d0d3db90a3a94858041f0bd541f89aac3f7595304"
         },
         {
           "alg" : "SHA-384",
-          "content" : "f20164cd0587b3017f41bd13e641f0d977069fb0dc817a54b05614599bd26f66c7b0424a6ec99c58a84f2254d7043a4a"
+          "content" : "5649fcd5a17c7707ca8fa34889444657af3be1986fefbda9e4d105ee21e9814784c5deab94b843fbff2a7d676989c049"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "e8f3902db2f48526a8b49fe85000083e8704fac0b8a7ed3e4385bc0844a9b682d91c631ca08c90e2610e4bec005630dc"
+          "content" : "102d287a76984c9a5b437332f1c4321c7f951bd866d465a2db0f11a0d6d3a6df00c12e6b46bad763be068a1087a82c9c"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "424c749f1e95a6fff421554a74628be6d4de365076e73ab4851b998a85227015"
+          "content" : "dc697af028799722ec91836c83d79deee824c9fc07e6809b81a6f779b8808885"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "126fc5a204a4f5fc42129b6e7a4eeec1a70dc9811d8ae6f69b54b31f8ff53e5a559ac5b7d3aa229547caf0d4b483476a39c4e079aec139cdf05437744b3e0ee0"
+          "content" : "7a058b4c496c3ee57783db10754f63b1739c0216c3ed68b2ca09e779b3f7ea29e732b58ec402a38c6884586631748106e8aeb88e581fc5d372500bc6a6fe1601"
         }
       ],
       "licenses" : [
@@ -156444,7 +156765,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -157611,45 +157932,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-codegen@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-codegen@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-codegen",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "9b83022b2320776e3b6efc0700e91316"
+          "content" : "fcc418d2e8dc1b11a0c61bd7f07e5c5c"
         },
         {
           "alg" : "SHA-1",
-          "content" : "01bd0c889d9dc6705f56e051affd2c1bdc5b07eb"
+          "content" : "8be935f1595facf22b057c7066d8cc3952371d75"
         },
         {
           "alg" : "SHA-256",
-          "content" : "d19b1c0033fdc7114be04edb9877c9df8a3368b2ff2610191279d1b79f7f7c27"
+          "content" : "b82fe8fe7324af7a37fd41940c228af99ea9c400e96ac55d0cfe8016b85b5337"
         },
         {
           "alg" : "SHA-512",
-          "content" : "cee589fa0c4139c75aa4ca6c4e6314c4ad394e7b68351a00c45db6c7946ef0c226699677a2cda8b0378ba93ef421709c79be347cc8e38417be2185a6c8ed0430"
+          "content" : "3aadc60fd78da5240feb27115e4f5e40b047ce2a0cdfc7ce2257f1173dcbe307822542fae4c563fb261f7965965a25fc6f50398e3994eb714886f3adfe6e8ea8"
         },
         {
           "alg" : "SHA-384",
-          "content" : "0918392cda235e05769c84dd376eee08d1d82f133d1c4fe36c76b1009f47454f185fb42a9273cd408b8ecb2a12a9b507"
+          "content" : "77ccdb812ca434bb28cd8b279eeaa2a8cf413d331557d7f8606962ddc0bae65a7ae621938a7cc5fe0076691adb18bc95"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "fdfd9161edd5010834b11c7069d9bf57c859e104aaad7f7e7d0cd7f2517131fd52d0613ea36bf8501fb9d06308aa7a9c"
+          "content" : "ba71d5c99920b8b475b6b561c479a6dd38152b340890c286b7f909252a4423cea0e8956baf0003f16429056ff45953ff"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "8a6896990af17101b71ceff17c7605514c8ad377d3e9815556f21cedb3744f24"
+          "content" : "bbd7a50458f36e03e12c40b0284174c677946d6bd4f989983c15b5496b41086d"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "32e5c765a6070b3e5ee125ad3d6201f6beb8f70629e6d88255558ecd62d6f096e9dfb33d09a610146440f9b232d291c13596049f7881c0eec54878fe95e2c73c"
+          "content" : "ead0ac5f91cdd7bbd1f72d53c509e6731dfe7c068c13c503ef5ed583c199efd7bdf39dd51879099c6c949c74d0c99861f3f5c497461fe88a0084789abd8cb2fb"
         }
       ],
       "licenses" : [
@@ -157664,7 +157985,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-codegen@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-codegen@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -169309,45 +169630,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.26?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-auth-oauth2",
-      "version" : "4.5.26",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "1a69157b66b326f6e7b4d8b6f05a7dee"
+          "content" : "8b5389d6d84ab1b49a651edcf96fa9c8"
         },
         {
           "alg" : "SHA-1",
-          "content" : "9b4a2a6161cf0236b34cbae900633d7eb1a15260"
+          "content" : "dd05872080424eb98a5a8be2218723d9521eb420"
         },
         {
           "alg" : "SHA-256",
-          "content" : "117cd6c4d90a0e479cbbc52b3221091725e33c7caeaaa51e92ea01be3b7144f2"
+          "content" : "73200e1855708e6a0142b419403944af4da58094cafae670ba622151e24781df"
         },
         {
           "alg" : "SHA-512",
-          "content" : "65e00bca20265b59b85829c2d03d334487d62887b88726e75b1b15cd061e2e36cf7d07611b91ccabf43311814c9dbb26562d189b4b7f15082b9684a285f72c2f"
+          "content" : "7646851b2f6e0bdd30dc3417a33a0566ea33ed07956bef3f0694d3384a1b261da07e24c30abe8cb848384864393a30871dbc0b2963b71b5d91ef44551aa0d55a"
         },
         {
           "alg" : "SHA-384",
-          "content" : "389598386f6d8051093e08821906f29755e29628301b7eb4de0880f15f643ed558fbba45027f44e2e5733d28315d6930"
+          "content" : "bd8a9345f79ddfa3c99cc0dacbf2fd0144b1e0684a9ab369ca5d88b4badf9bfd46bd14d942398a6cdb4271f7c029f53a"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "b7ac08ccf18bbeefd097aab881a9a4b2f4ba6c1b7d292247a7dc03b3901f453919a680289defd294e783e03d7054ffc4"
+          "content" : "77ffa4e8d84e989e9f6fb86e511062b79a4df1123b7712d266f4dfa8affc85de6f3adb1543d6ed55d1c6b357425f3183"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "919cd5921e5ae1370e3054e968e4fee6a9ef6d5791b8f9143941f3a20263a863"
+          "content" : "1d735fd45884e9e3e9e6c15e1404fee77be2f60b6a975cc0293281ef531eca89"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "353d5edde2f051a5bc65e9bdcd33f9d3604da3643d3e4a0cd850f94ef3c057271645a02cc275329f182d48ef7c8d33873d5934ff3093509fdb0f6cb54f353458"
+          "content" : "32e9f857d36c4c03c4b716afa26c396878a817deabc6071ec43045d778da43cdbce6779b4d7e81b6e71e4e032471b32ea3dacc87ddbad462843c32dd22e95e73"
         }
       ],
       "licenses" : [
@@ -169362,7 +169683,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.26?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -219033,7 +219354,7 @@
         "pkg:maven/org.eclipse.sisu/org.eclipse.sisu.inject@0.9.0.M4?type=jar",
         "pkg:maven/org.ow2.asm/asm@9.9?type=jar",
         "pkg:maven/com.google.inject/guice@5.1.0?classifier=classes&type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.guava/failureaccess@1.0.3?type=jar",
         "pkg:maven/javax.inject/javax.inject@1?type=jar",
         "pkg:maven/org.codehaus.plexus/plexus-utils@4.0.2?type=jar",
@@ -219214,13 +219535,13 @@
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+      "ref" : "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar"
+        "pkg:maven/org.jspecify/jspecify@1.0.1?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
+      "ref" : "pkg:maven/org.jspecify/jspecify@1.0.1?type=jar",
       "dependsOn" : [ ]
     },
     {
@@ -220649,7 +220970,7 @@
         "pkg:maven/org.apache.camel/camel-core@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.velocity/velocity-engine-core@2.4.1?type=jar",
         "pkg:maven/org.jboss.forge.roaster/roaster-jdt@2.31.0.Final?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -220657,7 +220978,7 @@
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.41.0?type=jar",
+      "ref" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.50.0?type=jar",
       "dependsOn" : [ ]
     },
     {
@@ -220799,6 +221120,10 @@
       "dependsOn" : [
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.41.0?type=jar"
       ]
+    },
+    {
+      "ref" : "pkg:maven/com.google.errorprone/error_prone_annotations@2.41.0?type=jar",
+      "dependsOn" : [ ]
     },
     {
       "ref" : "pkg:maven/org.apache.camel/camel-servlet@4.18.6-SNAPSHOT?type=jar",
@@ -222473,7 +222798,7 @@
       "ref" : "pkg:maven/com.datastax.cassandra/cassandra-driver-core@3.10.0?type=jar",
       "dependsOn" : [
         "pkg:maven/io.netty/netty-handler@4.1.137.Final?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/io.dropwizard.metrics/metrics-core@3.2.2?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/com.github.jnr/jnr-ffi@2.1.7?type=jar",
@@ -222590,6 +222915,10 @@
         "pkg:maven/org.reactivestreams/reactive-streams@1.0.4?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
+    },
+    {
+      "ref" : "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
+      "dependsOn" : [ ]
     },
     {
       "ref" : "pkg:maven/io.projectreactor/reactor-core@3.6.9?type=jar",
@@ -223349,7 +223678,7 @@
       "dependsOn" : [
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
         "pkg:maven/com.squareup.retrofit2/converter-jackson@3.0.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
         "pkg:maven/com.squareup.okhttp3/okhttp-jvm@5.3.2?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar",
@@ -223431,7 +223760,7 @@
     {
       "ref" : "pkg:maven/com.fasterxml.jackson.datatype/jackson-datatype-guava@2.21.4?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar"
@@ -226273,7 +226602,7 @@
         "pkg:maven/org.apache.santuario/xmlsec@4.0.4?type=jar",
         "pkg:maven/org.opensaml/opensaml-saml-impl@5.1.6?type=jar",
         "pkg:maven/org.cryptacular/cryptacular@1.2.7?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.opensaml/opensaml-xacml-impl@5.1.6?type=jar",
         "pkg:maven/org.opensaml/opensaml-xacml-saml-impl@5.1.6?type=jar",
         "pkg:maven/org.jasypt/jasypt@1.9.3?type=jar"
@@ -226467,7 +226796,7 @@
         "pkg:maven/org.opensaml/opensaml-core-api@5.1.6?type=jar",
         "pkg:maven/org.opensaml/opensaml-core-impl@5.1.6?type=jar",
         "pkg:maven/org.opensaml/opensaml-xacml-api@5.1.6?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar",
         "pkg:maven/net.shibboleth/shib-support@9.1.6?type=jar"
@@ -226755,7 +227084,7 @@
     {
       "ref" : "pkg:maven/tech.tablesaw/tablesaw-core@0.44.4?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.apache.commons/commons-math3@3.6.1?type=jar",
         "pkg:maven/it.unimi.dsi/fastutil@8.5.13?type=jar",
         "pkg:maven/org.roaringbitmap/RoaringBitmap@1.0.5?type=jar",
@@ -226872,7 +227201,7 @@
       "dependsOn" : [
         "pkg:maven/io.grpc/grpc-util@1.79.0?type=jar",
         "pkg:maven/io.grpc/grpc-core@1.79.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.45.0?type=jar",
         "pkg:maven/io.perfmark/perfmark-api@0.27.0?type=jar",
         "pkg:maven/io.grpc/grpc-api@1.79.0?type=jar",
@@ -226885,7 +227214,7 @@
         "pkg:maven/io.grpc/grpc-api@1.79.0?type=jar",
         "pkg:maven/io.grpc/grpc-core@1.79.0?type=jar",
         "pkg:maven/org.codehaus.mojo/animal-sniffer-annotations@1.26?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -226893,7 +227222,7 @@
       "dependsOn" : [
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.45.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -226912,7 +227241,7 @@
         "pkg:maven/com.google.android/annotations@4.1.1.4?type=jar",
         "pkg:maven/org.codehaus.mojo/animal-sniffer-annotations@1.26?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.45.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/io.perfmark/perfmark-api@0.27.0?type=jar",
         "pkg:maven/io.grpc/grpc-context@1.79.0?type=jar"
       ]
@@ -226942,7 +227271,7 @@
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar",
         "pkg:maven/com.google.protobuf/protobuf-java@3.25.5?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-common-protos@2.63.2?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/io.grpc/grpc-protobuf-lite@1.79.0?type=jar"
       ]
     },
@@ -226957,7 +227286,7 @@
       "dependsOn" : [
         "pkg:maven/io.grpc/grpc-api@1.79.0?type=jar",
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -226965,7 +227294,7 @@
       "dependsOn" : [
         "pkg:maven/io.grpc/grpc-api@1.79.0?type=jar",
         "pkg:maven/org.codehaus.mojo/animal-sniffer-annotations@1.26?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.45.0?type=jar"
       ]
     },
@@ -227726,7 +228055,7 @@
         "pkg:maven/io.grpc/grpc-services@1.79.0?type=jar",
         "pkg:maven/io.grpc/grpc-stub@1.79.0?type=jar",
         "pkg:maven/io.grpc/grpc-netty-shaded@1.79.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -227742,7 +228071,7 @@
         "pkg:maven/io.grpc/grpc-core@1.79.0?type=jar",
         "pkg:maven/io.grpc/grpc-protobuf@1.79.0?type=jar",
         "pkg:maven/io.grpc/grpc-util@1.79.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.protobuf/protobuf-java-util@3.25.5?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.45.0?type=jar",
         "pkg:maven/com.google.code.gson/gson@2.13.2?type=jar"
@@ -227755,7 +228084,7 @@
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar",
         "pkg:maven/com.google.code.gson/gson@2.13.2?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.45.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.j2objc/j2objc-annotations@3.1?type=jar"
       ]
     },
@@ -227832,7 +228161,7 @@
         "pkg:maven/io.netty/netty-codec-http2@4.1.137.Final?type=jar",
         "pkg:maven/io.grpc/grpc-core@1.79.0?type=jar",
         "pkg:maven/io.netty/netty-handler-proxy@4.1.137.Final?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.45.0?type=jar",
         "pkg:maven/io.perfmark/perfmark-api@0.27.0?type=jar",
         "pkg:maven/io.netty/netty-transport-native-unix-common@4.1.137.Final?type=jar",
@@ -228326,13 +228655,29 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-api@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/commons-codec/commons-codec@1.21.0?type=jar",
-        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.83?type=jar",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.83?type=jar",
-        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.83?type=jar",
+        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
         "pkg:maven/org.apache.httpcomponents.client5/httpclient5@5.5.1?type=jar",
         "pkg:maven/org.apache.velocity/velocity-engine-core@2.4.1?type=jar",
         "pkg:maven/org.apache.camel/camel-util@4.18.6-SNAPSHOT?type=jar"
       ]
+    },
+    {
+      "ref" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "dependsOn" : [ ]
     },
     {
       "ref" : "pkg:maven/org.apache.camel/camel-as2@4.18.6-SNAPSHOT?type=jar",
@@ -228345,7 +228690,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-asn1@4.18.6-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.83?type=jar",
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
         "pkg:maven/com.beanit/asn1bean@1.14.0?type=jar",
         "pkg:maven/com.beanit/asn1bean-compiler@1.14.0?type=jar",
         "pkg:maven/jakarta.xml.bind/jakarta.xml.bind-api@4.0.5?type=jar"
@@ -228376,7 +228721,7 @@
     {
       "ref" : "pkg:maven/org.asteriskjava/asterisk-java@3.41.0?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/org.reflections/reflections@0.10.2?type=jar"
       ]
@@ -228889,7 +229234,7 @@
         "pkg:maven/software.amazon.awssdk/sts@2.41.28?type=jar",
         "pkg:maven/software.amazon.awssdk/apache-client@2.41.28?type=jar",
         "pkg:maven/com.google.code.gson/gson@2.13.2?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.apache.camel/camel-jackson@4.18.6-SNAPSHOT?type=jar"
       ]
     },
@@ -229051,7 +229396,7 @@
         "pkg:maven/software.amazon.awssdk/netty-nio-client@2.41.28?type=jar",
         "pkg:maven/software.amazon.glue/schema-registry-serde@1.1.19?type=jar",
         "pkg:maven/software.amazon.glue/schema-registry-common@1.1.19?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.protobuf/protobuf-java@3.25.5?type=jar",
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
@@ -229177,7 +229522,7 @@
         "pkg:maven/org.apache.avro/avro@1.11.3?type=jar",
         "pkg:maven/org.apache.commons/commons-compress@1.21?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar"
       ]
     },
@@ -229437,7 +229782,7 @@
         "pkg:maven/com.squareup.wire/wire-swift-generator@4.3.0?type=jar",
         "pkg:maven/com.squareup.wire/wire-profiles@4.3.0?type=jar",
         "pkg:maven/com.squareup.okio/okio@3.4.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.jetbrains.kotlinx/kotlinx-serialization-core-jvm@1.4.0?type=jar"
       ]
     },
@@ -229446,7 +229791,7 @@
       "dependsOn" : [
         "pkg:maven/com.squareup.wire/wire-runtime-jvm@4.3.0?type=jar",
         "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-common@1.7.10?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk8@1.7.10?type=jar",
         "pkg:maven/com.squareup.okio/okio@3.4.0?type=jar"
       ]
@@ -229470,7 +229815,7 @@
         "pkg:maven/com.squareup.wire/wire-grpc-client-jvm@4.3.0?type=jar",
         "pkg:maven/com.squareup.wire/wire-grpc-server-generator@4.3.0?type=jar",
         "pkg:maven/com.squareup.okio/okio@3.4.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -229489,7 +229834,7 @@
         "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk8@1.7.10?type=jar",
         "pkg:maven/com.squareup.wire/wire-runtime-jvm@4.3.0?type=jar",
         "pkg:maven/com.squareup.okio/okio@3.4.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -229538,7 +229883,7 @@
         "pkg:maven/com.squareup.wire/wire-runtime-jvm@4.3.0?type=jar",
         "pkg:maven/com.squareup.wire/wire-profiles@4.3.0?type=jar",
         "pkg:maven/com.squareup.okio/okio@3.4.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -229565,7 +229910,7 @@
     {
       "ref" : "pkg:maven/com.google.jimfs/jimfs@1.1?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -230406,16 +230751,16 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar",
-        "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.83?type=jar",
-        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.83?type=jar",
+        "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
         "pkg:maven/net.i2p.crypto/eddsa@0.3.0?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.83?type=jar",
+      "ref" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.83?type=jar",
-        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.83?type=jar"
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar"
       ]
     },
     {
@@ -230823,7 +231168,7 @@
         "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar",
         "pkg:maven/com.fasterxml.jackson.datatype/jackson-datatype-jsr310@2.21.4?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -231126,8 +231471,8 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/commons-codec/commons-codec@1.21.0?type=jar",
-        "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.83?type=jar",
-        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.83?type=jar"
+        "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar"
       ]
     },
     {
@@ -232516,7 +232861,7 @@
         "pkg:maven/org.apache.commons/commons-compress@1.28.0?type=jar",
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.82?type=jar"
       ]
     },
@@ -232814,7 +233159,7 @@
     {
       "ref" : "pkg:maven/org.reflections/reflections@0.9.10?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.javassist/javassist@3.29.2-GA?type=jar",
         "pkg:maven/com.google.code.findbugs/annotations@2.0.1?type=jar"
       ]
@@ -232913,7 +233258,7 @@
         "pkg:maven/org.locationtech.proj4j/proj4j@1.2.2?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.11.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.checkerframework/checker-qual@3.12.0?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.4?type=jar",
@@ -232936,7 +233281,7 @@
       "ref" : "pkg:maven/org.apache.calcite/calcite-linq4j@1.34.0?type=jar",
       "dependsOn" : [
         "pkg:maven/org.checkerframework/checker-qual@3.12.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -232962,7 +233307,7 @@
       "ref" : "pkg:maven/com.google.uzaygezen/uzaygezen-core@0.2?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -233038,7 +233383,7 @@
         "pkg:maven/org.apache.hadoop.thirdparty/hadoop-shaded-protobuf_3_7@1.1.1?type=jar",
         "pkg:maven/org.apache.hadoop/hadoop-annotations@3.3.6?type=jar",
         "pkg:maven/org.apache.hadoop.thirdparty/hadoop-shaded-guava@1.1.1?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/commons-cli/commons-cli@1.2?type=jar",
         "pkg:maven/org.apache.commons/commons-math3@3.6.1?type=jar",
         "pkg:maven/org.apache.httpcomponents/httpclient@4.5.13?type=jar",
@@ -233289,7 +233634,7 @@
       "ref" : "pkg:maven/org.apache.curator/curator-client@5.5.0?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.zookeeper/zookeeper@3.6.3?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -234580,7 +234925,7 @@
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
         "pkg:maven/commons-codec/commons-codec@1.21.0?type=jar",
         "pkg:maven/commons-io/commons-io@2.21.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/org.slf4j/jcl-over-slf4j@2.0.16?type=jar",
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar",
@@ -235918,7 +236263,7 @@
     {
       "ref" : "pkg:maven/org.apache.fory/fory-core@0.15.0?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -236098,7 +236443,7 @@
         "pkg:maven/com.google.apis/google-api-services-bigquery@v2-rev20251012-2.0.0?type=jar",
         "pkg:maven/com.google.api/api-common@2.57.0?type=jar",
         "pkg:maven/javax.annotation/javax.annotation-api@1.3.2?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.guava/failureaccess@1.0.3?type=jar",
         "pkg:maven/com.google.guava/listenablefuture@9999.0-empty-to-avoid-conflict-with-guava?type=jar",
         "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
@@ -236386,7 +236731,7 @@
         "pkg:maven/com.google.auth/google-auth-library-credentials@1.30.0?type=jar",
         "pkg:maven/com.google.auth/google-auth-library-oauth2-http@1.30.0?type=jar",
         "pkg:maven/com.google.http-client/google-http-client-gson@2.1.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.http-client/google-http-client-apache-v2@2.1.0?type=jar",
         "pkg:maven/org.apache.httpcomponents/httpcore@4.4.16?type=jar",
         "pkg:maven/org.apache.httpcomponents/httpclient@4.5.14?type=jar",
@@ -236404,7 +236749,7 @@
         "pkg:maven/com.google.auth/google-auth-library-credentials@1.30.0?type=jar",
         "pkg:maven/com.google.http-client/google-http-client@2.1.0?type=jar",
         "pkg:maven/com.google.http-client/google-http-client-gson@2.1.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.36.0?type=jar"
       ]
     },
@@ -236471,7 +236816,7 @@
         "pkg:maven/com.google.api.grpc/proto-google-cloud-functions-v2alpha@2.74.0?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-cloud-functions-v2beta@2.74.0?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-cloud-functions-v1@2.74.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.guava/failureaccess@1.0.2?type=jar",
         "pkg:maven/com.google.guava/listenablefuture@9999.0-empty-to-avoid-conflict-with-guava?type=jar",
         "pkg:maven/org.checkerframework/checker-qual@3.49.0?type=jar",
@@ -236656,7 +237001,7 @@
         "pkg:maven/com.google.code.gson/gson@2.13.2?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-cloud-pubsub-v1@1.127.0?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-iam-v1@1.59.1?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.guava/failureaccess@1.0.3?type=jar",
         "pkg:maven/com.google.guava/listenablefuture@9999.0-empty-to-avoid-conflict-with-guava?type=jar",
         "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
@@ -236817,7 +237162,7 @@
         "pkg:maven/com.google.flogger/google-extensions@0.8?type=jar",
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar",
         "pkg:maven/com.google.api/api-common@2.56.1?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.threeten/threetenbp@1.7.0?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.42.0?type=jar",
         "pkg:maven/com.google.auto.value/auto-value-annotations@1.11.0?type=jar",
@@ -236911,7 +237256,7 @@
         "pkg:maven/com.google.api.grpc/proto-google-cloud-secretmanager-v1beta2@2.82.0?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-iam-v1@1.59.1?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-cloud-secretmanager-v1@2.82.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.guava/failureaccess@1.0.3?type=jar",
         "pkg:maven/com.google.guava/listenablefuture@9999.0-empty-to-avoid-conflict-with-guava?type=jar",
         "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
@@ -237018,7 +237363,7 @@
         "pkg:maven/com.fasterxml.jackson.datatype/jackson-datatype-jsr310@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.guava/failureaccess@1.0.3?type=jar",
         "pkg:maven/com.google.guava/listenablefuture@9999.0-empty-to-avoid-conflict-with-guava?type=jar",
         "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
@@ -237212,7 +237557,7 @@
     {
       "ref" : "pkg:maven/com.google.api/api-common@2.45.0?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.auto.value/auto-value-annotations@1.11.0?type=jar",
         "pkg:maven/javax.annotation/javax.annotation-api@1.3.2?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.42.0?type=jar",
@@ -237262,7 +237607,7 @@
         "pkg:maven/com.google.api.grpc/proto-google-common-protos@2.65.1?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-cloud-aiplatform-v1beta1@0.101.0?type=jar",
         "pkg:maven/com.google.api.grpc/proto-google-cloud-aiplatform-v1@3.85.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.guava/failureaccess@1.0.3?type=jar",
         "pkg:maven/com.google.guava/listenablefuture@9999.0-empty-to-avoid-conflict-with-guava?type=jar",
         "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
@@ -237414,7 +237759,7 @@
         "pkg:maven/org.apache.httpcomponents/httpclient@4.5.14?type=jar",
         "pkg:maven/org.apache.httpcomponents/httpcore@4.4.16?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.45.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.j2objc/j2objc-annotations@3.1?type=jar",
         "pkg:maven/io.grpc/grpc-context@1.79.0?type=jar",
         "pkg:maven/io.opencensus/opencensus-api@0.31.1?type=jar",
@@ -237448,7 +237793,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-guava-eventbus@4.18.6-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -237897,11 +238242,11 @@
       "ref" : "pkg:maven/org.apache.camel/camel-vertx-common@4.18.6-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar",
       "dependsOn" : [
         "pkg:maven/io.netty/netty-common@4.1.137.Final?type=jar",
         "pkg:maven/io.netty/netty-buffer@4.1.137.Final?type=jar",
@@ -237912,7 +238257,8 @@
         "pkg:maven/io.netty/netty-codec-http2@4.1.137.Final?type=jar",
         "pkg:maven/io.netty/netty-resolver@4.1.137.Final?type=jar",
         "pkg:maven/io.netty/netty-resolver-dns@4.1.137.Final?type=jar",
-        "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.4?type=jar"
+        "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.4?type=jar",
+        "pkg:maven/io.netty/netty-tcnative-classes@2.0.81.Final?type=jar"
       ]
     },
     {
@@ -237920,34 +238266,34 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-web@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-web-common@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-bridge-common@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-bridge-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-web-common@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-auth-common@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -238013,7 +238359,7 @@
         "pkg:maven/io.netty/netty-transport@4.1.137.Final?type=jar",
         "pkg:maven/io.netty/netty-codec@4.1.137.Final?type=jar",
         "pkg:maven/org.eclipse.neoscada.utils/org.eclipse.scada.utils@0.4.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/io.netty/netty-buffer@4.1.137.Final?type=jar",
         "pkg:maven/io.netty/netty-common@4.1.137.Final?type=jar"
       ]
@@ -238033,7 +238379,7 @@
         "pkg:maven/io.netty/netty-codec@4.1.137.Final?type=jar",
         "pkg:maven/org.eclipse.neoscada.utils/org.eclipse.scada.utils@0.4.0?type=jar",
         "pkg:maven/org.eclipse.neoscada.protocols/org.eclipse.neoscada.protocol.iec60870@0.4.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/io.netty/netty-buffer@4.1.137.Final?type=jar",
         "pkg:maven/io.netty/netty-common@4.1.137.Final?type=jar"
       ]
@@ -238072,7 +238418,7 @@
         "pkg:maven/io.netty/netty-transport@4.1.137.Final?type=jar",
         "pkg:maven/org.eclipse.neoscada.utils/org.eclipse.scada.utils@0.4.0?type=jar",
         "pkg:maven/org.eclipse.neoscada.protocols/org.eclipse.neoscada.protocol.iec60870@0.4.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/io.netty/netty-common@4.1.137.Final?type=jar"
       ]
     },
@@ -238675,7 +239021,7 @@
         "pkg:maven/org.apache.httpcomponents/httpclient@4.5.14?type=jar",
         "pkg:maven/org.apache.httpcomponents/httpcore@4.4.16?type=jar",
         "pkg:maven/com.google.errorprone/error_prone_annotations@2.18.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.j2objc/j2objc-annotations@2.8?type=jar",
         "pkg:maven/io.opencensus/opencensus-api@0.31.1?type=jar",
         "pkg:maven/io.opencensus/opencensus-contrib-http-util@0.31.1?type=jar"
@@ -238698,7 +239044,7 @@
         "pkg:maven/io.atlassian.util.concurrent/atlassian-util-concurrent@4.0.1?type=jar",
         "pkg:maven/com.atlassian.httpclient/atlassian-httpclient-api@4.0.1?type=jar",
         "pkg:maven/joda-time/joda-time@2.12.7?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -238985,22 +239331,22 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-http-base@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web-client@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-web-client@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-uri-template@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-web-common@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-uri-template@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-uri-template@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-uri-template@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -239024,7 +239370,7 @@
         "pkg:maven/org.apache.camel/camel-http-base@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-attachments@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar"
       ]
     },
     {
@@ -239179,13 +239525,13 @@
       "ref" : "pkg:maven/org.apache.camel/camel-knative-http@4.18.6-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-knative@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web-client@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-web@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-codegen@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-codegen@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-codegen@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-codegen@4.5.35?type=jar",
       "dependsOn" : [
         "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.4?type=jar"
       ]
@@ -239775,7 +240121,7 @@
       "ref" : "pkg:maven/org.iq80.leveldb/leveldb@0.12?type=jar",
       "dependsOn" : [
         "pkg:maven/org.iq80.leveldb/leveldb-api@0.12?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -240024,22 +240370,22 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-main@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-platform-http-vertx@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-properties@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-jwt@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-auth-properties@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-jwt@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -240290,7 +240636,7 @@
         "pkg:maven/org.eclipse.milo/milo-sdk-client@1.1.1?type=jar",
         "pkg:maven/org.eclipse.milo/milo-stack-core@1.1.1?type=jar",
         "pkg:maven/org.eclipse.milo/milo-dtd-manager@1.1.1?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -240392,7 +240738,7 @@
       "ref" : "pkg:maven/io.minio/minio@8.6.0?type=jar",
       "dependsOn" : [
         "pkg:maven/com.carrotsearch.thirdparty/simple-xml-safe@2.7.1?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
@@ -240592,7 +240938,7 @@
       "dependsOn" : [
         "pkg:maven/com.google.code.gson/gson@2.13.2?type=jar",
         "pkg:maven/com.nimbusds/nimbus-jose-jwt@10.7?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.26?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.35?type=jar",
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.httpcomponents.client5/httpclient5-fluent@5.5.1?type=jar",
         "pkg:maven/org.apache.camel/camel-platform-http-main@4.18.6-SNAPSHOT?type=jar",
@@ -240603,10 +240949,10 @@
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.26?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -240795,7 +241141,7 @@
     {
       "ref" : "pkg:maven/com.github.openstack4j.core/openstack4j-core@3.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.yaml/snakeyaml@1.33?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml@2.21.4?type=jar",
@@ -240818,7 +241164,7 @@
       "dependsOn" : [
         "pkg:maven/com.github.fge/msg-simple@1.1?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -241071,7 +241417,7 @@
         "pkg:maven/org.apache.hadoop.thirdparty/hadoop-shaded-protobuf_3_25@1.4.0?type=jar",
         "pkg:maven/org.apache.hadoop/hadoop-annotations@3.4.2?type=jar",
         "pkg:maven/org.apache.hadoop.thirdparty/hadoop-shaded-guava@1.4.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/commons-cli/commons-cli@1.9.0?type=jar",
         "pkg:maven/org.apache.commons/commons-math3@3.6.1?type=jar",
         "pkg:maven/org.apache.httpcomponents/httpclient@4.5.13?type=jar",
@@ -241450,7 +241796,7 @@
       "dependsOn" : [
         "pkg:maven/javax.inject/javax.inject@1?type=jar",
         "pkg:maven/aopalliance/aopalliance@1.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -241573,8 +241919,8 @@
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
         "pkg:maven/org.apache.pdfbox/pdfbox@3.0.6?type=jar",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.83?type=jar",
-        "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.83?type=jar"
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.85?type=jar"
       ]
     },
     {
@@ -241586,9 +241932,9 @@
       ]
     },
     {
-      "ref" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.83?type=jar",
+      "ref" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.85?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.83?type=jar"
+        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar"
       ]
     },
     {
@@ -241638,7 +241984,7 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-platform-http@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web@4.5.26?type=jar",
+        "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
         "pkg:maven/org.jolokia/jolokia-server-core@2.5.0?type=jar",
         "pkg:maven/org.jolokia/jolokia-service-serializer@2.5.0?type=jar",
         "pkg:maven/org.jolokia/jolokia-service-jmx@2.5.0?type=jar",
@@ -242285,7 +242631,7 @@
       "ref" : "pkg:maven/org.apache.pulsar/pulsar-package-core@4.1.2?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.pulsar/pulsar-client-admin-api@4.1.2?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar"
       ]
     },
@@ -242293,7 +242639,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-pqc@4.18.6-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.83?type=jar",
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
         "pkg:maven/org.springframework.vault/spring-vault-core@3.2.0?type=jar",
         "pkg:maven/software.amazon.awssdk/secretsmanager@2.41.28?type=jar"
       ]
@@ -242340,7 +242686,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-reactive-executor-vertx@4.18.6-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -242529,7 +242875,7 @@
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
         "pkg:maven/commons-validator/commons-validator@1.7?type=jar",
         "pkg:maven/com.github.luben/zstd-jni@1.5.2-2?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/commons-codec/commons-codec@1.21.0?type=jar",
         "pkg:maven/io.opentelemetry/opentelemetry-exporter-otlp@1.29.0?type=jar",
         "pkg:maven/io.opentelemetry/opentelemetry-exporter-prometheus@1.29.0-alpha?type=jar",
@@ -242739,7 +243085,7 @@
     {
       "ref" : "pkg:maven/org.reflections/reflections@0.9.11?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.javassist/javassist@3.21.0-GA?type=jar"
       ]
     },
@@ -242774,7 +243120,7 @@
         "pkg:maven/org.apache.rocketmq/rocketmq-remoting@5.3.2?type=jar",
         "pkg:maven/org.apache.rocketmq/rocketmq-common@5.3.2?type=jar",
         "pkg:maven/commons-cli/commons-cli@1.5.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.googlecode.concurrentlinkedhashmap/concurrentlinkedhashmap-lru@1.4.2?type=jar",
         "pkg:maven/org.awaitility/awaitility@4.3.0?type=jar"
       ]
@@ -243661,7 +244007,7 @@
         "pkg:maven/io.swagger.parser.v3/swagger-parser@2.1.34?type=jar",
         "pkg:maven/com.github.java-json-tools/json-schema-validator@2.2.14?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar",
         "pkg:maven/com.fasterxml.jackson.datatype/jackson-datatype-jdk8@2.21.4?type=jar"
       ]
@@ -243697,7 +244043,7 @@
         "pkg:maven/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml@2.21.4?type=jar",
         "pkg:maven/io.swagger/swagger-models@1.6.16?type=jar",
         "pkg:maven/org.yaml/snakeyaml@2.3?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -243740,7 +244086,7 @@
     {
       "ref" : "pkg:maven/com.github.java-json-tools/json-schema-validator@2.2.14?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.github.java-json-tools/jackson-coreutils-equivalence@1.0?type=jar",
         "pkg:maven/com.github.java-json-tools/json-schema-core@1.2.14?type=jar",
         "pkg:maven/com.sun.mail/mailapi@1.6.2?type=jar",
@@ -243754,7 +244100,7 @@
       "ref" : "pkg:maven/com.github.java-json-tools/jackson-coreutils-equivalence@1.0?type=jar",
       "dependsOn" : [
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.github.java-json-tools/jackson-coreutils@2.0?type=jar"
       ]
     },
@@ -243762,7 +244108,7 @@
       "ref" : "pkg:maven/com.github.java-json-tools/json-schema-core@1.2.14?type=jar",
       "dependsOn" : [
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.github.java-json-tools/jackson-coreutils@2.0?type=jar",
         "pkg:maven/com.github.java-json-tools/jackson-coreutils-equivalence@1.0?type=jar",
         "pkg:maven/com.github.java-json-tools/uri-template@0.10?type=jar",
@@ -243773,7 +244119,7 @@
     {
       "ref" : "pkg:maven/com.github.java-json-tools/uri-template@0.10?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.github.java-json-tools/msg-simple@1.2?type=jar",
         "pkg:maven/com.google.code.findbugs/jsr305@3.0.2?type=jar"
       ]
@@ -244293,7 +244639,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-threadpoolfactory-vertx@4.18.6-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -244510,7 +244856,7 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.18.6-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -244751,7 +245097,7 @@
       "ref" : "pkg:maven/org.knowm.xchange/xchange-core@5.2.4?type=jar",
       "dependsOn" : [
         "pkg:maven/com.github.mmazi/rescu@3.1?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/io.github.resilience4j/resilience4j-ratelimiter@1.7.1?type=jar",
         "pkg:maven/io.github.resilience4j/resilience4j-retry@1.7.1?type=jar",
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
@@ -244978,7 +245324,7 @@
         "pkg:maven/io.grpc/grpc-api@1.79.0?type=jar",
         "pkg:maven/io.grpc/grpc-protobuf@1.79.0?type=jar",
         "pkg:maven/io.grpc/grpc-stub@1.79.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.google.protobuf/protobuf-java@3.25.5?type=jar"
       ]
     },
@@ -245080,7 +245426,7 @@
       "ref" : "pkg:maven/org.apache.curator/curator-client@5.9.0?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.zookeeper/zookeeper@3.9.5?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -246399,7 +246745,7 @@
         "pkg:maven/org.apache.commons/commons-text@1.10.0?type=jar",
         "pkg:maven/org.apache.maven.resolver/maven-resolver-util@1.9.25?type=jar",
         "pkg:maven/commons-cli/commons-cli@1.10.0?type=jar",
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar",
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar",
         "pkg:maven/com.fasterxml.jackson.datatype/jackson-datatype-guava@2.21.4?type=jar",
         "pkg:maven/org.commonmark/commonmark@0.21.0?type=jar",
         "pkg:maven/com.github.mifmif/generex@1.0.2?type=jar",
@@ -246479,7 +246825,7 @@
     {
       "ref" : "pkg:maven/org.openapitools/openapi-generator-core@7.19.0?type=jar",
       "dependsOn" : [
-        "pkg:maven/com.google.guava/guava@33.5.0-jre?type=jar"
+        "pkg:maven/com.google.guava/guava@33.7.2-jre?type=jar"
       ]
     },
     {
@@ -246718,8 +247064,8 @@
       "ref" : "pkg:maven/io.fabric8/kubernetes-httpclient-vertx@7.5.0?type=jar",
       "dependsOn" : [
         "pkg:maven/io.fabric8/kubernetes-client-api@7.5.0?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.26?type=jar",
-        "pkg:maven/io.vertx/vertx-web-client@4.5.26?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar"
       ]
     },
     {
