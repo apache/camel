@@ -93,15 +93,6 @@ final class TextBodyFlow {
     /** ${body[x]} where x is a key, not an index. */
     private static final Pattern SIMPLE_KEY = Pattern.compile("\\$\\{body\\[\\s*['\"]?[A-Za-z_]");
 
-    /** Steps whose own steps run on the same body, so a read inside them sees the body at the step. */
-    private static final Set<String> SAME_BODY_BLOCKS = Set.of("choice", "when", "otherwise", "filter", "doTry",
-            "doCatch", "doFinally");
-
-    /** Steps that leave the body as it is. */
-    private static final Set<String> KEEPING_STEPS = Set.of("setHeader", "setHeaders", "setProperty", "setVariable",
-            "setVariables", "removeHeader", "removeHeaders", "removeProperty", "removeProperties", "removeVariable",
-            "convertHeaderTo", "convertVariableTo", "validate", "log", "wireTap", "delay", "throttle", "sample", "stop");
-
     /** ${body}, ${body[lines]} or ${body.lines}: the body, or a field of it. */
     private static final Pattern THE_BODY = Pattern.compile("\\$\\{body(\\??\\.[A-Za-z_]\\w*|\\[[^\\]]+])*}");
 
@@ -333,7 +324,7 @@ final class TextBodyFlow {
             JsonNode value = step.get(name);
             NodePath here = at.append(j).append(name);
             if (body != null && w.errors() != null) {
-                if (SAME_BODY_BLOCKS.contains(name)) {
+                if (w.bodyTypes().stepsHaveTheBody(name, value)) {
                     walkBlock(value, body, here, w);
                 } else if (body instanceof Text text) {
                     String read = readIn(value, text.readable());
@@ -342,7 +333,7 @@ final class TextBodyFlow {
                     }
                 } else if (body instanceof Parsed parsed) {
                     Need need = needsText(name, value, w);
-                    Parsed element = "split".equals(name) ? splitElement(value, parsed) : null;
+                    Parsed element = "split".equals(name) ? splitElement(value, parsed, w.bodyTypes()) : null;
                     if (need != null) {
                         w.errors().add(error(here, w.routeId(), need, parsed));
                         // the step fails at runtime, so what comes after it is not run with this body: one report
@@ -379,7 +370,12 @@ final class TextBodyFlow {
             JsonNode child = node.get(key);
             if ("steps".equals(key)) {
                 walk(child, body, at.append(key), w);
-            } else if (SAME_BODY_BLOCKS.contains(key) || child.isArray()) {
+            } else if (w.bodyTypes().isEip(key)) {
+                // a when or an otherwise has the body of its choice, a doCatch the one of the step that failed
+                if (w.bodyTypes().stepsHaveTheBody(key, child)) {
+                    walkBlock(child, body, at.append(key), w);
+                }
+            } else if (child.isArray()) {
                 walkBlock(child, body, at.append(key), w);
             } else if (body instanceof Text text) {
                 String read = readEntry(key, child, text.readable());
@@ -440,7 +436,7 @@ final class TextBodyFlow {
                 return returned;
             }
             default -> {
-                return KEEPING_STEPS.contains(name) ? body : null;
+                return w.bodyTypes().keepsTheBody(name, value) ? body : null;
             }
         }
     }
@@ -590,7 +586,7 @@ final class TextBodyFlow {
      * jsonpath, which reads parsed data as well), and its steps read fields of each element before they change it, as
      * ${body[sku]} or a jsonpath $.sku does. Otherwise null: a List may hold text as well.
      */
-    private static Parsed splitElement(JsonNode value, Parsed parsed) {
+    private static Parsed splitElement(JsonNode value, Parsed parsed, CatalogBodyTypes bodyTypes) {
         JsonNode node = value != null && value.has("expression") ? value.get("expression") : value;
         String language = node != null && node.isObject() && node.fieldNames().hasNext() ? node.fieldNames().next() : null;
         String expression = language != null ? expressionText(node.get(language)) : null;
@@ -611,7 +607,7 @@ final class TextBodyFlow {
                         parsed.origin() + ", and split " + expression.trim() + " gives its elements as data",
                         parsed.format());
             }
-            if (!KEEPING_STEPS.contains(name)) {
+            if (!bodyTypes.keepsTheBody(name, step.get(name))) {
                 return null;
             }
         }

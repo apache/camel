@@ -56,11 +56,6 @@ final class BodyTypeFlow {
     /** The steps that work on the body itself, and have nothing to work on when there is none. */
     private static final Set<String> STEPS_THAT_NEED_THE_BODY = Set.of("unmarshal", "marshal", "convertBodyTo");
 
-    /** Steps that put something in the body, whatever it is. */
-    private static final Set<String> SETS_THE_BODY = Set.of("setBody", "transform", "unmarshal", "marshal",
-            "convertBodyTo", "convertVariableTo", "poll", "pollEnrich", "enrich", "process", "bean", "to", "toD",
-            "recipientList", "serviceCall", "claimCheck", "aggregate", "split", "loadBalance", "removeBody");
-
     /** The REST verbs that carry no body, so a route they send to starts with none. */
     private static final Set<String> VERBS_WITHOUT_BODY = Set.of("get", "delete", "head");
 
@@ -97,7 +92,7 @@ final class BodyTypeFlow {
             restless.add(normalize(uri));
         }
         for (Route r : routes) {
-            String reader = firstBodyReaderBeforeAnyProducer(r.steps());
+            String reader = firstBodyReaderBeforeAnyProducer(r.steps(), bodyTypes);
             if (reader == null) {
                 continue;
             }
@@ -149,7 +144,7 @@ final class BodyTypeFlow {
             return fromRestWithoutBody;
         }
         for (Route caller : from) {
-            if (setsTheBodyBeforeSendingTo(caller, route)) {
+            if (setsTheBodyBeforeSendingTo(caller, route, bodyTypes)) {
                 return false;
             }
             if (!certainlyWithoutABody(caller, callers, restless, seen, bodyTypes)) {
@@ -163,7 +158,7 @@ final class BodyTypeFlow {
      * Whether the caller puts something in the body <em>before</em> it sends to the route. What it does afterwards
      * cannot help: the call has already happened.
      */
-    private static boolean setsTheBodyBeforeSendingTo(Route caller, Route target) {
+    private static boolean setsTheBodyBeforeSendingTo(Route caller, Route target, CatalogBodyTypes bodyTypes) {
         JsonNode steps = caller.steps();
         if (steps == null || !steps.isArray()) {
             return false;
@@ -176,7 +171,7 @@ final class BodyTypeFlow {
                 if (sendsToTheRoute(name, value, wanted)) {
                     return false; // reached the call, and nothing before it set the body
                 }
-                if (producesTheBody(step)) {
+                if (producesTheBody(step, bodyTypes)) {
                     return true;
                 }
             }
@@ -198,13 +193,13 @@ final class BodyTypeFlow {
      * itself when the step is the one that works on the body. Null when nothing reads it, or when a step produced a
      * body first.
      */
-    private static String firstBodyReaderBeforeAnyProducer(JsonNode steps) {
+    private static String firstBodyReaderBeforeAnyProducer(JsonNode steps, CatalogBodyTypes bodyTypes) {
         if (steps == null || !steps.isArray()) {
             return null;
         }
         for (JsonNode step : steps) {
             String reader = readsTheBody(step);
-            boolean produces = producesTheBody(step);
+            boolean produces = producesTheBody(step, bodyTypes);
             if (reader != null && !produces) {
                 return reader;
             }
@@ -242,14 +237,17 @@ final class BodyTypeFlow {
         return null;
     }
 
-    /** Whether this step, or anything nested in it, puts something in the body. */
-    private static boolean producesTheBody(JsonNode node) {
+    /**
+     * Whether this step, or anything nested in it, may put something in the body, as the body types of the EIPs in the
+     * catalog say.
+     */
+    private static boolean producesTheBody(JsonNode node, CatalogBodyTypes bodyTypes) {
         if (node == null) {
             return false;
         }
         if (node.isArray()) {
             for (JsonNode child : node) {
-                if (producesTheBody(child)) {
+                if (producesTheBody(child, bodyTypes)) {
                     return true;
                 }
             }
@@ -260,10 +258,10 @@ final class BodyTypeFlow {
         }
         for (var it = node.fieldNames(); it.hasNext();) {
             String name = it.next();
-            if (SETS_THE_BODY.contains(name)) {
+            if (bodyTypes.isEip(name) && bodyTypes.maySetTheBody(name)) {
                 return true;
             }
-            if (producesTheBody(node.get(name))) {
+            if (producesTheBody(node.get(name), bodyTypes)) {
                 return true;
             }
         }

@@ -256,4 +256,35 @@ public class BodyTypeFlowTest {
             throw new AssertionError("Failed to validate:\n" + yaml, e);
         }
     }
+
+    @Test
+    public void testAKameletMayGiveTheBody() {
+        // a kamelet step may put any body in the message, as the body types of the EIPs in the catalog say
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - kamelet:
+                            name: my-source
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).noneMatch(m -> m.contains("reads the message body"));
+        // log leaves the body as it was, so there is still none
+        String logged = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log: tick
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(logged)).anyMatch(m -> m.contains("reads the message body"));
+    }
 }
