@@ -15,6 +15,10 @@
     "modelName": "js",
     "modelJavaType": "org.apache.camel.model.language.JavaScriptExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in the variable body: a String is a JavaScript string, and other Java objects keep their methods" },
+    "expressionOut": { "carriers": [ "unknown" ], "description": "What the script returns: an object as a Map, an array or a typed array as a List, a Set as a Set, an ArrayBuffer as bytes and a Date as an Instant. A function fails" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

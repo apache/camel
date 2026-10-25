@@ -66,6 +66,8 @@ The `fruit` header is now accessible from the `message.out.headers`.
 Camel will provide exchange information in the Thymeleaf context (just a
 `Map`).
 The `Exchange` is transferred as:
+The `body`, `header`, `headers`, `variable`, `variables` and `exception` entries are always
+there; the others only when the endpoint has `allowContextMapAll=true`.
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -90,14 +92,16 @@ The `Exchange` is transferred as:
 |`response` |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
-You can set up a custom Thymeleaf Context yourself by
-setting property `allowTemplateFromHeader=true` and setting the message header `CamelThymeleafContext` like this
+You can add your own variables to the Thymeleaf context with a `Map` in the message header
+`CamelThymeleafVariableMap`. Camel sets the `body`, `header`, `headers`, `variable`, `variables` and
+`exception` entries on top of it, and removes the header after use:
 
 ._Java-only: programmatic Thymeleaf context setup via Exchange API_
 [source,java]
 ----
-EngineContext engineContext = new EngineContext(variableMap);
-exchange.getIn().setHeader("CamelThymeleafContext", engineContext);
+Map<String, Object> variableMap = new HashMap<>();
+variableMap.put("greeting", "Hello");
+exchange.getIn().setHeader("CamelThymeleafVariableMap", variableMap);
 ----
 
 === Hot reloading
@@ -112,8 +116,8 @@ when the resource never changes.
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set, then Camel uses this over the endpoint configured
-resource. This allows you to provide a dynamic template at runtime.
+headers is set, and the endpoint has `allowTemplateFromHeader=true`, then Camel uses this
+over the endpoint configured resource. This allows you to provide a dynamic template at runtime.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

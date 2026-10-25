@@ -14,8 +14,26 @@
 
 *{component-header}*
 
-The AWS Config component supports create and delete config rules
-https://aws.amazon.com/config/[AWS ECS] clusters instances.
+The AWS Config component manages the rules and conformance packs of
+https://aws.amazon.com/config/[AWS Config], the AWS service that records the configuration of your
+AWS resources and evaluates it against the rules you define.
+
+The producer supports the following operations, set with the `operation` option or the
+`CamelAwsConfigOperation` header:
+
+- `putConfigRule`: adds or updates a config rule. The `CamelAwsConfigRuleSource` header (the owner of the rule:
+`AWS`, `CUSTOM_LAMBDA` or `CUSTOM_POLICY`) is required; `CamelAwsConfigRuleName` and
+`CamelAwsConfigRuleSourceIdentifier` set the rule name and the identifier of the rule.
+- `removeConfigRule`: deletes the config rule named by the `CamelAwsConfigRuleName` header.
+- `describeRuleCompliance`: describes the compliance of the config rules, or of the rule named by the
+`CamelAwsConfigRuleName` header.
+- `putConformancePack`: adds or updates the conformance pack named by the `CamelAwsConformancePackName` header,
+from the template in S3 (`CamelAwsConfigConformacePackS3TemplateURI`) or the template body
+(`CamelAwsConfigConformacePackTemplateBody`).
+- `removeConformancePack`: deletes the conformance pack named by the `CamelAwsConformancePackName` header.
+
+With `pojoRequest=true`, each operation takes the AWS SDK request as the message body instead
+(such as a `PutConfigRuleRequest` for `putConfigRule`).
 
 Prerequisites
 

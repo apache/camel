@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,14 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "spring-ai-embeddings:embeddingId", producerOnly = true, category = {
                      Category.AI
              }, headersClass = SpringAiEmbeddingsHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The text to embed, or a List of texts for a batch. Another body is"
+                                                + " converted to text (a Map or a POJO as its toString()), and no body"
+                                                + " fails"),
+           producerOut = @BodyType(value = Carrier.LIST,
+                                   description = "The vector as a float[] for one text, also for a List with one text,"
+                                                 + " and a List of float[] for a List of more texts. The Embedding and"
+                                                 + " the input text are in headers, which spring-ai-vector-store reads"))
 public class SpringAiEmbeddingsEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id")

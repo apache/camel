@@ -24,6 +24,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.mns.constants.MNSHeaders;
 import org.apache.camel.component.alibaba.mns.constants.MNSOperations;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,20 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-mns", title = "Alibaba Message Service (MNS)",
              syntax = "alibaba-mns:queueName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = MNSHeaders.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The body of the MNS message as text, with the message id, the receipt handle"
+                                                 + " and the dequeue count in headers"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "operation", value = "deleteMessage",
+                                                            carriers = Carrier.ANY),
+                                  description = "The body of the message to send or publish, as text: bytes, a stream or a"
+                                                + " file are read as text, which corrupts binary data, a Map or a POJO is sent"
+                                                + " as its toString(), so marshal it first, and no body fails. deleteMessage"
+                                                + " does not use the body: it takes the receipt handle from the"
+                                                + " CamelAlibabaMnsReceiptHandle header"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: the message id, the request id and the MD5 of the body are set as"
+                                                 + " exchange properties, not headers"))
 public class MNSEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Queue name, or topic name when using the topic URI syntax", displayName = "Queue Name")

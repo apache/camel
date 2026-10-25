@@ -34,12 +34,12 @@ public class DeleteTableCommand extends AbstractDdbCommand {
         TableDescription tableDescription = ddbClient
                 .deleteTable(DeleteTableRequest.builder().tableName(determineTableName()).build()).tableDescription();
 
+        // the table name is not set as a result, as the next aws2-ddb step would take it as its table
         HashMap<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.PROVISIONED_THROUGHPUT, tableDescription.provisionedThroughput());
         tmp.put(Ddb2Constants.CREATION_DATE, tableDescription.creationDateTime());
         tmp.put(Ddb2Constants.ITEM_COUNT, tableDescription.itemCount());
         tmp.put(Ddb2Constants.KEY_SCHEMA, tableDescription.keySchema());
-        tmp.put(Ddb2Constants.TABLE_NAME, tableDescription.tableName());
         tmp.put(Ddb2Constants.TABLE_SIZE, tableDescription.tableSizeBytes());
         tmp.put(Ddb2Constants.TABLE_STATUS, tableDescription.tableStatus());
         addToResults(tmp);

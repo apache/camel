@@ -44,6 +44,14 @@ public final class SnmpConvertersLoader implements TypeConverterLoader, CamelCon
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
+        addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.snmp.SnmpMessage.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.snmp.SnmpConverters.toString((org.apache.camel.component.snmp.SnmpMessage) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.snmp4j.PDU.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.snmp.SnmpConverters.toString((org.snmp4j.PDU) value);

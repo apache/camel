@@ -21,7 +21,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
@@ -57,11 +56,12 @@ abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
     @Override
     public Processor consumer(KnativeEndpoint endpoint, KnativeResource service) {
         return exchange -> {
-            if (Objects.equals(exchange.getIn().getHeader(Exchange.CONTENT_TYPE), Knative.MIME_BATCH_CONTENT_MODE)) {
+            final Object contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE);
+            if (isMediaType(contentType, Knative.MIME_BATCH_CONTENT_MODE)) {
                 throw new UnsupportedOperationException("Batched CloudEvents are not yet supported");
             }
 
-            if (!Objects.equals(exchange.getIn().getHeader(Exchange.CONTENT_TYPE), Knative.MIME_STRUCTURED_CONTENT_MODE)) {
+            if (!isMediaType(contentType, Knative.MIME_STRUCTURED_CONTENT_MODE)) {
                 final Map<String, Object> headers = exchange.getIn().getHeaders();
 
                 for (CloudEvent.Attribute attribute : cloudEvent.attributes()) {
@@ -76,6 +76,18 @@ abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
                 }
             }
         };
+    }
+
+    /**
+     * Whether the content type is the given media type. The CloudEvents HTTP binding identifies the content mode by the
+     * media type, so its parameters (such as charset) and its case are not compared.
+     */
+    private static boolean isMediaType(Object contentType, String mediaType) {
+        if (contentType == null) {
+            return false;
+        }
+        String text = contentType.toString();
+        return mediaType.equalsIgnoreCase(StringHelper.before(text, ";", text).trim());
     }
 
     protected abstract void decodeStructuredContent(Exchange exchange, Map<String, Object> content);

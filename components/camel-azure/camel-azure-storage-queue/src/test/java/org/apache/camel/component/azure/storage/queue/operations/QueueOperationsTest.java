@@ -23,6 +23,7 @@ import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.queue.models.UpdateMessageResult;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
 import org.apache.camel.component.azure.storage.queue.QueueConstants;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
@@ -39,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -80,6 +83,15 @@ public class QueueOperationsTest extends CamelTestSupport {
 
         assertNotNull(response);
         assertTrue((boolean) response.getBody());
+    }
+
+    @Test
+    public void testSendMessageWithoutBody() {
+        final QueueOperations operations = new QueueOperations(configuration, client);
+        final Exchange exchange = new DefaultExchange(context);
+
+        assertThrows(InvalidPayloadException.class, () -> operations.sendMessage(exchange));
+        verify(client, never()).sendMessage(any(), any(), any(), any());
     }
 
     @Test

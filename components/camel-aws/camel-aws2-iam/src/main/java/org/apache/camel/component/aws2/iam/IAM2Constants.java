@@ -28,7 +28,7 @@ public interface IAM2Constants {
     String USERNAME = "CamelAwsIAMUsername";
     @Metadata(description = "The accessKey you want to manage", javaType = "String")
     String ACCESS_KEY_ID = "CamelAwsIAMAccessKeyID";
-    @Metadata(description = "The Status of the AccessKey you want to set, possible value are active and inactive",
+    @Metadata(description = "The Status of the AccessKey you want to set: Active or Inactive (in any case)",
               javaType = "String")
     String ACCESS_KEY_STATUS = "CamelAwsIAMAccessKeyStatus";
     @Metadata(description = "The name of an AWS IAM Group", javaType = "String")

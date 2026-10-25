@@ -225,7 +225,9 @@ public class SecretsManagerConfiguration implements Cloneable, AwsCommonConfigur
     }
 
     /**
-     * Set if the secret is binary or not
+     * Set if the secret is binary or not. When true, the createSecret, updateSecret and putSecretValue operations store
+     * the bytes of the message body as the binary of the secret. The getSecret and batchGetSecret operations give the
+     * value the secret has, whatever this option says: a byte[] for a binary secret, a String for a string secret.
      */
     public void setBinaryPayload(boolean binaryPayload) {
         this.binaryPayload = binaryPayload;

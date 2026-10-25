@@ -61,7 +61,10 @@ import software.amazon.awssdk.services.iam.model.StatusType;
 import software.amazon.awssdk.services.iam.model.UpdateAccessKeyResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IAMProducerTest extends CamelTestSupport {
 
@@ -234,6 +237,49 @@ public class IAMProducerTest extends CamelTestSupport {
 
         UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
+    }
+
+    @Test
+    public void iamUpdateAccessKeyStatusInAnyCaseTest() {
+        for (String status : new String[] { "inactive", "INACTIVE", "Inactive" }) {
+            Exchange exchange = template.request("direct:updateAccessKey", e -> {
+                e.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.updateAccessKey);
+                e.getIn().setHeader(IAM2Constants.ACCESS_KEY_ID, "1");
+                e.getIn().setHeader(IAM2Constants.ACCESS_KEY_STATUS, status);
+            });
+
+            assertNull(exchange.getException());
+            assertEquals(StatusType.INACTIVE, clientMock.lastUpdateAccessKeyRequest.status());
+        }
+        Exchange exchange = template.request("direct:updateAccessKey", e -> {
+            e.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.updateAccessKey);
+            e.getIn().setHeader(IAM2Constants.ACCESS_KEY_ID, "1");
+            e.getIn().setHeader(IAM2Constants.ACCESS_KEY_STATUS, "active");
+        });
+        assertNull(exchange.getException());
+        assertEquals(StatusType.ACTIVE, clientMock.lastUpdateAccessKeyRequest.status());
+    }
+
+    @Test
+    public void iamUpdateAccessKeyUnknownStatusTest() {
+        Exchange exchange = template.request("direct:updateAccessKey", e -> {
+            e.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.updateAccessKey);
+            e.getIn().setHeader(IAM2Constants.ACCESS_KEY_ID, "1");
+            e.getIn().setHeader(IAM2Constants.ACCESS_KEY_STATUS, "disabled");
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        String msg = exchange.getException().getMessage();
+        assertTrue(msg.contains("disabled") && msg.contains("Active") && msg.contains("Inactive"), msg);
+    }
+
+    @Test
+    public void iamPojoRequestEmptyBodyTest() {
+        Exchange exchange = template.request("direct:createUserPojo", e -> e.getIn().setBody(""));
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        String msg = exchange.getException().getMessage();
+        assertTrue(msg.contains("empty") && msg.contains(CreateUserRequest.class.getName()), msg);
     }
 
     @Test

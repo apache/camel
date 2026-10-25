@@ -168,6 +168,15 @@ public final class TransformJavaRoutes {
                 context.addRouteDefinitions(r.routes().getRoutes());
             }
             if ("json".equals(format)) {
+                // the checksum of each route as written, which is the one the route has when it runs: only when the
+                // parser read the whole source, as a part it could not read is missing from the routes
+                if (read.unread().isEmpty()) {
+                    for (RouteDefinition route : context.getRouteDefinitions()) {
+                        if (route.getChecksum() == null) {
+                            route.setChecksum(RouteDefinitionHelper.checksum(context, route));
+                        }
+                    }
+                }
                 // the ids a start assigns: the route structure looks each route up by its id, and shows the step ids
                 // (a route id that is a property placeholder is kept as it is, as there are no properties)
                 context.getPropertiesComponent().setIgnoreMissingProperty(true);

@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -33,6 +36,11 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "file-watch", title = "File Watch", syntax = "file-watch:path",
              category = { Category.FILE }, consumerOnly = true, headersClass = FileWatchConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.FILE, javaType = "java.io.File",
+                                   description = "The java.io.File of the file or directory of the event, also for DELETE, with"
+                                                 + " the event in the CamelFileEventType header. The consumer does not read it:"
+                                                 + " it converts to text, bytes or a stream by reading the file, which fails"
+                                                 + " after a DELETE"))
 public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriPath(description = "Path of directory to consume events from.")
@@ -47,11 +55,13 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
               defaultValue = "true")
     private boolean recursive = true;
     @UriParam(label = "advanced",
-              description = "The number of concurrent consumers. Increase this value, if your route is slow to prevent buffering in queue.",
+              description = "The number of concurrent consumers. Increase this value, if your route is slow to prevent"
+                            + " buffering in queue.",
               defaultValue = "1")
     private int concurrentConsumers;
     @UriParam(label = "advanced",
-              description = "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log.",
+              description = "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in"
+                            + " log.",
               defaultValue = "1")
     private int pollThreads;
     @UriParam(description = "ANT style pattern to match files. The file is matched against path relative to endpoint path. "
@@ -63,10 +73,10 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
               defaultValue = "" + Integer.MAX_VALUE)
     private int queueSize;
     @UriParam(label = "advanced",
-              description = "Reference to io.methvin.watcher.hashing.FileHasher. "
-                            + "This prevents emitting duplicate events on some platforms. "
-                            + "For working with large files and if you dont need detect multiple modifications per second per file, "
-                            + "use #lastModifiedTimeFileHasher. You can also provide custom implementation in registry.",
+              description = "Reference to io.methvin.watcher.hashing.FileHasher. This prevents emitting duplicate events on"
+                            + " some platforms. For working with large files and if you dont need detect multiple modifications"
+                            + " per second per file, use #lastModifiedTimeFileHasher. You can also provide custom"
+                            + " implementation in registry.",
               defaultValue = "#murmur3FFileHasher")
     private FileHasher fileHasher;
     @UriParam(description = "Enables or disables file hashing to detect duplicate events. "

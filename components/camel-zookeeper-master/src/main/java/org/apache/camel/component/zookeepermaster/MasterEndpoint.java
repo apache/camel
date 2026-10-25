@@ -24,6 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -37,6 +40,10 @@ import org.apache.camel.support.DefaultEndpoint;
              consumerOnly = true,
              title = "ZooKeeper Master", lenientProperties = true,
              category = { Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the consumer of the delegate endpoint (consumerEndpointUri) makes,"
+                                                 + " such as the file of a file consumer: only the node that holds the"
+                                                 + " leadership of the group runs it"))
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private final MasterComponent component;

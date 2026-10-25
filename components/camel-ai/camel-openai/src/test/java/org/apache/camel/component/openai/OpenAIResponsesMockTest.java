@@ -18,6 +18,7 @@ package org.apache.camel.component.openai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,10 +26,13 @@ import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ai.tool.AiToolConstants;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,6 +40,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OpenAIResponsesMockTest extends CamelTestSupport {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private final AtomicReference<String> toolConversationId = new AtomicReference<>();
+    private final AtomicReference<String> toolCallId = new AtomicReference<>();
 
     @RegisterExtension
     public OpenAIMock openAIMock = new OpenAIMock().builder()
@@ -136,6 +143,10 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
                 from("ai-tool:get_weather?tags=responses-tools&description=Get the weather for a city"
                      + "&parameter.city=string&parameter.city.required=true")
+                        .process(e -> {
+                            toolConversationId.set(e.getMessage().getHeader(AiToolConstants.CONVERSATION_ID, String.class));
+                            toolCallId.set(e.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID, String.class));
+                        })
                         .setBody(simple("Sunny in ${header.city}"));
 
                 from("ai-tool:lookup_order?tags=responses-direct&description=Look up an order"
@@ -299,6 +310,8 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getBody(String.class)).isEqualTo("It is sunny in Rome");
+        assertThat(toolConversationId).hasNullValue();
+        assertThat(toolCallId.get()).isNotBlank();
         assertThat(result.getMessage().getHeader(OpenAIConstants.TOOL_ITERATIONS, Integer.class)).isEqualTo(1);
         assertThat(result.getMessage().getHeader(OpenAIConstants.MCP_TOOL_CALLS, List.class)).containsExactly("get_weather");
 
@@ -399,12 +412,29 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         var requests = openAIMock.getReceivedRequests();
         assertThat(requests).hasSize(2);
         assertThat(requests.get(0).bodyAsJson().path("conversation").asText()).isEqualTo("conv_123");
+        assertThat(toolConversationId).hasValue("conv_123");
+        assertThat(toolCallId.get()).isNotBlank();
         JsonNode followUp = requests.get(1).bodyAsJson();
         assertThat(followUp.path("conversation").asText()).isEqualTo("conv_123");
         // the server already stored the user input and the function calls, so only the tool result is sent
         assertThat(followUp.path("input")).hasSize(1);
         assertThat(followUp.path("input").path(0).path("type").asText()).isEqualTo("function_call_output");
         assertThat(followUp.path("input").path(0).path("output").asText()).isEqualTo("Sunny in Rome");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:responses-route-tools", "direct:responses-conversation-tools" })
+    void propagatesTheConversationIdFromTheHeader(String route) {
+        Exchange result = template.request(route, e -> {
+            e.getIn().setBody("weather-tool");
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv_header");
+        });
+
+        assertThat(result.getException()).isNull();
+        assertThat(toolConversationId).hasValue("conv_header");
+        assertThat(toolCallId.get()).isNotBlank();
+        assertThat(openAIMock.getReceivedRequests())
+                .allSatisfy(request -> assertThat(request.bodyAsJson().path("conversation").asText()).isEqualTo("conv_header"));
     }
 
     @Test

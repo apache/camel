@@ -15,6 +15,10 @@
     "modelName": "language",
     "modelJavaType": "org.apache.camel.model.language.LanguageExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "Not read: the expression is the flag key, and the targeting key and the context come from headers" },
+    "expressionOut": { "carriers": [ "text", "value" ], "description": "The value of a string flag as text, or of a boolean flag as a Boolean, and the defaultValue of the endpoint as text when the flag is missing or is another type" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "language": { "index": 1, "kind": "attribute", "displayName": "Language", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the language to use." },

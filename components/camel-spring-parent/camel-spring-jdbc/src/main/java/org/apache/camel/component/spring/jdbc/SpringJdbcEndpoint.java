@@ -21,6 +21,9 @@ import javax.sql.DataSource;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.component.jdbc.JdbcEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
@@ -29,6 +32,25 @@ import org.apache.camel.spi.UriEndpoint;
 @UriEndpoint(firstVersion = "3.10.0", scheme = "spring-jdbc", title = "Spring JDBC", syntax = "spring-jdbc:dataSourceName",
              producerOnly = true,
              category = { Category.DATABASE })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The SQL statement as text, or bytes, a stream or a file of it; a Map or a List"
+                                                + " is not a statement: set the SQL as the body. With useHeadersAsParameters,"
+                                                + " the values of its placeholders come from the CamelJdbcParameters header, or"
+                                                + " else from the headers"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED }, dependsOn = "outputClass",
+                                   byOption = {
+                                           @BodyType.When(option = "outputType", value = "SelectOne",
+                                                          carriers = {
+                                                                  Carrier.MAP, Carrier.TEXT, Carrier.VALUE, Carrier.BYTES,
+                                                                  Carrier.POJO, Carrier.NULL, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "outputType", value = "StreamList",
+                                                          carriers = { Carrier.ITERATOR, Carrier.UNCHANGED }) },
+                                   description = "The rows of a select: a List of Maps of the column names and their values"
+                                                 + " (beans of outputClass when set). SelectOne gives the Map of the one row,"
+                                                 + " the value of its column as the driver reads it when it has one, or null"
+                                                 + " for no row; StreamList an Iterator of the rows, read once. A statement"
+                                                 + " that is not a select leaves the body unchanged, with the count in the"
+                                                 + " CamelJdbcUpdateCount header"))
 public class SpringJdbcEndpoint extends JdbcEndpoint {
 
     public SpringJdbcEndpoint() {

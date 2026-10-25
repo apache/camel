@@ -18,6 +18,9 @@ package org.apache.camel.component.aws2.rekognition;
 
 import org.apache.camel.*;
 import org.apache.camel.component.aws2.rekognition.client.Rekognition2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,6 +35,20 @@ import software.amazon.awssdk.services.rekognition.RekognitionClient;
              syntax = "aws2-rekognition:label",
              producerOnly = true, category = { Category.CLOUD, Category.AI },
              headersClass = Rekognition2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used, not even for the picture: the image comes from the"
+                                                + " CamelAwsRekognitionImage header, and for compareFaces from the"
+                                                + " CamelAwsRekognitionSourceImage and CamelAwsRekognitionTargetImage headers,"
+                                                + " as an Image of the AWS SDK with the bytes or the S3 object of a JPEG or"
+                                                + " PNG; bytes in these headers are not used. The other inputs come from"
+                                                + " headers too, such as CamelAwsRekognitionCollectionId. With pojoRequest=true"
+                                                + " the request of the AWS SDK for the operation, such as a"
+                                                + " DetectLabelsRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " DetectLabelsResponse of detectLabels, whose labels hold the names and the"
+                                                 + " confidence of what the image shows"))
 public class Rekognition2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private RekognitionClient awsRekognitionClient;

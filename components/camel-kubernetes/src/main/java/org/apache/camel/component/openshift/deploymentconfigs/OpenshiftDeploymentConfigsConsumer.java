@@ -61,7 +61,7 @@ public class OpenshiftDeploymentConfigsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         deploymentsWatcher = new DeploymentsConfigConsumerTask();
-        executor.submit(deploymentsWatcher);
+        KubernetesHelper.watch(this, executor, deploymentsWatcher);
     }
 
     @Override

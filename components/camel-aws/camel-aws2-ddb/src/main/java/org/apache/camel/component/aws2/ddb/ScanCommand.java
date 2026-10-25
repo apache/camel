@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
@@ -40,7 +41,8 @@ public class ScanCommand extends AbstractDdbCommand {
                 .exclusiveStartKey(determineExclusiveStartKey())
                 .attributesToGet(determineAttributeNames())
                 .scanFilter(determineScanFilter())
-                .consistentRead(determineConsistentRead());
+                .consistentRead(determineConsistentRead())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL);
 
         // Check if we have set an Index Name
         String indexName = determineIndexName();

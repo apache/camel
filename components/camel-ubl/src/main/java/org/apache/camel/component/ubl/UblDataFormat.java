@@ -31,6 +31,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -43,6 +46,16 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 @Dataformat("ubl")
 @Metadata(firstVersion = "4.23.0", title = "UBL")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO,
+                                 description = "A UBL 2.1 document of ph-ubl, such as an InvoiceType or a CreditNoteType: its"
+                                               + " class name gives the document type. Text fails"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "xml",
+                                  description = "The UBL XML in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "xml",
+                                   description = "A UBL 2.1 document, whose root element gives the document type"),
+           unmarshalOut = @BodyType(value = Carrier.POJO,
+                                    description = "The ph-ubl object of the document type, such as an InvoiceType for an"
+                                                  + " Invoice"))
 public class UblDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;

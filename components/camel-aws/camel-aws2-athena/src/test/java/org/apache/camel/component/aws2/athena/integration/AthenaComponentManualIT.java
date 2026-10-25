@@ -330,7 +330,8 @@ public class AthenaComponentManualIT extends CamelTestSupport {
 
                 from("direct:athenaGetQueryExecutionTest")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation="
+                            + s3Bucket + "&" + awsCreds)
                         .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
 
                 from("direct:athenaGetQueryResultsAsStreamListTest")
@@ -340,7 +341,8 @@ public class AthenaComponentManualIT extends CamelTestSupport {
                                           + "        (1, 'a'),"
                                           + "        (2, 'b')"
                                           + ") AS t (id, name)"))
-                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation="
+                            + s3Bucket
                             + "&" + awsCreds)
                         .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList&" + awsCreds);
 
@@ -351,65 +353,73 @@ public class AthenaComponentManualIT extends CamelTestSupport {
                                           + "        (1, 'a'),"
                                           + "        (2, 'b')"
                                           + ") AS t (id, name)"))
-                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation="
+                            + s3Bucket
                             + "&" + awsCreds)
                         .to("aws2-athena://label?operation=getQueryResults&outputType=SelectList&" + awsCreds);
 
                 from("direct:athenaGetQueryResultsAsS3PointerTest")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation="
+                            + s3Bucket
                             + "&" + awsCreds)
                         .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer&" + awsCreds);
 
                 from("direct:athenaListQueryExecutionsTest")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation="
+                            + s3Bucket + "&" + awsCreds)
                         .to("aws2-athena://label?operation=listQueryExecutions&" + awsCreds);
 
                 from("direct:athenaListQueryExecutionsSetsNextTokenTest")
                         .loop(2)
                             .setBody(constant("SELECT 1"))
-                            .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                            .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation=" + s3Bucket + "&" + awsCreds)
                         .end()
                         .to("aws2-athena://label?operation=listQueryExecutions&maxResults=1&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionIncludesTraceInQuery")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&includeTrace=true&outputLocation=" + s3Bucket
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&includeTrace=true&outputLocation="
+                            + s3Bucket
                             + "&" + awsCreds)
                         .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionWaitForQueryCompletionTest")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&outputLocation="
+                            + s3Bucket
                             + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionByDefaultDoesNotWaitForCompletionTest")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds);
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation="
+                            + s3Bucket + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionHandlesInvalidSqlTest")
                         .setBody(constant("SELECT INVALID SQL")) // parses, but query fails to complete
-                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&maxAttempts=3&retry=always&outputLocation="
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&maxAttempts=3&retry=always&outputLocation="
                             + s3Bucket + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionHandlesMalformedSqlTest")
                         .setBody(constant("MALFORMED SQL")) // unparseable by athena
-                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&maxAttempts=3&outputLocation="
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&waitTimeout=60000&maxAttempts=3&outputLocation="
                             + s3Bucket + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionTest")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds);
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation="
+                            + s3Bucket + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionAndGetQueryExecutionUsingHeaders")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation="
+                            + s3Bucket + "&" + awsCreds)
                         .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionAndGetQueryResultsByWaitingWithALoop")
                         .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=startQueryExecution&useMessageBodyForSql=true&outputLocation=" + s3Bucket + "&" + awsCreds)
                         .loopDoWhile(simple("${header." + Athena2Constants.QUERY_EXECUTION_STATE + "} != 'SUCCEEDED'"))
                             .delay(1_000)
                             .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds)

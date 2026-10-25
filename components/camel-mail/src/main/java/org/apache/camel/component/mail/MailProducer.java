@@ -58,8 +58,9 @@ public class MailProducer extends DefaultAsyncProducer {
 
             final Object body = exchange.getIn().getBody();
             if (body instanceof MimeMessage mimeMsg) {
-                // Body is directly a MimeMessage
-                mimeMessage = mimeMsg;
+                // Body is directly a MimeMessage, but a message of a mail store (mapMailMessage=false)
+                // is read-only, so send a copy of it
+                mimeMessage = mimeMsg.getFolder() != null ? new MimeMessage(mimeMsg) : mimeMsg;
             } else {
                 // Create a message with exchange data
                 mimeMessage = new MimeMessage(mailSender.getSession());

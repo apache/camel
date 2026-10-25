@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.calendar.stream;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
@@ -27,6 +29,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,10 +47,16 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-calendar-stream:index",
              consumerOnly = true,
              category = { Category.CLOUD }, headersClass = GoogleCalendarStreamConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.google.api.services.calendar.model.Event",
+                                   description = "One message per event of the calendar that is new or changed since the"
+                                                 + " last poll, with its id in the CamelGoogleCalendarEventId header. The"
+                                                 + " Event is a GenericJson, which is also a Map of the JSON fields"))
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleCalendarStreamConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Calendar client;
 
     public GoogleCalendarStreamEndpoint(String uri, GoogleCalendarStreamComponent component,
                                         GoogleCalendarStreamConfiguration endpointConfiguration) {
@@ -75,8 +86,24 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implemen
         return consumer;
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Calendar getClient() {
-        return ((GoogleCalendarStreamComponent) getComponent()).getClient(configuration);
+        Calendar answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleCalendarStreamComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     public GoogleCalendarStreamConfiguration getConfiguration() {

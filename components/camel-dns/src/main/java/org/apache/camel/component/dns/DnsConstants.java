@@ -23,13 +23,17 @@ public class DnsConstants {
     public static final String OPERATION_DIG = DnsType.dig.name();
     public static final String OPERATION_IP = DnsType.ip.name();
     public static final String OPERATION_LOOKUP = DnsType.lookup.name();
+    /**
+     * @deprecated the Wikipedia over DNS service is no longer available
+     */
+    @Deprecated
     public static final String OPERATION_WIKIPEDIA = DnsType.wikipedia.name();
 
     @Metadata(label = "lookup dig", description = "The DNS class of the lookup. Should match the values of\n" +
                                                   "`org.xbill.dns.DClass`. Optional.",
               javaType = "String")
     public static final String DNS_CLASS = "CamelDnsClass";
-    @Metadata(label = "lookup", description = "The name to lookup", javaType = "String", required = true)
+    @Metadata(label = "lookup dig", description = "The name to lookup", javaType = "String", required = true)
     public static final String DNS_NAME = "CamelDnsName";
     @Metadata(label = "ip", description = "The domain name.", javaType = "String", required = true)
     public static final String DNS_DOMAIN = "CamelDnsDomain";
@@ -38,10 +42,15 @@ public class DnsConstants {
               javaType = "String")
     public static final String DNS_SERVER = "CamelDnsServer";
     @Metadata(label = "lookup dig", description = "The type of the lookup. Should match the values of `org.xbill.dns.Type`.\n" +
-                                                  "Optional.",
+                                                  "Optional. The dig operation uses A when none or an unknown type is given.",
               javaType = "String")
     public static final String DNS_TYPE = "CamelDnsType";
-    @Metadata(label = "wikipedia", description = "The term", required = true)
+    /**
+     * @deprecated the Wikipedia over DNS service is no longer available
+     */
+    @Deprecated
+    @Metadata(label = "wikipedia", description = "The term", required = true,
+              deprecationNote = "The Wikipedia over DNS service is no longer available")
     public static final String TERM = "CamelDnsTerm";
 
     protected DnsConstants() {

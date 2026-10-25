@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,12 @@ import software.amazon.awssdk.services.transcribe.model.CreateLanguageModelReque
 import software.amazon.awssdk.services.transcribe.model.CreateLanguageModelResponse;
 import software.amazon.awssdk.services.transcribe.model.CreateVocabularyFilterRequest;
 import software.amazon.awssdk.services.transcribe.model.CreateVocabularyFilterResponse;
+import software.amazon.awssdk.services.transcribe.model.CreateVocabularyRequest;
+import software.amazon.awssdk.services.transcribe.model.CreateVocabularyResponse;
+import software.amazon.awssdk.services.transcribe.model.DeleteTranscriptionJobRequest;
+import software.amazon.awssdk.services.transcribe.model.DeleteTranscriptionJobResponse;
+import software.amazon.awssdk.services.transcribe.model.DeleteVocabularyRequest;
+import software.amazon.awssdk.services.transcribe.model.DeleteVocabularyResponse;
 import software.amazon.awssdk.services.transcribe.model.ListTagsForResourceRequest;
 import software.amazon.awssdk.services.transcribe.model.ListTagsForResourceResponse;
 import software.amazon.awssdk.services.transcribe.model.ListVocabularyFiltersRequest;
@@ -39,11 +46,14 @@ import software.amazon.awssdk.services.transcribe.model.TagResourceRequest;
 import software.amazon.awssdk.services.transcribe.model.TagResourceResponse;
 import software.amazon.awssdk.services.transcribe.model.UntagResourceRequest;
 import software.amazon.awssdk.services.transcribe.model.UntagResourceResponse;
+import software.amazon.awssdk.services.transcribe.model.UpdateVocabularyRequest;
+import software.amazon.awssdk.services.transcribe.model.UpdateVocabularyResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -72,6 +82,104 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
         assertThat(captor.getValue().vocabularyFilterName()).isEqualTo("my-filter");
         assertThat(captor.getValue().languageCodeAsString()).isEqualTo("en-US");
         assertThat(captor.getValue().words()).containsExactly("foo", "bar");
+    }
+
+    @Test
+    public void createVocabularySendsEachPhraseAndTheFileUri() throws Exception {
+        when(transcribeClient.createVocabulary(any(CreateVocabularyRequest.class)))
+                .thenReturn(CreateVocabularyResponse.builder().build());
+
+        template.send("direct:createVocabulary", exchange -> {
+            exchange.getIn().setHeader(Transcribe2Constants.VOCABULARY_NAME, "my-vocabulary");
+            exchange.getIn().setHeader(Transcribe2Constants.LANGUAGE_CODE, "en-US");
+            exchange.getIn().setHeader(Transcribe2Constants.VOCABULARY_PHRASES, List.of("camel", "kamelet"));
+            exchange.getIn().setHeader(Transcribe2Constants.VOCABULARY_FILE_URI, "s3://bucket/vocabulary.txt");
+        });
+
+        ArgumentCaptor<CreateVocabularyRequest> captor = ArgumentCaptor.forClass(CreateVocabularyRequest.class);
+        verify(transcribeClient).createVocabulary(captor.capture());
+        assertThat(captor.getValue().vocabularyName()).isEqualTo("my-vocabulary");
+        assertThat(captor.getValue().phrases()).containsExactly("camel", "kamelet");
+        assertThat(captor.getValue().vocabularyFileUri()).isEqualTo("s3://bucket/vocabulary.txt");
+    }
+
+    @Test
+    public void createVocabularyTakesASinglePhraseAsAList() throws Exception {
+        when(transcribeClient.createVocabulary(any(CreateVocabularyRequest.class)))
+                .thenReturn(CreateVocabularyResponse.builder().build());
+
+        template.send("direct:createVocabulary", exchange -> {
+            exchange.getIn().setHeader(Transcribe2Constants.VOCABULARY_NAME, "my-vocabulary");
+            exchange.getIn().setHeader(Transcribe2Constants.VOCABULARY_PHRASES, "camel");
+        });
+
+        ArgumentCaptor<CreateVocabularyRequest> captor = ArgumentCaptor.forClass(CreateVocabularyRequest.class);
+        verify(transcribeClient).createVocabulary(captor.capture());
+        assertThat(captor.getValue().phrases()).containsExactly("camel");
+    }
+
+    @Test
+    public void createVocabularyFailsWithPhrasesOfAnotherType() throws Exception {
+        Exchange exchange = template.send("direct:createVocabulary", e -> {
+            e.getIn().setHeader(Transcribe2Constants.VOCABULARY_NAME, "my-vocabulary");
+            e.getIn().setHeader(Transcribe2Constants.VOCABULARY_PHRASES, 42);
+        });
+
+        assertThat(exchange.getException()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(Transcribe2Constants.VOCABULARY_PHRASES);
+        verifyNoInteractions(transcribeClient);
+    }
+
+    @Test
+    public void updateVocabularySendsEachPhraseAndTheFileUri() throws Exception {
+        when(transcribeClient.updateVocabulary(any(UpdateVocabularyRequest.class)))
+                .thenReturn(UpdateVocabularyResponse.builder().build());
+
+        template.send("direct:updateVocabulary", exchange -> {
+            exchange.getIn().setHeader(Transcribe2Constants.VOCABULARY_NAME, "my-vocabulary");
+            exchange.getIn().setHeader(Transcribe2Constants.VOCABULARY_PHRASES, List.of("camel", "kamelet"));
+            exchange.getIn().setHeader(Transcribe2Constants.VOCABULARY_FILE_URI, "s3://bucket/vocabulary.txt");
+        });
+
+        ArgumentCaptor<UpdateVocabularyRequest> captor = ArgumentCaptor.forClass(UpdateVocabularyRequest.class);
+        verify(transcribeClient).updateVocabulary(captor.capture());
+        assertThat(captor.getValue().phrases()).containsExactly("camel", "kamelet");
+        assertThat(captor.getValue().vocabularyFileUri()).isEqualTo("s3://bucket/vocabulary.txt");
+    }
+
+    @Test
+    public void deleteVocabularySetsTheResponseAsBody() throws Exception {
+        DeleteVocabularyResponse response = DeleteVocabularyResponse.builder().build();
+        when(transcribeClient.deleteVocabulary(any(DeleteVocabularyRequest.class))).thenReturn(response);
+
+        Exchange exchange = template.send("direct:deleteVocabulary", e -> {
+            e.getIn().setHeader(Transcribe2Constants.VOCABULARY_NAME, "my-vocabulary");
+            e.getIn().setBody("the body of the step before");
+        });
+
+        assertThat(exchange.getMessage().getBody()).isSameAs(response);
+    }
+
+    @Test
+    public void deleteTranscriptionJobSetsTheResponseAsBody() throws Exception {
+        DeleteTranscriptionJobResponse response = DeleteTranscriptionJobResponse.builder().build();
+        when(transcribeClient.deleteTranscriptionJob(any(DeleteTranscriptionJobRequest.class))).thenReturn(response);
+
+        Exchange exchange = template.send("direct:deleteTranscriptionJob", e -> {
+            e.getIn().setHeader(Transcribe2Constants.TRANSCRIPTION_JOB_NAME, "my-job");
+            e.getIn().setBody("the body of the step before");
+        });
+
+        assertThat(exchange.getMessage().getBody()).isSameAs(response);
+    }
+
+    @Test
+    public void noOperationFails() throws Exception {
+        Exchange exchange = template.send("direct:noOperation", e -> e.getIn().setBody("test"));
+
+        assertThat(exchange.getException()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Operation must be specified with the operation option");
+        verifyNoInteractions(transcribeClient);
     }
 
     @Test
@@ -186,6 +294,11 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
             @Override
             public void configure() {
                 String base = "aws2-transcribe://transcribe?transcribeClient=#transcribeClient&operation=";
+                from("direct:noOperation").to("aws2-transcribe://transcribe?transcribeClient=#transcribeClient");
+                from("direct:createVocabulary").to(base + "createVocabulary");
+                from("direct:updateVocabulary").to(base + "updateVocabulary");
+                from("direct:deleteVocabulary").to(base + "deleteVocabulary");
+                from("direct:deleteTranscriptionJob").to(base + "deleteTranscriptionJob");
                 from("direct:createVocabularyFilter").to(base + "createVocabularyFilter");
                 from("direct:listVocabularyFilters").to(base + "listVocabularyFilters");
                 from("direct:createLanguageModel").to(base + "createLanguageModel");

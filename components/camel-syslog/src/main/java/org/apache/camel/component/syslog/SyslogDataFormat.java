@@ -21,6 +21,9 @@ import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -28,6 +31,17 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 @Dataformat("syslog")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO },
+                                 description = "A SyslogMessage, or the text of a syslog message, which is parsed first. A"
+                                               + " missing facility, severity, hostname or timestamp gets a default"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The syslog message in the stream cache, or a byte array when stream caching is"
+                                                + " off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text",
+                                   description = "An RFC 3164 or RFC 5424 message, decoded with the charset of the exchange"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.component.syslog.SyslogMessage",
+                                    description = "A SyslogMessage, an Rfc5424SyslogMessage for an RFC 5424 message. The"
+                                                  + " facility, severity, hostname and timestamp are headers as well"))
 public class SyslogDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     @Override

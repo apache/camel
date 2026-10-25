@@ -31,6 +31,10 @@
   "headers": {
     "CamelSmooksExecutionContext": { "index": 0, "kind": "header", "displayName": "", "group": "advanced", "label": "advanced", "required": false, "javaType": "org.smooks.api.ExecutionContext", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Smooks execution context.", "constantName": "org.apache.camel.component.smooks.SmooksConstants#SMOOKS_EXECUTION_CONTEXT" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The data the reader of the smooks config reads: XML by default, or EDI, CSV or JSON with a reader. A Map, a List or a POJO fails" },
+    "producerOut": { "carriers": [ "unknown" ], "description": "What the exports of the smooks config give: the bean a JavaSink export extracts (a Map of the beans when it extracts none), or the text of a StringSink. Without exports, the input as a stream" }
+  },
   "properties": {
     "smooksConfig": { "index": 0, "kind": "path", "displayName": "Smooks Config", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the Smooks configuration file" },
     "reportPath": { "index": 1, "kind": "parameter", "displayName": "Report Path", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "File path to place the generated HTML execution report. The report is a useful tool in the developers arsenal for diagnosing issues or comprehending a transformation. Do not set in production since this is a major performance drain" },

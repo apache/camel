@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.apache.camel.maven.packaging.generics.ClassUtil;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.tooling.model.EipModel;
@@ -166,6 +167,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
                         SchemaHelper.addModelMetadata(languageModel, project);
                         SchemaHelper.addModelMetadata(languageModel, javaType.getAnnotation(Metadata.class));
+                        BodyTypesHelper.addBodyTypes(languageModel, javaType.getAnnotation(BodyTypes.class), javaType);
 
                         // build json schema for the language
                         String schema = JsonMapper.createParameterJsonSchema(languageModel);

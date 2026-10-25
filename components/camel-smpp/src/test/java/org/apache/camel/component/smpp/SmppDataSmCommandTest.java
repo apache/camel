@@ -158,7 +158,8 @@ public class SmppDataSmCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(3, exchange.getMessage().getHeaders().size());
+        // the CamelSmppCommand header that was sent, and the three result headers
+        assertEquals(4, exchange.getMessage().getHeaders().size());
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
 
         Map<String, String> optParamMap = exchange.getMessage().getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
@@ -228,7 +229,8 @@ public class SmppDataSmCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(3, exchange.getMessage().getHeaders().size());
+        // the CamelSmppCommand header that was sent, and the three result headers
+        assertEquals(4, exchange.getMessage().getHeaders().size());
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
 
         Map<String, String> optParamMap = exchange.getMessage().getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
@@ -249,5 +251,23 @@ public class SmppDataSmCommandTest {
         assertEquals((short) 2, optionalResultParameter.get((short) 0x0008));
         assertEquals(3600000, optionalResultParameter.get((short) 0x0017));
         assertEquals((byte) 0, optionalResultParameter.get((short) 0x130C));
+    }
+
+    @Test
+    public void executeInOutKeepsTheBodyAndTheHeaders() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
+        exchange.getIn().setHeader("marker", "kept");
+        exchange.getIn().setBody("the body");
+        when(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
+                eq(new RegisteredDelivery((byte) 1)), eq(DataCodings.newInstance((byte) 0))))
+                .thenReturn(new DataSmResult(new MessageId("1"), null));
+
+        command.execute(exchange);
+
+        assertEquals("the body", exchange.getMessage().getBody());
+        assertEquals("kept", exchange.getMessage().getHeader("marker"));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
 }

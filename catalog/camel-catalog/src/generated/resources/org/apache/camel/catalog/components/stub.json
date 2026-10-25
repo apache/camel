@@ -38,6 +38,11 @@
     "shadow": { "index": 10, "kind": "property", "displayName": "Shadow", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If shadow is enabled then the stub component will register a shadow endpoint with the actual uri that refers to the stub endpoint, meaning you can lookup the endpoint via both stub:kafka:cheese and kafka:cheese." },
     "shadowPattern": { "index": 11, "kind": "property", "displayName": "Shadow Pattern", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "If shadow is enabled then this pattern can be used to filter which components to match. Multiple patterns can be separated by comma." }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unchanged" ], "description": "The body the producer sent" },
+    "producerIn": { "carriers": [ "any" ] },
+    "producerOut": { "carriers": [ "unknown" ], "description": "Unchanged when no route consumes from the stub endpoint (it keeps the latest size messages and drops the oldest), or for a message that expects no reply (InOnly). A message that expects one (InOut) waits for the body the stub route ends with" }
+  },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of queue" },
     "size": { "index": 1, "kind": "parameter", "displayName": "Size", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1000, "description": "The maximum capacity of the SEDA queue (i.e., the number of messages it can hold). Will by default use the queueSize set on the SEDA component." },

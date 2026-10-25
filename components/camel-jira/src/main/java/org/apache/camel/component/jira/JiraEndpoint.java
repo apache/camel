@@ -42,6 +42,9 @@ import org.apache.camel.component.jira.producer.FetchIssueProducer;
 import org.apache.camel.component.jira.producer.TransitionIssueProducer;
 import org.apache.camel.component.jira.producer.UpdateIssueProducer;
 import org.apache.camel.component.jira.producer.WatcherProducer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
@@ -78,6 +81,62 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
  */
 @UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type",
              category = { Category.DOCUMENT }, headersClass = JiraConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL }, dependsOn = "watchedFields",
+                                   byOption = {
+                                           @BodyType.When(option = "sendOnlyUpdatedField", value = "false",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.atlassian.jira.rest.client.api.domain.Issue"),
+                                           @BodyType.When(option = "type", value = "NEWISSUES", carriers = Carrier.POJO,
+                                                          javaType = "com.atlassian.jira.rest.client.api.domain.Issue"),
+                                           @BodyType.When(option = "type", value = "NEWCOMMENTS", carriers = Carrier.POJO,
+                                                          javaType = "com.atlassian.jira.rest.client.api.domain.Comment") },
+                                   description = "One message per new Issue (newIssues) or new Comment (newComments)."
+                                                 + " watchUpdates sends one per watched field that changed, with its new value,"
+                                                 + " such as the Status or the BasicPriority (null when cleared), or the Issue"
+                                                 + " with sendOnlyUpdatedField=false"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "type", value = "ADDISSUE",
+                                                         carriers = {
+                                                                 Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "type", value = "UPDATEISSUE",
+                                                         carriers = {
+                                                                 Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "type", value = "TRANSITIONISSUE",
+                                                         carriers = {
+                                                                 Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "type", value = "ADDISSUELINK",
+                                                         carriers = {
+                                                                 Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "type", value = "ADDCOMMENT",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "type", value = "ADDWORKLOG",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "type", value = "ATTACH",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }) },
+                                  description = "Read as text: the description for addIssue and updateIssue, the comment for"
+                                                + " addComment and addWorkLog, which fail without a body, and an optional"
+                                                + " comment for transitionIssue and addIssueLink; a Map or a POJO is sent as"
+                                                + " its toString(), so marshal it first. attach uploads a file, or text, bytes"
+                                                + " or a stream named by the CamelFileName header. The other types read only"
+                                                + " headers"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "type", value = "ADDISSUE", carriers = Carrier.POJO,
+                                                          javaType = "com.atlassian.jira.rest.client.api.domain.Issue"),
+                                           @BodyType.When(option = "type", value = "FETCHISSUE", carriers = Carrier.POJO,
+                                                          javaType = "com.atlassian.jira.rest.client.api.domain.Issue"),
+                                           @BodyType.When(option = "type", value = "FETCHCOMMENTS", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.atlassian.jira.rest.client.api.domain.Comment>") },
+                                   description = "The Issue created for addIssue, the Issue for fetchIssue and the List of its"
+                                                 + " Comments for fetchComments. The other types leave the body unchanged"))
 public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);

@@ -194,8 +194,60 @@ class AuthoringToolsTest {
         assertFalse(entries.get(1).containsKey("beforeLastReload"), "within a second of the reload: maybe the new routes");
         assertFalse(entries.get(2).containsKey("beforeLastReload"), "after the reload");
         assertEquals("1 exchange failed before the routes were last reloaded (at 08:18:09.731), so on an earlier version"
-                     + " of the routes (beforeLastReload); the errors are kept until the integration restarts",
+                     + " of the routes (beforeLastReload), 2 since; the errors are kept until the integration restarts",
                 errors.getString("note"));
+        assertEquals("note", errors.keySet().iterator().next(), "the note comes before the errors and their stack traces");
+    }
+
+    /** camel_get_log marks the records from before the last reload, with a note first in the answer. */
+    @Test
+    void theLogRecordsFromBeforeTheLastReloadAreMarked() {
+        JsonObject log = new JsonObject();
+        JsonArray lines = new JsonArray();
+        for (String time : new String[] { "08:20:00.000", "08:18:09.500", "08:10:00.000" }) {
+            JsonObject r = new JsonObject();
+            r.put("time", time);
+            r.put("level", "ERROR");
+            lines.add(r);
+        }
+        log.put("lines", lines);
+        log.put("returnedLines", 3);
+
+        AuthoringTools.markLogBefore(log, "08:18:09.731");
+
+        List<JsonObject> rows = entries(log, "lines");
+        assertFalse(rows.get(0).containsKey("beforeLastReload"), "after the reload");
+        assertFalse(rows.get(1).containsKey("beforeLastReload"), "within a second of the reload: maybe the new routes");
+        assertEquals(Boolean.TRUE, rows.get(2).get("beforeLastReload"));
+        assertEquals("reloadNote", log.keySet().iterator().next());
+        assertEquals("1 record is from before the routes were last reloaded (at 08:18:09.731), so from an earlier version"
+                     + " of the routes (beforeLastReload)",
+                log.getString("reloadNote"));
+
+        // a log that runs past midnight: 23:59:50 is before a reload at 00:00:30, and 00:00:40 is after it
+        JsonObject night = new JsonObject();
+        JsonArray nightLines = new JsonArray();
+        for (String time : new String[] { "00:00:40.000", "23:59:50.000" }) {
+            JsonObject r = new JsonObject();
+            r.put("time", time);
+            nightLines.add(r);
+        }
+        night.put("lines", nightLines);
+        AuthoringTools.markLogBefore(night, "00:00:30.000");
+        List<JsonObject> nightRows = entries(night, "lines");
+        assertFalse(nightRows.get(0).containsKey("beforeLastReload"));
+        assertEquals(Boolean.TRUE, nightRows.get(1).get("beforeLastReload"));
+
+        // no record before the reload: no note
+        JsonObject fresh = new JsonObject();
+        fresh.put("lines", new JsonArray(List.of(new JsonObject(Map.of("time", "08:20:00.000")))));
+        AuthoringTools.markLogBefore(fresh, "08:18:09.731");
+        assertFalse(fresh.containsKey("reloadNote"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<JsonObject> entries(JsonObject answer, String key) {
+        return List.copyOf((java.util.Collection<JsonObject>) answer.get(key));
     }
 
     @Test

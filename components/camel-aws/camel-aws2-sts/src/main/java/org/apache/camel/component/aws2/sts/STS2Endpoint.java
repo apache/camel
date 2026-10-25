@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.sts.client.STS2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,16 @@ import software.amazon.awssdk.services.sts.StsClient;
                      Category.CLOUD,
                      Category.MANAGEMENT },
              headersClass = STS2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: assumeRole takes the role from the CamelAwsStsRoleArn and"
+                                                + " CamelAwsStsRoleSessionName headers, and getFederationToken the name from"
+                                                + " CamelAwsStsFederatedName. With pojoRequest=true the request of the AWS SDK"
+                                                + " for the operation, such as an AssumeRoleRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the AssumeRoleResponse"
+                                                 + " of assumeRole, the default, with the temporary credentials in"
+                                                 + " credentials()"))
 public class STS2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private StsClient stsClient;

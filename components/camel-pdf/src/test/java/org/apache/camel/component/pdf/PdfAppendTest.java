@@ -55,8 +55,6 @@ public class PdfAppendTest extends CamelTestSupport {
 
         PDDocument document = PDFUtil.textToPDF(originalText);
 
-        template.sendBodyAndHeader("direct:start", textToAppend, PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, document);
-
         resultEndpoint.setExpectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             @Override
@@ -77,6 +75,7 @@ public class PdfAppendTest extends CamelTestSupport {
                 return true;
             }
         });
+        template.sendBodyAndHeader("direct:start", textToAppend, PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, document);
         resultEndpoint.assertIsSatisfied();
 
     }
@@ -107,8 +106,6 @@ public class PdfAppendTest extends CamelTestSupport {
         headers.put(PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, encryptedDocument);
         headers.put(PdfHeaderConstants.DECRYPTION_MATERIAL_HEADER_NAME, new StandardDecryptionMaterial(userPass));
 
-        template.sendBodyAndHeaders("direct:start", textToAppend, headers);
-
         resultEndpoint.setExpectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             @Override
@@ -130,6 +127,7 @@ public class PdfAppendTest extends CamelTestSupport {
                 return true;
             }
         });
+        template.sendBodyAndHeaders("direct:start", textToAppend, headers);
         resultEndpoint.assertIsSatisfied();
 
     }

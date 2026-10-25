@@ -33,6 +33,10 @@
   "headers": {
     "CamelIgniteIdGenOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "org.apache.camel.component.ignite.idgen.IgniteIdGenOperation", "enum": [ "ADD_AND_GET", "GET", "GET_AND_ADD", "GET_AND_INCREMENT", "INCREMENT_AND_GET" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Allows you to dynamically change the ID Generator operation.", "constantName": "org.apache.camel.component.ignite.IgniteConstants#IGNITE_IDGEN_OPERATION" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "operation", "value": "ADD_AND_GET", "carriers": [ "value", "text" ] }, { "option": "operation", "value": "GET_AND_ADD", "carriers": [ "value", "text" ] } ], "description": "ADD_AND_GET and GET_AND_ADD add the body to the sequence: a number, or text of one; no body fails. The other operations do not use the body, but text that is not a number still fails. The operation is the operation option or the CamelIgniteIdGenOperation header" },
+    "producerOut": { "carriers": [ "value" ], "javaType": "java.lang.Long", "description": "The value of the sequence, as a Long" }
+  },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The sequence name." },
     "batchSize": { "index": 1, "kind": "parameter", "displayName": "Batch Size", "group": "producer", "label": "producer", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "The batch size." },

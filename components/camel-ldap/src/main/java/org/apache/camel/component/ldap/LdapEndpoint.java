@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,13 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "1.5.0", scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true,
              category = { Category.DATABASE, Category.SECURITY })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The LDAP search filter, such as (objectClass=person), as text, or bytes, a"
+                                                + " stream or a file of it. A Map or a POJO is read as its toString(), which is"
+                                                + " not a filter, and no body fails as an empty filter"),
+           producerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<javax.naming.directory.SearchResult>",
+                                   description = "The entries found under the base DN: a List of SearchResult, empty when"
+                                                 + " none match, all the pages of them with pageSize"))
 public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";

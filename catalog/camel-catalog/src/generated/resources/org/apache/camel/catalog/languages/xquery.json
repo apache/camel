@@ -15,6 +15,10 @@
     "modelName": "xquery",
     "modelJavaType": "org.apache.camel.model.language.XQueryExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "dependsOn": [ "source" ], "description": "XML as text, bytes, a stream or a file, or a DOM or another javax.xml.transform.Source. A Map or no body fails" },
+    "expressionOut": { "carriers": [ "pojo" ], "javaType": "org.w3c.dom.Document", "dependsOn": [ "resultType" ], "description": "The result of the query as a DOM Document. A query that gives text, a number or more than one element fails unless resultType is java.lang.String" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

@@ -63,6 +63,9 @@ import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolRegistryListener;
 import org.apache.camel.component.ai.tool.AiToolSpec;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -85,6 +88,86 @@ import org.slf4j.LoggerFactory;
              syntax = "openai:operation",
              category = { Category.AI },
              headersClass = OpenAIConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.openai.models.webhooks.UnwrapWebhookEvent",
+                                   description = "The event of the webhook operation, verified with webhookSecret, such as"
+                                                 + " a batch or a background response that completed. The event type and"
+                                                 + " the id of the object it is about are in headers"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     description = "The body at the end of the route is not sent: OpenAI gets 200 without a"
+                                                   + " body, or 500 when the route fails, and then sends the event again"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "decisions", carriers = Carrier.POJO,
+                                                         javaType = "com.openai.models.decisions.DecisionCreateParams"),
+                                          @BodyType.When(option = "operation", value = "batch",
+                                                         carriers = {
+                                                                 Carrier.MAP, Carrier.LIST, Carrier.TEXT, Carrier.BYTES,
+                                                                 Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "audio-transcription",
+                                                         carriers = { Carrier.FILE, Carrier.BYTES, Carrier.STREAM }),
+                                          @BodyType.When(option = "operation", value = "audio-translation",
+                                                         carriers = { Carrier.FILE, Carrier.BYTES, Carrier.STREAM }),
+                                          @BodyType.When(option = "operation", value = "image-edit",
+                                                         carriers = {
+                                                                 Carrier.FILE, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.LIST }) },
+                                  description = "The prompt of chat-completion and responses: text, or a file, bytes or a"
+                                                + " stream with an image or a PDF (chat-completion also audio), which"
+                                                + " userMessage then describes. Another body is sent as its toString(),"
+                                                + " and userMessage or the CamelOpenAIUserMessage header replaces a text"
+                                                + " body. embeddings and moderation take text or a List of texts"
+                                                + " (moderation also an image), audio-speech the text to speak, and"
+                                                + " image-generation the prompt unless imagePrompt is set. batch takes the"
+                                                + " requests as a Map keyed by custom_id, a List, or JSONL; audio takes the"
+                                                + " audio and image-edit the image, or a List of images. The operations"
+                                                + " that read a stored response, a batch or the tool calls of the last"
+                                                + " answer do not use the body"),
+           producerOut = @BodyType(value = Carrier.TEXT,
+                                   byOption = {
+                                           @BodyType.When(option = "streaming", value = "true", carriers = Carrier.ITERATOR),
+                                           @BodyType.When(option = "autoToolExecution", value = "false",
+                                                          carriers = { Carrier.TEXT, Carrier.POJO, Carrier.LIST }),
+                                           @BodyType.When(option = "operation", value = "decisions", carriers = Carrier.POJO,
+                                                          javaType = "com.openai.models.decisions.Decision"),
+                                           @BodyType.When(option = "operation", value = "responses", carriers = Carrier.TEXT),
+                                           @BodyType.When(option = "operation", value = "responses-retrieve",
+                                                          carriers = Carrier.TEXT),
+                                           @BodyType.When(option = "operation", value = "responses-cancel",
+                                                          carriers = Carrier.TEXT),
+                                           @BodyType.When(option = "operation", value = "batch", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "batch-retrieve",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "batch-cancel",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "batch-results",
+                                                          carriers = Carrier.ITERATOR),
+                                           @BodyType.When(option = "operation", value = "embeddings", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "tool-execution",
+                                                          carriers = { Carrier.NULL, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "operation", value = "audio-transcription",
+                                                          carriers = Carrier.TEXT),
+                                           @BodyType.When(option = "operation", value = "audio-translation",
+                                                          carriers = Carrier.TEXT),
+                                           @BodyType.When(option = "operation", value = "audio-speech",
+                                                          carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "operation", value = "moderation",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "image-generation",
+                                                          carriers = { Carrier.BYTES, Carrier.TEXT, Carrier.LIST }),
+                                           @BodyType.When(option = "operation", value = "image-edit",
+                                                          carriers = { Carrier.BYTES, Carrier.TEXT, Carrier.LIST }) },
+                                   description = "The answer of chat-completion as text, also with outputClass or"
+                                                 + " jsonSchema, where it is JSON text: unmarshal it to read its fields."
+                                                 + " With streaming, an Iterator of the chunks (text when MCP tools run in"
+                                                 + " a loop). With autoToolExecution=false, the tool calls the model asks"
+                                                 + " for: an Optional of the List of tool calls, or a List of the function"
+                                                 + " calls for responses. embeddings gives a vector (a List of Float), or a"
+                                                 + " List of vectors for a List of texts; image-generation and image-edit"
+                                                 + " the image as bytes or its URL as text, a List for several; batch-results"
+                                                 + " an Iterator of the result lines as Maps. batch and moderation keep the"
+                                                 + " body and set headers, and tool-execution clears it when it runs tool"
+                                                 + " calls"))
 public class OpenAIEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIEndpoint.class);

@@ -27,7 +27,7 @@ include::partial$dataformat-options.adoc[]
 
 There are ways to unmarshal parquet files/structures, usually binary parquet files, where camel DSL allows.
 
-In this first example we unmarshal file payload to OutputStream and send it to mock endpoint, then we will be able to get GenericRecord or POJO (it could be a list if that is coming through)
+In this first example we unmarshal file payload to a List of the records and send it to mock endpoint: GenericRecords, or POJOs with `unmarshalType`. With `lazyLoad`, the body is an Iterator of them instead.
 
 [tabs]
 ====
@@ -58,7 +58,7 @@ With `unmarshalType`, the records are objects of that class. Without it, they ar
 
 == Marshal
 
-Marshalling is the reverse process of unmarshalling, so when you have your `GenericRecord` or POJO and marshal it, you will get the parquet-formatted output stream on your producer endpoint.
+Marshalling is the reverse process of unmarshalling, so when you have a List of `GenericRecord` objects or POJOs and marshal it, you will get the parquet-formatted output stream on your producer endpoint. A single record that is not in a List fails.
 
 [tabs]
 ====

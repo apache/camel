@@ -163,6 +163,27 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
             // we need the relative path without the hostname and port
             URI uri = new URI(request.uri());
+
+            // a request path with . or .. segments is ambiguous: the security constraint, the consumer dispatch
+            // and the route may each interpret it differently, so a path such as /foo/../admin/x (or its percent-encoded
+            // /foo/%2e%2e/admin/x form) could be matched against the constraint inclusions/exclusions in a different
+            // form than the one the route handles. Reject it up front when a security constraint is configured; a
+            // well-behaved HTTP client normalizes dot-segments before sending (CAMEL-25705). The same applies to a path
+            // with an empty segment, a ; path parameter or a \ (also in their percent-encoded forms), which a backend
+            // the route forwards to may collapse, strip or treat as a / respectively. A request target that starts with
+            // // is parsed as a host followed by a path, so its first segment never reaches uri.getPath(); check the
+            // request target for that empty segment.
+            if (security.getSecurityConstraint() != null
+                    && (request.uri().startsWith("//") || isAmbiguousPath(uri.getPath()))) {
+                LOG.debug("Rejecting request with an ambiguous path for resource: {}", url);
+                HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
+                response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
+                response.headers().set(Exchange.CONTENT_LENGTH, 0);
+                ctx.writeAndFlush(response);
+                ctx.channel().close();
+                return;
+            }
+
             final String target = extractTarget(uri);
 
             // is it a restricted resource?
@@ -223,12 +244,90 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         // strip the starting endpoint path so the target is relative to the endpoint uri.
         // the comparison must ignore case on the context-path, the same way consumer dispatch does
         // (RestConsumerContextPathMatcher), so the security constraint is evaluated against the same
-        // normalized target the request is actually routed to
+        // target the request is actually routed to
         String path = consumer.getConfiguration().getPath();
         if (path != null && target.toLowerCase(Locale.US).startsWith(path.toLowerCase(Locale.US))) {
             target = target.substring(path.length());
         }
         return target;
+    }
+
+    /**
+     * Whether the (decoded) path may be interpreted differently by the security constraint, the consumer dispatch, the
+     * route or a backend the route forwards to: it contains a {@code .} or {@code ..} segment, an empty segment
+     * ({@code //}), a {@code ;} path parameter or a {@code \}. Such a path is rejected up front when a security
+     * constraint is configured (see {@link #channelRead0}).
+     */
+    static boolean isAmbiguousPath(String path) {
+        if (path == null) {
+            return false;
+        }
+        return path.indexOf(';') != -1 || path.indexOf('\\') != -1 || path.contains("//") || containsDotSegments(path);
+    }
+
+    /**
+     * Whether the path contains a {@code .} or {@code ..} segment that path normalization would resolve. Such a path
+     * may be interpreted differently by the security constraint, the consumer dispatch and the route, so it is rejected
+     * up front when a security constraint is configured (see {@link #channelRead0}).
+     */
+    private static boolean containsDotSegments(String path) {
+        return path != null && !path.equals(removeDotSegments(path));
+    }
+
+    /**
+     * Removes {@code .} and {@code ..} segments from the given path, as specified by the {@code remove_dot_segments}
+     * algorithm in RFC 3986 section 5.2.4. Used to detect whether a request path carries dot-segments. Excess
+     * {@code ..} segments cannot climb above the root, so the returned path never contains a {@code ..} segment.
+     */
+    static String removeDotSegments(String path) {
+        // fast path: nothing to resolve unless there is a dot segment to begin with
+        if (path == null || path.isEmpty() || path.indexOf('.') == -1) {
+            return path;
+        }
+
+        String in = path;
+        StringBuilder out = new StringBuilder(path.length());
+        while (!in.isEmpty()) {
+            if (in.startsWith("../")) {
+                in = in.substring(3);
+            } else if (in.startsWith("./")) {
+                in = in.substring(2);
+            } else if (in.startsWith("/./")) {
+                in = in.substring(2);
+            } else if (in.equals("/.")) {
+                in = "/";
+            } else if (in.startsWith("/../")) {
+                in = in.substring(3);
+                removeLastSegment(out);
+            } else if (in.equals("/..")) {
+                in = "/";
+                removeLastSegment(out);
+            } else if (in.equals(".") || in.equals("..")) {
+                in = "";
+            } else {
+                // move the first path segment (including any leading slash, up to but not including the
+                // next slash) from the input to the output
+                int start = in.charAt(0) == '/' ? 1 : 0;
+                int next = in.indexOf('/', start);
+                if (next < 0) {
+                    out.append(in);
+                    in = "";
+                } else {
+                    out.append(in, 0, next);
+                    in = in.substring(next);
+                }
+            }
+        }
+        return out.toString();
+    }
+
+    private static void removeLastSegment(StringBuilder out) {
+        int lastSlash = out.lastIndexOf("/");
+        if (lastSlash >= 0) {
+            out.setLength(lastSlash);
+        } else {
+            out.setLength(0);
+        }
     }
 
     protected boolean matchesRoles(String roles, String userRoles) {

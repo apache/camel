@@ -62,6 +62,8 @@ class CloudTrailReloadTriggerTaskLookupTest {
     private final ContextReloadStrategy reload = mock(ContextReloadStrategy.class);
     private DefaultCamelContext context;
     private int eventIds;
+    // run in each LookupEvents call, to change the task while its lookups run
+    private Runnable onLookup;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -78,6 +80,9 @@ class CloudTrailReloadTriggerTaskLookupTest {
 
     private LookupEventsResponse lookup(LookupEventsRequest request) {
         requests.add(request);
+        if (onLookup != null) {
+            onLookup.run();
+        }
         // the service takes at most one lookup attribute
         assertTrue(request.lookupAttributes().size() <= 1, "LookupEvents takes at most one lookup attribute");
         LookupAttribute attribute = request.lookupAttributes().isEmpty() ? null : request.lookupAttributes().get(0);
@@ -105,7 +110,11 @@ class CloudTrailReloadTriggerTaskLookupTest {
     }
 
     private void addEvent(String name, String secret, Instant time) {
-        visibleEvents.add(Event.builder().eventId("id-" + eventIds++).eventSource(SOURCE).eventName(name)
+        addEvent(SOURCE, name, secret, time);
+    }
+
+    private void addEvent(String source, String name, String secret, Instant time) {
+        visibleEvents.add(Event.builder().eventId("id-" + eventIds++).eventSource(source).eventName(name)
                 .eventTime(time).resources(Resource.builder().resourceName(secret).build()).build());
     }
 
@@ -225,6 +234,52 @@ class CloudTrailReloadTriggerTaskLookupTest {
         task.run();
         verify(reload, times(1)).onReload(task);
         assertEquals(2, requests.size());
+        assertTrue(requests.stream().allMatch(r -> t0.plusSeconds(5).equals(r.startTime())));
+    }
+
+    @Test
+    void everyPageOfBothLookupsOfOneCheckUsesTheSameStartTime() throws Exception {
+        Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
+        CloudTrailReloadTriggerTask task = task(t0);
+        // two pages of PutSecretValue events and one page of UpdateSecret events
+        for (int i = 0; i < 60; i++) {
+            addEvent("PutSecretValue", "other-secret", t0.plusSeconds(1 + i % 20));
+        }
+        addEvent("UpdateSecret", "tracked-secret", t0.plusSeconds(5));
+        // lastTime changes while the first page is read: the other pages and the other lookup keep the start time
+        onLookup = () -> {
+            if (requests.size() == 1) {
+                try {
+                    setField(task, "lastTime", null);
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        };
+
+        task.run();
+
+        assertEquals(3, requests.size(), "two pages of PutSecretValue and one page of UpdateSecret");
+        for (LookupEventsRequest request : requests) {
+            assertEquals(t0, request.startTime(), "every page of both lookups must use the start time of the check");
+        }
+        assertTrue(task.getUpdates().containsKey("tracked-secret"));
+    }
+
+    @Test
+    void updateEventOfAnotherServiceIsIgnored() throws Exception {
+        Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
+        CloudTrailReloadTriggerTask task = task(t0);
+        // the lookup filters by event name only, and event names are not unique across AWS services
+        addEvent("other-service.amazonaws.com", "UpdateSecret", "tracked-secret", t0.plusSeconds(5));
+
+        task.run();
+
+        assertFalse(task.getUpdates().containsKey("tracked-secret"), "an event of another service is not an update");
+        verify(reload, times(0)).onReload(task);
+        // the event still moves the start time of the next check
+        requests.clear();
+        task.run();
         assertTrue(requests.stream().allMatch(r -> t0.plusSeconds(5).equals(r.startTime())));
     }
 }

@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CUSTOM_RESOURCES;
@@ -33,6 +36,37 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_C
 @UriEndpoint(firstVersion = "3.7.0", scheme = SCHEME_CUSTOM_RESOURCES, title = "Kubernetes Custom Resources",
              syntax = "kubernetes-custom-resources:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "json",
+                                   description = "The custom resource that changed as JSON text, with the action (ADDED, MODIFIED or"
+                                                 + " DELETED) in the CamelKubernetesCRDEventAction header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the name of the"
+                                                + " instance in CamelKubernetesCRDInstanceName and, for createCustomResource and"
+                                                + " updateCustomResource, the instance as JSON text in CamelKubernetesCRDInstance"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.MAP, Carrier.POJO, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listCustomResources",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "org.apache.camel.util.json.JsonArray"),
+                                           @BodyType.When(option = "operation", value = "listCustomResourcesByLabels",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "org.apache.camel.util.json.JsonArray"),
+                                           @BodyType.When(option = "operation", value = "getCustomResource",
+                                                          carriers = Carrier.MAP,
+                                                          javaType = "org.apache.camel.util.json.JsonObject"),
+                                           @BodyType.When(option = "operation", value = "createCustomResource",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.GenericKubernetesResource"),
+                                           @BodyType.When(option = "operation", value = "updateCustomResource",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.GenericKubernetesResource"),
+                                           @BodyType.When(option = "operation", value = "deleteCustomResource",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "A JsonArray of the GenericKubernetesResource of the instances for the list"
+                                                 + " operations, a JsonObject of the instance for getCustomResource, and the"
+                                                 + " GenericKubernetesResource of create and update (an empty one when it already"
+                                                 + " exists). deleteCustomResource leaves the body as it was, with whether it deleted"
+                                                 + " the instance in the CamelKubernetesDeleteResult header"))
 public class KubernetesCustomResourcesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesCustomResourcesEndpoint(String uri, KubernetesCustomResourcesComponent component,

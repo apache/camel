@@ -22,6 +22,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
@@ -39,6 +42,18 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name",
              remote = false, category = { Category.MESSAGING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "org.springframework.context.ApplicationEvent",
+                                   description = "The ApplicationEvent itself, for every event of the ApplicationContext"
+                                                 + " whatever the name: an object published with publishEvent comes as a"
+                                                 + " PayloadApplicationEvent, and a non-event body a spring-event producer"
+                                                 + " sent as a CamelEvent, whose getExchange() holds the sending exchange"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "An ApplicationEvent body is published as it is. Any other body, also none,"
+                                                + " is published as a CamelEvent that holds the exchange, so listeners read the"
+                                                + " body from its getExchange()"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body is left as it is. The listeners run before the producer returns,"
+                                                 + " and a CamelEvent gives them the exchange itself"))
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;

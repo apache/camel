@@ -18,6 +18,8 @@ package org.apache.camel.component.google.mail.stream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
@@ -28,6 +30,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,10 +48,19 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-mail-stream:index",
              consumerOnly = true,
              category = { Category.CLOUD, Category.MAIL }, headersClass = GoogleMailStreamConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
+                                   byOption = @BodyType.When(option = "raw", value = "true", carriers = Carrier.TEXT),
+                                   description = "One message per mail of the query (unread mails by default): the"
+                                                 + " content of the first part of the mail that carries data, such as the"
+                                                 + " text/plain part, decoded as UTF-8 text, or null when no part has data."
+                                                 + " With raw the whole RFC 2822 mail as base64url-encoded text. The id,"
+                                                 + " subject, from, to and the other mail headers are CamelGoogleMail headers"))
 public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleMailStreamConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Gmail client;
 
     public GoogleMailStreamEndpoint(String uri, GoogleMailStreamComponent component,
                                     GoogleMailStreamConfiguration endpointConfiguration) {
@@ -86,8 +100,24 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements E
         return consumer;
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Gmail getClient() {
-        return ((GoogleMailStreamComponent) getComponent()).getClient(configuration);
+        Gmail answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleMailStreamComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     public GoogleMailClientFactory getClientFactory() {

@@ -149,7 +149,7 @@ public class Web3jProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrateg
         case "WEB3_SHA3": target.web3Sha3(exchange.getMessage()); return null;
         case "ethprotocolversion":
         case "ethProtocolVersion": target.ethProtocolVersion(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 

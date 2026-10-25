@@ -30,6 +30,9 @@ import org.apache.camel.component.olingo4.internal.Olingo4ApiCollection;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.component.olingo4.internal.Olingo4Constants;
 import org.apache.camel.component.olingo4.internal.Olingo4PropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -48,6 +51,53 @@ import org.apache.camel.util.CaseInsensitiveMap;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.CLOUD }, headersClass = Olingo4Constants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "methodName", value = "uread",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "filterAlreadySeen", value = "true",
+                                                          carriers = { Carrier.POJO, Carrier.VALUE, Carrier.LIST }) },
+                                   description = "The result of read for the resourcePath, as in the producer: an entity"
+                                                 + " set is split into one message per ClientEntity and a collection"
+                                                 + " property into one message per ClientValue; with splitResult=false the"
+                                                 + " ClientEntitySet or the ClientCollectionValue comes in one message. uread"
+                                                 + " gives the response unparsed as a stream"),
+           producerIn = @BodyType(value = { Carrier.POJO, Carrier.TEXT }, dependsOn = "inBody",
+                                  byOption = {
+                                          @BodyType.When(option = "methodName", value = "read", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "methodName", value = "uread", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "methodName", value = "delete", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "methodName", value = "action",
+                                                         carriers = { Carrier.POJO, Carrier.TEXT, Carrier.NULL }),
+                                          @BodyType.When(option = "methodName", value = "batch",
+                                                         carriers = Carrier.LIST) },
+                                  description = "create, update, patch, merge and action send the body as their data,"
+                                                + " passed as it is without type conversion: a ClientEntity, or the entity"
+                                                + " as JSON text, which is sent as application/json. A Map, bytes or a"
+                                                + " stream fails: convertBodyTo String for JSON in bytes or a stream. An action may have no body,"
+                                                + " and batch takes a List of Olingo4BatchRequest. read, uread and delete"
+                                                + " do not use the body"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "methodName", value = "uread",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "methodName", value = "delete",
+                                                          carriers = Carrier.VALUE),
+                                           @BodyType.When(option = "methodName", value = "batch",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "filterAlreadySeen", value = "true",
+                                                          carriers = {
+                                                                  Carrier.POJO, Carrier.VALUE, Carrier.LIST,
+                                                                  Carrier.NULL }) },
+                                   description = "read gives the Olingo client object of the resource: a ClientEntitySet,"
+                                                 + " a ClientEntity, the Edm of $metadata or the ClientServiceDocument; a"
+                                                 + " ClientPrimitiveValue, ClientComplexValue or ClientCollectionValue for a"
+                                                 + " property or $value, and a Long for $count. uread gives the response as"
+                                                 + " a stream. create, update, patch, merge and action give the ClientEntity"
+                                                 + " of the response, or the HttpStatusCode when it has no content, as delete"
+                                                 + " does; batch gives a List of Olingo4BatchResponse. With"
+                                                 + " filterAlreadySeen, a result read before is null, and a complex or"
+                                                 + " collection value becomes a List"))
 @Deprecated(since = "4.18")
 public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration>
         implements EndpointServiceLocation {

@@ -25,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -78,53 +76,11 @@ public class PahoConsumer extends DefaultConsumer {
                 client.connect(connectOptions);
             }
 
-            MqttClient callbackClient = client;
-            boolean isOwnedClient = stopClient;
-            callbackClient.setCallback(new MqttCallbackExtended() {
-
-                @Override
-                public void connectComplete(boolean reconnect, String serverURI) {
-                    if (reconnect && isRunAllowed() && callbackClient == client) {
-                        try {
-                            callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
-                        } catch (MqttException e) {
-                            if (isOwnedClient) {
-                                LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
-                                        e.getMessage(), e);
-                                restartRouteAsync();
-                            } else {
-                                LOG.error(
-                                        "MQTT resubscribe failed on reconnect with externally provided client,"
-                                          + " route will not be auto-restarted: {}",
-                                        e.getMessage(), e);
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void connectionLost(Throwable cause) {
-                    LOG.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
-                }
-
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    LOG.debug("Message arrived on topic: {} -> {}", topic, message);
-                    Exchange exchange = createExchange(message, topic);
-
-                    // use default consumer callback
-                    AsyncCallback cb = defaultConsumerCallback(exchange, true);
-                    getAsyncProcessor().process(exchange, cb);
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
-                    LOG.debug("Delivery complete. Token: {}", token);
-                }
-            });
+            // the client can be shared by the consumers of several endpoints, and it has a single callback
+            PahoClientCallback.register(client, this, stopClient);
 
             LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
-            callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+            client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
         } catch (Exception startException) {
             MqttClient ownedClient = stopClient ? client : null;
             if (ownedClient != null) {
@@ -139,6 +95,7 @@ public class PahoConsumer extends DefaultConsumer {
                 }
                 closeOwnedClient(ownedClient, startException);
             }
+            PahoClientCallback.unregister(this);
             throw startException;
         }
     }
@@ -194,6 +151,18 @@ public class PahoConsumer extends DefaultConsumer {
         try {
             super.doStop();
 
+            MqttClient sharedClient = ownedClient == null ? client : null;
+            if (sharedClient != null) {
+                // the messages of a shared client no longer go to this consumer (the own client of the consumer is
+                // unregistered after its disconnect, so that its messages are routed until then, as before)
+                boolean topicStillUsed = PahoClientCallback.unregister(this);
+                if (sharedClient.isConnected() && getEndpoint().getConfiguration().isCleanSession() && !topicStillUsed) {
+                    // the client stays connected for the other users, so remove the subscription of this consumer (unless
+                    // another consumer of the client uses the same topic filter: the broker has one subscription)
+                    LOG.debug("Unsubscribing shared client from topic: {}", getEndpoint().getTopic());
+                    sharedClient.unsubscribe(getEndpoint().getTopic());
+                }
+            }
             if (ownedClient != null && ownedClient.isConnected()) {
                 String topic = getEndpoint().getTopic();
                 // only unsubscribe if we are not durable
@@ -210,7 +179,11 @@ public class PahoConsumer extends DefaultConsumer {
         } catch (Exception e) {
             stopException = e;
         } finally {
-            client = null;
+            PahoClientCallback.unregister(this);
+            if (ownedClient != null) {
+                // an externally provided client is kept, so that the consumer uses it again when it starts again
+                client = null;
+            }
             stopClient = false;
             if (ownedClient != null) {
                 stopException = closeOwnedClient(ownedClient, stopException);
@@ -219,6 +192,39 @@ public class PahoConsumer extends DefaultConsumer {
         if (stopException != null) {
             throw stopException;
         }
+    }
+
+    /**
+     * Subscribes again after the client reconnected.
+     */
+    void resubscribe() {
+        MqttClient current = client;
+        if (current == null || !isRunAllowed()) {
+            // stopping: do not subscribe the topic again, the stop unsubscribes it
+            return;
+        }
+        try {
+            current.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+        } catch (MqttException e) {
+            if (stopClient) {
+                LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
+                        e.getMessage(), e);
+                restartRouteAsync();
+            } else {
+                LOG.error(
+                        "MQTT resubscribe failed on reconnect with externally provided client,"
+                          + " route will not be auto-restarted: {}",
+                        e.getMessage(), e);
+            }
+        }
+    }
+
+    void onMessageArrived(String topic, MqttMessage message) {
+        Exchange exchange = createExchange(message, topic);
+
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     MqttClient createClient() throws MqttException {

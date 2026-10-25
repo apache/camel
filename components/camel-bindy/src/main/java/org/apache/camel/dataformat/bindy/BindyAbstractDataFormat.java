@@ -30,6 +30,8 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.dataformat.bindy.annotation.FormatFactories;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.factories.DefaultFactoryRegistry;
@@ -176,6 +178,21 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
                 row.putIfAbsent(field.getType().getName(),
                         ReflectionHelper.getField(field, model));
             }
+        }
+    }
+
+    /**
+     * Checks that the row to marshal has an object of a model class, as the factory would otherwise write an empty line
+     * for it, such as for a Map of field values or a String body.
+     */
+    protected void checkModelRow(Exchange exchange, BindyAbstractFactory factory, Map<String, Object> row)
+            throws InvalidPayloadException {
+        if (!factory.containsModel(row)) {
+            throw new InvalidPayloadException(
+                    exchange, classType != null ? classType : Object.class, exchange.getIn(),
+                    "marshal takes an object of the model class, a List of them, or a Map of the model class names to the objects,"
+                                                                                              + " but a row has the keys: "
+                                                                                              + row.keySet());
         }
     }
 

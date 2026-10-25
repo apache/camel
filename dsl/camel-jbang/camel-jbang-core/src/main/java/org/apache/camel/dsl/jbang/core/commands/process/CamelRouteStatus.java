@@ -114,6 +114,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         description = "Include group column")
     boolean showGroup;
 
+    @CommandLine.Option(names = { "--checksum" },
+                        description = "Include the checksum and revision of each route: the checksum is the same in every run while the route is not changed, and the revision counts the times a reload changed it")
+    boolean checksum;
+
     public CamelRouteStatus(CamelJBangMain main) {
         super(main);
     }
@@ -149,6 +153,8 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                     row.remote = bool;
                 }
                 row.source = o.getString("source");
+                row.checksum = o.getString("checksum");
+                row.revision = o.getIntegerOrDefault("revision", 0);
                 row.state = o.getString("state");
                 row.age = o.getString("uptime");
                 row.uptime = row.age != null ? TimeUtils.toMilliSeconds(row.age) : 0;
@@ -307,6 +313,11 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("FROM").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(fromWideW, OverflowBehaviour.NEWLINE)
                         .with(r -> r.from),
+                new Column().header("CHECKSUM").visible(checksum).dataAlign(HorizontalAlign.LEFT)
+                        .with(r -> r.checksum != null ? r.checksum : ""),
+                new Column().header("REV").visible(checksum).headerAlign(HorizontalAlign.CENTER)
+                        .dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.revision > 0 ? String.valueOf(r.revision) : ""),
                 new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)
                         .with(this::getRemote),
@@ -337,6 +348,9 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         jo.put("group", r.group);
         jo.put("from", r.from);
         jo.put("remote", r.remote);
+        // the same in every run while the route is not changed, and the times a reload changed it (when known)
+        jo.put("checksum", r.checksum);
+        jo.put("revision", r.revision > 0 ? r.revision : null);
         jo.put("status", getStatus(r));
         jo.put("age", r.age);
         jo.put("uptime", r.uptime);
@@ -558,6 +572,8 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         String from;
         boolean remote;
         String source;
+        String checksum;
+        int revision;
         String state;
         String age;
         String coverage;

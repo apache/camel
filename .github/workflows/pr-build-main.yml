@@ -54,9 +54,14 @@ on:
         required: false
         type: boolean
         default: false
+      jdk25_only:
+        description: 'Run on JDK 25 only (skips JDK 21 build, experimental)'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}${{ inputs.extra_modules && '-component-test' || '' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}${{ inputs.extra_modules && '-component-test' || '' }}${{ inputs.jdk25_only && '-jdk25' || '' }}
   cancel-in-progress: true
 
 permissions:
@@ -64,14 +69,14 @@ permissions:
 
 jobs:
   build:
-    if: github.repository == 'apache/camel'
+    if: github.repository == 'apache/camel' && !inputs.jdk25_only
     permissions:
       contents: read
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: ['21', '25']
+        java: ['21']
         experimental: [ false ]
 
     steps:
@@ -246,3 +251,103 @@ jobs:
           name: ci-comment
           path: ci-comment-artifact/
           overwrite: true
+
+  build-jdk25:
+    if: github.repository == 'apache/camel' && inputs.jdk25_only == true
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ inputs.pr_ref || '' }}
+      - name: Fetch base branch for Scalpel change detection
+        if: ${{ !inputs.skip_full_build }}
+        run: |
+          BASE_REF="${GITHUB_BASE_REF:-main}"
+          for depth in 50 200 1000; do
+            git fetch --no-tags --deepen=$depth origin ${BASE_REF} 2>/dev/null || true
+            git fetch --no-tags --depth=$depth origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
+            if git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
+              echo "Merge base reachable at depth $depth"
+              break
+            fi
+            echo "Merge base not reachable at depth $depth, deepening..."
+          done
+          if ! git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
+            echo "Merge base still not reachable, fetching full history"
+            git fetch --no-tags --unshallow origin ${BASE_REF} 2>/dev/null || true
+            git fetch --no-tags origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
+          fi
+      - id: install-packages
+        uses: ./.github/actions/install-packages
+      - id: install-mvnd
+        uses: ./.github/actions/install-mvnd
+      - name: Set up JDK 25
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+      - name: Get Atlassian dependency version
+        id: atlassian-version
+        run: |
+          JIRA_VERSION=$(./mvnw help:evaluate -Dexpression=jira-rest-client-api-version -q -DforceStdout -N -f parent/pom.xml)
+          echo "version=${JIRA_VERSION}" >> $GITHUB_OUTPUT
+      - name: Restore Atlassian Maven Cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.m2/repository/com/atlassian
+            ~/.m2/repository/io/atlassian
+          key: atlassian-maven-${{ steps.atlassian-version.outputs.version }}
+      - name: maven build
+        if: ${{ !inputs.skip_full_build }}
+        run: ./etc/scripts/regen.sh
+      - name: Quick dependency build
+        if: ${{ inputs.skip_full_build }}
+        shell: bash
+        env:
+          EXTRA_MODULES: ${{ inputs.extra_modules }}
+        run: ./mvnw -l build.log install -B -DskipTests -Dquickly -pl "$EXTRA_MODULES" -am
+      - name: archive logs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: build-25.log
+          path: |
+            build.log
+            build-regen.log
+            build-regen-catalog.log
+      - name: Save Atlassian Maven Cache
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: always()
+        with:
+          path: |
+            ~/.m2/repository/com/atlassian
+            ~/.m2/repository/io/atlassian
+          key: atlassian-maven-${{ steps.atlassian-version.outputs.version }}
+      - name: mvn test
+        uses: ./.github/actions/incremental-build
+        with:
+          pr-id: ${{ github.event.number || inputs.pr_number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-mvnd-install: 'true'
+          extra-modules: ${{ inputs.extra_modules || '' }}
+          maven-extra-args: ''
+          flake-label: JDK 25
+      - name: archive incremental test logs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: incremental-test-java-25.log
+          path: incremental-test.log
+      - name: Upload recovered-flake report
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always() && hashFiles('flakes.json') != ''
+        with:
+          name: flakes-java-25
+          path: flakes.json

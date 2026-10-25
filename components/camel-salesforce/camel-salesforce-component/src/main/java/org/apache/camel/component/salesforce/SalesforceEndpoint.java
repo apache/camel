@@ -24,6 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +42,98 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce",
              syntax = "salesforce:operationName:topicName", category = { Category.CLOUD, Category.SAAS },
              headersClass = SalesforceConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.MAP, Carrier.POJO },
+                                   byOption = {
+                                           @BodyType.When(option = "operationName", value = "pubSubSubscribe",
+                                                          carriers = Carrier.POJO),
+                                           @BodyType.When(option = "rawPayload", value = "true",
+                                                          carriers = { Carrier.TEXT, Carrier.POJO }),
+                                           @BodyType.When(option = "pubSubDeserializeType", value = "JSON",
+                                                          carriers = { Carrier.TEXT, Carrier.MAP, Carrier.POJO }) },
+                                   description = "The subscribe operation gives a push topic record as a Map, or an object of"
+                                                 + " sObjectClass (or the DTO of sObjectName), a platform event (/event/)"
+                                                 + " as a PlatformEvent, and a change event (/data/) as a Map of the"
+                                                 + " changed fields, with the replay id and the change event header in"
+                                                 + " headers; rawPayload=true gives the JSON text instead. pubSubSubscribe"
+                                                 + " gives an Avro GenericRecord or SpecificRecord, an object of"
+                                                 + " pubSubPojoClass with POJO, or JSON text with JSON"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO, Carrier.LIST, Carrier.MAP,
+                   Carrier.NULL },
+                                  description = "The REST operations send a generated DTO (an AbstractSObjectBase) as"
+                                                + " JSON, or JSON text, bytes, a stream or a file as is; a Map or another"
+                                                + " object is sent as its toString, not as JSON: marshal it first. Text in"
+                                                + " the body is the id, SOQL or SOSL when the option or header is not set."
+                                                + " apexCall takes a Map as query parameters; bulk operations take a"
+                                                + " JobInfo, BatchInfo or Job, and createBatch the CSV or XML records as a"
+                                                + " stream; composite operations an SObjectComposite, SObjectBatch or"
+                                                + " SObjectTree, the SObject collections a List of DTOs; pubSubPublish a"
+                                                + " List of events; raw the request as a stream"),
+           producerOut = @BodyType(value = {
+                   Carrier.POJO, Carrier.LIST, Carrier.MAP, Carrier.STREAM, Carrier.UNCHANGED, Carrier.NULL },
+                                   dependsOn = { "streamQueryResult", "notFoundBehaviour" },
+                                   byOption = {
+                                           @BodyType.When(option = "operationName", value = "createSObject",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.apache.camel.component.salesforce.api.dto.CreateSObjectResult"),
+                                           @BodyType.When(option = "operationName", value = "upsertSObject",
+                                                          carriers = { Carrier.POJO, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "operationName", value = "updateSObject",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operationName", value = "deleteSObject",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operationName", value = "deleteSObjectWithId",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operationName", value = "getSObject",
+                                                          carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operationName", value = "getSObjectWithId",
+                                                          carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operationName", value = "query",
+                                                          carriers = { Carrier.POJO, Carrier.STREAM }),
+                                           @BodyType.When(option = "operationName", value = "queryAll",
+                                                          carriers = { Carrier.POJO, Carrier.STREAM }),
+                                           @BodyType.When(option = "operationName", value = "queryMore",
+                                                          carriers = { Carrier.POJO, Carrier.STREAM }),
+                                           @BodyType.When(option = "operationName", value = "getBlobField",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operationName", value = "getVersions",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operationName", value = "apexCall",
+                                                          carriers = {
+                                                                  Carrier.POJO, Carrier.MAP, Carrier.STREAM,
+                                                                  Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "operationName", value = "raw",
+                                                          carriers = { Carrier.STREAM, Carrier.NULL }),
+                                           @BodyType.When(option = "operationName",
+                                                          value = "compositeCreateSObjectCollections",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operationName",
+                                                          value = "compositeUpdateSObjectCollections",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operationName",
+                                                          value = "compositeUpsertSObjectCollections",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operationName",
+                                                          value = "compositeRetrieveSObjectCollections",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operationName",
+                                                          value = "compositeDeleteSObjectCollections",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operationName", value = "pubSubPublish",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "rawPayload", value = "true",
+                                                          carriers = {
+                                                                  Carrier.STREAM, Carrier.POJO, Carrier.LIST,
+                                                                  Carrier.UNCHANGED, Carrier.NULL }) },
+                                   description = "The response as a DTO: a CreateSObjectResult, the SObject DTO of"
+                                                 + " sObjectName or sObjectClass, a QueryRecords class for a query (an"
+                                                 + " Iterator of the records with streamQueryResult=true), JobInfo or Job"
+                                                 + " for bulk, a List for getVersions, the collections and pubSubPublish;"
+                                                 + " a DTO class that is not in packages fails: set sObjectClass or use"
+                                                 + " rawPayload. getBlobField, raw and the bulk results give a stream;"
+                                                 + " an update or delete with no content leaves the body. rawPayload=true"
+                                                 + " gives the JSON of the REST, apexCall and composite responses as a"
+                                                 + " stream; format=JSON or XML only sets the content type of raw"))
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);

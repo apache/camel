@@ -15,6 +15,10 @@
     "modelName": "tokenize",
     "modelJavaType": "org.apache.camel.model.language.TokenizerExpression"
   },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "bytes", "stream", "file" ], "dependsOn": [ "source" ], "description": "Text as text, bytes, a stream or a file. Another body is tokenized as its toString(), and fails with endToken or xml: marshal it first" },
+    "expressionOut": { "carriers": [ "iterator" ], "description": "An Iterator of the tokens as text, read once: in setBody the body is the Iterator, for the Split EIP to walk. With group, each N tokens are joined into one text" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "token": { "index": 1, "kind": "attribute", "displayName": "Token", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as the token to support dynamic tokens." },

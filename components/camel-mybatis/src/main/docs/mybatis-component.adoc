@@ -60,8 +60,9 @@ include::partial$component-endpoint-headers.adoc[]
 The response from MyBatis will only be set as the body if it's a
 `SELECT` statement. That means, for example, for `INSERT` statements
 Camel will not replace the body. This allows you to continue routing and
-keep the original body. The response from MyBatis is always stored in
-the header with the key `CamelMyBatisResult`.
+keep the original body. The response from MyBatis is stored in
+the header with the key `CamelMyBatisResult`, or in the header that the
+`outputHeader` option names, which leaves the body unchanged for a `SELECT` as well.
 
 == Examples
 

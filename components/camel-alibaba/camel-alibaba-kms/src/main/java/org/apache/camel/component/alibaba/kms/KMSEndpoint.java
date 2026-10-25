@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.kms.constants.KMSHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,23 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-kms", title = "Alibaba Key Management Service (KMS)",
              syntax = "alibaba-kms:operation", category = { Category.CLOUD },
              headersClass = KMSHeaders.class, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "encrypt",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "decrypt", carriers = Carrier.TEXT) },
+                                  description = "encrypt encrypts the body unless the plaintext option or header is set: text"
+                                                + " and bytes as they are, a stream or a file read as text, which corrupts"
+                                                + " binary data, and a Map or a POJO as its toString(), so marshal it first."
+                                                + " decrypt takes the ciphertext blob as text, unless the ciphertextBlob option"
+                                                + " or header is set. No body fails both; generateDataKey does not use the body"),
+           producerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map",
+                                   description = "A Map with the statusCode and the fields of the response: the ciphertextBlob"
+                                                 + " and keyId of encrypt, the plaintext of decrypt, which is Base64 when this"
+                                                 + " component encrypted it, and the plaintext and ciphertextBlob of"
+                                                 + " generateDataKey. The request id is in the CamelAlibabaKmsRequestId header"
+                                                 + " too"))
 public class KMSEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",

@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.huaweicloud.image.constants.ImageRecognitionConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,21 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-imagerecognition", title = "Huawei Cloud Image Recognition",
              syntax = "hwcloud-imagerecognition:operation",
              category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used, not even for the image: the image comes from the imageContent option"
+                                                + " or the CamelHwCloudImageContent exchange property as base64, or from the"
+                                                + " imageUrl option or the CamelHwCloudImageUrl exchange property as a URL"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "celebrityRecognition",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.huaweicloud.sdk.image.v2.model.CelebrityRecognitionResultBody>"),
+                                           @BodyType.When(option = "operation", value = "tagRecognition",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.huaweicloud.sdk.image.v2.model.ImageTaggingResponseResult") },
+                                   description = "The result of the Huawei Cloud SDK: for celebrityRecognition a List with a"
+                                                 + " CelebrityRecognitionResultBody per celebrity found, and for tagRecognition"
+                                                 + " an ImageTaggingResponseResult with the tags"))
 public class ImageRecognitionEndpoint extends DefaultEndpoint {
     @UriPath(
              description = "Name of Image Recognition operation to perform, including celebrityRecognition and tagRecognition",

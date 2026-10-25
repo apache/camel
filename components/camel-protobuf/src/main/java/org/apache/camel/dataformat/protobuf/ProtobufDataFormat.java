@@ -32,6 +32,9 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -48,6 +51,23 @@ import org.apache.commons.io.IOUtils;
                               +
                               "enableFeatures,disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
                               "schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.MAP },
+                                 description = "A protobuf Message of a generated class, or a Map of the fields of the"
+                                               + " instanceClass message, which needs instanceClass. JSON text is not"
+                                               + " converted"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The protobuf binary data, or JSON with contentTypeFormat json, in the stream"
+                                                + " cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                   byOption = @BodyType.When(option = "contentTypeFormat", value = "json",
+                                                             carriers = {
+                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                     Carrier.FILE }),
+                                   description = "Protobuf binary data, or JSON with contentTypeFormat json: unmarshal fails"
+                                                 + " without instanceClass"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "com.google.protobuf.Message",
+                                    description = "The generated class of instanceClass, such as AddressBookProtos$Person;"
+                                                  + " convertBodyTo Map gives its fields"))
 public class ProtobufDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

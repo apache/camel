@@ -18,8 +18,11 @@ package org.apache.camel.component.docling;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -82,10 +85,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.OAuthHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1734,9 +1739,68 @@ public class DoclingProducer extends DefaultProducer {
             return tempFile.toString();
         } else if (body instanceof File file) {
             return validateLocalInputPath(file.getAbsolutePath());
+        } else if (body instanceof StreamCache || body instanceof InputStream) {
+            return writeStreamToTempFile(exchange, body);
         }
 
         throw new InvalidPayloadException(exchange, String.class);
+    }
+
+    /**
+     * Writes a stream body (an {@link InputStream} or a {@link StreamCache}) to a temp file, as a byte[] body is, and
+     * fails when it is larger than {@code maxFileSize}. A stream cache is reset afterwards, so it can be read again; a
+     * plain stream is consumed and closed.
+     */
+    private String writeStreamToTempFile(Exchange exchange, Object body) throws IOException {
+        Path secureTempDir = createSecureTempDir();
+        registerTempDirCleanup(exchange, secureTempDir);
+        Path tempFile = createSecureTempFile(secureTempDir);
+        try (OutputStream out = new MaxFileSizeOutputStream(Files.newOutputStream(tempFile), configuration.getMaxFileSize())) {
+            if (body instanceof StreamCache cache) {
+                cache.writeTo(out);
+            } else {
+                ((InputStream) body).transferTo(out);
+            }
+        } finally {
+            if (body instanceof StreamCache cache) {
+                cache.reset();
+            } else {
+                IOHelper.close((InputStream) body);
+            }
+        }
+        return tempFile.toString();
+    }
+
+    /**
+     * Fails a write that takes the written size over the maximum file size.
+     */
+    private static final class MaxFileSizeOutputStream extends FilterOutputStream {
+        private final long maxFileSize;
+        private long size;
+
+        MaxFileSizeOutputStream(OutputStream out, long maxFileSize) {
+            super(out);
+            this.maxFileSize = maxFileSize;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            checkSize(1);
+            out.write(b);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            checkSize(len);
+            out.write(b, off, len);
+        }
+
+        private void checkSize(int len) {
+            size += len;
+            if (size > maxFileSize) {
+                throw new IllegalArgumentException("File size exceeds maximum allowed size: " + maxFileSize);
+            }
+        }
     }
 
     /**

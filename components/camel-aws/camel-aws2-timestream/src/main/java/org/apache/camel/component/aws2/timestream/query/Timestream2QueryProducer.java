@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws.common.AwsExceptionUtil;
+import org.apache.camel.component.aws2.timestream.Timestream2ClientType;
 import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
 import org.apache.camel.component.aws2.timestream.Timestream2Constants;
 import org.apache.camel.component.aws2.timestream.Timestream2Operations;
@@ -79,6 +80,12 @@ public class Timestream2QueryProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified, either with the operation option or the "
+                                               + Timestream2Constants.OPERATION + " header");
+        }
+        operation.checkClientType(Timestream2ClientType.query);
         return operation;
     }
 
@@ -408,6 +415,11 @@ public class Timestream2QueryProducer extends DefaultProducer {
         } else {
             DescribeScheduledQueryRequest.Builder builder = DescribeScheduledQueryRequest.builder();
 
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_ARN))) {
+                String queryArn = exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_ARN, String.class);
+                builder.scheduledQueryArn(queryArn);
+            }
+
             DescribeScheduledQueryResponse result;
             try {
                 result = timestreamQueryClient.describeScheduledQuery(builder.build());
@@ -585,6 +597,11 @@ public class Timestream2QueryProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
+        Timestream2Operations operation = getConfiguration().getOperation();
+        if (operation != null) {
+            operation.checkClientType(Timestream2ClientType.query);
+        }
+
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
                 getEndpoint().getCamelContext(),

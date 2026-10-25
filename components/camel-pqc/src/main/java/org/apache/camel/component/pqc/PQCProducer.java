@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -41,6 +44,8 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridKEM;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
@@ -640,43 +645,111 @@ public class PQCProducer extends DefaultProducer {
     /**
      * Feeds the message body into the given {@link Signature} without materialising the whole payload as a String. A
      * {@code byte[]} body is used directly, an {@link InputStream} body is read in chunks (and reset afterwards when it
-     * is a re-readable {@link StreamCache} so downstream processors still see the payload), and any other body type
-     * falls back to its String representation, encoded as UTF-8.
+     * is a re-readable {@link StreamCache} so downstream processors still see the payload), and a file body is read in
+     * chunks from the file (see {@link #fileContent(Object)}). A {@code String} or {@link CharSequence} body is encoded
+     * as UTF-8, and any other body is read through {@link #rawBytes(Message, Object)}, which either gets its bytes or
+     * rejects it.
      */
     private static void updateSignatureFromBody(Signature signature, Message message)
             throws InvalidPayloadException, SignatureException, IOException {
-        Object body = message.getBody();
+        Object body = fileContent(message.getBody());
         if (body instanceof byte[] bytes) {
             signature.update(bytes);
+        } else if (body instanceof Path path) {
+            try (InputStream stream = Files.newInputStream(path)) {
+                updateSignatureFromStream(signature, stream);
+            }
         } else if (body instanceof InputStream stream) {
             try {
-                byte[] buffer = new byte[STREAM_BUFFER_SIZE];
-                int read;
-                while ((read = stream.read(buffer)) != -1) {
-                    signature.update(buffer, 0, read);
-                }
+                updateSignatureFromStream(signature, stream);
             } finally {
                 if (body instanceof StreamCache streamCache) {
                     streamCache.reset();
                 }
             }
+        } else if (body instanceof CharSequence text) {
+            signature.update(textToBytes(text));
         } else {
-            // Pin UTF-8: the JVM default charset is platform dependent, so signing and verifying on JVMs with a
-            // different default would disagree on the bytes for a non-ASCII payload
-            signature.update(message.getMandatoryBody(String.class).getBytes(StandardCharsets.UTF_8));
+            signature.update(rawBytes(message, body));
         }
+    }
+
+    /**
+     * Encodes a text body as UTF-8. The JVM default charset is platform dependent, so signing and verifying on JVMs
+     * with a different default would disagree on the bytes for a non-ASCII payload; UTF-8 keeps them in step.
+     */
+    private static byte[] textToBytes(CharSequence text) {
+        return text.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Returns the bytes of a body that is neither a {@code byte[]}, an {@link InputStream}, a file nor a
+     * {@link CharSequence}, by asking the type converter registry for a registered converter to {@code byte[]} - which
+     * covers bodies with a binary form such as a {@link java.nio.ByteBuffer}, a {@link java.io.ByteArrayOutputStream},
+     * a Netty {@code ByteBuf} or a Vert.x {@code Buffer}, so they are signed over their bytes rather than over a text
+     * rendering. A body with no such converter (for example a {@code Map} or a POJO) has no well-defined bytes to sign,
+     * so it is rejected with {@link InvalidPayloadException} rather than signed over an incidental text form. Fallback
+     * converters are not consulted, so the result does not depend on which components are on the classpath.
+     */
+    private static byte[] rawBytes(Message message, Object body) throws InvalidPayloadException {
+        Exchange exchange = message.getExchange();
+        if (body != null) {
+            // lookup finds only a registered converter, so a body with a binary form (ByteBuffer, ByteArrayOutputStream,
+            // Netty ByteBuf, Vert.x Buffer, ...) is converted, while a Map or POJO - which would only convert through a
+            // fallback converter, if any component provides one - is left for the InvalidPayloadException below, so the
+            // outcome does not depend on the classpath. tryConvertTo returns null instead of throwing on a miss.
+            TypeConverter converter = exchange.getContext().getTypeConverterRegistry().lookup(byte[].class, body.getClass());
+            if (converter != null) {
+                byte[] bytes = converter.tryConvertTo(byte[].class, exchange, body);
+                if (bytes != null) {
+                    return bytes;
+                }
+            }
+        }
+        throw new InvalidPayloadException(exchange, byte[].class, message);
+    }
+
+    private static void updateSignatureFromStream(Signature signature, InputStream stream)
+            throws SignatureException, IOException {
+        byte[] buffer = new byte[STREAM_BUFFER_SIZE];
+        int read;
+        while ((read = stream.read(buffer)) != -1) {
+            signature.update(buffer, 0, read);
+        }
+    }
+
+    /**
+     * Resolves a file body to the content to sign: a {@link WrappedFile} (the body of the file based consumers) gives
+     * its content, and a {@link File} is turned into its {@link Path}, so that the bytes of the file are read as they
+     * are. The content of a {@link WrappedFile} is a {@link File} for the local file system, otherwise the content the
+     * consumer has already loaded, such as a {@code byte[]} or an {@link InputStream}. Other bodies are not changed.
+     */
+    private static Object fileContent(Object body) {
+        if (body instanceof WrappedFile<?> wrappedFile) {
+            Object content = wrappedFile.getBody();
+            if (content != null) {
+                body = content;
+            }
+        }
+        if (body instanceof File file) {
+            return file.toPath();
+        }
+        return body;
     }
 
     /**
      * Returns the message body as a byte array without a String round-trip when it is already binary. Used by the
      * hybrid operations, which need the whole payload in memory. An {@link InputStream} is fully read (and reset
-     * afterwards when it is a re-readable {@link StreamCache}). Any other body type falls back to its String
-     * representation, encoded as UTF-8.
+     * afterwards when it is a re-readable {@link StreamCache}), and a file body is read from the file (see
+     * {@link #fileContent(Object)}). A {@code String} or {@link CharSequence} body is encoded as UTF-8, and any other
+     * body is read through {@link #rawBytes(Message, Object)}, which either gets its bytes or rejects it.
      */
     private static byte[] bodyToByteArray(Message message) throws InvalidPayloadException, IOException {
-        Object body = message.getBody();
+        Object body = fileContent(message.getBody());
         if (body instanceof byte[] bytes) {
             return bytes;
+        } else if (body instanceof Path path) {
+            return Files.readAllBytes(path);
         } else if (body instanceof InputStream stream) {
             try {
                 return stream.readAllBytes();
@@ -685,9 +758,10 @@ public class PQCProducer extends DefaultProducer {
                     streamCache.reset();
                 }
             }
+        } else if (body instanceof CharSequence text) {
+            return textToBytes(text);
         } else {
-            // Pin UTF-8, as updateSignatureFromBody does
-            return message.getMandatoryBody(String.class).getBytes(StandardCharsets.UTF_8);
+            return rawBytes(message, body);
         }
     }
 

@@ -44,10 +44,26 @@ public final class ServiceBusTypeConverterLoader implements TypeConverterLoader,
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
+        addTypeConverter(registry, byte[].class, com.azure.core.util.BinaryData.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.azure.servicebus.ServiceBusTypeConverter.toBytes((com.azure.core.util.BinaryData) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.azure.core.util.BinaryData.class, java.lang.String.class, true,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.azure.servicebus.ServiceBusTypeConverter.toBinaryData((java.lang.String) value);
                 if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
+        addTypeConverter(registry, java.io.InputStream.class, com.azure.core.util.BinaryData.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.azure.servicebus.ServiceBusTypeConverter.toInputStream((com.azure.core.util.BinaryData) value);
+                if (false && answer == null) {
                     answer = Void.class;
                 }
                 return answer;

@@ -26,6 +26,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSHeaders;
 import org.apache.camel.component.huaweicloud.obs.models.OBSRegion;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +42,48 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-obs", title = "Huawei Object Storage Service (OBS)",
              syntax = "hwcloud-obs:operation",
              category = { Category.CLOUD }, headersClass = OBSHeaders.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The content of the object as a byte array, one message per object, with its"
+                                                 + " bucket, key and metadata in headers such as CamelHwCloudObsObjectKey, and the"
+                                                 + " key in CamelFileName too. Folders are consumed too, with an empty body, unless"
+                                                 + " includeFolders=false"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "putObject",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "createBucket",
+                                                         carriers = { Carrier.TEXT, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "listObjects",
+                                                         carriers = { Carrier.TEXT, Carrier.POJO }) },
+                                  description = "For putObject the content to upload: text, bytes, a stream or a file, such as"
+                                                + " the file of a file consumer, whose name is the object name when objectName is"
+                                                + " not set. A Map or a POJO fails: marshal it first. createBucket takes a"
+                                                + " CreateBucketRequest of the OBS SDK or its JSON as text, and listObjects a"
+                                                + " ListObjectsRequest or its JSON, and with another body use the options. The"
+                                                + " other operations do not use the body"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "putObject", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "getObject", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "operation", value = "listObjects", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "listBuckets", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "createBucket", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "deleteBucket", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "getBucketMetadata",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String") },
+                                   description = "The JSON of the result as text: the PutObjectResult of putObject, the array of"
+                                                 + " the objects or the buckets for listObjects and listBuckets, the bucket for"
+                                                 + " createBucket, the response headers for deleteBucket and the metadata for"
+                                                 + " getBucketMetadata. getObject gives the content of the object as a byte array"
+                                                 + " with its metadata in headers. Unchanged after checkBucketExists, which sets the"
+                                                 + " CamelHwCloudObsBucketExists exchange property"))
 public class OBSEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")

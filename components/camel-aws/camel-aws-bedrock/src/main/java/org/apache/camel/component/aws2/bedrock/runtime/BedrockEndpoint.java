@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.bedrock.runtime.client.BedrockClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +42,42 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock", title = "AWS Bedrock",
              syntax = "aws-bedrock:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = BedrockConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.TEXT,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "converse", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "converseStream",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "applyGuardrail",
+                                                         carriers = Carrier.ANY) },
+                                  description = "The request of the model as JSON text for the invoke operations, which also"
+                                                + " need the CamelAwsBedrockContentType and CamelAwsBedrockAcceptContentType"
+                                                + " headers. Bytes, a stream or a file are sent as their toString(): convert"
+                                                + " them to a String first, and marshal a Map or a POJO to JSON. converse,"
+                                                + " converseStream and applyGuardrail take their input from headers, such as"
+                                                + " CamelAwsBedrockConverseMessages. With pojoRequest=true an"
+                                                + " InvokeModelRequest of the AWS SDK: another body fails"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.LIST },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "invokeTextModel",
+                                                          carriers = { Carrier.TEXT, Carrier.POJO }),
+                                           @BodyType.When(option = "operation", value = "invokeImageModel",
+                                                          carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "invokeEmbeddingsModel",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse"),
+                                           @BodyType.When(option = "operation", value = "converse", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "applyGuardrail",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String") },
+                                   description = "The streaming operations and converseStream give the text, or a List of the"
+                                                 + " chunks with streamOutputMode=chunks. invokeTextModel gives the JSON"
+                                                 + " response as text for the Amazon Titan models, and a Jackson JsonNode for"
+                                                 + " the others: the response, or the generated text for Llama, Cohere and"
+                                                 + " Claude 2. invokeImageModel gives a JsonNode array of the images as Base64"
+                                                 + " text, and invokeEmbeddingsModel the InvokeModelResponse of the AWS SDK."
+                                                 + " converse gives the answer as text, empty when the model asks for a tool,"
+                                                 + " and applyGuardrail its action as text: NONE or GUARDRAIL_INTERVENED"))
 public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockRuntimeClient bedrockRuntimeClient;

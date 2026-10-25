@@ -23,6 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -40,6 +43,10 @@ import org.slf4j.LoggerFactory;
  * The Camel simple language.
  */
 @Language(value = "simple", functionsClass = SimpleConstants.class, operatorsClass = SimpleOperatorConstants.class)
+@BodyTypes(expressionIn = @BodyType(Carrier.ANY),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "A text with functions gives text. A single function, such as ${body} or"
+                                                   + " ${header.foo}, gives its value as it is"))
 public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleLanguage.class);

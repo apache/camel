@@ -36,7 +36,7 @@ Java::
 [source,java]
 ----
 from("file-watch://some-directory")
-    .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
+    .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelMessageTimestamp}");
 ----
 
 XML::
@@ -45,7 +45,7 @@ XML::
 ----
 <route>
   <from uri="file-watch://some-directory"/>
-  <log message="File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}"/>
+  <log message="File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelMessageTimestamp}"/>
 </route>
 ----
 
@@ -58,7 +58,7 @@ YAML::
       uri: file-watch://some-directory
       steps:
         - log:
-            message: "File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}"
+            message: "File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelMessageTimestamp}"
 ----
 ====
 
@@ -71,7 +71,7 @@ Java::
 [source,java]
 ----
 from("file-watch://some-directory?events=DELETE,CREATE&antInclude=**/*.txt")
-    .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
+    .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelMessageTimestamp}");
 ----
 
 XML::
@@ -80,7 +80,7 @@ XML::
 ----
 <route>
   <from uri="file-watch://some-directory?events=DELETE,CREATE&amp;antInclude=**/*.txt"/>
-  <log message="File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}"/>
+  <log message="File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelMessageTimestamp}"/>
 </route>
 ----
 
@@ -96,7 +96,7 @@ YAML::
         antInclude: "**/*.txt"
       steps:
         - log:
-            message: "File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}"
+            message: "File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelMessageTimestamp}"
 ----
 ====
 

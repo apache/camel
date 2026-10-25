@@ -21,6 +21,9 @@ import java.util.Map;
 
 import org.apache.camel.*;
 import org.apache.camel.component.aws2.bedrock.agentruntime.client.BedrockAgentRuntimeClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,34 @@ import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeCl
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent-runtime", title = "AWS Bedrock Agent Runtime",
              syntax = "aws-bedrock-agent-runtime:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = BedrockAgentRuntimeConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "operation", value = "invokeFlow",
+                                                            carriers = { Carrier.TEXT, Carrier.LIST, Carrier.POJO }),
+                                  description = "The question, the query or the input of the agent as text for"
+                                                + " retrieveAndGenerate, retrieve, invokeAgent and invokeInlineAgent: bytes, a"
+                                                + " stream or a file are read as text, a Map or a POJO is sent as its"
+                                                + " toString(), so take the text out of it first, and no body fails. invokeFlow"
+                                                + " takes a String, which becomes the document of the input node FlowInputNode,"
+                                                + " or a FlowInput or a List of FlowInput of the AWS SDK: another body fails."
+                                                + " With pojoRequest=true the request of the AWS SDK for the operation, such as"
+                                                + " a RetrieveAndGenerateRequest: another body fails"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.LIST },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "retrieveAndGenerate",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "retrieve", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalResult>"),
+                                           @BodyType.When(option = "operation", value = "invokeFlow",
+                                                          carriers = { Carrier.TEXT, Carrier.POJO, Carrier.UNCHANGED }) },
+                                   description = "The answer as text for retrieveAndGenerate, with the citations and the"
+                                                 + " session id in headers, and a List of KnowledgeBaseRetrievalResult for"
+                                                 + " retrieve. invokeAgent and invokeInlineAgent give the answer as text, or a"
+                                                 + " List of the chunks with streamOutputMode=chunks or the"
+                                                 + " CamelAwsBedrockAgentRuntimeAgentStreamOutputMode header; the text is empty"
+                                                 + " when the agent returns control. invokeFlow gives the document of the last"
+                                                 + " output of the flow as text, or as a Document of the AWS SDK for another"
+                                                 + " type, and keeps the body when the flow has no output"))
 public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockAgentRuntimeClient bedrockAgentRuntimeClient;

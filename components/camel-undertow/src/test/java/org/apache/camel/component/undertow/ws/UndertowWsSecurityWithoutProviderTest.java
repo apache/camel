@@ -128,7 +128,11 @@ class UndertowWsSecurityWithoutProviderTest extends BaseUndertowTest {
         // the connection does not get what the producer sends
         template.sendBody("direct:late", "broadcast");
         // and its messages do not reach the route: it is closed instead
-        webSocket.sendText("hello", true).join();
+        // The consumer may already have closed this stale connection; sending is best effort.
+        webSocket.sendText("hello", true)
+                .orTimeout(5, TimeUnit.SECONDS)
+                .handle((result, error) -> null)
+                .join();
 
         assertEquals(CloseMessage.MSG_VIOLATES_POLICY, listener.closeCode.orTimeout(10, TimeUnit.SECONDS).join());
         assertTrue(listener.received.isEmpty());
@@ -147,7 +151,11 @@ class UndertowWsSecurityWithoutProviderTest extends BaseUndertowTest {
         // the connection does not get what the producer sends
         template.sendBody("direct:lateBasic", "broadcast");
         // and its messages do not reach the route: it is closed instead
-        webSocket.sendText("hello", true).join();
+        // The consumer may already have closed this stale connection; sending is best effort.
+        webSocket.sendText("hello", true)
+                .orTimeout(5, TimeUnit.SECONDS)
+                .handle((result, error) -> null)
+                .join();
 
         assertEquals(CloseMessage.MSG_VIOLATES_POLICY, listener.closeCode.orTimeout(10, TimeUnit.SECONDS).join());
         assertTrue(listener.received.isEmpty());

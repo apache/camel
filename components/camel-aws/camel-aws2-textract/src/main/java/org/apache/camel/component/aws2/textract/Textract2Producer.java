@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.aws2.textract;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -168,9 +171,8 @@ public class Textract2Producer extends DefaultProducer {
             request.document(document);
 
             // Get feature types from headers or default to TABLES and FORMS
-            @SuppressWarnings("unchecked")
-            List<FeatureType> featureTypes = exchange.getIn().getHeader(Textract2Constants.FEATURE_TYPES, List.class);
-            if (featureTypes != null && !featureTypes.isEmpty()) {
+            List<FeatureType> featureTypes = getFeatureTypes(exchange);
+            if (!featureTypes.isEmpty()) {
                 request.featureTypes(featureTypes);
             } else {
                 request.featureTypes(FeatureType.TABLES, FeatureType.FORMS);
@@ -231,11 +233,12 @@ public class Textract2Producer extends DefaultProducer {
                     result = textractClient.startDocumentTextDetection(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Document Text Detection command returned the error code {}",
-                            ase.awsErrorDetails().errorCode());
+                            AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                message.setHeader(Textract2Constants.JOB_ID, result.jobId());
             } else {
                 throw new IllegalArgumentException(
                         "startDocumentTextDetection operation requires StartDocumentTextDetectionRequest in POJO mode");
@@ -250,11 +253,12 @@ public class Textract2Producer extends DefaultProducer {
                 result = textractClient.startDocumentTextDetection(request.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("Start Document Text Detection command returned the error code {}",
-                        ase.awsErrorDetails().errorCode());
+                        AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Textract2Constants.JOB_ID, result.jobId());
         }
     }
 
@@ -271,6 +275,7 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                message.setHeader(Textract2Constants.JOB_ID, result.jobId());
             } else {
                 throw new IllegalArgumentException(
                         "startDocumentAnalysis operation requires StartDocumentAnalysisRequest in POJO mode");
@@ -280,9 +285,8 @@ public class Textract2Producer extends DefaultProducer {
             DocumentLocation documentLocation = createDocumentLocationFromExchange(exchange);
             request.documentLocation(documentLocation);
 
-            @SuppressWarnings("unchecked")
-            List<FeatureType> featureTypes = exchange.getIn().getHeader(Textract2Constants.FEATURE_TYPES, List.class);
-            if (featureTypes != null && !featureTypes.isEmpty()) {
+            List<FeatureType> featureTypes = getFeatureTypes(exchange);
+            if (!featureTypes.isEmpty()) {
                 request.featureTypes(featureTypes);
             } else {
                 request.featureTypes(FeatureType.TABLES, FeatureType.FORMS);
@@ -297,6 +301,7 @@ public class Textract2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Textract2Constants.JOB_ID, result.jobId());
         }
     }
 
@@ -313,6 +318,7 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                message.setHeader(Textract2Constants.JOB_ID, result.jobId());
             } else {
                 throw new IllegalArgumentException(
                         "startExpenseAnalysis operation requires StartExpenseAnalysisRequest in POJO mode");
@@ -331,6 +337,7 @@ public class Textract2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Textract2Constants.JOB_ID, result.jobId());
         }
     }
 
@@ -343,7 +350,7 @@ public class Textract2Producer extends DefaultProducer {
                     result = textractClient.getDocumentTextDetection(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Document Text Detection command returned the error code {}",
-                            ase.awsErrorDetails().errorCode());
+                            AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -486,6 +493,56 @@ public class Textract2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
+    }
+
+    /**
+     * The feature types of the {@link Textract2Constants#FEATURE_TYPES} header: a FeatureType, a String with comma
+     * separated values, or an array or collection of them. The String values are case-insensitive.
+     */
+    private static List<FeatureType> getFeatureTypes(Exchange exchange) {
+        Object header = exchange.getIn().getHeader(Textract2Constants.FEATURE_TYPES);
+        List<FeatureType> answer = new ArrayList<>();
+        if (header == null) {
+            return answer;
+        }
+        Iterable<?> values;
+        if (header instanceof Iterable<?> it) {
+            values = it;
+        } else if (header instanceof Object[] array) {
+            values = Arrays.asList(array);
+        } else {
+            values = List.of(header);
+        }
+        for (Object value : values) {
+            if (value instanceof FeatureType featureType) {
+                answer.add(featureType);
+            } else if (value instanceof String text) {
+                for (String part : text.split(",")) {
+                    String name = part.trim();
+                    if (!name.isEmpty()) {
+                        answer.add(toFeatureType(name));
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException(
+                        "The " + Textract2Constants.FEATURE_TYPES + " header must hold FeatureType or String values, but has a "
+                                                   + (value == null ? "null" : value.getClass().getName()) + " value");
+            }
+        }
+        return answer;
+    }
+
+    private static FeatureType toFeatureType(String name) {
+        FeatureType answer = FeatureType.fromValue(name);
+        if (answer == FeatureType.UNKNOWN_TO_SDK_VERSION) {
+            answer = FeatureType.fromValue(name.toUpperCase(Locale.ROOT));
+        }
+        if (answer == FeatureType.UNKNOWN_TO_SDK_VERSION) {
+            throw new IllegalArgumentException(
+                    "Unknown feature type " + name + " in the " + Textract2Constants.FEATURE_TYPES + " header: use one of "
+                                               + FeatureType.knownValues());
+        }
+        return answer;
     }
 
     private Document createDocumentFromExchange(Exchange exchange) throws InvalidPayloadException {

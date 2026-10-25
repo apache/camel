@@ -19,6 +19,9 @@ package org.apache.camel.component.openstack.glance;
 import org.apache.camel.Category;
 import org.apache.camel.Producer;
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,6 +35,23 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_GLANCE, title = "OpenStack Glance", syntax = "openstack-glance:host",
              category = { Category.CONTAINER }, producerOnly = true, headersClass = GlanceConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY, byOption = {
+        @BodyType.When(option = "operation", value = "create", carriers = { Carrier.STREAM, Carrier.FILE, Carrier.POJO }),
+        @BodyType.When(option = "operation", value = "upload", carriers = { Carrier.STREAM, Carrier.FILE, Carrier.POJO }) },
+                                  description = "For create and upload the image data: an InputStream, a File, a URL or a Payload of "
+                                                + "openstack4j; text, bytes or the file of the file consumer fail: convert it to a File or "
+                                                + "an InputStream first. reserve and update take an Image of openstack4j, or else the fields from "
+                                                + "headers such as CamelOpenstackName"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL, Carrier.UNCHANGED }, byOption = {
+                   @BodyType.When(option = "operation", value = "reserve", carriers = Carrier.POJO),
+                   @BodyType.When(option = "operation", value = "create", carriers = Carrier.POJO),
+                   @BodyType.When(option = "operation", value = "upload", carriers = Carrier.POJO),
+                   @BodyType.When(option = "operation", value = "update", carriers = Carrier.POJO),
+                   @BodyType.When(option = "operation", value = "get", carriers = { Carrier.POJO, Carrier.NULL }),
+                   @BodyType.When(option = "operation", value = "getAll", carriers = Carrier.LIST),
+                   @BodyType.When(option = "operation", value = "delete", carriers = Carrier.UNCHANGED) },
+                                   description = "The Image of openstack4j reserved, created, uploaded, updated or read (null when get finds "
+                                                 + "none), a List of them for getAll; delete keeps the body"))
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
     @UriPath

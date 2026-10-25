@@ -82,7 +82,7 @@ final class TelegramHandlerRegistry {
         }
 
         @Override
-        protected void addBody(TelegramMessage message) {
+        protected void addBody(TelegramBodyPublisher bodyPublisher, TelegramMessage message) {
             try {
                 final String body = mapper.writeValueAsString(message);
                 bodyPublisher.addBodyPart(new TelegramBodyPublisher.SingleBodyPart(body));

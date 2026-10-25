@@ -61,7 +61,7 @@ public class ${cn} implements InvokeOnHeaderStrategy {
         case "${option.key}": return target.${option.methodName}(${args});
         #end
     #end
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
 #end
     }

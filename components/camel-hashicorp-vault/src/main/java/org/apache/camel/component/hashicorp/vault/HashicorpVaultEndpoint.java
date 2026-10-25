@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,27 @@ import org.springframework.vault.core.VaultTemplate;
 @Metadata(annotations = {
         "vault=hashicorp-vault",
 })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.POJO },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "getSecret", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "deleteSecret", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "listSecrets", carriers = Carrier.ANY) },
+                                  description = "The fields of the secret for createSecret, the default operation: a Map of the"
+                                                + " keys and values, or a POJO written as JSON. Text, bytes, a stream, a file or a"
+                                                + " List fail, so unmarshal JSON first, and no body writes an empty version. The"
+                                                + " other operations take the secret from the secretPath option or the"
+                                                + " CamelHashicorpVaultSecretPath header"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getSecret",
+                                                          carriers = { Carrier.MAP, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "listSecrets",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.lang.String>") },
+                                   description = "getSecret gives a Map with the fields of the secret under data and its version"
+                                                 + " under metadata, or no body when the secret does not exist or is deleted."
+                                                 + " listSecrets gives a List of the names of the secrets in the engine;"
+                                                 + " createSecret and deleteSecret leave the body unchanged"))
 public class HashicorpVaultEndpoint extends DefaultEndpoint {
 
     private VaultTemplate vaultTemplate;

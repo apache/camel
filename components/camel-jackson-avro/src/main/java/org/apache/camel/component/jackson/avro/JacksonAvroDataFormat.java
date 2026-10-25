@@ -20,6 +20,9 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.avro.AvroMapper;
 import org.apache.camel.component.jackson.AbstractJacksonDataFormat;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 
@@ -29,6 +32,20 @@ import org.apache.camel.spi.annotations.Dataformat;
 @Dataformat("avroJackson")
 @Metadata(firstVersion = "3.10.0", title = "Avro Jackson",
           excludeProperties = "library,instanceClassName,schema,serializablePackages")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                 description = "A POJO, a Map or a JsonNode to write with the Avro schema of the"
+                                               + " schemaResolver, or a List for an array schema. A String or bytes are not"
+                                               + " written as they are"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The Avro binary data, without the schema, in the stream cache, or a byte"
+                                                + " array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "Avro binary data of the schema of the schemaResolver. A String fails"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" },
+                                    byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
+                                    description = "A Map (LinkedHashMap) for an Avro record, a List (ArrayList) for an array;"
+                                                  + " an object of the class unmarshalType names, such as JsonNode"))
 public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
 
     /**

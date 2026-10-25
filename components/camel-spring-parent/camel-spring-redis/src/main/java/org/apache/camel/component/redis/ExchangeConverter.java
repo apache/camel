@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.redis;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -95,6 +97,18 @@ public class ExchangeConverter {
     }
 
     Collection<String> getKeys(Exchange exchange) {
+        Object keys = exchange.getIn().getHeader(RedisConstants.KEYS);
+        if (keys instanceof String text) {
+            // one key, or several keys separated by comma
+            List<String> answer = new ArrayList<>();
+            for (String key : text.split(",")) {
+                String name = key.trim();
+                if (!name.isEmpty()) {
+                    answer.add(name);
+                }
+            }
+            return answer;
+        }
         return getInHeaderValue(exchange, RedisConstants.KEYS, Collection.class);
     }
 

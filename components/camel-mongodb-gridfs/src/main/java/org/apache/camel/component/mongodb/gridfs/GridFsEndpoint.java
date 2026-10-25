@@ -28,6 +28,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +46,36 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS",
              syntax = "mongodb-gridfs:connectionBean", category = { Category.DATABASE, Category.FILE },
              headersClass = GridFsConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.STREAM,
+                                   description = "One message per new file: a stream of the content of the file (the"
+                                                 + " stream cache when stream caching is on), with its length, upload date,"
+                                                 + " content type and metadata in headers"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "findOne", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "listAll", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "count", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "remove", carriers = Carrier.ANY) },
+                                  description = "The content of the file that create, the default operation, uploads under"
+                                                + " the name in the CamelFileName header: text, bytes, a stream or a file. A"
+                                                + " Map, a POJO or no body fail. The other operations do not use the body;"
+                                                + " the CamelGridFsOperation header sets the operation when the option is not"
+                                                + " set"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "findOne",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "listAll",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "count", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Long"),
+                                           @BodyType.When(option = "operation", value = "remove",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "create, the default, leaves the body unchanged, with the id of the file in"
+                                                 + " the CamelGridFsFileId header. findOne gives a stream of the content of"
+                                                 + " the file named by CamelFileName; listAll a Reader of text, one line per"
+                                                 + " file with its name and id separated by a tab; count the number of files"
+                                                 + " as a Long; remove leaves the body unchanged"))
 public class GridFsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);

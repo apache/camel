@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.transcribe;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -47,7 +49,11 @@ public class Transcribe2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        switch (getConfiguration().getOperation()) {
+        Transcribe2Operations operation = getConfiguration().getOperation();
+        if (operation == null) {
+            throw new IllegalArgumentException("Operation must be specified with the operation option");
+        }
+        switch (operation) {
 
             case startTranscriptionJob:
                 startTranscriptionJob(getEndpoint().getTranscribeClient(), exchange);
@@ -269,12 +275,7 @@ public class Transcribe2Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteTranscriptionJobRequest req) {
-                try {
-                    transcribeClient.deleteTranscriptionJob(req);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Transcription Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
-                    throw ase;
-                }
+                setResponse(exchange, execute("Delete Transcription Job", () -> transcribeClient.deleteTranscriptionJob(req)));
             } else {
                 throw new IllegalArgumentException(
                         "deleteTranscriptionJob operation requires DeleteTranscriptionJobRequest in POJO mode");
@@ -285,12 +286,8 @@ public class Transcribe2Producer extends DefaultProducer {
                 String jobName = exchange.getIn().getHeader(Transcribe2Constants.TRANSCRIPTION_JOB_NAME, String.class);
                 builder.transcriptionJobName(jobName);
             }
-            try {
-                transcribeClient.deleteTranscriptionJob(builder.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("Delete Transcription Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
-                throw ase;
-            }
+            setResponse(exchange,
+                    execute("Delete Transcription Job", () -> transcribeClient.deleteTranscriptionJob(builder.build())));
         }
     }
 
@@ -322,10 +319,11 @@ public class Transcribe2Producer extends DefaultProducer {
                 String languageCode = exchange.getIn().getHeader(Transcribe2Constants.LANGUAGE_CODE, String.class);
                 builder.languageCode(languageCode);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Transcribe2Constants.VOCABULARY_PHRASES))) {
-                String phrases = exchange.getIn().getHeader(Transcribe2Constants.VOCABULARY_PHRASES, String.class);
+            List<String> phrases = getPhrases(exchange);
+            if (ObjectHelper.isNotEmpty(phrases)) {
                 builder.phrases(phrases);
             }
+            applyIfPresent(exchange, Transcribe2Constants.VOCABULARY_FILE_URI, builder::vocabularyFileUri);
             CreateVocabularyResponse result;
             try {
                 result = transcribeClient.createVocabulary(builder.build());
@@ -435,6 +433,11 @@ public class Transcribe2Producer extends DefaultProducer {
                 String languageCode = exchange.getIn().getHeader(Transcribe2Constants.LANGUAGE_CODE, String.class);
                 builder.languageCode(languageCode);
             }
+            List<String> phrases = getPhrases(exchange);
+            if (ObjectHelper.isNotEmpty(phrases)) {
+                builder.phrases(phrases);
+            }
+            applyIfPresent(exchange, Transcribe2Constants.VOCABULARY_FILE_URI, builder::vocabularyFileUri);
             UpdateVocabularyResponse result;
             try {
                 result = transcribeClient.updateVocabulary(builder.build());
@@ -451,12 +454,7 @@ public class Transcribe2Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteVocabularyRequest req) {
-                try {
-                    transcribeClient.deleteVocabulary(req);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
-                    throw ase;
-                }
+                setResponse(exchange, execute("Delete Vocabulary", () -> transcribeClient.deleteVocabulary(req)));
             } else {
                 throw new IllegalArgumentException(
                         "deleteVocabulary operation requires DeleteVocabularyRequest in POJO mode");
@@ -467,12 +465,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 String vocabularyName = exchange.getIn().getHeader(Transcribe2Constants.VOCABULARY_NAME, String.class);
                 builder.vocabularyName(vocabularyName);
             }
-            try {
-                transcribeClient.deleteVocabulary(builder.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("Delete Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
-                throw ase;
-            }
+            setResponse(exchange, execute("Delete Vocabulary", () -> transcribeClient.deleteVocabulary(builder.build())));
         }
     }
 
@@ -492,7 +485,7 @@ public class Transcribe2Producer extends DefaultProducer {
             applyIfPresent(exchange, Transcribe2Constants.LANGUAGE_CODE, builder::languageCode);
             applyIfPresent(exchange, Transcribe2Constants.VOCABULARY_FILE_URI, builder::vocabularyFilterFileUri);
             applyIfPresent(exchange, Transcribe2Constants.DATA_ACCESS_ROLE_ARN, builder::dataAccessRoleArn);
-            List<String> words = exchange.getIn().getHeader(Transcribe2Constants.VOCABULARY_PHRASES, List.class);
+            List<String> words = getPhrases(exchange);
             if (ObjectHelper.isNotEmpty(words)) {
                 builder.words(words);
             }
@@ -552,7 +545,7 @@ public class Transcribe2Producer extends DefaultProducer {
             applyIfPresent(exchange, Transcribe2Constants.VOCABULARY_FILTER_NAME, builder::vocabularyFilterName);
             applyIfPresent(exchange, Transcribe2Constants.VOCABULARY_FILE_URI, builder::vocabularyFilterFileUri);
             applyIfPresent(exchange, Transcribe2Constants.DATA_ACCESS_ROLE_ARN, builder::dataAccessRoleArn);
-            List<String> words = exchange.getIn().getHeader(Transcribe2Constants.VOCABULARY_PHRASES, List.class);
+            List<String> words = getPhrases(exchange);
             if (ObjectHelper.isNotEmpty(words)) {
                 builder.words(words);
             }
@@ -915,6 +908,32 @@ public class Transcribe2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(value)) {
             setter.accept(value);
         }
+    }
+
+    /**
+     * Reads the phrases (or words of a vocabulary filter) header as a list of strings. A single String is taken as a
+     * list of one phrase.
+     */
+    private List<String> getPhrases(Exchange exchange) {
+        Object value = exchange.getIn().getHeader(Transcribe2Constants.VOCABULARY_PHRASES);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String phrase) {
+            return phrase.isBlank() ? null : List.of(phrase);
+        }
+        if (value instanceof Collection<?> collection) {
+            List<String> phrases = new ArrayList<>(collection.size());
+            for (Object phrase : collection) {
+                if (phrase != null) {
+                    phrases.add(phrase.toString());
+                }
+            }
+            return phrases;
+        }
+        throw new IllegalArgumentException(
+                "The " + Transcribe2Constants.VOCABULARY_PHRASES + " header must be a List<String> or a String, was: "
+                                           + value.getClass().getName());
     }
 
     private void applyMaxResults(Exchange exchange, Consumer<Integer> setter) {

@@ -15,6 +15,9 @@
     "modelName": "constant",
     "modelJavaType": "org.apache.camel.model.language.ConstantExpression"
   },
+  "bodyTypes": {
+    "expressionOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "dependsOn": [ "resultType" ], "description": "The text as it is written; resource:classpath:name loads the text of the resource" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },

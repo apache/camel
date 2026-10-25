@@ -40,6 +40,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.StateRepository;
@@ -68,6 +71,57 @@ import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
              category = { Category.DATABASE }, headersClass = MongoDbConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "org.bson.Document",
+                                   byOption = @BodyType.When(option = "consumerType", value = "changeStreams",
+                                                             carriers = { Carrier.POJO, Carrier.NULL }),
+                                   description = "The document added to the capped collection; with changeStreams the full"
+                                                 + " document of the change, null when the change has none (an update"
+                                                 + " without fullDocument=updateLookup)"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "A document or a query: a Document, a Map or JSON text; a List of them for"
+                                                + " insert, aggregate and update"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = { "outputType", "writeResultAsHeader" },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "findById",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "org.bson.Document"),
+                                           @BodyType.When(option = "operation", value = "findOneByQuery",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "org.bson.Document"),
+                                           @BodyType.When(option = "operation", value = "findOneAndDelete",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "org.bson.Document"),
+                                           @BodyType.When(option = "operation", value = "findOneAndReplace",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "org.bson.Document"),
+                                           @BodyType.When(option = "operation", value = "findOneAndUpdate",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "org.bson.Document"),
+                                           @BodyType.When(option = "operation", value = "findAll", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "findDistinct",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "aggregate", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "count", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Long"),
+                                           @BodyType.When(option = "operation", value = "insert",
+                                                          carriers = { Carrier.POJO, Carrier.LIST }),
+                                           @BodyType.When(option = "operation", value = "save", carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "update", carriers = Carrier.POJO,
+                                                          javaType = "com.mongodb.client.result.UpdateResult"),
+                                           @BodyType.When(option = "operation", value = "remove", carriers = Carrier.POJO,
+                                                          javaType = "com.mongodb.client.result.DeleteResult"),
+                                           @BodyType.When(option = "operation", value = "bulkWrite", carriers = Carrier.POJO,
+                                                          javaType = "com.mongodb.bulk.BulkWriteResult"),
+                                           @BodyType.When(option = "operation", value = "command", carriers = Carrier.POJO,
+                                                          javaType = "org.bson.Document"),
+                                           @BodyType.When(option = "operation", value = "getDbStats", carriers = Carrier.POJO,
+                                                          javaType = "org.bson.Document"),
+                                           @BodyType.When(option = "operation", value = "getColStats", carriers = Carrier.POJO,
+                                                          javaType = "org.bson.Document") },
+                                   description = "By the operation: a Document or null for a find of one, a List for"
+                                                 + " findAll, findDistinct and aggregate, a Long for count, the document"
+                                                 + " added for insert, the result of the driver for the other writes, and a"
+                                                 + " Document for command and the stats"))
 public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);

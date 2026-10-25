@@ -129,7 +129,8 @@ public interface DnsEndpointBuilderFactory {
          * Syntax: <code>dns:dnsType</code>
          * 
          * Path parameter: dnsType (required)
-         * The type of the lookup.
+         * The type of the lookup. The wikipedia type is deprecated, as the
+         * Wikipedia over DNS service it queries is no longer available.
          * There are 4 enums and the value can be one of: dig, ip, lookup,
          * wikipedia
          * 
@@ -150,7 +151,8 @@ public interface DnsEndpointBuilderFactory {
          * Syntax: <code>dns:dnsType</code>
          * 
          * Path parameter: dnsType (required)
-         * The type of the lookup.
+         * The type of the lookup. The wikipedia type is deprecated, as the
+         * Wikipedia over DNS service it queries is no longer available.
          * There are 4 enums and the value can be one of: dig, ip, lookup,
          * wikipedia
          * 
@@ -193,7 +195,7 @@ public interface DnsEndpointBuilderFactory {
          * The option is a: {@code String} type.
          * 
          * Required: true
-         * Group: lookup
+         * Group: lookup dig
          * 
          * @return the name of the header {@code DnsName}.
          */
@@ -228,7 +230,8 @@ public interface DnsEndpointBuilderFactory {
         }
         /**
          * The type of the lookup. Should match the values of
-         * org.xbill.dns.Type. Optional.
+         * org.xbill.dns.Type. Optional. The dig operation uses A when none or
+         * an unknown type is given.
          * 
          * The option is a: {@code String} type.
          * 
@@ -240,7 +243,8 @@ public interface DnsEndpointBuilderFactory {
             return "CamelDnsType";
         }
         /**
-         * The term.
+         * The term. Deprecation note: The Wikipedia over DNS service is no
+         * longer available.
          * 
          * The option is a: {@code } type.
          * 
@@ -249,6 +253,7 @@ public interface DnsEndpointBuilderFactory {
          * 
          * @return the name of the header {@code DnsTerm}.
          */
+        @Deprecated
         public String dnsTerm() {
             return "CamelDnsTerm";
         }

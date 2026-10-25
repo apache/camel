@@ -58,6 +58,13 @@ public class MiloClientConsumer extends DefaultConsumer {
         return (MiloClientEndpoint) super.getEndpoint();
     }
 
+    /**
+     * The connection that monitors the nodes of this consumer while it is started
+     */
+    MiloClientConnection getConnection() {
+        return this.connection;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();

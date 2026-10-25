@@ -32,6 +32,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CompilePreProcessor;
 import org.apache.camel.spi.EventNotifier;
@@ -49,6 +52,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("groovy")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY, description = "The body as it is, in the variable body"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the script returns"))
 public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroovyLanguage.class);

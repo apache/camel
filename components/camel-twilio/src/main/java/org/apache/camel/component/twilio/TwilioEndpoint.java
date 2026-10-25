@@ -32,6 +32,9 @@ import org.apache.camel.component.twilio.internal.TwilioApiName;
 import org.apache.camel.component.twilio.internal.TwilioConstants;
 import org.apache.camel.component.twilio.internal.TwilioPropertiesHelper;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -46,6 +49,21 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 @UriEndpoint(firstVersion = "2.20.0", scheme = "twilio", title = "Twilio", syntax = "twilio:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.API, Category.MESSAGING, Category.CLOUD })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   description = "One message per poll with the resource of the method, such as the"
+                                                 + " Message of message/fetch. read is split into one message per resource,"
+                                                 + " and all its pages are read"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names a parameter of the method, and"
+                                                + " must then be of the type of that parameter: text for body of"
+                                                + " message/create or for a sid such as pathSid, a"
+                                                + " com.twilio.type.PhoneNumber for to and from. Without inBody the"
+                                                + " arguments come from the options and the CamelTwilio. headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.ITERATOR, Carrier.VALUE },
+                                   description = "The resource of the method, such as the Message of message/create and"
+                                                 + " message/fetch or the Call of call/create. read gives a ResourceSet,"
+                                                 + " which reads the next pages from Twilio while it is iterated, and"
+                                                 + " delete a Boolean"))
 public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioConfiguration> implements EndpointServiceLocation {
 
     protected static final Map<String, String> EXECUTOR_METHOD_MAP;

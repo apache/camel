@@ -27,7 +27,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.core.document.Document;
 import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
 import software.amazon.awssdk.services.s3vectors.model.CreateIndexRequest;
 import software.amazon.awssdk.services.s3vectors.model.CreateIndexResponse;
@@ -143,8 +142,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
         }
 
         // Get metadata if provided
-        @SuppressWarnings("unchecked")
-        Map<String, String> metadata = message.getHeader(AWS2S3VectorsConstants.VECTOR_METADATA, Map.class);
+        Map<?, ?> metadata = message.getHeader(AWS2S3VectorsConstants.VECTOR_METADATA, Map.class);
 
         // Convert vector data to List<Float>
         List<Float> vectorData = convertToFloatList(vectorDataObj);
@@ -155,9 +153,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
                 .data(VectorData.builder().float32(vectorData).build());
 
         if (metadata != null && !metadata.isEmpty()) {
-            // Convert Map to Document
-            Document metadataDoc = convertMapToDocument(metadata);
-            vectorBuilder.metadata(metadataDoc);
+            vectorBuilder.metadata(AWS2S3VectorsHelper.metadataToDocument(metadata));
         }
 
         // Build and execute request
@@ -171,9 +167,8 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
         PutVectorsResponse response = client.putVectors(request);
         LOG.trace("Put vector response: {}", response);
 
-        // Set response headers
-        message.setHeader(AWS2S3VectorsConstants.VECTOR_BUCKET_NAME, vectorBucketName);
-        message.setHeader(AWS2S3VectorsConstants.VECTOR_INDEX_NAME, vectorIndexName);
+        // the key the vector was put under (the exchange id when no key was given); the bucket and the index are not
+        // set as headers, as they are inputs that would redirect a later step of the route
         message.setHeader(AWS2S3VectorsConstants.VECTOR_ID, vectorId);
         message.setBody(response);
     }
@@ -197,12 +192,19 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
             topK = getConfiguration().getTopK();
         }
 
-        // Build and execute request (metadata filter can be complex, skip for now)
         QueryVectorsRequest.Builder requestBuilder = QueryVectorsRequest.builder()
                 .vectorBucketName(vectorBucketName)
                 .indexName(vectorIndexName)
                 .queryVector(VectorData.builder().float32(queryVector).build())
-                .topK(topK);
+                .topK(topK)
+                .returnMetadata(true)
+                .returnDistance(true);
+
+        String metadataFilter = message.getHeader(AWS2S3VectorsConstants.METADATA_FILTER, String.class);
+        if (ObjectHelper.isNotEmpty(metadataFilter)) {
+            requestBuilder.filter(AWS2S3VectorsHelper.parseMetadataFilter(metadataFilter,
+                    AWS2S3VectorsConstants.METADATA_FILTER + " header"));
+        }
 
         LOG.trace("Querying vectors in bucket [{}] index [{}] with topK [{}]", vectorBucketName, vectorIndexName, topK);
         QueryVectorsResponse response = client.queryVectors(requestBuilder.build());
@@ -218,15 +220,8 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
         String vectorBucketName = determineVectorBucketName(exchange);
         String vectorIndexName = determineVectorIndexName(exchange);
 
-        // Get vector IDs from header or body
-        Object vectorIdsObj = message.getHeader(AWS2S3VectorsConstants.VECTOR_ID);
-        if (ObjectHelper.isEmpty(vectorIdsObj)) {
-            vectorIdsObj = message.getBody();
-        }
+        List<String> vectorIds = determineVectorKeys(message, "deleteVectors");
 
-        List<String> vectorIds = convertToStringList(vectorIdsObj);
-
-        // Build and execute request
         DeleteVectorsRequest request = DeleteVectorsRequest.builder()
                 .vectorBucketName(vectorBucketName)
                 .indexName(vectorIndexName)
@@ -245,19 +240,14 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
         String vectorBucketName = determineVectorBucketName(exchange);
         String vectorIndexName = determineVectorIndexName(exchange);
 
-        // Get vector IDs from header or body
-        Object vectorIdsObj = message.getHeader(AWS2S3VectorsConstants.VECTOR_ID);
-        if (ObjectHelper.isEmpty(vectorIdsObj)) {
-            vectorIdsObj = message.getBody();
-        }
+        List<String> vectorIds = determineVectorKeys(message, "getVectors");
 
-        List<String> vectorIds = convertToStringList(vectorIdsObj);
-
-        // Build and execute request
         GetVectorsRequest request = GetVectorsRequest.builder()
                 .vectorBucketName(vectorBucketName)
                 .indexName(vectorIndexName)
                 .keys(vectorIds)
+                .returnData(true)
+                .returnMetadata(true)
                 .build();
 
         LOG.trace("Getting vectors [{}] from bucket [{}] index [{}]", vectorIds, vectorBucketName, vectorIndexName);
@@ -279,7 +269,6 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
         CreateVectorBucketResponse response = client.createVectorBucket(request);
         LOG.trace("Create vector bucket response: {}", response);
 
-        message.setHeader(AWS2S3VectorsConstants.VECTOR_BUCKET_NAME, vectorBucketName);
         message.setHeader(AWS2S3VectorsConstants.VECTOR_BUCKET_ARN, response.vectorBucketArn());
         message.setBody(response);
     }
@@ -360,7 +349,6 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
         CreateIndexResponse response = client.createIndex(request);
         LOG.trace("Create vector index response: {}", response);
 
-        message.setHeader(AWS2S3VectorsConstants.VECTOR_INDEX_NAME, vectorIndexName);
         // Status may not be available in response
         message.setBody(response);
     }
@@ -445,13 +433,19 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
         if (obj instanceof List<?> list) {
             List<Float> result = new ArrayList<>(list.size());
-            for (Object item : list) {
+            for (int i = 0; i < list.size(); i++) {
+                Object item = list.get(i);
                 if (item instanceof Float floatItem) {
                     result.add(floatItem);
                 } else if (item instanceof Number number) {
                     result.add(number.floatValue());
+                } else if (item == null) {
+                    throw new IllegalArgumentException(
+                            "The vector has a null element at position " + i + ": every element must be a number");
                 } else {
-                    throw new IllegalArgumentException("Invalid vector data type: " + item.getClass());
+                    throw new IllegalArgumentException(
+                            "The vector has an element of type " + item.getClass().getName() + " at position " + i
+                                                       + ": every element must be a number");
                 }
             }
             return result;
@@ -472,38 +466,31 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private List<String> convertToStringList(Object obj) {
-        if (ObjectHelper.isEmpty(obj)) {
-            throw new IllegalArgumentException("Vector IDs cannot be null");
+    /**
+     * The keys of getVectors and deleteVectors: from the body when it holds keys, else from the vector id header, so
+     * the key that an earlier putVectors left in the header does not win over the body.
+     */
+    private List<String> determineVectorKeys(Message message, String operation) {
+        Object body = message.getBody();
+        List<String> keys = AWS2S3VectorsHelper.asKeys(body);
+        if (keys != null) {
+            return keys;
         }
-
-        if (obj instanceof List) {
-            return (List<String>) obj;
-        } else if (obj instanceof String str) {
-            List<String> result = new ArrayList<>();
-            result.add(str);
-            return result;
-        } else if (obj instanceof String[] array) {
-            List<String> result = new ArrayList<>(array.length);
-            for (String s : array) {
-                result.add(s);
+        Object header = message.getHeader(AWS2S3VectorsConstants.VECTOR_ID);
+        if (ObjectHelper.isNotEmpty(header)) {
+            keys = AWS2S3VectorsHelper.asKeys(header);
+            if (keys == null) {
+                throw new IllegalArgumentException(
+                        "The " + AWS2S3VectorsConstants.VECTOR_ID + " header must hold the vector key as a String, or"
+                                                   + " the vector keys as a list of Strings, but it is "
+                                                   + AWS2S3VectorsHelper.describe(header));
             }
-            return result;
-        } else {
-            throw new IllegalArgumentException("Unsupported vector ID type: " + obj.getClass());
+            return keys;
         }
-    }
-
-    private Document convertMapToDocument(Map<String, String> map) {
-        if (map == null || map.isEmpty()) {
-            return null;
-        }
-        Document.MapBuilder builder = Document.mapBuilder();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            builder.putString(entry.getKey(), entry.getValue());
-        }
-        return builder.build();
+        throw new IllegalArgumentException(
+                operation + " needs the vector keys in the body (a String, or a list of Strings) or in the "
+                                           + AWS2S3VectorsConstants.VECTOR_ID + " header, but the body is "
+                                           + AWS2S3VectorsHelper.describe(body));
     }
 
     @Override

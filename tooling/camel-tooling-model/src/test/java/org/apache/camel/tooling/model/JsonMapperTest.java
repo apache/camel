@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -160,5 +161,82 @@ class JsonMapperTest {
         assertFalse(m.isDeprecated());
         assertEquals(List.of("Object getBody()", "<T> T getBody(Class<T> type)"), m.getSignatures());
         assertEquals(List.of("message.getBody(String.class)"), m.getExamples());
+    }
+
+    @Test
+    void testShouldWriteBodyTypesOnlyWhenSet() {
+        // CAMEL-24961: the body a step needs and the body it leaves
+        ComponentModel model = new ComponentModel();
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"bodyTypes\""));
+        assertTrue(JsonMapper.generateComponentModel(json).getBodyTypes().isEmpty());
+
+        BodyTypeModel in = new BodyTypeModel();
+        in.setCarriers(List.of("text", "bytes", "stream", "file"));
+        in.setFormat("xml");
+        BodyTypeModel out = new BodyTypeModel();
+        out.setCarriers(List.of("text"));
+        out.setJavaType("java.lang.String");
+        out.setDependsOn(List.of("resultHandlerFactory"));
+        BodyTypeModel.OptionBodyTypeModel bytes = new BodyTypeModel.OptionBodyTypeModel();
+        bytes.setOption("output");
+        bytes.setValue("bytes");
+        bytes.setCarriers(List.of("bytes"));
+        bytes.setJavaType("byte[]");
+        out.getByOption().add(bytes);
+        out.setDescription("The result of the transformation");
+        model.getBodyTypes().put(BodyTypeModel.PRODUCER_IN, in);
+        model.getBodyTypes().put(BodyTypeModel.PRODUCER_OUT, out);
+
+        json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"bodyTypes\""), json);
+        ComponentModel model2 = JsonMapper.generateComponentModel(json);
+        assertEquals(List.of(BodyTypeModel.PRODUCER_IN, BodyTypeModel.PRODUCER_OUT),
+                List.copyOf(model2.getBodyTypes().keySet()));
+        assertNull(model2.getBodyType(BodyTypeModel.CONSUMER_OUT));
+
+        BodyTypeModel in2 = model2.getBodyType(BodyTypeModel.PRODUCER_IN);
+        assertEquals(List.of("text", "bytes", "stream", "file"), in2.getCarriers());
+        assertEquals("xml", in2.getFormat());
+        assertNull(in2.getJavaType());
+        assertTrue(in2.getDependsOn().isEmpty());
+        assertTrue(in2.getByOption().isEmpty());
+
+        BodyTypeModel out2 = model2.getBodyType(BodyTypeModel.PRODUCER_OUT);
+        assertEquals(List.of("text"), out2.getCarriers());
+        assertEquals("java.lang.String", out2.getJavaType());
+        assertEquals(List.of("resultHandlerFactory"), out2.getDependsOn());
+        assertEquals("The result of the transformation", out2.getDescription());
+        assertEquals(1, out2.getByOption().size());
+        BodyTypeModel.OptionBodyTypeModel bytes2 = out2.getByOption().get(0);
+        assertEquals("output", bytes2.getOption());
+        assertEquals("bytes", bytes2.getValue());
+        assertEquals(List.of("bytes"), bytes2.getCarriers());
+        assertEquals("byte[]", bytes2.getJavaType());
+        assertFalse(out2.isUnchanged());
+        assertFalse(out2.isUnknown());
+    }
+
+    @Test
+    void testShouldWriteBodyTypesOfDataFormatsAndLanguages() {
+        DataFormatModel dataFormat = new DataFormatModel();
+        dataFormat.setName("jackson");
+        BodyTypeModel unmarshalOut = new BodyTypeModel();
+        unmarshalOut.setCarriers(List.of("map", "list"));
+        unmarshalOut.setDependsOn(List.of("unmarshalType"));
+        dataFormat.getBodyTypes().put(BodyTypeModel.UNMARSHAL_OUT, unmarshalOut);
+        DataFormatModel dataFormat2
+                = JsonMapper.generateDataFormatModel(JsonMapper.createParameterJsonSchema(dataFormat));
+        assertEquals(List.of("map", "list"), dataFormat2.getBodyType(BodyTypeModel.UNMARSHAL_OUT).getCarriers());
+        assertEquals(List.of("unmarshalType"), dataFormat2.getBodyType(BodyTypeModel.UNMARSHAL_OUT).getDependsOn());
+
+        LanguageModel language = new LanguageModel();
+        language.setName("constant");
+        BodyTypeModel expressionOut = new BodyTypeModel();
+        expressionOut.setCarriers(List.of("text"));
+        language.getBodyTypes().put(BodyTypeModel.EXPRESSION_OUT, expressionOut);
+        LanguageModel language2 = JsonMapper.generateLanguageModel(JsonMapper.createParameterJsonSchema(language));
+        assertEquals(List.of("text"), language2.getBodyType(BodyTypeModel.EXPRESSION_OUT).getCarriers());
+        assertNull(language2.getBodyType(BodyTypeModel.EXPRESSION_IN));
     }
 }

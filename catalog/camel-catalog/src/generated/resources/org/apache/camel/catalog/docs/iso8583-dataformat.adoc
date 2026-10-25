@@ -49,6 +49,10 @@ in `src/main/resources` so it can be loaded from the classpath.
 
 This configuration file should contain the support ISO-8583 mappings.
 
+The `configFile` option sets another configuration file. It is loaded from the classpath by default,
+and the prefixes `classpath:`, `file:` and `http:` select where to load it from, such as `file:/etc/myapp/j8583-config.xml`.
+The data format fails at startup when a `configFile` that is set cannot be found.
+
 == Specifying ISO-Type per message
 
 The data format requires to know the ISO-Type of the message to understand how to parse the data.

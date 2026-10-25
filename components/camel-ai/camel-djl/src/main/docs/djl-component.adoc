@@ -142,6 +142,10 @@ String[]`
 | `String`
 | `ai.djl.ndarray.NDArray`
 
+| `nlp/word_embedding` (custom model only)
+| `String`
+| `byte[]` (the encoded `ai.djl.ndarray.NDList`)
+
 | `audio`
 | `ai.djl.modality.audio.Audio +
 byte[] +
@@ -152,6 +156,14 @@ File`
 | `timeseries/forecasting`
 | `ai.djl.timeseries.TimeSeriesData`
 | `ai.djl.timeseries.Forecast`
+
+| `tabular/linear_regression` (custom model only)
+| Any body: the input type of the translator
+| The output type of the translator
+
+| `tabular/softmax_regression` (custom model only)
+| Any body: the input type of the translator
+| The output type of the translator
 
 |===
 

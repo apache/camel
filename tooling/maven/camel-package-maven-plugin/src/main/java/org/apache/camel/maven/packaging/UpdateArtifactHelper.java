@@ -133,6 +133,10 @@ public class UpdateArtifactHelper extends AbstractGeneratorMojo {
     /**
      * Rewrites the Map.entry lines between the START and END tokens of the given table, in the layout the formatter
      * keeps (so a rebuild does not change the file again).
+     * <p/>
+     * Each entry uses an explicit type witness, Map.&lt;String, String&gt; entry, so javac does not have to infer the
+     * type of every nested generic Map.entry call together with Map.ofEntries, which makes compilation of the large
+     * tables very slow.
      */
     private static boolean update(File camelDir, String token, Map<String, String> table) throws Exception {
         File java = new File(camelDir, JAVA_FILE);
@@ -142,12 +146,13 @@ public class UpdateArtifactHelper extends AbstractGeneratorMojo {
         String spaces12 = "            ";
         String spaces4 = "    ";
 
+        String entryCall = "Map.<String, String> entry(";
         StringJoiner sb = new StringJoiner(",\n");
         for (Map.Entry<String, String> entry : table.entrySet()) {
-            String line = spaces12 + "Map.entry(\"" + entry.getKey() + "\", \"" + entry.getValue() + "\")";
+            String line = spaces12 + entryCall + "\"" + entry.getKey() + "\", \"" + entry.getValue() + "\")";
             if (line.length() > 120) {
                 // the formatter wraps a long entry after the key
-                line = spaces12 + "Map.entry(\"" + entry.getKey() + "\",\n" + spaces12 + spaces4 + spaces4
+                line = spaces12 + entryCall + "\"" + entry.getKey() + "\",\n" + spaces12 + spaces4 + spaces4
                        + "\"" + entry.getValue() + "\")";
             }
             sb.add(line);

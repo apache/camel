@@ -56,9 +56,17 @@ final class HeaderChecks {
      */
     static final Pattern EXCHANGE_CONSTANT_NAME = Pattern.compile("name:\\s*['\"]?Exchange\\.([A-Z][A-Z0-9_]*)");
 
-    // the scheme of a URI (uri: "jms:queue:x"), or the scheme alone (uri: jms, with the rest under parameters:)
-    static final Pattern SCHEME_IN_URI_PATTERN
-            = Pattern.compile("(?m)uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*)(?::|\"?\\s*$)");
+    /**
+     * The scheme of an endpoint: of a uri: (from, to, wireTap...), and of the steps the YAML DSL takes in the short
+     * form, such as to: aws-secrets-manager:sm (CAMEL-26039). The value is on the line of the key, so the long form of
+     * a to: with its uri: on the next line does not name a key such as uri: or steps: as a scheme. A uri: can also hold
+     * the scheme alone (uri: jms, with the rest under parameters:).
+     */
+    static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile(
+            "(?m)(?<![A-Za-z0-9_-])(?:(?:uri|to|toD|to-d|poll|interceptFrom|intercept-from|interceptSendToEndpoint"
+                                                                 + "|intercept-send-to-endpoint):[ \\t]*['\"]?(?=[a-zA-Z][a-zA-Z0-9+.-]*:)"
+                                                                 + "|uri:[ \\t]*['\"]?(?=[a-zA-Z][a-zA-Z0-9+.-]*['\"]?[ \\t\\r]*$))"
+                                                                 + "([a-zA-Z][a-zA-Z0-9+.-]*)");
 
     /**
      * Names a component sets as exchange properties, not headers; the catalog has no metadata for those, so the ones a

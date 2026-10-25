@@ -3426,8 +3426,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(sb, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(sb, "secureTag", def.getSecureTag(), null);
-        doWriteAttribute(sb, "secureTagContents", def.getSecureTagContents(), null);
-        doWriteAttribute(sb, "keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
+        doWriteAttribute(sb, "secureTagContents", def.getSecureTagContents(), "true");
+        doWriteAttribute(sb, "keyCipherAlgorithm", def.getKeyCipherAlgorithm(), null);
         doWriteAttribute(sb, "recipientKeyAlias", def.getRecipientKeyAlias(), null);
         doWriteAttribute(sb, "keyOrTrustStoreParameters", def.getKeyOrTrustStoreParameters(), null);
         doWriteAttribute(sb, "keyPassword", def.getKeyPassword(), null);

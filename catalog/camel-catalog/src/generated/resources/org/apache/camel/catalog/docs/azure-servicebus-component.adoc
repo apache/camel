@@ -90,7 +90,7 @@ When clients are bound to the Camel registry, they will be autowired into the Se
 === Message Body
 In the producer, this component accepts a message body of `String`, `byte[]` and `BinaryData` types. Or `List<String>`, `List<byte[]>` and `List<BinaryData>` to send batch messages.
 
-In the consumer, the returned message body will be of type `String`.
+In the consumer, the returned message body will be of type `com.azure.core.util.BinaryData`, which converts to `String`, `byte[]` and `InputStream`.
 
 === Azure ServiceBus Producer operations
 [width="100%",cols="10%,90%",options="header",]

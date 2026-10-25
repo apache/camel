@@ -319,6 +319,7 @@ final class DiagramDetailSupport {
                         Span.styled(" Coverage:   ", Theme.muted()),
                         Span.raw(route.coverage)));
             }
+            addRevision(lines, route);
 
             lines.add(Line.from(Span.raw("")));
             int w = numWidth(route.total, route.failed, route.inflight);
@@ -387,6 +388,26 @@ final class DiagramDetailSupport {
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
+    }
+
+    /**
+     * The checksum of the route as written, to compare with the checksum camel cmd route-structure gives for the routes
+     * of a file, and its revision when it was added again changed in this run, such as by a reload (CAMEL-25771).
+     */
+    static void addRevision(List<Line> lines, RouteInfo route) {
+        if (route.checksum == null) {
+            return;
+        }
+        lines.add(Line.from(
+                Span.styled(" Checksum:   ", Theme.muted()),
+                Span.raw(route.checksum)));
+        if (route.revision > 1) {
+            int changes = route.revision - 1;
+            lines.add(Line.from(
+                    Span.styled(" Revision:   ", Theme.muted()),
+                    Span.raw(String.valueOf(route.revision)),
+                    Span.styled(changes == 1 ? " · 1 change" : " · " + changes + " changes", Theme.muted())));
+        }
     }
 
     /**

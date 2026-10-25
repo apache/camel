@@ -37,6 +37,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.avro.support.AvroClassSecuritySupport;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -49,6 +52,21 @@ import org.apache.camel.util.ObjectHelper;
                               "collectionTypeName,collectionType,useList,moduleClassNames,moduleRefs,enableFeatures," +
                               "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
                               "contentTypeHeader,schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO,
+                                 description = "An Avro record: an object of a class the Avro compiler generated, or a"
+                                               + " GenericRecord of the schema of instanceClassName. Without"
+                                               + " instanceClassName the schema comes from the class of the body, so a"
+                                               + " GenericRecord fails. A Map is not converted"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The record in Avro binary encoding, without the schema (not an Avro"
+                                                + " container file), in the stream cache, or a byte array when stream caching"
+                                                + " is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "One record in Avro binary encoding, as marshal writes it: unmarshal fails"
+                                                 + " without instanceClassName (or a schema set in Java)"),
+           unmarshalOut = @BodyType(value = Carrier.POJO,
+                                    description = "An object of the class instanceClassName names; a GenericRecord when a"
+                                                  + " schema set in Java has no class on the classpath"))
 public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();

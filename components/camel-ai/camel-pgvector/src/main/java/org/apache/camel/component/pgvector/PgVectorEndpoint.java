@@ -23,6 +23,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +46,19 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              },
              headersClass = PgVectorHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.LIST, Carrier.NULL },
+                                  description = "By the action in the CamelPgVectorAction header: the vector as a List of"
+                                                + " Float or a float array for UPSERT and SIMILARITY_SEARCH, with the id,"
+                                                + " text and metadata of UPSERT in headers. CREATE_TABLE, CREATE_INDEX,"
+                                                + " DROP_TABLE and DELETE do not read the body, DELETE takes the id from"
+                                                + " the CamelPgVectorRecordId header. Another body fails, a List of Double"
+                                                + " too: the pgvector:embeddings data type transformer builds the vector"
+                                                + " from the output of langchain4j-embeddings"),
+           producerOut = @BodyType(value = { Carrier.VALUE, Carrier.TEXT, Carrier.LIST },
+                                   description = "By the action: a Boolean for CREATE_TABLE, CREATE_INDEX, DROP_TABLE and"
+                                                 + " DELETE (false when no record had the id), the record id as a String"
+                                                 + " for UPSERT, and a List of Map with the keys id, text_content, metadata"
+                                                 + " and distance for SIMILARITY_SEARCH"))
 public class PgVectorEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

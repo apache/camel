@@ -163,7 +163,7 @@ public class IBMCOSProducerAdditionalOperationsIT extends IBMCOSTestSupport {
             Exchange createExchange = template.request("direct:createBucket", new Processor() {
                 @Override
                 public void process(Exchange exchange) {
-                    exchange.getIn().setHeader(IBMCOSConstants.BUCKET_NAME, testBucketName);
+                    exchange.getIn().setHeader(IBMCOSConstants.OVERRIDE_BUCKET_NAME, testBucketName);
                 }
             });
 
@@ -176,7 +176,7 @@ public class IBMCOSProducerAdditionalOperationsIT extends IBMCOSTestSupport {
             template.send("direct:deleteBucket", new Processor() {
                 @Override
                 public void process(Exchange exchange) {
-                    exchange.getIn().setHeader(IBMCOSConstants.BUCKET_NAME, testBucketName);
+                    exchange.getIn().setHeader(IBMCOSConstants.OVERRIDE_BUCKET_NAME, testBucketName);
                 }
             });
 

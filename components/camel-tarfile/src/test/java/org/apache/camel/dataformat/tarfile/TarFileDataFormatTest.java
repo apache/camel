@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.tarfile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -47,10 +48,13 @@ import static org.apache.camel.Exchange.FILE_NAME;
 import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredTextInFolder;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredTexts;
 import static org.apache.camel.dataformat.tarfile.TarUtils.toEntries;
 import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -315,6 +319,88 @@ class TarFileDataFormatTest extends CamelTestSupport {
                 () -> template.sendBody("direct:tarSplitterMaxDecompressedSize", files));
     }
 
+    @Test
+    void testUntarWithFolderEntry() throws Exception {
+        // CAMEL-26008: the folder entry of an archive of a folder with one file is not an entry of its own
+        MockEndpoint mock = getMockEndpoint("mock:untar");
+        mock.expectedBodiesReceived(TEXT);
+        mock.expectedHeaderReceived(FILE_NAME, "poem.txt");
+
+        template.sendBody("direct:untar", getTaredTextInFolder("poems/", "poems/poem.txt"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testUntarWithMoreThanOneFileEntry() throws Exception {
+        final byte[] files = getTaredTexts("a.txt", "b.txt");
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:untar", files));
+        assertInstanceOf(IllegalStateException.class, e.getCause());
+        assertEquals("Tar file has more than 1 entry.", e.getCause().getMessage());
+    }
+
+    @Test
+    void testUntarIteratorSplitNotStreaming() throws Exception {
+        // CAMEL-26004: a split that is not streaming takes all the entries before it processes them
+        MockEndpoint mock = getMockEndpoint("mock:untarIteratorSplit");
+        mock.expectedBodiesReceived(TEXT, TEXT);
+        mock.expectedHeaderValuesReceivedInAnyOrder(TarIterator.TARFILE_ENTRY_NAME_HEADER, "a.txt", "b.txt");
+
+        template.sendBody("direct:untarIteratorSplit", getTaredTexts("a.txt", "b.txt"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testUntarIteratorEntryFileLength() throws Exception {
+        // CAMEL-26009: each entry has its own size, not the CamelFileLength of the archive
+        MockEndpoint mock = getMockEndpoint("mock:untarIteratorSplit");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(Exchange.FILE_LENGTH, (long) TEXT.getBytes(StandardCharsets.UTF_8).length);
+
+        template.sendBodyAndHeader("direct:untarIteratorSplit", getTaredText("poem.txt"), Exchange.FILE_LENGTH, 12345L);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testTarWithFileLengthHeaderSmallerThanBody() throws Exception {
+        // CAMEL-26009: the body changed after a file consumer, so CamelFileLength is not its size
+        assertTarOfText(TEXT, Map.of(FILE_NAME, "poem.txt", Exchange.FILE_LENGTH, 5L));
+    }
+
+    @Test
+    void testTarWithFileLengthHeaderLargerThanBody() throws Exception {
+        assertTarOfText(TEXT, Map.of(FILE_NAME, "poem.txt", Exchange.FILE_LENGTH, 100000L));
+    }
+
+    @Test
+    void testTarFileWithFileLengthHeaderNotMatchingBody() throws Exception {
+        File file = new File(TEST_DIR, "poem.txt");
+        file.getParentFile().mkdirs();
+        Files.write(file.toPath(), TEXT.getBytes(StandardCharsets.UTF_8));
+        assertTarOfText(file, Map.of(FILE_NAME, "poem.txt", Exchange.FILE_LENGTH, 5L));
+    }
+
+    private void assertTarOfText(Object body, Map<String, Object> headers) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:tar");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:tar", body, headers);
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        byte[] tared = mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
+        try (TarArchiveInputStream tis = new TarArchiveInputStream(new ByteArrayInputStream(tared))) {
+            TarArchiveEntry entry = tis.getNextEntry();
+            assertEquals("poem.txt", entry.getName());
+            assertEquals(TEXT.getBytes(StandardCharsets.UTF_8).length, entry.getSize());
+            assertEquals(TEXT, new String(tis.readAllBytes(), StandardCharsets.UTF_8));
+        }
+    }
+
     @AfterEach
     public void cleanOutputDirectory() {
         deleteDirectory(TEST_DIR);
@@ -386,6 +472,13 @@ class TarFileDataFormatTest extends CamelTestSupport {
                 from("direct:dslTar").marshal(tar).to("mock:dslTar");
                 from("direct:dslUntar").unmarshal(tar).to("mock:dslUntar");
                 from("direct:corruptUntar").unmarshal(tar).to("mock:corruptUntar");
+
+                TarFileDataFormat iteratorTar = new TarFileDataFormat();
+                iteratorTar.setUsingIterator(true);
+                from("direct:untarIteratorSplit").unmarshal(iteratorTar)
+                        .split(body())
+                            .to("mock:untarIteratorSplit")
+                        .end();
 
                 TarFileDataFormat maxDecompressedSizeTar = new TarFileDataFormat();
                 // Only allow 10 bytes to be decompressed

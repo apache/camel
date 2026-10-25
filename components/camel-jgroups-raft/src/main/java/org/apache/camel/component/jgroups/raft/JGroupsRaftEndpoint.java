@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,19 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName",
              category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsRaftConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
+                                   description = "No body: an event for each change of the role of this member (only with"
+                                                 + " enableRoleChangeEvents), with LEADER or FOLLOWER in the"
+                                                 + " CamelJGroupsRaftEventType header and the state of the raft in the other"
+                                                 + " headers"),
+           producerIn = @BodyType(value = { Carrier.BYTES, Carrier.TEXT, Carrier.STREAM, Carrier.FILE },
+                                  description = "The bytes to set() in the replicated log: a byte array, or text, a stream or"
+                                                + " a file converted to bytes. A null body, a Map, a number or a POJO has no"
+                                                + " conversion to bytes and is skipped without an error: nothing is set"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.UNCHANGED },
+                                   description = "The byte array the state machine returns for the set (an empty array with"
+                                                 + " the default NopStateMachine), with the state of the raft in the headers. A"
+                                                 + " body that was skipped is left as it was"))
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 
@@ -98,17 +114,25 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Closing JGroupsraft Channel {}", getEndpointUri());
-        if (resolvedRaftHandle != null && resolvedRaftHandle.channel() != null) {
-            resolvedRaftHandle.channel().close();
-            LOG.info("Closed JGroupsraft Channel {}", getEndpointUri());
-        }
-        LOG.info("Closing Log {}", getEndpointUri());
-        if (resolvedRaftHandle != null && resolvedRaftHandle.log() != null) {
-            resolvedRaftHandle.log().close();
-            LOG.info("Closed Log Channel {}", getEndpointUri());
+        // a handle this endpoint did not create (such as the raftHandle of the component) is used by other endpoints,
+        // and is closed by the component
+        if (resolvedRaftHandle != null && isOwnHandle()) {
+            LOG.info("Closing JGroupsraft Channel {}", getEndpointUri());
+            if (resolvedRaftHandle.channel() != null) {
+                resolvedRaftHandle.channel().close();
+                LOG.info("Closed JGroupsraft Channel {}", getEndpointUri());
+            }
+            LOG.info("Closing Log {}", getEndpointUri());
+            if (resolvedRaftHandle.log() != null) {
+                resolvedRaftHandle.log().close();
+                LOG.info("Closed Log Channel {}", getEndpointUri());
+            }
         }
         super.doStop();
+    }
+
+    private boolean isOwnHandle() {
+        return raftHandle == null;
     }
 
     private RaftHandle resolveHandle() throws Exception {
@@ -120,14 +144,14 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             LOG.trace("Raft Handle created with configured channelProperties: {} and state machine: {}", channelProperties,
                     stateMachine);
             @SuppressWarnings("resource")
-            // NOTE: channel will be closed by the component during
+            // NOTE: channel will be closed by this endpoint during
             // stop() lifecycle step.
             JChannel channel = new JChannel(channelProperties).name(raftId); // NOSONAR
             return new RaftHandle(channel, stateMachine).raftId(raftId);
         }
         LOG.trace("Raft Handle created with defaults: {}, {},", JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG, stateMachine);
         @SuppressWarnings("resource")
-        // NOTE: channel will be closed by the component during
+        // NOTE: channel will be closed by this endpoint during
         // stop() lifecycle step.
         JChannel channel = new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG).name(raftId); // NOSONAR
         return new RaftHandle(channel, stateMachine).raftId(raftId);
@@ -139,9 +163,13 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public void connect() throws Exception {
-        connectCount.incrementAndGet();
         LOG.trace("Connecting JGroups-raft Channel {} with cluster name: {}, raftHandle: {} and using config: {}",
                 getEndpointUri(), clusterName, resolvedRaftHandle, channelProperties == null ? "default" : channelProperties);
+        if (!isOwnHandle()) {
+            ((JGroupsRaftComponent) getComponent()).connectSharedHandle(resolvedRaftHandle, clusterName);
+            return;
+        }
+        connectCount.incrementAndGet();
         resolvedRaftHandle.channel().connect(clusterName);
     }
 
@@ -149,6 +177,10 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
      * Disconnect shared RaftHandle channel, called by producer and consumer.
      */
     public void disconnect() {
+        if (!isOwnHandle()) {
+            ((JGroupsRaftComponent) getComponent()).disconnectSharedHandle(resolvedRaftHandle);
+            return;
+        }
         if (connectCount.decrementAndGet() == 0) {
             LOG.trace("Disconnecting JGroupsraft Channel {}", getEndpointUri());
             resolvedRaftHandle.channel().disconnect();

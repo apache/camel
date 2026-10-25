@@ -75,8 +75,13 @@ A part of a Java route the parser cannot work out (a value computed at runtime) 
 
 The YAML validator follows the message body through the steps of each route, and reports a step that cannot work on
 it: a field read such as `+${body.qty}+` on text that was never unmarshalled, or a Map that a `to: file` cannot write.
-Where the file does not tell what the body is, such as after a `platform-http` or `kafka` consumer, or after a call
-with `to: http`, it says nothing.
+What a component or a data format does with the body comes from the
+xref:camel-catalog.adoc#_body_types_in_the_catalog[body types in the catalog]: the file consumer gives the file it
+read, the `http` producer leaves the response as bytes or a stream, and `unmarshal: json` makes a Map or a List. The
+answer of `openai:chat-completion` is text, also when it is asked for JSON with `jsonSchema`, so a field read on it
+needs `unmarshal: json` first. Where they do not tell what the body is, the validator says nothing: after a `platform-http` consumer the body
+depends on the request, and the deserializer of a `kafka` consumer can be set on the component, which the route file
+does not show.
 
 When an integration runs the routes of the file with the message history on, such as with `camel run --dev`, the
 validator fills these gaps with what the integration saw at the endpoints of its routes: the body each consumer gave,

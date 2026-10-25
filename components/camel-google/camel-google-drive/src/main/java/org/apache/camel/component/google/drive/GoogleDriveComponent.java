@@ -37,8 +37,6 @@ public class GoogleDriveComponent
     @Metadata
     GoogleDriveConfiguration configuration;
     @Metadata(label = "advanced")
-    private Drive client;
-    @Metadata(label = "advanced")
     private GoogleDriveClientFactory clientFactory;
     @Metadata(label = "proxy", description = "Proxy server host")
     private String proxyHost;
@@ -58,22 +56,34 @@ public class GoogleDriveComponent
         return getCamelContext().getTypeConverter().convertTo(GoogleDriveApiName.class, apiNameStr);
     }
 
+    /**
+     * Creates a client for the given configuration with the client factory of the component.
+     *
+     * @see #getClient(GoogleDriveConfiguration, GoogleDriveClientFactory)
+     */
     public Drive getClient(GoogleDriveConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Google Drive client");
-            }
+        return getClient(config, null);
+    }
+
+    /**
+     * Creates a client for the given configuration with the given client factory or, when that is null, with the client
+     * factory of the component. Each endpoint creates its own client from its own options and keeps it for its
+     * lifetime.
+     */
+    public Drive getClient(GoogleDriveConfiguration config, GoogleDriveClientFactory factory) {
+        GoogleDriveClientFactory factoryToUse = factory != null ? factory : getClientFactory();
+        if (config.getClientId() != null && !config.getClientId().isBlank()
+                && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
+            return factoryToUse.makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+        } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
+            return factoryToUse.makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Google Drive client");
         }
-        return client;
     }
 
     public GoogleDriveClientFactory getClientFactory() {

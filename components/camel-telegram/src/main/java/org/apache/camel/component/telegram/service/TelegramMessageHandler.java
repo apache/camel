@@ -31,7 +31,6 @@ import org.apache.camel.component.telegram.model.MessageResult;
 
 abstract class TelegramMessageHandler<T extends TelegramMessage> {
     protected final ObjectMapper mapper;
-    protected final TelegramBodyPublisher bodyPublisher;
 
     private final TelegramApiClient apiClient;
     private final String contentType;
@@ -45,14 +44,14 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
         this.uri = uri;
         this.contentType = contentType;
         this.resultClass = resultClass;
-
-        bodyPublisher = new TelegramBodyPublisher(apiClient.bufferSize());
     }
 
     public void sendMessage(Exchange exchange, AsyncCallback callback, T message) {
         HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(uri));
 
-        addBody(message);
+        // the body of this request only: the producer may send from several threads at once
+        TelegramBodyPublisher bodyPublisher = new TelegramBodyPublisher(apiClient.bufferSize());
+        addBody(bodyPublisher, message);
 
         if (bodyPublisher.getBodyParts().size() > 1) {
             builder.setHeader("Content-type", "multipart/form-data; boundary=\"" + bodyPublisher.getBoundary() + "\"");
@@ -90,11 +89,7 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
         callback.done(false);
     }
 
-    protected abstract void addBody(T message);
-
-    protected <T> void buildTextPart(String name, T value) {
-        buildTextPart(bodyPublisher, name, value);
-    }
+    protected abstract void addBody(TelegramBodyPublisher bodyPublisher, T message);
 
     static <T> void buildTextPart(TelegramBodyPublisher bodyPublisher, String name, T value) {
         if (value != null) {
@@ -103,10 +98,6 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
 
             bodyPublisher.addBodyPart(bodyPart);
         }
-    }
-
-    protected void buildMediaPart(String name, String fileNameWithExtension, byte[] value) {
-        buildMediaPart(bodyPublisher, name, fileNameWithExtension, value);
     }
 
     void buildMediaPart(TelegramBodyPublisher bodyPublisher, String name, String fileNameWithExtension, byte[] value) {

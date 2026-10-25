@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.apache.camel.maven.packaging.generics.ClassUtil;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -202,6 +203,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
                         SchemaHelper.addModelMetadata(dataFormatModel, project);
                         SchemaHelper.addModelMetadata(dataFormatModel, metadata);
+                        BodyTypesHelper.addBodyTypes(dataFormatModel, clazz.getAnnotation(BodyTypes.class), clazz);
 
                         if (!modelName.equals(name)) {
                             /* Prefer description from the clazz */

@@ -49,6 +49,9 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
@@ -97,6 +100,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true,
              remote = false, internal = true, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+@BodyTypes(producerIn = @BodyType(Carrier.ANY), producerOut = @BodyType(Carrier.UNCHANGED))
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, NotifyBuilderMatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);

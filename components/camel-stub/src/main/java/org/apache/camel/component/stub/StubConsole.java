@@ -96,10 +96,9 @@ public class StubConsole extends AbstractDevConsole {
             if (dump) {
                 Queue<Exchange> q = se.getQueue();
                 List<Exchange> copy = new ArrayList<>(q);
-                if (max > 0 && q.size() > max) {
-                    int pos = q.size() - 1 - max;
-                    int end = q.size() - 1;
-                    copy = copy.subList(pos, end);
+                if (max > 0 && copy.size() > max) {
+                    // the latest messages
+                    copy = copy.subList(copy.size() - max, copy.size());
                 }
                 for (Exchange exchange : copy) {
                     // dump to xml or json
@@ -155,10 +154,9 @@ public class StubConsole extends AbstractDevConsole {
 
                 Queue<Exchange> q = se.getQueue();
                 List<Exchange> copy = new ArrayList<>(q);
-                if (max > 0 && q.size() > max) {
-                    int pos = q.size() - 1 - max;
-                    int end = q.size() - 1;
-                    copy = copy.subList(pos, end);
+                if (max > 0 && copy.size() > max) {
+                    // the latest messages
+                    copy = copy.subList(copy.size() - max, copy.size());
                 }
                 for (Exchange exchange : copy) {
                     try {

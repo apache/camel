@@ -17,6 +17,8 @@
 package org.apache.camel.component.redis;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchHeaderException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -25,7 +27,10 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @MockitoSettings
@@ -44,6 +49,15 @@ public class RedisConnectionTest extends RedisTestSupport {
                 RedisConstants.VALUE, "value");
 
         assertEquals("value", result);
+    }
+
+    @Test
+    public void shouldFailECHOWithoutValue() throws Exception {
+        Exchange exchange = template.send(e -> e.getIn().setHeader(RedisConstants.COMMAND, "ECHO"));
+
+        NoSuchHeaderException cause = assertInstanceOf(NoSuchHeaderException.class, exchange.getException());
+        assertTrue(cause.getMessage().contains(RedisConstants.VALUE), cause.getMessage());
+        verifyNoInteractions(redisTemplate);
     }
 
     @Test

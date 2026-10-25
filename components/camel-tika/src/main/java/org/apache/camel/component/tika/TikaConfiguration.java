@@ -32,7 +32,9 @@ public class TikaConfiguration {
     private TikaOperation operation;
     @UriParam(defaultValue = "xml")
     private TikaParseOutputFormat tikaParseOutputFormat = TikaParseOutputFormat.xml;
-    @UriParam(description = "Tika Parse Output Encoding")
+    @UriParam(description = "The character encoding of the parsed output. Defaults to the default charset of the JVM."
+                            + " The parse operation sets this encoding as the charset of the exchange, so converting"
+                            + " the output to text decodes it with this encoding.")
     private String tikaParseOutputEncoding = Charset.defaultCharset().name();
     @UriParam(label = "advanced", description = "Tika loader used to configure parsers and detectors")
     private TikaLoader tikaLoader;
@@ -64,8 +66,6 @@ public class TikaConfiguration {
      * <li>xml: Returns Parsed Content as XML.</li>
      * <li>html: Returns Parsed Content as HTML.</li>
      * <li>text: Returns Parsed Content as Text.</li>
-     * <li>textMain: Uses the <a href="http://code.google.com/p/boilerpipe/">boilerpipe</a> library to automatically
-     * extract the main content from a web page.</li>
      * </ul>
      */
     public void setTikaParseOutputFormat(TikaParseOutputFormat tikaParseOutputFormat) {
@@ -78,7 +78,8 @@ public class TikaConfiguration {
 
     /**
      * Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to
-     * Charset.defaultCharset().
+     * Charset.defaultCharset(). The parse operation sets this encoding as the charset of the exchange, so converting
+     * the output to text decodes it with this encoding.
      */
     public void setTikaParseOutputEncoding(String tikaParseOutputEncoding) {
         this.tikaParseOutputEncoding = tikaParseOutputEncoding;

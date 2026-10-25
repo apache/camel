@@ -123,7 +123,7 @@ In YAML, the object name is the `objectName` option, which the producer uses whe
 ----
 ====
 
-Producer operations return structured response metadata in the message body (`Map` or `List<Map>` depending on the operation).
+The `getObject` operation returns the content of the object as a `byte[]` in the message body, with its metadata in headers. `listObjects` and `listBuckets` return a `List<Map>`, and the other operations return the response metadata as a `Map`.
 
 === Consume objects from a bucket
 

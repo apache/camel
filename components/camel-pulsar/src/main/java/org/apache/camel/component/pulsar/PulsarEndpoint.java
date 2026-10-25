@@ -21,6 +21,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -37,6 +40,18 @@ import org.apache.pulsar.client.api.PulsarClient;
 @UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar",
              syntax = "pulsar:persistence://tenant/namespace/topic", category = { Category.MESSAGING },
              headersClass = PulsarMessageHeaders.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.BYTES, Carrier.NULL }, javaType = "byte[]",
+                                   description = "The payload of the Pulsar message as a byte array, null for a message with"
+                                                 + " a null value (a tombstone), with the key and the properties in headers:"
+                                                 + " convert or unmarshal it"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "What converts to a byte array: text, bytes, a stream or a file, sent as the"
+                                                + " payload. Any other body is sent with Java serialization, a Map, a List, a"
+                                                + " number and no body too, and an object that is not Serializable fails:"
+                                                + " marshal it first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, also when the exchange expects a reply, with the id of the"
+                                                 + " published message in a header"))
 public class PulsarEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private PulsarClient pulsarClient;

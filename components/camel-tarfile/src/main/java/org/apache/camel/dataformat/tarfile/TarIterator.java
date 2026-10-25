@@ -21,11 +21,14 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -34,7 +37,6 @@ import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.io.input.BoundedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
     private final Exchange exchange;
     private long maxDecompressedSize = -1;
     private volatile TarArchiveInputStream tarInputStream;
+    private final List<CachedOutputStream> cachedOutputStreamsToClose = new ArrayList<>();
     private volatile Message parent;
     private volatile boolean first;
     private boolean allowEmptyDirectory;
@@ -82,21 +85,17 @@ public class TarIterator implements Iterator<Message>, Closeable {
             if (tarInputStream == null) {
                 return false;
             }
-            boolean availableDataInCurrentEntry = tarInputStream.getCurrentEntry() != null && tarInputStream.available() > 0;
-            if (!availableDataInCurrentEntry) {
-                // advance to the next entry.
+            if (parent == null) {
+                // advance to the next entry (the entry of the last message is already read into its body)
                 parent = getNextElement();
                 if (parent == null) {
                     tarInputStream.close();
-                    availableDataInCurrentEntry = false;
-                } else {
-                    availableDataInCurrentEntry = true;
                 }
                 if (first && parent == null) {
                     throw new IllegalStateException("Unable to untar the file, it may be corrupted.");
                 }
             }
-            return availableDataInCurrentEntry;
+            return parent != null;
         } catch (IOException exception) {
             throw new RuntimeCamelException(exception);
         }
@@ -137,22 +136,17 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 // CamelFileName control header to the leaf name (Tar Slip). The full path stays on
                 // CamelTarFileEntryName.
                 answer.setHeader(Exchange.FILE_NAME, FileUtil.stripPath(current.getName()));
-                if (current.getSize() > 0) {
-                    if (maxDecompressedSize > 0) {
-                        answer.setBody(BoundedInputStream.builder()
-                                .setInputStream(new TarElementInputStreamWrapper(tarInputStream))
-                                .setMaxCount(maxDecompressedSize)
-                                .setOnMaxCount((max, count) -> {
-                                    throw new IOException(
-                                            "The InputStream entry being decompressed exceeds the maximum allowed size");
-                                })
-                                .get());
-                    } else {
-                        answer.setBody(new TarElementInputStreamWrapper(tarInputStream));
-                    }
-                } else {
-                    // Workaround for the case when the entry is zero bytes big
+                // the size of this entry, not the one of the archive the headers are copied from
+                answer.setHeader(Exchange.FILE_LENGTH, current.getSize());
+                if (current.isDirectory()) {
                     answer.setBody(new ByteArrayInputStream(new byte[0]));
+                } else {
+                    // copy the entry into a stream cache, as all the entries share the stream of the archive,
+                    // so the body can be read after the next entry is taken (CAMEL-26004)
+                    CachedOutputStream cos = new CachedOutputStream(exchange);
+                    cachedOutputStreamsToClose.add(cos);
+                    IOHelper.copy(tarInputStream, cos, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
+                    answer.setBody(cos.getInputStream());
                 }
                 return answer;
             } else {
@@ -196,6 +190,10 @@ public class TarIterator implements Iterator<Message>, Closeable {
     public void close() throws IOException {
         IOHelper.close(tarInputStream);
         tarInputStream = null;
+
+        for (CachedOutputStream cos : cachedOutputStreamsToClose) {
+            IOHelper.close(cos);
+        }
     }
 
     public boolean isAllowEmptyDirectory() {

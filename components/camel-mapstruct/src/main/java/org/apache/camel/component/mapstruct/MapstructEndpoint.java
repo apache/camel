@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -31,6 +34,13 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.19.0", scheme = "mapstruct", title = "MapStruct", syntax = "mapstruct:className",
              remote = false, producerOnly = true,
              category = { Category.TRANSFORMATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                  description = "A POJO that a mapper of the mapperPackageName packages maps to the className"
+                                                + " type; a body of that type already is left as it is. Any other body fails"
+                                                + " with an InvalidPayloadException, unless mandatory is false"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                   description = "The object of the className type the mapper returns, or null when there is"
+                                                 + " no body. With mandatory=false, a body that no mapper converts becomes null"))
 public class MapstructEndpoint extends DefaultEndpoint {
 
     @UriPath

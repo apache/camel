@@ -63,7 +63,7 @@
         <activemq-artemis-version>2.57.0</activemq-artemis-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
-        <alibabacloud-oss-version>0.6.0</alibabacloud-oss-version>
+        <alibabacloud-oss-version>0.6.1</alibabacloud-oss-version>
         <aliyun-sdk-mns-version>2.0.0</aliyun-sdk-mns-version>
         <aliyun-fc-open-version>2.1.0</aliyun-fc-open-version>
         <aliyun-dysmsapi-version>4.6.0</aliyun-dysmsapi-version>
@@ -106,7 +106,7 @@
         <californium-scandium-version>3.14.0</californium-scandium-version>
         <!-- jbang edit command which uses embedded kamelets catalog -->
         <camel-lsp-version>1.34.0</camel-lsp-version>
-        <camel-kamelets-catalog-version>4.22.1</camel-kamelets-catalog-version>
+        <camel-kamelets-catalog-version>4.23.0</camel-kamelets-catalog-version>
         <camunda-version>7.24.0</camunda-version>
         <camunda-client-java-version>8.10.4</camunda-client-java-version>
         <cassandra-driver-version>4.19.4</cassandra-driver-version>
@@ -219,7 +219,7 @@
         <graphql-java-version>26.1</graphql-java-version>
         <greenmail-version>2.1.14</greenmail-version>
         <groovy-version>5.1.2</groovy-version>
-        <grpc-version>1.85.0</grpc-version>
+        <grpc-version>1.85.1</grpc-version>
         <grpc-java-jwt-version>4.6.1</grpc-java-jwt-version>
         <gson-version>2.14.0</gson-version>
         <guava-version>33.7.2-jre</guava-version>
@@ -243,7 +243,7 @@
         <mariadb-version>3.5.10</mariadb-version>
         <mariadb4j-version>3.3.1</mariadb4j-version>
         <httpcore-version>5.4.4</httpcore-version>
-        <httpclient-version>5.6.4</httpclient-version>
+        <httpclient-version>5.6.5</httpclient-version>
         <httpcore4-version>4.4.16</httpcore4-version>
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
@@ -265,8 +265,8 @@
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
-        <jackson2-version>2.22.3</jackson2-version>
-        <jackson3-version>3.2.3</jackson3-version>
+        <jackson2-version>2.22.4</jackson2-version>
+        <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.4</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
         <jandex-version>3.6.0</jandex-version>
@@ -307,7 +307,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.7</jettison-version>
         <jgit-version>7.8.0.202609011348-r</jgit-version>
-        <jgroups-version>5.5.7.Final</jgroups-version>
+        <jgroups-version>5.5.8.Final</jgroups-version>
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
         <jira-rest-client-api-version>6.0.4</jira-rest-client-api-version>
         <jira-sal-api-version>7.2.1</jira-sal-api-version>
@@ -396,14 +396,14 @@
         <microprofile-config-version>3.1.2</microprofile-config-version>
         <milo-version>1.1.8</milo-version>
         <milvus-client-version>2.6.25</milvus-client-version>
-        <mina-version>2.2.9</mina-version>
+        <mina-version>2.2.10</mina-version>
         <minio-version>9.0.3</minio-version>
         <mockito-version>5.24.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.13.0</mongo-java-driver-version>
         <msal4j-version>1.26.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
-        <mvel-version>2.5.4.Final</mvel-version>
+        <mvel-version>2.6.0.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
         <neo4j-version>6.3.0</neo4j-version>
@@ -507,15 +507,15 @@
         <splunk-version>1.9.5_1</splunk-version>
         <spring-ai-version>2.0.1</spring-ai-version>
         <spring-cloud-config-version>5.0.5</spring-cloud-config-version>
-        <spring-batch-version>6.0.5</spring-batch-version>
-        <spring-boot-version>4.1.1</spring-boot-version>
-        <spring-data-redis-version>4.1.1</spring-data-redis-version>
-        <spring-ldap-version>4.1.1</spring-ldap-version>
+        <spring-batch-version>6.0.6</spring-batch-version>
+        <spring-boot-version>4.1.2</spring-boot-version>
+        <spring-data-redis-version>4.1.2</spring-data-redis-version>
+        <spring-ldap-version>4.1.2</spring-ldap-version>
         <spring-vault-core-version>4.1.0</spring-vault-core-version>
-        <spring-version>7.0.9</spring-version>
-        <spring-rabbitmq-version>4.1.1</spring-rabbitmq-version>
-        <spring-security-version>7.1.1</spring-security-version>
-        <spring-ws-version>5.0.2</spring-ws-version>
+        <spring-version>7.0.10</spring-version>
+        <spring-rabbitmq-version>4.1.2</spring-rabbitmq-version>
+        <spring-security-version>7.1.2</spring-security-version>
+        <spring-ws-version>5.0.3</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp5-version>5.5.0</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
@@ -535,7 +535,7 @@
         <testcontainers-version>2.0.5</testcontainers-version>
         <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
         <tika-version>4.1.0</tika-version>
-        <twilio-version>13.0.2</twilio-version>
+        <twilio-version>13.1.0</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-servlet-version>2.3.26.Final</undertow-servlet-version>
         <undertow-version>2.4.4.Final</undertow-version>

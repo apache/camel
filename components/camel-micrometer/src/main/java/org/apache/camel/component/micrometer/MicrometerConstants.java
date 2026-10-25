@@ -27,7 +27,7 @@ public final class MicrometerConstants {
     @Metadata(description = "Override timer action in URI",
               javaType = "org.apache.camel.component.micrometer.MicrometerTimerAction")
     public static final String HEADER_TIMER_ACTION = HEADER_PREFIX + "TimerAction";
-    @Metadata(description = "Override histogram value in URI", javaType = "long")
+    @Metadata(description = "Override histogram value in URI", javaType = "Double")
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
     @Metadata(description = "Override decrement value in URI", javaType = "Double")
     public static final String HEADER_COUNTER_DECREMENT = HEADER_PREFIX + "CounterDecrement";

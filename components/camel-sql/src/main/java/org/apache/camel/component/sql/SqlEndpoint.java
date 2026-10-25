@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,6 +35,28 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query",
              category = { Category.DATABASE }, headersClass = SqlConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map<String, Object>",
+                                   dependsOn = { "outputClass", "outputHeader" },
+                                   byOption = {
+                                           @BodyType.When(option = "useIterator", value = "false", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "outputType", value = "SelectOne",
+                                                          carriers = { Carrier.MAP, Carrier.VALUE }),
+                                           @BodyType.When(option = "outputType", value = "StreamList",
+                                                          carriers = Carrier.ITERATOR) },
+                                   description = "A row of the query: a Map of the column names and their values"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The parameters of the query: a Map for the named ones, a List or an array"
+                                                + " for the # ones; the query itself with useMessageBodyForSql"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
+                                   dependsOn = { "outputClass", "outputHeader", "noop" },
+                                   byOption = {
+                                           @BodyType.When(option = "outputType", value = "SelectOne",
+                                                          carriers = { Carrier.MAP, Carrier.VALUE, Carrier.NULL }),
+                                           @BodyType.When(option = "outputType", value = "StreamList",
+                                                          carriers = Carrier.ITERATOR) },
+                                   description = "The rows of a select: a List of Maps of the column names and their values."
+                                                 + " A query that is not a select leaves the body unchanged, with the count"
+                                                 + " in the CamelSqlUpdateCount header"))
 public class SqlEndpoint extends DefaultSqlEndpoint {
 
     @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")

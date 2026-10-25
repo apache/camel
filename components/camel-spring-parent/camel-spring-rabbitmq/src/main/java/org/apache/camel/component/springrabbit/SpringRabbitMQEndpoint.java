@@ -26,6 +26,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -57,6 +60,36 @@ import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DI
 @UriEndpoint(firstVersion = "3.8.0", scheme = "spring-rabbitmq", title = "Spring RabbitMQ",
              syntax = "spring-rabbitmq:exchangeName",
              category = { Category.MESSAGING }, headersClass = SpringRabbitMQConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES }, dependsOn = "messageConverter",
+                                   description = "A String when the content type starts with text, as for text this"
+                                                 + " component sends; a byte array otherwise, JSON and Java serialized objects"
+                                                 + " too, which are not deserialized"),
+           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                     dependsOn = "messageConverter",
+                                     byOption = @BodyType.When(option = "allowNullBody", value = "true",
+                                                               carriers = {
+                                                                       Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                       Carrier.STREAM, Carrier.FILE }),
+                                     description = "The reply to a message with a reply-to, converted as the producer"
+                                                   + " converts a body: a Map or a POJO fails"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "messageConverter",
+                                  byOption = @BodyType.When(option = "allowNullBody", value = "true",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE }),
+                                  description = "Text, bytes, a stream or a file, sent as a byte array, text as text/plain"
+                                                + " unless the CamelSpringRabbitmqContentType header says another type. A Map"
+                                                + " or a POJO fails, as it is not serialized: marshal it first"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "exchangePattern", value = "InOnly",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "disableReplyTo", value = "true",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "Unchanged for a message that expects no reply (InOnly). A message that"
+                                                 + " expects one (InOut) gets the body of the reply as the consumer gives it:"
+                                                 + " a String for a text content type, a byte array otherwise"))
 public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
 
     public static final String ARG_PREFIX = "arg.";

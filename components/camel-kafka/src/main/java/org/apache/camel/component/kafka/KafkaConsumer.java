@@ -167,13 +167,9 @@ public class KafkaConsumer extends DefaultConsumer
             KafkaFetchRecords task = new KafkaFetchRecords(
                     this, bridge, topic, pattern, Integer.toString(i), getProps(), consumerListener);
 
-            if (!endpoint.getCamelContext().isStarted()) {
-                // if camel has not been fully started yet then delay starting this consumer to avoid
-                // process incoming message before camel is fully started
-                endpoint.getComponent().pendingConsumer(() -> executor.submit(task));
-            } else {
-                executor.submit(task);
-            }
+            // if camel has not been fully started yet then delay starting this consumer to avoid
+            // process incoming message before camel is fully started
+            endpoint.getComponent().startConsumer(() -> executor.submit(task));
 
             tasks.add(task);
         }

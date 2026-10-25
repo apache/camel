@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +41,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -508,6 +511,29 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         assertEquals("This is not a MIME-Multipart", bodyStr);
     }
 
+    @Test
+    public void unmarshalNonMimeFileBody(@TempDir Path tempDir) throws IOException {
+        // a body that is not in memory: its stream is closed when unmarshal returns, so the body must be left as it was
+        // (CAMEL-26007)
+        Path file = tempDir.resolve("plain.txt");
+        Files.writeString(file, "This is not a MIME-Multipart", StandardCharsets.UTF_8);
+        in.setBody(file.toFile());
+        Exchange out = template.send("direct:unmarshalonly", exchange);
+        assertNull(out.getException());
+        assertEquals("This is not a MIME-Multipart", out.getMessage().getBody(String.class));
+    }
+
+    @Test
+    public void unmarshalNonMultipartContentTypeFileBodyWithoutStreamCaching(@TempDir Path tempDir) throws IOException {
+        Path file = tempDir.resolve("plain.txt");
+        Files.writeString(file, "This is not a MIME-Multipart", StandardCharsets.UTF_8);
+        in.setBody(file.toFile());
+        in.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+        Exchange out = template.send("direct:unmarshalonlythenstring", exchange);
+        assertNull(out.getException());
+        assertEquals("This is not a MIME-Multipart", out.getMessage().getBody(String.class));
+    }
+
     /*
      * This test will only work of stream caching is enabled on the route. In order to find out whether the body
      * is a multipart or not the stream has to be read, and if the underlying data is a stream (but not a stream cache)
@@ -619,6 +645,8 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
                 from("direct:marshalonlymixed").marshal().mimeMultipart();
                 from("direct:marshalonlyinlineheaders").marshal().mimeMultipart("mixed", false, true, "(included|x-.*)", false);
                 from("direct:unmarshalonly").unmarshal().mimeMultipart(false, false, false);
+                from("direct:unmarshalonlythenstring").streamCache(false).unmarshal().mimeMultipart(false, false, false)
+                        .convertBodyTo(String.class);
                 from("direct:unmarshalonlyinlineheaders").streamCache(true).unmarshal().mimeMultipart(false, true, false);
             }
         };

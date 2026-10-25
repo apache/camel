@@ -19,10 +19,12 @@ behaves as a simple Web server.
 *Stream*
 
 Jetty is stream-based, which means the input it receives is
-submitted to Camel as a stream. That means you will only be able to read
-the content of the stream *once*.
+submitted to Camel as a stream. By default the consumer copies the request
+body into a stream cache, which can be read more than once. With
+`disableStreamCache=true` the body is the raw request stream, and you will
+only be able to read the content of the stream *once*.
 If you find a situation where the message body appears to be empty, or
-you need to access the Exchange.HTTP_RESPONSE_CODE data multiple times
+you need to access the body multiple times
 (e.g.: doing multicasting, or redelivery error handling), you should use
 Stream caching or convert the message body to
 a `String` which is safe to be re-read multiple times.

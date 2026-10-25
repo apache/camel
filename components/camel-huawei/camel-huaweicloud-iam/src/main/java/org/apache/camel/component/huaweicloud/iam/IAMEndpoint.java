@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -38,6 +41,22 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-iam", title = "Huawei Identity and Access Management (IAM)",
              syntax = "hwcloud-iam:operation",
              category = { Category.CLOUD }, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "updateUser",
+                                                         carriers = { Carrier.TEXT, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "updateGroup",
+                                                         carriers = { Carrier.TEXT, Carrier.POJO }) },
+                                  description = "Not used by the list and get operations, which take the ids from the options"
+                                                + " or the CamelHwCloudIamUserId and CamelHwCloudIamGroupId exchange properties."
+                                                + " updateUser needs an UpdateUserOption of the Huawei Cloud SDK or its JSON as"
+                                                + " text, and updateGroup a KeystoneUpdateGroupOption or its JSON: another body,"
+                                                + " JSON as bytes or a stream too, fails"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "json",
+                                   description = "The JSON of the result as text: the array of the users or the groups for"
+                                                 + " listUsers, listGroups and getGroupUsers, the user or the group for getUser,"
+                                                 + " updateUser and updateGroup. The keys are the field names of the Huawei Cloud"
+                                                 + " SDK, such as domainId"))
 public class IAMEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")

@@ -30,6 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -46,6 +49,24 @@ import quickfix.SessionID;
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName",
              category = { Category.MESSAGING }, headersClass = QuickfixjEndpoint.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                   description = "The FIX message: a quickfix.Message, such as a quickfix.fix44.Email, with"
+                                                 + " the kind of event in the EventCategory header and the MsgType in the"
+                                                 + " MessageType header. SessionCreated, SessionLogon and SessionLogoff"
+                                                 + " events have no body"),
+           consumerReply = @BodyType(value = { Carrier.POJO, Carrier.TEXT, Carrier.BYTES },
+                                     description = "With exchangePattern=InOut, the reply sent back on the session of the"
+                                                   + " request: a quickfix.Message, or the FIX message as text or bytes."
+                                                   + " Every event is answered with the body the route ends with: a route"
+                                                   + " that sets no reply sends back the message it received"),
+           producerIn = @BodyType(value = { Carrier.POJO, Carrier.TEXT, Carrier.BYTES },
+                                  description = "The FIX message to send: a quickfix.Message, or the FIX message as text or"
+                                                + " bytes, parsed with the DataDictionary exchange property or the data"
+                                                + " dictionary of the session. A stream, a Map or no body fails"),
+           producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.POJO },
+                                   description = "The body is left as it was. An InOut exchange waits for the reply that"
+                                                 + " matches the CorrelationCriteria exchange property, and the reply"
+                                                 + " quickfix.Message is the body"))
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     @Metadata(description = "The event category.", javaType = "org.apache.camel.component.quickfixj.QuickfixjEventCategory")
     public static final String EVENT_CATEGORY_KEY = "EventCategory";

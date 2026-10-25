@@ -37,6 +37,14 @@ public class OgnlTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testMessageExpressions() {
+        assertExpression("message.body", "<hello id='m123'>world!</hello>");
+        assertExpression("message.headers.foo", "abc");
+        assertExpression("getMessage().headers['foo']", "abc");
+        assertExpression("message == exchange.message", true);
+    }
+
+    @Test
     public void testClassMethodExpression() {
         try {
             assertExpression("@org.apache.camel.language.ognl.Animal1@getClassName()", "Animal");

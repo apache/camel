@@ -99,7 +99,8 @@ public interface MinioConstants {
               javaType = "String")
     String CANNED_ACL = "CamelMinioCannedAcl";
     @Metadata(label = "producer", description = "The operation to perform.",
-              javaType = "org.apache.camel.component.minio.MinioOperations")
+              javaType = "org.apache.camel.component.minio.MinioOperations",
+              enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink,createUploadLink")
     String MINIO_OPERATION = "CamelMinioOperation";
     @Metadata(description = """
             *Producer:* Sets the server-side encryption algorithm when encrypting

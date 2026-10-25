@@ -72,7 +72,7 @@ public class SshConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private String shellPrompt;
     @UriParam(label = "advanced", defaultValue = "100")
-    private long sleepForShellPrompt;
+    private long sleepForShellPrompt = 100;
     @UriParam(label = "security")
     private String kex;
     @UriParam(label = "security")
@@ -252,7 +252,8 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000
+     * Sets the timeout in milliseconds to wait in establishing the remote SSH server connection: connecting,
+     * authenticating and opening the channel. It does not limit how long the command runs. Defaults to 30000
      * milliseconds.
      *
      * @param timeout long milliseconds to wait.
@@ -337,7 +338,8 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the shellPrompt to be dropped when response is read after command execution
+     * Sets the shellPrompt to be dropped when response is read after command execution. Required when the channelType
+     * is shell.
      *
      * @param shellPrompt String defining ending string of command line which has to be dropped when response is read
      *                    after command execution.

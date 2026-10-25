@@ -385,7 +385,7 @@ public class AthenaComponentTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct:startQueryExecution")
-                        .to("aws2-athena://label?accessKey=unused&secretKey=unused")
+                        .to("aws2-athena://label?accessKey=unused&secretKey=unused&useMessageBodyForSql=true")
                         .to("mock:result");
             }
         };

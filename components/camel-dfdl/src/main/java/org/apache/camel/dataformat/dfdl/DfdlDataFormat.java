@@ -28,6 +28,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dfdl.DfdlParseException;
 import org.apache.camel.component.dfdl.DfdlUnparseException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -44,6 +47,17 @@ import org.apache.daffodil.japi.infoset.W3CDOMInfosetOutputter;
 import org.apache.daffodil.japi.io.InputSourceDataInputStream;
 
 @Dataformat("dfdl")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                 format = "xml",
+                                 description = "The XML infoset of the DFDL schema, as text or as a DOM Document (or another"
+                                               + " DOM Node or Source), which is converted to a DOM Document"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The data in the format the DFDL schema describes, in the stream cache, or a"
+                                                + " byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                   description = "Data in the format the DFDL schema describes, such as an EDI message"),
+           unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.Document",
+                                    description = "The XML infoset as a DOM Document"))
 public class DfdlDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
     private CamelContext camelContext;
     private String schemaUri;

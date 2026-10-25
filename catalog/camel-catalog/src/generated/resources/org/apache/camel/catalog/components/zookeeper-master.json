@@ -33,6 +33,9 @@
     "curator": { "index": 6, "kind": "property", "displayName": "Curator", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.curator.framework.CuratorFramework", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom configured CuratorFramework as connection to zookeeper ensemble." },
     "zooKeeperPassword": { "index": 7, "kind": "property", "displayName": "Zoo Keeper Password", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "The password to use when connecting to the zookeeper ensemble" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unknown" ], "description": "The body the consumer of the delegate endpoint (consumerEndpointUri) makes, such as the file of a file consumer: only the node that holds the leadership of the group runs it" }
+  },
   "properties": {
     "groupName": { "index": 0, "kind": "path", "displayName": "Group Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the cluster group to use" },
     "consumerEndpointUri": { "index": 1, "kind": "path", "displayName": "Consumer Endpoint Uri", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The consumer endpoint to use in master\/slave mode" },

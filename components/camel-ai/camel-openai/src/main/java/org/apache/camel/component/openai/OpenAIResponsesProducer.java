@@ -199,7 +199,8 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                         "background cannot be combined with automatic tool execution, the tool loop needs each answer. "
                                                    + "Set autoToolExecution=false to handle the function calls in the route");
             }
-            processToolLoop(exchange, config, params, inputSpec.items(), model);
+            processToolLoop(exchange, config, params, inputSpec.items(), model,
+                    ObjectHelper.isNotEmpty(conversationId) ? conversationId : null);
             return;
         }
 
@@ -216,7 +217,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
      */
     private void processToolLoop(
             Exchange exchange, OpenAIConfiguration config, ResponseCreateParams params, List<ResponseInputItem> input,
-            String model)
+            String model, String conversationId)
             throws Exception {
         // a stored conversation keeps every item it receives, so after the first request only the new items are sent,
         // while otherwise each request carries the whole conversation of the exchange
@@ -273,7 +274,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
                 functionCalls.forEach(call -> toolCallsLog.add(call.name()));
                 List<ChatCompletionMessageToolCall> toolCalls = OpenAIResponsesSupport.toChatToolCalls(functionCalls);
-                List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls, exchange);
+                List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls, exchange, conversationId);
                 observability.recordIteration(
                         modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
                         results);

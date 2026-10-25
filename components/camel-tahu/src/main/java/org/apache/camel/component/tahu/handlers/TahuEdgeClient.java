@@ -116,6 +116,13 @@ public final class TahuEdgeClient extends EdgeClient {
         }
     }
 
+    /**
+     * The executor that runs this client.
+     */
+    public ExecutorService getClientExecutorService() {
+        return clientExecutorService;
+    }
+
     public SparkplugBPayloadMap addDeviceMetricDataPayloadMap(
             SparkplugDescriptor metricDescriptor, SparkplugBPayloadMap metricDataTypePayloadMap) {
         return tahuEdgeNodeMetricHandler.addDeviceMetricDataPayloadMap(metricDescriptor, metricDataTypePayloadMap);

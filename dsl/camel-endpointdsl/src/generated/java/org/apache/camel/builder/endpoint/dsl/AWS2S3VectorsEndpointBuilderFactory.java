@@ -45,7 +45,8 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return (AdvancedAWS2S3VectorsEndpointConsumerBuilder) this;
         }
         /**
-         * The data type of the vector. Options: float32, float16.
+         * The data type of the vectors of the index to create. S3 Vectors
+         * supports float32 only.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -60,8 +61,8 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The distance metric to use for similarity search. Options: cosine,
-         * euclidean, dot-product.
+         * The distance metric of the index to create, which the similarity
+         * search uses. Options: cosine, euclidean.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -124,7 +125,11 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The minimum similarity threshold for results.
+         * (deprecated) Never used: S3 Vectors has no similarity threshold. The
+         * consumer sets the CamelAwsS3VectorsDistance header to the distance of
+         * each vector from the query vector. Deprecation note: S3 Vectors has
+         * no similarity threshold, the component never used this option. Filter
+         * the results on their CamelAwsS3VectorsDistance header instead.
          * 
          * The option is a: <code>java.lang.Float</code> type.
          * 
@@ -133,12 +138,17 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * @param similarityThreshold the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AWS2S3VectorsEndpointConsumerBuilder similarityThreshold(Float similarityThreshold) {
             doSetProperty("similarityThreshold", similarityThreshold);
             return this;
         }
         /**
-         * The minimum similarity threshold for results.
+         * (deprecated) Never used: S3 Vectors has no similarity threshold. The
+         * consumer sets the CamelAwsS3VectorsDistance header to the distance of
+         * each vector from the query vector. Deprecation note: S3 Vectors has
+         * no similarity threshold, the component never used this option. Filter
+         * the results on their CamelAwsS3VectorsDistance header instead.
          * 
          * The option will be converted to a <code>java.lang.Float</code> type.
          * 
@@ -147,6 +157,7 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * @param similarityThreshold the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AWS2S3VectorsEndpointConsumerBuilder similarityThreshold(String similarityThreshold) {
             doSetProperty("similarityThreshold", similarityThreshold);
             return this;
@@ -245,8 +256,10 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Optional metadata filter for the consumer to filter vectors during
-         * polling.
+         * The metadata filter of the similarity search of the consumer, as a
+         * JSON object with the filter operators of S3 Vectors, such as {genre:
+         * {$eq: drama}}. Only the vectors whose metadata match the filter are
+         * consumed.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1298,7 +1311,8 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
         }
 
         /**
-         * The data type of the vector. Options: float32, float16.
+         * The data type of the vectors of the index to create. S3 Vectors
+         * supports float32 only.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1313,8 +1327,8 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The distance metric to use for similarity search. Options: cosine,
-         * euclidean, dot-product.
+         * The distance metric of the index to create, which the similarity
+         * search uses. Options: cosine, euclidean.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1377,7 +1391,11 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The minimum similarity threshold for results.
+         * (deprecated) Never used: S3 Vectors has no similarity threshold. The
+         * consumer sets the CamelAwsS3VectorsDistance header to the distance of
+         * each vector from the query vector. Deprecation note: S3 Vectors has
+         * no similarity threshold, the component never used this option. Filter
+         * the results on their CamelAwsS3VectorsDistance header instead.
          * 
          * The option is a: <code>java.lang.Float</code> type.
          * 
@@ -1386,12 +1404,17 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * @param similarityThreshold the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AWS2S3VectorsEndpointProducerBuilder similarityThreshold(Float similarityThreshold) {
             doSetProperty("similarityThreshold", similarityThreshold);
             return this;
         }
         /**
-         * The minimum similarity threshold for results.
+         * (deprecated) Never used: S3 Vectors has no similarity threshold. The
+         * consumer sets the CamelAwsS3VectorsDistance header to the distance of
+         * each vector from the query vector. Deprecation note: S3 Vectors has
+         * no similarity threshold, the component never used this option. Filter
+         * the results on their CamelAwsS3VectorsDistance header instead.
          * 
          * The option will be converted to a <code>java.lang.Float</code> type.
          * 
@@ -1400,6 +1423,7 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * @param similarityThreshold the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AWS2S3VectorsEndpointProducerBuilder similarityThreshold(String similarityThreshold) {
             doSetProperty("similarityThreshold", similarityThreshold);
             return this;
@@ -1894,7 +1918,8 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
         }
 
         /**
-         * The data type of the vector. Options: float32, float16.
+         * The data type of the vectors of the index to create. S3 Vectors
+         * supports float32 only.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1909,8 +1934,8 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The distance metric to use for similarity search. Options: cosine,
-         * euclidean, dot-product.
+         * The distance metric of the index to create, which the similarity
+         * search uses. Options: cosine, euclidean.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1973,7 +1998,11 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The minimum similarity threshold for results.
+         * (deprecated) Never used: S3 Vectors has no similarity threshold. The
+         * consumer sets the CamelAwsS3VectorsDistance header to the distance of
+         * each vector from the query vector. Deprecation note: S3 Vectors has
+         * no similarity threshold, the component never used this option. Filter
+         * the results on their CamelAwsS3VectorsDistance header instead.
          * 
          * The option is a: <code>java.lang.Float</code> type.
          * 
@@ -1982,12 +2011,17 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * @param similarityThreshold the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AWS2S3VectorsEndpointBuilder similarityThreshold(Float similarityThreshold) {
             doSetProperty("similarityThreshold", similarityThreshold);
             return this;
         }
         /**
-         * The minimum similarity threshold for results.
+         * (deprecated) Never used: S3 Vectors has no similarity threshold. The
+         * consumer sets the CamelAwsS3VectorsDistance header to the distance of
+         * each vector from the query vector. Deprecation note: S3 Vectors has
+         * no similarity threshold, the component never used this option. Filter
+         * the results on their CamelAwsS3VectorsDistance header instead.
          * 
          * The option will be converted to a <code>java.lang.Float</code> type.
          * 
@@ -1996,6 +2030,7 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * @param similarityThreshold the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AWS2S3VectorsEndpointBuilder similarityThreshold(String similarityThreshold) {
             doSetProperty("similarityThreshold", similarityThreshold);
             return this;
@@ -2487,12 +2522,13 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return "CamelAwsS3VectorsOperation";
         }
         /**
-         * The name of the vector bucket which will be used for the current
-         * operation.
+         * The name of the vector bucket to use for the current operation
+         * instead of the vector bucket of the endpoint. An input only: neither
+         * the producer nor the consumer sets it.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code AwsS3VectorsVectorBucketName}.
          */
@@ -2500,12 +2536,13 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return "CamelAwsS3VectorsVectorBucketName";
         }
         /**
-         * The name of the vector index which will be used for the current
-         * operation.
+         * The name of the vector index to use for the current operation instead
+         * of the vectorIndexName option of the endpoint. An input only: neither
+         * the producer nor the consumer sets it.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code AwsS3VectorsVectorIndexName}.
          */
@@ -2513,11 +2550,15 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return "CamelAwsS3VectorsVectorIndexName";
         }
         /**
-         * The unique identifier for a vector.
+         * The key of a vector. putVectors puts the vector under this key (the
+         * exchange id when it is not set) and sets it to the key it used.
+         * getVectors and deleteVectors take their key, or a list of keys, from
+         * this header only when the message body holds no keys. The consumer
+         * sets it to the key of the consumed vector.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code String or List<String>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code AwsS3VectorsVectorId}.
          */
@@ -2549,7 +2590,7 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return "CamelAwsS3VectorsVectorDimensions";
         }
         /**
-         * The data type of the vector (float32 or float16).
+         * The data type of the vectors of the index to create (float32).
          * 
          * The option is a: {@code String} type.
          * 
@@ -2561,9 +2602,10 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return "CamelAwsS3VectorsDataType";
         }
         /**
-         * Additional metadata for the vector as a map.
+         * Additional metadata for the vector as a map. The values may be
+         * Strings, numbers, booleans or lists of these.
          * 
-         * The option is a: {@code Map<String, String>} type.
+         * The option is a: {@code Map<String, Object>} type.
          * 
          * Group: producer
          * 
@@ -2598,8 +2640,7 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return "CamelAwsS3VectorsTopK";
         }
         /**
-         * The distance metric to use for similarity search (cosine, euclidean,
-         * dot-product).
+         * The distance metric of the index to create (cosine or euclidean).
          * 
          * The option is a: {@code String} type.
          * 
@@ -2611,7 +2652,10 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return "CamelAwsS3VectorsDistanceMetric";
         }
         /**
-         * The minimum similarity threshold for results.
+         * (deprecated) Never used: S3 Vectors has no similarity threshold.
+         * Deprecation note: S3 Vectors has no similarity threshold, the
+         * component never used this header. Filter the results on their
+         * CamelAwsS3VectorsDistance header instead.
          * 
          * The option is a: {@code Float} type.
          * 
@@ -2620,12 +2664,14 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * @return the name of the header {@code
          * AwsS3VectorsSimilarityThreshold}.
          */
+        @Deprecated
         public String awsS3VectorsSimilarityThreshold() {
             return "CamelAwsS3VectorsSimilarityThreshold";
         }
         /**
-         * Optional filter expression for metadata filtering during vector
-         * search.
+         * The metadata filter of queryVectors, as a JSON object with the filter
+         * operators of S3 Vectors, such as $eq, $in or $and. Only the vectors
+         * whose metadata match the filter are returned.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2637,7 +2683,10 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
             return "CamelAwsS3VectorsMetadataFilter";
         }
         /**
-         * The similarity score of the returned vector.
+         * (deprecated) Never set: S3 Vectors returns a distance, see
+         * CamelAwsS3VectorsDistance. Deprecation note: S3 Vectors returns a
+         * distance, not a similarity score, and the component never set this
+         * header. Use the CamelAwsS3VectorsDistance header instead.
          * 
          * The option is a: {@code Float} type.
          * 
@@ -2645,8 +2694,22 @@ public interface AWS2S3VectorsEndpointBuilderFactory {
          * 
          * @return the name of the header {@code AwsS3VectorsSimilarityScore}.
          */
+        @Deprecated
         public String awsS3VectorsSimilarityScore() {
             return "CamelAwsS3VectorsSimilarityScore";
+        }
+        /**
+         * The distance of the consumed vector from the query vector, computed
+         * with the distance metric of the index: the lower, the closer.
+         * 
+         * The option is a: {@code Float} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsS3VectorsDistance}.
+         */
+        public String awsS3VectorsDistance() {
+            return "CamelAwsS3VectorsDistance";
         }
         /**
          * The number of vectors returned in the result.

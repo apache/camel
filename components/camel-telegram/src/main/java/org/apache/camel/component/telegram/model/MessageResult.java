@@ -19,6 +19,7 @@ package org.apache.camel.component.telegram.model;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,6 +31,11 @@ public class MessageResult implements Serializable {
     private static final long serialVersionUID = -4560342931918215225L;
 
     private boolean ok;
+
+    @JsonProperty("error_code")
+    private Integer errorCode;
+
+    private String description;
 
     private IncomingMessage message;
 
@@ -44,6 +50,28 @@ public class MessageResult implements Serializable {
 
     public void setOk(boolean ok) {
         this.ok = ok;
+    }
+
+    /**
+     * The error code of an answer that is not ok.
+     */
+    public Integer getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(Integer errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    /**
+     * The description of the answer, such as the reason of an answer that is not ok.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public IncomingMessage getMessage() {
@@ -74,6 +102,10 @@ public class MessageResult implements Serializable {
     public String toString() {
         final StringBuilder sb = new StringBuilder("MessageResult{");
         sb.append("ok=").append(ok);
+        if (!ok) {
+            sb.append(", errorCode=").append(errorCode);
+            sb.append(", description=").append(description);
+        }
         sb.append(", message=").append(message);
         sb.append('}');
         return sb.toString();

@@ -56,7 +56,9 @@ public class TelegramMockRoutes extends RouteBuilder {
     public void configure() {
 
         mocks.forEach((key, value) -> {
-            from("netty-http:http://localhost:" + port + "/botmock-token/" + key + "?httpMethodRestrict=" + value.method)
+            // accepts requests with media larger than the 1 MB that netty-http accepts by default
+            from("netty-http:http://localhost:" + port + "/botmock-token/" + key + "?httpMethodRestrict=" + value.method
+                 + "&chunkedMaxContentLength=" + (16 * 1024 * 1024))
                     .process(value);
         });
 
@@ -104,11 +106,11 @@ public class TelegramMockRoutes extends RouteBuilder {
                                 = returnType != String.class
                                         ? (T) new ObjectMapper().readValue(rawBody, returnType) : (T) rawBody;
                         recordedMessages.add(body);
-                        final byte[] bytes = responseBodies[responseIndex].getBytes(StandardCharsets.UTF_8);
-                        m.setBody(bytes);
-                        m.setHeader("Content-Length", bytes.length);
-                        m.setHeader("Content-Type", "application/json; charset=UTF-8");
                     }
+                    final byte[] bytes = responseBodies[responseIndex].getBytes(StandardCharsets.UTF_8);
+                    m.setBody(bytes);
+                    m.setHeader("Content-Length", bytes.length);
+                    m.setHeader("Content-Type", "application/json; charset=UTF-8");
                 }
             }
         }

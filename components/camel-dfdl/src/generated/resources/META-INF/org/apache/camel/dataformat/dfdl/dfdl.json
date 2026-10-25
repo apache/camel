@@ -15,6 +15,12 @@
     "modelName": "dfdl",
     "modelJavaType": "org.apache.camel.model.dataformat.DfdlDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "description": "The XML infoset of the DFDL schema, as text or as a DOM Document (or another DOM Node or Source), which is converted to a DOM Document" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "The data in the format the DFDL schema describes, in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "Data in the format the DFDL schema describes, such as an EDI message" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "javaType": "org.w3c.dom.Document", "description": "The XML infoset as a DOM Document" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "schemaUri": { "index": 1, "kind": "attribute", "displayName": "Schema Uri", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The path to the DFDL schema file." },

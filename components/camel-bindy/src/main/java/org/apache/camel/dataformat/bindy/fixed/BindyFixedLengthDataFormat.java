@@ -35,6 +35,9 @@ import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.UnicodeHelper;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -46,6 +49,22 @@ import org.slf4j.LoggerFactory;
  * Marshal and unmarshal between POJOs and fixed field length format using Camel Bindy
  */
 @Dataformat("bindyFixed")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                 description = "An object of the classType class, or a List (or an Iterator) of them; a Map of"
+                                               + " the model class names to the objects is one record. Other bodies, such as"
+                                               + " a Map of field values or a String, fail. The headers"
+                                               + " CamelBindyFixedLengthHeader and CamelBindyFixedLengthFooter add the header"
+                                               + " and footer records"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The fixed-length records in the stream cache, or a byte array when stream"
+                                                + " caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                    byOption = @BodyType.When(option = "unwrapSingleInstance", value = "false",
+                                                              carriers = Carrier.LIST),
+                                    description = "An object of the classType class when there is one record, otherwise a"
+                                                  + " List of them. The header and footer records go to the headers"
+                                                  + " CamelBindyFixedLengthHeader and CamelBindyFixedLengthFooter"))
 public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     public static final String CAMEL_BINDY_FIXED_LENGTH_HEADER = "CamelBindyFixedLengthHeader";
@@ -88,11 +107,16 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 body = Collections.singleton(body).iterator();
             }
             for (Object model : ObjectHelper.createIterable(body)) {
-                String name = model.getClass().getName();
-                Map<String, Object> row = new HashMap<>();
-                row.put(name, model);
-                row.putAll(createLinkedFieldsModel(model));
-                models.add(row);
+                if (model instanceof Map) {
+                    // a map of the model class names to the objects, as with bindyCsv and bindyKvp
+                    models.add((Map<String, Object>) model);
+                } else {
+                    String name = model.getClass().getName();
+                    Map<String, Object> row = new HashMap<>();
+                    row.put(name, model);
+                    row.putAll(createLinkedFieldsModel(model));
+                    models.add(row);
+                }
             }
         } else {
             // cast to the expected type
@@ -143,7 +167,9 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             }
 
             if (result == null) {
-                // marshal as a normal / default row
+                // marshal as a normal / default row, and fail rather than write an empty line for a row that has no
+                // object of the model
+                checkModelRow(exchange, factory, model);
                 result = factory.unbind(getCamelContext(), model);
             }
 

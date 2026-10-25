@@ -60,7 +60,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         configMapWatcher = new ConfigMapsConsumerTask();
-        executor.submit(configMapWatcher);
+        KubernetesHelper.watch(this, executor, configMapWatcher);
     }
 
     @Override

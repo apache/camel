@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.chatscript.utils.ChatScriptConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -38,6 +41,13 @@ import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DE
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",
              producerOnly = true, category = { Category.AI, Category.CHAT })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.TEXT },
+                                  description = "A ChatScriptMessage, or its JSON as text with the username and the message"
+                                                + " fields. Bytes, a stream, a Map or plain text fail; the bot name always"
+                                                + " comes from the endpoint"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.component.chatscript.ChatScriptMessage",
+                                   description = "The ChatScriptMessage that was sent, with the answer of the bot in its reply"
+                                                 + " (the response field in JSON)"))
 public class ChatScriptEndpoint extends DefaultEndpoint {
 
     private ChatScriptBot bot;
