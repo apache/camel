@@ -575,6 +575,10 @@ public abstract class AbstractCamelContext extends BaseService
                 StartupStep step = startupStepRecorder.beginStep(Component.class, name, "Start Component");
                 startService(component);
                 startupStepRecorder.endStep(step);
+            } else if (autoStart && (isStarted() || isStarting()) && isNotStartedYet(component)) {
+                // another thread has just created the component and may still be starting it: start it (or wait for
+                // the other thread to have started it), so the component is not used before it has been started
+                ServiceHelper.startService(component);
             }
 
             return component;
@@ -584,6 +588,22 @@ public abstract class AbstractCamelContext extends BaseService
             // remove the reference to the component being created
             componentsInCreation.get().remove(name);
         }
+    }
+
+    /**
+     * Whether the component has not been started yet, or is being started. A component that has been stopped, or has
+     * failed to start, is not.
+     */
+    private static boolean isNotStartedYet(Component component) {
+        if (component instanceof BaseService bs) {
+            if (bs.isNew() || bs.isBuild()) {
+                return true;
+            }
+            ServiceStatus status = bs.getStatus();
+            return status == ServiceStatus.Initializing || status == ServiceStatus.Initialized
+                    || status == ServiceStatus.Starting;
+        }
+        return false;
     }
 
     /**
