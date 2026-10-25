@@ -46,6 +46,9 @@ public final class ExpressionEvaluator {
             "\\s(==|=~|!=|!=~|>|>=|<|<=|~~|!~~|contains|!contains|regex|!regex|in|!in|is|!is|range|!range"
                                                                       + "|startsWith|!startsWith|endsWith|!endsWith|equals|!equals|&&|\\|\\|)\\s");
 
+    // a path that ends with a filter: $[?(@.sku == 'CAMEL-MUG')]
+    private static final Pattern FILTER_ENDS_PATH = Pattern.compile("\\)]\\s*$");
+
     private ExpressionEvaluator() {
     }
 
@@ -83,23 +86,37 @@ public final class ExpressionEvaluator {
             result.put("evaluatedIn", "a local scratch context (no integration selected)");
             evaluateLocally(ctx, lang, expression, body, predicate, result);
         }
+        addFilterNote(result, lang, expression);
+        return result;
+    }
+
+    /** Adds the note about a jsonpath filter to the result of an evaluation, after the note it has already. */
+    static void addFilterNote(JsonObject result, String lang, String expression) {
         String filter = filterNote(lang, expression, result.getString("status"));
         if (filter != null) {
             result.put("note", result.containsKey("note") ? result.getString("note") + "; " + filter : filter);
         }
-        return result;
     }
 
     /**
      * A jsonpath filter gives a list, also for one match: models picked the element with an index after the filter,
-     * which gives an empty list, or a made-up syntax. In a route, resultType java.util.Map gives the one element.
+     * which gives an empty list, or a made-up syntax. In a route, resultType java.util.Map gives the one element when
+     * the path ends with the filter, and the type of the value gives the one value of a path that goes on after it.
      */
     static String filterNote(String lang, String expression, String status) {
         if (!"jsonpath".equals(lang) || expression == null || !expression.contains("[?(") || !"ok".equals(status)) {
             return null;
         }
-        return "a filter gives a list, also for one match; in a route, resultType: java.util.Map gives the one element"
-               + " it matches (null when none does), and an index after the filter gives an empty list";
+        String problem = JsonPathChecks.filterProblem(expression, false);
+        if (problem != null) {
+            return problem;
+        }
+        if (FILTER_ENDS_PATH.matcher(expression).find()) {
+            return "a filter gives a list, also for one match; in a route, resultType: java.util.Map gives the one"
+                   + " element it matches (null when none or several do)";
+        }
+        return "a filter gives a list, also for one match; in a route, a resultType that is not a list, such as"
+               + " java.lang.String or java.lang.Integer, gives the one value when one element matches";
     }
 
     private static void evaluateInProcess(

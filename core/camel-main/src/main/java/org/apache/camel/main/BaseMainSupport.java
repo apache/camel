@@ -3263,7 +3263,8 @@ public abstract class BaseMainSupport extends BaseService {
                     entry.getKey().getOptionPrefix(),
                     failFast,
                     true,
-                    autoConfiguredProperties);
+                    autoConfiguredProperties,
+                    MainHelper.configurerByName(camelContext, entry.getKey().getOptionPrefix(), instance));
         }
 
         // log which options was not set

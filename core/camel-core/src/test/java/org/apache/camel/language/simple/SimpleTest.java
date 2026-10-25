@@ -552,7 +552,11 @@ public class SimpleTest extends LanguageTestSupport {
                 () -> assertExpression("${body[qty]}", null));
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("a List has no keys: pick an element first, such as [0][qty]"),
+        // the lookup by a field first, as for ${body.qty}
+        assertTrue(cause.getMessage().contains("a List has no keys: to pick the element whose qty has a given value, use"
+                                               + " jsonpath: \"$[?(@.qty == '${header.qty}')]\" with resultType"
+                                               + " java.util.Map (the element, or null when none or several match);"
+                                               + " [0][qty] reads the first element; or split it)"),
                 cause.getMessage());
     }
 
@@ -563,7 +567,11 @@ public class SimpleTest extends LanguageTestSupport {
                 () -> assertExpression("${body[qty]}", null));
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("an array has no keys: pick an element first, such as [0][qty]"),
+        // the lookup by a field first, as for ${body.qty}
+        assertTrue(cause.getMessage().contains("an array has no keys: to pick the element whose qty has a given value, use"
+                                               + " jsonpath: \"$[?(@.qty == '${header.qty}')]\" with resultType"
+                                               + " java.util.Map (the element, or null when none or several match);"
+                                               + " [0][qty] reads the first element; or split it)"),
                 cause.getMessage());
         // [0] picks the element the hint points to
         assertExpression("${body[0][qty]}", 42);

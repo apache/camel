@@ -131,18 +131,45 @@ class PackageLanguageMojoTest {
         assertThrows(IllegalArgumentException.class, () -> PackageLanguageMojo.languageOptions(UndescribedLanguage.class));
     }
 
+    @Test
+    void theConfigurerSetsAndGetsTheOptions() throws Exception {
+        String source = mojo(OptionsLanguage.class).generatePropertyConfigurer("org.example", "OptionsLanguageConfigurer",
+                "org.apache.camel.support.component.PropertyConfigurerSupport", "OptionsLanguage", false,
+                PackageLanguageMojo.languageOptions(OptionsLanguage.class));
+        assertTrue(source.contains("public class OptionsLanguageConfigurer extends"), source);
+        assertTrue(
+                source.contains("case \"memory\": target.setMemory(property(camelContext, long.class, value)); return true;"),
+                source);
+        assertTrue(source.contains("case \"memory\": return target.getMemory();"), source);
+        assertTrue(source.contains("case \"base\": target.setBase(property(camelContext, java.lang.String.class, value));"),
+                source);
+    }
+
+    @Test
+    void aLanguageWithoutOptionsHasAnEmptyConfigurer() throws Exception {
+        String source = mojo(GenericLanguage.class).generatePropertyConfigurer("org.example", "GenericLanguageConfigurer",
+                "org.apache.camel.support.component.PropertyConfigurerSupport", "GenericLanguage", false,
+                PackageLanguageMojo.languageOptions(GenericLanguage.class));
+        assertTrue(source.contains("public class GenericLanguageConfigurer extends"), source);
+        assertFalse(source.contains("case \""), source);
+    }
+
     private LanguageModel extract(Class<?> type) {
+        PackageLanguageMojo mojo = mojo(type);
+        return mojo.extractLanguageModel(mojo.project, GENERIC_MODEL, "custom", type);
+    }
+
+    private PackageLanguageMojo mojo(Class<?> type) {
         MavenProject project = new MavenProject();
         project.setGroupId("org.apache.camel");
         project.setArtifactId("camel-custom");
         project.setVersion("4.24.0-SNAPSHOT");
-        PackageLanguageMojo mojo = new PackageLanguageMojo(new SystemStreamLog(), project, null, null, null, null, null) {
+        return new PackageLanguageMojo(new SystemStreamLog(), project, null, null, null, null, null, null, null) {
             @Override
             protected Class<?> loadClass(String name) {
                 return type;
             }
         };
-        return mojo.extractLanguageModel(project, GENERIC_MODEL, "custom", type);
     }
 
     @Language(value = "custom", modelName = "language")
