@@ -318,7 +318,7 @@ project `directory` as an argument, the runtime tools take the integration `name
   its group of `application.properties` keys, the key first. A component, data format or language that
   declares its body types has them in `bodyTypes`, a line per side: what a `from:` gives the route
   (`consumerOut`), what a `to:` can send (`producerIn`) and the body after it (`producerOut`), and so on (see
-  xref:camel-catalog.adoc#_body_types_in_the_catalog[Body types in the Catalog]). An answer is cut at 18 000
+  xref:body-types.adoc[Message Body Types]). An answer is cut at 18 000
   characters, with a marker that says what was left out.
   `includeOptions` picks the options listed: `common` (the default) leaves out the deprecated and advanced
   ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`

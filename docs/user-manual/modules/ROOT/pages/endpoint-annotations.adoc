@@ -33,8 +33,8 @@ annotated with one or more `@UriParam` or `@UriParams` annotations
 |`@Metadata` | Used for special situations to provide additional information.
 
 |`@BodyTypes` | The message body the endpoint works with: the body the consumer creates, the bodies the
-producer can send, and the body after the producer. See xref:camel-catalog.adoc#_body_types_in_the_catalog[Body types
-in the Catalog].
+producer can send, and the body after the producer. See xref:body-types.adoc[Message
+Body Types].
 |=======================================================================
 
 For example see the `TimerEndpoint` from the `camel-timer` component and

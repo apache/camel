@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -32,8 +31,8 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
+import org.apache.camel.tooling.model.BodyTypeResolver;
 import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.tooling.util.Strings;
 
 /**
  * Carries the {@link BodyTypes} of a component, data format, language or EIP into its model, which the catalog JSON is
@@ -238,24 +237,11 @@ final class BodyTypesHelper {
         List<String> values = option.getEnums() != null && !option.getEnums().isEmpty()
                 ? option.getEnums()
                 : "boolean".equals(option.getType()) ? List.of("true", "false") : List.of();
-        if (!values.isEmpty() && values.stream().noneMatch(v -> isSameValue(v, when.value()))) {
+        if (!values.isEmpty() && values.stream().noneMatch(v -> BodyTypeResolver.isSameValue(v, when.value()))) {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " has " + when.option() + "=" + when.value()
                                                + ", which is not a value of the option: " + String.join(", ", values));
         }
-    }
-
-    /**
-     * Whether two values of an option are one value as Camel takes it: in any case, and in any style of an enum
-     * constant, so convert-to-json and convertToJson are CONVERT_TO_JSON, as for the catalog and the enum type
-     * converter (StringHelper.asEnumConstantValue in camel-util, which this plugin does not depend on).
-     */
-    private static boolean isSameValue(String value, String other) {
-        return value.equalsIgnoreCase(other) || asEnumConstant(value).equals(asEnumConstant(other));
-    }
-
-    private static String asEnumConstant(String value) {
-        return Strings.camelCaseToDash(value).replaceAll("-+", "-").replace('-', '_').toUpperCase(Locale.ENGLISH);
     }
 
     /**
