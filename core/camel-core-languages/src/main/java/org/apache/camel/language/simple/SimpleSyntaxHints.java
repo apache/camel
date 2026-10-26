@@ -82,7 +82,8 @@ public final class SimpleSyntaxHints {
 
     private static final String[] OPERATOR_WORDS = {
             "==", "!=", ">=", "<=", ">", "<", "=~", "!=~", "~~", "!~~", "contains",
-            "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "endsWith", "&&", "||" };
+            "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "!startsWith",
+            "endsWith", "!endsWith", "equals", "!equals", "&&", "||" };
 
     private SimpleSyntaxHints() {
     }
@@ -187,7 +188,7 @@ public final class SimpleSyntaxHints {
             " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",
             " contains ", " !contains ", " ~~ ", " !~~ ", " regex ", " !regex ",
             " in ", " !in ", " is ", " !is ", " range ", " !range ",
-            " startsWith ", " !startsWith ", " endsWith ", " !endsWith " };
+            " startsWith ", " !startsWith ", " endsWith ", " !endsWith ", " equals ", " !equals " };
 
     /**
      * Wraps the function references of a predicate written inside {@code ${ }} so that it can be parsed as one:
@@ -330,7 +331,10 @@ public final class SimpleSyntaxHints {
         int best = -1;
         String bestOp = null;
         for (String op : OPERATOR_WORDS) {
-            int i = function.indexOf(" " + op + " ");
+            // an operator inside quotes belongs to a literal, such as the argument of ${uppercase('a') == 'A'}: the
+            // first one outside quotes, brackets and parentheses is the operator, so a function with a quoted argument
+            // can be compared
+            int i = indexOutsideQuotes(function, " " + op + " ");
             if (i > 0 && (best < 0 || i < best)) {
                 best = i;
                 bestOp = op;
@@ -339,24 +343,9 @@ public final class SimpleSyntaxHints {
         if (bestOp == null) {
             return null;
         }
+        // an operator inside an argument list that may hold a predicate (iif, filter, forEach), or inside a key such as
+        // ${header[order in progress]}, is not at the top level, so indexOutsideQuotes has skipped it
         String head = function.substring(0, best);
-        if (head.contains("'") || head.contains("\"")) {
-            return null;
-        }
-        int open = 0;
-        for (int i = 0; i < head.length(); i++) {
-            char c = head.charAt(i);
-            if (c == '(' || c == '[') {
-                open++;
-            } else if (c == ')' || c == ']') {
-                open--;
-            }
-        }
-        if (open > 0) {
-            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach),
-            // or inside a key such as ${header[order in progress]}
-            return null;
-        }
         if (head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
             // the operator word is in the default value: ${properties:msg:value is not set}
             return null;
