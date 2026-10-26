@@ -2358,6 +2358,20 @@ public interface ComponentsBuilderFactory {
         return HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * @return the dsl builder
+     */
+    static HibernateComponentBuilderFactory.HibernateComponentBuilder hibernate() {
+        return HibernateComponentBuilderFactory.hibernate();
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 

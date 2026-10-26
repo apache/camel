@@ -1856,6 +1856,20 @@ public class EndpointHeaderBuilders {
         return HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HibernateEndpointBuilderFactory.HibernateHeaderNameBuilder hibernate() {
+        return HibernateEndpointBuilderFactory.HibernateHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 

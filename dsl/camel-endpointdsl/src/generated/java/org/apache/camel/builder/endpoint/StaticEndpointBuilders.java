@@ -7674,6 +7674,48 @@ public class StaticEndpointBuilders {
         return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String path) {
+        return hibernate("hibernate", path);
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String componentName, String path) {
+        return HibernateEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 
