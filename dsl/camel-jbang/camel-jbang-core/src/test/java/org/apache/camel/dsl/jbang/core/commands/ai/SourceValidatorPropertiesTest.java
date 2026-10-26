@@ -204,4 +204,37 @@ public class SourceValidatorPropertiesTest {
         assertThat(msgs.get(0)).contains("Unknown option").contains("period is an endpoint option of timer")
                 .contains("timer:name?period=...");
     }
+
+    /**
+     * Asked to "add a resilience4jConfiguration", a model wrote the keys to application.properties, the reload did not
+     * apply them, and the circuit breaker never opened (the local-model benchmark): the write answer says so, with the
+     * same options in the route.
+     */
+    @Test
+    void circuitBreakerKeysThatAReloadDoesNotApplyAreTold() {
+        String note = PropertiesChecks.circuitBreakerKeysNote("", """
+                camel.resilience4j.slidingWindowSize=4
+                camel.resilience4j.minimum-number-of-calls=4
+                camel.resilience4j.failureRateThreshold=50
+                camel.resilience4j.waitDurationInOpenState=5000
+                camel.resilience4j.permittedNumberOfCallsInHalfOpenState=1
+                """);
+        assertThat(note)
+                .startsWith("camel.resilience4j.slidingWindowSize and 4 more keys set the defaults of every circuit breaker")
+                .contains("a reload of the running integration does not apply them")
+                .contains("circuitBreaker: {resilience4jConfiguration: {slidingWindowSize: 4, minimumNumberOfCalls: 4,"
+                          + " failureRateThreshold: 50, waitDurationInOpenState: 5000, ...}}")
+                .contains("camel_control restart");
+
+        // only a key that is new or changed counts, written in any form of its name
+        assertThat(PropertiesChecks.circuitBreakerKeysNote(
+                "camel.resilience4j.sliding-window-size=4\n", "camel.resilience4j.slidingWindowSize=4\ngreeting=hi\n"))
+                .isNull();
+        assertThat(PropertiesChecks.circuitBreakerKeysNote(
+                "camel.faulttolerance.timeoutEnabled=false\n", "camel.faulttolerance.timeoutEnabled=true\n"))
+                .startsWith("camel.faulttolerance.timeoutEnabled sets a default of every circuit breaker")
+                .contains("does not apply it.")
+                .contains("circuitBreaker: {faultToleranceConfiguration: {timeoutEnabled: true}}");
+        assertThat(PropertiesChecks.circuitBreakerKeysNote(null, "camel.component.log.level=INFO\n")).isNull();
+    }
 }
