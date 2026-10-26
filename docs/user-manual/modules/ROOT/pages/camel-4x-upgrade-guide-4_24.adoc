@@ -31,6 +31,16 @@ To control a consumer's `SendMessage` reply, replace writes to `CamelA2ATaskStat
 The old names continue to control producers or describe their responses. Explicit producer
 operation headers still override the endpoint's `operation` option.
 
+Java code using `A2AConstants` must also migrate even though the existing constant names and values
+remain. For consumer metadata reads, replace `OPERATION`, `TASK_ID` and `CONTEXT_ID` with
+`REQUEST_OPERATION`, `REQUEST_TASK_ID` and `REQUEST_CONTEXT_ID`, respectively. For consumer reply
+controls, replace `TASK_STATE` and `RESPONSE_TYPE` with `REPLY_TASK_STATE` and `REPLY_TYPE`.
+
+No Endpoint DSL header helper methods were removed. The new `a2ARequestOperation()`,
+`a2ARequestTaskId()` and `a2ARequestContextId()` methods provide the consumer metadata header names;
+`a2AReplyTaskState()` and `a2AReplyType()` provide the consumer reply control header names.
+Existing helpers retain their producer roles.
+
 Downstream results no longer replace the outer task ID, context, state or reply type, and progress
 updates remain attached to the outer task. Consumer reply messages use the outer context and task
 identity. With `dataFormat=POJO`, forwarding the same incoming `Message` instance to another agent

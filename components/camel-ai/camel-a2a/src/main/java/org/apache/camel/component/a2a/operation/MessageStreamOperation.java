@@ -101,7 +101,6 @@ public class MessageStreamOperation implements A2AOperation {
 
     @Override
     public Object buildResponse(Exchange exchange) {
-        A2AStreamEmitter emitter = exchange.getProperty(A2AConstants.STREAM_EMITTER, A2AStreamEmitter.class);
-        return emitter != null ? emitter : exchange.getMessage().getHeader(A2AConstants.STREAM_EMITTER, A2AStreamEmitter.class);
+        return exchange.getMessage().getHeader(A2AConstants.STREAM_EMITTER, A2AStreamEmitter.class);
     }
 }

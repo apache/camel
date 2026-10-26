@@ -1499,7 +1499,6 @@ public class A2AConsumer extends DefaultConsumer {
         messageSendOperation.parseRequest(processorExchange, request, getEndpoint().getConfiguration().getDataFormat());
         setTaskContext(processorExchange, taskId, contextId, A2AOperations.MESSAGE_STREAM.getMethodName());
         processorExchange.getMessage().setHeader(A2AConstants.STREAM_EMITTER, emitter);
-        processorExchange.setProperty(A2AConstants.STREAM_EMITTER, emitter);
 
         A2ATaskStore store = getEndpoint().getTaskStore();
         FutureTask<Void> future = new FutureTask<>(() -> {
