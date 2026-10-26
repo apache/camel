@@ -404,7 +404,7 @@
         <msal4j-version>1.26.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.6.0.Final</mvel-version>
-        <mybatis-version>3.5.19</mybatis-version>
+        <mybatis-version>3.6.0</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
         <neo4j-version>6.3.0</neo4j-version>
         <netty-version>4.2.18.Final</netty-version>
