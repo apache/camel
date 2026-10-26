@@ -92,6 +92,9 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
     private boolean crossOriginFilterOn;
     @UriParam(defaultValue = "*")
     private String allowedOrigins;
+    @UriParam(defaultValue = "websocket,long-polling",
+              description = "The transport types allowed by the CometD server. Default is websocket,long-polling.")
+    private String allowedTransports = "websocket,long-polling";
     @UriParam
     private String filterPath;
     @UriParam(label = "producer")
@@ -290,6 +293,17 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
 
     public String getFilterPath() {
         return filterPath;
+    }
+
+    public String getAllowedTransports() {
+        return allowedTransports;
+    }
+
+    /**
+     * The transport types allowed by the CometD server. Default is websocket,long-polling.
+     */
+    public void setAllowedTransports(String allowedTransports) {
+        this.allowedTransports = allowedTransports;
     }
 
     /**

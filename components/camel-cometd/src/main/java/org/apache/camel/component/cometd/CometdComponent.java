@@ -235,6 +235,9 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         holder.setInitParameter("multiFrameInterval", Integer.toString(endpoint.getMultiFrameInterval()));
         holder.setInitParameter("JSONCommented", Boolean.toString(endpoint.isJsonCommented()));
         holder.setInitParameter("logLevel", Integer.toString(endpoint.getLogLevel()));
+        if (endpoint.getAllowedTransports() != null) {
+            holder.setInitParameter("allowedTransports", endpoint.getAllowedTransports());
+        }
 
         return servlet;
     }
