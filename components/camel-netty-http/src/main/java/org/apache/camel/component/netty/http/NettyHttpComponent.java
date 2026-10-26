@@ -333,23 +333,23 @@ public class NettyHttpComponent extends NettyComponent
         getConfiguration().setMuteException(muteException);
     }
 
-    public HttpServerConsumerChannelFactory getMultiplexChannelHandler(String address) {
-        int port = 0;
-        int idx = address.lastIndexOf(':');
-        if (idx > -1) {
-            try {
-                port = Integer.parseInt(address.substring(idx + 1));
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
-        return getMultiplexChannelHandler(address, port);
-    }
-
+    /**
+     * Gets, creating it on first use, the multiplex channel handler for the consumer bound to the given
+     * {@code address}. Handlers are keyed by {@code address}, so consumers bound to different interfaces on the same
+     * port each get their own handler and do not cross-dispatch.
+     *
+     * @param  address the listener address in {@code host:port} form (for example {@code 127.0.0.1:8080})
+     * @param  port    the listener port, used only to initialise a newly created handler for this address
+     * @return         the handler for the address, creating a new one if none exists yet
+     */
     public HttpServerConsumerChannelFactory getMultiplexChannelHandler(String address, int port) {
         return multiplexChannelHandlers.computeIfAbsent(address, s -> newHttpServerConsumerChannelFactory(port));
     }
 
+    /**
+     * @deprecated use {@link #getMultiplexChannelHandler(String, int)}. This method only returns the handler of the
+     *             listener on {@code 0.0.0.0} for the given port.
+     */
     @Deprecated
     public HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
         return getMultiplexChannelHandler("0.0.0.0:" + port, port);

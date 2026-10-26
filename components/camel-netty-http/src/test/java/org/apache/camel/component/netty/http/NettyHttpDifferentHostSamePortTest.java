@@ -19,10 +19,13 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
+@DisabledOnOs(value = OS.MAC, disabledReason = "macOS only configures 127.0.0.1 on the loopback interface")
 public class NettyHttpDifferentHostSamePortTest extends BaseNettyTestSupport {
 
     @Test
