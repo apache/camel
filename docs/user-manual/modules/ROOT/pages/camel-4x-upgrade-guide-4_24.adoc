@@ -3655,3 +3655,7 @@ options such as `exceptionHandler`) from the connection string it hands to the d
 as connection string parameters too.
 
 The constant `Constants.PLC_NAME`, which was only used with the PLC4X scraper, was removed.
+
+=== camel-stripe - endpoint request options isolate credentials across endpoints
+
+The `camel-stripe` producer now applies `apiKey` and `apiBase` using endpoint-scoped `RequestOptions` on each Stripe API request, rather than mutating JVM-global Stripe SDK static configuration at startup. Multiple Stripe endpoints configured in the same application now operate with complete configuration isolation.
