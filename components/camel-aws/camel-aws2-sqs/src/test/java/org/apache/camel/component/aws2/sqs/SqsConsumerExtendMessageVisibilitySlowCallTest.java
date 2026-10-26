@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -39,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * its response. When the response is slow, the next extension must still come before the call plus
  * {@code visibilityTimeout}.
  */
+@Timeout(value = 30, unit = TimeUnit.SECONDS)
 class SqsConsumerExtendMessageVisibilitySlowCallTest extends CamelTestSupport {
 
     private static final int VISIBILITY_TIMEOUT_SECONDS = 4;
