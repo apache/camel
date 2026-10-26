@@ -80,7 +80,10 @@ import org.apache.kafka.common.record.TimestampType;
  * <li>ACCEPT: done. RELEASE: available again (or archived at the delivery limit). REJECT: archived.</li>
  * <li>Camel's contract (KafkaShareFetchRecords, the route never sets the acknowledge header): RELEASE of a delivery
  * that the route neither completed nor failed only once the consumer stops, and it always wakes up its share consumer
- * when it stops. Before the first wakeup of a share consumer such a RELEASE is a violation.</li>
+ * when it stops. Before the first wakeup of a share consumer such a RELEASE is a violation. This check relies on the
+ * stop not waiting for the processing lock (see the limits in {@link KafkaShareWorld}): with real threads,
+ * KafkaShareFetchRecords.stop() waits for that lock, and the consumer thread releases the rest of the batch before the
+ * wakeup.</li>
  * </ul>
  * Not modelled: several partitions, the batch_optimized acquire mode (a poll returns at most max.poll.records), lock
  * renewal (RENEW), the heartbeat and assignment of the group.

@@ -50,7 +50,8 @@ import org.apache.kafka.clients.consumer.ShareConsumer;
  * (in poll or in the route) cannot see it finish: the stop waits for its timeouts and the thread ends later. A stop
  * above an exchange that blocks in the route would wait for ever, so the processing takes time (and can outlast the
  * acquisition lock) only once the operations are done. The locks of the consumer do not exclude on the one stack, so a
- * stop never waits for the processing lock of the consumer thread.
+ * stop never waits for the processing lock of the consumer thread. The RELEASE check of the fake relies on this: with
+ * real threads, the stop waits for that lock, and the consumer thread releases the rest of the batch before the wakeup.
  * <p>
  * Properties: every published record completes in the route at least once, unless the share group archived it at the
  * delivery limit, or rejected a delivery that failed with onFailure=REJECT; the acknowledgement type is exact (ACCEPT
