@@ -13,7 +13,7 @@
         - unmarshal:
             json:
               library: Jackson
-        - setHeader:
+        - setVariable:
             name: orderId
             expression:
               simple:
@@ -24,7 +24,7 @@
                 expression: "${body[lines]}"
             steps:
               - log:
-                  message: "Picked ${body[qty]} x ${body[sku]} for ${header.orderId}"
+                  message: "Picked ${body[qty]} x ${body[sku]} for ${variable.orderId}"
               - to:
                   uri: direct
                   parameters:
@@ -40,7 +40,7 @@
             aggregationStrategy: "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy"
             correlationExpression:
               simple:
-                expression: "${header.orderId}"
+                expression: "${variable.orderId}"
             completionSizeExpression:
               simple:
                 expression: "${header.CamelSplitSize}"
@@ -49,4 +49,4 @@
                   json:
                     library: Jackson
               - log:
-                  message: "Shipment for ${header.orderId} complete: ${body}"
+                  message: "Shipment for ${variable.orderId} complete: ${body}"

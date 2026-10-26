@@ -153,8 +153,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             for (Object exchange : exchanges) {
                 due |= extender.add((Exchange) exchange, received);
             }
-            if (due) {
-                // a message received long before this batch started may expire before the next scheduled run
+            if (due && isBatchAllowed()) {
+                // a message received long before this batch started may expire before the next scheduled run (not
+                // when the consumer is stopping or suspending: the batch is then not routed, see below)
                 extendNow(extender);
             }
         }
@@ -515,6 +516,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                         try {
                             LOG.trace("Extending visibility window by {} seconds for request entries: {}", visibilityTimeout,
                                     batchEntries);
+                            // SQS counts the new visibility timeout from the time of the call, so the next deadline is
+                            // counted from before the call (never later than when SQS extended the message)
+                            final Instant sent = Instant.now();
                             ChangeMessageVisibilityBatchResponse br
                                     = getEndpoint().getClient().changeMessageVisibilityBatch(request);
                             if (br.hasFailed()) {
@@ -530,7 +534,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             if (br.hasSuccessful()) {
                                 br.successful().forEach(successEntry -> {
                                     LOG.debug("Extended visibility window for request entry: {}", successEntry.id());
-                                    entries.computeIfPresent(successEntry.id(), (t, u) -> u.extendDeadline());
+                                    entries.computeIfPresent(successEntry.id(), (t, u) -> u.extendDeadline(sent));
                                 });
                             }
                         } catch (SdkException e) {
@@ -571,8 +575,11 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 this.extendRequest = extendRequest;
             }
 
-            TimeoutExtenderEntry extendDeadline() {
-                return new TimeoutExtenderEntry(extendRequest, Instant.now());
+            /**
+             * @param start the time the extension request was sent, the new visibility timeout runs from then
+             */
+            TimeoutExtenderEntry extendDeadline(Instant start) {
+                return new TimeoutExtenderEntry(extendRequest, start);
             }
 
             boolean isDeadlineReachedAt(Instant time) {

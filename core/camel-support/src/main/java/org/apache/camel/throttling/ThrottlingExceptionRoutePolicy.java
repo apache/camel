@@ -16,7 +16,9 @@
  */
 package org.apache.camel.throttling;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,10 +50,11 @@ import org.slf4j.LoggerFactory;
  * database down) then it will stop consuming new messages from the endpoint by stopping the consumer. The
  * implementation is comparable to the Circuit Breaker pattern. After a set amount of time, it will move to a half open
  * state and attempt to determine if the consumer can be started. There are two ways to determine if a route can be
- * closed after being opened (1) start the consumer and check the failure threshold (2) call the
- * {@link ThrottlingExceptionHalfOpenHandler} The second option allows a custom check to be performed without having to
- * take on the possibility of multiple messages from the endpoint. The idea is that a handler could run a simple test
- * (ie select 1 from dual) to determine if the processes that cause the route to be open are now available
+ * closed after being opened (1) start the consumer and let the next exchange decide: a success closes the circuit and a
+ * failure opens it again (2) call the {@link ThrottlingExceptionHalfOpenHandler} The second option allows a custom
+ * check to be performed without having to take on the possibility of multiple messages from the endpoint. The idea is
+ * that a handler could run a simple test (ie select 1 from dual) to determine if the processes that cause the route to
+ * be open are now available
  */
 @Metadata(label = "bean",
           description = "A throttle based RoutePolicy which is modelled after the circuit breaker and will stop consuming"
@@ -102,6 +105,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private volatile Timer halfOpenTimer;
     private volatile long lastFailure;
     private volatile long openedAt;
+    // the times of the most recent failures (at most failureThreshold of them), oldest first, guarded by failureLock
+    // (not by lock, which is held while the consumer is suspended or resumed)
+    private final Lock failureLock = new ReentrantLock();
+    private final Deque<Long> failureTimes = new ArrayDeque<>();
 
     public ThrottlingExceptionRoutePolicy() {
     }
@@ -201,16 +208,19 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 openCircuit(route);
             }
         } else {
-            if (hasFailed(exchange)) {
+            boolean failed = hasFailed(exchange);
+            if (failed) {
                 // record the failure
                 failures.incrementAndGet();
-                lastFailure = TimeSource.currentTimeMillis();
+                long now = TimeSource.currentTimeMillis();
+                lastFailure = now;
+                recordFailureTime(now);
             } else {
                 success.incrementAndGet();
             }
 
             // check for state change
-            calculateState(route);
+            calculateState(route, failed);
         }
     }
 
@@ -250,7 +260,41 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         return answer;
     }
 
-    private void calculateState(Route route) {
+    private void recordFailureTime(long time) {
+        failureLock.lock();
+        try {
+            failureTimes.addLast(time);
+            trimFailureTimes();
+        } finally {
+            failureLock.unlock();
+        }
+    }
+
+    private void clearFailureTimes() {
+        failureLock.lock();
+        try {
+            failureTimes.clear();
+        } finally {
+            failureLock.unlock();
+        }
+    }
+
+    private void trimFailureTimes() {
+        // only the most recent failureThreshold failures decide whether the threshold is exceeded
+        int max = Math.max(failureThreshold, 1);
+        while (failureTimes.size() > max) {
+            failureTimes.removeFirst();
+        }
+    }
+
+    /**
+     * Calculates the state of the circuit.
+     *
+     * @param route          the route
+     * @param exchangeFailed whether the exchange that is done failed, or null when there is no exchange (the check of
+     *                       an open circuit after halfOpenAfter)
+     */
+    private void calculateState(Route route, Boolean exchangeFailed) {
 
         // have we reached the failure limit?
         boolean failureLimitReached = isThresholdExceeded();
@@ -261,7 +305,14 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 openCircuit(route);
             }
         } else if (state.get() == STATE_HALF_OPEN) {
-            if (failureLimitReached) {
+            // the exchange done in the half open state decides: a failure opens the circuit again, and a success
+            // closes it. The failures that opened the circuit must not count against it again: they may still be within
+            // the failure window (with the defaults the circuit is half opened after 30 seconds, and the window is 60)
+            if (exchangeFailed == null) {
+                // the half open check of the timer, after an exchange that was done at the same time has already half
+                // opened the circuit: the next exchange decides
+                LOG.debug("Keeping circuit half open (waiting for an exchange)...");
+            } else if (exchangeFailed) {
                 LOG.debug("Opening circuit...");
                 openCircuit(route);
             } else {
@@ -300,10 +351,18 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected boolean isThresholdExceeded() {
         boolean output = false;
         logState();
-        // failures exceed the threshold
-        // AND the last of those failures occurred within window
-        if (failures.get() >= failureThreshold && lastFailure >= TimeSource.currentTimeMillis() - failureWindow) {
-            output = true;
+        // at least failureThreshold failures occurred within the window, that is the oldest of the most recent
+        // failureThreshold failures occurred within the window
+        long since = TimeSource.currentTimeMillis() - failureWindow;
+        failureLock.lock();
+        try {
+            trimFailureTimes();
+            Long oldest = failureTimes.peekFirst();
+            if (failureTimes.size() >= failureThreshold && (oldest != null ? oldest : lastFailure) >= since) {
+                output = true;
+            }
+        } finally {
+            failureLock.unlock();
         }
 
         return output;
@@ -390,6 +449,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             }
             failures.set(0);
             success.set(0);
+            clearFailureTimes();
             lastFailure = 0;
             openedAt = 0;
             state.set(STATE_CLOSED);
@@ -444,7 +504,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         public void run() {
             // cancel the timer of this task only, a newer timer may already have been scheduled
             timer.cancel();
-            calculateState(route);
+            calculateState(route, null);
         }
     }
 

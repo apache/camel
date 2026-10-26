@@ -69,6 +69,19 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
+
+The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last
+`failureWindow` milliseconds, as documented. Before, it counted every failure since the circuit last closed (or since
+the route started), and only the last failure had to be within the window, so failures spread over hours opened the
+circuit on a single new failure. Routes whose failures are spread out therefore open their circuit less often now; to
+open it sooner, lower `failureThreshold` or raise `failureWindow`.
+
+In the half open state, a successful exchange now closes the circuit, and a failed exchange opens it again. Before, a
+successful exchange opened the circuit again as long as the failures that opened it were within `failureWindow`; with
+the defaults (a window of 60 seconds, a half open check after 30 seconds) a success in the first 30 seconds after the
+half open check therefore kept the circuit open. A `halfOpenHandler` decides as before.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
@@ -272,6 +285,16 @@ call. The `google-mail:update-message-labels` data type transformer now uses a c
 configuration (the `camel.component.google-mail.*` options), kept until the component stops. Before, it used whichever
 client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
 credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
+
+=== camel-spring-rabbitmq - confirm=auto waits for simple publisher confirms
+
+With the default `confirm=auto`, an InOnly producer now also waits for the publisher confirm when the connection
+factory has publisher confirms of type `SIMPLE` (for example `spring.rabbitmq.publisher-confirm-type=simple`), as it
+did for type `CORRELATED`. Before, it sent such messages without waiting, so a message that RabbitMQ negatively
+acknowledged, or did not confirm, was lost without an error. Each send now waits up to `confirmTimeout` (5 seconds by
+default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ negatively acknowledges the message,
+and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
+Set `confirm=disabled` to send without waiting, as before.
 
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
@@ -3550,3 +3573,12 @@ producer only, and the catalog now describes the body that the webhook route get
 the YAML DSL validator and the Endpoint DSL, now accept a whatsapp endpoint as a consumer, and the Endpoint DSL builder
 of whatsapp gets the consumer options `bridgeErrorHandler`, `exceptionHandler` and `exchangePattern`. A whatsapp
 endpoint used directly in `from` still fails at startup: wrap it with the webhook component, as before.
+
+=== camel-avro-rpc - the http consumer listens on the host of the endpoint
+
+The `avro:http` consumer now uses the host of the endpoint URI (`avro:http:[host]:[port]`) for its HTTP server, as the `avro:netty` consumer does.
+
+Use `0.0.0.0` as the host to accept connections on all network interfaces.
+
+`AvroRpcHttpServerFactory` has a new method `create(SpecificResponder, String, int)` that receives the host. A custom factory should implement it.
+

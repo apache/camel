@@ -25,5 +25,24 @@ import org.apache.avro.ipc.specific.SpecificResponder;
  */
 public interface AvroRpcHttpServerFactory {
 
+    /**
+     * Creates a server that listens on the given port on all interfaces.
+     */
     Server create(SpecificResponder responder, int port) throws Exception;
+
+    /**
+     * Creates a server that listens on the given host and port.
+     *
+     * The default implementation ignores the host and calls {@link #create(SpecificResponder, int)}, so an
+     * implementation should override it to listen on the host the endpoint is configured with.
+     *
+     * @param  responder the responder
+     * @param  host      the host or address to listen on
+     * @param  port      the port to listen on
+     * @return           the server
+     * @since            4.24
+     */
+    default Server create(SpecificResponder responder, String host, int port) throws Exception {
+        return create(responder, port);
+    }
 }

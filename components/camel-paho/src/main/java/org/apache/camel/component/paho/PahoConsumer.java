@@ -69,15 +69,21 @@ public class PahoConsumer extends DefaultConsumer {
                     clientId = "camel-" + MqttClient.generateClientId();
                 }
                 client = createClient();
-                LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
                 if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
                     client.setManualAcks(true);
                 }
-                client.connect(connectOptions);
             }
 
             // the client can be shared by the consumers of several endpoints, and it has a single callback
             PahoClientCallback.register(client, this, stopClient);
+
+            if (stopClient) {
+                // connect once the callback is set: on a session that the broker kept (cleanSession=false), it sends
+                // the messages of the session right after CONNACK, and Paho drops a message that arrives while the
+                // client has no callback (without acknowledging it)
+                LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+                client.connect(connectOptions);
+            }
 
             LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
             client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());

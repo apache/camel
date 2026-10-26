@@ -473,6 +473,30 @@ NOTE: Tool execution errors always bypass `returnDirect` — errors are sent bac
 
 Route-based tools registered via the xref:components::ai-tool-component.adoc[ai-tool component] can also declare `returnDirect=true` on the `ai-tool` endpoint. Configure the OpenAI endpoint with the `tags` option to expose matching route tools alongside MCP tools; their annotations (including `returnDirect`) are honoured in the agentic loop the same way as MCP tool annotations.
 
+=== Tool search
+
+`toolSearch=true` is a visibility policy. Route tools with `searchable=false` stay in the initial model request. Route tools with `searchable=true`, and remote MCP tools that already passed the server, name, and provider filters, are omitted until the model calls the synthetic `tool_search_tool`. Route and MCP tools are ranked together. A match is sent with its full definition on the next model turn and is executed by the original route or MCP handler.
+
+Enabling tool search does not skip MCP `tools/list`. It only reduces the definitions sent to the model. `toolSearch=false` (the default) sends the current combined set, and the `searchable` flag has no effect.
+
+`toolSearchStrategy=keyword` (the default) matches the tool name and description. `toolSearchStrategy=vector` requires `toolSearchEmbeddingModel` and does not fall back to keyword search. `toolSearchMaxResults` defaults to 5. With `conversationMemory=true`, discovered names remain available across manual tool-loop steps on the same exchange, even when no session ID is supplied. To retain discoveries across separate exchanges, enable `conversationMemory=true` on `openai:chat-completion` and set the same `CamelOpenAIToolSearchSessionId` header on `openai:chat-completion` and `openai:tool-execution`. This header is independent of `CamelOpenAIConversationId` and the `conversationId` option, which are used for Responses API conversation state. Use distinct tool-search session IDs when endpoints need independent discovery state: each endpoint prunes retained names against its own tool catalogue, so endpoints with different `tags` or MCP filters can remove discoveries made by another endpoint. With `conversationMemory=false` and no active exchange session, discoveries are limited to the current request. Keep the session mode consistent throughout a tool loop; do not introduce `CamelOpenAIToolSearchSessionId` midway through an exchange that already has an exchange-local tool-search session, because discovery and tool execution can then use different sessions. The name `tool_search_tool` is reserved while search is enabled. ID-based sessions expire after 30 minutes of inactivity and are limited to 10,000 sessions per OpenAI component, with least-recently-used eviction. For `openai:responses`, `conversationId` continues to identify the OpenAI server-side conversation; set `CamelOpenAIToolSearchSessionId` separately when discoveries must be retained across exchanges. `toolSearch=true` on `openai:responses` requires `autoToolExecution=true`, because a Responses function-call result cannot be executed directly by `openai:tool-execution`.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ask
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4o-mini
+              tags: erp
+              toolSearch: true
+              toolSearchMaxResults: 5
+              toolSearchStrategy: keyword
+----
+
 === MCP Tool Call Headers
 
 The following headers are set after the agentic loop completes:
