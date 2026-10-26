@@ -172,7 +172,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v26.2.4",
+  "serviceVersion" : "v26.2.5",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
