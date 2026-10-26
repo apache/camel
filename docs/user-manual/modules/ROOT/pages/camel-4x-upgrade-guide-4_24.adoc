@@ -4181,8 +4181,15 @@ with the Quartz API. A clustered job store is not changed, as Camel does not pau
 
 === camel-jpa - a TransactionStrategy in the registry is used by default
 
-When no `TransactionStrategy` is configured, the JPA component and endpoint now use the single `TransactionStrategy`
-bean in the registry, if there is one, before creating the Spring based `DefaultTransactionStrategy`. Without such a
-bean nothing changes. If there is more than one, none of them is used and a WARN is logged. The return type of the
-protected method `JpaEndpoint.createTransactionStrategy()` is now `TransactionStrategy` instead of
-`DefaultTransactionStrategy`.
+The `transactionStrategy` option of the JPA component is now autowired. When no `TransactionStrategy` is configured,
+the JPA component and endpoint now use the single `TransactionStrategy` bean in the registry, if there is one, before
+creating the Spring based `DefaultTransactionStrategy`. Without such a bean, or with `autowiredEnabled=false`, nothing
+changes. If there is more than one, none of them is used and a WARN is logged.
+
+The bean applies to every JPA component and endpoint without a configured strategy, including ones using another
+`EntityManagerFactory`. If the bean is bound to one `EntityManagerFactory` (for example a `DefaultTransactionStrategy`
+created for it), set the `transactionStrategy` option explicitly.
+
+The return type of the protected method `JpaEndpoint.createTransactionStrategy()` is now `TransactionStrategy` instead
+of `DefaultTransactionStrategy`. A subclass that overrides it must be recompiled: compiled against the old return type,
+its method is no longer called.

@@ -43,7 +43,7 @@ public class JpaComponent extends HealthCheckComponent {
 
     @Metadata(autowired = true)
     private EntityManagerFactory entityManagerFactory;
-    @Metadata
+    @Metadata(autowired = true)
     private TransactionStrategy transactionStrategy;
     @Metadata(defaultValue = "true")
     private boolean joinTransaction = true;
@@ -185,7 +185,11 @@ public class JpaComponent extends HealthCheckComponent {
 
     private void createTransactionStrategy() {
         if (transactionStrategy == null && getEntityManagerFactory() != null) {
-            transactionStrategy = JpaHelper.resolveTransactionStrategy(getCamelContext(), getEntityManagerFactory());
+            // a component added with CamelContext.addComponent is initialized before it is autowired,
+            // so look up the registry here too, unless autowiring is turned off
+            boolean autowired = getCamelContext().isAutowiredEnabled() && isAutowiredEnabled();
+            transactionStrategy
+                    = JpaHelper.resolveTransactionStrategy(getCamelContext(), getEntityManagerFactory(), autowired);
         }
     }
 

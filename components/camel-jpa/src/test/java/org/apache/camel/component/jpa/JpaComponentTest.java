@@ -141,6 +141,7 @@ public class JpaComponentTest extends CamelTestSupport {
         TransactionStrategy strategy = Runnable::run;
         context.getRegistry().bind("myTransactionStrategy", strategy);
 
+        EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
         try (JpaComponent comp = new JpaComponent()) {
             comp.setCamelContext(context);
             comp.init();
@@ -148,8 +149,58 @@ public class JpaComponentTest extends CamelTestSupport {
             assertNull(comp.getTransactionStrategy());
 
             JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
+            jpa.setEntityManagerFactory(fac);
             jpa.init();
             assertSame(strategy, jpa.getTransactionStrategy());
+        } finally {
+            fac.close();
+        }
+    }
+
+    @Test
+    public void testJpaComponentTransactionStrategyAutowired() {
+        TransactionStrategy strategy = Runnable::run;
+        context.getRegistry().bind("myTransactionStrategy", strategy);
+
+        // created by the camel context, so the component is autowired (it has no EntityManagerFactory)
+        JpaComponent comp = context.getComponent("jpa", JpaComponent.class);
+        assertSame(strategy, comp.getTransactionStrategy());
+    }
+
+    @Test
+    public void testJpaComponentTransactionStrategyNotFromRegistryWhenAutowiringDisabled() throws Exception {
+        TransactionStrategy strategy = Runnable::run;
+        context.getRegistry().bind("myTransactionStrategy", strategy);
+        context.setAutowiredEnabled(false);
+
+        EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            comp.setEntityManagerFactory(fac);
+            comp.init();
+            assertInstanceOf(DefaultTransactionStrategy.class, comp.getTransactionStrategy());
+        } finally {
+            fac.close();
+        }
+    }
+
+    @Test
+    public void testJpaEndpointTransactionStrategyNotFromRegistryWhenAutowiringDisabled() throws Exception {
+        TransactionStrategy strategy = Runnable::run;
+        context.getRegistry().bind("myTransactionStrategy", strategy);
+
+        EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            comp.setAutowiredEnabled(false);
+            comp.init();
+
+            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
+            jpa.setEntityManagerFactory(fac);
+            jpa.init();
+            assertInstanceOf(DefaultTransactionStrategy.class, jpa.getTransactionStrategy());
+        } finally {
+            fac.close();
         }
     }
 

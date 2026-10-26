@@ -48,7 +48,7 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"entityManagerFactory"};
+        return new String[]{"entityManagerFactory", "transactionStrategy"};
     }
 
     @Override
