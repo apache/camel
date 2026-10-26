@@ -19,6 +19,8 @@ package org.apache.camel.component.springai.chat;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.component.ai.tool.AiToolSearch;
+import org.apache.camel.component.ai.tool.AiToolSearchStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -27,6 +29,7 @@ import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.converter.StructuredOutputConverter;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
 
@@ -160,6 +163,31 @@ public class SpringAiChatConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "20",
               description = "Timeout in seconds for MCP operations including tool execution and initialization")
     private int mcpTimeout = 20;
+
+    @UriParam(defaultValue = "false")
+    @Metadata(label = "producer",
+              description = "When true, route tools marked searchable and remote MCP tools are omitted from the initial "
+                            + "model request and exposed through one synthetic search tool. Directly visible route tools "
+                            + "and toolCallbacks stay in the request. Search is a visibility policy, not authorization. "
+                            + "Enabling it does not skip MCP tools/list. Camel must build the ChatClient from chatModel.")
+    private boolean toolSearch;
+
+    @UriParam(defaultValue = "5")
+    @Metadata(label = "producer",
+              description = "Maximum number of tools returned by one tool search. Route and MCP tools are ranked together.")
+    private int toolSearchMaxResults = AiToolSearch.DEFAULT_MAX_RESULTS;
+
+    @UriParam(enums = "keyword,vector", defaultValue = "keyword")
+    @Metadata(label = "producer",
+              description = "How tool search ranks route and MCP tools. 'keyword' matches the tool name and description. "
+                            + "'vector' uses cosine similarity and requires toolSearchEmbeddingModel. Vector search "
+                            + "does not fall back to keyword search.")
+    private AiToolSearchStrategy toolSearchStrategy = AiToolSearchStrategy.KEYWORD;
+
+    @UriParam
+    @Metadata(label = "producer", autowired = true,
+              description = "Spring AI embedding model used when toolSearchStrategy=vector. Required for vector search.")
+    private EmbeddingModel toolSearchEmbeddingModel;
 
     public ChatClient getChatClient() {
         return chatClient;
@@ -566,6 +594,38 @@ public class SpringAiChatConfiguration implements Cloneable {
      */
     public void setStructuredOutputValidationMaxAttempts(int structuredOutputValidationMaxAttempts) {
         this.structuredOutputValidationMaxAttempts = structuredOutputValidationMaxAttempts;
+    }
+
+    public boolean isToolSearch() {
+        return toolSearch;
+    }
+
+    public void setToolSearch(boolean toolSearch) {
+        this.toolSearch = toolSearch;
+    }
+
+    public int getToolSearchMaxResults() {
+        return toolSearchMaxResults;
+    }
+
+    public void setToolSearchMaxResults(int toolSearchMaxResults) {
+        this.toolSearchMaxResults = toolSearchMaxResults;
+    }
+
+    public AiToolSearchStrategy getToolSearchStrategy() {
+        return toolSearchStrategy;
+    }
+
+    public void setToolSearchStrategy(AiToolSearchStrategy toolSearchStrategy) {
+        this.toolSearchStrategy = toolSearchStrategy;
+    }
+
+    public EmbeddingModel getToolSearchEmbeddingModel() {
+        return toolSearchEmbeddingModel;
+    }
+
+    public void setToolSearchEmbeddingModel(EmbeddingModel toolSearchEmbeddingModel) {
+        this.toolSearchEmbeddingModel = toolSearchEmbeddingModel;
     }
 
     public SpringAiChatConfiguration copy() {
