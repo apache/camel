@@ -134,7 +134,8 @@ public interface PayloadMode extends Service, CamelContextAware {
     boolean isPayload(Exchange exchange, Object body);
 
     /**
-     * The payload as data of this mode. Only called when isPayload is true; throws when the payload does not parse.
+     * The payload as data of this mode. Only called when isPayload is true; throws when the payload does not parse,
+     * or holds a value that is not data of this mode (for json: a POJO in a Map).
      */
     Object toData(Exchange exchange, Object body) throws Exception;
 
@@ -283,8 +284,8 @@ In camel-support, with camel-util-json, so it needs no new dependency.
 
 - Data: `JsonObject` (a `LinkedHashMap`, so the field order is kept) and `JsonArray`; numbers are `BigDecimal`.
 - Payloads: a `String`, `byte[]`, stream or file whose `Content-Type` is `application/json` or `*+json`, or with no
-  `Content-Type` whose file name ends with `.json` or whose text starts with `{` or `[`; and a `Map` or a `List` that
-  converts as below. Any other body is left as it is.
+  `Content-Type` whose file name ends with `.json` or whose text starts with `{` or `[`; and a `Map`, a `List` or an
+  array, whose values `toData` checks (below). Any other body is left as it is.
 - `toData` parses the text, and converts a `Map` to a `JsonObject` and a `List` (or an array) to a `JsonArray`, with
   their nested values:
 ** a `String`, `Number`, `Boolean` and null stay as they are
@@ -292,8 +293,11 @@ In camel-support, with camel-util-json, so it needs no new dependency.
 ** a `java.util.Date`, a `java.sql.Timestamp` and the `java.time` values become their ISO-8601 text, so the rows of
    sql (with their `Timestamp` columns) become JSON data
 ** an enum becomes its name, a `UUID` its text, and a `byte[]` its base64 text
-** any other object (a POJO), or a reference back to a map or list that contains it, is not JSON data: the whole
-   `Map` or `List` is then not a payload, and is left as it is
+** any other object (a POJO), or a reference back to a map or list that contains it, is not JSON data: `toData`
+   throws an `IllegalArgumentException` that names the value, as for text that does not parse. `isPayload` does not
+   walk the values (that is the work of `toData`), so this is the one contract of the SPI: the engine catches it and
+   leaves the whole `Map` or `List` as it is, and where the message comes in the strict mode fails the message with
+   that error as its hint
 - `copy`: a deep copy of the `JsonObject` or `JsonArray` (their values are JSON values, so the copy is plain).
 - `toPayload` and `toDisplay`: the JSON text (`Jsoner`).
 
