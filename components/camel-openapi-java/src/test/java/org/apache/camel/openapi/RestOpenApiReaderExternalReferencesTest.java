@@ -112,6 +112,31 @@ class RestOpenApiReaderExternalReferencesTest {
     }
 
     @Test
+    void finishesForASchemaThatReferencesItself() throws Exception {
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("external-references-31-recursive.yaml").externalReferences("local");
+
+        // the schema is reached again under its own $id, with the same base, so the check visits it once
+        OpenAPI openApi = read(rest);
+
+        assertNotNull(openApi.getPaths().get("/pets/{petId}"));
+    }
+
+    @Test
+    void checksADocumentReachedAgainUnderAnotherId() {
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("external-references-31-revisit.yaml").externalReferences("local");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+        // the shared schema passes without an $id and is checked again below the $id of Pet
+        assertTrue(e.getMessage().contains("in classpath:///external-references-31-shared.yaml"), e.getMessage());
+        assertTrue(e.getMessage().contains(
+                "external-references-31-owner.yaml resolves to https://schemas.example.invalid/schemas/external-references-31-owner.yaml"),
+                e.getMessage());
+    }
+
+    @Test
     void checksAReferenceGivenAsAYamlAlias() {
         RestDefinition rest = new RestDefinition();
         rest.openApi().specification("external-references-alias.yaml").externalReferences("none");

@@ -97,7 +97,7 @@ final class OpenApiExternalReferences {
         if (ALL.equals(policy)) {
             return;
         }
-        new Check(policy, specificationUri, remote).document(specification, null, null, List.of());
+        new Check(policy, specificationUri, remote).root(specification);
     }
 
     private static boolean isHttp(String target) {
@@ -120,10 +120,6 @@ final class OpenApiExternalReferences {
             this.origin = origin;
             this.inheritedIds = inheritedIds;
         }
-
-        String key() {
-            return inheritedIds.isEmpty() ? location : location + " under " + inheritedIds;
-        }
     }
 
     /**
@@ -143,46 +139,51 @@ final class OpenApiExternalReferences {
             this.remote = remote;
         }
 
+        void root(String specification) {
+            JsonNode tree = tree(specification, null, null);
+            // the parser resolves an OpenAPI 3.1 document with its own dereferencer, which has other rules
+            openApi31 = tree.path("openapi").asText("").startsWith("3.1");
+            follow(tree, null, openApi31 ? LOCAL_URI : null, List.of());
+        }
+
         /**
-         * Checks one document.
+         * Checks the references of one document and then the documents they lead to.
          *
-         * @param content      the document
+         * @param tree         the document
          * @param document     the resolved location of the document, as the parser uses it, or null for the root
-         * @param origin       where the root references this document, for the error message, or null for the root
+         * @param base         what the references of the document resolve against
          * @param inheritedIds the {@code $id}s of the schemas enclosing the reference that led here (OpenAPI 3.1)
          */
-        void document(String content, String document, String origin, List<String> inheritedIds) {
-            JsonNode tree;
+        private void follow(JsonNode tree, String document, String base, List<String> inheritedIds) {
+            // the external references of this document, with where they are, in the order they are met
+            Map<String, Target> targets = new LinkedHashMap<>();
+            scan(tree, "", document, base, inheritedIds, targets);
+            for (Target target : targets.values()) {
+                String targetBase = target.location;
+                if (openApi31) {
+                    // OpenAPI31Traverser.traverseSchema: the inherited $ids resolved, in turn, against the document
+                    for (String id : target.inheritedIds) {
+                        targetBase = resolveBase(id, targetBase, "", target.location);
+                    }
+                }
+                // a document resolves its references the same way whenever it is reached with the same base, whatever
+                // chain of $ids led to it; this also ends the visit of a schema that references itself
+                if (checked.add(target.location + " under " + targetBase)) {
+                    JsonNode targetTree = tree(read(target.location, target.origin), target.location, target.origin);
+                    follow(targetTree, target.location, targetBase, target.inheritedIds);
+                }
+            }
+        }
+
+        private JsonNode tree(String content, String document, String origin) {
             try {
                 // the tree the parser resolves: the same YAML reader, with the aliases expanded and its limits applied
-                tree = DeserializationUtils.deserializeIntoTree(content, document != null ? document : specificationUri);
+                return DeserializationUtils.deserializeIntoTree(content, document != null ? document : specificationUri);
             } catch (RuntimeException e) {
                 throw new IllegalArgumentException(
                         (document != null ? where(document, origin) : "The OpenAPI specification " + specificationUri)
                                                    + " cannot be read to check its references: " + e.getMessage(),
                         e);
-            }
-            if (document == null) {
-                // the parser resolves an OpenAPI 3.1 document with its own dereferencer, which has other rules
-                openApi31 = tree.path("openapi").asText("").startsWith("3.1");
-            }
-            String base = document;
-            if (openApi31) {
-                // OpenAPI31Traverser.traverseSchema: the inherited $ids resolved, in turn, against the document
-                base = document == null ? LOCAL_URI : document;
-                for (String id : inheritedIds) {
-                    base = resolveBase(id, base, "", document);
-                }
-            }
-            // the external references of this document, with where they are, in the order they are met
-            Map<String, Target> targets = new LinkedHashMap<>();
-            scan(tree, "", document, base, inheritedIds, targets);
-            for (Target target : targets.values()) {
-                if (checked.add(target.key())) {
-                    // a referenced local document can reference further documents, which the parser loads as well
-                    document(read(target.location, target.origin), target.location, target.origin,
-                            target.inheritedIds);
-                }
             }
         }
 
@@ -268,8 +269,7 @@ final class OpenApiExternalReferences {
             }
             // a local document: file: and classpath: URIs, and paths the parser reads from the working directory or
             // the classpath; the parser carries the enclosing $ids into it (ReferenceVisitor.resolveSchemaRef)
-            Target found = new Target(target, where(ref, path, document), ids);
-            targets.putIfAbsent(found.key(), found);
+            targets.putIfAbsent(target + " under " + ids, new Target(target, where(ref, path, document), ids));
         }
 
         /**

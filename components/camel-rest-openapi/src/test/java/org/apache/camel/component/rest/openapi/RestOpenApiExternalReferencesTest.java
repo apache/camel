@@ -320,6 +320,73 @@ class RestOpenApiExternalReferencesTest {
     }
 
     @Test
+    void localFinishesForASchemaThatReferencesItself(@TempDir Path dir) throws Exception {
+        Path node = dir.resolve("node.yaml");
+        Files.writeString(node, """
+                $id: %s
+                type: object
+                properties:
+                  next:
+                    $ref: %s
+                """.formatted(node.toUri(), node.toUri()));
+        Path root = Files.writeString(dir.resolve("root.yaml"), contract31(null, node.toUri().toString()));
+
+        // the schema is reached again under its own $id, with the same base, so the check visits it once
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local");
+
+        assertThat(openApi.getPaths()).containsKey("/pets/{petId}");
+    }
+
+    @Test
+    void localChecksADocumentReachedAgainUnderAnotherId(@TempDir Path dir) throws Exception {
+        Path shared = Files.writeString(dir.resolve("shared.yaml"), """
+                type: object
+                properties:
+                  owner:
+                    $ref: owner.yaml
+                """);
+        Files.writeString(dir.resolve("owner.yaml"), OWNER_SCHEMA);
+        Path root = Files.writeString(dir.resolve("root.yaml"), """
+                openapi: 3.1.0
+                info:
+                  title: Pets
+                  version: "1.0"
+                paths:
+                  /pets/{petId}:
+                    get:
+                      operationId: getPetById
+                      responses:
+                        "200":
+                          description: The pet
+                          content:
+                            application/json:
+                              schema:
+                                $ref: '#/components/schemas/Pet'
+                components:
+                  schemas:
+                    Safe:
+                      type: object
+                      properties:
+                        shared:
+                          $ref: '%s'
+                    Pet:
+                      $id: %s/schemas/
+                      type: object
+                      properties:
+                        shared:
+                          $ref: '%s'
+                """.formatted(shared.toUri(), SERVER.baseUrl(), shared.toUri()));
+
+        // shared.yaml is first reached without an $id, where owner.yaml is the file next to it, then below the $id of
+        // Pet, where the parser resolves owner.yaml against the server: the second visit must not be skipped
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references owner.yaml at properties.owner.$ref in " + shared.toUri())
+                .hasMessageContaining("(owner.yaml resolves to " + SERVER.baseUrl() + "/schemas/owner.yaml)");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
     void noneAllowsAReferenceInsideTheDocumentBelowAnHttpId(@TempDir Path dir) throws Exception {
         Path root = Files.writeString(dir.resolve("root.yaml"),
                 contract31(SERVER.baseUrl() + "/schemas/", "#/components/schemas/Owner") + """
