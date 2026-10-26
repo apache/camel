@@ -146,10 +146,14 @@ The `TransactionStrategy` is a vendor neutral abstraction that allows `camel-jpa
 to easily plug in and work with Spring `TransactionManager` or Quarkus Transaction API.
 
 When no `TransactionStrategy` is configured, the `JpaComponent` and `JpaEndpoint`
-use the `TransactionStrategy` from the Registry, if there is exactly one.
+use the `TransactionStrategy` from the Registry, if there is exactly one and autowiring is enabled.
 Otherwise, they create the Spring based `org.apache.camel.component.jpa.DefaultTransactionStrategy`,
 which uses the single `PlatformTransactionManager` (or `TransactionTemplate`) from the Registry,
 or else creates a `JpaTransactionManager` for the `EntityManagerFactory`.
+
+The `TransactionStrategy` from the Registry is used whatever the `EntityManagerFactory` is.
+If it is bound to one `EntityManagerFactory`, configure the `transactionStrategy` option explicitly
+on a JPA component that uses another one.
 
 If there is more than one `TransactionStrategy` in the Registry, none of them is used, and Camel logs a WARN.
 In such cases you might want to instantiate and

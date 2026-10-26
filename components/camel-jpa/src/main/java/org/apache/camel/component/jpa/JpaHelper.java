@@ -90,18 +90,20 @@ public final class JpaHelper {
 
     /**
      * Gets the {@link TransactionStrategy} to use when none has been configured: the single {@link TransactionStrategy}
-     * in the registry if there is one, otherwise a new {@link DefaultTransactionStrategy} (a WARN is logged when the
-     * registry has more than one).
+     * in the registry if there is one and autowiring is enabled, otherwise a new {@link DefaultTransactionStrategy} (a
+     * WARN is logged when the registry has more than one).
      *
      * @param  camelContext         the camel context, or <tt>null</tt> if not available (then the registry is not used)
      * @param  entityManagerFactory the entity manager factory
+     * @param  autowiredEnabled     whether autowiring is enabled (otherwise the registry is not used)
      * @return                      the transaction strategy (is never null)
      */
     public static TransactionStrategy resolveTransactionStrategy(
-            CamelContext camelContext, EntityManagerFactory entityManagerFactory) {
-        if (camelContext != null) {
+            CamelContext camelContext, EntityManagerFactory entityManagerFactory, boolean autowiredEnabled) {
+        if (camelContext != null && autowiredEnabled) {
             TransactionStrategy strategy = camelContext.getRegistry().findSingleByType(TransactionStrategy.class);
             if (strategy != null) {
+                LOG.info("Using TransactionStrategy found in registry: {}", strategy);
                 return strategy;
             }
             int count = camelContext.getRegistry().findByType(TransactionStrategy.class).size();
@@ -129,7 +131,8 @@ public final class JpaHelper {
         }
     }
 
-    // the only place creating the Spring based DefaultTransactionStrategy, so runtimes without Spring can replace it
+    // the only place creating the Spring based DefaultTransactionStrategy, so runtimes without Spring can replace it:
+    // Camel Quarkus replaces this method by its name, so do not rename it or change its signature
     private static TransactionStrategy createDefaultTransactionStrategy(
             CamelContext camelContext, EntityManagerFactory entityManagerFactory) {
         return new DefaultTransactionStrategy(camelContext, entityManagerFactory);

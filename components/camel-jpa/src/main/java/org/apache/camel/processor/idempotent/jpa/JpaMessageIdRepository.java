@@ -58,7 +58,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     private boolean sharedEntityManager;
 
     public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, String processorName) {
-        this(entityManagerFactory, JpaHelper.resolveTransactionStrategy(null, entityManagerFactory), processorName);
+        this(entityManagerFactory, JpaHelper.resolveTransactionStrategy(null, entityManagerFactory, false), processorName);
     }
 
     public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, TransactionStrategy transactionStrategy,

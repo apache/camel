@@ -477,7 +477,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
     @Override
     protected void doInit() throws Exception {
         if (transactionStrategy == null) {
-            transactionStrategy = JpaHelper.resolveTransactionStrategy(null, entityManagerFactory);
+            transactionStrategy = JpaHelper.resolveTransactionStrategy(null, entityManagerFactory, false);
         }
     }
 
