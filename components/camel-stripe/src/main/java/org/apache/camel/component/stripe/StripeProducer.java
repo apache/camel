@@ -39,7 +39,7 @@ public class StripeProducer extends DefaultProducer {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private RequestOptions requestOptions;
+    private volatile RequestOptions requestOptions;
 
     public StripeProducer(StripeEndpoint endpoint) {
         super(endpoint);
@@ -54,11 +54,13 @@ public class StripeProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         StripeConfiguration config = getEndpoint().getConfiguration();
-        RequestOptions.RequestOptionsBuilder builder = RequestOptions.builder();
-
-        if (ObjectHelper.isNotEmpty(config.getApiKey())) {
-            builder.setApiKey(config.getApiKey());
+        if (ObjectHelper.isEmpty(config.getApiKey())) {
+            throw new IllegalArgumentException(
+                    "Stripe apiKey must be configured for endpoint: " + getEndpoint().getEndpointUri());
         }
+
+        RequestOptions.RequestOptionsBuilder builder = RequestOptions.builder();
+        builder.setApiKey(config.getApiKey());
 
         if (ObjectHelper.isNotEmpty(config.getApiBase())) {
             builder.setBaseUrl(config.getApiBase());

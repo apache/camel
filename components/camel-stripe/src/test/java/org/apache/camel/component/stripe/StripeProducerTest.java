@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StripeProducerTest {
 
@@ -175,6 +176,22 @@ public class StripeProducerTest {
                 producer1.stop();
                 producer2.stop();
             }
+        }
+    }
+
+    @Test
+    public void testMissingApiKeyFailsStartup() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            StripeComponent component = new StripeComponent();
+            component.setCamelContext(context);
+            StripeConfiguration config = new StripeConfiguration();
+            config.setOperation(StripeOperation.CHARGES);
+
+            StripeEndpoint endpoint = new StripeEndpoint("stripe:charges", component, config);
+            StripeProducer producer = new StripeProducer(endpoint);
+
+            assertThrows(IllegalArgumentException.class, () -> producer.start());
         }
     }
 }
