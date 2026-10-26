@@ -34,6 +34,16 @@ public class InMemorySession implements OAuthSession {
         this.sessionId = sessionId;
     }
 
+    public Map<String, Object> getValues() {
+        return new HashMap<>(values);
+    }
+
+    public void putAll(Map<String, Object> newValues) {
+        if (newValues != null) {
+            this.values.putAll(newValues);
+        }
+    }
+
     @Override
     public String getSessionId() {
         return sessionId;

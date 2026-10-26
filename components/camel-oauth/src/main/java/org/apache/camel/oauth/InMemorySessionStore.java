@@ -62,6 +62,7 @@ public class InMemorySessionStore implements OAuthSessionStore {
         return maybeSession;
     }
 
+    @Override
     public OAuthSession createSession(Exchange exchange) {
 
         var sessionId = UUID.randomUUID().toString();
@@ -69,12 +70,36 @@ public class InMemorySessionStore implements OAuthSessionStore {
         sessions.put(sessionId, session);
 
         var msg = exchange.getMessage();
-        log.info("New OAuthSession: {}", sessionId);
+        log.debug("New OAuthSession: {}", sessionId);
 
         setSessionCookie(msg, session);
         msg.setHeader(OAuth.CAMEL_OAUTH_SESSION_ID, sessionId);
 
         return session;
+    }
+
+    @Override
+    public OAuthSession rotateSession(Exchange exchange, OAuthSession session) {
+        if (session == null) {
+            return createSession(exchange);
+        }
+        var oldSessionId = session.getSessionId();
+        sessions.remove(oldSessionId);
+
+        var newSessionId = UUID.randomUUID().toString();
+        var newSession = new InMemorySession(newSessionId);
+        if (session instanceof InMemorySession inMemorySession) {
+            newSession.putAll(inMemorySession.getValues());
+        }
+        sessions.put(newSessionId, newSession);
+
+        var msg = exchange.getMessage();
+        log.debug("Rotated OAuthSession from {} to {}", oldSessionId, newSessionId);
+
+        setSessionCookie(msg, newSession);
+        msg.setHeader(OAuth.CAMEL_OAUTH_SESSION_ID, newSessionId);
+
+        return newSession;
     }
 
     private Map<String, String> getCookies(Exchange exchange) {
@@ -110,9 +135,6 @@ public class InMemorySessionStore implements OAuthSessionStore {
     private void setSessionCookie(Message msg, OAuthSession session) {
         var sessionId = session.getSessionId();
         var cookieId = "%s=%s".formatted(CAMEL_OAUTH_COOKIE, sessionId);
-        if (msg.getHeader("Set-Cookie") != null) {
-            throw new IllegalStateException("Duplicate 'Set-Cookie' header");
-        }
         var cookie = cookieId + "; Path=/; HttpOnly; SameSite=None; Secure";
         msg.setHeader("Set-Cookie", cookie);
         log.debug("Set-Cookie: {}", cookie);

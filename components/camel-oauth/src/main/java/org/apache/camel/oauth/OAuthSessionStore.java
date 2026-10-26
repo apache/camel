@@ -25,4 +25,16 @@ public interface OAuthSessionStore {
     Optional<OAuthSession> getSession(Exchange exchange);
 
     OAuthSession createSession(Exchange exchange);
+
+    /**
+     * Rotates the session, replacing the current session identifier with a newly generated one and transferring any
+     * session state.
+     *
+     * @param  exchange the current exchange
+     * @param  session  the existing session to rotate
+     * @return          the rotated session with a new session identifier
+     */
+    default OAuthSession rotateSession(Exchange exchange, OAuthSession session) {
+        return session;
+    }
 }

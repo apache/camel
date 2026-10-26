@@ -98,4 +98,8 @@ public abstract class OAuth {
     public OAuthSession createSession(Exchange exchange) {
         return getSessionStore().createSession(exchange);
     }
+
+    public OAuthSession rotateSession(Exchange exchange, OAuthSession session) {
+        return getSessionStore().rotateSession(exchange, session);
+    }
 }
