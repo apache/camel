@@ -104,6 +104,8 @@ marshal.
 - `payloadModeStrict` (off by default) makes the route accept only payloads of its mode from the consumer:
   `camel.main.payloadModeStrict = true` for all the routes, and a route can set its own `payloadModeStrict` to turn
   it on or off (see the strict mode in the engine).
+- A route that does not set its own `payloadMode` follows the payload mode of the exchange, so a utility route that
+  other routes call with `direct` acts as its caller (see the exchange's payload mode in the engine).
 
 === The SPI
 
@@ -166,6 +168,21 @@ types and file extensions, and brings its parser, its writer and its copy:
 
 The engine part does not depend on the format.
 
+*The exchange's payload mode.* Where a route consumer creates an exchange, the payload mode of that route (its own, or
+the global one) is marked on the exchange, in the exchange extension (not a property, so a route cannot remove it by
+accident). The copies of an exchange (`seda`, multicast, recipient list, split, wire tap) carry the mark. A route then
+works under:
+
+- its own `payloadMode`, when it sets one. `payloadMode=default` opts a route out, such as a route of Java helpers that
+  wants the Java types of the components;
+- otherwise the mode of the exchange, so a utility route that several routes call with `direct` acts as its caller:
+  in `json` mode for a json route, and as today for a route without a mode;
+- otherwise the global mode, for an exchange that no route consumer created, such as one sent with a
+  `ProducerTemplate`.
+
+When the exchange comes back from a route with a mode of its own, the caller's mode applies again after the step that
+called it. The type converters at the edges and the JMS binding read the mode from the exchange too.
+
 *Which bodies become data.* Where the consumer hands the message to the route, and after every step, the body is
 given to the route's mode (where stream caching works today): when it `isData` already it is left alone, and when it
 `isPayload` it is turned into data with `toData`. So one rule covers the body of a consumer, the reply of a producer and the result of
@@ -215,7 +232,8 @@ these EIPs copy a `StreamCache` body for each branch today (`MulticastProcessor`
   become their `toDisplay` text (not the `Camel*` headers, some of which are maps on purpose), so they survive a JMS
   or Kafka hop; and the `Content-Type` header is set to the first of the mode's content types unless it is already
   one of them.
-- local endpoints (`direct`, `seda`) pass the data as it is to the next route.
+- local endpoints (`direct`, `seda`) pass the data as it is to the next route, which works under its own mode or the
+  mode of the exchange (above).
 
 *What users see.* `MessageHelper` (the body in logs, tracing, the backlog tracer and the dev consoles, so also Camel
 TUI and the MCP tools) shows `toDisplay` of data of a payload mode, so users see the JSON text, not
@@ -415,14 +433,16 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
   the `toString` of the map (`{sku=CAMEL-MUG}`, which is not JSON), and there was no conversion to a `byte[]` or
   `InputStream`. This is the one change outside the mode, and it is in the upgrade guide of 4.24. A `JsonObject` that
   holds a value that is not JSON, such as a POJO, converts as before.
-- The fallback type converter of a plugin without regular converters only acts on exchanges of a route with a payload
-  mode.
+- No exchange is marked when no payload mode is configured, so a route that does not set a mode acts as today.
+- The fallback type converter of a plugin without regular converters only acts on exchanges with a payload mode.
 - The JMS and SJMS change only applies to data of a payload mode.
 
 == Risks
 
 - The data is mutable. The EIPs that copy the exchange copy the data too (see the engine), but a Java `process` or a
   custom `AggregationStrategy` that hands the same data to two exchanges still shares it, as with a `Map` body today.
+- A route without a mode of its own that is called from a json route works in `json` mode: Java code in it that
+  expects the Java types of the components gets data. `payloadMode=default` on that route opts it out.
 - Copying the data for each branch costs a deep copy per branch, which fits the non-goal of the lowest overhead.
 - Producers that turn a `Map` into something other than the payload, and are not found by the survey, send the wrong
   thing in the mode.
@@ -436,9 +456,9 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
   content type, with a `Map` from a step going to the first? `json,text` would give JSON data for JSON payloads and
   text for XML, CSV and plain text ones, so a non-JSON file is not left as a `GenericFile`.
 - Regular type converters run before fallback converters, so at an edge the JSON text converters of `JsonObject`
-  would win over a binary plugin (such as CBOR) that shares the JSON data model. Either the converter hands the
-  conversion to the payload mode of the exchange when that mode claims the data (the converter gets the exchange), or
-  each binary plugin has a data type of its own.
+  would win over a binary plugin (such as CBOR) that shares the JSON data model. The mark of the exchange's payload
+  mode gives the converter what it needs to hand the conversion to that mode when the mode claims the data (the
+  converter gets the exchange); the other way is a data type of its own for each binary plugin.
 - The marker type for CSV rows, and the data type of XML (DOM, or a Groovy-friendly view).
 - Should the strict mode also check the reply of a producer, such as an http call that answers with an HTML error page?
 
