@@ -33,6 +33,8 @@ import org.xml.sax.XMLReader;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.jaxp.XMLReaderPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,27 @@ final class XsltSaxonHelper {
     private static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
     private static final String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
 
+    // Configured once: a SAXParserFactory on the classpath that does not recognise one of the required features fails
+    // here, on the first use of this class, rather than silently degrading on every exchange. The pool hands out a
+    // reader for a single parse and is safe to share between threads.
+    private static final XMLReaderPool SECURE_XML_READER_POOL = new XMLReaderPool(createSecureSaxParserFactory());
+
     private XsltSaxonHelper() {
+    }
+
+    private static SAXParserFactory createSecureSaxParserFactory() {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
+            factory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
+            factory.setFeature(LOAD_EXTERNAL_DTD, false);
+            return factory;
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new IllegalStateException(
+                    "Cannot configure a restricted SAXParserFactory for xslt-saxon input parsing", e);
+        }
     }
 
     public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration) {
@@ -111,18 +133,12 @@ final class XsltSaxonHelper {
             return source;
         }
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            factory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
-            factory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
-            factory.setFeature(LOAD_EXTERNAL_DTD, false);
-            XMLReader xmlReader = factory.newSAXParser().getXMLReader();
+            XMLReader xmlReader = SECURE_XML_READER_POOL.createXMLReader();
             return new SAXSource(xmlReader, inputSource);
         } catch (ParserConfigurationException | SAXException e) {
-            LOG.warn("Cannot create a restricted XMLReader for the input source, transforming it as is: {}",
-                    e.getMessage(), e);
-            return source;
+            // Fail closed: this is the security control, so do not fall back to an unrestricted parse.
+            throw new RuntimeCamelException(
+                    "Cannot create a restricted XMLReader for the xslt-saxon input source", e);
         }
     }
 
