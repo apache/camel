@@ -478,7 +478,7 @@
         <redisson-version>4.8.0</redisson-version>
         <redshift-jdbc-version>2.1.0.33</redshift-jdbc-version>
         <resilience4j-version>2.4.0</resilience4j-version>
-        <rest-assured-version>6.0.1</rest-assured-version>
+        <rest-assured-version>6.2.0</rest-assured-version>
         <roaster-version>2.31.1.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>5.3.2</rocketmq-version>
