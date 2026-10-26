@@ -118,14 +118,16 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
 
         Subject currentUser = resolveSubject();
 
+        boolean success = false;
         // Authenticate user if not authenticated
         try {
             authenticateUser(currentUser, securityToken);
 
             // Test whether user's role is authorized to perform functions in the permissions list
             authorizeUser(currentUser, exchange);
+            success = true;
         } finally {
-            if (policy.isAlwaysReauthenticate()) {
+            if (policy.isAlwaysReauthenticate() || !success) {
                 try {
                     currentUser.logout();
                 } finally {
@@ -139,8 +141,7 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
     private Subject resolveSubject() {
         Subject currentUser = null;
         Subject threadSubject = ThreadContext.getSubject();
-        if (threadSubject instanceof DelegatingSubject) {
-            DelegatingSubject delegatingSubject = (DelegatingSubject) threadSubject;
+        if (threadSubject instanceof DelegatingSubject delegatingSubject) {
             if (policy.getSecurityManager() != null && delegatingSubject.getSecurityManager() == policy.getSecurityManager()) {
                 currentUser = threadSubject;
             }

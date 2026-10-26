@@ -26,7 +26,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.config.Ini;
+import org.apache.shiro.util.ThreadContext;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
 
@@ -136,6 +139,20 @@ public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
         failureEndpointNoReauthB.assertIsSatisfied();
     }
 
+    @Test
+    public void testThreadContextCleanupOnFailureWithReauthenticateFalse() throws Exception {
+        failureEndpointNoReauthA.expectedMessageCount(1);
+
+        Map<String, Object> invalidHeaders = new HashMap<>();
+        invalidHeaders.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "alice");
+        invalidHeaders.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "wrongpassword");
+        template.sendBodyAndHeaders("direct:routeNoReauthA", "payloadA", invalidHeaders);
+
+        failureEndpointNoReauthA.assertIsSatisfied();
+        assertNull(ThreadContext.getSubject(), "ThreadContext subject should be cleaned up on failure");
+        assertNull(ThreadContext.getSecurityManager(), "ThreadContext security manager should be cleaned up on failure");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         Ini iniA = new Ini();
@@ -151,11 +168,11 @@ public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(AuthenticationException.class)
-                        .handled(true)
-                        .to("mock:failureA");
-
                 from("direct:routeA")
+                        .onException(AuthenticationException.class)
+                        .handled(true)
+                        .to("mock:failureA")
+                        .end()
                         .policy(policyA)
                         .to("mock:successA");
 
