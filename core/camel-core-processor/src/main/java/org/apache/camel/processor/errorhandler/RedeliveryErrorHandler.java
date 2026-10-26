@@ -77,6 +77,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandler.class);
 
+    // the exception of a failure that was continued (onException continued), which is not a previous exception of a
+    // later failure. A key of its own: Exchange.EXCEPTION_HANDLED is the doCatch's marker that a previous doCatch of
+    // the doTry handled the exception, and a direct call shares the exchange with the caller's doTry.
+    private static final String CONTINUED_EXCEPTION = "CamelErrorHandlerContinuedException";
+
     // factory
     protected PooledExchangeTaskFactory taskFactory;
 
@@ -838,7 +843,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.removeProperty(ExchangePropertyKey.UNIT_OF_WORK_EXHAUSTED);
             // continue but keep the caused exception stored as a property
             // (by default we do not log the failure as we continue routing)
-            exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, e);
+            exchange.setProperty(CONTINUED_EXCEPTION, e);
             exchange.getExchangeExtension().setErrorHandlerHandled(true);
 
             LOG.trace("This exchange is continued: {}", exchange);
@@ -872,7 +877,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // e is never null
 
             Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-            if (previous != null && previous == exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED)) {
+            if (previous != null && previous == exchange.getProperty(CONTINUED_EXCEPTION)) {
                 // the previous exception was handled (continued) so this is a new failure
                 previous = null;
             }
@@ -1395,7 +1400,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // and mark it as handled (continued), so it is not regarded as a previous exception of a later failure
             Exception handled = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
             if (handled != null) {
-                exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, handled);
+                exchange.setProperty(CONTINUED_EXCEPTION, handled);
             }
 
             // create log message
@@ -1448,7 +1453,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // e is never null
 
             Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-            if (previous != null && previous == exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED)) {
+            if (previous != null && previous == exchange.getProperty(CONTINUED_EXCEPTION)) {
                 // the previous exception was handled (continued) so this is a new failure
                 previous = null;
             }
