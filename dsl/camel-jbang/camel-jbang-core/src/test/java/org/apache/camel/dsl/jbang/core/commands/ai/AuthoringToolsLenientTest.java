@@ -94,6 +94,8 @@ class AuthoringToolsLenientTest {
                     from:
                       uri: timer:x
                       steps:
+                        - setBody:
+                            constant: "{}"
                         - unmarshal:
                             json:
                               library: jackson
@@ -149,6 +151,8 @@ class AuthoringToolsLenientTest {
                         - log:
                             level: WARN
                             message: "x"
+                        - setBody:
+                            constant: "{}"
                         - unmarshal:
                             jackson: {}
                 """);
