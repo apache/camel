@@ -19,13 +19,18 @@ package org.apache.camel.component.langchain4j.agent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.invocation.InvocationContext;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.service.tool.search.ToolSearchRequest;
+import dev.langchain4j.service.tool.search.ToolSearchResult;
+import dev.langchain4j.service.tool.search.ToolSearchStrategy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ai.tool.AiToolSearch;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
@@ -50,6 +55,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class LangChain4jAgentToolSearchTest extends CamelTestSupport {
 
     private final RecordingChatModel chatModel = new RecordingChatModel();
+    private final AtomicBoolean customizerRan = new AtomicBoolean();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -68,6 +74,9 @@ class LangChain4jAgentToolSearchTest extends CamelTestSupport {
                             + "&toolSearchMaxResults=5&mcpClients=#weather");
                 from("direct:plain")
                         .to("langchain4j-agent:plain?agentConfiguration=#cfg&tags=erp");
+                from("direct:customized-search")
+                        .to("langchain4j-agent:customizedSearch?agentConfiguration=#cfgWithCustomizer"
+                            + "&tags=erp&toolSearch=true");
                 from("direct:plainWithBeanSearchEnabled")
                         .to("langchain4j-agent:plainWithBeanSearchEnabled?agentConfiguration=#cfgWithToolSearchEnabled&tags=erp");
                 from("direct:reserved-mcp")
@@ -82,6 +91,22 @@ class LangChain4jAgentToolSearchTest extends CamelTestSupport {
         registry.bind("cfgWithToolSearchEnabled", new AgentConfiguration()
                 .withChatModel(chatModel)
                 .withToolSearchEnabled(true));
+        registry.bind("cfgWithCustomizer", new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withAiServicesCustomizer(builder -> {
+                    customizerRan.set(true);
+                    builder.toolSearchStrategy(new ToolSearchStrategy() {
+                        @Override
+                        public List<ToolSpecification> getToolSearchTools(InvocationContext invocationContext) {
+                            throw new IllegalStateException("User tool-search strategy should be overridden");
+                        }
+
+                        @Override
+                        public ToolSearchResult search(ToolSearchRequest request) {
+                            throw new IllegalStateException("User tool-search strategy should be overridden");
+                        }
+                    });
+                }));
         registry.bind("weather", new StubMcpClient(
                 "weather", ToolSpecification.builder()
                         .name("get_weather")
@@ -151,6 +176,16 @@ class LangChain4jAgentToolSearchTest extends CamelTestSupport {
             assertThat(names).doesNotContain(
                     AiToolSearch.TOOL_NAME, "tool_search_tool");
         });
+    }
+
+    @Test
+    void customizerRunsButEndpointToolSearchStrategyWins() {
+        template.requestBody("direct:customized-search", new AiAgentBody<>("find invoice"), String.class);
+
+        assertThat(customizerRan.get()).isTrue();
+        assertThat(chatModel.turns).hasSize(2);
+        assertThat(chatModel.turns.get(0)).contains(AiToolSearch.TOOL_NAME).doesNotContain("invoice");
+        assertThat(chatModel.turns.get(1)).contains("invoice");
     }
 
     @Test

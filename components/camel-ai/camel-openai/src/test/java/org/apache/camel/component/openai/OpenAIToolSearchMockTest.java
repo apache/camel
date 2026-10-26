@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -256,6 +257,18 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
     }
 
     @Test
+    void previousSessionIsRestoredAfterSwitchingToAnIdBasedSession() {
+        Exchange result = template.request("direct:session-restore", e -> e.getIn().setBody("find invoice"));
+
+        assertNull(result.getException());
+        assertTrue(toolNamesFor("call invoice directly").get(0).contains("invoice"),
+                "the discovery from the original exchange session should still be advertised");
+        assertSame(result.getProperty("expectedToolSearchSession"),
+                result.getProperty(OpenAIToolSearch.SESSION_PROPERTY),
+                "the exact exchange session that existed before the ID-based step should be restored");
+    }
+
+    @Test
     void concurrentExchangesDoNotShareDiscoveries() throws Exception {
         injectWeather("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true&toolSearch=true"
                       + "&tags=search&baseUrl=" + openAIMock.getBaseUrl() + "/v1");
@@ -414,6 +427,21 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=false"
                             + "&conversationMemory=true&storeFullResponse=true&toolSearch=true&tags=search&baseUrl=" + base)
                         .end();
+
+                from("direct:session-restore")
+                        .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true"
+                            + "&conversationMemory=true&toolSearch=true&tags=search&baseUrl=" + base)
+                        .process(e -> e.setProperty("expectedToolSearchSession",
+                                e.getProperty(OpenAIToolSearch.SESSION_PROPERTY)))
+                        .setHeader(OpenAIConstants.TOOL_SEARCH_SESSION_ID, constant("session-restore-shared"))
+                        .setBody(constant("search on"))
+                        .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true"
+                            + "&conversationMemory=true&toolSearch=true&tags=search&baseUrl=" + base)
+                        .setBody(constant("call invoice directly"))
+                        .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=false"
+                            + "&conversationMemory=false&toolSearch=true&storeFullResponse=true&tags=search&baseUrl=" + base)
+                        .to("openai:tool-execution?toolSearch=true&conversationMemory=false&apiKey=dummy"
+                            + "&tags=search&baseUrl=" + base);
 
                 from("direct:limited")
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true&toolSearch=true"
