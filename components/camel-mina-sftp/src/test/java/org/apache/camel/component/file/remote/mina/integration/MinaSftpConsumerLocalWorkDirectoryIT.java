@@ -91,22 +91,28 @@ class MinaSftpConsumerLocalWorkDirectoryIT extends MinaSftpServerTestSupport {
     void localWorkFileIsMovedToTheTargetOfAFileProducer() throws Exception {
         Files.writeString(ftpFile("moved.txt"), "Moved World");
 
-        NotifyBuilder done = new NotifyBuilder(context).whenDone(1).create();
+        NotifyBuilder completed = new NotifyBuilder(context).whenCompleted(1).create();
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from(consumerUri("moved.txt"))
-                        .to(TestSupport.fileUri(testDirectory, "out"));
+                        .to(TestSupport.fileUri(testDirectory, "out"))
+                        .process(this::failIfTheLocalWorkFileIsLeft);
+            }
+
+            private void failIfTheLocalWorkFileIsLeft(Exchange exchange) {
+                // checked before the exchange is done, so before the consumer deletes the local work file: a file
+                // producer that copied it would leave it here, and the exchange fails instead of completing
+                if (Files.exists(testDirectory.resolve("lwd/moved.txt"))) {
+                    throw new IllegalStateException("The file producer should move the local work file, not copy it");
+                }
             }
         });
 
-        assertTrue(done.matches(10, TimeUnit.SECONDS), "The exchange should be done");
+        assertTrue(completed.matches(10, TimeUnit.SECONDS), "The exchange should complete");
 
         assertEquals("Moved World", Files.readString(testDirectory.resolve("out/moved.txt")));
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertFalse(Files.exists(testDirectory.resolve("lwd/moved.txt")),
-                        "The local work file should not be left in the local work directory"));
     }
 
     @Test
