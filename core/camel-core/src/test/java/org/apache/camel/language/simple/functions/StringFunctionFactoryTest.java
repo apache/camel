@@ -48,6 +48,30 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("foo-bar", evaluate("replace( ,-,${header.msg})", String.class));
     }
 
+    @Test
+    void testArgumentsWithASpaceAfterTheComma() {
+        // a space after the comma is not part of the next argument, as in the collection functions (CAMEL-24969)
+        exchange.getIn().setBody("Hello great big World");
+        assertEquals("Hell0 great big W0rld", evaluate("replace('o', '0')", String.class));
+        assertEquals("ello great big Worl", evaluate("substring(1, -1)", String.class));
+        assertEquals("Hello", evaluate("substringBefore(${body}, ' ')", String.class));
+        assertEquals("great big World", evaluate("substringAfter(${body}, 'Hello ')", String.class));
+        assertEquals(" big ", evaluate("substringBetween(${body}, 'great', 'World')", String.class));
+        assertEquals(true, evaluate("contains(${body}, 'hello')", Boolean.class));
+        // the spaces inside the quotes are kept
+        assertEquals("Hello GREAT big World", evaluate("replace(' great', ' GREAT')", String.class));
+    }
+
+    @Test
+    void testQuoteInsideAnArgumentIsKept() {
+        // only the quotes around a whole argument are removed: a'b'c is the text a'b'c (it was abc), and the two
+        // quotes inside 'it''s' are kept (they were removed: its)
+        exchange.getIn().setBody("a'b'c and abc");
+        assertEquals("x and abc", evaluate("replace(a'b'c,x)", String.class));
+        exchange.getIn().setBody("x");
+        assertEquals("it''s", evaluate("replace(x, 'it''s')", String.class));
+    }
+
     // --- substring ---
 
     @Test
