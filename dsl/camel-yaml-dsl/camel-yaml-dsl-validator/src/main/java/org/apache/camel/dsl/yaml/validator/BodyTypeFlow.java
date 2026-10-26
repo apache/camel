@@ -209,8 +209,11 @@ final class BodyTypeFlow {
             }
             if (reader != null) {
                 // the step both reads and produces, as setBody with a jsonpath expression does, or a choice with a
-                // branch that sets the body: which comes first cannot be told from the tree, so say nothing
-                return "setBody".equals(firstName(step)) ? reader : null;
+                // branch that sets the body: which comes first cannot be told from the tree, so say nothing. Not so
+                // for a setBody, which evaluates its expression first, nor for an unmarshal, a marshal or a
+                // convertBodyTo, which read the body to make the new one
+                String first = firstName(step);
+                return "setBody".equals(first) || first.equals(reader) ? reader : null;
             }
             if (produces) {
                 // a branch of a choice, a doTry or a split may set the body: from here on nothing is certain

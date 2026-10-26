@@ -2582,4 +2582,254 @@ public class TextBodyFlowTest {
         assertThat(lines(events, KAMELETS)).singleElement()
                 .satisfies(m -> assertThat(m).contains("to: file needs the body as text"));
     }
+
+    @Test
+    public void testAFieldReadInTheUriOfAToDAfterAMarshal() {
+        // what the benchmark wrote (r22): the ticket is marshalled for the file, and the file name reads a field of it
+        String yaml = """
+                - route:
+                    id: classify
+                    from:
+                      uri: file:tickets
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - marshal:
+                            json: {}
+                        - toD:
+                            uri: file:classified?fileName=${body[ticketId]}.json
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 11: ");
+            assertThat(m).contains("route classify: the uri of toD reads a field of the body (${body[ticketId]})");
+            assertThat(m).contains("marshal: json writes data as text");
+            // the marshal is wanted here: not "unmarshal is the step"
+            assertThat(m).contains("read the field before the marshal, for example into a variable with setVariable");
+            assertThat(m).contains("marshal with variableReceive");
+            assertThat(m).doesNotContain("is the step, not marshal");
+        });
+        // the same read in a log message, and in an option of the endpoint
+        assertThat(lines(yaml.replace("""
+                        - toD:
+                            uri: file:classified?fileName=${body[ticketId]}.json
+                """, """
+                        - log:
+                            message: "ticket ${body[ticketId]} classified"
+                """))).singleElement().satisfies(m -> assertThat(m)
+                .contains("the log message reads a field of the body (${body[ticketId]})"));
+        assertThat(lines(yaml.replace("""
+                        - toD:
+                            uri: file:classified?fileName=${body[ticketId]}.json
+                """, """
+                        - to:
+                            uri: file:classified
+                            parameters:
+                              fileName: ${body[ticketId]}.json
+                """))).singleElement().satisfies(m -> assertThat(m)
+                .contains("the fileName of to reads a field of the body (${body[ticketId]})"));
+        // the body itself, and a field of the data before the marshal, are fine
+        assertThat(lines(yaml.replace("${body[ticketId]}", "${body}"))).isEmpty();
+        assertThat(lines(yaml.replace("""
+                        - marshal:
+                            json: {}
+                        - toD:
+                """, """
+                        - log: "ticket ${body[ticketId]}"
+                        - setVariable:
+                            name: ticketId
+                            simple: ${body[ticketId]}
+                        - marshal:
+                            json: {}
+                        - toD:
+                """).replace("${body[ticketId]}.json", "${variable.ticketId}.json"))).isEmpty();
+    }
+
+    @Test
+    public void testAFileWriteOfDataSaysToReadTheFieldsBeforeTheMarshal() {
+        // the file name reads a field of the data: after the marshal it would read text
+        String yaml = """
+                - route:
+                    id: classify
+                    from:
+                      uri: file:tickets
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - toD:
+                            uri: file:classified?fileName=${body[ticketId]}.json
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("toD: file needs the body as");
+            assertThat(m).contains("add marshal: json before this step - and the uri of toD reads ${body[ticketId]},"
+                                   + " which is text after the marshal: read it before the marshal into a variable"
+                                   + " (setVariable with name ticketId and simple ${body[ticketId]}) and use"
+                                   + " ${variable.ticketId} here");
+        });
+        // no field read in the step: the fields the steps after it read
+        assertThat(lines(yaml.replace("?fileName=${body[ticketId]}.json", ""))).singleElement()
+                .satisfies(m -> assertThat(m).contains("add marshal: json before this step (read the fields you still"
+                                                       + " need, such as for a file name or a log, before the marshal"));
+    }
+
+    @Test
+    public void testAWireTapOrAnEnrichOfDataToAFile() {
+        // what the benchmark wrote (r22): the order Map is tapped to a file
+        String yaml = """
+                - route:
+                    id: dedupe
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - wireTap:
+                            uri: file:audit?fileName=${body[orderId]}.json
+                        - log: "order ${body[orderId]}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 9: ");
+            assertThat(m).contains("route dedupe: wireTap: file needs the body as");
+            assertThat(m).contains("add marshal: json before this step");
+        });
+        // with variableSend the variable is sent
+        assertThat(lines(yaml.replace("""
+                            uri: file:audit?fileName=${body[orderId]}.json
+                """, """
+                            uri: file:audit?fileName=${body[orderId]}.json
+                            variableSend: audit
+                """))).isEmpty();
+        // an enrich sends the body to the endpoint too
+        assertThat(lines(yaml.replace("""
+                        - wireTap:
+                            uri: file:audit?fileName=${body[orderId]}.json
+                """, """
+                        - enrich:
+                            constant: file:audit
+                """))).singleElement().satisfies(m -> assertThat(m).contains("enrich: file needs the body as"));
+    }
+
+    @Test
+    public void testAnUnmarshalOfDataThatIsParsedAlready() {
+        // what the benchmark wrote (r22): the order was unmarshalled, and is unmarshalled again
+        String yaml = """
+                - route:
+                    id: dedupe
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - setHeader:
+                            name: orderId
+                            simple: ${body[orderId]}
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: file:out
+                """;
+        // one report: the unmarshal fails, and the to: after it is not run
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 12: ");
+            assertThat(m).contains("route dedupe: unmarshal: json parses text");
+            assertThat(m).contains("but the body here is parsed data (a Map or a List), not text");
+            assertThat(m).contains("the body is data already, so leave this unmarshal out");
+            assertThat(m).contains("unmarshal it with variableSend and variableReceive set to its name");
+        });
+        // a variable that holds data
+        String variable = """
+                - route:
+                    id: dedupe
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                            variableReceive: order
+                        - unmarshal:
+                            json: {}
+                            variableSend: order
+                            variableReceive: order
+                """;
+        assertThat(lines(variable)).singleElement().satisfies(m -> {
+            assertThat(m).contains("but the variable order holds parsed data (a Map or a List), not text");
+            assertThat(m).contains("${variable.order[name]}");
+        });
+        // the text of the file is in the body still: that unmarshal is right
+        assertThat(lines(variable.replace("variableSend: order", "variableSend: other"))).isEmpty();
+    }
+
+    @Test
+    public void testAFieldReadOnAVariableThatHoldsTheFile() {
+        // what the benchmark wrote (r22): the customer file is polled into a variable, and read as if it were parsed
+        String yaml = """
+                - route:
+                    id: enrich
+                    from:
+                      uri: direct:enrich
+                      steps:
+                        - pollEnrich:
+                            constant: file:customers?fileName=C-482.json&noop=true
+                            variableReceive: customer
+                            timeout: 1000
+                        - setHeader:
+                            name: customerName
+                            simple: ${variable.customer[name]}
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 11: ");
+            assertThat(m).contains("route enrich: simple reads a field of the variable customer"
+                                   + " (${variable.customer[name]})");
+            assertThat(m).contains("the variable holds the file as it was read (a GenericFile)");
+            assertThat(m).contains("pollEnrich: file:customers gives it");
+            assertThat(m).contains("unmarshal: {json: {}, variableSend: customer, variableReceive: customer}");
+        });
+        // the .name form, and in a log message
+        assertThat(lines(yaml.replace("${variable.customer[name]}", "${variable.customer.name}"))).hasSize(1);
+        assertThat(lines(yaml.replace("""
+                        - setHeader:
+                            name: customerName
+                            simple: ${variable.customer[name]}
+                """, """
+                        - log: "customer ${variables.customer.name}"
+                """))).singleElement()
+                .satisfies(m -> assertThat(m).contains("(${variables.customer.name})"));
+        // what the file has, the variable itself, and the variable once unmarshalled
+        assertThat(lines(yaml.replace("${variable.customer[name]}", "${variable.customer.fileName}"))).isEmpty();
+        assertThat(lines(yaml.replace("${variable.customer[name]}", "${variable.customer}"))).isEmpty();
+        assertThat(lines(yaml.replace("""
+                        - setHeader:
+                """, """
+                        - unmarshal:
+                            json: {}
+                            variableSend: customer
+                            variableReceive: customer
+                        - setHeader:
+                """))).isEmpty();
+        // a bean may set any variable: nothing is known after it
+        assertThat(lines(yaml.replace("""
+                        - setHeader:
+                """, """
+                        - bean:
+                            ref: customers
+                        - setHeader:
+                """))).isEmpty();
+        // a setVariable of the file body is the file too
+        String copied = """
+                - route:
+                    id: copy
+                    from:
+                      uri: file:customers
+                      steps:
+                        - setVariable:
+                            name: customer
+                            simple: ${body}
+                        - setBody:
+                            constant: done
+                        - setHeader:
+                            name: customerName
+                            simple: ${variable.customer[name]}
+                """;
+        assertThat(lines(copied)).singleElement()
+                .satisfies(m -> assertThat(m).contains("simple reads a field of the variable customer"));
+    }
 }

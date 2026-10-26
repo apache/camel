@@ -18,6 +18,8 @@ package org.apache.camel.processor.groovy;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import groovy.lang.MissingPropertyException;
 import org.apache.camel.Exchange;
@@ -28,6 +30,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -135,16 +138,38 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
         assertTrue(cause.getMessage().contains("header 'skuList' is still JSON text, not parsed data"), cause.getMessage());
         assertTrue(cause.getMessage().contains("new groovy.json.JsonSlurper().parseText(headers.skuList)"),
                 cause.getMessage());
+        // the parsed data goes into a variable, not back into a header
+        assertTrue(cause.getMessage().contains("or keep the parsed data in a variable (setVariable with simple ${body}"
+                                               + " after unmarshal: json) and read variables.skuList"),
+                cause.getMessage());
     }
 
     @Test
     public void fieldReadOnTextElsewhereSaysItIsText() {
-        // a list of plain text values: an element is text, not data with fields
+        // a list of plain text values: an element is text, not data with fields, and the body needs no unmarshal
         Exception e = assertThrows(Exception.class,
                 () -> template.sendBodyAndHeader("direct:field", java.util.List.of("A1", "B2"), "sku", "A1"));
         MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("the value read here is still text (a String comes from iterating text)"),
+        assertTrue(cause.getMessage().contains("the value read here is text (a String) in the body, not an object with"
+                                               + " fields: the body is a List"),
                 cause.getMessage());
+        assertTrue(cause.getMessage().contains("which is data already, so no unmarshal is needed"), cause.getMessage());
+        assertFalse(cause.getMessage().contains("unmarshal it first"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnATextFieldOfParsedDataSaysTheBodyIsParsed() {
+        // what the benchmark wrote (r22): customer holds the customer number, and customer.customerNo reads it
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:customer", new LinkedHashMap<>(Map.of("customer", "C-482"))));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("No such property: customerNo for class: java.lang.String"),
+                cause.getMessage());
+        assertTrue(cause.getMessage().contains("the value read here is text (a String) in the body, not an object with"
+                                               + " fields: the body is a Map (LinkedHashMap), which is data already"),
+                cause.getMessage());
+        assertTrue(cause.getMessage().contains("(its keys are: customer)"), cause.getMessage());
+        assertFalse(cause.getMessage().contains("unmarshal it first"), cause.getMessage());
     }
 
     @Test
@@ -169,6 +194,7 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
                 from("direct:unknown").transform().groovy("nosuch.toUpperCase()");
                 from("direct:field").transform().groovy("body.find { it.sku == headers.sku }");
                 from("direct:read").transform().groovy("body.sku");
+                from("direct:customer").transform().groovy("body.customer.customerNo");
                 from("direct:header").transform().groovy("headers.skuList.find { it.sku == headers.sku }");
                 from("direct:message").transform().groovy("message.getHeader('name') + ' ' + message.body");
             }
