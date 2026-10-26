@@ -16,6 +16,9 @@
  */
 package org.apache.camel.support;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -39,6 +42,7 @@ public class DefaultMessageHistory implements MessageHistory {
     private boolean debugSkipOver;
     private long elapsed;
     private String bodyType;
+    private boolean bodyData;
     private long bodySize = -1;
 
     public DefaultMessageHistory(String routeId, NamedNode node) {
@@ -64,6 +68,15 @@ public class DefaultMessageHistory implements MessageHistory {
 
     public void setBodyType(String bodyType) {
         this.bodyType = bodyType;
+    }
+
+    /**
+     * Whether the body was a Map or a collection when this node was reached: data, which a marshal writes as text. Kept
+     * as the body is captured, as the class of a nested type (such as the Map of {@code Map.of}) cannot be loaded back
+     * from its canonical name.
+     */
+    public boolean isBodyData() {
+        return bodyData;
     }
 
     @Override
@@ -101,6 +114,7 @@ public class DefaultMessageHistory implements MessageHistory {
         Message current = exchange.getMessage();
         Object body = current.getBody();
         bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        bodyData = body instanceof Map<?, ?> || body instanceof Collection<?>;
         if (registry != null && routeId != null && nodeId != null) {
             registry.addBodyType(routeId, nodeId, bodyType, BodyFacts.kindOf(body));
         }

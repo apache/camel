@@ -92,6 +92,13 @@ public class BodyFactsTest extends ContextTestSupport {
                                         + " example into a variable with setVariable, or keep the data in the body and"
                                         + " marshal into a variable"),
                 seen.get(0));
+        // nested classes, whose canonical names cannot be loaded back as classes
+        seen.clear();
+        template.sendBody("direct:marshalled", Map.of("ticketId", "T-1"));
+        assertTrue(seen.get(0).contains("read the field before the marshal"), seen.get(0));
+        seen.clear();
+        template.sendBody("direct:marshalled", List.of("T-1", "T-2"));
+        assertTrue(seen.get(0).contains("read the field before the marshal"), seen.get(0));
         // a marshal of text: unmarshal was meant
         seen.clear();
         template.sendBody("direct:marshalled", "{\"ticketId\": \"T-1\"}");

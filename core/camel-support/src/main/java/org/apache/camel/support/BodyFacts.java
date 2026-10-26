@@ -303,7 +303,7 @@ public final class BodyFacts {
             }
             // the step that set the body, and the body it was reached with
             if (step.getNode() == null || !"marshal".equals(step.getNode().getShortName())
-                    || !isDataType(exchange.getContext(), type)) {
+                    || !(step instanceof DefaultMessageHistory dmh && dmh.isBodyData())) {
                 return null;
             }
             return "the " + step(step.getNode()) + " wrote it from data (" + StringHelper.afterLast(type, ".", type)
@@ -312,12 +312,6 @@ public final class BodyFacts {
                    + " variableSend)";
         }
         return null;
-    }
-
-    /** Whether a class, by its name, is a Map or a collection. */
-    private static boolean isDataType(CamelContext context, String type) {
-        Class<?> clazz = context != null ? context.getClassResolver().resolveClass(type) : null;
-        return clazz != null && (Map.class.isAssignableFrom(clazz) || Collection.class.isAssignableFrom(clazz));
     }
 
     private static String readTheDataFirst() {
