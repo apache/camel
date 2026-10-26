@@ -50,6 +50,9 @@ import org.apache.kafka.common.record.TimestampType;
  * A fake Kafka share group (KIP-932) for one topic with one partition, and fake share consumers behind the
  * {@link ShareConsumer} interface (dynamic proxies).
  * <p>
+ * Written against kafka-clients 4.3.1: when kafka-clients is upgraded, check the rules below ([A] to [X]) against the
+ * new ShareConsumerImpl and ShareInFlightBatch.
+ * <p>
  * Rules (KIP-932 and the KafkaShareConsumer Javadoc, Kafka 4.3):
  * <ul>
  * <li>[A] "records are acquired for a consumer ... with a time-limited acquisition lock"
