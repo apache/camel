@@ -59,7 +59,8 @@ marshal.
 
 - A route can opt in to work on the payload as data of one format: JSON first.
 - Inside such a route, the body has one predictable shape: Groovy `body.sku`, simple `${body.sku}` and
-  `${body[sku]}`, split and aggregate work on it without unmarshal and marshal steps.
+  `${body[sku]}`, split and aggregate work on it without unmarshal and marshal steps. Reading a few fields of the
+  payload needs no jsonpath, jq or JSON parsing code in Groovy: `body.sku` reads better than their syntax.
 - At the edges (producers, header values, what users see in logs and tooling) the payload is its text, or its bytes
   for a binary format.
 - Formats are plugins of one SPI, so CSV, XML and binary formats can be added without changing the engine.
@@ -153,7 +154,11 @@ types and file extensions, and brings its parser, its writer and its copy:
   no `Content-Type`, and a sniff of the content that a plugin can override (the first character for a text format,
   magic bytes for a binary one)
 - the engine calls `toData` only when `isPayload` is true, so there is no "not mine" result to check. When it throws,
-  the engine leaves the body as it is and logs at DEBUG: the mode never fails a message
+  it depends on what made the body a payload. Where the consumer hands the message to the route and the sender's
+  `Content-Type` names the format, the message fails with an error that says the payload is not valid JSON: the
+  sender broke its contract, and passing the body on would only fail later, in a step that reads a field. When the
+  file name or a sniff made it a payload, or after a step (see a stale `Content-Type` in the engine), the engine
+  leaves the body as it is and logs at DEBUG
 - a stream that stream caching has spooled to disk is not a payload: the spool threshold is the size limit, so the
   mode has no size option of its own
 
@@ -170,6 +175,13 @@ type check per step.
 The steps of the error paths are steps too: `onException`, `doTry` / `doCatch` / `doFinally` and the error handler
 have a channel like any other step, so the hook runs there as well. A body that is not a payload, such as an exception
 or an error text, is left as it is.
+
+*A stale `Content-Type`.* The `Content-Type` header that came with a payload stays on the message when a step turns
+the payload into another format, such as JSON that a `marshal` writes as XML, or an xslt. The data formats set the
+header of what they write (`contentTypeHeader`, on by default), but a language or an xslt step does not. So after a
+step that changed the body, a body that does not parse although the header names one of the mode's content types is
+not a broken payload but a stale header: the body is left as it is and the header is removed (logged at DEBUG), so a
+producer does not send XML as `application/json`.
 
 *Copies of the exchange.* Multicast, recipient list, wire tap and split give each branch a copy of the exchange, and
 the copies would share the same mutable data, so a branch that changes a field would change it for the others. Where
@@ -247,6 +259,53 @@ So in a route with `payloadMode=json`, with no change to the languages or the EI
 - split of a `JsonArray` gives its elements, each a `JsonObject`; aggregating them gives a `List`, which becomes a
   `JsonArray`
 
+=== A route with more than one format
+
+A route is rarely one format. Raymond Meester's order route from the review of this proposal reads JSON files and
+sends XML to a SOAP service. In `json` mode the JSON part is data, and the XML part is left as it is today:
+
+[cols="1,2,2"]
+|===
+|Step |What it does |The body in `json` mode
+
+|`from: file` (`.json` files)
+|reads an order
+|a `JsonObject` (by the file name)
+
+|`log`
+|logs the order
+|the JSON text in the log (`toDisplay`)
+
+|`split` by jsonpath `$.lines[*]`
+|one message per order line
+|each a `JsonObject` (jsonpath gives a `LinkedHashMap`, which becomes data)
+
+|`setBody` with Groovy `[sku: body.sku, qty: body.qty * 2]`
+|maps the line
+|a `JsonObject`, with no `JsonSlurper`
+
+|`marshal` with `jacksonXml`
+|JSON to XML
+|a `byte[]` of XML with `Content-Type: application/xml`, which is not JSON and is left as it is
+
+|`log`
+|logs the XML
+|the XML text, as today
+
+|`to: xslt`
+|transforms the XML
+|an XML `String`, as today
+
+|`to: spring-ws`
+|calls the SOAP service
+|the XML text
+|===
+
+The JSON to XML step is still a `marshal` through a data format; a step that converts one text format to another
+(JSON to XML, CSV to JSON) is a topic of its own. What the `json` mode leaves out: an XML or CSV payload that arrives
+at the consumer (a `.xml` file) is not JSON, so it stays a `GenericFile`. The text plugin (below) and more than one
+mode per route (`payloadMode=json,text`, an open question) close that gap.
+
 === Other formats, on paper
 
 These are not part of the first work. They are here to check that the SPI does not only fit JSON.
@@ -277,6 +336,14 @@ converters). Detection by `Content-Type` and magic bytes.
 |camel-avro, camel-protobuf, camel-thrift, camel-asn1
 |a `GenericRecord` / `DynamicMessage`, or the JSON data model through the format's JSON mapping
 |A plugin needs options (the schema).
+
+|Text
+|camel-support
+|a `String` for a text payload (JSON, XML, CSV, plain text), a `byte[]` for a binary one
+|Not a data model but the wire form: `copy` returns the same object (it does not change), and a `Map`, `List` or DOM
+`Node` that a step returns becomes text by the `Content-Type` (JSON for a `Map` or `List` by default, XML for a
+`Node`). Fields are read with jsonpath, xpath or jq, so it does not give `body.sku`. It fits routes built from steps
+that read and write text, as on the Fluxygen platform, and the second mode of a route (`payloadMode=json,text`).
 |===
 
 Parquet is a file format of many rows, not a message payload, and is not a candidate.
@@ -288,6 +355,8 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 - `unmarshal: json` gives a `Map`, which becomes data; `marshal: json` gives text, which becomes data again. Both are
   no longer needed. They do no harm to the result, but `marshal: json` costs a write and a parse back for nothing:
   `${bodyAs(String)}` is the cheap way to the JSON text inside the route.
+- Groovy code that parses the body itself, `new JsonSlurper().parseText(body)`, fails: the body is already data, and
+  `body.sku` is the field. The hint of the Groovy language (CAMEL-25749) says so in a payload mode.
 - An `unmarshal` to a class (a POJO) stays a POJO: other Java objects are left as they are.
 - Java code (`process`, `bean`) that expects the Java type of a component gets the data of the mode.
 
@@ -297,6 +366,8 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
   JSON data, and the "unmarshal it first" warnings do not apply.
 - The catalog documents the `payloadMode` option, and the body types of the payload modes.
 - Camel TUI and the MCP tools show the mode of a route.
+- The tracer, the backlog tracer and the dev consoles show the format of the body (JSON for data of the mode, or the
+  `Content-Type`) next to its Java type.
 
 === Order of work
 
@@ -314,7 +385,10 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 
 - *The body as JSON text (a `String`), parsed by each language when it reads it.* Every read parses again (or needs a
   cache), split of a `String` splits on commas, and the languages, split and aggregate all need to learn the mode.
-  JSON data in the route gives the same to users with no change to them.
+  JSON data in the route gives the same to users with no change to them. Reading a field of a text body needs
+  jsonpath, jq or JSON parsing code in Groovy (`new JsonSlurper().parseText(body)`) instead of `body.sku`. For routes
+  built from steps that read and write text, this is still useful as a plugin of its own (text, in the formats on
+  paper).
 - *Converting only at the endpoints.* Most of the drift happens inside the route: a Groovy or `process` step that
   returns a `Map`, split, aggregate. Those would keep the drift.
 - *Not converting the body, and letting each reader see a text view of it.* Cheapest, but the body's type is not
@@ -342,14 +416,15 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 - Copying the data for each branch costs a deep copy per branch, which fits the non-goal of the lowest overhead.
 - Producers that turn a `Map` into something other than the payload, and are not found by the survey, send the wrong
   thing in the mode.
-- Detection by sniffing can be wrong (a text that starts with `[`). The `Content-Type` wins, and a parse failure leaves
-  the body as it is.
+- Detection by sniffing can be wrong (a text that starts with `[`). The `Content-Type` wins, and a parse failure of a
+  sniffed body leaves it as it is.
 - The SPI is designed with one plugin. Marking it preview, and the formats on paper above, keep it open to change.
 
 == Open questions
 
 - Should a route be able to have more than one payload mode (`payloadMode=json,csv`), each claiming its payloads by
-  content type, with a `Map` from a step going to the first?
+  content type, with a `Map` from a step going to the first? `json,text` would give JSON data for JSON payloads and
+  text for XML, CSV and plain text ones, so a non-JSON file is not left as a `GenericFile`.
 - Regular type converters run before fallback converters, so at an edge the JSON text converters of `JsonObject`
   would win over a binary plugin (such as CBOR) that shares the JSON data model. Either the converter hands the
   conversion to the payload mode of the exchange when that mode claims the data (the converter gets the exchange), or
