@@ -2698,6 +2698,10 @@ With live reloading (such as `camel run --dev`), a change to application.propert
 * A bean that exists is left as it is, as components may hold it. When its properties change, a `WARN` says that a
   restart is needed.
 * A properties file that is created while the application runs is applied as well.
+* The defaults of the circuit breakers (`camel.resilience4j.*` and `camel.faulttolerance.*`) are applied as well. The
+  routes are created again after the properties reload, and a circuit breaker reads the defaults when its route is
+  created, so settings such as `slidingWindowSize` and `failureRateThreshold` can be tried out without a restart. A key
+  that is removed from the file keeps its value until a restart.
 
 `PropertiesReload` has a new default method, `onChanged`, which a properties file that changed calls with the properties
 that changed. A context reload (such as for secret rotation) still calls `onReload`.
