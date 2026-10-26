@@ -17,19 +17,14 @@
 package org.apache.camel.component.avro;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketException;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * The http consumer listens on the host of the endpoint, as the netty consumer does.
@@ -49,32 +44,14 @@ public class AvroHttpConsumerHostTest extends AvroTestSupport {
     }
 
     @Test
-    public void testListensOnConfiguredHostOnly() throws Exception {
-        InetAddress other = findNonLoopbackAddress();
-        assumeTrue(other != null, "No non-loopback IPv4 address available");
-
-        assertDoesNotThrow(() -> connect(InetAddress.getByName("127.0.0.1")));
-        assertThrows(IOException.class, () -> connect(other));
+    public void testListensOnConfiguredHostOnly() {
+        assertDoesNotThrow(() -> connect("127.0.0.1"));
+        assertThrows(IOException.class, () -> connect("127.0.0.2"));
     }
 
-    private void connect(InetAddress address) throws IOException {
+    private void connect(String host) throws IOException {
         try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(address, avroPort), 2000);
+            socket.connect(new InetSocketAddress(host, avroPort), 2000);
         }
-    }
-
-    private static InetAddress findNonLoopbackAddress() throws SocketException {
-        return NetworkInterface.networkInterfaces()
-                .filter(nic -> {
-                    try {
-                        return nic.isUp() && !nic.isLoopback();
-                    } catch (SocketException e) {
-                        return false;
-                    }
-                })
-                .flatMap(NetworkInterface::inetAddresses)
-                .filter(address -> address instanceof Inet4Address && !address.isLoopbackAddress())
-                .findFirst()
-                .orElse(null);
     }
 }
