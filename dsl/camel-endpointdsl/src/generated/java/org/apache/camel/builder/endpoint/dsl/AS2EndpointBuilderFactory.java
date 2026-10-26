@@ -662,16 +662,19 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma separated list of host names an asynchronous MDN may be
-         * delivered to. The delivery address is chosen by the sender of the AS2
-         * message, so this is the list of hosts the operator vouches for. When
-         * set, an asynchronous MDN whose delivery address names a host outside
-         * the list is refused, and the configured
-         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
-         * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached. The option
-         * applies to the consumer endpoint it is set on: consumers sharing a
-         * serverPortNumber each apply their own list.
+         * Comma separated list of hosts an asynchronous MDN may be delivered
+         * to. The delivery address is chosen by the sender of the AS2 message,
+         * so this is the list of destinations the operator vouches for. Each
+         * entry is a host with an optional port in host:port form; a bare-host
+         * entry (for example partner.example) matches only the default port for
+         * the scheme (80 or 443), so a non-default port is listed explicitly
+         * (for example partner.example:8443). When set, an asynchronous MDN
+         * whose delivery address is not on the list is refused, and the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached only
+         * to an address on the list. When not set, the MDN is still delivered
+         * to the sender-supplied address but no credentials are attached. The
+         * option applies to the consumer endpoint it is set on: consumers
+         * sharing a serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -682,6 +685,52 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder asyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
             doSetProperty("asyncMdnAllowedHosts", asyncMdnAllowedHosts);
+            return this;
+        }
+        /**
+         * Whether an asynchronous MDN may only be delivered over https. The
+         * delivery address, including its scheme, is chosen by the sender of
+         * the AS2 message; by default both http and https are accepted. When
+         * set to true, an asynchronous MDN whose delivery address does not use
+         * https is refused, before the connection is opened and before the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
+         * the credentials are never sent in cleartext to a sender-chosen
+         * address. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own value.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param asyncMdnRequireHttps the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder asyncMdnRequireHttps(boolean asyncMdnRequireHttps) {
+            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
+            return this;
+        }
+        /**
+         * Whether an asynchronous MDN may only be delivered over https. The
+         * delivery address, including its scheme, is chosen by the sender of
+         * the AS2 message; by default both http and https are accepted. When
+         * set to true, an asynchronous MDN whose delivery address does not use
+         * https is refused, before the connection is opened and before the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
+         * the credentials are never sent in cleartext to a sender-chosen
+         * address. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own value.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param asyncMdnRequireHttps the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder asyncMdnRequireHttps(String asyncMdnRequireHttps) {
+            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
             return this;
         }
         /**
@@ -1882,16 +1931,19 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma separated list of host names an asynchronous MDN may be
-         * delivered to. The delivery address is chosen by the sender of the AS2
-         * message, so this is the list of hosts the operator vouches for. When
-         * set, an asynchronous MDN whose delivery address names a host outside
-         * the list is refused, and the configured
-         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
-         * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached. The option
-         * applies to the consumer endpoint it is set on: consumers sharing a
-         * serverPortNumber each apply their own list.
+         * Comma separated list of hosts an asynchronous MDN may be delivered
+         * to. The delivery address is chosen by the sender of the AS2 message,
+         * so this is the list of destinations the operator vouches for. Each
+         * entry is a host with an optional port in host:port form; a bare-host
+         * entry (for example partner.example) matches only the default port for
+         * the scheme (80 or 443), so a non-default port is listed explicitly
+         * (for example partner.example:8443). When set, an asynchronous MDN
+         * whose delivery address is not on the list is refused, and the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached only
+         * to an address on the list. When not set, the MDN is still delivered
+         * to the sender-supplied address but no credentials are attached. The
+         * option applies to the consumer endpoint it is set on: consumers
+         * sharing a serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1902,6 +1954,52 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder asyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
             doSetProperty("asyncMdnAllowedHosts", asyncMdnAllowedHosts);
+            return this;
+        }
+        /**
+         * Whether an asynchronous MDN may only be delivered over https. The
+         * delivery address, including its scheme, is chosen by the sender of
+         * the AS2 message; by default both http and https are accepted. When
+         * set to true, an asynchronous MDN whose delivery address does not use
+         * https is refused, before the connection is opened and before the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
+         * the credentials are never sent in cleartext to a sender-chosen
+         * address. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own value.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param asyncMdnRequireHttps the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder asyncMdnRequireHttps(boolean asyncMdnRequireHttps) {
+            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
+            return this;
+        }
+        /**
+         * Whether an asynchronous MDN may only be delivered over https. The
+         * delivery address, including its scheme, is chosen by the sender of
+         * the AS2 message; by default both http and https are accepted. When
+         * set to true, an asynchronous MDN whose delivery address does not use
+         * https is refused, before the connection is opened and before the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
+         * the credentials are never sent in cleartext to a sender-chosen
+         * address. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own value.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param asyncMdnRequireHttps the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder asyncMdnRequireHttps(String asyncMdnRequireHttps) {
+            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
             return this;
         }
         /**
@@ -2968,16 +3066,19 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma separated list of host names an asynchronous MDN may be
-         * delivered to. The delivery address is chosen by the sender of the AS2
-         * message, so this is the list of hosts the operator vouches for. When
-         * set, an asynchronous MDN whose delivery address names a host outside
-         * the list is refused, and the configured
-         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
-         * the list. When not set, the MDN is still delivered to the
-         * sender-supplied address but no credentials are attached. The option
-         * applies to the consumer endpoint it is set on: consumers sharing a
-         * serverPortNumber each apply their own list.
+         * Comma separated list of hosts an asynchronous MDN may be delivered
+         * to. The delivery address is chosen by the sender of the AS2 message,
+         * so this is the list of destinations the operator vouches for. Each
+         * entry is a host with an optional port in host:port form; a bare-host
+         * entry (for example partner.example) matches only the default port for
+         * the scheme (80 or 443), so a non-default port is listed explicitly
+         * (for example partner.example:8443). When set, an asynchronous MDN
+         * whose delivery address is not on the list is refused, and the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached only
+         * to an address on the list. When not set, the MDN is still delivered
+         * to the sender-supplied address but no credentials are attached. The
+         * option applies to the consumer endpoint it is set on: consumers
+         * sharing a serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2988,6 +3089,52 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder asyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
             doSetProperty("asyncMdnAllowedHosts", asyncMdnAllowedHosts);
+            return this;
+        }
+        /**
+         * Whether an asynchronous MDN may only be delivered over https. The
+         * delivery address, including its scheme, is chosen by the sender of
+         * the AS2 message; by default both http and https are accepted. When
+         * set to true, an asynchronous MDN whose delivery address does not use
+         * https is refused, before the connection is opened and before the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
+         * the credentials are never sent in cleartext to a sender-chosen
+         * address. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own value.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param asyncMdnRequireHttps the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder asyncMdnRequireHttps(boolean asyncMdnRequireHttps) {
+            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
+            return this;
+        }
+        /**
+         * Whether an asynchronous MDN may only be delivered over https. The
+         * delivery address, including its scheme, is chosen by the sender of
+         * the AS2 message; by default both http and https are accepted. When
+         * set to true, an asynchronous MDN whose delivery address does not use
+         * https is refused, before the connection is opened and before the
+         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
+         * the credentials are never sent in cleartext to a sender-chosen
+         * address. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own value.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param asyncMdnRequireHttps the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder asyncMdnRequireHttps(String asyncMdnRequireHttps) {
+            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
             return this;
         }
         /**

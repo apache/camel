@@ -57,7 +57,7 @@ public class AS2AsyncMdnContextReuseTest extends AbstractAS2ITSupport {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2AsyncMdnContextReuseTest Server", "server.example.com", 0,
                 AS2SignatureAlgorithm.SHA256WITHRSA, null, null, null, "TBD", null, null,
-                null, null, null, "localhost");
+                null, null, null, "localhost:" + jettyPort.getPort());
         targetPort = serverConnection.getLocalPort();
         serverConnection.listen("/", new AS2AsyncMDNServerManagerIT.RequestHandler());
     }
