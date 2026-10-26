@@ -63,6 +63,14 @@ With `includeTrace=true`, the URI of the from endpoint in the SQL comment is now
 an endpoint URI, and it is left out when the exchange has no from endpoint, which failed with a `NullPointerException`
 before.
 
+=== camel-avro-rpc - the http consumer listens on the host of the endpoint
+
+The `avro:http` consumer now uses the host of the endpoint URI (`avro:http:[host]:[port]`) for its HTTP server, as the `avro:netty` consumer does.
+
+Use `0.0.0.0` as the host to accept connections on all network interfaces.
+
+`AvroRpcHttpServerFactory` has a new method `create(SpecificResponder, String, int)` that receives the host. A custom factory should implement it.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-docling - output path handling
@@ -1875,11 +1883,3 @@ now refuses to send a request path, query or header value that contains a contro
 framing, are still allowed. Routes that put a percent-encoded control character (such as `%0D%0A`) into the
 `CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
 likely to be affected.
-
-=== camel-avro-rpc - the http consumer listens on the host of the endpoint
-
-The `avro:http` consumer now uses the host of the endpoint URI (`avro:http:[host]:[port]`) for its HTTP server, as the `avro:netty` consumer does.
-
-Use `0.0.0.0` as the host to accept connections on all network interfaces.
-
-`AvroRpcHttpServerFactory` has a new method `create(SpecificResponder, String, int)` that receives the host. A custom factory should implement it.
