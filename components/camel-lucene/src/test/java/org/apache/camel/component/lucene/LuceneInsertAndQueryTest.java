@@ -122,6 +122,23 @@ class LuceneInsertAndQueryTest extends CamelTestSupport {
     }
 
     @Test
+    void headersNamedLikeTheExchangeFieldsDoNotReplaceThem() {
+        Exchange inserted = template.send("direct:insert", e -> {
+            e.getIn().setHeader("contents", "header value");
+            e.getIn().setHeader("exchangeId", "header id");
+            e.getIn().setBody("the real body");
+        });
+        assertNull(inserted.getException(), "insert");
+
+        Hits hits = query("direct:query", "real");
+        assertEquals(1, hits.getNumberOfHits());
+        Hit hit = hits.getHit().get(0);
+        assertEquals("the real body", hit.getData(), "a header named contents must not replace the body");
+        assertEquals(inserted.getExchangeId(), hit.getDocument().get("exchangeId"),
+                "a header named exchangeId must not replace the exchange id");
+    }
+
+    @Test
     void sourceFileIsFoundByQueryWithItsPath() throws Exception {
         // the source directory is indexed when the insert endpoint is created
         Exchange inserted = template.send("direct:insertWithSrcDir", e -> e.getIn().setBody("unrelated"));

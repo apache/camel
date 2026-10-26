@@ -78,19 +78,21 @@ public class LuceneIndexer {
         try {
             // one document per exchange, so a hit on the body or on a header gives all the fields of its exchange
             Document doc = new Document();
-            Map<String, Object> headers = exchange.getIn().getHeaders();
+            // before the headers: Document.get returns the first value of a field, so a header named
+            // exchangeId or contents does not replace them in the hit
             add(doc, "exchangeId", exchange.getExchangeId(), true);
+            add(doc, "contents", exchange.getIn().getMandatoryBody(String.class), true);
+            Map<String, Object> headers = exchange.getIn().getHeaders();
             for (Entry<String, Object> entry : headers.entrySet()) {
                 String field = entry.getKey();
                 String value = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, entry.getValue());
                 add(doc, field, value, true);
             }
 
-            add(doc, "contents", exchange.getIn().getMandatoryBody(String.class), true);
             indexWriter.addDocument(doc);
             indexWriter.commit();
         } catch (Exception e) {
-            // discard the documents of this exchange and release the index write lock
+            // discard the document of this exchange and release the index write lock
             try {
                 indexWriter.rollback();
             } catch (Exception re) {
