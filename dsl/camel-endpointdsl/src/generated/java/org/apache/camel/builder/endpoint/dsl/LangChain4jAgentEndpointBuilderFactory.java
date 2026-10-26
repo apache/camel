@@ -377,7 +377,7 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * LangChain4j embedding model used when toolSearchStrategy=vector.
+         * LangChain4j embedding model used when toolSearchStrategy=VECTOR.
          * Required for vector search.
          * 
          * The option is a:
@@ -393,7 +393,7 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * LangChain4j embedding model used when toolSearchStrategy=vector.
+         * LangChain4j embedding model used when toolSearchStrategy=VECTOR.
          * Required for vector search.
          * 
          * The option will be converted to a
@@ -441,8 +441,8 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -450,7 +450,7 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: producer
          * 
          * @param toolSearchStrategy the value to set
@@ -461,8 +461,8 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -470,7 +470,7 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: producer
          * 
          * @param toolSearchStrategy the value to set

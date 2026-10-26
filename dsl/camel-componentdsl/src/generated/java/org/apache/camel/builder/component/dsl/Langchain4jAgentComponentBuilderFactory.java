@@ -285,7 +285,7 @@ public interface Langchain4jAgentComponentBuilderFactory {
         }
     
         /**
-         * LangChain4j embedding model used when toolSearchStrategy=vector.
+         * LangChain4j embedding model used when toolSearchStrategy=VECTOR.
          * Required for vector search.
          * 
          * The option is a:
@@ -321,15 +321,15 @@ public interface Langchain4jAgentComponentBuilderFactory {
     
         
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.ai.tool.AiToolSearchStrategy&lt;/code&gt; type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: producer
          * 
          * @param toolSearchStrategy the value to set

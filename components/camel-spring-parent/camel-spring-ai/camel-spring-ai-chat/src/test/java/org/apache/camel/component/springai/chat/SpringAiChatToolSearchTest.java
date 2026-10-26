@@ -216,7 +216,7 @@ class SpringAiChatToolSearchTest extends CamelTestSupport {
                         .to("spring-ai-chat:chat?chatModel=#chatModel&tags=erp&toolSearch=true&toolSearchMaxResults=5");
                 from("direct:vector")
                         .to("spring-ai-chat:chat?chatModel=#chatModel&tags=erp&toolSearch=true"
-                            + "&toolSearchMaxResults=1&toolSearchStrategy=vector"
+                            + "&toolSearchMaxResults=1&toolSearchStrategy=VECTOR"
                             + "&toolSearchEmbeddingModel=#embeddingModel");
             }
         };

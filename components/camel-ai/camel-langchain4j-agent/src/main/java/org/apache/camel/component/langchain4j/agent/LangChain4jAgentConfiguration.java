@@ -140,16 +140,16 @@ public class LangChain4jAgentConfiguration implements Cloneable {
               description = "Maximum number of tools returned by one tool search. Route and MCP tools are ranked together.")
     private int toolSearchMaxResults = AiToolSearch.DEFAULT_MAX_RESULTS;
 
-    @UriParam(enums = "keyword,vector", defaultValue = "keyword")
+    @UriParam(enums = "KEYWORD,VECTOR", defaultValue = "KEYWORD")
     @Metadata(label = "producer",
-              description = "How tool search ranks route and MCP tools. 'keyword' matches the tool name and description. "
-                            + "'vector' uses cosine similarity and requires toolSearchEmbeddingModel. Vector search "
+              description = "How tool search ranks route and MCP tools. 'KEYWORD' matches the tool name and description. "
+                            + "'VECTOR' uses cosine similarity and requires toolSearchEmbeddingModel. Vector search "
                             + "does not fall back to keyword search.")
     private AiToolSearchStrategy toolSearchStrategy = AiToolSearchStrategy.KEYWORD;
 
     @UriParam
     @Metadata(label = "producer", autowired = true,
-              description = "LangChain4j embedding model used when toolSearchStrategy=vector. Required for vector search.")
+              description = "LangChain4j embedding model used when toolSearchStrategy=VECTOR. Required for vector search.")
     private EmbeddingModel toolSearchEmbeddingModel;
 
     public LangChain4jAgentConfiguration() {

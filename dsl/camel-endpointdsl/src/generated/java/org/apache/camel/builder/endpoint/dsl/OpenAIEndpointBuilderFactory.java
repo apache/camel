@@ -2005,7 +2005,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Embedding model used when toolSearchStrategy=vector, for example
+         * Embedding model used when toolSearchStrategy=VECTOR, for example
          * text-embedding-3-small. Required for vector search. It is not read
          * from the embeddings operation model option.
          * 
@@ -2053,8 +2053,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -2062,7 +2062,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: common
          * 
          * @param toolSearchStrategy the value to set
@@ -2073,8 +2073,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -2082,7 +2082,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: common
          * 
          * @param toolSearchStrategy the value to set
@@ -4567,7 +4567,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Embedding model used when toolSearchStrategy=vector, for example
+         * Embedding model used when toolSearchStrategy=VECTOR, for example
          * text-embedding-3-small. Required for vector search. It is not read
          * from the embeddings operation model option.
          * 
@@ -4615,8 +4615,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -4624,7 +4624,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: common
          * 
          * @param toolSearchStrategy the value to set
@@ -4635,8 +4635,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -4644,7 +4644,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: common
          * 
          * @param toolSearchStrategy the value to set
@@ -6978,7 +6978,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Embedding model used when toolSearchStrategy=vector, for example
+         * Embedding model used when toolSearchStrategy=VECTOR, for example
          * text-embedding-3-small. Required for vector search. It is not read
          * from the embeddings operation model option.
          * 
@@ -7026,8 +7026,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -7035,7 +7035,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: common
          * 
          * @param toolSearchStrategy the value to set
@@ -7046,8 +7046,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -7055,7 +7055,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: common
          * 
          * @param toolSearchStrategy the value to set

@@ -233,7 +233,7 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * Spring AI embedding model used when toolSearchStrategy=vector.
+         * Spring AI embedding model used when toolSearchStrategy=VECTOR.
          * Required for vector search.
          * 
          * The option is a:
@@ -249,7 +249,7 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * Spring AI embedding model used when toolSearchStrategy=vector.
+         * Spring AI embedding model used when toolSearchStrategy=VECTOR.
          * Required for vector search.
          * 
          * The option will be converted to a
@@ -297,8 +297,8 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -306,7 +306,7 @@ public interface SpringAiChatEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: producer
          * 
          * @param toolSearchStrategy the value to set
@@ -317,8 +317,8 @@ public interface SpringAiChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * How tool search ranks route and MCP tools. 'keyword' matches the tool
-         * name and description. 'vector' uses cosine similarity and requires
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
          * toolSearchEmbeddingModel. Vector search does not fall back to keyword
          * search.
          * 
@@ -326,7 +326,7 @@ public interface SpringAiChatEndpointBuilderFactory {
          * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
          * type.
          * 
-         * Default: keyword
+         * Default: KEYWORD
          * Group: producer
          * 
          * @param toolSearchStrategy the value to set
