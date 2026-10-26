@@ -544,11 +544,14 @@ class CatalogDocsTest {
         assertTrue(o.getString("note").contains("not a component"), o.getString("note"));
         assertTrue(json.contains("camel.resilience4j.failureRateThreshold"), json);
         // the route first: asked this way to "add a resilience4jConfiguration", a model wrote the keys to
-        // application.properties, which the reload did not apply (the local-model benchmark)
+        // application.properties instead of configuring the circuit breaker of its route (the local-model benchmark)
         String note = o.getString("note");
         assertTrue(note.contains("set its options in the route, under circuitBreaker: resilience4jConfiguration:"), note);
         assertTrue(note.indexOf("circuitBreaker:") < note.indexOf("camel.resilience4j.*"), note);
-        assertTrue(note.contains("a reload of the running integration does not apply them"), note);
+        // a reload applies the defaults of the circuit breakers (CAMEL-26320)
+        assertFalse(note.contains("does not apply"), note);
+        assertFalse(catalogDoc(Map.of("name", "camel.resilience4j.slidingWindowSize")).getString("note")
+                .contains("does not apply"));
         assertEquals("circuitBreaker: {resilience4jConfiguration: {...}}", o.getString("inTheRoute"));
         JsonObject faultTolerance = catalogDoc(Map.of("name", "faulttolerance", "kind", "component"));
         assertEquals("circuitBreaker: {faultToleranceConfiguration: {...}}", faultTolerance.getString("inTheRoute"));

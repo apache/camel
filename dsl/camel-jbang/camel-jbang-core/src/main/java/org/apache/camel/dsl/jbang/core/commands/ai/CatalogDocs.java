@@ -987,19 +987,20 @@ public final class CatalogDocs {
             result.put("note", "the " + group + ".* keys go in application.properties and are read by camel run and"
                                + " camel export, not by the Camel application itself");
         } else if (matched != null) {
+            // a reload applies the defaults of the circuit breakers (CAMEL-26320), not the other main options
             result.put("note", matched.getName() + " is a key for application.properties (camel run and Camel Main read"
-                               + " it at startup, so a reload of the running integration does not apply it); the other "
-                               + group + ".* keys follow it");
+                               + " it at startup" + (CIRCUIT_BREAKER_CONFIGURATIONS.containsKey(group)
+                                       ? "" : ", so a reload of the running integration does not apply it")
+                               + "); the other " + group + ".* keys follow it");
         } else if (CIRCUIT_BREAKER_CONFIGURATIONS.containsKey(group)) {
             // asked for "resilience4j" as a component to "add a resilience4jConfiguration", a model wrote these keys to
-            // application.properties, the reload did not apply them, and the circuit breaker never opened (4 of 7 runs
-            // of a step in the local-model benchmark)
+            // application.properties instead of configuring the circuit breaker of its route (4 of 7 runs of a step in
+            // the local-model benchmark)
             String eipOption = CIRCUIT_BREAKER_CONFIGURATIONS.get(group);
             result.put("note", name + " is not a component: it runs the circuitBreaker EIP. To configure a circuit breaker,"
                                + " set its options in the route, under circuitBreaker: " + eipOption + ": (camel_catalog_doc"
                                + " name=" + eipOption + " kind=eip has them). The " + group + ".* keys below are the"
-                               + " defaults of every circuit breaker, for application.properties: camel run reads them at"
-                               + " startup, so a reload of the running integration does not apply them");
+                               + " defaults of every circuit breaker, for application.properties");
             result.put("inTheRoute", "circuitBreaker: {" + eipOption + ": {...}}");
         } else {
             result.put("note", name + " is not a component: these are the " + group + ".* keys for"

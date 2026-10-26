@@ -1745,8 +1745,6 @@ public final class AuthoringTools {
         if (watch) {
             sinceKey = ReloadOutcome.latestReloadKey(ReloadOutcome.records(watchPid, processName));
         }
-        // the keys of a properties file that a reload does not apply are told after the write
-        String previousProperties = file.toLowerCase(Locale.ROOT).endsWith(".properties") ? (exists ? read(path) : "") : null;
         try {
             Files.createDirectories(path.getParent());
             Files.writeString(path, content, StandardCharsets.UTF_8);
@@ -1823,15 +1821,6 @@ public final class AuthoringTools {
         if (replyByHand) {
             result.put("message", result.getString("message") + " Note: a JMS reply header is set by hand, and nothing"
                                   + " is sent with pattern: InOut (see notes).");
-        }
-        String circuitBreakerKeys
-                = previousProperties != null ? PropertiesChecks.circuitBreakerKeysNote(previousProperties, content) : null;
-        if (circuitBreakerKeys != null) {
-            JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
-            notes.add(circuitBreakerKeys);
-            result.put("notes", notes);
-            result.put("message", result.getString("message") + " Note: circuit breaker keys are read at startup, and a"
-                                  + " reload does not apply them (see notes).");
         }
         if (!repaired.isEmpty()) {
             result.put("repaired", new JsonArray(repaired));
