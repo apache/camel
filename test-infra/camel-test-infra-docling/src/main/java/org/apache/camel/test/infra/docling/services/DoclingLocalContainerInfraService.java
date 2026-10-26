@@ -68,6 +68,8 @@ public class DoclingLocalContainerInfraService implements DoclingInfraService, C
                 waitingFor(Wait.forListeningPorts(DOCLING_PORT))
                         .withStartupTimeout(Duration.ofMinutes(3L));
 
+                withEnv("DOCLING_SERVE_MAX_SYNC_WAIT", "300");
+
                 ContainerEnvironmentUtil.configurePort(this, fixedPort, DOCLING_PORT);
             }
         }

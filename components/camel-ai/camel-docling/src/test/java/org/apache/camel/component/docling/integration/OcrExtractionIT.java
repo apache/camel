@@ -179,6 +179,7 @@ class OcrExtractionIT extends CamelTestSupport {
                 .as("OCR should extract at least some of the expected text. Got: %s", result)
                 .isTrue();
 
+        // Docling recognizes the footer but classifies it as page furniture, which the default body export excludes.
         // Note: footer classification behavior changed in docling-serve v1.37.0.
         // The footer text may or may not be included depending on the version's classification model.
         // We log the result for informational purposes but do not assert on footer presence.
