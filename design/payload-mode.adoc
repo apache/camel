@@ -101,6 +101,9 @@ marshal.
 - The value is the name of a payload mode plugin. `default` (the default) means no payload mode: today's behaviour.
 - A route has one payload mode. The value is a single name, so a list (`json,csv`) can be added later without
   breaking it.
+- `payloadModeStrict` (off by default) makes the route accept only payloads of its mode from the consumer:
+  `camel.main.payloadModeStrict = true` for all the routes, and a route can set its own `payloadModeStrict` to turn
+  it on or off (see the strict mode in the engine).
 
 === The SPI
 
@@ -154,11 +157,8 @@ types and file extensions, and brings its parser, its writer and its copy:
   no `Content-Type`, and a sniff of the content that a plugin can override (the first character for a text format,
   magic bytes for a binary one)
 - the engine calls `toData` only when `isPayload` is true, so there is no "not mine" result to check. When it throws,
-  it depends on what made the body a payload. Where the consumer hands the message to the route and the sender's
-  `Content-Type` names the format, the message fails with an error that says the payload is not valid JSON: the
-  sender broke its contract, and passing the body on would only fail later, in a step that reads a field. When the
-  file name or a sniff made it a payload, or after a step (see a stale `Content-Type` in the engine), the engine
-  leaves the body as it is and logs at DEBUG
+  the engine leaves the body as it is and logs at DEBUG: by default the mode never fails a message (see the strict
+  mode in the engine for a route that wants it to)
 - a stream that stream caching has spooled to disk is not a payload: the spool threshold is the size limit, so the
   mode has no size option of its own
 
@@ -182,6 +182,16 @@ header of what they write (`contentTypeHeader`, on by default), but a language o
 step that changed the body, a body that does not parse although the header names one of the mode's content types is
 not a broken payload but a stale header: the body is left as it is and the header is removed (logged at DEBUG), so a
 producer does not send XML as `application/json`.
+
+*The strict mode.* By default the mode never fails a message: a body that is not a payload of the mode, or does not
+parse, is left as it is. A route with `payloadModeStrict` accepts only payloads of its mode from the consumer, so in
+`json` mode only valid JSON. Before the first step, a body that is not data of the mode fails the message with an
+`InvalidPayloadException`, whose hint says why: the parse error of invalid JSON, or the Java type and `Content-Type`
+of a body that is not JSON at all (a CSV file in a json route, an object of a component's SDK). The check runs in the
+channel of the first step, inside the error handler, so `onException` and the error handler of the route handle it
+like any failed message, and an http consumer answers with an error. A null or empty body passes (a timer, an http
+`GET`): there is no payload to check. Only what comes in at the consumer is checked: after a step, a body that is not
+data is the route's own doing (a step that writes XML), and is left as it is.
 
 *Copies of the exchange.* Multicast, recipient list, wire tap and split give each branch a copy of the exchange, and
 the copies would share the same mutable data, so a branch that changes a field would change it for the others. Where
@@ -373,8 +383,8 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 
 . camel-core, on its own first: the type converters from `JsonObject` and `JsonArray` to their JSON text
   (CAMEL-26324), which are useful without a payload mode.
-. camel-core: the `payloadMode` option (camel-api, camel-main, the model and the YAML and XML DSLs), the SPI and its
-  base class, the engine (the hooks, the copy for the branches of an EIP, header values, display), the json plugin, a
+. camel-core: the `payloadMode` and `payloadModeStrict` options (camel-api, camel-main, the model and the YAML and
+  XML DSLs), the SPI and its base class, the engine (the hooks, the copy for the branches of an EIP, header values, display), the json plugin, a
   user manual page, and tests that run the examples of the motivation in both modes. The fallback converter for
   plugins without regular converters comes with the first such plugin.
 . Components: JMS and SJMS, and the survey of the producers that turn a `Map` into something else.
@@ -416,8 +426,8 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 - Copying the data for each branch costs a deep copy per branch, which fits the non-goal of the lowest overhead.
 - Producers that turn a `Map` into something other than the payload, and are not found by the survey, send the wrong
   thing in the mode.
-- Detection by sniffing can be wrong (a text that starts with `[`). The `Content-Type` wins, and a parse failure of a
-  sniffed body leaves it as it is.
+- Detection by sniffing can be wrong (a text that starts with `[`). The `Content-Type` wins, and a parse failure leaves
+  the body as it is, unless the route is strict.
 - The SPI is designed with one plugin. Marking it preview, and the formats on paper above, keep it open to change.
 
 == Open questions
@@ -430,6 +440,7 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
   conversion to the payload mode of the exchange when that mode claims the data (the converter gets the exchange), or
   each binary plugin has a data type of its own.
 - The marker type for CSV rows, and the data type of XML (DOM, or a Groovy-friendly view).
+- Should the strict mode also check the reply of a producer, such as an http call that answers with an HTML error page?
 
 == Related tickets
 
