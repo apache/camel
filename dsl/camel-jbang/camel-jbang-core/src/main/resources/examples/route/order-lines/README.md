@@ -1,7 +1,7 @@
 # Order lines
 
 An order is one message with several lines; the warehouse picks one line at a time. The splitter turns the order
-into one message per line, and the order id travels along in a header.
+into one message per line, and the order id travels along in a variable.
 
 ## What you will see
 
@@ -32,8 +32,9 @@ can be repeated.
 
 - The order is parsed with `unmarshal` and `json`, so `${body[lines]}` is a list and `${body[lines].size()}` its
   length.
-- `setHeader` keeps the order id before the split: headers are copied to every split message, so each pick line
-  knows its order.
+- `setVariable` keeps the order id before the split: every split message gets a copy of the variables, so each pick
+  line knows its order. A variable, not a header: a header is sent on with the message to the next endpoint, and
+  the order id is only for the route itself.
 - `split` with `${body[lines]}` runs its steps once per line with that line as the body; `CamelSplitIndex` and
   `CamelSplitSize` are available inside if a count is needed.
 - After the split the route continues with the original order, which logs the confirmation.
@@ -42,7 +43,7 @@ can be repeated.
 
 1. A `file` route on `orders` that unmarshals each order and logs the number of lines.
 2. Add `split` over `${body[lines]}` and log `${body[sku]}` inside it.
-3. Keep the order id in a header before the split and use it in the pick line.
+3. Keep the order id in a variable before the split and use it in the pick line.
 4. Log the confirmation after the split and notice the body is the whole order again.
 
 ## Try changing

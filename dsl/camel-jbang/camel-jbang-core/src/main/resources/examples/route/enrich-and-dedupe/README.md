@@ -37,8 +37,8 @@ The copies of the accepted orders land in `audit/`. Stop the example with `ctrl`
 - `idempotentConsumer` computes the order id with Simple and checks it against the repository. With
   `skipDuplicate: false` a duplicate is not dropped but marked with the exchange property `CamelDuplicateMessage`,
   so the `choice` can log it.
-- `pollEnrich` reads the customer's file. The file name is computed into a header first: the file consumer that
-  `pollEnrich` uses evaluates `fileName` with the headers of the message, not its body. `variableReceive: customer`
+- `pollEnrich` reads the customer's file. The file name is computed into a variable first: the file consumer that
+  `pollEnrich` uses evaluates `fileName` with the variables and headers of the message, not its body. `variableReceive: customer`
   keeps the customer in a variable, so the order stays the body, and `unmarshal` with `variableSend` and
   `variableReceive` parses the variable in place.
 - `wireTap` sends a copy of the order to the `audit` route and goes on at once: the audit never holds the order up.
