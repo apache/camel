@@ -269,11 +269,16 @@ final class SimpleChecks {
 
     /**
      * A value of the ternary: bare text is quoted, a quoted literal, a function, a number, true, false and null not.
+     * Text with a single quote of its own (O'Brien) is quoted with double quotes, and text with both quotes stays as
+     * written.
      */
     private static String quoted(String value) {
         if (value.isEmpty() || value.startsWith("'") || value.startsWith("\"") || value.startsWith("${")
-                || value.matches("-?\\d+(\\.\\d+)?|true|false|null") || value.contains("'")) {
+                || value.matches("-?\\d+(\\.\\d+)?|true|false|null")) {
             return value;
+        }
+        if (value.contains("'")) {
+            return value.contains("\"") ? value : "\"" + value + "\"";
         }
         return "'" + value + "'";
     }

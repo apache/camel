@@ -453,6 +453,9 @@ class SourceValidatorSimpleTest {
         // two functions compared: the condition starts with the first of them
         assertThat(rewritten("${header.a} == ${header.b} ? same : 2"))
                 .isEqualTo("${header.a == ${header.b} ? 'same' : 2}");
+        // a value with a single quote of its own is quoted with double quotes
+        assertThat(rewritten("${header.vip} == true ? guest : O'Brien"))
+                .isEqualTo("${header.vip == true ? 'guest' : \"O'Brien\"}");
         // no function before the ?: no rewrite, the message keeps its example
         assertThat(SimpleChecks.topLevelTernary("Total 5 > 3 ? ${header.a} : no"))
                 .endsWith("as in ${body.size() == 0 ? ${null} : ${body[0]}}");
@@ -464,6 +467,15 @@ class SourceValidatorSimpleTest {
                       - setBody:
                           simple: "%s"
                 """.formatted(rewritten("${header.CamelTimerCounter} == 1 ? 'order.json' : 'order-bad-email.json'")),
+                catalog)).isEmpty();
+        assertThat(SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: |-
+                            %s
+                """.formatted(rewritten("${header.vip} == true ? guest : O'Brien")),
                 catalog)).isEmpty();
     }
 
