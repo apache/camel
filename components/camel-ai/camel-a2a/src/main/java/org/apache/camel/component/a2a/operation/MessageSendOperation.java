@@ -50,6 +50,7 @@ public class MessageSendOperation implements A2AOperation {
 
         if (body instanceof Message msg) {
             // Identity distinguishes the original consumer message from route-supplied copies, even value-equal ones.
+            // Removing the consumer-owned REQUEST_MESSAGE property disables stripping of the incoming task/context IDs.
             message = msg == exchange.getProperty(A2AConstants.REQUEST_MESSAGE)
                     ? Message.builder(msg).taskId(null).contextId(null).build() : msg;
         } else {
