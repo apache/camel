@@ -629,17 +629,47 @@ public class SubscriptionManager {
             });
         }
 
+        /**
+         * Closes the connection and waits until the client has disconnected.
+         */
         public void dispose() {
-            if (this.listener.closed) {
+            if (!close()) {
                 return;
             }
-            // the session closed by the disconnect is no loss of communication
-            this.listener.closed = true;
             try {
                 this.client.disconnect();
             } catch (final UaException e) {
                 LOG.warn("Failed to disconnect client", e);
             }
+        }
+
+        /**
+         * Closes a connection that failed, without waiting until the client has disconnected. The server may not answer
+         * the CloseSession request of the client on a link that failed, which then waits until the request times out or
+         * a reconnect attempt of the channel fails, while the caller holds {@code lock}, on the thread that starts or
+         * stops a consumer or on the reconnect thread, and the connection is only rebuilt after it.
+         */
+        public void disposeFailed() {
+            if (!close()) {
+                return;
+            }
+            this.client.disconnectAsync().whenComplete((disconnected, e) -> {
+                if (e != null) {
+                    LOG.warn("Failed to disconnect client", e);
+                }
+            });
+        }
+
+        /**
+         * @return whether the connection was open: it is closed once
+         */
+        private boolean close() {
+            if (this.listener.closed) {
+                return false;
+            }
+            // the session closed by the disconnect is no loss of communication
+            this.listener.closed = true;
+            return true;
         }
 
         /**
@@ -1284,7 +1314,7 @@ public class SubscriptionManager {
                 // the nodes lose their communication with the connection, after the values it still delivers
                 reportLoss(failed.manager, failed.generation, this.subscriptions);
                 failed.cancelRetry();
-                failed.dispose();
+                failed.disposeFailed();
             }
 
             // log
@@ -1347,7 +1377,7 @@ public class SubscriptionManager {
                 } catch (final Exception e) {
                     LOG.info("Failed to set subscriptions", e);
                     connected.cancelRetry();
-                    connected.dispose();
+                    connected.disposeFailed();
                     throw e;
                 }
             } finally {
