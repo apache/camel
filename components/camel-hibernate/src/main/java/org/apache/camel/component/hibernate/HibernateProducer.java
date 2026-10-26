@@ -148,7 +148,7 @@ public class HibernateProducer extends DefaultProducer {
                     transaction.commit();
                     activeSession.close();
                 }
-            } else if (endpoint.getSelectionQuery() != null) {
+            } else if (endpoint.getSelectionQuery() != null && !endpoint.getSelectionQuery().isBlank()) {
                 SelectionQuery<?> query = activeSession.createSelectionQuery(
                         endpoint.getSelectionQuery(), endpoint.getEntityType());
 

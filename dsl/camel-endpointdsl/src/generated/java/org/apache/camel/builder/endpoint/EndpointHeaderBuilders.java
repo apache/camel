@@ -1857,7 +1857,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Camel Hibernate Component
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
      * 
      * Category: database
      * Since: 4.24

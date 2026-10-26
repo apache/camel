@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
@@ -106,6 +107,13 @@ public class HibernateConsumer extends ScheduledPollConsumer {
 
                         if (exchange.getException() != null) {
                             throw exchange.getException();
+                        } else if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
+                            throw new RollbackExchangeException(
+                                    "Rollback poll transaction: exchange marked rollback only", exchange);
+                        } else if (transaction.getRollbackOnly()) {
+                            throw new IllegalStateException(
+                                    "The Hibernate session shared with the route was marked rollback-only while processing "
+                                                            + exchange + "; the poll transaction is rolled back");
                         } else if (endpoint.isConsumeDelete()) {
                             session.remove(result);
                         }

@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 public final class HibernateConstants {
 
     @Metadata(description = "Map of named parameters to bind to the Hibernate query, or to override natural-id lookup values.",
+              javaType = "Map<String, Object>",
               label = "producer")
     public static final String HIBERNATE_PARAMETERS = "CamelHibernateParameters";
 

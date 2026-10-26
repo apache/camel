@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hibernate",
     "title": "Hibernate",
-    "description": "Camel Hibernate Component",
+    "description": "Execute selection and mutation queries and natural-id lookups using Hibernate ORM.",
     "deprecated": false,
     "firstVersion": "4.24.0",
     "label": "database",
@@ -33,10 +33,15 @@
     "autowiredEnabled": { "index": 6, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
   },
   "headers": {
-    "CamelHibernateParameters": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Map of named parameters to bind to the Hibernate query, or to override natural-id lookup values.", "constantName": "org.apache.camel.component.hibernate.HibernateConstants#HIBERNATE_PARAMETERS" }
+    "CamelHibernateParameters": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Map of named parameters to bind to the Hibernate query, or to override natural-id lookup values.", "constantName": "org.apache.camel.component.hibernate.HibernateConstants#HIBERNATE_PARAMETERS" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaTypeOption": "entityClassName", "description": "The configured selection query emits one entity per message." },
+    "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "statelessOperation", "value": "*", "carriers": [ "pojo" ] } ], "description": "Stateless insert\/upsert consumes the entity in the message body. For selection and mutation queries, the body is not used; named parameters come from the CamelHibernateParameters header. Natural-id values can be configured on the endpoint or supplied in that header." },
+    "producerOut": { "carriers": [ "pojo", "list", "stream", "value", "null", "unchanged" ], "description": "The result depends on the operation: a selection query returns a list, or a stream with streaming=true; a mutation query returns the affected-row count; a natural-id lookup returns the entity or null; stateless operations leave the body unchanged." }
   },
   "properties": {
-    "entityClassName": { "index": 0, "kind": "path", "displayName": "Entity Class Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Target entity class name or entity type name" },
+    "entityClassName": { "index": 0, "kind": "path", "displayName": "Entity Class Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Target entity class name" },
     "consumeDelete": { "index": 1, "kind": "parameter", "displayName": "Consume Delete", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to delete consumed entities after successful processing." },
     "filters": { "index": 2, "kind": "parameter", "displayName": "Filters", "group": "consumer", "label": "producer,consumer", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Object>>", "prefix": "filter.", "multiValue": true, "deprecated": false, "autowired": false, "secret": false, "description": "Hibernate filters and their parameter values. This is a multi-value option with prefix: filter." },
     "maximumResults": { "index": 3, "kind": "parameter", "displayName": "Maximum Results", "group": "consumer", "label": "consumer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "description": "The maximum number of entities to retrieve in a single poll." },

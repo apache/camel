@@ -140,6 +140,16 @@ class HibernateEndpointTest {
         assertEquals(Map.of("nameFilter", Map.of("name", "test")), endpoint.getFilters());
     }
 
+    @Test
+    void shouldRejectConsumerWithoutSelectionQuery() {
+        HibernateEndpoint endpoint = createEndpoint();
+        endpoint.setMutationQuery("update HibernateTestEntity set name = :name");
+        HibernateConsumer consumer = new HibernateConsumer(endpoint, exchange -> {
+        });
+
+        assertThrows(IllegalArgumentException.class, consumer::start);
+    }
+
     private HibernateEndpoint createEndpoint() {
         HibernateEndpoint endpoint = new HibernateEndpoint();
         endpoint.setCamelContext(new DefaultCamelContext());

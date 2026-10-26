@@ -2,7 +2,7 @@
 :doctitle: Hibernate
 :shortname: hibernate
 :artifactid: camel-hibernate
-:description: Camel Hibernate Component
+:description: Execute selection and mutation queries and natural-id lookups using Hibernate ORM.
 :since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
@@ -39,7 +39,7 @@ for this component:
 
 === hibernate:entityClassName
 
-Where `entityClassName` is the target entity class name or entity type name.
+Where `entityClassName` is the fully qualified name of the target entity class.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -103,7 +103,7 @@ Hibernate determines the database dialect automatically; the component does not 
 
 [NOTE]
 ====
-Entity package scanning is not currently provided. Use `entityClasses` to explicitly register the entity classes used by the `SessionFactory`.
+Entity package scanning is not currently provided. Use `entityClasses` to explicitly register the entity classes used by the `SessionFactory`. `entityClasses` is currently a Java/Spring component configuration property, not a URI option; YAML routes should use a `SessionFactory` that has already been configured with its entity classes unless the component is configured separately.
 ====
 
 ==== Hibernate properties
@@ -297,6 +297,8 @@ Session sharing has limits. A copied exchange does not carry the live Hibernate 
 so processing a copied exchange can open a separate session. Stateless operations always
 use their own `StatelessSession`.
 
+If an operation on the shared session marks the Hibernate transaction rollback-only, the consumer rolls back the whole poll even if the route handles the operation's exception. The batch may be delivered again on a subsequent poll.
+
 If processing an entity fails, the consumer rolls back the active poll transaction and
 stops processing the current batch. This prevents changes made earlier in the same poll
 from being committed after a later entity fails. Entities processed before the failure
@@ -356,6 +358,8 @@ from("direct:streamEntities")
         }
     });
 ----
+
+The returned stream is backed by a live Hibernate session. Consume and close it within the same route exchange, before the exchange completes; the component closes an owned session when the exchange completes.
 
 The Hibernate `Session` and transaction remain open while the stream is being consumed.
 
@@ -432,11 +436,11 @@ YAML::
 - route:
     from:
       uri: direct:findEntities
-    steps:
-      - to:
-          uri: hibernate:com.example.MyEntity
-          parameters:
-            selectionQuery: "from MyEntity where status = :status"
+      steps:
+        - to:
+            uri: hibernate:com.example.MyEntity
+            parameters:
+              selectionQuery: "from MyEntity where status = :status"
 ----
 ====
 
@@ -469,11 +473,11 @@ YAML::
 - route:
     from:
       uri: direct:updateEntities
-    steps:
-      - to:
-          uri: hibernate:com.example.MyEntity
-          parameters:
-            mutationQuery: "update MyEntity set status = :status where id = :id"
+      steps:
+        - to:
+            uri: hibernate:com.example.MyEntity
+            parameters:
+              mutationQuery: "update MyEntity set status = :status where id = :id"
 ----
 ====
 
@@ -506,11 +510,11 @@ YAML::
 - route:
     from:
       uri: direct:insertEntity
-    steps:
-      - to:
-          uri: hibernate:com.example.MyEntity
-          parameters:
-            statelessOperation: insert
+      steps:
+        - to:
+            uri: hibernate:com.example.MyEntity
+            parameters:
+              statelessOperation: insert
 ----
 ====
 
@@ -543,11 +547,11 @@ YAML::
 - route:
     from:
       uri: direct:upsertEntity
-    steps:
-      - to:
-          uri: hibernate:com.example.MyEntity
-          parameters:
-            statelessOperation: upsert
+      steps:
+        - to:
+            uri: hibernate:com.example.MyEntity
+            parameters:
+              statelessOperation: upsert
 ----
 ====
 
@@ -580,14 +584,14 @@ YAML::
 - route:
     from:
       uri: hibernate:com.example.MyEntity
-    parameters:
-      selectionQuery: "from MyEntity"
-      maximumResults: 100
-      initialDelay: 1000
-      delay: 5000
-    steps:
-      - to:
-          uri: direct:processEntity
+      parameters:
+        selectionQuery: "from MyEntity"
+        maximumResults: 100
+        initialDelay: 1000
+        delay: 5000
+      steps:
+        - to:
+            uri: direct:processEntity
 ----
 ====
 
@@ -620,13 +624,13 @@ YAML::
 - route:
     from:
       uri: hibernate:com.example.MyEntity
-    parameters:
-      selectionQuery: "from MyEntity"
-      skipLocked: true
-      maximumResults: 100
-    steps:
-      - to:
-          uri: direct:processEntity
+      parameters:
+        selectionQuery: "from MyEntity"
+        skipLocked: true
+        maximumResults: 100
+      steps:
+        - to:
+            uri: direct:processEntity
 ----
 ====
 
@@ -667,9 +671,12 @@ YAML::
 - route:
     from:
       uri: direct:streamEntities
-    parameters:
-      selectionQuery: "from MyEntity"
-      streaming: true
+      steps:
+        - to:
+            uri: hibernate:com.example.MyEntity
+            parameters:
+              selectionQuery: "from MyEntity"
+              streaming: true
 ----
 ====
 
@@ -705,11 +712,11 @@ YAML::
 - route:
     from:
       uri: direct:findEntities
-    steps:
-      - to:
-          uri: hibernate:com.example.MyEntity
-          parameters:
-            selectionQuery: "from MyEntity"
+      steps:
+        - to:
+            uri: hibernate:com.example.MyEntity
+            parameters:
+              selectionQuery: "from MyEntity"
 ----
 ====
 
@@ -736,6 +743,11 @@ XML::
 ----
 <bean id="hibernate" class="org.apache.camel.component.hibernate.HibernateComponent">
     <property name="dataSource" ref="dataSource"/>
+    <property name="entityClasses">
+        <array>
+            <value>com.example.MyEntity</value>
+        </array>
+    </property>
     <property name="schemaAction" value="update"/>
 </bean>
 ----
@@ -747,11 +759,11 @@ YAML::
 - route:
     from:
       uri: direct:findEntities
-    steps:
-      - to:
-          uri: hibernate:com.example.MyEntity
-          parameters:
-            selectionQuery: "from MyEntity"
+      steps:
+        - to:
+            uri: hibernate:com.example.MyEntity
+            parameters:
+              selectionQuery: "from MyEntity"
 ----
 ====
 

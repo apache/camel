@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,11 +37,25 @@ import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder;
 
+/**
+ * Execute selection and mutation queries and natural-id lookups using Hibernate ORM.
+ */
 @UriEndpoint(firstVersion = "4.24.0", scheme = "hibernate", title = "Hibernate", syntax = "hibernate:entityClassName",
              category = { Category.DATABASE }, headersClass = HibernateConstants.class)
+@BodyTypes(
+           consumerOut = @BodyType(value = Carrier.POJO, javaTypeOption = "entityClassName",
+                                   description = "The configured selection query emits one entity per message."),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "statelessOperation", value = "*",
+                                                            carriers = Carrier.POJO),
+                                  description = "Stateless insert/upsert consumes the entity in the message body. For selection and mutation queries, the body is not used; named parameters come from the CamelHibernateParameters header. Natural-id values can be configured on the endpoint or supplied in that header."),
+           producerOut = @BodyType(value = {
+                   Carrier.POJO, Carrier.LIST, Carrier.STREAM, Carrier.VALUE, Carrier.NULL,
+                   Carrier.UNCHANGED },
+                                   description = "The result depends on the operation: a selection query returns a list, or a stream with streaming=true; a mutation query returns the affected-row count; a natural-id lookup returns the entity or null; stateless operations leave the body unchanged."))
 public class HibernateEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(description = "Target entity class name or entity type name")
+    @UriPath(description = "Target entity class name")
     @Metadata(required = true)
     private String entityClassName;
 

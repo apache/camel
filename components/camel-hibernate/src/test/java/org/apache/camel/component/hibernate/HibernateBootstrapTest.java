@@ -58,10 +58,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HibernateBootstrapTest extends CamelTestSupport {
+class HibernateBootstrapTest extends CamelTestSupport {
 
     @Test
-    public void testExplicitSessionFactoryReuseAndNoClose() throws Exception {
+    void testExplicitSessionFactoryReuseAndNoClose() throws Exception {
         SessionFactory mockSf = Mockito.mock(SessionFactory.class);
 
         HibernateComponent comp = new HibernateComponent();
@@ -76,7 +76,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRegistrySessionFactoryReuseAndNoClose() throws Exception {
+    void testRegistrySessionFactoryReuseAndNoClose() throws Exception {
         SessionFactory mockSf = Mockito.mock(SessionFactory.class);
         context.getRegistry().bind("registrySf", mockSf);
 
@@ -91,7 +91,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testComponentCreatedSessionFactoryClosesOnStop() throws Exception {
+    void testComponentCreatedSessionFactoryClosesOnStop() throws Exception {
         HibernateComponent comp = createComponent("testDs", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
 
         SessionFactory sf = comp.getSessionFactory();
@@ -103,7 +103,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInvalidDataSourceRegistryNameFails() {
+    void testInvalidDataSourceRegistryNameFails() {
         HibernateComponent comp = new HibernateComponent();
         comp.setCamelContext(context);
         comp.setDataSource("nonExistentDs");
@@ -113,7 +113,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInvalidSchemaActionFails() {
+    void testInvalidSchemaActionFails() {
         HibernateComponent comp = new HibernateComponent();
         comp.setCamelContext(context);
         comp.setSchemaAction("invalid-action");
@@ -123,7 +123,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSelectionQueryProducer() throws Exception {
+    void testSelectionQueryProducer() throws Exception {
         HibernateComponent comp = createComponent(
                 "selectionDs",
                 "jdbc:h2:mem:selectiondb;DB_CLOSE_DELAY=-1",
@@ -153,7 +153,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMutationQueryProducer() throws Exception {
+    void testMutationQueryProducer() throws Exception {
         HibernateComponent comp = createComponent(
                 "mutationDs",
                 "jdbc:h2:mem:mutationdb;DB_CLOSE_DELAY=-1",
@@ -181,7 +181,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSchemaActionsAcceptedValues() {
+    void testSchemaActionsAcceptedValues() {
         String[] actions = { "none", "validate", "update", "create", "create-drop", "create-only", "drop" };
         for (String action : actions) {
             HibernateComponent comp = new HibernateComponent();
@@ -191,7 +191,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExplicitEntityClassesBootstrap() throws Exception {
+    void testExplicitEntityClassesBootstrap() throws Exception {
         HibernateComponent comp = createComponent(
                 "entityDs",
                 "jdbc:h2:mem:entitydb;DB_CLOSE_DELAY=-1",
@@ -205,7 +205,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSelectionQueryProducerReadOnly() throws Exception {
+    void testSelectionQueryProducerReadOnly() throws Exception {
         HibernateComponent comp = createComponent(
                 "readOnlyDs",
                 "jdbc:h2:mem:readonlydb;DB_CLOSE_DELAY=-1",
@@ -237,7 +237,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNaturalIdLookupProducer() throws Exception {
+    void testNaturalIdLookupProducer() throws Exception {
         HibernateComponent comp = createComponent(
                 "naturalIdDs",
                 "jdbc:h2:mem:naturaliddb;DB_CLOSE_DELAY=-1",
@@ -280,7 +280,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNaturalIdPrefixUriBinding() throws Exception {
+    void testNaturalIdPrefixUriBinding() throws Exception {
         HibernateComponent comp = createComponent(
                 "naturalIdPrefixDs",
                 "jdbc:h2:mem:naturalidprefixdb;DB_CLOSE_DELAY=-1",
@@ -295,7 +295,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNaturalIdBeanParameter() throws Exception {
+    void testNaturalIdBeanParameter() throws Exception {
         HibernateComponent comp = createComponent(
                 "naturalIdBeanDs",
                 "jdbc:h2:mem:naturalidbeandb;DB_CLOSE_DELAY=-1",
@@ -312,7 +312,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNaturalIdLookupFromMessageHeader() throws Exception {
+    void testNaturalIdLookupFromMessageHeader() throws Exception {
         HibernateComponent comp = createComponent(
                 "naturalIdHeaderDs",
                 "jdbc:h2:mem:naturalidheaderdb;DB_CLOSE_DELAY=-1",
@@ -356,7 +356,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNaturalIdHeaderParametersAreNotSimpleEvaluated() throws Exception {
+    void testNaturalIdHeaderParametersAreNotSimpleEvaluated() throws Exception {
         SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
         Session session = Mockito.mock(Session.class);
         Transaction transaction = Mockito.mock(Transaction.class);
@@ -397,7 +397,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSelectionQueryWithFilter() throws Exception {
+    void testSelectionQueryWithFilter() throws Exception {
         HibernateComponent comp = createComponent(
                 "filterDs",
                 "jdbc:h2:mem:filterdb;DB_CLOSE_DELAY=-1",
@@ -446,7 +446,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFilterPrefixUriBinding() throws Exception {
+    void testFilterPrefixUriBinding() throws Exception {
         HibernateComponent comp = createComponent(
                 "filterPrefixDs",
                 "jdbc:h2:mem:filterprefixdb;DB_CLOSE_DELAY=-1",
@@ -464,7 +464,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testTenantIdentifierUsedForSession() throws Exception {
+    void testTenantIdentifierUsedForSession() throws Exception {
         SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
         SessionBuilder sessionBuilder = Mockito.mock(SessionBuilder.class);
         Session session = Mockito.mock(Session.class);
@@ -503,7 +503,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testStatelessInsertProducer() throws Exception {
+    void testStatelessInsertProducer() throws Exception {
         HibernateComponent comp = createComponent(
                 "statelessInsertDs",
                 "jdbc:h2:mem:statelessinsertdb;DB_CLOSE_DELAY=-1",
@@ -541,7 +541,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testStatelessUpsertProducer() throws Exception {
+    void testStatelessUpsertProducer() throws Exception {
         HibernateComponent comp = createComponent(
                 "statelessUpsertDs",
                 "jdbc:h2:mem:statelessupsertdb;DB_CLOSE_DELAY=-1",
@@ -1086,7 +1086,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testResourceLocalTransactedFailsFast() throws Exception {
+    void testResourceLocalTransactedFailsFast() throws Exception {
         HibernateComponent comp = createComponent(
                 "transactedDs",
                 "jdbc:h2:mem:transacteddb;DB_CLOSE_DELAY=-1",
@@ -1111,7 +1111,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTransactedWithJtaSucceeds() throws Exception {
+    void testTransactedWithJtaSucceeds() throws Exception {
         SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
         SessionFactoryImplementor sessionFactoryImplementor = Mockito.mock(SessionFactoryImplementor.class);
         ServiceRegistryImplementor serviceRegistry
@@ -1162,7 +1162,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testStreamingTransactedFailsFast() throws Exception {
+    void testStreamingTransactedFailsFast() throws Exception {
         HibernateComponent comp = createComponent(
                 "streamingDs",
                 "jdbc:h2:mem:streamingdb;DB_CLOSE_DELAY=-1",
@@ -1188,7 +1188,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNonTransactedResourceLocalUnaffected() throws Exception {
+    void testNonTransactedResourceLocalUnaffected() throws Exception {
         HibernateComponent comp = createComponent(
                 "unaffectedDs",
                 "jdbc:h2:mem:unaffecteddb;DB_CLOSE_DELAY=-1",
