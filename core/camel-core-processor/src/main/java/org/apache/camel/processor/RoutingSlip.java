@@ -421,12 +421,19 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
             ex.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
             ex.setProperty(ExchangePropertyKey.SLIP_ENDPOINT, endpoint.getEndpointUri());
             // routing slip needs to have access to the producer
+            // (the exchange can already have one, when this routing slip runs in a route that was called from a step of
+            // another routing slip or dynamic router, whose error handler still needs it to redeliver that step)
+            final Object previousProducer = ex.getProperty(ExchangePropertyKey.SLIP_PRODUCER);
             ex.setProperty(ExchangePropertyKey.SLIP_PRODUCER, p);
 
             return target.process(ex, new AsyncCallback() {
                 public void done(boolean doneSync) {
-                    // cleanup producer after usage
-                    ex.removeProperty(ExchangePropertyKey.SLIP_PRODUCER);
+                    // cleanup producer after usage, and restore the producer of the calling step if there was one
+                    if (previousProducer != null) {
+                        ex.setProperty(ExchangePropertyKey.SLIP_PRODUCER, previousProducer);
+                    } else {
+                        ex.removeProperty(ExchangePropertyKey.SLIP_PRODUCER);
+                    }
 
                     // and stop prototype endpoints (also when this step completed asynchronously)
                     if (prototype) {
@@ -580,6 +587,13 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             AsyncProcessor producer = exchange.getProperty(ExchangePropertyKey.SLIP_PRODUCER, AsyncProcessor.class);
+            if (producer == null) {
+                // fail the exchange instead of throwing, as the callback must always be called
+                exchange.setException(new IllegalStateException(
+                        "No producer for the routing slip step in the exchange property " + Exchange.SLIP_PRODUCER));
+                callback.done(true);
+                return true;
+            }
             return producer.process(exchange, callback);
         }
 
