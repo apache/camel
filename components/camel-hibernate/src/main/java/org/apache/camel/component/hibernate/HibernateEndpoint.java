@@ -61,7 +61,7 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     @Metadata(required = true)
     private String entityClassName;
 
-    @UriParam(description = "The HQL selection query to execute.", label = "producer,consumer")
+    @UriParam(description = "The HQL selection query to execute.")
     private String selectionQuery;
 
     @UriParam(description = "The HQL mutation query to execute.", label = "producer")
@@ -72,16 +72,13 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     @Metadata(supportSimpleExpression = true)
     private Map<String, Object> naturalIdParameters;
 
-    @UriParam(description = "Whether the Hibernate session and selection query should be read-only.",
-              label = "producer,consumer")
+    @UriParam(description = "Whether the Hibernate session and selection query should be read-only.")
     private boolean readOnly;
 
-    @UriParam(description = "Hibernate filters and their parameter values.", label = "producer,consumer",
-              prefix = "filter.", multiValue = true)
+    @UriParam(description = "Hibernate filters and their parameter values.", prefix = "filter.", multiValue = true)
     private Map<String, Map<String, Object>> filters;
 
-    @UriParam(description = "The tenant identifier used to create the Hibernate session.",
-              label = "producer,consumer")
+    @UriParam(description = "The tenant identifier used to create the Hibernate session.")
     private String tenantIdentifier;
 
     public enum StatelessOperation {
