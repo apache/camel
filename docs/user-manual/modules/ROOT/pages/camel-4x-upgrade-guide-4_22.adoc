@@ -312,6 +312,15 @@ first ran is no longer served: its messages no longer reach the route and it no 
 sends, and the connection is closed. Clients that open a connection in this window must reconnect after the consumer
 has started.
 
+=== camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
+
+All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the
+`sslContextParameters` of the first consumer to start. A consumer started later with different `sslContextParameters`
+(including one with none while the server uses some, or the other way round) used to start and be served with the
+first consumer's settings. Such a consumer now fails to start with an `IllegalArgumentException` naming the host and
+port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
+reference, or the global SSL context parameters), or move consumers that need other settings to another port.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
