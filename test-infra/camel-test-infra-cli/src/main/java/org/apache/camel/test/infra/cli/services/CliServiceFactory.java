@@ -97,6 +97,11 @@ public final class CliServiceFactory {
         public String getSshPassword() {
             return getService().getSshPassword();
         }
+
+        @Override
+        public String getCommandWorkDir() {
+            return getService().getCommandWorkDir();
+        }
     }
 
     private CliServiceFactory() {

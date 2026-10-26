@@ -23,14 +23,12 @@ import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 @DisabledOnOs(WINDOWS)
-@Tag("container-only")
 public class JolokiaITCase extends JBangTestSupport {
 
     private String hawtioPid;

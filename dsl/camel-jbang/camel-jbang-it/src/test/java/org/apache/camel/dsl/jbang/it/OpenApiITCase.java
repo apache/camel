@@ -31,11 +31,9 @@ import org.apache.camel.dsl.jbang.it.support.InVersion;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-@Tag("container-only")
 public class OpenApiITCase extends JBangTestSupport {
 
     @AfterEach
@@ -116,7 +114,7 @@ public class OpenApiITCase extends JBangTestSupport {
         final String generatedPath = mountPoint() + "/petstore";
         generateProperties(Map.of("camel.jbang.runtime", "spring-boot", "camel.jbang.gav", "example:petstore:1.0-SNAPSHOT",
                 "camel.jbang.exportDir", generatedPath, "camel.jbang.open-api",
-                DEFAULT_ROUTE_FOLDER + "/petstore-v3.json"));
+                containerService.getCommandWorkDir() + "/petstore-v3.json"));
         execute("export");
         assertFileInDataFolderExists("petstore");
         assertFileInDataFolderExists("petstore/src/main/resources/petstore-v3.json");
@@ -134,9 +132,9 @@ public class OpenApiITCase extends JBangTestSupport {
         execute("plugin add generate");
         execute("plugin get");
         execute("generate rest --dto --input=petstore-v3.json --output=rest-dsl.yaml --runtime=spring-boot --routes");
-        List<String> generatedDTO = containerService.listDirectory(DEFAULT_ROUTE_FOLDER + "/model").toList();
+        List<String> generatedDTO = containerService.listDirectory(containerService.getCommandWorkDir() + "/model").toList();
         Assertions.assertThat(generatedDTO).as("check generated DTO number").hasSize(8);
-        assertFileInContainerExists(DEFAULT_ROUTE_FOLDER + "/rest-dsl.yaml");
+        assertFileInContainerExists(containerService.getCommandWorkDir() + "/rest-dsl.yaml");
     }
 
     private HttpResponse<String> executeHttpRequest(final String ctxUrl, boolean acceptJson) {

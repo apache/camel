@@ -103,12 +103,13 @@ public abstract class JBangTestSupport {
             } catch (Exception | AssertionError e) {
                 logger.warn("integrations did not stop within timeout: {}", e.getMessage());
             }
-            // Remove non-hidden files/dirs from /home/jbang to prevent cross-test contamination.
+            // Remove non-hidden files/dirs from the command working directory to prevent cross-test contamination.
             // The JBang installation baseline is entirely hidden (.jbang/, .bashrc, .camel-jbang/).
             try {
-                execInContainer("find /home/jbang -maxdepth 1 -mindepth 1 -not -name '.*' -exec rm -rf {} +");
+                execInContainer(String.format("find %s -maxdepth 1 -mindepth 1 -not -name '.*' -exec rm -rf {} +",
+                        containerService.getCommandWorkDir()));
             } catch (Exception | AssertionError e) {
-                logger.debug("failed to clean up test files from /home/jbang: {}", e.getMessage());
+                logger.debug("failed to clean up test files from {}: {}", containerService.getCommandWorkDir(), e.getMessage());
             }
             for (String key : new String[] { "runtime", "gav", "directory" }) {
                 try {
@@ -455,7 +456,8 @@ public abstract class JBangTestSupport {
 
     protected String downloadFile(String downloadUrl) {
         String fileName = this.downloadNewFileInDataFolder(downloadUrl);
-        containerService.copyFileInternally(mountPoint() + "/" + fileName, DEFAULT_ROUTE_FOLDER);
+        containerService.copyFileInternally(mountPoint() + "/" + fileName,
+                containerService.getCommandWorkDir() + "/" + fileName);
         return fileName;
     }
 
@@ -475,7 +477,8 @@ public abstract class JBangTestSupport {
         this.newFileInDataFolder(fileName, contentWriter.toString());
         if (!inDataFolder) {
             containerService.executeGenericCommand(
-                    String.format("mv %s/%s %s/%s", mountPoint(), fileName, DEFAULT_ROUTE_FOLDER, fileName));
+                    String.format("mv %s/%s %s/%s", mountPoint(), fileName, containerService.getCommandWorkDir(),
+                            fileName));
         }
     }
 
