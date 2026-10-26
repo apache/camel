@@ -193,7 +193,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
 
         // every consumer on this host and port is served by the one server the first consumer configured, so a consumer
         // with other SSLContextParameters cannot be served with them, and must not start as if it were
-        SSLContextParameters hostSslContextParameters = host.getHostConfiguration().getSslContextParameters();
+        SSLContextParameters hostSslContextParameters = host.getSslContextParameters();
         if (configuration.getSslContextParameters() != hostSslContextParameters) {
             throw new IllegalArgumentException(
                     "Cannot start the consumer for " + configuration.getWebsocketURI() + " because the server on "
@@ -220,7 +220,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         VertxWebsocketHost vertxWebsocketHost = vertxHostRegistry.get(hostKey);
 
         if (vertxWebsocketHost != null) {
-            vertxWebsocketHost.disconnect(configuration.getWebsocketURI().getPath());
+            vertxWebsocketHost.disconnect(consumer);
 
             // every consumer on this host and port shares the one host, which stops its server as its last
             // consumer goes. Forgetting it any earlier would leave the consumers still on it unable to disconnect.

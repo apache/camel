@@ -30,6 +30,7 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -94,11 +95,61 @@ public class VertxWebsocketSharedHostSSLContextParametersTest extends VertxWebSo
         }
     }
 
+    @Test
+    void consumersWithoutSSLContextParametersShareTheHost() throws Exception {
+        CamelContext context = createContext("", "");
+        context.start();
+        try {
+            VertxWebsocketComponent component = context.getComponent("vertx-websocket", VertxWebsocketComponent.class);
+            assertEquals(1, component.getVertxHostRegistry().size());
+
+            MockEndpoint mockEndpoint = context.getEndpoint("mock:b", MockEndpoint.class);
+            mockEndpoint.expectedBodiesReceived("Hello");
+            mockEndpoint.setResultWaitTime(TimeUnit.SECONDS.toMillis(5));
+
+            context.createProducerTemplate().sendBody("vertx-websocket:localhost:" + port.getPort() + "/b", "Hello");
+
+            mockEndpoint.assertIsSatisfied();
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    void rejectedConsumerOnTheSamePathKeepsTheRouteOfTheStartedConsumer() throws Exception {
+        CamelContext context = createContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                fromF("vertx-websocket:localhost:%d/same?sslContextParameters=#serverParameters", port.getPort())
+                        .routeId("tls")
+                        .to("mock:tls");
+
+                fromF("vertx-websocket:localhost:%d/same", port.getPort())
+                        .routeId("plain").autoStartup(false)
+                        .to("mock:plain");
+            }
+        });
+        context.start();
+        try {
+            Exception exception = assertThrows(Exception.class, () -> context.getRouteController().startRoute("plain"));
+            assertSSLContextParametersMismatch(exception);
+
+            MockEndpoint mockEndpoint = context.getEndpoint("mock:tls", MockEndpoint.class);
+            mockEndpoint.expectedBodiesReceived("Hello");
+            mockEndpoint.setResultWaitTime(TimeUnit.SECONDS.toMillis(5));
+
+            context.createProducerTemplate().sendBody(
+                    "vertx-websocket:localhost:" + port.getPort() + "/same?sslContextParameters=#clientParameters", "Hello");
+
+            mockEndpoint.assertIsSatisfied();
+        } finally {
+            context.stop();
+        }
+    }
+
     private CamelContext createContext(String firstOptions, String secondOptions) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("serverParameters", serverParameters);
-        context.getRegistry().bind("clientAuthServerParameters", clientAuthServerParameters);
-        context.getRegistry().bind("clientParameters", clientParameters);
+        CamelContext context = createContext();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -114,19 +165,30 @@ public class VertxWebsocketSharedHostSSLContextParametersTest extends VertxWebSo
         return context;
     }
 
+    private CamelContext createContext() {
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("serverParameters", serverParameters);
+        context.getRegistry().bind("clientAuthServerParameters", clientAuthServerParameters);
+        context.getRegistry().bind("clientParameters", clientParameters);
+        return context;
+    }
+
     private static void assertFailsToStart(CamelContext context) {
         try {
-            Exception exception = assertThrows(Exception.class, context::start);
-            Throwable cause = exception;
-            while (cause != null && !(cause instanceof IllegalArgumentException)) {
-                cause = cause.getCause();
-            }
-            assertNotNull(cause, "Expected an IllegalArgumentException, got " + exception);
-            assertTrue(cause.getMessage().contains("localhost:"), cause.getMessage());
-            assertTrue(cause.getMessage().contains("same SSLContextParameters"), cause.getMessage());
+            assertSSLContextParametersMismatch(assertThrows(Exception.class, context::start));
         } finally {
             context.stop();
         }
+    }
+
+    private static void assertSSLContextParametersMismatch(Exception exception) {
+        Throwable cause = exception;
+        while (cause != null && !(cause instanceof IllegalArgumentException)) {
+            cause = cause.getCause();
+        }
+        assertNotNull(cause, "Expected an IllegalArgumentException, got " + exception);
+        assertTrue(cause.getMessage().contains("localhost:"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("same SSLContextParameters"), cause.getMessage());
     }
 
     private static KeyManagersParameters keyManagers() {
