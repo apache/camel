@@ -396,6 +396,11 @@ including the messages sent by producers on that path, and keep applying while t
 only has producers applies their settings. A connection that was opened before these settings applied does not
 receive the messages of the producers, and it is closed when it sends a message.
 
+A connection opened while only producers served a path did not pass the custom `handlers` of a consumer, as those
+handlers run only for consumers. When a consumer that configures `handlers` is started on that path, such a connection
+is therefore no longer served: its messages do not reach the route, it does not receive what the producers send, and
+it is closed. Clients that open a connection before the consumer has started must reconnect after it has started.
+
 A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
 rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
 

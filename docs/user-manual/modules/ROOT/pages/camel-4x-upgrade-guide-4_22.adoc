@@ -299,6 +299,19 @@ has an entry with a wildcard such as `https://*` or an entry `null`, the origin 
 credentials. Previously credentials were allowed for every origin. A cross-origin client that sends cookies or other
 credentials must have its origin listed in `allowedOrigins`.
 
+=== camel-undertow - a WebSocket connection opened before a consumer with custom handlers started is no longer served
+
+On a WebSocket path whose producer applies a security provider or allowed roles, a connection could be accepted while
+only the producer served the path, before its consumer was started for the first time. Such a connection ran the
+producer checks but not the custom `handlers` the consumer configures, as those handlers run only for consumers. Once
+the consumer was started, the connection was still treated as having passed the consumer checks, so its messages
+reached the route and it kept receiving what the producer sent.
+
+Once a consumer that configures `handlers` is started on a path, a connection opened on that path before the consumer
+first ran is no longer served: its messages no longer reach the route and it no longer receives what the producer
+sends, and the connection is closed. Clients that open a connection in this window must reconnect after the consumer
+has started.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
