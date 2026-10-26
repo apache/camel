@@ -44,6 +44,11 @@ public final class CliServiceFactory {
         }
 
         @Override
+        public String executeNohup(String command) {
+            return getService().executeNohup(command);
+        }
+
+        @Override
         public String executeGenericCommand(String command) {
             return getService().executeGenericCommand(command);
         }
@@ -96,6 +101,11 @@ public final class CliServiceFactory {
         @Override
         public String getSshPassword() {
             return getService().getSshPassword();
+        }
+
+        @Override
+        public String getCommandWorkDir() {
+            return getService().getCommandWorkDir();
         }
     }
 
