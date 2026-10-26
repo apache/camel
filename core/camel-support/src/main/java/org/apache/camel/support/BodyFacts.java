@@ -72,6 +72,12 @@ import org.apache.camel.util.URISupport;
  * </tr>
  * <tr>
  * <td>{@link Need#DATA}</td>
+ * <td>text, bytes or a stream a marshal wrote from a Map or a List, as the message history says</td>
+ * <td>read the field before the marshal, or marshal into a variable: an unmarshal would undo the marshal a later step
+ * needs</td>
+ * </tr>
+ * <tr>
+ * <td>{@link Need#DATA}</td>
  * <td>null, or empty text or bytes</td>
  * <td>as for {@link Need#A_BODY}</td>
  * </tr>
@@ -214,7 +220,8 @@ public final class BodyFacts {
             return readTheDataFirst();
         }
         if (isPayload(body)) {
-            return unmarshalFirst(exchange, body);
+            String marshal = marshalledData(exchange, body);
+            return marshal != null ? marshal : unmarshalFirst(exchange, body);
         }
         if (body instanceof Map<?, ?> map) {
             if (map.isEmpty()) {
@@ -275,6 +282,42 @@ public final class BodyFacts {
             case "csv" -> unmarshal + " to read its rows: a List of rows, or a Map per row with useMaps: true";
             default -> unmarshal + " to read its fields";
         };
+    }
+
+    /**
+     * When a marshal wrote the body from a Map or a List, as the message history says: the marshal is wanted, for a
+     * later step that needs text (a file write), and the field is read after it, too late; an unmarshal would undo it.
+     * Null when the history does not say so, as for a marshal of text, where an unmarshal was meant.
+     */
+    private static String marshalledData(Exchange exchange, Object body) {
+        List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history == null || history.isEmpty()) {
+            return null;
+        }
+        String now = ObjectHelper.classCanonicalName(body);
+        for (int i = history.size() - 1; i >= 0; i--) {
+            MessageHistory step = history.get(i);
+            String type = step.getBodyType();
+            if (type == null || type.equals(now)) {
+                continue;
+            }
+            // the step that set the body, and the body it was reached with
+            if (step.getNode() == null || !"marshal".equals(step.getNode().getShortName())
+                    || !isDataType(exchange.getContext(), type)) {
+                return null;
+            }
+            return "the " + step(step.getNode()) + " wrote it from data (" + StringHelper.afterLast(type, ".", type)
+                   + "): read the field before the marshal, for example into a header with setHeader, or keep the data"
+                   + " in the body and marshal into a variable (marshal with variableReceive, and send that variable with"
+                   + " variableSend)";
+        }
+        return null;
+    }
+
+    /** Whether a class, by its name, is a Map or a collection. */
+    private static boolean isDataType(CamelContext context, String type) {
+        Class<?> clazz = context != null ? context.getClassResolver().resolveClass(type) : null;
+        return clazz != null && (Map.class.isAssignableFrom(clazz) || Collection.class.isAssignableFrom(clazz));
     }
 
     private static String readTheDataFirst() {

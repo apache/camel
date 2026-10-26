@@ -18,6 +18,10 @@ package org.apache.camel.processor;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -132,6 +136,39 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         assertEquals("Cannot unmarshal using MyDataFormat: the variable order is null, so there is nothing to unmarshal. "
                      + "Set the variable order first, or set allowNullBody=true to skip a null body.",
+                exchange.getException().getMessage());
+    }
+
+    @Test
+    public void testParsedDataSaysItIsDataAlready() throws Exception {
+        // what the benchmark wrote (r22): the order was unmarshalled, and is unmarshalled again
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), new LinkedHashMap<>(Map.of("orderId", "1")));
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+
+        processor.process(exchange);
+
+        NoTypeConversionAvailableException e
+                = assertInstanceOf(NoTypeConversionAvailableException.class, exchange.getException());
+        assertEquals("Cannot unmarshal using MyDataFormat: the body is a Map (LinkedHashMap), which is data already, and"
+                     + " the data format reads text: read its fields as they are, and leave this unmarshal out; to parse the"
+                     + " text in a variable, unmarshal it with variableSend and variableReceive set to its name",
+                e.getMessage());
+        assertEquals(InputStream.class, e.getToType());
+        assertInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+    }
+
+    @Test
+    public void testParsedDataInAVariableSaysItIsDataAlready() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
+        exchange.setVariable("order", new ArrayList<>(List.of("A1")));
+        UnmarshalProcessor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+        processor.setVariableSend("order");
+
+        processor.process(exchange);
+
+        assertEquals("Cannot unmarshal using MyDataFormat: the variable order holds data (ArrayList) already, and the data"
+                     + " format reads text: read its fields as they are, such as ${variable.order[name]}, and leave this"
+                     + " unmarshal out",
                 exchange.getException().getMessage());
     }
 

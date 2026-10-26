@@ -34,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
@@ -107,6 +108,10 @@ public class GroovyExpression extends ExpressionSupport {
             // (CAMEL-25749); null for an object, where the name read is wrong
             String payload = !onText && body != null && e.getType() == body.getClass() && !(body instanceof Map)
                     ? BodyFacts.hint(exchange, BodyFacts.Need.DATA) : null;
+            // customer.customerNo on parsed data, where customer holds the text C-482: the text is a value of the
+            // data, and the body needs no unmarshal
+            BodyTypeRegistry.Kind kind = BodyFacts.kindOf(body);
+            boolean bodyData = kind == BodyTypeRegistry.Kind.DATA || kind == BodyTypeRegistry.Kind.COLLECTION;
             String hint;
             if (bodyText) {
                 // what the body is, the step that set it, and the unmarshal that parses it (CAMEL-25749)
@@ -119,6 +124,11 @@ public class GroovyExpression extends ExpressionSupport {
                 hint = "header '" + textHeader + "' is still JSON text, not parsed data: parse it in the script with"
                        + " new groovy.json.JsonSlurper().parseText(" + ref + "), or set the header from the body after"
                        + " unmarshal: json";
+            } else if (onText && bodyData && !bean) {
+                String keys = BodyFacts.hint(exchange, BodyFacts.Need.DATA);
+                hint = "the value read here is text (a " + e.getType().getSimpleName() + ") in the body, not an object"
+                       + " with fields: " + BodyFacts.describe(exchange) + ", which is data already, so no unmarshal is"
+                       + " needed; check the name read, and the value it is read on" + (keys != null ? " (" + keys + ")" : "");
             } else if (onText && !bean) {
                 hint = "the value read here is still text (a " + e.getType().getSimpleName()
                        + " comes from iterating text), not parsed data: unmarshal it first (unmarshal: json for JSON),"

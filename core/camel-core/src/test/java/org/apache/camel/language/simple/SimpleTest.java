@@ -531,8 +531,10 @@ public class SimpleTest extends LanguageTestSupport {
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
         assertTrue(cause.getMessage().startsWith("Key: qty not found in bean: "), cause.getMessage());
-        assertTrue(cause.getMessage().contains("the value is the message body as a stream, not a Map: unmarshal it first"),
+        // what the body is says it once: no second hint about the value
+        assertTrue(cause.getMessage().contains("(the body is a stream (ByteArrayInputStream): unmarshal it first"),
                 cause.getMessage());
+        assertFalse(cause.getMessage().contains("the value is the message body as a stream"), cause.getMessage());
     }
 
     @Test

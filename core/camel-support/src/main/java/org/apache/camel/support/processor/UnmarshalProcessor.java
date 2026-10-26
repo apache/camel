@@ -17,7 +17,9 @@
 package org.apache.camel.support.processor;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -124,7 +126,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
         } catch (Exception e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
-            exchange.setException(body == null ? nullBodyException(exchange, e) : e);
+            exchange.setException(body == null ? nullBodyException(exchange, e) : parsedDataException(exchange, body, e));
         } finally {
             // The Iterator will close the stream itself
             if (!(result instanceof Iterator)) {
@@ -154,6 +156,33 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
                   + ", so there is nothing to unmarshal: " + BodyFacts.hint(exchange, BodyFacts.Need.A_BODY)
                   + "; or set allowNullBody=true to skip a null body.";
         NoTypeConversionAvailableException answer = new NoTypeConversionAvailableException(message, null, ntc.getToType());
+        answer.initCause(e);
+        return answer;
+    }
+
+    /**
+     * A Map or a List fails in the type converter too, as the data format reads text: "No type converter available to
+     * convert from type: java.util.LinkedHashMap to the required type: java.io.InputStream". Say what it means here:
+     * the body, or the variable, is data already, and a variable is unmarshalled with variableSend and variableReceive.
+     * The exception type stays the same, so an onException for it still matches.
+     */
+    private Exception parsedDataException(Exchange exchange, Object body, Exception e) {
+        if (!(e instanceof NoTypeConversionAvailableException ntc) || !(body instanceof Map) && !(body instanceof Collection)) {
+            return e;
+        }
+        String name
+                = dataFormat instanceof DataFormatName dfn ? dfn.getDataFormatName() : dataFormat.getClass().getSimpleName();
+        String message = variableSend != null
+                ? "Cannot unmarshal using " + name + ": the variable " + variableSend + " holds data ("
+                  + body.getClass().getSimpleName()
+                  + ") already, and the data format reads text: read its fields as they are, such as"
+                  + " ${variable." + variableSend + "[name]}, and leave this unmarshal out"
+                : "Cannot unmarshal using " + name + ": " + BodyFacts.describe(exchange)
+                  + ", which is data already, and the data format reads text: read its fields as they are, and leave"
+                  + " this unmarshal out; to parse the text in a variable, unmarshal it with variableSend and"
+                  + " variableReceive set to its name";
+        NoTypeConversionAvailableException answer
+                = new NoTypeConversionAvailableException(message, body, ntc.getToType());
         answer.initCause(e);
         return answer;
     }

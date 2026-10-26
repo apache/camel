@@ -17,6 +17,8 @@
 package org.apache.camel.support;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,7 +32,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BodyTypeRegistry.Kind;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.BodyFacts.Need;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,6 +63,8 @@ public class BodyFactsTest extends ContextTestSupport {
                 from("direct:unchanged").process(e -> seen.add(BodyFacts.describe(e)));
                 from("direct:setBy").setBody(constant(new LinkedHashMap<>(Map.of("sku", "A1")))).log("next")
                         .process(e -> seen.add(BodyFacts.describe(e)));
+                from("direct:marshalled").marshal(new TextDataFormat())
+                        .process(e -> seen.add(BodyFacts.describe(e) + ": " + BodyFacts.hint(e, Need.DATA)));
             }
         };
     }
@@ -74,6 +80,22 @@ public class BodyFactsTest extends ContextTestSupport {
         template.sendBody("direct:setBy", "hello");
         assertEquals(1, seen.size());
         assertTrue(seen.get(0).startsWith("the body is a Map (LinkedHashMap), set by setBody"), seen.get(0));
+    }
+
+    @Test
+    public void testAFieldReadAfterAMarshalOfData() {
+        // what the benchmark wrote (r22): the ticket is marshalled for a file, and a field is read after it
+        template.sendBody("direct:marshalled", new LinkedHashMap<>(Map.of("ticketId", "T-1")));
+        assertEquals(1, seen.size());
+        assertTrue(seen.get(0).contains(", set by marshal"), seen.get(0));
+        assertTrue(seen.get(0).contains("wrote it from data (LinkedHashMap): read the field before the marshal, for"
+                                        + " example into a header with setHeader, or keep the data in the body and"
+                                        + " marshal into a variable"),
+                seen.get(0));
+        // a marshal of text: unmarshal was meant
+        seen.clear();
+        template.sendBody("direct:marshalled", "{\"ticketId\": \"T-1\"}");
+        assertTrue(seen.get(0).contains("unmarshal it first"), seen.get(0));
     }
 
     @Test
@@ -189,6 +211,20 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals("yaml", BodyFacts.dataFormatOf("application/x-yaml"));
         assertNull(BodyFacts.dataFormatOf("text/plain"));
         assertNull(BodyFacts.dataFormatOf(null));
+    }
+
+    /** Writes the body as its text. */
+    private static final class TextDataFormat extends ServiceSupport implements DataFormat {
+
+        @Override
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+            stream.write(String.valueOf(graph).getBytes(StandardCharsets.UTF_8));
+        }
+
+        @Override
+        public Object unmarshal(Exchange exchange, InputStream stream) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private Exchange exchange(Object body) {
