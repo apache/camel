@@ -163,7 +163,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         registry = AiToolRegistry.getOrCreate(camelContext);
         resourceRegistry = AiResourceRegistry.getOrCreate(camelContext);
         // subscribe before snapshotting so no concurrent registration is missed: publishing a published spec again is
-        // a no-op, a refused one is offered to the engine again
+        // a no-op, a refused one is offered to the engine again. publish is called for each selected tag of a spec, so
+        // a refusal is logged once per tag, as a name clash is
         registry.addListener(listener);
         resourceRegistry.addListener(resourceListener);
         registry.getTools().forEach((tag, specs) -> {
@@ -240,7 +241,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             try {
                 engine.toolAdded(createTool(spec));
             } catch (McpServerRefusedException e) {
-                LOG.error("Refusing to expose MCP tool '{}': {}", spec.getName(), e.getMessage(), e.getCause());
+                LOG.error("Refusing to expose MCP tool '{}': {}", spec.getName(), e.getMessage(), e);
                 return;
             }
             // track only what the engine accepted: a refused name stays free and is never passed to toolRemoved
@@ -294,7 +295,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             try {
                 engine.resourceAdded(createResource(spec));
             } catch (McpServerRefusedException e) {
-                LOG.error("Refusing to expose MCP resource '{}': {}", spec.getUri(), e.getMessage(), e.getCause());
+                LOG.error("Refusing to expose MCP resource '{}': {}", spec.getUri(), e.getMessage(), e);
                 return;
             }
             publishedResources.put(spec.getUri(), spec);
