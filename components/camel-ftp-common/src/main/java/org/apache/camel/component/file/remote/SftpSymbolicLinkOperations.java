@@ -43,4 +43,11 @@ public interface SftpSymbolicLinkOperations {
      */
     String readSymbolicLink(String path) throws GenericFileOperationFailedException;
 
+    /**
+     * Whether the failure is due to a transport or connection error rather than an unresolvable symbolic link.
+     */
+    default boolean isTransportError(GenericFileOperationFailedException e) {
+        return false;
+    }
+
 }

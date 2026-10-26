@@ -1219,6 +1219,22 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile>,
     }
 
     @Override
+    public boolean isTransportError(GenericFileOperationFailedException e) {
+        if (!isConnected()) {
+            return true;
+        }
+        Throwable cause = e.getCause();
+        if (cause instanceof org.apache.sshd.sftp.common.SftpException sftp) {
+            if (sftp.getStatus() == org.apache.sshd.sftp.common.SftpConstants.SSH_FX_NO_SUCH_FILE
+                    || sftp.getStatus() == org.apache.sshd.sftp.common.SftpConstants.SSH_FX_PERMISSION_DENIED) {
+                return false;
+            }
+            return true;
+        }
+        return cause != null;
+    }
+
+    @Override
     public boolean retrieveFile(String name, Exchange exchange, long size)
             throws GenericFileOperationFailedException {
         lock.lock();

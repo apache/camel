@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
@@ -52,6 +54,8 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
 
     // the starting directory with its symbolic links resolved on the server, computed once per poll
     private volatile String resolvedStartingDirectory;
+
+    private final Set<String> unresolvableLinks = ConcurrentHashMap.newKeySet();
 
     protected AbstractSftpConsumer(RemoteFileEndpoint<SftpRemoteFile> endpoint, Processor processor,
                                    RemoteFileOperations<SftpRemoteFile> operations,
@@ -90,7 +94,7 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
 
     @Override
     protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
-        // resolved again on the first symbolic link of this poll, as the starting directory can be replaced between polls
+        // resolved lazily during this poll on the first symbolic link encountered, as the starting directory can be replaced between polls
         resolvedStartingDirectory = null;
 
         String currentDir = null;
@@ -288,11 +292,20 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
                     : resolveSymbolicLinks(links, null, remoteFile.getAbsoluteFilePath());
             return GenericFileHelper.isWithinDirectory(target, startingDirectory, '/');
         } catch (GenericFileOperationFailedException e) {
+            if (links.isTransportError(e)) {
+                throw e;
+            }
             // such as a dangling symbolic link
+            unresolvableLinks.add(absoluteFilePath);
             LOG.debug("Cannot resolve symbolic link: {} against the starting directory due to: {}", absoluteFilePath,
                     e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    protected boolean isUnresolvableLink(String absoluteFilePath) {
+        return unresolvableLinks.contains(absoluteFilePath);
     }
 
     /**

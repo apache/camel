@@ -150,6 +150,57 @@ class SftpConsumerJailStartingDirectorySymlinkIT extends SftpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    void skipsLinkResolvingOutsideStartingDirectoryStepwiseFalse() throws Exception {
+        Path inbox = Files.createDirectories(base.resolve("inbox"));
+        Path archive = Files.createDirectories(base.resolve("archive"));
+        Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        Files.writeString(archive.resolve("report.txt"), "Archived");
+        createSymbolicLink(inbox.resolve("report.txt"), Path.of("..", "archive", "report.txt"));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(1);
+
+        consume("inbox", "&stepwise=false");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void skipsDanglingLinkStepwiseFalse() throws Exception {
+        Path inbox = Files.createDirectories(base.resolve("inbox"));
+        Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        createSymbolicLink(inbox.resolve("missing.txt"), Path.of("gone.txt"));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(1);
+
+        consume("inbox", "&stepwise=false");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void skipsLinkResolvingOutsideInSubDirectoryRecursive() throws Exception {
+        Path inbox = Files.createDirectories(base.resolve("inbox"));
+        Path sub = Files.createDirectories(inbox.resolve("sub"));
+        Path archive = Files.createDirectories(base.resolve("archive"));
+        Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        Files.writeString(archive.resolve("report.txt"), "Archived");
+        createSymbolicLink(sub.resolve("report.txt"), Path.of("..", "..", "archive", "report.txt"));
+        createSymbolicLink(sub.resolve("inner.txt"), Path.of("..", "hello.txt"));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Hello World");
+        mock.expectedHeaderValuesReceivedInAnyOrder(Exchange.FILE_NAME, "hello.txt", "sub/inner.txt");
+
+        consume("inbox", "&recursive=true");
+
+        mock.assertIsSatisfied();
+    }
+
     private void consume(String directory, String query) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

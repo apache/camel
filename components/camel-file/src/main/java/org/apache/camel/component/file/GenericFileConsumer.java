@@ -817,9 +817,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (endpoint.isJailStartingDirectory() && !isWithinStartingDirectory(file, absoluteFilePath)) {
             // such a file usually stays where it is and is listed again on every poll, so only warn the first time
             if (skippedOutsideStartingDirectory.put(absoluteFilePath, Boolean.TRUE) == null) {
-                LOG.warn("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+                if (isUnresolvableLink(absoluteFilePath)) {
+                    LOG.warn("Skipping file as symbolic link cannot be resolved: {}", absoluteFilePath);
+                } else {
+                    LOG.warn("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+                }
             } else {
-                LOG.debug("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+                if (isUnresolvableLink(absoluteFilePath)) {
+                    LOG.debug("Skipping file as symbolic link cannot be resolved: {}", absoluteFilePath);
+                } else {
+                    LOG.debug("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+                }
             }
             return false;
         }
@@ -902,6 +910,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      */
     protected boolean isWithinStartingDirectory(Supplier<GenericFile<T>> file, String absoluteFilePath) {
         return isWithinStartingDirectory(absoluteFilePath);
+    }
+
+    /**
+     * Strategy to determine whether a skipped file could not be resolved (such as a dangling symbolic link).
+     *
+     * @param  absoluteFilePath the resolved absolute path of the listed file
+     * @return                  {@code true} if the file could not be resolved rather than resolving outside
+     */
+    protected boolean isUnresolvableLink(String absoluteFilePath) {
+        return false;
     }
 
     /**

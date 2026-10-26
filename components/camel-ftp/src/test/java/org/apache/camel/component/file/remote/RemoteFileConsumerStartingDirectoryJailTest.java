@@ -217,6 +217,11 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
         }
 
         @Override
+        public boolean isConnected() {
+            return true;
+        }
+
+        @Override
         public String getHomeDirectory() {
             return "/home/camel";
         }

@@ -975,15 +975,30 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile>, Sft
         }
     }
 
+    @Override
+    public boolean isTransportError(GenericFileOperationFailedException e) {
+        if (!isConnected()) {
+            return true;
+        }
+        Throwable cause = e.getCause();
+        if (cause instanceof SftpException sftp) {
+            if (sftp.id == ChannelSftp.SSH_FX_NO_SUCH_FILE || sftp.id == ChannelSftp.SSH_FX_PERMISSION_DENIED) {
+                return false;
+            }
+            return true;
+        }
+        return cause != null;
+    }
+
     /**
      * Escapes the characters that JSch interprets in a path argument, so that the server acts on the literal path.
      * <p/>
      * {@link ChannelSftp#lstat(String)} and {@link ChannelSftp#readlink(String)} pass the path through JSch's
      * {@code isUnique}/{@code glob_remote}, which treats {@code *} and {@code ?} as wildcards and {@code \} as an
      * escape character and removes it. Without this, a listed link whose target contains one of these characters (for
-     * example a target that steps through a sibling symbolic link named with a backslash) would be checked against a
-     * different path from the one the server follows when the file is retrieved, which would let the jail check be
-     * bypassed. This mirrors JSch's own (package-private) {@code Util.quote}.
+     * example a target that steps through a sibling symbolic link named with a backslash) would check a different path
+     * from the one the server opens when retrieving the file, which would let the jail check be bypassed. This mirrors
+     * JSch's own (package-private) {@code Util.quote}.
      *
      * @param  path the literal path to look up
      * @return      the path with {@code \}, {@code *} and {@code ?} escaped for JSch
