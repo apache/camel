@@ -121,9 +121,12 @@ public class GroovyExpression extends ExpressionSupport {
                 hint = BodyFacts.describe(exchange) + ": " + payload;
             } else if (textHeader != null) {
                 String ref = isIdentifier(textHeader) ? "headers." + textHeader : "headers['" + textHeader + "']";
+                String variable
+                        = isIdentifier(textHeader) ? "variables." + textHeader : "variables['" + textHeader + "']";
+                // the parsed data is kept in a variable, not a header: a header is sent on with the message
                 hint = "header '" + textHeader + "' is still JSON text, not parsed data: parse it in the script with"
-                       + " new groovy.json.JsonSlurper().parseText(" + ref + "), or set the header from the body after"
-                       + " unmarshal: json";
+                       + " new groovy.json.JsonSlurper().parseText(" + ref + "), or keep the parsed data in a variable"
+                       + " (setVariable with simple ${body} after unmarshal: json) and read " + variable;
             } else if (onText && bodyData && !bean) {
                 String keys = BodyFacts.hint(exchange, BodyFacts.Need.DATA);
                 hint = "the value read here is text (a " + e.getType().getSimpleName() + ") in the body, not an object"

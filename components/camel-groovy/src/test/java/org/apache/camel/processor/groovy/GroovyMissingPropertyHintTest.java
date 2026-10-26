@@ -138,6 +138,10 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
         assertTrue(cause.getMessage().contains("header 'skuList' is still JSON text, not parsed data"), cause.getMessage());
         assertTrue(cause.getMessage().contains("new groovy.json.JsonSlurper().parseText(headers.skuList)"),
                 cause.getMessage());
+        // the parsed data goes into a variable, not back into a header
+        assertTrue(cause.getMessage().contains("or keep the parsed data in a variable (setVariable with simple ${body}"
+                                               + " after unmarshal: json) and read variables.skuList"),
+                cause.getMessage());
     }
 
     @Test
