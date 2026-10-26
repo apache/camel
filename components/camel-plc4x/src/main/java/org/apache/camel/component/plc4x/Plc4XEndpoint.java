@@ -145,7 +145,11 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     public void setupConnection() throws PlcConnectionException {
         try {
             synchronized (this) {
-                connection = plcDriverManager.getConnection(connectionString);
+                // a restarted route or another consumer or producer of the endpoint keeps a live connection
+                if (!isConnected()) {
+                    closeConnection();
+                    connection = plcDriverManager.getConnection(connectionString);
+                }
             }
             if (!isConnected()) {
                 reconnectIfNeeded();
@@ -180,7 +184,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
             if (autoReconnect) {
                 // a lost PLC4X connection cannot always connect again (the S7 and EtherNet/IP drivers fail on a closed
                 // transport), so it is replaced by a new one
-                closeLostConnection();
+                closeConnection();
                 connection = plcDriverManager.getConnection(connectionString);
                 LOGGER.debug("Successfully reconnected");
                 return;
@@ -191,12 +195,12 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
         stop();
     }
 
-    private void closeLostConnection() {
+    private void closeConnection() {
         if (connection != null) {
             try {
                 connection.close();
             } catch (Exception e) {
-                LOGGER.debug("Closing the lost connection failed: {}", e.getMessage());
+                LOGGER.debug("Closing the connection failed: {}", e.getMessage());
             }
             connection = null;
         }
@@ -239,18 +243,24 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     /**
      * Build a {@link PlcReadRequest} using the tags specified in the endpoint.
      */
-    public PlcReadRequest buildPlcReadRequest() {
+    public PlcReadRequest buildPlcReadRequest() throws PlcConnectionException {
         return buildPlcReadRequest(Map.of());
     }
 
     /**
      * Build a {@link PlcReadRequest} using the given tags and the tags specified in the endpoint.
      *
-     * @param  additionalTags tag addresses by name to read in addition to the tags of the endpoint
-     * @return                {@link PlcReadRequest}
+     * @param  additionalTags         tag addresses by name to read in addition to the tags of the endpoint
+     * @return                        {@link PlcReadRequest}
+     * @throws PlcConnectionException if there is no connection
      */
-    PlcReadRequest buildPlcReadRequest(Map<String, String> additionalTags) {
-        PlcReadRequest.Builder builder = connection.readRequestBuilder();
+    PlcReadRequest buildPlcReadRequest(Map<String, String> additionalTags) throws PlcConnectionException {
+        // read the field once: a concurrent stop or reconnect can clear it at any time
+        PlcConnection current = connection;
+        if (current == null) {
+            throw new PlcConnectionException("Cannot establish connection");
+        }
+        PlcReadRequest.Builder builder = current.readRequestBuilder();
         additionalTags.forEach(builder::addTagAddress);
         if (tags != null) {
             for (Map.Entry<String, String> tag : tags.entrySet()) {
@@ -346,10 +356,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     public void doStop() throws Exception {
         super.doStop();
         synchronized (this) {
-            if (isConnected()) {
-                connection.close();
-                connection = null;
-            }
+            closeConnection();
         }
     }
 

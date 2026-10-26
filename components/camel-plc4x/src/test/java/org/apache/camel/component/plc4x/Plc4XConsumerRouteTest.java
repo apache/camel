@@ -133,6 +133,7 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
         context.getRouteController().startRoute("triggered");
 
         result.assertIsSatisfied(10000);
+        assertEquals(1, MockDriver.connectionStrings().size(), "the restarted route uses the connection that is still open");
     }
 
     @Test

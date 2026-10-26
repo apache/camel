@@ -72,9 +72,6 @@ public class Plc4XConsumer extends DefaultConsumer {
         PlcReadRequest request;
         try {
             plc4XEndpoint.reconnectIfNeeded();
-            if (plc4XEndpoint.connection == null) {
-                throw new PlcConnectionException("Cannot establish connection");
-            }
             request = plc4XEndpoint.buildPlcReadRequest();
         } catch (Exception e) {
             if (LOGGER.isTraceEnabled()) {

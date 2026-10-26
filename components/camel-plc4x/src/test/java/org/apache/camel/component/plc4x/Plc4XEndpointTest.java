@@ -20,12 +20,15 @@ import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class Plc4XEndpointTest {
@@ -56,12 +59,21 @@ class Plc4XEndpointTest {
     }
 
     @Test
-    void doStopDisconnectedConnection() throws Exception {
+    void doStopClosesALostConnection() throws Exception {
         PlcConnection plcConnectionMock = mock(PlcConnection.class);
+        // isConnected() returns false on the mock, and close() fails as on a dead transport
+        doThrow(new PlcConnectionException("Transport is not open")).when(plcConnectionMock).close();
         sut.connection = plcConnectionMock;
-        // isConnected() returns false by default on the mock, so doStop() should skip close()
+
         sut.doStop();
-        verify(plcConnectionMock, never()).close();
+
+        verify(plcConnectionMock).close();
+        assertThat(sut.connection, nullValue());
+    }
+
+    @Test
+    void buildPlcReadRequestWithoutAConnection() {
+        assertThrows(PlcConnectionException.class, () -> sut.buildPlcReadRequest());
     }
 
 }

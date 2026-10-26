@@ -25,7 +25,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
-import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
@@ -116,9 +115,6 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
      */
     private PlcReadResponse read() throws Exception {
         plc4XEndpoint.reconnectIfNeeded();
-        if (plc4XEndpoint.connection == null) {
-            throw new PlcConnectionException("Cannot establish connection");
-        }
         CompletableFuture<? extends PlcReadResponse> future
                 = plc4XEndpoint.buildPlcReadRequest(Map.of(Constants.TRIGGER, trigger)).execute();
         PlcReadResponse response;
