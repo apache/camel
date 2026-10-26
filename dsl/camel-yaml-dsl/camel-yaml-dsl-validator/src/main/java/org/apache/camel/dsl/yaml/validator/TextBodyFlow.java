@@ -165,7 +165,11 @@ final class TextBodyFlow {
     /** The components whose endpoint is a route, which may set variables of the message. */
     private static final Set<String> ROUTES = Set.of("direct", "seda", "direct-vm", "vm", "kamelet");
 
-    /** What a block that may set variables has in it: a step that does, or a call of a route. */
+    /**
+     * What a block that may set variables has in it: a step that does, or a call of a route. "ariable" is one substring
+     * for setVariable, removeVariable, variableReceive, ${variable.x} and the like, whether the v is upper or lower
+     * case.
+     */
     private static final List<String> MAY_SET_VARIABLES = List.of("ariable", "\"bean\"", "\"process\"", "\"script\"",
             "direct", "seda", "kamelet");
 
@@ -222,7 +226,10 @@ final class TextBodyFlow {
             Map<String, ProjectFacts.Observed> observed, CatalogBodyTypes bodyTypes,
             Map<String, ProjectFacts.KameletDataTypes> kamelets, Map<String, Body> variables) {
 
-        /** The walk of a route a step calls: for its outcome alone, and the variables of the message it changes. */
+        /**
+         * The walk of a route a step calls: for its outcome alone, and the variables of the message it changes. The
+         * called route runs on the same exchange, so it shares the variables, where a branch gets a copy.
+         */
         Walk called() {
             return new Walk(
                     null, byFrom, null, seen, false, operations, requestFields, observed, bodyTypes, kamelets, variables);
@@ -733,8 +740,9 @@ final class TextBodyFlow {
         String uri = sendUri(name, value);
         boolean callsARoute = uri != null && ROUTES.contains(scheme(uri))
                 && !("to".equals(name) && !value.has("variableReceive") && w.byFrom().containsKey(normalize(uri)));
-        if (SETS_VARIABLES.contains(name) || callsARoute || RouteGraph.SENDS.contains(name) && uri == null
-                || mayChangeVariables(value)) {
+        // nothing to forget when no variable is known, and the text of a block is then not looked at
+        if (!variables.isEmpty() && (SETS_VARIABLES.contains(name) || callsARoute
+                || RouteGraph.SENDS.contains(name) && uri == null || mayChangeVariables(value))) {
             variables.clear();
         }
         String receive = value != null && value.isObject() ? fixedName(value.get("variableReceive")) : null;
