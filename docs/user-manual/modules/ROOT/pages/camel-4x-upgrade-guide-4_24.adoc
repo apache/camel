@@ -179,6 +179,28 @@ between `next()` and `remove()` must call `remove()` before `hasNext()`.
 outside the Basic Multilingual Plane (such as U+10400 and U+10428) as the same key, as `String.equalsIgnoreCase` does;
 before, they were usually kept as two entries. Keys without such letters are not affected.
 
+=== camel-core - the failover load balancer does not fail over on a suppressed exception
+
+The failover load balancer with a list of exceptions now matches only the exception the attempt fails with and its
+causes, as `onException` and `doCatch` do. Before, it also matched the suppressed exceptions of that exception. Since
+4.23, an exception thrown in a `doFinally` block is added as a suppressed exception to the exception from the `doTry`
+block, so a `doFinally` that threw one of the exceptions to fail over on made the load balancer fail over, and the
+exception from the `doTry` block was lost when the next processor succeeded. Now the exchange fails with that
+exception. The same applies to a failing `onCompletion` that runs before the consumer (`modeBeforeConsumer`) and a
+failing saga compensation, whose exceptions are also added as suppressed exceptions.
+
+The load balancer also no longer fails over when one of the exceptions to fail over on is only the suppressed exception
+of the exception the attempt fails with in these cases:
+
+* An `onException` block (or another error handler) fails while it handles the exception: the exchange fails with the
+  new exception, and the original exception is added to it as a suppressed exception.
+* The `onWhen` predicate of a `doCatch` throws an exception: the exchange fails with the exception of the predicate, and
+  the original exception is added to it as a suppressed exception.
+* A processor or component adds a suppressed exception itself (such as Java's try-with-resources when closing a
+  resource fails).
+
+To fail over in these cases, add the type of the exception the attempt fails with to the list.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
