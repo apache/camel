@@ -183,7 +183,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-hashicorp-vault",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.2.0",
+  "serviceVersion" : "2.2.1",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
