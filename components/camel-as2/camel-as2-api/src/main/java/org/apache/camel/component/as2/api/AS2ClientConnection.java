@@ -283,7 +283,8 @@ public class AS2ClientConnection {
                 try {
                     byte[] content = EntityUtils.toByteArray(entity);
                     classicResponse.setEntity(new InputStreamEntity(
-                            new ByteArrayInputStream(content), content.length, ContentType.parse(entity.getContentType()),
+                            new ByteArrayInputStream(content), content.length,
+                            ContentType.parseLenient(entity.getContentType()),
                             entity.getContentEncoding()));
                 } catch (IOException | RuntimeException e) {
                     // a connection with a half-read body must not go back to the pool

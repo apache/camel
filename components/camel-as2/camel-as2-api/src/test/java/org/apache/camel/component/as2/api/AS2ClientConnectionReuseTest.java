@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.util.IOHelper;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
@@ -74,7 +75,7 @@ class AS2ClientConnectionReuseTest {
     }
 
     @Test
-    void bodyLargerThanTheInputBufferIsReadAfterTheConnectionIsClosed() throws Exception {
+    void bodyLargerThanTheInputBufferIsFullyReadWhenThePartnerClosesTheConnection() throws Exception {
         // the body is far beyond the 8 KB input buffer: it must be read before the connection is released and closed
         String body = "0123456789abcdef".repeat(4096);
         startPartner("HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: " + body.length() + "\r\n\r\n" + body, true);
@@ -84,7 +85,7 @@ class AS2ClientConnectionReuseTest {
     }
 
     @Test
-    void chunkedBodyLargerThanTheInputBufferIsReadAfterTheConnectionIsClosed() throws Exception {
+    void chunkedBodyLargerThanTheInputBufferIsFullyReadWhenThePartnerClosesTheConnection() throws Exception {
         String body = "0123456789abcdef".repeat(4096);
         startPartner("HTTP/1.1 200 OK\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\n"
                      + Integer.toHexString(body.length()) + "\r\n" + body + "\r\n0\r\n\r\n",
@@ -123,6 +124,18 @@ class AS2ClientConnectionReuseTest {
 
         for (int i = 0; i < 2; i++) {
             assertThrows(IOException.class, () -> clientConnection.send(newRequest(), as2Context()));
+        }
+        assertEquals(2, connections.get());
+    }
+
+    @Test
+    void unknownCharsetInTheResponseFailsTheSendAsAnHttpExceptionAndTheConnectionIsNotReused() throws Exception {
+        startPartner("HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=no-such-charset\r\nContent-Length: 2\r\n\r\nok",
+                false);
+        AS2ClientConnection clientConnection = newClientConnection();
+
+        for (int i = 0; i < 2; i++) {
+            assertThrows(HttpException.class, () -> clientConnection.send(newRequest(), as2Context()));
         }
         assertEquals(2, connections.get());
     }
