@@ -61,8 +61,12 @@ include::partial$component-endpoint-headers.adoc[]
 This component supports 2 producer endpoints.
 
 *insert*: the insert producer builds a searchable index by analyzing
-the body in incoming exchanges and associating it with a token
-("content").
+the body in incoming exchanges and associating it with the field
+`contents`. Each exchange is indexed as one document, which holds the
+body in the field `contents`, the exchange id in the field `exchangeId`,
+and each header in a field of the header name. Each file of the `srcDir`
+directory is indexed as one document, which holds the file contents in
+the field `contents` and the file path, not tokenized, in the field `path`.
 *query*: the query producer performs searches on a pre-created index.
 The query uses the searchable index to perform score & relevance based
 searches. Queries are sent via the incoming exchange contains a header
