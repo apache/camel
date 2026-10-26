@@ -49,6 +49,10 @@ including an equal copy made with `Message.builder(incoming).build()`. When copy
 the incoming message to start a new downstream conversation, clear inherited IDs with
 `.taskId(null).contextId(null)`. Set explicit downstream IDs when continuing a downstream conversation.
 
+=== camel-shiro - ShiroSecurityPolicy scopes SecurityManager to policy instance
+
+The `ShiroSecurityPolicy` constructors that load configuration from an INI file or object no longer set the resulting `SecurityManager` as Shiro's global security manager via `SecurityUtils.setSecurityManager(...)`. `ShiroSecurityProcessor` now creates and authenticates the `Subject` using the route policy's `SecurityManager` directly. Applications configuring multiple `ShiroSecurityPolicy` instances in the same JVM now have their realms evaluated independently per policy.
+
 === camel-ai-tool - required arguments with reserved names reject the call
 
 Required tool arguments whose names start with `camel` or `org.apache.camel.` (case-insensitive)

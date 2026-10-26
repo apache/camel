@@ -32,6 +32,8 @@ import org.apache.shiro.crypto.cipher.ByteSourceBroker;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DelegatingSubject;
+import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +116,7 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         ByteSourceBroker decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
         ShiroSecurityToken securityToken = ShiroSecurityHelper.deserialize(decryptedToken.getClonedBytes());
 
-        Subject currentUser = SecurityUtils.getSubject();
+        Subject currentUser = resolveSubject();
 
         // Authenticate user if not authenticated
         try {
@@ -124,9 +126,39 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
             authorizeUser(currentUser, exchange);
         } finally {
             if (policy.isAlwaysReauthenticate()) {
-                currentUser.logout();
+                try {
+                    currentUser.logout();
+                } finally {
+                    ThreadContext.unbindSubject();
+                    ThreadContext.unbindSecurityManager();
+                }
             }
         }
+    }
+
+    private Subject resolveSubject() {
+        Subject currentUser = null;
+        Subject threadSubject = ThreadContext.getSubject();
+        if (threadSubject instanceof DelegatingSubject) {
+            DelegatingSubject delegatingSubject = (DelegatingSubject) threadSubject;
+            if (policy.getSecurityManager() != null && delegatingSubject.getSecurityManager() == policy.getSecurityManager()) {
+                currentUser = threadSubject;
+            }
+        }
+
+        if (currentUser == null) {
+            if (policy.getSecurityManager() != null) {
+                ThreadContext.unbindSubject();
+                ThreadContext.unbindSecurityManager();
+                currentUser = new Subject.Builder(policy.getSecurityManager()).buildSubject();
+                ThreadContext.bind(currentUser);
+                ThreadContext.bind(policy.getSecurityManager());
+            } else {
+                currentUser = SecurityUtils.getSubject();
+            }
+        }
+
+        return currentUser;
     }
 
     private void authenticateUser(Subject currentUser, ShiroSecurityToken securityToken) {
