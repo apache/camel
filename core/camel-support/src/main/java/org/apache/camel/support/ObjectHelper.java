@@ -71,6 +71,12 @@ public final class ObjectHelper {
     private static final Pattern PARENTHESIS_PATTERN;
     private static final String DEFAULT_DELIMITER = ",";
     private static final char DEFAULT_DELIMITER_CHAR = ',';
+    /**
+     * The longest text that is parsed as a number to compare it with a number. Parsing a {@link BigDecimal} takes time
+     * that grows with the square of the number of digits (a million digits take seconds), and no number in a message is
+     * this long.
+     */
+    private static final int MAX_NUMBER_LENGTH = 1000;
 
     /**
      * Utility classes should not have a public constructor.
@@ -118,6 +124,13 @@ public final class ObjectHelper {
             // converting one to the type of the other may drop the decimals, and BigDecimal.equals also compares the
             // scale (2.50 is not equal to 2.5)
             return compareNumbers(leftNum, rightNum) == 0;
+        } else if (rightValue instanceof String text && isExactNumber(leftValue)) {
+            // a number and a numeric String (such as 10.00 and "10", or 10 and "1e1") are equal if their values are
+            // equal, as the <=, >= and in operators compare them, even when the String is written differently
+            BigDecimal rightNum = decimalOrNull(text);
+            if (rightNum != null) {
+                return compareNumbers((Number) leftValue, rightNum) == 0;
+            }
         }
 
         // try without type coerce
@@ -134,6 +147,12 @@ public final class ObjectHelper {
             return stringDoubleComparison((String) leftValue, doubleValue);
         } else if (rightValue instanceof Boolean) {
             return stringBooleanComparison(leftValue, rightValue);
+        } else if (isExactNumber(rightValue)) {
+            // a numeric String and a number are equal if their values are equal (see typeCoerceEquals)
+            BigDecimal leftNum = decimalOrNull((String) leftValue);
+            if (leftNum != null) {
+                return compareNumbers(leftNum, (Number) rightValue) == 0;
+            }
         }
 
         return tryConverters(converter, leftValue, rightValue, ignoreCase);
@@ -146,14 +165,83 @@ public final class ObjectHelper {
     private static Number asNumber(Object value) {
         if (value instanceof Number number) {
             return number;
-        } else if (value instanceof String text && (isNumber(text) || isFloatingNumber(text))) {
-            try {
-                return new BigDecimal(text);
-            } catch (NumberFormatException e) {
-                return null;
-            }
+        } else if (value instanceof String text) {
+            return decimalOrNull(text);
         }
         return null;
+    }
+
+    /**
+     * Parses the text as a decimal number, such as {@code 10}, {@code 10.00}, {@code -2.5} or {@code 1e1}, ignoring
+     * leading and trailing whitespace, or returns {@code null} if it is not a number. Text longer than
+     * {@link #MAX_NUMBER_LENGTH} is not parsed.
+     */
+    private static BigDecimal decimalOrNull(String text) {
+        String number = text.trim();
+        if (number.isEmpty() || number.length() > MAX_NUMBER_LENGTH || !isDecimalNumber(number)) {
+            return null;
+        }
+        try {
+            return new BigDecimal(number);
+        } catch (NumberFormatException e) {
+            // such as an exponent that is too large
+            return null;
+        }
+    }
+
+    /**
+     * Whether the text is a number as {@link BigDecimal} parses it: an optional sign, digits with an optional decimal
+     * point, and an optional exponent, such as {@code +10}, {@code 10.}, {@code .5} or {@code 1e-3}. This is checked
+     * before parsing, so text that is not a number (most text) does not throw an exception.
+     */
+    private static boolean isDecimalNumber(String text) {
+        int len = text.length();
+        int i = 0;
+        char ch = text.charAt(0);
+        if (ch == '-' || ch == '+') {
+            i++;
+        }
+        boolean digits = false;
+        boolean dot = false;
+        for (; i < len; i++) {
+            ch = text.charAt(i);
+            if (Character.isDigit(ch)) {
+                digits = true;
+            } else if (ch == '.' && !dot) {
+                dot = true;
+            } else {
+                break;
+            }
+        }
+        if (!digits) {
+            return false;
+        } else if (i == len) {
+            return true;
+        } else if (ch != 'e' && ch != 'E') {
+            return false;
+        }
+        // the exponent
+        i++;
+        if (i < len && (text.charAt(i) == '-' || text.charAt(i) == '+')) {
+            i++;
+        }
+        if (i == len) {
+            return false;
+        }
+        for (; i < len; i++) {
+            if (!Character.isDigit(text.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Whether the value is a number other than a {@link Double} or {@link Float}. A double or float is compared with a
+     * numeric String by converting the String to a double or float, which compares their values already.
+     */
+    private static boolean isExactNumber(Object value) {
+        return value instanceof Number && !(value instanceof Double) && !(value instanceof Float);
     }
 
     /**
