@@ -495,6 +495,8 @@ Reports in `target/dst/`: `<Test>.escapes.txt` (the scan), `<Test>.summary.txt` 
 left alive, runtime escapes) and `<Test>.<method>/seed-<n>.trace` (the trace of each failing or replayed seed, with
 its SHA-256 on the second line).
 
+== Setup
+
 Add the module with test scope:
 
 [source,xml]
@@ -505,3 +507,37 @@ Add the module with test scope:
     <scope>test</scope>
 </dependency>
 ----
+
+The rewriting needs the Byte Buddy agent, loaded with `-javaagent` when the JVM of the tests starts. The harness does
+not attach it to the running JVM: the JDK warns about an agent loaded that way, and is to refuse it by default
+(JEP 451). Let the `properties` goal of the `maven-dependency-plugin` set the path of the agent jar, and add the agent to
+the surefire `argLine`. In the Camel build, a module with DST tests adds it to `camel.surefire.fork.additional-vmargs`,
+which the `argLine` of the parent includes:
+
+[source,xml]
+----
+<properties>
+    <camel.surefire.fork.additional-vmargs>-javaagent:${net.bytebuddy:byte-buddy-agent:jar}</camel.surefire.fork.additional-vmargs>
+</properties>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>dst-agent-path</id>
+                    <goals>
+                        <goal>properties</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+----
+
+Without the agent, the first test with `@DstInstrument` fails with "The byte code agent of camel-test-dst is not
+loaded". To run a DST test from an IDE, add `-javaagent:<path of byte-buddy-agent.jar>` to the JVM options of the run
+configuration.

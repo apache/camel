@@ -102,11 +102,24 @@
     <build>
         <plugins>
             <plugin>
+                <!-- sets the property net.bytebuddy:byte-buddy-agent:jar to the path of the agent -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>dst-agent-path</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- the agent that rewrites the time calls is attached at runtime (as Mockito does) -->
-                    <argLine>${camel.surefire.fork.vmargs} -Xmx1g @{argLine}</argLine>
+                    <!-- the agent that rewrites the time calls is loaded when the JVM starts -->
+                    <argLine>${camel.surefire.fork.vmargs} -javaagent:${net.bytebuddy:byte-buddy-agent:jar} -Xmx1g @{argLine}</argLine>
                     <systemPropertyVariables>
                         <dst.traceDir>${project.build.directory}/dst</dst.traceDir>
                     </systemPropertyVariables>

@@ -33,6 +33,8 @@
     <description>Camel Azure Event Hubs Component</description>
 
     <properties>
+        <!-- the DST tests load the byte code agent of camel-test-dst when the JVM starts (see test-dst.adoc) -->
+        <camel.surefire.fork.additional-vmargs>-javaagent:${net.bytebuddy:byte-buddy-agent:jar}</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -88,4 +90,22 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- sets the property net.bytebuddy:byte-buddy-agent:jar to the path of the agent of the DST tests -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>dst-agent-path</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

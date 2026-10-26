@@ -74,7 +74,9 @@ import net.bytebuddy.jar.asm.Opcodes;
  * virtual clock while a run is open (see {@link Dst}); only its blocking waits, such as the permit queue of
  * {@code org.apache.camel.processor.TotalRequestsThrottler}, still need the rewriting.
  * <p>
- * Uses a runtime-attached agent (as Mockito's inline mock maker does) and the ASM copy shipped in Byte Buddy.
+ * Uses the Byte Buddy agent, loaded when the JVM starts with {@code -javaagent:<path of byte-buddy-agent.jar>} (the
+ * surefire {@code argLine} of the modules with DST tests), and the ASM copy shipped in Byte Buddy. The agent is not
+ * attached at runtime: the JDK warns about agents loaded into a running JVM and is to disallow it by default (JEP 451).
  */
 public final class DstInstrumentation {
 
@@ -170,7 +172,7 @@ public final class DstInstrumentation {
             return;
         }
         if (instrumentation == null) {
-            instrumentation = ByteBuddyAgent.install();
+            instrumentation = agent();
             instrumentation.addTransformer(new TimeTransformer(), true);
         }
         List<Class<?>> loaded = new ArrayList<>();
@@ -186,6 +188,18 @@ public final class DstInstrumentation {
             } catch (UnmodifiableClassException e) {
                 throw new IllegalStateException(e);
             }
+        }
+    }
+
+    private static Instrumentation agent() {
+        try {
+            return ByteBuddyAgent.getInstrumentation();
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException(
+                    "The byte code agent of camel-test-dst is not loaded: start the JVM of the tests with"
+                                            + " -javaagent:<path of byte-buddy-agent.jar>, for example in the surefire argLine"
+                                            + " (see \"Setup\" in test-dst.adoc)",
+                    e);
         }
     }
 
