@@ -1,0 +1,253 @@
+---
+title: Chaos
+authors:
+  - "@allthingssecurity"
+reviewers: ["@davsclaus"]
+approvers: []
+creation-date: 2026-10-26
+last-updated: 2026-10-27
+status: proposed
+see-also:
+  - "CAMEL-26330"
+  - "CAMEL-26331"
+  - "CAMEL-25911"
+  - "CAMEL-25684"
+  - "CAMEL-25682"
+  - "CAMEL-26286"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+`camel-chaos` lets a developer, or an AI tool, turn on faults in a running Camel application and see how its routes
+cope. A rule such as "fail 30% of the sends to `kafka:orders` for one minute" or "stall route `poller` for 20 s" is
+added while the application runs, for example in dev mode (`camel run --dev`), and a report then says per route how
+many messages completed, failed, were handled by the error handler, were redelivered or were lost, with a verdict.
+
+With the `camel-chaos` JAR on the classpath its hooks are installed and stay idle until a rule is added. Without the
+JAR, as in production, nothing of it is there. Faults run in real time, so a person can start an application, turn
+chaos on and watch what happens, and the same rules can run inside a `camel-test-dst` world in virtual time.
+
+Chaos needs two small changes in camel-core: a hook for every send to an endpoint (CAMEL-26331) and a hook for every
+step in the channel. The other levels use SPIs that exist today.
+
+== Motivation
+
+Routes are written for the happy path, and their error handling is rarely exercised before production. Questions such
+as "what happens to the messages in flight when the broker is slow for 30 s", "does this `onException` really match the
+error the HTTP endpoint returns" or "does the consumer resume after its route was suspended" are answered today by
+hand-written tests, one route and one fault at a time.
+
+A prototype (CAMEL-26330 links it), which hooks only `to`, reproduced CAMEL-25684 (camel-slack, a route suspend in the
+middle of a poll) and CAMEL-25682 (camel-resilience4j, a timeout while the task writes its result) on the code from
+before their fixes. The recent "remove a route" bugs (CAMEL-26286, CAMEL-26287, CAMEL-26288, CAMEL-26302 to
+CAMEL-26305: one route goes, and another route loses the cache, channel or session it shares) have a shape a chaos
+rule can produce on demand.
+
+AI tools that write and change routes need the same: a way to try a route against failures and read a short result.
+
+== Goals
+
+- Out of the box chaos for any Camel application in development: faults on sends, on the messages that enter a route,
+  on consumer polls, on processing steps and on the route lifecycle.
+- Switched on by the classpath, idle until a rule is added; rules added, changed and removed live.
+- Configuration through `camel.chaos.*` options of camel-main, as for `camel.debug.*` and `camel.trace.*`.
+- A report per route with counts and a verdict, readable by a person and by a tool.
+- Control from the CLI (`camel cmd chaos`), a dev console, and the camel-jbang MCP server.
+- Real time by default; the same rules in virtual time inside a DST world.
+- A seed makes a run repeatable.
+
+== Non-goals
+
+- Production use. With profile `prod` chaos stays off even when the JAR is present.
+- Custom fault types written by users. The first version has a fixed set; a plugin SPI (a JAR with its own faults) can
+  come later.
+- Faults outside Camel: network partitions, killing processes, disk or clock faults of the host. Tools outside Camel
+  do that; this is about what Camel does with the failures it sees.
+- The video, the models (TLA+, Lean, Z3) and the demo scripts of the prototype. They stay on the prototype branch.
+
+== Proposal
+
+=== Switched on by the classpath
+
+`camel-chaos` registers a `ContextServicePlugin` (`META-INF/services/org.apache.camel.spi.ContextServicePlugin`).
+The `CamelContext` loads the plugins found on the classpath while it is built, before the routes are created.
+
+In camel-main the profile and the `camel.chaos.*` options are set after the plugins are loaded, so the plugin reads
+them when the context initializes (`LifecycleStrategy.onContextInitializing`), which is still before the routes are
+created. When the profile is `prod`, or `camel.chaos.enabled=false`, it installs nothing. Otherwise it installs the
+hooks below, logs a WARN that chaos is active, and waits for rules. Each hook asks the `ChaosManager` whether a rule
+matches; with no rules that is one volatile read, and the call goes on unchanged.
+
+=== Options
+
+[cols="1,1,3"]
+|===
+|Option |Default |Description
+
+|`camel.chaos.enabled` |`true` |Install the hooks (only when the JAR is present, and never with profile `prod`).
+|`camel.chaos.seed` | |Seed of the random choices; without it a seed is picked and shown in the report.
+|`camel.chaos.rules` | |Rules to add at startup, in the same text form as `camel cmd chaos add`.
+|`camel.chaos.maxDuration` |`10m` |Upper bound for every rule; a rule without its own limit ends after this.
+|`camel.chaos.reportOnShutdown` |`true` |Log the report when the context stops.
+|===
+
+They are a `ChaosConfigurationProperties` group in camel-main, as `DebuggerConfigurationProperties` is for
+`camel.debug.*`, so the catalog and tooling know them.
+
+=== Rules
+
+A rule has a target, a fault, how often it fires, and when it ends:
+
+[source]
+----
+target:  route=<id or pattern> | endpoint=<uri pattern> | component=<name> | step=<processor id pattern>
+fault:   error | delay | stall | drop | corrupt | lifecycle   (with parameters, see below)
+rate:    a probability (0.3), or every Nth match
+until:   a number of matches, a duration, or removed by hand
+----
+
+Rules are added, changed, listed and removed live. A rule ends by itself after its count or duration (at most
+`camel.chaos.maxDuration`), so a forgotten rule cannot keep breaking a dev instance. Rules stay when the routes are
+reloaded in dev mode.
+
+=== Hooks at all levels
+
+[cols="1,2,2"]
+|===
+|Level |Hook |Faults
+
+|Sends to any endpoint
+|The send hook of camel-core (CAMEL-26331): one helper that the six places that fire `ExchangeSendingEvent` share
+(`SendProcessor`, `DefaultProducerCache` twice, `EventNotifierCallback`, `MulticastProcessor`,
+`EventNotifierProducer`), with a hook before and after the producer.
+|Stop the send with an exception (the producer is not called), a delay, a dropped send that reports success, a changed
+message or reply.
+
+|Messages that enter a route
+|A `RoutePolicy`, added to every route by a `RoutePolicyFactory`. Its `onExchangeBegin` sees every exchange that
+enters a route and can change the message.
+|Header values with random data, a body in an unusual charset (characters outside US-ASCII), an `InputStream` that
+ends too soon.
+
+|Consumer polls
+|The `PollingConsumerPollStrategy` of a `ScheduledPollConsumer`, which can be changed at runtime with
+`setPollStrategy`. Its `begin`, `commit` and `rollback` run around every poll. Chaos wraps the consumer's own strategy
+while a rule is active and puts it back when the rule ends.
+|A failed poll, a slow poll, a skipped poll.
+
+|Every step
+|The channel (`CamelInternalProcessor`), next to the check that skips a processor disabled with
+`camel cmd disable-processor`. A small change in camel-core, in a follow-up ticket.
+|A delay or an exception at a step.
+
+|Route lifecycle
+|The `RouteController` (suspend, resume, stop, start), and `CamelContext.removeRoute` with the route definition added
+again.
+|Stall a route (suspend, then resume), stop and start it, remove it and add it again.
+|===
+
+The send hook covers every send whatever started it: `to`, `toD`, `wireTap`, `enrich`, `recipientList`, `multicast`
+and a `ProducerTemplate`. The components stay the real ones (a `KafkaComponent` stays a `KafkaComponent`), and the
+routes get no extra processors. For a send from a route the hook runs inside the error handler, so a stopped send is a
+real failure for `onException`, redelivery and the dead letter channel.
+
+A fault has a real type where it matters, so that the `onException` of the route is what gets tested: for the HTTP
+components, the exception the component throws for a status code (`HttpOperationFailedException` of
+camel-http-base, `NettyHttpOperationFailedException` for camel-netty-http) with the status code and headers given in
+the rule; for any other endpoint, an exception class and message given in the rule.
+
+=== Time
+
+The clock reads and the sleeps of `camel-chaos` (delays, stall durations, rule expiry) go through `TimeSource`
+(camel-util, CAMEL-25911). By default that is the system clock, so a person sees a 20 s stall last 20 s. Inside a
+`camel-test-dst` world the same rules run on the virtual clock: a 10 minute stall takes milliseconds, and a seed gives
+the same report again, times included. Chaos does not need DST.
+
+The Javadoc of `TimeSource` says it is internal and not an API for components. `camel-chaos` may use it: it reads the
+clock and sleeps through it, and never installs a provider (only a test harness such as `camel-test-dst` does that).
+The Javadoc is updated to say so with the first chaos pull request.
+
+=== The report
+
+The plugin counts per route with an event notifier, as the prototype does: completed, failed, handled by the error
+handler, redelivered, and the faults that fired. A rule can carry an expectation ("route `orders` completes 100 more
+messages"), which finds messages that were lost before they became an exchange.
+
+The verdict is PASS when every message the route took in completed or was handled, and FAIL otherwise, with the
+reason. It must not call a message lost when its consumer redelivers it (a file that stays in the directory, a
+transacted JMS message that is rolled back), because a tool acts on what the report says. The report is plain text
+for the CLI and JSON for tools, and states the seed and the rules that were active.
+
+=== Control
+
+- A `chaos` dev console: list, add, change and remove rules, and show the report. The CLI connector uses it, so
+  `camel cmd chaos add|list|remove|report` works against any running application with the JAR, and so can any other
+  client of the dev consoles.
+- The camel-jbang MCP server (`camel-jbang-mcp`) gets tools for the same (add a fault, report, clear), in a `chaos`
+  runtime tool group next to the `sql`, `tracing`, `resilience` and `http` groups, offered only when the application
+  has `camel-chaos`.
+- JMX is not needed for the first version.
+
+=== Order of work
+
+Each step is its own pull request after this document:
+
+. camel-core: the send hook (CAMEL-26331).
+. The module, the plugin, the options, the rule model, the report, and the faults on sends.
+. The dev console and `camel cmd chaos`.
+. Faults on the messages that enter a route, and on consumer polls.
+. camel-core: the step hook in the channel, then the faults at steps.
+. Route lifecycle faults.
+. The MCP tool group.
+. A DST world that runs chaos rules in virtual time, as an example and a regression test.
+
+== Alternatives considered
+
+- *Wrapping the component*, as `camel run --stub` swaps in the stub component where the component resolver of camel
+  run creates it. It sees every send, but it changes the type of the component: a `KafkaComponent` is then a wrapper
+  for `getComponent("kafka", KafkaComponent.class)`, the component options, the dev consoles and the health checks.
+- *An event notifier on `ExchangeSendingEvent`.* It fires for every send but cannot stop one: an exception thrown by an
+  event notifier is logged and ignored, and the producer is called anyway.
+- *`interceptSendToEndpoint`.* It can stop a send, but it wraps the endpoints, and it needs an intercept definition in
+  the routes or a route configuration, which the user then sees in the route model.
+- *An `InterceptStrategy` for the steps.* It needs no camel-core change, but it wraps every processor of every route
+  in one more processor. The channel already runs a check per step for disabled processors.
+- *Faults from outside the JVM* (a proxy in front of the broker, killing containers). Useful, but it cannot fail one
+  route and not another, cannot produce a typed exception for `onException`, and needs infrastructure a developer
+  running `camel run --dev` does not have.
+- *Advice-with in tests.* It changes routes for one test; chaos is for a running application, and does not change the
+  routes.
+
+== Compatibility
+
+Nothing changes for applications without the JAR. The two camel-core hooks cost one check each when no hook is
+installed, like the event check that the send places do today. With the JAR and no rules, the send hook, a route
+policy per route and the step hook are installed but idle: one volatile read per send, per exchange that enters a
+route and per step, a development-time cost only. The new options are in a new group.
+
+== Risks
+
+- The JAR left on the classpath of a production build. Mitigations: the `prod` profile guard, a WARN at startup when
+  the hooks are installed, and rules that expire. Rules come only from `camel.chaos.rules`, the CLI connector of
+  `camel run` and the dev console; the dev console over HTTP needs `camel.management.devConsoleEnabled`, which the
+  security policy marks `insecure:dev` (design/security.adoc). `camel.chaos.rules` can be marked `insecure:dev` too,
+  so profile `prod` refuses to start with rules configured.
+- A verdict that is wrong. The report states what it counted and from where, so a person can check it.
+
+== Open questions
+
+- Module location: `components/camel-chaos`, next to `camel-debug`?
+- Should chaos also stay off when no profile is set (a plain `Main`), so that only `dev` and test runs turn it on?
+- Is the rule text form above good enough for `camel.chaos.rules` in `application.properties`, or should rules be
+  YAML?
+
+== Related tickets
+
+- CAMEL-26330: this feature.
+- CAMEL-26331: the send hook in camel-core.
+- CAMEL-25911: `TimeSource` in camel-util.
+- CAMEL-25684, CAMEL-25682: bugs the prototype reproduced on the code from before their fixes.
+- CAMEL-26286, CAMEL-26287, CAMEL-26288, CAMEL-26302 to CAMEL-26305: the "remove a route" bugs that a lifecycle rule
+  produces.
