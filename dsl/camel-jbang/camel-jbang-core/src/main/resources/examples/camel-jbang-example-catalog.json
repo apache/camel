@@ -1135,7 +1135,7 @@
             "eips": [
                 "aggregate",
                 "split",
-                "setHeader",
+                "setVariable",
                 "marshal",
                 "unmarshal"
             ],
@@ -1352,7 +1352,7 @@
     {
         "name": "route/order-lines",
         "title": "Order lines",
-        "description": "Each order read from the orders directory is split into one message per line, the order id travels along in a header, and the log shows the order, one pick line per line, and the parent's confirmation that all lines went to picking.",
+        "description": "Each order read from the orders directory is split into one message per line, the order id travels along in a variable, and the log shows the order, one pick line per line, and the parent's confirmation that all lines went to picking.",
         "level": "route",
         "teaches": {
             "components": [
@@ -1361,7 +1361,7 @@
             ],
             "eips": [
                 "split",
-                "setHeader",
+                "setVariable",
                 "unmarshal"
             ],
             "languages": [
@@ -1433,7 +1433,7 @@
                 "log"
             ],
             "eips": [
-                "setHeader",
+                "setVariable",
                 "setBody"
             ],
             "languages": [
@@ -1712,7 +1712,7 @@
     {
         "name": "transform/json-transform",
         "title": "JSON transform",
-        "description": "The shop's order in order.json is reshaped for the warehouse: jsonpath reads the order id and the number of lines into headers, jq builds the pick list with only sku and quantity per line, and both the order and the pick list are logged.",
+        "description": "The shop's order in order.json is reshaped for the warehouse: jsonpath reads the order id and the number of lines into variables, jq builds the pick list with only sku and quantity per line, and both the order and the pick list are logged.",
         "level": "transform",
         "teaches": {
             "components": [
@@ -1721,7 +1721,7 @@
             ],
             "eips": [
                 "transform",
-                "setHeader",
+                "setVariable",
                 "setBody"
             ],
             "languages": [
