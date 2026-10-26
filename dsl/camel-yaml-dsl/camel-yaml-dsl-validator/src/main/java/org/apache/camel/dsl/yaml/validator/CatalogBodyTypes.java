@@ -184,6 +184,13 @@ final class CatalogBodyTypes {
                 ? answer(model.getBodyType(BodyTypeModel.UNMARSHAL_OUT), values(options), Set.of()) : null;
     }
 
+    /** The bodies an unmarshal with a data format of the YAML DSL (json, csv...) and its options can read. */
+    Answer unmarshalIn(String key, JsonNode options) {
+        DataFormatModel model = dataFormat(key, options);
+        return model != null
+                ? answer(model.getBodyType(BodyTypeModel.UNMARSHAL_IN), values(options), Set.of()) : null;
+    }
+
     /** The bodies the data type transformer of a transformDataType can transform. */
     Answer transformerIn(JsonNode step) {
         return transformerSide(step, BodyTypeModel.TRANSFORMER_IN);
