@@ -17,8 +17,9 @@
 package org.apache.camel.component.once;
 
 import java.io.InputStream;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -38,30 +39,41 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
 
     private final CamelContext camelContext;
     private final OnceEndpoint endpoint;
-    private final Timer timer;
-    private final TimerTask task;
+    private final Runnable task;
+    // the thread that fires the route is created when the consumer starts and released when it stops: it must not
+    // outlive the route (one thread per route that was ever created) nor keep the JVM running
+    private volatile ScheduledExecutorService executor;
+    private volatile ScheduledFuture<?> future;
     private volatile boolean scheduled;
 
     public OnceConsumer(OnceEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.camelContext = endpoint.getCamelContext();
         this.endpoint = endpoint;
-        this.timer = new Timer(endpoint.getName());
-        this.task = new OnceTimerTask();
+        this.task = new OnceTask();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        executor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, endpoint.getName());
         if (!scheduled && endpoint.getCamelContext().getStatus().isStarted()) {
-            scheduleTask(task, timer);
+            scheduleTask();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (task != null) {
-            task.cancel();
+        ScheduledFuture<?> f = future;
+        if (f != null) {
+            // an exchange that is being routed is not interrupted
+            f.cancel(false);
+            future = null;
+        }
+        ScheduledExecutorService e = executor;
+        if (e != null) {
+            camelContext.getExecutorServiceManager().shutdown(e);
+            executor = null;
         }
         scheduled = false;
         super.doStop();
@@ -70,18 +82,23 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
         if (!scheduled) {
-            scheduleTask(task, timer);
+            scheduleTask();
         }
     }
 
-    protected void scheduleTask(TimerTask task, Timer timer) {
+    protected void scheduleTask() {
+        ScheduledExecutorService e = executor;
+        if (e == null) {
+            // not started
+            return;
+        }
         long delay = Math.max(0, endpoint.getDelay());
         LOG.debug("Scheduled once after: {} mills for task: {} ", delay, task);
-        timer.schedule(task, delay);
+        future = e.schedule(task, delay, TimeUnit.MILLISECONDS);
         scheduled = true;
     }
 
-    private class OnceTimerTask extends TimerTask {
+    private class OnceTask implements Runnable {
 
         @Override
         public void run() {
