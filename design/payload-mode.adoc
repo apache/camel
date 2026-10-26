@@ -178,9 +178,12 @@ these EIPs copy a `StreamCache` body for each branch today (`MulticastProcessor`
 
 *The edges.* Producers get the payload through the type converter, not by replacing the body before them:
 
-- a fallback type converter gives `toPayload` (and `toDisplay` for a `String` from a binary format) when the target is
-  a `String`, `byte[]` or `InputStream` and the value is data of the exchange's payload mode. So http, file, kafka and
-  the other producers that read text, bytes or a stream get the payload.
+- type converters give the payload when the target is a `String`, `byte[]` or `InputStream`. For the json mode these
+  are the regular type converters of camel-support from `JsonObject` and `JsonArray` to their JSON text (CAMEL-26324),
+  which act in every route, with or without a payload mode. A plugin whose data type has no such converters adds a
+  fallback type converter that gives `toPayload` (and `toDisplay` for a `String` from a binary format) when the value
+  is data of the exchange's payload mode. So http, file, kafka and the other producers that read text, bytes or a
+  stream get the payload.
 - producers that take a `Map` as their API use the data: sql named parameters (`:#sku`, `SqlHelper` converts the body
   to a `Map`), mongodb documents.
 - producers that would turn a `Map` into something that is not the payload are fixed to ask the payload mode first:
@@ -204,13 +207,14 @@ formats:
 - Inside the route the engine hook turns payloads into data, at the spots of the stream caching advice. A type
   converter only runs when a step asks for a type, so it cannot keep the body as data from one step to the next; the
   hook can.
-- At the edges the mode adds one fallback type converter, from data of the mode to a `String`, `byte[]` or
-  `InputStream` (see the edges above). It only acts on exchanges of a route with a payload mode, and the other type
-  converters are left as they are.
+- At the edges the json mode needs no type converter of its own: the regular type converters from `JsonObject` and
+  `JsonArray` to a `String`, `byte[]` or `InputStream` give the JSON text (CAMEL-26324). A plugin whose data type has
+  no such converters adds a fallback type converter, which only acts on exchanges of a route with a payload mode (see
+  the edges above). The other type converters are left as they are.
 - A conversion inside the route uses the type converters as today: `convertBodyTo`, `${bodyAs(...)}` and the
   parameter binding of a bean. Data of the json mode is a `Map` or a `List`, so a conversion to `Map` gives it as it
-  is and a conversion to `String` gives the JSON text; a conversion to another type goes through the type converters
-  that exist today.
+  is, and a conversion to `String` gives the JSON text through the converters of CAMEL-26324 above (not the
+  `toString` of a `Map`); a conversion to another type goes through the type converters that exist today.
 - The data formats do not change: `marshal` and `unmarshal` do what they do today, and their result is handled like
   the result of any other step (see what changes for route authors below).
 - The body types the catalog declares stay the Java types the components give. The validator applies the payload mode
@@ -266,7 +270,8 @@ These are not part of the first work. They are here to check that the SPI does n
 |camel-cbor, and new ones
 |the JSON data model, so `JsonObject` / `JsonArray` too
 |A binary wire form: `toPayload` gives a `byte[]` and `toDisplay` the JSON text. Two plugins can share a data type, so
-writing at an edge uses the route's mode, not the type of the data. Detection by `Content-Type` and magic bytes.
+writing at an edge uses the route's mode, not the type of the data (see the open question on the regular type
+converters). Detection by `Content-Type` and magic bytes.
 
 |Avro, Protobuf, Thrift, ASN.1
 |camel-avro, camel-protobuf, camel-thrift, camel-asn1
@@ -295,10 +300,12 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 
 === Order of work
 
+. camel-core, on its own first: the type converters from `JsonObject` and `JsonArray` to their JSON text
+  (CAMEL-26324), which are useful without a payload mode.
 . camel-core: the `payloadMode` option (camel-api, camel-main, the model and the YAML and XML DSLs), the SPI and its
-  base class, the engine (the hooks, the fallback converter, the copy for the branches of an EIP, header values,
-  display), the json plugin, a user manual
-  page, and tests that run the examples of the motivation in both modes.
+  base class, the engine (the hooks, the copy for the branches of an EIP, header values, display), the json plugin, a
+  user manual page, and tests that run the examples of the motivation in both modes. The fallback converter for
+  plugins without regular converters comes with the first such plugin.
 . Components: JMS and SJMS, and the survey of the producers that turn a `Map` into something else.
 . Tooling: the validator, the catalog, Camel TUI and the MCP tools.
 . Measure: the local-model benchmark with the mode off and on, comparing the body type collisions and the pass rate.
@@ -320,9 +327,12 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 
 - Nothing changes for routes without a payload mode. The mode is opt-in, and `default` is today's behaviour, so
   existing applications run as they are, with the `unmarshal` and `marshal` steps and the Java types they use today.
-- The fallback type converter only acts on exchanges of a route with a payload mode. Whether a `JsonObject` should
-  also convert to its JSON text outside the mode (today it gives `{sku=CAMEL-MUG}` through `toString`) is an open
-  question.
+- `JsonObject` and `JsonArray` convert to their JSON text in every route with CAMEL-26324. Before, a `String` was
+  the `toString` of the map (`{sku=CAMEL-MUG}`, which is not JSON), and there was no conversion to a `byte[]` or
+  `InputStream`. This is the one change outside the mode, and it is in the upgrade guide of 4.24. A `JsonObject` that
+  holds a value that is not JSON, such as a POJO, converts as before.
+- The fallback type converter of a plugin without regular converters only acts on exchanges of a route with a payload
+  mode.
 - The JMS and SJMS change only applies to data of a payload mode.
 
 == Risks
@@ -340,7 +350,10 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 
 - Should a route be able to have more than one payload mode (`payloadMode=json,csv`), each claiming its payloads by
   content type, with a `Map` from a step going to the first?
-- Should a `JsonObject` convert to its JSON text outside a payload mode too?
+- Regular type converters run before fallback converters, so at an edge the JSON text converters of `JsonObject`
+  would win over a binary plugin (such as CBOR) that shares the JSON data model. Either the converter hands the
+  conversion to the payload mode of the exchange when that mode claims the data (the converter gets the exchange), or
+  each binary plugin has a data type of its own.
 - The marker type for CSV rows, and the data type of XML (DOM, or a Groovy-friendly view).
 
 == Related tickets
@@ -349,3 +362,4 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 - CAMEL-24844: the body type flow of the validator.
 - CAMEL-25330, CAMEL-25746, CAMEL-25749: the hints when a body is not the data a step reads.
 - CAMEL-25329: marshal json writes JSON text as it is.
+- CAMEL-26324: type converters from `JsonObject` and `JsonArray` to their JSON text.
