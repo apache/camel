@@ -196,6 +196,26 @@ these EIPs copy a `StreamCache` body for each branch today (`MulticastProcessor`
 TUI and the MCP tools) shows `toDisplay` of data of a payload mode, so users see the JSON text, not
 `{sku=CAMEL-MUG, qty=3}`.
 
+=== Type converters, data formats and body types
+
+A payload mode is a stage of its own, not a type converter, and it does not replace the type converters or the data
+formats:
+
+- Inside the route the engine hook turns payloads into data, at the spots of the stream caching advice. A type
+  converter only runs when a step asks for a type, so it cannot keep the body as data from one step to the next; the
+  hook can.
+- At the edges the mode adds one fallback type converter, from data of the mode to a `String`, `byte[]` or
+  `InputStream` (see the edges above). It only acts on exchanges of a route with a payload mode, and the other type
+  converters are left as they are.
+- A conversion inside the route uses the type converters as today: `convertBodyTo`, `${bodyAs(...)}` and the
+  parameter binding of a bean. Data of the json mode is a `Map` or a `List`, so a conversion to `Map` gives it as it
+  is and a conversion to `String` gives the JSON text; a conversion to another type goes through the type converters
+  that exist today.
+- The data formats do not change: `marshal` and `unmarshal` do what they do today, and their result is handled like
+  the result of any other step (see what changes for route authors below).
+- The body types the catalog declares stay the Java types the components give. The validator applies the payload mode
+  on top of them (see tooling below).
+
 === The json plugin
 
 In camel-support, with camel-util-json, so it needs no new dependency.
@@ -298,7 +318,8 @@ Parquet is a file format of many rows, not a message payload, and is not a candi
 
 == Compatibility
 
-- Nothing changes for routes without a payload mode.
+- Nothing changes for routes without a payload mode. The mode is opt-in, and `default` is today's behaviour, so
+  existing applications run as they are, with the `unmarshal` and `marshal` steps and the Java types they use today.
 - The fallback type converter only acts on exchanges of a route with a payload mode. Whether a `JsonObject` should
   also convert to its JSON text outside the mode (today it gives `{sku=CAMEL-MUG}` through `toString`) is an open
   question.
