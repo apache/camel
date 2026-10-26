@@ -124,8 +124,10 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
 
+        String address = consumer.getConfiguration().getAddress();
         int port = consumer.getConfiguration().getPort();
-        ChannelHandler handler = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(port).getChannelHandler();
+        ChannelHandler handler
+                = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(address, port).getChannelHandler();
 
         if (consumer.getConfiguration().isUsingExecutorService()) {
             EventExecutorGroup applicationExecutor = consumer.getEndpoint().getComponent().getExecutorService();
