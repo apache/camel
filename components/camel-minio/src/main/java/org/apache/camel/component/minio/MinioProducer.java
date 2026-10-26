@@ -196,6 +196,11 @@ public class MinioProducer extends DefaultProducer {
                 .object(objectName)
                 .userMetadata(objectMetadata);
 
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getServerSideEncryption, putObjectRequest::sse);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getServerSideEncryptionCustomerKey, putObjectRequest::sse);
+
         if (!extraHeaders.isEmpty()) {
             putObjectRequest.extraHeaders(extraHeaders);
         }
@@ -223,6 +228,11 @@ public class MinioProducer extends DefaultProducer {
         String cannedAcl = exchange.getIn().getHeader(MinioConstants.CANNED_ACL, String.class);
         if (isNotEmpty(cannedAcl)) {
             extraHeaders.put("x-amz-acl", cannedAcl);
+        }
+
+        String serverSideEncryption = exchange.getIn().getHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, String.class);
+        if (isNotEmpty(serverSideEncryption)) {
+            extraHeaders.put("x-amz-server-side-encryption", serverSideEncryption);
         }
 
         return extraHeaders;
@@ -256,10 +266,18 @@ public class MinioProducer extends DefaultProducer {
                     .bucket(bucketName)
                     .object(sourceKey);
 
+            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                    getConfiguration()::getServerSideEncryptionCustomerKey, copySourceBuilder::ssec);
+
             CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
                     .bucket(destinationBucketName)
                     .object(destinationKey)
                     .source(copySourceBuilder.build());
+
+            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                    getConfiguration()::getServerSideEncryption, copyObjectRequest::sse);
+            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                    getConfiguration()::getServerSideEncryptionCustomerKey, copyObjectRequest::sse);
 
             ObjectWriteResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
 
@@ -341,10 +359,14 @@ public class MinioProducer extends DefaultProducer {
             final String bucketName = determineBucketName(exchange);
             final String sourceKey = determineObjectName(exchange);
 
-            InputStream respond = minioClient.getObject(GetObjectArgs.builder()
+            GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder()
                     .bucket(bucketName)
-                    .object(sourceKey)
-                    .build());
+                    .object(sourceKey);
+
+            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                    getConfiguration()::getServerSideEncryptionCustomerKey, getObjectRequest::ssec);
+
+            InputStream respond = minioClient.getObject(getObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(respond);
@@ -371,12 +393,16 @@ public class MinioProducer extends DefaultProducer {
                         "A Offset and length header must be configured to perform a partial get operation.");
             }
 
-            InputStream respond = minioClient.getObject(GetObjectArgs.builder()
+            GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder()
                     .bucket(bucketName)
                     .object(sourceKey)
                     .offset(Long.parseLong(offset))
-                    .length(Long.parseLong(length))
-                    .build());
+                    .length(Long.parseLong(length));
+
+            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                    getConfiguration()::getServerSideEncryptionCustomerKey, getObjectRequest::ssec);
+
+            InputStream respond = minioClient.getObject(getObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(respond);
