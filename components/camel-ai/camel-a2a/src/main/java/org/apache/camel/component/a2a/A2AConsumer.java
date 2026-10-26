@@ -42,7 +42,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.a2a.auth.A2AUserProfile;
 import org.apache.camel.component.a2a.extension.A2AExtensionHandler;
 import org.apache.camel.component.a2a.model.AgentCard;
@@ -1199,8 +1198,7 @@ public class A2AConsumer extends DefaultConsumer {
 
         contextId = contextIdOrNew(contextId);
 
-        processorExchange.getMessage().setHeader(A2AConstants.TASK_ID, taskId);
-        processorExchange.getMessage().setHeader(A2AConstants.CONTEXT_ID, contextId);
+        setTaskContext(processorExchange, taskId, contextId, A2AOperations.MESSAGE_SEND.getMethodName());
 
         if (resolveReturnImmediately(request, exchange)) {
             return processSendMessageAsync(processorExchange, taskId, contextId);
@@ -1247,6 +1245,15 @@ public class A2AConsumer extends DefaultConsumer {
         }
 
         return response;
+    }
+
+    private static void setTaskContext(Exchange exchange, String taskId, String contextId, String operation) {
+        exchange.setProperty(A2AConstants.REQUEST_TASK_ID, taskId);
+        exchange.setProperty(A2AConstants.REQUEST_CONTEXT_ID, contextId);
+        exchange.setProperty(A2AConstants.REQUEST_OPERATION, operation);
+        exchange.getMessage().setHeader(A2AConstants.REQUEST_TASK_ID, taskId);
+        exchange.getMessage().setHeader(A2AConstants.REQUEST_CONTEXT_ID, contextId);
+        exchange.getMessage().setHeader(A2AConstants.REQUEST_OPERATION, operation);
     }
 
     private SendMessageResponse processSendMessageAsync(
@@ -1489,24 +1496,10 @@ public class A2AConsumer extends DefaultConsumer {
         processorExchange.setProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT,
                 requestExchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT));
         copyNegotiatedExtensions(requestExchange, processorExchange);
-        A2ADataFormat dataFormat = getEndpoint().getConfiguration().getDataFormat();
-        if (dataFormat == A2ADataFormat.POJO) {
-            processorExchange.getMessage().setBody(request.getMessage());
-        } else if (dataFormat == A2ADataFormat.RAW) {
-            try {
-                processorExchange.getMessage().setBody(
-                        A2AJsonMapper.instance().writeValueAsString(request.getMessage()));
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Failed to serialize Message to JSON", e);
-            }
-        } else {
-            // PAYLOAD (default)
-            processorExchange.getMessage().setBody(A2ATypeConverters.messageToString(request.getMessage()));
-        }
-        processorExchange.getMessage().setHeader(A2AConstants.TASK_ID, taskId);
-        processorExchange.getMessage().setHeader(A2AConstants.CONTEXT_ID, contextId);
-        processorExchange.getMessage().setHeader(A2AConstants.OPERATION, A2AOperations.MESSAGE_STREAM.getMethodName());
+        messageSendOperation.parseRequest(processorExchange, request, getEndpoint().getConfiguration().getDataFormat());
+        setTaskContext(processorExchange, taskId, contextId, A2AOperations.MESSAGE_STREAM.getMethodName());
         processorExchange.getMessage().setHeader(A2AConstants.STREAM_EMITTER, emitter);
+        processorExchange.setProperty(A2AConstants.STREAM_EMITTER, emitter);
 
         A2ATaskStore store = getEndpoint().getTaskStore();
         FutureTask<Void> future = new FutureTask<>(() -> {

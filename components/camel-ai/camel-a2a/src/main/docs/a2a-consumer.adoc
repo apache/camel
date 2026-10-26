@@ -17,6 +17,45 @@ The consumer turns a Camel route into an A2A agent. It automatically:
 
 The route's `setBody` output becomes the agent's response — the consumer handles all A2A protocol wrapping. The `dataFormat` parameter controls what the route receives as body: extracted text (`PAYLOAD`, default), the full `Message` object (`POJO`), or raw JSON (`RAW`).
 
+=== Calling another agent
+
+An agent route can call an A2A producer directly. The producer uses its `operation` option,
+or an explicit `CamelA2AOperation` header set by the route. The incoming method does not select
+the downstream operation: a streaming caller can invoke a non-streaming downstream agent.
+
+The consumer exposes its incoming method, task ID and context ID as `CamelA2ARequestOperation`,
+`CamelA2ARequestTaskId` and `CamelA2ARequestContextId` headers. Copies in exchange properties with
+the same names preserve the consumer identity for replies and `A2AProgress` / `a2aSubTask` updates,
+even if the route removes or changes message headers. Treat these properties as consumer-owned state.
+For example, `${exchangeProperty.CamelA2ARequestTaskId}` always addresses the outer task.
+
+The existing `CamelA2ATaskId`, `CamelA2AContextId`, `CamelA2ATaskState` and `CamelA2AResponseType`
+headers describe the downstream operation and its result. They do not change the outer task.
+Set `CamelA2AReplyTaskState` to choose the state returned by `SendMessage`, or `CamelA2AReplyType`
+to `message` for a message-only reply. The default is a completed task. The consumer assigns
+its own context and task identity to reply messages, including a `Message` body returned by a producer.
+
+With `dataFormat=POJO`, forwarding the unchanged incoming `Message` to a producer copies its content
+without the incoming task and context IDs. The original immutable message remains available in the
+`CamelA2ARequestMessage` exchange property. To continue a downstream conversation, explicitly build
+a new `Message` with the downstream task/context IDs, or set `CamelA2AContextId` for its context.
+A route-supplied message retains its explicit IDs.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:orchestrator-card.json
+      steps:
+        - to:
+            uri: a2a:https://worker.example.com
+        - log:
+            message: "Worker replied to outer task ${exchangeProperty.CamelA2ARequestTaskId}"
+----
+
+The worker's result body becomes the outer reply content. Its task ID, state and response type
+remain available as producer results, while the outer consumer completes its own task.
+
 === Basic Agent (Local Only)
 
 The simplest possible local A2A agent. Define your agent's capabilities in `agent-card.json`, disable operation auth for local-only use, and let the route handle business logic:

@@ -82,11 +82,12 @@ import org.slf4j.LoggerFactory;
                                                  + " URL. With dataFormat POJO the Message, with RAW the Message as JSON"),
            consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
                                      description = "The reply of the agent: text, sent as one text part (bytes, a stream or a"
-                                                   + " file as their text), or a Message sent as it is. Another body is sent"
+                                                   + " file as their text), or Message content with the consumer task/context identity."
+                                                   + " Another body is sent"
                                                    + " as text: a Task as the text of its last message, a Map or a POJO as its"
                                                    + " toString(): marshal it first. The reply goes in a Task, completed"
-                                                   + " unless the CamelA2ATaskState header says another state, or as a Message"
-                                                   + " when the CamelA2AResponseType header is message"),
+                                                   + " unless the CamelA2AReplyTaskState header says another state, or as a Message"
+                                                   + " when the CamelA2AReplyType header is message"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "TASK_GET", carriers = Carrier.ANY),
@@ -104,7 +105,8 @@ import org.slf4j.LoggerFactory;
                                           @BodyType.When(option = "operation", value = "PUSH_CONFIG_DELETE",
                                                          carriers = Carrier.ANY) },
                                   description = "The message to send: text, sent as one text part (bytes, a stream or a"
-                                                + " file as their text), or a Message sent as it is; MESSAGE_STREAM also"
+                                                + " file as their text), or a Message. An unchanged consumer message is sent without"
+                                                + " its incoming task/context IDs. MESSAGE_STREAM also"
                                                 + " takes a SendMessageRequest. Another body is sent as its toString(), so a"
                                                 + " Map or a POJO needs marshalling first, and JSON text is sent as text."
                                                 + " PUSH_CONFIG_CREATE needs a TaskPushNotificationConfig, and the other"

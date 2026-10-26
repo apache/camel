@@ -49,7 +49,9 @@ public class MessageSendOperation implements A2AOperation {
         Object body = exchange.getMessage().getBody();
 
         if (body instanceof Message msg) {
-            message = msg;
+            // An unchanged consumer message carries the outer agent's identity, not the peer's.
+            message = msg == exchange.getProperty(A2AConstants.REQUEST_MESSAGE)
+                    ? Message.builder(msg).taskId(null).contextId(null).build() : msg;
         } else {
             String text = exchange.getMessage().getBody(String.class);
             message = Message.builder()
@@ -104,21 +106,16 @@ public class MessageSendOperation implements A2AOperation {
 
     @Override
     public void parseRequest(Exchange exchange, Object request) {
-        SendMessageRequest sendMessageRequest = (SendMessageRequest) request;
-        Message message = sendMessageRequest.getMessage();
-
-        String textContent = A2ATypeConverters.messageToString(message);
-        exchange.getMessage().setBody(textContent);
-
-        exchange.getMessage().setHeader(A2AConstants.MESSAGE_ID, message.messageId());
-        exchange.getMessage().setHeader(A2AConstants.CONTEXT_ID, message.contextId());
-        exchange.getMessage().setHeader(A2AConstants.OPERATION, methodName());
+        parseRequest(exchange, request, A2ADataFormat.PAYLOAD);
     }
 
     @Override
     public void parseRequest(Exchange exchange, Object request, A2ADataFormat dataFormat) {
         SendMessageRequest sendMessageRequest = (SendMessageRequest) request;
         Message message = sendMessageRequest.getMessage();
+        exchange.setProperty(A2AConstants.REQUEST_MESSAGE, message);
+        exchange.setProperty(A2AConstants.REQUEST_OPERATION, methodName());
+        exchange.setProperty(A2AConstants.REQUEST_CONTEXT_ID, message.contextId());
 
         if (dataFormat == A2ADataFormat.POJO) {
             exchange.getMessage().setBody(message);
@@ -135,20 +132,20 @@ public class MessageSendOperation implements A2AOperation {
         }
 
         exchange.getMessage().setHeader(A2AConstants.MESSAGE_ID, message.messageId());
-        exchange.getMessage().setHeader(A2AConstants.CONTEXT_ID, message.contextId());
-        exchange.getMessage().setHeader(A2AConstants.OPERATION, methodName());
+        exchange.getMessage().setHeader(A2AConstants.REQUEST_CONTEXT_ID, message.contextId());
+        exchange.getMessage().setHeader(A2AConstants.REQUEST_OPERATION, methodName());
     }
 
     @Override
     public Object buildResponse(Exchange exchange) {
         Object body = exchange.getMessage().getBody();
 
-        String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
-        String contextId = exchange.getMessage().getHeader(A2AConstants.CONTEXT_ID, String.class);
-        String taskStateStr = exchange.getMessage().getHeader(A2AConstants.TASK_STATE, String.class);
-        String responseType = exchange.getMessage().getHeader(A2AConstants.RESPONSE_TYPE, String.class);
+        String taskId = exchange.getProperty(A2AConstants.REQUEST_TASK_ID, String.class);
+        String contextId = exchange.getProperty(A2AConstants.REQUEST_CONTEXT_ID, String.class);
+        String taskStateStr = exchange.getMessage().getHeader(A2AConstants.REPLY_TASK_STATE, String.class);
+        String responseType = exchange.getMessage().getHeader(A2AConstants.REPLY_TYPE, String.class);
 
-        // If route set a Message directly (POJO mode), use it as-is
+        // Preserve Message content; consumer identity is applied below.
         Message agentMessage;
         if (body instanceof Message msg) {
             agentMessage = msg;
@@ -159,6 +156,13 @@ public class MessageSendOperation implements A2AOperation {
                     .parts(List.of(new TextPart(responseText)))
                     .messageId(UUID.randomUUID().toString())
                     .build();
+        }
+
+        // Reply identity belongs to this consumer even when the body came from another agent.
+        if (taskId != null || contextId != null) {
+            agentMessage = Message.builder(agentMessage)
+                    .taskId("message".equals(responseType) ? null : taskId)
+                    .contextId(contextId).build();
         }
 
         SendMessageResponse response = new SendMessageResponse();
