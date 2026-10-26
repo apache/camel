@@ -318,7 +318,7 @@ from("direct:start")
 
 Enabling tool search does not skip MCP `tools/list`. It only reduces the definitions sent to the model. `toolSearch=false` (the default) sends the current combined set, and the `searchable` flag has no effect.
 
-`toolSearchStrategy=vector` requires an autowired `toolSearchEmbeddingModel` and does not fall back to keyword search. A dynamic tool provider registered outside Camel's composite is refreshed by LangChain4j after search and is not part of this catalogue. Tool search is only applied in inline agent creation mode.
+`toolSearchStrategy=VECTOR` requires an autowired `toolSearchEmbeddingModel` and does not fall back to keyword search. A dynamic tool provider registered outside Camel's composite is refreshed by LangChain4j after search and is not part of this catalogue. Tool search is only applied in inline agent creation mode.
 
 [source,yaml]
 ----

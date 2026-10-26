@@ -196,7 +196,7 @@ class LangChain4jAgentToolSearchTest extends CamelTestSupport {
                 @Override
                 public void configure() {
                     from("direct:vector")
-                            .to("langchain4j-agent:vector?agentConfiguration=#cfg&toolSearch=true&toolSearchStrategy=vector");
+                            .to("langchain4j-agent:vector?agentConfiguration=#cfg&toolSearch=true&toolSearchStrategy=VECTOR");
                 }
             });
 

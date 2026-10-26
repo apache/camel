@@ -93,7 +93,7 @@ final class OpenAIToolSearch {
         if (configuration.getToolSearchStrategy() == AiToolSearchStrategy.VECTOR
                 && ObjectHelper.isEmpty(configuration.getToolSearchEmbeddingModel())) {
             throw new IllegalArgumentException(
-                    "toolSearchStrategy=vector requires toolSearchEmbeddingModel and does not fall back to keyword search");
+                    "toolSearchStrategy=VECTOR requires toolSearchEmbeddingModel and does not fall back to keyword search");
         }
     }
 

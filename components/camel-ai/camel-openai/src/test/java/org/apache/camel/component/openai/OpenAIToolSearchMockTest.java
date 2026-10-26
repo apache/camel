@@ -197,7 +197,7 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
     void vectorSearchFindsAndExecutesTheSemanticallyMatchingMcpTool() {
         String endpointUri = "openai:chat-completion?model=gpt-4o-mini&apiKey=dummy"
                              + "&autoToolExecution=true&toolSearch=true"
-                             + "&toolSearchStrategy=vector&toolSearchEmbeddingModel=text-embedding-ada-002"
+                             + "&toolSearchStrategy=VECTOR&toolSearchEmbeddingModel=text-embedding-ada-002"
                              + "&toolSearchMaxResults=1&tags=search&baseUrl="
                              + openAIMock.getBaseUrl() + "/v1";
         injectWeather(endpointUri);
@@ -411,7 +411,7 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
                             + base);
                 from("direct:vector")
                         .to("openai:chat-completion?model=gpt-4o-mini&apiKey=dummy&autoToolExecution=true"
-                            + "&toolSearch=true&toolSearchStrategy=vector"
+                            + "&toolSearch=true&toolSearchStrategy=VECTOR"
                             + "&toolSearchEmbeddingModel=text-embedding-ada-002&toolSearchMaxResults=1"
                             + "&tags=search&baseUrl=" + base);
                 from("direct:manual")

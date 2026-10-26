@@ -346,14 +346,14 @@ public class OpenAIConfiguration implements Cloneable {
                             + "together against this limit.")
     private int toolSearchMaxResults = AiToolSearch.DEFAULT_MAX_RESULTS;
 
-    @UriParam(enums = "keyword,vector", defaultValue = "keyword")
-    @Metadata(description = "How tool search ranks route and MCP tools. 'keyword' matches the tool name and description. "
-                            + "'vector' uses cosine similarity and requires toolSearchEmbeddingModel. Vector search "
+    @UriParam(enums = "KEYWORD,VECTOR", defaultValue = "KEYWORD")
+    @Metadata(description = "How tool search ranks route and MCP tools. 'KEYWORD' matches the tool name and description. "
+                            + "'VECTOR' uses cosine similarity and requires toolSearchEmbeddingModel. Vector search "
                             + "does not fall back to keyword search.")
     private AiToolSearchStrategy toolSearchStrategy = AiToolSearchStrategy.KEYWORD;
 
     @UriParam
-    @Metadata(description = "Embedding model used when toolSearchStrategy=vector, for example text-embedding-3-small. "
+    @Metadata(description = "Embedding model used when toolSearchStrategy=VECTOR, for example text-embedding-3-small. "
                             + "Required for vector search. It is not read from the embeddings operation model option.")
     private String toolSearchEmbeddingModel;
 

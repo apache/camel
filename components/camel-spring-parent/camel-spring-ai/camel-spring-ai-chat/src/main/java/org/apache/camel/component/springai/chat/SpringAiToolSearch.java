@@ -98,7 +98,7 @@ final class SpringAiToolSearch {
         if (configuration.getToolSearchStrategy() == AiToolSearchStrategy.VECTOR
                 && configuration.getToolSearchEmbeddingModel() == null) {
             throw new IllegalArgumentException(
-                    "toolSearchStrategy=vector requires toolSearchEmbeddingModel and does not fall back to keyword search");
+                    "toolSearchStrategy=VECTOR requires toolSearchEmbeddingModel and does not fall back to keyword search");
         }
     }
 

@@ -308,7 +308,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             if (endpointConfiguration.getToolSearchStrategy() == AiToolSearchStrategy.VECTOR
                     && endpointConfiguration.getToolSearchEmbeddingModel() == null) {
                 throw new IllegalArgumentException(
-                        "toolSearchStrategy=vector requires toolSearchEmbeddingModel and does not fall back to keyword search");
+                        "toolSearchStrategy=VECTOR requires toolSearchEmbeddingModel and does not fall back to keyword search");
             }
             CamelToolSearchStrategy strategy = new CamelToolSearchStrategy(
                     endpointConfiguration.getToolSearchStrategy(),
