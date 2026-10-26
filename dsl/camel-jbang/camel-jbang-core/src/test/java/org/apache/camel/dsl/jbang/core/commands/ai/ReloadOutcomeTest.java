@@ -188,6 +188,41 @@ class ReloadOutcomeTest {
         assertTrue(!line.contains("MessageId") && !line.contains("Exhausted after"), line);
     }
 
+    /**
+     * A sql: route failed with "bad SQL grammar []", and the database's message was only in the stack trace (the
+     * local-model benchmark): the line ends with the root cause, with the position PostgreSQL gives on its next line.
+     */
+    @Test
+    void theRootCauseOfAFailedExchangeIsAddedWhenTheLineDoesNotSayIt() {
+        List<String> failed = List.of(
+                "2026-10-25 22:20:53.000  INFO 42 --- [rReloadStrategy] org.apache.camel.support.RouteWatcherReloadStrategy : Routes reloaded summary (total:2 started:2 changed:1)",
+                "2026-10-25 22:20:54.029 ERROR 42 --- [- file://orders] or.errorhandler.DefaultErrorHandler : Failed delivery for"
+                                                                                                                                                                                      + " (MessageId: D53CDBC0CA79126-02 on ExchangeId: D53CDBC0CA79126-02) at"
+                                                                                                                                                                                      + " register-customers[to3] sql.camel.yaml:29. Exhausted after delivery attempt: 1"
+                                                                                                                                                                                      + " caught: org.springframework.jdbc.BadSqlGrammarException:"
+                                                                                                                                                                                      + " PreparedStatementCallback; bad SQL grammar []",
+                "",
+                "org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar []",
+                "\tat org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:112)",
+                "Caused by: org.postgresql.util.PSQLException: ERROR: syntax error at or near \":\"",
+                "  Position: 53",
+                "\tat org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2993)");
+
+        JsonArray output = ReloadOutcome.output(records(BEFORE, failed));
+
+        assertEquals(1, output.size(), output.toJson());
+        assertEquals("ERROR Failed at register-customers[to3] sql.camel.yaml:29: BadSqlGrammarException:"
+                     + " PreparedStatementCallback; bad SQL grammar [] (caused by PSQLException: ERROR: syntax error at or"
+                     + " near \":\" Position: 53)",
+                output.get(0).toString());
+
+        // a cause the line already says is not repeated
+        assertEquals("Failed: X due to: IllegalStateException: no stock",
+                ReloadOutcome.withRootCause("Failed: X due to: IllegalStateException: no stock",
+                        "Caused by: java.lang.IllegalStateException: no stock\n\tat a.B.c(B.java:1)"));
+        assertEquals("Failed: X", ReloadOutcome.withRootCause("Failed: X", "no stack trace"));
+    }
+
     @Test
     void theDumpOfAnExchangeAndOfALongBeanGo() {
         String m = ReloadOutcome.compact("Method with name: orderId not found on bean: ["
