@@ -54,9 +54,11 @@ import org.apache.kafka.clients.consumer.ShareConsumer;
  * <p>
  * Properties: every published record completes in the route at least once, unless the share group archived it at the
  * delivery limit, or rejected a delivery that failed with onFailure=REJECT; the acknowledgement type is exact (ACCEPT
- * for a delivery the route completed, onFailure for one that failed, REJECT for no other); the group is drained once
- * the faults cleared; a started route holds one open share consumer, a stopped one none; the consumer uses the client
- * as the Javadoc requires.
+ * for a delivery the route completed, onFailure for one that failed, REJECT for no other, and RELEASE of a delivery the
+ * route did not route only once the consumer woke up its share consumer to stop, so a consumer that does not route
+ * cannot pass by releasing every record until the group archives it); the group is drained once the faults cleared; a
+ * started route holds one open share consumer, a stopped one none; the consumer uses the client as the Javadoc
+ * requires.
  * <p>
  * When the seed sets createConsumerBackoffMaxAttempts and the creation failed that many times in a row, the consumer
  * thread gives up and the route has no share consumer: once the faults cleared, the operator restarts the route, once

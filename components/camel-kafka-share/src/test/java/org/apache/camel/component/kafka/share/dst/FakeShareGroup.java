@@ -78,6 +78,9 @@ import org.apache.kafka.common.record.TimestampType;
  * <li>[X] close: the pending acknowledgements are sent; acquired records that were not acknowledged are released (the
  * delivery count is kept).</li>
  * <li>ACCEPT: done. RELEASE: available again (or archived at the delivery limit). REJECT: archived.</li>
+ * <li>Camel's contract (KafkaShareFetchRecords, the route never sets the acknowledge header): RELEASE of a delivery
+ * that the route neither completed nor failed only once the consumer stops, and it always wakes up its share consumer
+ * when it stops. Before the first wakeup of a share consumer such a RELEASE is a violation.</li>
  * </ul>
  * Not modelled: several partitions, the batch_optimized acquire mode (a poll returns at most max.poll.records), lock
  * renewal (RENEW), the heartbeat and assignment of the group.
@@ -138,7 +141,11 @@ final class FakeShareGroup {
         final List<Delivery> lastBatch = new ArrayList<>();
         final List<Delivery> pendingAcks = new ArrayList<>();
         boolean closed;
+        // a wakeup that is pending (cleared when it is thrown)
         boolean wakeup;
+        // woken up at least once (never cleared): the consumer stops it with a wakeup, so only from then on it may
+        // release a delivery that it did not route
+        boolean wokenUp;
         AcknowledgementCommitCallback callback;
         // [K] the results of the acknowledgements sent, for the callback at the next poll or commit
         final List<CompletedAcks> completedAcks = new ArrayList<>();
@@ -160,6 +167,7 @@ final class FakeShareGroup {
                 case "wakeup":
                     dst.trace("fake: " + name + " wakeup");
                     wakeup = true;
+                    wokenUp = true;
                     return null;
                 case "close":
                     close();
@@ -306,6 +314,13 @@ final class FakeShareGroup {
                         violations.add(name + " acknowledged " + d.rec.id + "#" + d.number + " after its " + d.ack.name()
                                        + " was sent");
                         throw new IllegalStateException("The record cannot be acknowledged.");
+                    }
+                    // RELEASE is for a delivery that the stopping consumer did not route, and the consumer always
+                    // wakes up its share consumer when it stops
+                    String key = d.rec.id + "#" + d.number;
+                    if (type == AcknowledgeType.RELEASE && !wokenUp && !completedDeliveries.contains(key)
+                            && !failedDeliveries.contains(key)) {
+                        violations.add(name + " released " + key + " without routing it, and it was not stopping");
                     }
                     if (d.ack == null) {
                         pendingAcks.add(d);
@@ -485,7 +500,7 @@ final class FakeShareGroup {
     /**
      * Applies an acknowledgement that the group took. The route never sets the acknowledge header, so the type is
      * exact: ACCEPT for a delivery the route completed, onFailure for one that failed, and RELEASE only for one the
-     * consumer did not route (it was stopping).
+     * consumer did not route (it was stopping; checked in acknowledge, against the wakeup).
      */
     private void apply(Rec r, int number, AcknowledgeType type) {
         String key = r.id + "#" + number;
