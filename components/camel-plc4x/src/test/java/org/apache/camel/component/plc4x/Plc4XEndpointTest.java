@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.plc4x;
 
+import java.util.Map;
+
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -74,6 +76,11 @@ class Plc4XEndpointTest {
     @Test
     void buildPlcReadRequestWithoutAConnection() {
         assertThrows(PlcConnectionException.class, () -> sut.buildPlcReadRequest());
+    }
+
+    @Test
+    void buildPlcWriteRequestWithoutAConnection() {
+        assertThrows(PlcConnectionException.class, () -> sut.buildPlcWriteRequest(Map.of()));
     }
 
 }

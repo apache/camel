@@ -290,11 +290,17 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      * Build a {@link PlcWriteRequest}.
      * <p>
      *
-     * @param  tags tags to add to write request
-     * @return      {@link PlcWriteRequest}
+     * @param  tags                   tags to add to write request
+     * @return                        {@link PlcWriteRequest}
+     * @throws PlcConnectionException if there is no connection
      */
-    public PlcWriteRequest buildPlcWriteRequest(Map<String, Map<String, Object>> tags) {
-        PlcWriteRequest.Builder builder = connection.writeRequestBuilder();
+    public PlcWriteRequest buildPlcWriteRequest(Map<String, Map<String, Object>> tags) throws PlcConnectionException {
+        // read the field once: a concurrent stop or reconnect can clear it at any time
+        PlcConnection current = connection;
+        if (current == null) {
+            throw new PlcConnectionException("Cannot establish connection");
+        }
+        PlcWriteRequest.Builder builder = current.writeRequestBuilder();
 
         for (Map.Entry<String, Map<String, Object>> entry : tags.entrySet()) {
             //Tags are stored like this --> Map<Tagname,Map<Query,Value>> for writing
