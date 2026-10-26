@@ -16,12 +16,21 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.Persistence;
 
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
 import org.springframework.orm.jpa.JpaTransactionManager;
 
@@ -30,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaComponentTest extends CamelTestSupport {
 
@@ -140,6 +150,42 @@ public class JpaComponentTest extends CamelTestSupport {
             JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
             jpa.init();
             assertSame(strategy, jpa.getTransactionStrategy());
+        }
+    }
+
+    @Test
+    public void testJpaComponentMoreTransactionStrategiesInRegistry() throws Exception {
+        TransactionStrategy strategy = Runnable::run;
+        TransactionStrategy otherStrategy = Runnable::run;
+        context.getRegistry().bind("myTransactionStrategy", strategy);
+        context.getRegistry().bind("myOtherTransactionStrategy", otherStrategy);
+
+        List<String> warnings = new CopyOnWriteArrayList<>();
+        Logger logger = (Logger) LogManager.getLogger(JpaHelper.class);
+        AbstractAppender appender = new AbstractAppender("warnings", null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                if (event.getLevel() == Level.WARN) {
+                    warnings.add(event.getMessage().getFormattedMessage());
+                }
+            }
+        };
+        appender.start();
+        logger.addAppender(appender);
+
+        EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            comp.setEntityManagerFactory(fac);
+            comp.init();
+            // none of them is used
+            assertInstanceOf(DefaultTransactionStrategy.class, comp.getTransactionStrategy());
+            assertEquals(1, warnings.size());
+            assertTrue(warnings.get(0).startsWith("Found 2 TransactionStrategy beans in the registry"));
+        } finally {
+            logger.removeAppender(appender);
+            appender.stop();
+            fac.close();
         }
     }
 

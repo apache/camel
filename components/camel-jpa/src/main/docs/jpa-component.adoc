@@ -151,7 +151,7 @@ Otherwise, they create the Spring based `org.apache.camel.component.jpa.DefaultT
 which uses the single `PlatformTransactionManager` (or `TransactionTemplate`) from the Registry,
 or else creates a `JpaTransactionManager` for the `EntityManagerFactory`.
 
-If there is more than one `TransactionStrategy` in the Registry, none of them is used.
+If there is more than one `TransactionStrategy` in the Registry, none of them is used, and Camel logs a WARN.
 In such cases you might want to instantiate and
 explicitly configure a JPA component that references the
 `myTransactionStrategy` transaction strategy, as follows:

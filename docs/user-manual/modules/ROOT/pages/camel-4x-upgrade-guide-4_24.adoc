@@ -4183,5 +4183,6 @@ with the Quartz API. A clustered job store is not changed, as Camel does not pau
 
 When no `TransactionStrategy` is configured, the JPA component and endpoint now use the single `TransactionStrategy`
 bean in the registry, if there is one, before creating the Spring based `DefaultTransactionStrategy`. Without such a
-bean nothing changes. The return type of the protected method `JpaEndpoint.createTransactionStrategy()` is now
-`TransactionStrategy` instead of `DefaultTransactionStrategy`.
+bean nothing changes. If there is more than one, none of them is used and a WARN is logged. The return type of the
+protected method `JpaEndpoint.createTransactionStrategy()` is now `TransactionStrategy` instead of
+`DefaultTransactionStrategy`.
