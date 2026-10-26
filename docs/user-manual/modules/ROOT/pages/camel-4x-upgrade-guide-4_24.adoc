@@ -69,6 +69,19 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
+
+The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last
+`failureWindow` milliseconds, as documented. Before, it counted every failure since the circuit last closed (or since
+the route started), and only the last failure had to be within the window, so failures spread over hours opened the
+circuit on a single new failure. Routes whose failures are spread out therefore open their circuit less often now; to
+open it sooner, lower `failureThreshold` or raise `failureWindow`.
+
+In the half open state, a successful exchange now closes the circuit, and a failed exchange opens it again. Before, a
+successful exchange opened the circuit again as long as the failures that opened it were within `failureWindow`; with
+the defaults (a window of 60 seconds, a half open check after 30 seconds) a success in the first 30 seconds after the
+half open check therefore kept the circuit open. A `halfOpenHandler` decides as before.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
