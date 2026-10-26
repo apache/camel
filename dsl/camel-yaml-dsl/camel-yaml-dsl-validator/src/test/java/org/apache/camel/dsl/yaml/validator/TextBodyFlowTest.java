@@ -2604,7 +2604,7 @@ public class TextBodyFlowTest {
             assertThat(m).contains("route classify: the uri of toD reads a field of the body (${body[ticketId]})");
             assertThat(m).contains("marshal: json writes data as text");
             // the marshal is wanted here: not "unmarshal is the step"
-            assertThat(m).contains("read the field before the marshal, for example into a header with setHeader");
+            assertThat(m).contains("read the field before the marshal, for example into a variable with setVariable");
             assertThat(m).contains("marshal with variableReceive");
             assertThat(m).doesNotContain("is the step, not marshal");
         });
@@ -2635,13 +2635,13 @@ public class TextBodyFlowTest {
                         - toD:
                 """, """
                         - log: "ticket ${body[ticketId]}"
-                        - setHeader:
+                        - setVariable:
                             name: ticketId
                             simple: ${body[ticketId]}
                         - marshal:
                             json: {}
                         - toD:
-                """).replace("${body[ticketId]}.json", "${header.ticketId}.json"))).isEmpty();
+                """).replace("${body[ticketId]}.json", "${variable.ticketId}.json"))).isEmpty();
     }
 
     @Test
@@ -2661,7 +2661,9 @@ public class TextBodyFlowTest {
         assertThat(lines(yaml)).singleElement().satisfies(m -> {
             assertThat(m).contains("toD: file needs the body as");
             assertThat(m).contains("add marshal: json before this step - and the uri of toD reads ${body[ticketId]},"
-                                   + " which is text after the marshal: read it before the marshal into a header");
+                                   + " which is text after the marshal: read it before the marshal into a variable"
+                                   + " (setVariable with name ticketId and simple ${body[ticketId]}) and use"
+                                   + " ${variable.ticketId} here");
         });
         // no field read in the step: the fields the steps after it read
         assertThat(lines(yaml.replace("?fileName=${body[ticketId]}.json", ""))).singleElement()

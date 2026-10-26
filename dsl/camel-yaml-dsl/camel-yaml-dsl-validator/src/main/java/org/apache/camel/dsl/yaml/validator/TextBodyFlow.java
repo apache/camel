@@ -105,6 +105,9 @@ final class TextBodyFlow {
     private static final Pattern SIMPLE_VARIABLE = Pattern.compile(
             "\\$\\{variables?[.:]([A-Za-z_]\\w*)(\\??\\.([A-Za-z_]\\w*)(?!\\w|\\s*\\()|\\[\\s*['\"]?[A-Za-z_])");
 
+    /** The name of the field a read such as ${body[x]} or ${body.x} reads. */
+    private static final Pattern FIELD_READ = Pattern.compile("\\$\\{body(?:\\??\\.|\\[\\s*['\"]?)([A-Za-z_]\\w*)");
+
     /** ${body[x]} where x is a key, not an index. */
     private static final Pattern SIMPLE_KEY = Pattern.compile("\\$\\{body\\[\\s*['\"]?[A-Za-z_]");
 
@@ -1211,19 +1214,22 @@ final class TextBodyFlow {
 
     /**
      * What to read before the marshal a step that needs text gets: the fields this step reads in its uri or options (a
-     * file name), or else the fields the steps after it read (a log), which are text after the marshal.
+     * file name), or else the fields the steps after it read (a log), which are text after the marshal. Into a
+     * variable, not a header: a header is sent on with the message, and becomes part of what the endpoint gets.
      */
     private static String beforeTheMarshal(String name, JsonNode value) {
         for (Template template : templates(name, value)) {
             String found = simpleRead(template.text(), TEXT_PROPERTIES);
             if (found != null) {
+                Matcher field = FIELD_READ.matcher(found);
+                String variable = field.find() ? field.group(1) : "field";
                 return " - and " + template.where() + " reads " + found + ", which is text after the marshal: read it"
-                       + " before the marshal into a header (setHeader with simple " + found + ") and use the header"
-                       + " here";
+                       + " before the marshal into a variable (setVariable with name " + variable + " and simple "
+                       + found + ") and use ${variable." + variable + "} here";
             }
         }
         return " (read the fields you still need, such as for a file name or a log, before the marshal, for example into"
-               + " a header)";
+               + " a variable with setVariable)";
     }
 
     /**
@@ -1474,7 +1480,7 @@ final class TextBodyFlow {
         String fix;
         if (text.marshalled()) {
             // the marshal is wanted, for a step after it that needs text: the field is read too late
-            fix = "read the field before the marshal, for example into a header with setHeader, or keep the data in"
+            fix = "read the field before the marshal, for example into a variable with setVariable, or keep the data in"
                   + " the body and marshal into a variable (marshal with variableReceive, and send that variable with"
                   + " variableSend)";
         } else if (format == null) {

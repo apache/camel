@@ -307,7 +307,7 @@ public final class BodyFacts {
                 return null;
             }
             return "the " + step(step.getNode()) + " wrote it from data (" + StringHelper.afterLast(type, ".", type)
-                   + "): read the field before the marshal, for example into a header with setHeader, or keep the data"
+                   + "): read the field before the marshal, for example into a variable with setVariable, or keep the data"
                    + " in the body and marshal into a variable (marshal with variableReceive, and send that variable with"
                    + " variableSend)";
         }

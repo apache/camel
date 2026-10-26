@@ -295,7 +295,8 @@ and an `enrich` send the body to their endpoint, as a `to` does. What a step put
 after a `pollEnrich` of a file with `variableReceive: customer`, `+${variable.customer[name]}+` reads the file, not the
 customer, and the validator says to unmarshal the variable in place, with `variableSend` and `variableReceive` set to
 its name. An `unmarshal` of a body or a variable that is parsed data already is reported too, and so is a field read
-after a `marshal` of parsed data, with the hint to read the field before the marshal.
+after a `marshal` of parsed data, with the hint to read the field into a variable before the marshal (not into a
+header, which is sent on with the message).
 
 The EIPs come from the catalog as well: their `eipOut` says which ones leave the body as it was (`log`, `setHeader`,
 `threads`, a `split` without an aggregation strategy), and their `eipSteps` whose steps start with the body at the EIP

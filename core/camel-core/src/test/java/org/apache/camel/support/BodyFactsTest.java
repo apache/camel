@@ -89,7 +89,7 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals(1, seen.size());
         assertTrue(seen.get(0).contains(", set by marshal"), seen.get(0));
         assertTrue(seen.get(0).contains("wrote it from data (LinkedHashMap): read the field before the marshal, for"
-                                        + " example into a header with setHeader, or keep the data in the body and"
+                                        + " example into a variable with setVariable, or keep the data in the body and"
                                         + " marshal into a variable"),
                 seen.get(0));
         // a marshal of text: unmarshal was meant
