@@ -222,8 +222,13 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                 if (idx > 0) {
                     query = query.substring(0, idx);
                 }
-                // URI path is URL-encoded, decode it
-                query = URLDecoder.decode(query, StandardCharsets.UTF_8);
+                // the URI path is URL-encoded with %20 for a space, so a + is a + of the statement
+                // (orders = customers.orders + 1), which form decoding would turn into a space
+                try {
+                    query = URLDecoder.decode(query.replace("+", "%2B"), StandardCharsets.UTF_8);
+                } catch (IllegalArgumentException e) {
+                    // a % that is not an escape: the statement as written
+                }
                 return query;
             }
         } else if (endpointUri.startsWith("jdbc:")) {
