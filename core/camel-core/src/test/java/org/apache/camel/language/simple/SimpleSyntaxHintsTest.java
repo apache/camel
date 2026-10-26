@@ -243,7 +243,7 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         exchange.getIn().setBody(List.of("A1", "A2").iterator());
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.size()}").evaluate(exchange, String.class));
-        assertThat(e.getMessage()).contains("the body is an iterator (")
+        assertThat(e.getMessage()).contains("the body is an iterator")
                 .contains("it has no size and can be read once: split it, or have the producer give a List");
     }
 

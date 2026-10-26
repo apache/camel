@@ -174,7 +174,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
                 = dataFormat instanceof DataFormatName dfn ? dfn.getDataFormatName() : dataFormat.getClass().getSimpleName();
         String message = variableSend != null
                 ? "Cannot unmarshal using " + name + ": the variable " + variableSend + " holds data ("
-                  + body.getClass().getSimpleName()
+                  + BodyFacts.typeName(body)
                   + ") already, and the data format reads text: read its fields as they are, such as"
                   + " ${variable." + variableSend + "[name]}, and leave this unmarshal out"
                 : "Cannot unmarshal using " + name + ": " + BodyFacts.describe(exchange)

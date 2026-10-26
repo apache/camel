@@ -21,10 +21,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
@@ -95,10 +100,10 @@ public class BodyFactsTest extends ContextTestSupport {
         // nested classes, whose canonical names cannot be loaded back as classes
         seen.clear();
         template.sendBody("direct:marshalled", Map.of("ticketId", "T-1"));
-        assertTrue(seen.get(0).contains("read the field before the marshal"), seen.get(0));
+        assertTrue(seen.get(0).contains("wrote it from data (Map): read the field before the marshal"), seen.get(0));
         seen.clear();
         template.sendBody("direct:marshalled", List.of("T-1", "T-2"));
-        assertTrue(seen.get(0).contains("read the field before the marshal"), seen.get(0));
+        assertTrue(seen.get(0).contains("wrote it from data (List): read the field before the marshal"), seen.get(0));
         // a marshal of text: unmarshal was meant
         seen.clear();
         template.sendBody("direct:marshalled", "{\"ticketId\": \"T-1\"}");
@@ -114,7 +119,14 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals("a stream (ByteArrayInputStream)", BodyFacts.words(new ByteArrayInputStream(new byte[0])));
         assertEquals("a Map (LinkedHashMap)", BodyFacts.words(new LinkedHashMap<>()));
         assertEquals("a List (ArrayList)", BodyFacts.words(new ArrayList<>()));
-        assertTrue(BodyFacts.words(List.of(1).iterator()).startsWith("an iterator ("));
+        // a class the JDK keeps to itself goes by the interface it implements
+        assertEquals("a Map", BodyFacts.words(Map.of("sku", "A1")));
+        assertEquals("a List", BodyFacts.words(List.of("A1")));
+        assertEquals("a List", BodyFacts.words(Arrays.asList("A1")));
+        assertEquals("a collection (Set)", BodyFacts.words(Collections.unmodifiableSet(new HashSet<>())));
+        assertEquals("a Map", BodyFacts.words(Collections.unmodifiableMap(new HashMap<>())));
+        assertEquals("an iterator", BodyFacts.words(List.of(1).iterator()));
+        assertEquals("an iterator (Scanner)", BodyFacts.words(new Scanner("A1")));
         assertEquals("an object of class java.lang.Object", BodyFacts.words(new Object()));
         // without the message history the step is not known
         assertEquals("the body is a Map (LinkedHashMap)", BodyFacts.describe(exchange(new LinkedHashMap<>())));

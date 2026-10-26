@@ -170,6 +170,13 @@ public class UnmarshalProcessorTest extends TestSupport {
                      + " format reads text: read its fields as they are, such as ${variable.order[name]}, and leave this"
                      + " unmarshal out",
                 exchange.getException().getMessage());
+
+        // the List of List.of goes by its interface, not by the class the JDK keeps to itself
+        exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
+        exchange.setVariable("order", List.of("A1"));
+        processor.process(exchange);
+        assertTrue(exchange.getException().getMessage().contains("the variable order holds data (List) already"),
+                exchange.getException().getMessage());
     }
 
     @Test

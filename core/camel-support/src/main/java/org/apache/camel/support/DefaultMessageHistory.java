@@ -42,7 +42,7 @@ public class DefaultMessageHistory implements MessageHistory {
     private boolean debugSkipOver;
     private long elapsed;
     private String bodyType;
-    private boolean bodyData;
+    private String bodyDataType;
     private long bodySize = -1;
 
     public DefaultMessageHistory(String routeId, NamedNode node) {
@@ -71,12 +71,12 @@ public class DefaultMessageHistory implements MessageHistory {
     }
 
     /**
-     * Whether the body was a Map or a collection when this node was reached: data, which a marshal writes as text. Kept
-     * as the body is captured, as the class of a nested type (such as the Map of {@code Map.of}) cannot be loaded back
-     * from its canonical name.
+     * The class of the body, as {@link BodyFacts#typeName(Object)} names it, when it was a Map or a collection as this
+     * node was reached: data, which a marshal writes as text. Null for any other body. Kept as the body is captured, as
+     * the class of a nested type (such as the Map of {@code Map.of}) cannot be loaded back from its canonical name.
      */
-    public boolean isBodyData() {
-        return bodyData;
+    public String getBodyDataType() {
+        return bodyDataType;
     }
 
     @Override
@@ -114,7 +114,7 @@ public class DefaultMessageHistory implements MessageHistory {
         Message current = exchange.getMessage();
         Object body = current.getBody();
         bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
-        bodyData = body instanceof Map<?, ?> || body instanceof Collection<?>;
+        bodyDataType = body instanceof Map<?, ?> || body instanceof Collection<?> ? BodyFacts.typeName(body) : null;
         if (registry != null && routeId != null && nodeId != null) {
             registry.addBodyType(routeId, nodeId, bodyType, BodyFacts.kindOf(body));
         }
