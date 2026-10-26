@@ -30,9 +30,13 @@ public interface OAuthSessionStore {
      * Rotates the session, replacing the current session identifier with a newly generated one and transferring any
      * session state.
      *
-     * @param  exchange the current exchange
-     * @param  session  the existing session to rotate
-     * @return          the rotated session with a new session identifier
+     * @implNote          The default implementation is a no-op that returns the existing session unchanged.
+     *                    Implementors MUST override this method to prevent session fixation — failing to do so leaves
+     *                    the session identifier unchanged across privilege escalation (login).
+     *
+     * @param    exchange the current exchange
+     * @param    session  the existing session to rotate
+     * @return            the rotated session with a new session identifier
      */
     default OAuthSession rotateSession(Exchange exchange, OAuthSession session) {
         return session;

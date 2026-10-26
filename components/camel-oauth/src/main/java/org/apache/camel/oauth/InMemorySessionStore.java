@@ -56,7 +56,7 @@ public class InMemorySessionStore implements OAuthSessionStore {
 
         var maybeSession = Optional.ofNullable(sessions.get(sessionId));
         if (maybeSession.isEmpty()) {
-            log.warn("No OAuthSession for: {}", sessionId);
+            log.warn("No OAuthSession found for cookie");
         }
 
         return maybeSession;
@@ -94,7 +94,7 @@ public class InMemorySessionStore implements OAuthSessionStore {
         sessions.put(newSessionId, newSession);
 
         var msg = exchange.getMessage();
-        log.debug("Rotated OAuthSession from {} to {}", oldSessionId, newSessionId);
+        log.debug("Rotated OAuthSession");
 
         setSessionCookie(msg, newSession);
         msg.setHeader(OAuth.CAMEL_OAUTH_SESSION_ID, newSessionId);
