@@ -49,7 +49,7 @@ public class MessageSendOperation implements A2AOperation {
         Object body = exchange.getMessage().getBody();
 
         if (body instanceof Message msg) {
-            // An unchanged consumer message carries the outer agent's identity, not the peer's.
+            // Identity distinguishes the original consumer message from route-supplied copies, even value-equal ones.
             message = msg == exchange.getProperty(A2AConstants.REQUEST_MESSAGE)
                     ? Message.builder(msg).taskId(null).contextId(null).build() : msg;
         } else {

@@ -38,6 +38,7 @@ public final class A2AConstants {
     public static final String REPLY_TASK_STATE = "CamelA2AReplyTaskState";
     @Metadata(label = "consumer", description = "SendMessage reply type: task (default) or message", javaType = "String")
     public static final String REPLY_TYPE = "CamelA2AReplyType";
+    // Exchange property only; @Metadata would incorrectly advertise it as a message header.
     public static final String REQUEST_MESSAGE = "CamelA2ARequestMessage";
     @Metadata(label = "producer", description = "Downstream task ID for producer requests and responses", javaType = "String")
     public static final String TASK_ID = "CamelA2ATaskId";

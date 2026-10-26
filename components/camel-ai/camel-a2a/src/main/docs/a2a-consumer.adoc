@@ -35,11 +35,16 @@ Set `CamelA2AReplyTaskState` to choose the state returned by `SendMessage`, or `
 to `message` for a message-only reply. The default is a completed task. The consumer assigns
 its own context and task identity to reply messages, including a `Message` body returned by a producer.
 
-With `dataFormat=POJO`, forwarding the unchanged incoming `Message` to a producer copies its content
-without the incoming task and context IDs. The original immutable message remains available in the
-`CamelA2ARequestMessage` exchange property. To continue a downstream conversation, explicitly build
-a new `Message` with the downstream task/context IDs, or set `CamelA2AContextId` for its context.
-A route-supplied message retains its explicit IDs.
+With `dataFormat=POJO`, forwarding the same incoming `Message` instance to a producer copies its
+content without the incoming task and context IDs. The original immutable message remains available
+in the `CamelA2ARequestMessage` exchange property; this is not a message header.
+
+A new `Message` supplied by the route retains its task/context IDs, even when it is equal to the
+incoming message. This includes `Message.builder(incoming).build()` and copies with edited content.
+When copying or transforming a message to start a new downstream conversation, clear inherited IDs
+with `.taskId(null).contextId(null)`. To continue a downstream conversation, set the downstream
+task/context IDs on the new message, or set `CamelA2AContextId` for its context. These explicit IDs
+are preserved even when their values match the incoming IDs.
 
 [source,yaml]
 ----

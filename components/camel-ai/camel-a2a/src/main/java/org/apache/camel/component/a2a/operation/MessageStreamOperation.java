@@ -53,6 +53,7 @@ public class MessageStreamOperation implements A2AOperation {
         Message message;
         Object body = exchange.getMessage().getBody();
         if (body instanceof Message msg) {
+            // Identity distinguishes the original consumer message from route-supplied copies, even value-equal ones.
             message = msg == exchange.getProperty(A2AConstants.REQUEST_MESSAGE)
                     ? Message.builder(msg).taskId(null).contextId(null).build() : msg;
         } else {

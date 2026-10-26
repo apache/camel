@@ -105,8 +105,8 @@ import org.slf4j.LoggerFactory;
                                           @BodyType.When(option = "operation", value = "PUSH_CONFIG_DELETE",
                                                          carriers = Carrier.ANY) },
                                   description = "The message to send: text, sent as one text part (bytes, a stream or a"
-                                                + " file as their text), or a Message. An unchanged consumer message is sent without"
-                                                + " its incoming task/context IDs. MESSAGE_STREAM also"
+                                                + " file as their text), or a Message. Forwarding the original consumer Message"
+                                                + " instance strips its task/context IDs; route-supplied copies retain theirs. MESSAGE_STREAM also"
                                                 + " takes a SendMessageRequest. Another body is sent as its toString(), so a"
                                                 + " Map or a POJO needs marshalling first, and JSON text is sent as text."
                                                 + " PUSH_CONFIG_CREATE needs a TaskPushNotificationConfig, and the other"

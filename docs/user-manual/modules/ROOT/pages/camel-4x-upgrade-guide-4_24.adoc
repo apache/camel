@@ -33,9 +33,11 @@ operation headers still override the endpoint's `operation` option.
 
 Downstream results no longer replace the outer task ID, context, state or reply type, and progress
 updates remain attached to the outer task. Consumer reply messages use the outer context and task
-identity. With `dataFormat=POJO`, an unchanged incoming message forwarded to another agent no longer
-carries the outer task/context IDs. Build a new message with explicit downstream IDs when continuing
-a downstream conversation.
+identity. With `dataFormat=POJO`, forwarding the same incoming `Message` instance to another agent
+no longer carries the outer task/context IDs. A new message supplied by the route retains its IDs,
+including an equal copy made with `Message.builder(incoming).build()`. When copying or transforming
+the incoming message to start a new downstream conversation, clear inherited IDs with
+`.taskId(null).contextId(null)`. Set explicit downstream IDs when continuing a downstream conversation.
 
 === camel-ai-tool - required arguments with reserved names reject the call
 
