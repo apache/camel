@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== camel-jbang - doctor Maven configuration and exit codes
+
+`camel doctor` now uses the `camel.jbang.*` Maven system properties, including configured repositories and Maven
+settings files, when resolving its test artifact. Previously these settings were ignored by this check.
+It now returns a non-zero exit code if Maven artifact resolution fails or the Java runtime is unsupported.
+Scripts that previously relied on a successful exit code despite these failures must handle the failure status.
+
 === camel-ai-tool - required arguments with reserved names reject the call
 
 Required tool arguments whose names start with `camel` or `org.apache.camel.` (case-insensitive)

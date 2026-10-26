@@ -651,6 +651,7 @@ it (see xref:camel-jbang-exit-codes.adoc#_json_output[JSON output]):
   `camel overview --apply-descriptions --format=json` prints the changed files as JSON.
 * `camel doctor` exits with `1` when a check fails (Maven cannot resolve artifacts, or more than one installation of the
   Camel CLI is found). A missing container runtime or Ollama, and ports in use, are warnings, which do not fail it.
+  Its Maven check also honours the `camel.jbang.*` Maven system properties, including repositories and settings files.
 
 New `--json` options: `camel doctor` (the status `OK`, `WARN` or `FAIL` of each check), `camel validate yaml`,
 `camel validate properties` and `camel validate source` (`valid`, `file` and `errors` of each file, as the MCP tool
