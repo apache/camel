@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -53,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A consumer reports its nodes with {@code Bad_NoCommunication} when communication with the server is lost, and
@@ -107,11 +110,16 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
     @RegisterExtension
     AvailablePortFinder.Port reconnectTimeoutRelayPort = AvailablePortFinder.find();
 
+    @RegisterExtension
+    AvailablePortFinder.Port disposedRelayPort = AvailablePortFinder.find();
+
     private final TcpRelay relay = new TcpRelay();
 
     private final TcpRelay lateRelay = new TcpRelay();
 
     private final TcpRelay reconnectTimeoutRelay = new TcpRelay();
+
+    private final TcpRelay disposedRelay = new TcpRelay();
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -157,6 +165,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         relay.stop();
         lateRelay.stop();
         reconnectTimeoutRelay.stop();
+        disposedRelay.stop();
     }
 
     @Test
@@ -380,6 +389,58 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
             reconnectExecutor.shutdownNow();
             executor.shutdownNow();
         }
+    }
+
+    /**
+     * A connection that the manager completes after it has been disposed is closed: the manager no longer holds it, so
+     * nothing else would close its session.
+     */
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void connectionCompletedAfterDisposeIsClosed() throws Exception {
+        final MiloClientEndpoint endpoint = context.getEndpoint(
+                resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(disposedRelayPort.getPort())),
+                MiloClientEndpoint.class);
+        final AtomicReference<Thread> reconnectThread = new AtomicReference<>();
+        final ScheduledExecutorService reconnectExecutor = Executors.newSingleThreadScheduledExecutor(task -> {
+            final Thread thread = new Thread(task, "reconnect");
+            reconnectThread.set(thread);
+            return thread;
+        });
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        // the reconnect thread waits until the relay listens
+        final CountDownLatch listening = new CountDownLatch(1);
+        reconnectExecutor.submit(() -> {
+            listening.await();
+            return null;
+        });
+        // the relay is down: the first attempt fails and the manager connects again on the reconnect thread
+        final SubscriptionManager manager
+                = new SubscriptionManager(endpoint.getConfiguration(), reconnectExecutor, executor, 100);
+        try {
+            disposedRelay.listen(disposedRelayPort.getPort());
+            listening.countDown();
+
+            // the manager is disposed while it connects through the relay, which accepts the connection only then
+            await().atMost(10, TimeUnit.SECONDS).until(() -> connects(reconnectThread.get()));
+            manager.dispose();
+            disposedRelay.relay(getServerPort());
+            reconnectExecutor.submit(() -> {
+            }).get(30, TimeUnit.SECONDS);
+            assertTrue(disposedRelay.accepted() >= 2, "The manager did not connect after it was disposed");
+
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !disposedRelay.isRelaying());
+        } finally {
+            manager.dispose();
+            reconnectExecutor.shutdownNow();
+            executor.shutdownNow();
+        }
+    }
+
+    private static boolean connects(final Thread thread) {
+        return Arrays.stream(thread.getStackTrace())
+                .anyMatch(frame -> frame.getClassName().equals(SubscriptionManager.class.getName())
+                        && frame.getMethodName().equals("performConnect"));
     }
 
     private static boolean waitsInDisconnect(final Thread thread) {
