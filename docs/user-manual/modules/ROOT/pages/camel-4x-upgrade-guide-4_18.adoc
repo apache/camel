@@ -1878,9 +1878,8 @@ likely to be affected.
 
 === camel-avro-rpc - the http consumer listens on the host of the endpoint
 
-The `avro:http` consumer now uses the host of the endpoint URI (`avro:http:[host]:[port]`) for its HTTP server, as the `avro:netty` consumer does. 
+The `avro:http` consumer now uses the host of the endpoint URI (`avro:http:[host]:[port]`) for its HTTP server, as the `avro:netty` consumer does.
 
 Use `0.0.0.0` as the host to accept connections on all network interfaces.
 
 `AvroRpcHttpServerFactory` has a new method `create(SpecificResponder, String, int)` that receives the host. A custom factory should implement it.
-
