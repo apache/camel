@@ -45,6 +45,107 @@ public interface HibernateEndpointBuilderFactory {
             return (AdvancedHibernateEndpointConsumerBuilder) this;
         }
         /**
+         * Hibernate filters and their parameter values. This is a multi-value
+         * option with prefix: filter.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
+         * type.
+         * The option is multivalued, and you can use the filters(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder filters(String key, Object value) {
+            doSetMultiValueProperty("filters", "filter." + key, value);
+            return this;
+        }
+        /**
+         * Hibernate filters and their parameter values. This is a multi-value
+         * option with prefix: filter.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
+         * type.
+         * The option is multivalued, and you can use the filters(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder filters(Map values) {
+            doSetMultiValueProperties("filters", "filter.", values);
+            return this;
+        }
+        /**
+         * Whether the Hibernate session and selection query should be
+         * read-only.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param readOnly the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder readOnly(boolean readOnly) {
+            doSetProperty("readOnly", readOnly);
+            return this;
+        }
+        /**
+         * Whether the Hibernate session and selection query should be
+         * read-only.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param readOnly the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder readOnly(String readOnly) {
+            doSetProperty("readOnly", readOnly);
+            return this;
+        }
+        /**
+         * The HQL selection query to execute.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param selectionQuery the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder selectionQuery(String selectionQuery) {
+            doSetProperty("selectionQuery", selectionQuery);
+            return this;
+        }
+        /**
+         * The tenant identifier used to create the Hibernate session.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param tenantIdentifier the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder tenantIdentifier(String tenantIdentifier) {
+            doSetProperty("tenantIdentifier", tenantIdentifier);
+            return this;
+        }
+        /**
          * Whether to delete consumed entities after successful processing.
          * 
          * The option is a: <code>boolean</code> type.
@@ -800,6 +901,107 @@ public interface HibernateEndpointBuilderFactory {
         }
 
         /**
+         * Hibernate filters and their parameter values. This is a multi-value
+         * option with prefix: filter.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
+         * type.
+         * The option is multivalued, and you can use the filters(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder filters(String key, Object value) {
+            doSetMultiValueProperty("filters", "filter." + key, value);
+            return this;
+        }
+        /**
+         * Hibernate filters and their parameter values. This is a multi-value
+         * option with prefix: filter.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
+         * type.
+         * The option is multivalued, and you can use the filters(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder filters(Map values) {
+            doSetMultiValueProperties("filters", "filter.", values);
+            return this;
+        }
+        /**
+         * Whether the Hibernate session and selection query should be
+         * read-only.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param readOnly the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder readOnly(boolean readOnly) {
+            doSetProperty("readOnly", readOnly);
+            return this;
+        }
+        /**
+         * Whether the Hibernate session and selection query should be
+         * read-only.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param readOnly the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder readOnly(String readOnly) {
+            doSetProperty("readOnly", readOnly);
+            return this;
+        }
+        /**
+         * The HQL selection query to execute.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param selectionQuery the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder selectionQuery(String selectionQuery) {
+            doSetProperty("selectionQuery", selectionQuery);
+            return this;
+        }
+        /**
+         * The tenant identifier used to create the Hibernate session.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param tenantIdentifier the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder tenantIdentifier(String tenantIdentifier) {
+            doSetProperty("tenantIdentifier", tenantIdentifier);
+            return this;
+        }
+        /**
          * The HQL mutation query to execute.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -983,6 +1185,107 @@ public interface HibernateEndpointBuilderFactory {
             return (AdvancedHibernateEndpointBuilder) this;
         }
 
+        /**
+         * Hibernate filters and their parameter values. This is a multi-value
+         * option with prefix: filter.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
+         * type.
+         * The option is multivalued, and you can use the filters(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default HibernateEndpointBuilder filters(String key, Object value) {
+            doSetMultiValueProperty("filters", "filter." + key, value);
+            return this;
+        }
+        /**
+         * Hibernate filters and their parameter values. This is a multi-value
+         * option with prefix: filter.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
+         * type.
+         * The option is multivalued, and you can use the filters(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default HibernateEndpointBuilder filters(Map values) {
+            doSetMultiValueProperties("filters", "filter.", values);
+            return this;
+        }
+        /**
+         * Whether the Hibernate session and selection query should be
+         * read-only.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param readOnly the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointBuilder readOnly(boolean readOnly) {
+            doSetProperty("readOnly", readOnly);
+            return this;
+        }
+        /**
+         * Whether the Hibernate session and selection query should be
+         * read-only.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param readOnly the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointBuilder readOnly(String readOnly) {
+            doSetProperty("readOnly", readOnly);
+            return this;
+        }
+        /**
+         * The HQL selection query to execute.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param selectionQuery the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointBuilder selectionQuery(String selectionQuery) {
+            doSetProperty("selectionQuery", selectionQuery);
+            return this;
+        }
+        /**
+         * The tenant identifier used to create the Hibernate session.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param tenantIdentifier the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointBuilder tenantIdentifier(String tenantIdentifier) {
+            doSetProperty("tenantIdentifier", tenantIdentifier);
+            return this;
+        }
     }
 
     /**
