@@ -50,9 +50,11 @@ import org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder;
                                                             carriers = Carrier.POJO),
                                   description = "Stateless insert/upsert consumes the entity in the message body. For selection and mutation queries, the body is not used; named parameters come from the CamelHibernateParameters header. Natural-id values can be configured on the endpoint or supplied in that header."),
            producerOut = @BodyType(value = {
-                   Carrier.POJO, Carrier.LIST, Carrier.STREAM, Carrier.VALUE, Carrier.NULL,
+                   Carrier.POJO, Carrier.LIST, Carrier.VALUE, Carrier.NULL,
                    Carrier.UNCHANGED },
-                                   description = "The result depends on the operation: a selection query returns a list, or a stream with streaming=true; a mutation query returns the affected-row count; a natural-id lookup returns the entity or null; stateless operations leave the body unchanged."))
+                                   byOption = @BodyType.When(option = "streaming", value = "true",
+                                                             carriers = Carrier.ITERATOR),
+                                   description = "The result depends on the operation: a selection query returns a list, or a java.util.stream.Stream when streaming=true; a mutation query returns the affected-row count; a natural-id lookup returns the entity or null; stateless operations leave the body unchanged."))
 public class HibernateEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Target entity class name")

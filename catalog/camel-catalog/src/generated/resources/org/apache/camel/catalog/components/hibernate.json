@@ -38,7 +38,7 @@
   "bodyTypes": {
     "consumerOut": { "carriers": [ "pojo" ], "javaTypeOption": "entityClassName", "description": "The configured selection query emits one entity per message." },
     "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "statelessOperation", "value": "*", "carriers": [ "pojo" ] } ], "description": "Stateless insert\/upsert consumes the entity in the message body. For selection and mutation queries, the body is not used; named parameters come from the CamelHibernateParameters header. Natural-id values can be configured on the endpoint or supplied in that header." },
-    "producerOut": { "carriers": [ "pojo", "list", "stream", "value", "null", "unchanged" ], "description": "The result depends on the operation: a selection query returns a list, or a stream with streaming=true; a mutation query returns the affected-row count; a natural-id lookup returns the entity or null; stateless operations leave the body unchanged." }
+    "producerOut": { "carriers": [ "pojo", "list", "value", "null", "unchanged" ], "byOption": [ { "option": "streaming", "value": "true", "carriers": [ "iterator" ] } ], "description": "The result depends on the operation: a selection query returns a list, or a java.util.stream.Stream when streaming=true; a mutation query returns the affected-row count; a natural-id lookup returns the entity or null; stateless operations leave the body unchanged." }
   },
   "properties": {
     "entityClassName": { "index": 0, "kind": "path", "displayName": "Entity Class Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Target entity class name" },
