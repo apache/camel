@@ -168,6 +168,11 @@ public class Plc4XRepeatedFailureRouteTest extends CamelTestSupport {
             assertEquals(List.of(Level.WARN),
                     log.eventsContaining(POLLING_STOPS).stream().map(LogEvent::getLevel).toList(),
                     () -> "Unexpected log: " + messages(log.events()));
+            // the log line of the poll says that no next poll follows it
+            String stopped = log.eventsContaining(POLLING_STOPS).get(0).getMessage().getFormattedMessage();
+            assertTrue(stopped.startsWith(
+                    "Failed polling endpoint: " + consumer.getEndpoint() + ". Polling stops until the route is restarted"),
+                    stopped);
         }
     }
 

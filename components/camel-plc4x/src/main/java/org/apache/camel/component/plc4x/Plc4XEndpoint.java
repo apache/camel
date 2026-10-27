@@ -229,6 +229,13 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
         return current != null && current.isConnected();
     }
 
+    /**
+     * @return false if the lost connection was shut down, or none was set up
+     */
+    boolean hasConnection() {
+        return connection != null;
+    }
+
     @Override
     public Producer createProducer() {
         return new Plc4XProducer(this);

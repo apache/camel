@@ -130,7 +130,7 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
     private PlcReadResponse read() throws Exception {
         plc4XEndpoint.reconnectIfNeeded();
         // a connection that is lost after reconnectIfNeeded() fails the read instead, and the next poll shuts it down
-        if (!plc4XEndpoint.isAutoReconnect() && plc4XEndpoint.connection == null) {
+        if (!plc4XEndpoint.isAutoReconnect() && !plc4XEndpoint.hasConnection()) {
             // the endpoint shut the lost connection down, so no later poll could read: polling stops until the route is
             // restarted, and this poll fails, so the health check of the consumer stays down
             getScheduler().unscheduleTask();
@@ -176,7 +176,8 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
     /**
      * Logs like the default exception handler of a consumer, but a failed poll only at WARN with the stack trace when
      * it starts a run of failed polls or stops the polling, and the following failed polls of the run at DEBUG without
-     * it, so that a PLC that cannot be reached is not logged on every poll.
+     * it, so that a PLC that cannot be reached is not logged on every poll. The failed poll that stops the polling says
+     * so, instead of announcing a next poll.
      */
     private final class FailedPollExceptionHandler extends LoggingExceptionHandler {
         FailedPollExceptionHandler(CamelContext camelContext) {
@@ -187,7 +188,11 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
         public void handleException(String message, Throwable exception) {
             // a failed poll is reported without an exchange and before it is counted, so the first one of a run finds an
             // error counter of 0, and the one that stops the polling finds its task unscheduled
-            if (getErrorCounter() == 0 || !isSchedulerStarted()) {
+            if (!isSchedulerStarted()) {
+                super.handleException(
+                        "Failed polling endpoint: " + getEndpoint() + ". Polling stops until the route is restarted",
+                        exception);
+            } else if (getErrorCounter() == 0) {
                 super.handleException(message, exception);
             } else {
                 // the first failed poll of the run is logged with the stack trace already
