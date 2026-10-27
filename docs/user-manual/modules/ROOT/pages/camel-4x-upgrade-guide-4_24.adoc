@@ -3869,3 +3869,13 @@ version, with a warning. When the CLI is newer than all the releases, or the rel
 
 `--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
 registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
+
+=== camel-spring - a CamelEvent only goes to the consumers of the same name
+
+A `spring-event` producer publishes a body that is not an `ApplicationEvent` as a `CamelEvent`. Before, every
+`spring-event` consumer received it, whatever its name. Now only the consumers of the endpoint with the same name
+receive it: a message sent to `spring-event:foo` goes to `from("spring-event:foo")`, and no longer to
+`from("spring-event:bar")`.
+
+Other application events of the `ApplicationContext`, such as `ContextRefreshedEvent` or an `ApplicationEvent` body
+published by a producer, still go to every consumer.
