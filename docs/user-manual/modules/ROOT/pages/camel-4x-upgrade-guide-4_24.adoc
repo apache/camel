@@ -1511,7 +1511,10 @@ with `OAuthHelper.validateOAuthToken` from camel-support instead.
 For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
 a value that also appears in the query string of the request.
 
-In `camel-oauth`, `InMemorySessionStore` no longer logs session identifiers at `INFO` level. Additionally, `OAuthCodeFlowCallback` rotates the session identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier and emitting an updated session cookie. Custom `OAuthSessionStore` implementations can override the default `rotateSession` method to support session rotation on login.
+`InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
+identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
+and emitting an updated session cookie. Custom `OAuthSessionStore` implementations can override the default
+`rotateSession` method to support session rotation on login.
 
 === camel-platform-http-vertx - the charset parameter of the request Content-Type in any case
 
