@@ -10,6 +10,7 @@ status: proposed
 see-also:
   - "CAMEL-26330"
   - "CAMEL-26331"
+  - "CAMEL-26338"
   - "CAMEL-25911"
   - "CAMEL-25684"
   - "CAMEL-25682"
@@ -227,7 +228,7 @@ while a rule is active and puts it back when the rule ends.
 |Every step
 |The channel (`CamelInternalProcessor`), next to the check that skips a processor disabled with
 `camel cmd disable-processor`. That check runs before the error handler of the step, so a failure is raised where the
-error handler calls the step, as for a send. A small change in camel-core, in a follow-up ticket.
+error handler calls the step, as for a send. A small change in camel-core, CAMEL-26338.
 |`delay` or `error` at a step.
 
 |Route lifecycle
@@ -341,7 +342,7 @@ Each step is its own pull request after this document:
 . The module, the plugin, the options, the rule model, the report, and the faults on sends.
 . The dev console, the `chaos` action of the CLI connector, `camel cmd chaos` and `camel run --chaos`.
 . Faults on the messages that enter a route, and on consumer polls.
-. camel-core: the step hook in the channel, then the faults at steps.
+. camel-core: the step hook in the channel (CAMEL-26338), then the faults at steps.
 . Route lifecycle faults.
 . The MCP tool group.
 . A DST world that runs chaos rules in virtual time, as an example and a regression test.
@@ -400,6 +401,7 @@ Each has a proposed answer; the maintainers decide.
 
 - CAMEL-26330: this feature.
 - CAMEL-26331: the send hook in camel-core.
+- CAMEL-26338: the step hook in camel-core.
 - CAMEL-25911: `TimeSource` in camel-util.
 - CAMEL-25684, CAMEL-25682: bugs the prototype reproduced on the code from before their fixes.
 - CAMEL-26286, CAMEL-26287, CAMEL-26288, CAMEL-26302 to CAMEL-26305: the "remove a route" bugs that a lifecycle rule
