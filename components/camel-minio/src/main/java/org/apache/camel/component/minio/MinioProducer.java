@@ -67,6 +67,16 @@ public class MinioProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (getConfiguration().getServerSideEncryption() != null
+                && getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            throw new IllegalArgumentException(
+                    "Only one of serverSideEncryption or serverSideEncryptionCustomerKey can be configured");
+        }
+    }
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
@@ -196,11 +206,6 @@ public class MinioProducer extends DefaultProducer {
                 .object(objectName)
                 .userMetadata(objectMetadata);
 
-        if (getConfiguration().getServerSideEncryption() != null
-                && getConfiguration().getServerSideEncryptionCustomerKey() != null) {
-            throw new IllegalArgumentException(
-                    "Only one of serverSideEncryption or serverSideEncryptionCustomerKey may be configured, not both");
-        }
         if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
             putObjectRequest.sse(getConfiguration().getServerSideEncryptionCustomerKey());
         } else if (getConfiguration().getServerSideEncryption() != null) {
@@ -234,11 +239,6 @@ public class MinioProducer extends DefaultProducer {
         String cannedAcl = exchange.getIn().getHeader(MinioConstants.CANNED_ACL, String.class);
         if (isNotEmpty(cannedAcl)) {
             extraHeaders.put("x-amz-acl", cannedAcl);
-        }
-
-        String serverSideEncryption = exchange.getIn().getHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, String.class);
-        if (isNotEmpty(serverSideEncryption)) {
-            extraHeaders.put("x-amz-server-side-encryption", serverSideEncryption);
         }
 
         return extraHeaders;
@@ -281,11 +281,6 @@ public class MinioProducer extends DefaultProducer {
                     .object(destinationKey)
                     .source(copySourceBuilder.build());
 
-            if (getConfiguration().getServerSideEncryption() != null
-                    && getConfiguration().getServerSideEncryptionCustomerKey() != null) {
-                throw new IllegalArgumentException(
-                        "Only one of serverSideEncryption or serverSideEncryptionCustomerKey may be configured, not both");
-            }
             if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
                 copyObjectRequest.sse(getConfiguration().getServerSideEncryptionCustomerKey());
             } else if (getConfiguration().getServerSideEncryption() != null) {

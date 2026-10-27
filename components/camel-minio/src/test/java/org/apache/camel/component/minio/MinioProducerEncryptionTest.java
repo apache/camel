@@ -112,31 +112,7 @@ class MinioProducerEncryptionTest extends CamelTestSupport {
     }
 
     @Test
-    void putObjectWithServerSideEncryptionHeader() throws Exception {
-        MinioComponent component = context.getComponent("minio", MinioComponent.class);
-        MinioEndpoint endpoint = (MinioEndpoint) component.createEndpoint("minio://mybucket?autoCreateBucket=false");
-        endpoint.getConfiguration().setMinioClient(minioClient);
-
-        when(minioClient.putObject(any(PutObjectArgs.class))).thenReturn(mock(ObjectWriteResponse.class));
-
-        MinioProducer producer = createProducer(endpoint);
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-        exchange.getIn().setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, "AES256");
-        exchange.getIn().setBody("content");
-
-        producer.process(exchange);
-
-        ArgumentCaptor<PutObjectArgs> captor = ArgumentCaptor.forClass(PutObjectArgs.class);
-        verify(minioClient).putObject(captor.capture());
-        assertNotNull(captor.getValue().extraHeaders());
-        assertEquals("AES256", captor.getValue().extraHeaders().getFirst("x-amz-server-side-encryption"));
-        producer.stop();
-        endpoint.stop();
-    }
-
-    @Test
-    void putObjectWithBothEncryptionThrows() throws Exception {
+    void producerStartWithBothEncryptionOptionsThrows() throws Exception {
         ServerSideEncryption.S3 sse = new ServerSideEncryption.S3();
         ServerSideEncryption.CustomerKey ssec = new ServerSideEncryption.CustomerKey(secretKey);
 
@@ -146,13 +122,9 @@ class MinioProducerEncryptionTest extends CamelTestSupport {
         endpoint.getConfiguration().setServerSideEncryption(sse);
         endpoint.getConfiguration().setServerSideEncryptionCustomerKey(ssec);
 
-        MinioProducer producer = createProducer(endpoint);
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-        exchange.getIn().setBody("content");
-
-        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
-        producer.stop();
+        endpoint.start();
+        MinioProducer producer = new MinioProducer(endpoint);
+        assertThrows(IllegalArgumentException.class, producer::start);
         endpoint.stop();
     }
 
@@ -208,29 +180,6 @@ class MinioProducerEncryptionTest extends CamelTestSupport {
         assertSame(ssec, captor.getValue().sse());
         assertNotNull(captor.getValue().source());
         assertSame(ssec, captor.getValue().source().ssec());
-        producer.stop();
-        endpoint.stop();
-    }
-
-    @Test
-    void copyObjectWithBothEncryptionThrows() throws Exception {
-        ServerSideEncryption.S3 sse = new ServerSideEncryption.S3();
-        ServerSideEncryption.CustomerKey ssec = new ServerSideEncryption.CustomerKey(secretKey);
-
-        MinioComponent component = context.getComponent("minio", MinioComponent.class);
-        MinioEndpoint endpoint = (MinioEndpoint) component.createEndpoint("minio://mybucket?autoCreateBucket=false");
-        endpoint.getConfiguration().setMinioClient(minioClient);
-        endpoint.getConfiguration().setServerSideEncryption(sse);
-        endpoint.getConfiguration().setServerSideEncryptionCustomerKey(ssec);
-
-        MinioProducer producer = createProducer(endpoint);
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.copyObject);
-        exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "source.txt");
-        exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "dest.txt");
-        exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "dest-bucket");
-
-        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
         producer.stop();
         endpoint.stop();
     }
