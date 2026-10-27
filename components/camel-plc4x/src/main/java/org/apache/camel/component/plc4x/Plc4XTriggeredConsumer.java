@@ -22,18 +22,24 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads the trigger tag together with the tags every {@code period} milliseconds and emits the tags once on each rising
  * edge of the trigger.
  */
 public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XTriggeredConsumer.class);
+
     private final Plc4XEndpoint plc4XEndpoint;
     private final String trigger;
     private final int period;
@@ -49,6 +55,8 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
         setInitialDelay(0);
         setDelay(period);
         setTimeUnit(TimeUnit.MILLISECONDS);
+        // the endpoint replaces it when an exceptionHandler or bridgeErrorHandler is configured
+        setExceptionHandler(new FailedPollExceptionHandler(endpoint.getCamelContext()));
     }
 
     @Override
@@ -85,6 +93,10 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
         if (!isRunAllowed()) {
             // the consumer stopped while the read was in progress
             return 0;
+        }
+        if (getErrorCounter() > 0) {
+            // the error counter is reset after this poll, so it still counts the failed polls before it
+            LOGGER.info("Polling endpoint: {} succeeded again after {} failed polls", getEndpoint(), getErrorCounter());
         }
         boolean triggered = (Boolean) response.getObject(Constants.TRIGGER);
         boolean risingEdge = triggered && !Boolean.TRUE.equals(lastTrigger);
@@ -146,5 +158,28 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
     @Override
     public String toString() {
         return "Plc4XTriggeredConsumer[" + plc4XEndpoint + "]";
+    }
+
+    /**
+     * Logs like the default exception handler of a consumer, but a failed poll only at WARN with the stack trace when
+     * it starts a run of failed polls, and the following failed polls of the run at DEBUG without it, so that a PLC
+     * that cannot be reached is not logged on every poll.
+     */
+    private final class FailedPollExceptionHandler extends LoggingExceptionHandler {
+        FailedPollExceptionHandler(CamelContext camelContext) {
+            super(camelContext, Plc4XTriggeredConsumer.class);
+        }
+
+        @Override
+        public void handleException(String message, Throwable exception) {
+            // a failed poll is reported without an exchange and before it is counted, so the first one of a run finds an
+            // error counter of 0
+            if (getErrorCounter() == 0) {
+                super.handleException(message, exception);
+            } else {
+                // the first failed poll of the run is logged with the stack trace already
+                LOGGER.debug("{}. Caused by: {}", message, exception.getMessage());
+            }
+        }
     }
 }
