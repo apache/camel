@@ -198,9 +198,9 @@ public class AS2AsynchronousMDNManager {
         // header), so it is untrusted input that selects an outbound destination.
         URI uri = URI.create(recipientDeliveryAddress);
         String scheme = uri.getScheme() == null ? null : uri.getScheme().toLowerCase(Locale.US);
-        // The delivery scheme is sender-chosen (untrusted input). Plain http is always allowed; https is allowed
-        // only when the AS2 endpoint has SSLContextParameters configured, otherwise it is refused (fail-closed)
-        // rather than written in cleartext to the TLS port. Any other scheme is rejected.
+        // The delivery scheme is sender-chosen (untrusted input). Plain http is allowed unless asyncMdnRequireHttps
+        // is set; https is allowed only when the AS2 endpoint has SSLContextParameters configured, otherwise it is
+        // refused (fail-closed) rather than written in cleartext to the TLS port. Any other scheme is rejected.
         boolean https = "https".equals(scheme);
         if (!"http".equals(scheme) && !https) {
             throw new HttpException(
@@ -253,9 +253,9 @@ public class AS2AsynchronousMDNManager {
             if (authorityIsAllowed) {
                 AS2HeaderUtils.addAuthorizationHeader(request, userName, password, accessToken);
             } else if (userName != null || accessToken != null) {
-                LOG.warn("Asynchronous MDN credentials not sent to sender-supplied host {}:"
+                LOG.warn("Asynchronous MDN credentials not sent to sender-supplied authority {}:{}:"
                          + " set asyncMdnAllowedHosts to authorise it",
-                        host);
+                        host, port);
             }
             httpContext.setRequest(request);
             multipartMimeEntity.setMainBody(true);
@@ -311,7 +311,7 @@ public class AS2AsynchronousMDNManager {
      * host with an optional port ({@code host} or {@code host:port}); a bare-host entry matches only the default port
      * for the scheme ({@code defaultPort}), so a listed host does not authorise every port on that host.
      */
-    private boolean isAllowedAuthority(String host, int port, int defaultPort) {
+    boolean isAllowedAuthority(String host, int port, int defaultPort) {
         if (allowedHosts == null || allowedHosts.isBlank()) {
             return false;
         }

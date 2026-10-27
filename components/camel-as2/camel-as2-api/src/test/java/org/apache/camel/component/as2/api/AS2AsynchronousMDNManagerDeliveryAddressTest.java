@@ -127,14 +127,15 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
     }
 
     /**
-     * A bare-host entry matches the default port for the scheme, so a delivery to that default port is accepted: it
-     * gets past the address checks and fails on the connection instead.
+     * A bare-host entry matches the default port for the scheme (80 for http, 443 for https).
      */
     @Test
     void aBareHostEntryMatchesTheDefaultPort() {
-        Exception e = assertThrows(Exception.class, () -> deliver("http://partner.example/receipts", ALLOWED));
-        assertTrue(!(e instanceof HttpException) || !e.getMessage().contains("asyncMdnAllowedHosts"),
-                "a bare-host entry must match the default port: " + e.getMessage());
+        AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
+                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, ALLOWED, null,
+                false);
+        assertTrue(manager.isAllowedAuthority("partner.example", 80, 80),
+                "a bare-host entry must match the default port for the scheme");
     }
 
     /**
