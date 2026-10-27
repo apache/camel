@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpException;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -175,6 +178,40 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
         assertFalse(consumer.isWithinStartingDirectory(listed("poll", "missing.txt", true), "poll/missing.txt"));
         assertFalse(consumer.isWithinStartingDirectory(listed("poll", "ping.txt", true), "poll/ping.txt"));
         assertFalse(consumer.isWithinStartingDirectory(listed("poll", "empty.txt", true), "poll/empty.txt"));
+    }
+
+    @Test
+    void isTransportErrorClassification() {
+        SftpOperations disconnected = new SftpOperations();
+        assertTrue(disconnected.isTransportError(new GenericFileOperationFailedException("disconnected")),
+                "Disconnected operations should classify any failure as transport error");
+
+        SftpOperations connected = new SftpOperations() {
+            @Override
+            public boolean isConnected() {
+                return true;
+            }
+        };
+
+        // Whitelisted transport errors
+        assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
+                "connection lost", new SftpException(ChannelSftp.SSH_FX_CONNECTION_LOST, "connection lost"))));
+        assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
+                "no connection", new SftpException(ChannelSftp.SSH_FX_NO_CONNECTION, "no connection"))));
+        assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
+                "io exception", new IOException("broken pipe"))));
+
+        // Application-level errors are not transport errors
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "no such file", new SftpException(ChannelSftp.SSH_FX_NO_SUCH_FILE, "no such file"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "permission denied", new SftpException(ChannelSftp.SSH_FX_PERMISSION_DENIED, "permission denied"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "failure", new SftpException(ChannelSftp.SSH_FX_FAILURE, "failure"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "bad message", new SftpException(ChannelSftp.SSH_FX_BAD_MESSAGE, "bad message"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "op unsupported", new SftpException(ChannelSftp.SSH_FX_OP_UNSUPPORTED, "op unsupported"))));
     }
 
     private static Supplier<GenericFile<SftpRemoteFile>> listed(
