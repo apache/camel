@@ -250,10 +250,62 @@ Add, list installed, and remove plugins:
 [source,bash]
 ----
 camel plugin add generate
-camel plugin add forage --version=1.2.3
+camel plugin add forage
 camel plugin get
 camel plugin delete <plugin-name>
 ----
+
+=== Plugin versions
+
+The plugins of the Apache Camel project always use the version of the CLI.
+
+A community plugin, such as `forage` or `kit`, is released on its own, and each release is built for a Camel version.
+`camel plugin add <name>` selects the newest release of the plugin built for the version of the installed CLI, and prints it:
+
+[source,bash]
+----
+$ camel plugin add forage
+Selected forage 1.6.2 for Camel CLI 4.22.2 (built for Camel 4.22.2)
+Plugin forage added
+----
+
+To select the release, the CLI reads the POMs of the releases of the plugin, newest first (at most 10), from the Maven
+repositories it is configured with (including `--repos` and the Maven `settings.xml`). The Camel versions a release
+supports are:
+
+. the Maven version range in the property `camel.jbang.plugin.camel-versions` of its POM, when the plugin declares it
+(see <<Building custom plugins>>)
+. otherwise the minor version of Camel of its `org.apache.camel:camel-jbang-core` dependency: a release built with
+Camel 4.22.2 supports Camel 4.22.x (the range `[4.22.0,4.23.0)`)
+
+A SNAPSHOT build of the CLI is compared without `-SNAPSHOT`. The `--camel-version` option of the commands is not used for
+this: it is the version of the installed CLI that counts.
+
+`camel plugin add` downloads the selected release before it saves the configuration, and stores the exact version in
+`~/.camel-jbang-plugins.json`, together with the Camel versions it supports. The plugin therefore stays at that version:
+run `camel plugin add <name>` again to select the newest matching release, for example after a new patch release of the
+plugin. When the CLI is upgraded to a Camel version that the stored release does not support, the CLI warns when the
+plugin is loaded, and tells to run `camel plugin add <name>` again. Plugins added with an older CLI are not checked.
+
+When no release is known to support the CLI version (for example, the plugin has no release for a new Camel version
+yet), or the releases cannot be read (for example, when offline), `camel plugin add` warns and uses the newest release
+(Maven `LATEST`), as older versions of the CLI do. The warning lists the newest release per Camel version found.
+
+To use a specific release, give its version, or the Maven coordinates of the plugin. It is used as given; the CLI only
+warns when the release is known to be built for another Camel version:
+
+[source,bash]
+----
+camel plugin add forage --version 1.6.2
+camel plugin add forage --gav io.kaoto.forage:camel-jbang-plugin-forage:1.6.2
+----
+
+Older versions of the CLI do not select a release, and use the newest one. To use a release built for your CLI with them:
+
+* Camel 4.22 LTS: `camel plugin add forage --version 1.6.2`
+* Camel 4.18 LTS: `camel plugin add forage --gav io.kaoto.forage:camel-jbang-plugin-forage:1.4.2`. The CLI knows the
+community plugins (and their Maven `groupId`) since Camel 4.21, so before that `--version` alone looks for the plugin in
+the `org.apache.camel` group.
 
 === Building custom plugins
 
@@ -262,6 +314,21 @@ to see how that is done.
 
 IMPORTANT: The name of the plugin Maven **artifactId** must start with `camel-jbang-plugin-`. For example if the plugin is named `cheese`, then
 the maven artifact must be named `camel-jbang-plugin-cheese`.
+
+A plugin should declare the Camel versions each release supports, as a Maven version range in the property
+`camel.jbang.plugin.camel-versions` of the POM of the plugin, so `camel plugin add` selects the right release
+(see <<Plugin versions>>):
+
+[source,xml]
+----
+<properties>
+    <camel.jbang.plugin.camel-versions>[4.23.0,4.24.0)</camel.jbang.plugin.camel-versions>
+</properties>
+----
+
+Keep the value a literal range, updated together with the Camel version the plugin is built with. A value that is not a
+version range (such as a single version) is ignored. Without the property, a release is taken to support the minor
+version of Camel of its `org.apache.camel:camel-jbang-core` dependency.
 
 == Generate plugin
 
