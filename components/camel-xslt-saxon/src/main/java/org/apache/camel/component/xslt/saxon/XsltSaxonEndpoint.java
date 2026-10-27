@@ -78,7 +78,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     private List<Object> saxonExtensionFunctions;
     @UriParam(displayName = "Allow StAX", defaultValue = "true")
     private boolean allowStAX = true;
-    @UriParam(label = "advanced", defaultValue = "true")
+    @UriParam(label = "advanced,security", defaultValue = "true", security = "insecure:dev", insecureValue = "false")
     private boolean secureProcessing = true;
     @UriParam
     @Metadata(firstVersion = "4.15.0", displayName = "Use JSON Body", defaultValue = "false", required = false)
@@ -168,7 +168,9 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
     /**
      * Feature for XML secure processing (see javax.xml.XMLConstants). This is enabled by default. However, when using
-     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions.
+     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions. Note
+     * that turning it off also restores the previous, unrestricted parsing of a {@code Source} message body that is
+     * still to be parsed, so only do so for trusted input.
      */
     public void setSecureProcessing(boolean secureProcessing) {
         this.secureProcessing = secureProcessing;
@@ -234,6 +236,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
             }
+
         }
 
         if (factory instanceof TransformerFactoryImpl) {
@@ -241,6 +244,9 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             XsltSaxonHelper.registerSaxonConfiguration(tf, saxonConfiguration);
             XsltSaxonHelper.registerSaxonConfigurationProperties(tf, saxonConfigurationProperties);
             XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions, secureProcessing);
+        }
+        if (factory != null) {
+            XsltSaxonHelper.configureExternalAccess(factory);
         }
 
         if (factory != null) {
@@ -259,6 +265,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         xslt.setEntityResolver(getEntityResolver());
         xslt.setAllowStAX(allowStAX);
         xslt.setUseJsonBody(useJsonBody);
+        xslt.setSecureProcessing(secureProcessing);
         xslt.setDeleteOutputFile(isDeleteOutputFile());
         xslt.setSource(ExpressionBuilder.singleInputExpression(getSource()));
 
