@@ -506,6 +506,12 @@ first consumer's settings. Such a consumer now fails to start with an `IllegalAr
 port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
 reference, or the global SSL context parameters), or move consumers that need other settings to another port.
 
+=== camel-wordpress - requests and responses are no longer logged
+
+The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
+level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
+`camel-wordpress` JAR no longer contains a `log4j.properties` file.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
