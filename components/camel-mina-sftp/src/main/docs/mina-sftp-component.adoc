@@ -569,7 +569,7 @@ IMPORTANT: The `chmod` and `chmodDirectory` options only work on POSIX-compatibl
 
 == Symbolic Links
 
-The consumer follows symbolic links to their target files. The producer writes to symlink targets.
+The consumer follows symbolic links to their target files, within the starting directory unless `jailStartingDirectory=false` (see below). The producer writes to symlink targets.
 
 With `jailStartingDirectory` enabled (the default), the consumer resolves a listed file that the server reports as a
 symbolic link before it accepts the file, one path segment at a time with the `lstat` and `readlink` requests. A link
