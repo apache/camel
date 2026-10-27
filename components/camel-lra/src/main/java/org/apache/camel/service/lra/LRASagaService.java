@@ -94,6 +94,8 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
                 .thenApply(url -> {
                     URI lra = toUri(url);
                     if (lra == null || !isHostedByAllowedCoordinator(lra)) {
+                        // The LRA created at the coordinator is deliberately not cancelled through the returned URL,
+                        // as doing so would connect to the unapproved destination.
                         throw new IllegalArgumentException(
                                 "The Long-Running-Action " + url + " returned by the LRA coordinator is not hosted by"
                                                            + " the LRA coordinator configured on the LRA saga service."

@@ -82,12 +82,7 @@ public class LRASagaServiceTest extends CamelTestSupport {
     @Test
     void testNewSagaAcceptsAllowedCoordinatorUrl() throws Exception {
         LRAClient client = Mockito.mock(LRAClient.class);
-        LRASagaService sagaService = new ClientMockingLRASagaService(client);
-        sagaService.setCoordinatorUrl("http://lra-coordinator:8080");
-        sagaService.setCoordinatorContextPath("/lra-coordinator");
-        sagaService.setLocalParticipantUrl("http://participant:8080");
-        sagaService.setCamelContext(this.context());
-        sagaService.doStart();
+        LRASagaService sagaService = startedService(client, null);
 
         Exchange exchange = Mockito.mock(Exchange.class);
         URL validUrl = URI.create("http://lra-coordinator:8080/lra-coordinator/0_1").toURL();
@@ -102,12 +97,7 @@ public class LRASagaServiceTest extends CamelTestSupport {
     @Test
     void testNewSagaRejectsUnapprovedHost() throws Exception {
         LRAClient client = Mockito.mock(LRAClient.class);
-        LRASagaService sagaService = new ClientMockingLRASagaService(client);
-        sagaService.setCoordinatorUrl("http://lra-coordinator:8080");
-        sagaService.setCoordinatorContextPath("/lra-coordinator");
-        sagaService.setLocalParticipantUrl("http://participant:8080");
-        sagaService.setCamelContext(this.context());
-        sagaService.doStart();
+        LRASagaService sagaService = startedService(client, null);
 
         Exchange exchange = Mockito.mock(Exchange.class);
         URL unapprovedUrl = URI.create("http://elsewhere:8080/lra-coordinator/0_1").toURL();
@@ -122,12 +112,7 @@ public class LRASagaServiceTest extends CamelTestSupport {
     @Test
     void testNewSagaRejectsPathOutsideCoordinatorContextPath() throws Exception {
         LRAClient client = Mockito.mock(LRAClient.class);
-        LRASagaService sagaService = new ClientMockingLRASagaService(client);
-        sagaService.setCoordinatorUrl("http://lra-coordinator:8080");
-        sagaService.setCoordinatorContextPath("/lra-coordinator");
-        sagaService.setLocalParticipantUrl("http://participant:8080");
-        sagaService.setCamelContext(this.context());
-        sagaService.doStart();
+        LRASagaService sagaService = startedService(client, null);
 
         Exchange exchange = Mockito.mock(Exchange.class);
         URL unapprovedPathUrl = URI.create("http://lra-coordinator:8080/other/0_1").toURL();
@@ -141,13 +126,7 @@ public class LRASagaServiceTest extends CamelTestSupport {
     @Test
     void testNewSagaAcceptsAlternativeAllowedCoordinatorUrl() throws Exception {
         LRAClient client = Mockito.mock(LRAClient.class);
-        LRASagaService sagaService = new ClientMockingLRASagaService(client);
-        sagaService.setCoordinatorUrl("http://lra-coordinator:8080");
-        sagaService.setCoordinatorContextPath("/lra-coordinator");
-        sagaService.setAllowedCoordinatorUrls("http://proxy-coordinator:8080/lra-coordinator");
-        sagaService.setLocalParticipantUrl("http://participant:8080");
-        sagaService.setCamelContext(this.context());
-        sagaService.doStart();
+        LRASagaService sagaService = startedService(client, "http://proxy-coordinator:8080/lra-coordinator");
 
         Exchange exchange = Mockito.mock(Exchange.class);
         URL proxyUrl = URI.create("http://proxy-coordinator:8080/lra-coordinator/0_1").toURL();
@@ -156,6 +135,19 @@ public class LRASagaServiceTest extends CamelTestSupport {
         CamelSagaCoordinator coordinator = sagaService.newSaga(exchange).join();
         Assertions.assertNotNull(coordinator);
         Assertions.assertEquals(proxyUrl.toString(), coordinator.getId());
+    }
+
+    private LRASagaService startedService(LRAClient client, String allowedCoordinatorUrls) throws Exception {
+        LRASagaService sagaService = new ClientMockingLRASagaService(client);
+        sagaService.setCoordinatorUrl("http://lra-coordinator:8080");
+        sagaService.setCoordinatorContextPath("/lra-coordinator");
+        sagaService.setLocalParticipantUrl("http://participant:8080");
+        if (allowedCoordinatorUrls != null) {
+            sagaService.setAllowedCoordinatorUrls(allowedCoordinatorUrls);
+        }
+        sagaService.setCamelContext(this.context());
+        sagaService.doStart();
+        return sagaService;
     }
 
     @DisplayName("Tests whether doStart() fails when the callback secret is set but blank")
