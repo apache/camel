@@ -18,17 +18,22 @@ package org.apache.camel.component.shiro.security;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.util.ThreadContext;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
@@ -64,6 +69,25 @@ public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
 
     @EndpointInject("mock:failureNoReauthB")
     protected MockEndpoint failureEndpointNoReauthB;
+
+    @EndpointInject("mock:successAuthB")
+    protected MockEndpoint successEndpointAuthB;
+
+    @EndpointInject("mock:failureAuthB")
+    protected MockEndpoint failureEndpointAuthB;
+
+    @EndpointInject("mock:nestedSuccess")
+    protected MockEndpoint nestedSuccessEndpoint;
+
+    @EndpointInject("mock:innerSuccess")
+    protected MockEndpoint innerSuccessEndpoint;
+
+    private ShiroSecurityPolicy policyAuthB;
+
+    @AfterEach
+    public void tearDownThreadContext() {
+        ThreadContext.remove();
+    }
 
     @Test
     public void testPolicyIsolationBetweenDifferentRealms() throws Exception {
@@ -153,6 +177,41 @@ public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
         assertNull(ThreadContext.getSecurityManager(), "ThreadContext security manager should be cleaned up on failure");
     }
 
+    @Test
+    public void testRoleAuthorizationIsolation() throws Exception {
+        successEndpointAuthB.expectedMessageCount(1);
+        failureEndpointAuthB.expectedMessageCount(1);
+
+        // 1. Bob has roleB in realm B, passes authorization
+        Map<String, Object> headersBob = new HashMap<>();
+        headersBob.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "bob");
+        headersBob.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "passwordB");
+        template.sendBodyAndHeaders("direct:routeAuthB", "payload", headersBob);
+
+        // 2. Charlie is in realm B with roleA (from realm A's permission model), fails authorization on policy B
+        Map<String, Object> headersCharlie = new HashMap<>();
+        headersCharlie.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "charlie");
+        headersCharlie.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "passwordB");
+        template.sendBodyAndHeaders("direct:routeAuthB", "payload", headersCharlie);
+
+        successEndpointAuthB.assertIsSatisfied();
+        failureEndpointAuthB.assertIsSatisfied();
+    }
+
+    @Test
+    public void testNestedRouteSubjectThreadStateRestoration() throws Exception {
+        nestedSuccessEndpoint.expectedMessageCount(1);
+        innerSuccessEndpoint.expectedMessageCount(1);
+
+        Map<String, Object> headersAlice = new HashMap<>();
+        headersAlice.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "alice");
+        headersAlice.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "passwordA");
+        template.sendBodyAndHeaders("direct:outerRoute", "payload", headersAlice);
+
+        nestedSuccessEndpoint.assertIsSatisfied();
+        innerSuccessEndpoint.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         Ini iniA = new Ini();
@@ -162,8 +221,12 @@ public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
 
         Ini iniB = new Ini();
         iniB.setSectionProperty("users", "bob", "passwordB, roleB");
+        iniB.setSectionProperty("users", "charlie", "passwordB, roleA");
         policyB = new ShiroSecurityPolicy(iniB, KEY_B);
         policyNoReauthB = new ShiroSecurityPolicy(iniB, KEY_B, false);
+
+        policyAuthB = new ShiroSecurityPolicy(iniB, KEY_B);
+        policyAuthB.setRolesList(List.of("roleB"));
 
         return new RouteBuilder() {
             @Override
@@ -199,6 +262,34 @@ public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
                         .end()
                         .policy(policyNoReauthB)
                         .to("mock:successNoReauthB");
+
+                from("direct:routeAuthB")
+                        .onException(CamelAuthorizationException.class)
+                        .handled(true)
+                        .to("mock:failureAuthB")
+                        .end()
+                        .policy(policyAuthB)
+                        .to("mock:successAuthB");
+
+                from("direct:outerRoute")
+                        .policy(policyNoReauthA)
+                        .process(exchange -> {
+                            assertEquals("alice", SecurityUtils.getSubject().getPrincipal());
+                        })
+                        .to("direct:innerRoute")
+                        .process(exchange -> {
+                            assertEquals("alice", SecurityUtils.getSubject().getPrincipal(),
+                                    "Outer subject should be restored after calling inner route");
+                        })
+                        .to("mock:nestedSuccess");
+
+                from("direct:innerRoute")
+                        .process(exchange -> {
+                            exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "bob");
+                            exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "passwordB");
+                        })
+                        .policy(policyB)
+                        .to("mock:innerSuccess");
             }
         };
     }

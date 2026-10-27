@@ -33,6 +33,7 @@ import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DelegatingSubject;
+import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,9 @@ import org.slf4j.LoggerFactory;
 public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShiroSecurityProcessor.class);
+    private static final String MANAGED_SUBJECT = ShiroSecurityProcessor.class.getName() + ".MANAGED_SUBJECT";
+    private static final String MANAGED_EXCHANGE = ShiroSecurityProcessor.class.getName() + ".MANAGED_EXCHANGE";
+
     private final ShiroSecurityPolicy policy;
 
     public ShiroSecurityProcessor(Processor processor, ShiroSecurityPolicy policy) {
@@ -116,11 +120,30 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         ByteSourceBroker decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
         ShiroSecurityToken securityToken = ShiroSecurityHelper.deserialize(decryptedToken.getClonedBytes());
 
-        Subject currentUser = resolveSubject();
-
+        SubjectThreadState threadState = null;
+        Subject currentUser = null;
         boolean success = false;
-        // Authenticate user if not authenticated
+
         try {
+            Subject threadSubject = ThreadContext.getSubject();
+            if (!policy.isAlwaysReauthenticate()
+                    && threadSubject instanceof DelegatingSubject delegatingSubject
+                    && policy.getSecurityManager() != null
+                    && delegatingSubject.getSecurityManager() == policy.getSecurityManager()) {
+                currentUser = threadSubject;
+            } else {
+                cleanUpManagedSubject(exchange);
+
+                if (policy.getSecurityManager() != null) {
+                    currentUser = new Subject.Builder(policy.getSecurityManager()).buildSubject();
+                    threadState = new SubjectThreadState(currentUser);
+                    threadState.bind();
+                } else {
+                    currentUser = SecurityUtils.getSubject();
+                }
+            }
+
+            // Authenticate user if not authenticated
             authenticateUser(currentUser, securityToken);
 
             // Test whether user's role is authorized to perform functions in the permissions list
@@ -129,37 +152,40 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         } finally {
             if (policy.isAlwaysReauthenticate() || !success) {
                 try {
-                    currentUser.logout();
+                    if (currentUser != null) {
+                        currentUser.logout();
+                    }
                 } finally {
-                    ThreadContext.unbindSubject();
-                    ThreadContext.unbindSecurityManager();
+                    ThreadContext.remove(MANAGED_SUBJECT);
+                    ThreadContext.remove(MANAGED_EXCHANGE);
+                    if (threadState != null) {
+                        threadState.restore();
+                    } else {
+                        ThreadContext.unbindSubject();
+                        ThreadContext.unbindSecurityManager();
+                    }
                 }
+            } else {
+                ThreadContext.put(MANAGED_SUBJECT, currentUser);
+                ThreadContext.put(MANAGED_EXCHANGE, exchange);
             }
         }
     }
 
-    private Subject resolveSubject() {
-        Subject currentUser = null;
-        Subject threadSubject = ThreadContext.getSubject();
-        if (threadSubject instanceof DelegatingSubject delegatingSubject) {
-            if (policy.getSecurityManager() != null && delegatingSubject.getSecurityManager() == policy.getSecurityManager()) {
-                currentUser = threadSubject;
+    private void cleanUpManagedSubject(Exchange currentExchange) {
+        Object managedExchange = ThreadContext.get(MANAGED_EXCHANGE);
+        if (managedExchange != null && managedExchange != currentExchange) {
+            Object managed = ThreadContext.get(MANAGED_SUBJECT);
+            if (managed instanceof Subject oldSubject) {
+                try {
+                    oldSubject.logout();
+                } catch (Exception e) {
+                    LOG.debug("Error logging out previous managed subject", e);
+                }
             }
+            ThreadContext.remove(MANAGED_SUBJECT);
+            ThreadContext.remove(MANAGED_EXCHANGE);
         }
-
-        if (currentUser == null) {
-            if (policy.getSecurityManager() != null) {
-                ThreadContext.unbindSubject();
-                ThreadContext.unbindSecurityManager();
-                currentUser = new Subject.Builder(policy.getSecurityManager()).buildSubject();
-                ThreadContext.bind(currentUser);
-                ThreadContext.bind(policy.getSecurityManager());
-            } else {
-                currentUser = SecurityUtils.getSubject();
-            }
-        }
-
-        return currentUser;
     }
 
     private void authenticateUser(Subject currentUser, ShiroSecurityToken securityToken) {

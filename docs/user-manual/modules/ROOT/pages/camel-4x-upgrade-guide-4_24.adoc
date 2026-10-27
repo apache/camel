@@ -51,7 +51,21 @@ the incoming message to start a new downstream conversation, clear inherited IDs
 
 === camel-shiro - ShiroSecurityPolicy scopes SecurityManager to policy instance
 
-The `ShiroSecurityPolicy` constructors that load configuration from an INI file or object no longer set the resulting `SecurityManager` as Shiro's global security manager via `SecurityUtils.setSecurityManager(...)`. `ShiroSecurityProcessor` now creates and authenticates the `Subject` using the route policy's `SecurityManager` directly. Applications configuring multiple `ShiroSecurityPolicy` instances in the same JVM now have their realms evaluated independently per policy.
+The `ShiroSecurityPolicy` constructors that load configuration from an INI file or object no longer set the resulting
+`SecurityManager` as Shiro's global security manager via `SecurityUtils.setSecurityManager(...)`. `ShiroSecurityProcessor`
+now creates and authenticates the caller identity (principal) using the route policy's `SecurityManager` directly.
+Applications configuring multiple `ShiroSecurityPolicy` instances in the same JVM now have their realms evaluated
+independently per policy.
+
+Code that accesses the ambient security context or calls `SecurityUtils.getSecurityManager()` outside the policy and
+previously relied on the policy constructor setting the global security manager will now receive
+`UnavailableSecurityManagerException`. Such applications should explicitly configure
+`SecurityUtils.setSecurityManager(policy.getSecurityManager())` at startup.
+
+Additionally:
+- A `ShiroSecurityPolicy` created with the no-arg constructor must be configured with `setSecurityManager(...)`.
+- When `alwaysReauthenticate=true` (the default), no caller identity stays bound to the processing thread after the
+  policy check completes.
 
 === camel-ai-tool - required arguments with reserved names reject the call
 
