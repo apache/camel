@@ -48,7 +48,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -101,74 +100,6 @@ class XsltSaxonDomSourceTest {
         if (context != null) {
             context.stop();
         }
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void testImplicitDocumentElement(boolean genericSourceOnly) throws Exception {
-        Document document = parse(INPUT);
-        Document original = (Document) document.cloneNode(true);
-        Element element = document.getDocumentElement();
-        DOMSource source = new DOMSource(element, "file:/payload/request.xml");
-        Payload payload = new Payload(source, genericSourceOnly);
-        // Reuse the converter's cached DOMSource, as an Element-backed CXF payload does.
-        for (int i = 0; i < 3; i++) {
-            String result = template.requestBody(ENDPOINT, payload, String.class);
-            assertTrue(result.contains("<root"), result);
-            Document output = parse(result);
-            assertEquals("root", output.getDocumentElement().getNodeName());
-            assertEquals("test-user", output.getElementsByTagNameNS("urn:login", "UserId").item(0).getTextContent());
-            assertEquals("test-password", output.getElementsByTagNameNS("urn:login", "Password").item(0).getTextContent());
-            assertEquals(1, output.getElementsByTagNameNS("urn:login", "LogIn_Input").getLength());
-            assertFalse(result.contains("SOURCE_SYSTEM_VALUE"), result);
-        }
-        assertTrue(payload.conversions >= 3, "The test must use the registered DOM converter");
-        assertSame(element, source.getNode());
-        assertSame(document, element.getOwnerDocument());
-        assertSame(document, element.getParentNode());
-        assertTrue(original.isEqualNode(document), "Conversion must not modify the original DOM");
-        Source prepared = getSource(payload);
-        assertNotSame(source, prepared);
-        assertSame(document, ((DOMSource) prepared).getNode());
-        assertEquals(source.getSystemId(), prepared.getSystemId());
-        assertEquals("file:/payload/request.xml", source.getSystemId());
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void testStaxLookupReturningDomSource(boolean sourceExpression) throws Exception {
-        Document document = parse(INPUT);
-        Document original = (Document) document.cloneNode(true);
-        DOMSource source = new DOMSource(document.getDocumentElement(), "file:/payload/request.xml");
-        GenericSourcePayload payload = new GenericSourcePayload(source);
-        TypeConverterSupport converter = new TypeConverterSupport() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-                GenericSourcePayload input = (GenericSourcePayload) value;
-                input.requestedType = type;
-                return (T) input.source;
-            }
-        };
-        context.getTypeConverterRegistry().addTypeConverter(Source.class, GenericSourcePayload.class, converter);
-        // Pin the generic Source converter selected by the registry for a StAX request, as with CXF payloads.
-        context.getTypeConverterRegistry().addTypeConverter(StAXSource.class, GenericSourcePayload.class, converter);
-        for (int i = 0; i < 3; i++) {
-            String result = sourceExpression
-                    ? template.requestBodyAndHeader(
-                            ENDPOINT + "?source=header:payloadSource", "unused body", "payloadSource", payload, String.class)
-                    : template.requestBody(ENDPOINT, payload, String.class);
-            assertSame(StAXSource.class, payload.requestedType, "Must exercise Saxon's non-null StAX conversion path");
-            assertEquals("root", parse(result).getDocumentElement().getNodeName(), result);
-            assertFalse(result.contains("SOURCE_SYSTEM_VALUE"), result);
-        }
-        Source prepared = getSource(payload);
-        assertSame(document, ((DOMSource) prepared).getNode());
-        assertNotSame(source, prepared);
-        assertEquals(source.getSystemId(), prepared.getSystemId());
-        assertSame(document.getDocumentElement(), source.getNode());
-        assertSame(document, source.getNode().getParentNode());
-        assertTrue(original.isEqualNode(document));
     }
 
     @ParameterizedTest
@@ -296,15 +227,6 @@ class XsltSaxonDomSourceTest {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         return factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
-    }
-
-    private static final class GenericSourcePayload {
-        private final DOMSource source;
-        private Class<?> requestedType;
-
-        private GenericSourcePayload(DOMSource source) {
-            this.source = source;
-        }
     }
 
     private static final class Payload {

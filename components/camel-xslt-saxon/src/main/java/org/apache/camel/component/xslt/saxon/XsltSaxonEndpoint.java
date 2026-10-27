@@ -78,7 +78,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     private List<Object> saxonExtensionFunctions;
     @UriParam(displayName = "Allow StAX", defaultValue = "true")
     private boolean allowStAX = true;
-    @UriParam(label = "advanced,security", defaultValue = "true", security = "insecure:dev", insecureValue = "false")
+    @UriParam(label = "advanced,security", defaultValue = "true")
     private boolean secureProcessing = true;
     @UriParam
     @Metadata(firstVersion = "4.15.0", displayName = "Use JSON Body", defaultValue = "false", required = false)

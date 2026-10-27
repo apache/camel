@@ -144,7 +144,6 @@ final class XsltSaxonHelper {
         }
     }
 
-
     public static void registerSaxonExtensionFunctions(
             TransformerFactoryImpl factory,
             List<Object> saxonExtensionFunctions,

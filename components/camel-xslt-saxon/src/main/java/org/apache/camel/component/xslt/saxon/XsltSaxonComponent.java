@@ -39,7 +39,7 @@ public class XsltSaxonComponent extends XsltComponent {
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
     @Metadata(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
-    @Metadata(label = "advanced,security", defaultValue = "true", security = "insecure:dev", insecureValue = "false")
+    @Metadata(label = "advanced,security", defaultValue = "true")
     private boolean secureProcessing = true;
 
     public List<Object> getSaxonExtensionFunctions() {
