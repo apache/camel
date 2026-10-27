@@ -3812,6 +3812,8 @@ fail, but it finds none of its documents, as before.
 
 Each exchange is now indexed as one document, with the body in `contents`, the exchange id in `exchangeId` and each
 header in a field of the header name. Each file of `srcDir` is one document with the `contents` and `path` fields.
-Before, each of these fields was a document of its own. A query on a header, such as `author:carlin`, now gives a hit
+Before, each of these fields was a document of its own. The files of `srcDir` are indexed each time the insert endpoint
+is created, such as when the application starts; the document of a file now replaces the one with the same `path`
+instead of adding a copy. A query on a header, such as `author:carlin`, now gives a hit
 whose data is the body of the exchange, and with `CamelLuceneReturnLuceneDocs` the document of a hit carries all the
 fields of its exchange or file.

@@ -34,6 +34,7 @@ import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +162,8 @@ public class LuceneIndexer {
                 add(doc, "contents", contents, true);
                 openIndexWriter();
                 try {
-                    indexWriter.addDocument(doc);
+                    // replace the document of this path: srcDir is indexed again each time the endpoint is created
+                    indexWriter.updateDocument(new Term("path", file.getPath()), doc);
                     closeIndexWriter();
                 } catch (Exception e) {
                     // discard the document of this file and release the index write lock

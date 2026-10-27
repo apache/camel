@@ -37,6 +37,9 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.StoredFields;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.junit.jupiter.api.Test;
@@ -158,6 +161,26 @@ class LuceneIndexProducerLifecycleTest extends CamelTestSupport {
         try (FSDirectory dir = FSDirectory.open(oldIndexDir.toPath());
              IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {
             assertTrue(writer.isOpen(), "a failed source directory insert must not leave the index write lock held");
+        }
+    }
+
+    @Test
+    void sourceDirectoryIndexedAgainReplacesTheDocumentsOfItsFiles(@TempDir File srcIndexDir, @TempDir File srcDir)
+            throws Exception {
+        File file = new File(srcDir, "quote.txt");
+        Files.writeString(file.toPath(), "A day without sunshine is like night", StandardCharsets.UTF_8);
+        new LuceneIndexer(srcDir, srcIndexDir, new StandardAnalyzer());
+
+        // as when the application starts again, with a file that was changed in the meantime
+        Files.writeString(file.toPath(), "A day without rain is like night", StandardCharsets.UTF_8);
+        new LuceneIndexer(srcDir, srcIndexDir, new StandardAnalyzer());
+
+        try (FSDirectory dir = FSDirectory.open(srcIndexDir.toPath());
+             DirectoryReader reader = DirectoryReader.open(dir)) {
+            assertEquals(1, reader.numDocs(), "indexing the source directory again must not add a copy of its file");
+            IndexSearcher searcher = new IndexSearcher(reader);
+            assertEquals(1, searcher.count(new TermQuery(new Term("contents", "rain"))), "the new contents");
+            assertEquals(0, searcher.count(new TermQuery(new Term("contents", "sunshine"))), "the old contents");
         }
     }
 
