@@ -105,8 +105,22 @@ release and removes the pin. `camel self-update` treats the pin as follows:
 |===
 
 On an installation pinned to a release line or to `LTS`, `camel self-update --version X.Y.Z` is refused
-too, because it would leave the pinned selector. `camel self-update --check` and the update notice
-described below compare against the newest release of the pinned line or the newest LTS release.
+too, because it would leave the pinned selector. The message ("this install is pinned to LTS" or "this
+install is pinned to the 4.22 release line") suggests re-running the installer with that exact version
+instead, which replaces the selector pin with an exact one:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version 4.23.0
+----
+
+[source,powershell]
+----
+irm https://camel.apache.org/install.ps1 -OutFile install.ps1; .\install.ps1 -Version 4.23.0
+----
+
+`camel self-update --check` and the update notice described below compare against the newest release
+of the pinned line or the newest LTS release.
 
 NOTE: Camel CLI 4.22.x and older do not understand a release line or `LTS` pin. If such a CLI finds
 one (for example after a `--version LTS` install that resolved to 4.22.2), `camel self-update` refuses
