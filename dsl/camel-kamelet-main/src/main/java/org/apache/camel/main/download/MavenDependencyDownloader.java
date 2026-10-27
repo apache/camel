@@ -46,6 +46,7 @@ import org.apache.camel.main.util.XmlHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenArtifactDescriptor;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -427,6 +428,22 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }
 
         return answer;
+    }
+
+    @Override
+    public MavenArtifactDescriptor resolveArtifactDescriptor(
+            String groupId, String artifactId, String version, String repos) {
+        String gav = groupId + ":" + artifactId + ":" + version;
+        if (verbose) {
+            LOG.info("Reading artifact descriptor: {}", gav);
+        } else {
+            LOG.debug("Reading artifact descriptor: {}", gav);
+        }
+        try {
+            return mavenDownloader.resolveArtifactDescriptor(gav, resolveExtraRepositories(repos));
+        } catch (MavenResolutionException e) {
+            throw new DownloadException(e.getMessage(), e);
+        }
     }
 
     private void resolveQuarkus(String minimumVersion, String camelVersion, Set<String> extraRepos, List<String[]> answer)
