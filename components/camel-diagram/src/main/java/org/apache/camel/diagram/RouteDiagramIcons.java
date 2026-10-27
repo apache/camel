@@ -332,16 +332,22 @@ final class RouteDiagramIcons {
                 pos++;
             }
             boolean dot = false;
+            boolean digits = false;
+            boolean exponent = false;
             while (pos < d.length()) {
                 char c = d.charAt(pos);
                 if (Character.isDigit(c)) {
+                    digits = true;
                     pos++;
                 } else if (c == '.' && !dot) {
                     dot = true;
                     pos++;
-                } else if ((c == 'e' || c == 'E') && pos > start) {
+                } else if ((c == 'e' || c == 'E') && digits && !exponent && exponentDigits(pos + 1)) {
+                    // an exponent only with its digits (1e-3); an e without them ends the number
+                    exponent = true;
+                    dot = true;
                     pos++;
-                    if (pos < d.length() && (d.charAt(pos) == '-' || d.charAt(pos) == '+')) {
+                    if (d.charAt(pos) == '-' || d.charAt(pos) == '+') {
                         pos++;
                     }
                 } else {
@@ -352,6 +358,14 @@ final class RouteDiagramIcons {
                 throw new IllegalArgumentException("Expected a number at " + pos + " in: " + d);
             }
             return Double.parseDouble(d.substring(start, pos));
+        }
+
+        /** Whether the digits of an exponent start at the index, after an optional sign. */
+        private boolean exponentDigits(int i) {
+            if (i < d.length() && (d.charAt(i) == '-' || d.charAt(i) == '+')) {
+                i++;
+            }
+            return i < d.length() && Character.isDigit(d.charAt(i));
         }
 
         private void skipSeparators() {

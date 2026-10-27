@@ -189,6 +189,14 @@ class RouteDiagramCardStyleTest {
         assertThat(arc.getMaxX()).isEqualTo(22.0, within(0.01));
         assertThat(arc.getMinX()).isEqualTo(12.0, within(0.01));
 
+        // an exponent, and an e without its digits which is not a number
+        Rectangle2D exp = RouteDiagramIcons.path("M1e1 2.5E-1L20 2e+1").getBounds2D();
+        assertThat(exp.getMinX()).isEqualTo(10.0, within(0.01));
+        assertThat(exp.getMinY()).isEqualTo(0.25, within(0.01));
+        assertThat(exp.getMaxY()).isEqualTo(20.0, within(0.01));
+        assertThatThrownBy(() -> RouteDiagramIcons.path("M1e 2")).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("Expected a number at 2");
+
         assertThatThrownBy(() -> RouteDiagramIcons.path("12 2")).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> RouteDiagramIcons.path("M12 2Q1 1 2 2")).isInstanceOf(IllegalArgumentException.class);
     }
