@@ -54,7 +54,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     private TTransport syncTransport;
     private TNonblockingTransport asyncTransport;
     private TAsyncClientManager asyncClientManager;
-    private Object thriftClient;
+    private volatile Object thriftClient;
     // the callbacks of the asynchronous calls that have not completed yet, failed when this producer stops
     private final Set<PendingCallback> pendingCallbacks = ConcurrentHashMap.newKeySet();
 
@@ -74,7 +74,10 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             ThriftUtils.invokeAsyncMethod(thriftClient, configuration.getMethod(), message.getBody(), pending);
         } catch (Exception e) {
             // the call was not made
-            pending.discard();
+            if (!pending.discard()) {
+                // a stop of the producer completed the exchange meanwhile, with done(false)
+                return false;
+            }
             if (e.getCause() instanceof TException) {
                 exchange.setException(e.getCause());
             } else {
@@ -82,6 +85,11 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             }
             callback.done(true);
             return true;
+        }
+        if (isStoppingOrStopped()) {
+            // the stop may have failed the pending calls before this one was registered, and a selector thread that
+            // is still ending accepts the call without ever completing it
+            pending.stopped();
         }
 
         return false;
@@ -226,8 +234,8 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             }
         }
 
-        void discard() {
-            finish();
+        boolean discard() {
+            return finish();
         }
 
         private boolean finish() {
