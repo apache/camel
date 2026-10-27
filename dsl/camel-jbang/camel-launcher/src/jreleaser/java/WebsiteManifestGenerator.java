@@ -173,6 +173,9 @@ public class WebsiteManifestGenerator {
         byte[] manifest = renderManifest(version, tarSha256, zipSha256);
 
         Path releasesDir = output.resolve("releases");
+        if (!latest) {
+            rejectNewHighestWithoutLatest(releasesDir, version);
+        }
         Files.createDirectories(releasesDir);
         writeVersionManifest(releasesDir.resolve(version + ".properties"), manifest, version);
 
@@ -197,6 +200,31 @@ public class WebsiteManifestGenerator {
 
         if (installSh != null && installPs1 != null) {
             writeInstallChecksums(output.getParent(), installSh, installPs1);
+        }
+    }
+
+    /**
+     * {@code --rebuild-aliases --check} expects {@code latest.properties} to match the highest {@code X.Y.Z} manifest.
+     * Publishing a version higher than every existing manifest without {@code --latest true} would leave
+     * {@code latest} behind and fail that check after the manifests were written, so refuse it before writing anything.
+     * An empty (or missing) releases directory, such as a fresh staging build, has nothing to compare with.
+     */
+    private static void rejectNewHighestWithoutLatest(Path releasesDir, String version) throws IOException {
+        if (!Files.isDirectory(releasesDir)) {
+            return;
+        }
+        String highest = null;
+        try (Stream<Path> files = Files.list(releasesDir)) {
+            for (Path file : files.toList()) {
+                Matcher m = VERSION_FILE_PATTERN.matcher(file.getFileName().toString());
+                if (m.matches() && (highest == null || compareSemver(m.group(1), highest) > 0)) {
+                    highest = m.group(1);
+                }
+            }
+        }
+        if (highest != null && compareSemver(version, highest) > 0) {
+            throw new UsageException(version + " is higher than every published release (highest is " + highest
+                                     + "), so latest.properties must move to it - pass --latest true.");
         }
     }
 

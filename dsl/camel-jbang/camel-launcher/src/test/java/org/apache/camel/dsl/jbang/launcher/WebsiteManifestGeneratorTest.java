@@ -263,6 +263,62 @@ class WebsiteManifestGeneratorTest {
                 "malformed existing latest.properties must remain untouched");
     }
 
+    // --rebuild-aliases --check expects latest to be the highest X.Y.Z manifest, so publishing a new highest
+    // version without --latest true must fail up front instead of leaving latest behind.
+    @Test
+    void newHighestVersionWithoutLatestFailsBeforeWritingAnything(@TempDir Path work) throws Exception {
+        Path tar1 = writeFixture(work, "old.tar.gz", "old-tar");
+        Path zip1 = writeFixture(work, "old.zip", "old-zip");
+        Path installSh = writeFixture(work, "install.sh", "#!/bin/sh\n");
+        Path installPs1 = writeFixture(work, "install.ps1", "# ps1\n");
+        Path output = work.resolve("website").resolve("camel-cli");
+        Path releases = output.resolve("releases");
+
+        Result seed = run("--version", "4.22.0", "--tar", tar1.toString(), "--zip", zip1.toString(), "--output",
+                output.toString(), "--latest", "true", "--lts", "true");
+        assertEquals(0, seed.exit, seed.stderr);
+        List<String> before = listing(releases);
+        byte[] latestBefore = Files.readAllBytes(releases.resolve("latest.properties"));
+
+        Path tar2 = writeFixture(work, "new.tar.gz", "new-tar");
+        Path zip2 = writeFixture(work, "new.zip", "new-zip");
+        Result r = run("--version", "4.23.0", "--tar", tar2.toString(), "--zip", zip2.toString(), "--output",
+                output.toString(), "--latest", "false", "--lts", "true", "--install-sh", installSh.toString(),
+                "--install-ps1", installPs1.toString());
+
+        assertNotEquals(0, r.exit, "a new highest version must not be published without --latest true");
+        assertThat(r.stderr).contains("4.23.0 is higher than every published release (highest is 4.22.0)")
+                .contains("pass --latest true");
+        assertThat(listing(releases)).isEqualTo(before);
+        assertArrayEquals(latestBefore, Files.readAllBytes(releases.resolve("latest.properties")));
+        assertFalse(Files.exists(output.getParent().resolve("install.sha256")), "nothing may be written");
+    }
+
+    @Test
+    void olderVersionWithoutLatestIsStillPublished(@TempDir Path work) throws Exception {
+        Path tar1 = writeFixture(work, "hi.tar.gz", "hi-tar");
+        Path zip1 = writeFixture(work, "hi.zip", "hi-zip");
+        Path output = work.resolve("website");
+        Result seed = run("--version", "4.23.0", "--tar", tar1.toString(), "--zip", zip1.toString(), "--output",
+                output.toString(), "--latest", "true");
+        assertEquals(0, seed.exit, seed.stderr);
+
+        Path tar2 = writeFixture(work, "lo.tar.gz", "lo-tar");
+        Path zip2 = writeFixture(work, "lo.zip", "lo-zip");
+        Result r = run("--version", "4.22.3", "--tar", tar2.toString(), "--zip", zip2.toString(), "--output",
+                output.toString(), "--latest", "false", "--lts", "true");
+
+        assertEquals(0, r.exit, r.stderr);
+        assertTrue(Files.exists(output.resolve("releases").resolve("4.22.3.properties")));
+        assertTrue(Files.exists(output.resolve("releases").resolve("lts.properties")));
+    }
+
+    private static List<String> listing(Path dir) throws IOException {
+        try (var files = Files.list(dir)) {
+            return files.map(f -> f.getFileName().toString()).sorted().toList();
+        }
+    }
+
     @Test
     void forwardUpdateSucceeds(@TempDir Path work) throws Exception {
         Path tar1 = writeFixture(work, "old.tar.gz", "old-tar");
@@ -409,7 +465,7 @@ class WebsiteManifestGeneratorTest {
         assertThat(releases.resolve("lts.properties")).doesNotExist();
         assertThat(releases.resolve("latest.properties")).doesNotExist();
 
-        assertThat(publish(work, output, "4.22.2", "b", false, false).exit).isZero();
+        assertThat(publish(work, output, "4.22.2", "b", true, false).exit).isZero();
         assertThat(aliasVersion(releases, "4.22")).isEqualTo("4.22.2");
 
         // A late, older patch of the same line is published but leaves the line alias alone.
@@ -432,7 +488,7 @@ class WebsiteManifestGeneratorTest {
 
         assertThat(publish(work, output, "4.18.5", "a", false, true).exit).isZero();
         assertThat(aliasVersion(releases, "lts")).isEqualTo("4.18.5");
-        assertThat(publish(work, output, "4.22.2", "b", false, true).exit).isZero();
+        assertThat(publish(work, output, "4.22.2", "b", true, true).exit).isZero();
         assertThat(releases.resolve("lts.properties")).hasSameBinaryContentAs(releases.resolve("4.22.2.properties"));
 
         // A non-LTS release never touches lts.properties.
