@@ -29,12 +29,14 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.config.Ini;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
 
@@ -274,12 +276,17 @@ public class ShiroMultiplePolicyIsolationTest extends CamelTestSupport {
                 from("direct:outerRoute")
                         .policy(policyNoReauthA)
                         .process(exchange -> {
-                            assertEquals("alice", SecurityUtils.getSubject().getPrincipal());
+                            Subject subject = SecurityUtils.getSubject();
+                            assertEquals("alice", subject.getPrincipal());
+                            assertTrue(subject.isAuthenticated());
                         })
                         .to("direct:innerRoute")
                         .process(exchange -> {
-                            assertEquals("alice", SecurityUtils.getSubject().getPrincipal(),
+                            Subject restored = SecurityUtils.getSubject();
+                            assertEquals("alice", restored.getPrincipal(),
                                     "Outer subject should be restored after calling inner route");
+                            assertTrue(restored.isAuthenticated(),
+                                    "Restored subject must still be authenticated");
                         })
                         .to("mock:nestedSuccess");
 

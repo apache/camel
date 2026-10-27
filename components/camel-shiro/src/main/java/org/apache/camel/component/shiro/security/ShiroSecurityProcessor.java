@@ -166,6 +166,8 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
                     }
                 }
             } else {
+                // When alwaysReauthenticate=false and the exchange succeeds, the subject remains bound for subsequent
+                // exchanges on this thread. cleanUpManagedSubject will log it out when a different exchange arrives.
                 ThreadContext.put(MANAGED_SUBJECT, currentUser);
                 ThreadContext.put(MANAGED_EXCHANGE, exchange);
             }
@@ -174,6 +176,8 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
 
     private void cleanUpManagedSubject(Exchange currentExchange) {
         Object managedExchange = ThreadContext.get(MANAGED_EXCHANGE);
+        // Use reference inequality (!=) to skip cleanup during synchronous nested routing on the same exchange
+        // (such as direct: routes), avoiding premature logout of the outer subject.
         if (managedExchange != null && managedExchange != currentExchange) {
             Object managed = ThreadContext.get(MANAGED_SUBJECT);
             if (managed instanceof Subject oldSubject) {
