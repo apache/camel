@@ -426,6 +426,34 @@ class WebsiteInstallTest {
             }
         }
 
+        // A trailing-zero line must be compared as a whole component: 4.20 is not 4.2, and 4.2 accepts neither
+        // 4.20.0 nor 4.22.0.
+        @Test
+        void trailingZeroReleaseLineIsNotReadAsAShorterLine(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishAlias(fixture, "4.20", "4.20.3");
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, "4.20");
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertVersionInstalled(home, "4.20.3");
+                assertThat(pinnedVersionFile(home)).hasContent("4.20");
+
+                publishAlias(fixture, "4.2", "4.20.0");
+                WebsiteInstallerFixture.Result twenty = install(fixture, home, "4.2");
+                publishAlias(fixture, "4.2", "4.22.0");
+                WebsiteInstallerFixture.Result twentyTwo = install(fixture, home, "4.2");
+
+                assertNotEquals(0, twenty.exit());
+                assertThat(twenty.stderr()).contains("manifest version (4.20.0) is not in the requested release line (4.2)");
+                assertNotEquals(0, twentyTwo.exit());
+                assertThat(twentyTwo.stderr()).contains("manifest version (4.22.0) is not in the requested release line (4.2)");
+                assertVersionInstalled(home, "4.20.3");
+                assertThat(pinnedVersionFile(home)).hasContent("4.20");
+            }
+        }
+
         @Test
         void rejectsReleaseLineManifestOutsideTheLine(@TempDir Path temp) throws Exception {
             try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
@@ -1090,6 +1118,34 @@ class WebsiteInstallTest {
                 assertEquals(0, r.exit(), r.stderr());
                 assertVersionInstalled(home, "2.1.4");
                 assertThat(pinnedVersionFile(home)).hasContent("2.1");
+            }
+        }
+
+        // A trailing-zero line must be compared as a whole component: 4.20 is not 4.2, and 4.2 accepts neither
+        // 4.20.0 nor 4.22.0.
+        @Test
+        void trailingZeroReleaseLineIsNotReadAsAShorterLine(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishAlias(fixture, "4.20", "4.20.3");
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, "4.20");
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertVersionInstalled(home, "4.20.3");
+                assertThat(pinnedVersionFile(home)).hasContent("4.20");
+
+                publishAlias(fixture, "4.2", "4.20.0");
+                WebsiteInstallerFixture.Result twenty = install(fixture, home, "4.2");
+                publishAlias(fixture, "4.2", "4.22.0");
+                WebsiteInstallerFixture.Result twentyTwo = install(fixture, home, "4.2");
+
+                assertNotEquals(0, twenty.exit());
+                assertThat(twenty.stderr()).contains("manifest version (4.20.0) is not in the requested release line (4.2)");
+                assertNotEquals(0, twentyTwo.exit());
+                assertThat(twentyTwo.stderr()).contains("manifest version (4.22.0) is not in the requested release line (4.2)");
+                assertVersionInstalled(home, "4.20.3");
+                assertThat(pinnedVersionFile(home)).hasContent("4.20");
             }
         }
 

@@ -134,7 +134,8 @@ public final class UpdateChecker {
         String version = fetcher.fetchAlias(pin.aliasName()).version();
         if (!pin.accepts(version)) {
             throw new SelfUpdateException(
-                    "manifest version (" + version + ") is not in the pinned release line (" + pin.value() + ")");
+                    "manifest version (" + version + ") does not match this install, which is pinned to "
+                                          + pin.describe());
         }
         return version;
     }

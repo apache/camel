@@ -86,10 +86,15 @@ public class SelfUpdateCommand extends CamelCommand {
         // only within its selector, so an explicit --version, which could leave it, is refused as well.
         Optional<String> pinned = InstallDetector.pinnedVersion();
         Pin pin = pinned.map(Pin::parse).orElse(null);
-        if (pin != null && (!pin.tracksAlias() || version != null)) {
-            String label = pin.tracksAlias() ? pin.describe() : "version " + pinned.get();
-            printer().printErr("this install is pinned to " + label + " - remove "
+        if (pin != null && !pin.tracksAlias()) {
+            printer().printErr("this install is pinned to version " + pinned.get() + " - remove "
                                + InstallDetector.pinnedVersionFile() + " to resume tracking new releases");
+            return 1;
+        }
+        if (pin != null && version != null) {
+            // Removing the pin file would make the install track the latest release, which is not what asking for
+            // one version means, so point at the installer, which replaces the selector pin with an exact one.
+            printer().printErr(selectorPinRefusal(pin, version));
             return 1;
         }
 
@@ -112,8 +117,8 @@ public class SelfUpdateCommand extends CamelCommand {
             return 1;
         }
         if (pin != null && !pin.accepts(manifest.version())) {
-            printer().printErr("manifest version (" + manifest.version() + ") is not in the pinned release line ("
-                               + pin.value() + ")");
+            printer().printErr("manifest version (" + manifest.version() + ") does not match this install, which is pinned"
+                               + " to " + pin.describe());
             return 1;
         }
 
@@ -189,6 +194,16 @@ public class SelfUpdateCommand extends CamelCommand {
         } finally {
             deleteRecursively(stagingDir);
         }
+    }
+
+    // Package-visible for testing. Quotes the installer command form the install docs use for the running platform.
+    static String selectorPinRefusal(Pin pin, String requestedVersion) {
+        String installer = FileUtil.isWindows()
+                ? "irm https://camel.apache.org/install.ps1 -OutFile install.ps1; .\\install.ps1 -Version "
+                  + requestedVersion
+                : "curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version " + requestedVersion;
+        return "this install is pinned to " + pin.describe() + " - to pin an exact version instead, re-run the"
+               + " installer with that version: " + installer;
     }
 
     private static String refusalMessage(InstallDetector.InstallMethod method) {

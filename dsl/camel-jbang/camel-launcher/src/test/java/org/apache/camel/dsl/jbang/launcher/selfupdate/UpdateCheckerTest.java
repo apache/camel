@@ -151,7 +151,8 @@ class UpdateCheckerTest {
             assertThat(UpdateChecker.resolve(fetcher, Pin.parse("4.23"))).isEqualTo("4.23.1");
             assertThatThrownBy(() -> UpdateChecker.resolve(fetcher, Pin.parse("4.21")))
                     .isInstanceOf(SelfUpdateException.class)
-                    .hasMessageContaining("not in the pinned release line (4.21)");
+                    .hasMessageContaining("manifest version (4.22.0) does not match this install, which is pinned to the 4.21"
+                                          + " release line");
             assertThatThrownBy(() -> UpdateChecker.resolve(fetcher, Pin.parse("4.20")))
                     .isInstanceOf(SelfUpdateException.class)
                     .hasMessageContaining("no manifest for 4.20");

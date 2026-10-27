@@ -333,7 +333,8 @@ class SelfUpdateIntegrationTest {
             int exit = run(fixture, home, xdgDataHome);
 
             assertThat(exit).isEqualTo(1);
-            assertThat(printer.getOutput()).contains("not in the pinned release line (99.0)");
+            assertThat(printer.getOutput()).contains(
+                    "manifest version (99.1.0) does not match this install, which is pinned to the 99.0 release line");
             assertThat(Files.isDirectory(xdgDataHome.resolve("camel-cli/versions/99.1.0"))).isFalse();
         }
     }
@@ -368,8 +369,34 @@ class SelfUpdateIntegrationTest {
             int exit = run(fixture, home, xdgDataHome, "--version", NEWER_VERSION);
 
             assertThat(exit).isEqualTo(1);
-            assertThat(printer.getOutput()).contains("pinned to LTS").contains("pinned-version");
+            assertThat(printer.getOutput())
+                    .contains("this install is pinned to LTS - to pin an exact version instead, re-run the installer"
+                              + " with that version: ")
+                    .contains("--version " + NEWER_VERSION)
+                    .doesNotContain("pinned-version");
             assertThat(Files.isDirectory(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION))).isFalse();
+        }
+    }
+
+    @Test
+    void linePinRefusesExplicitVersion(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, "1.0.0");
+            Path pinnedVersionFile = pin(xdgDataHome, "99.0");
+            WebsiteInstallTest.publishVersion(fixture, "99.0.1");
+            WebsiteInstallTest.publishAlias(fixture, "99.0", "99.0.1");
+
+            int exit = run(fixture, home, xdgDataHome, "--version", "99.0.1");
+
+            assertThat(exit).isEqualTo(1);
+            assertThat(printer.getOutput())
+                    .contains("this install is pinned to the 99.0 release line - to pin an exact version instead,")
+                    .contains("--version 99.0.1")
+                    .doesNotContain("pinned-version");
+            assertThat(pinnedVersionFile).hasContent("99.0");
+            assertThat(Files.isDirectory(xdgDataHome.resolve("camel-cli/versions/99.0.1"))).isFalse();
         }
     }
 
