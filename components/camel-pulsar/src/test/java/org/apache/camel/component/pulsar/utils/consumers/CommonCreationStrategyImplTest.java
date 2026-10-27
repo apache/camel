@@ -16,15 +16,25 @@
  */
 package org.apache.camel.component.pulsar.utils.consumers;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.apache.camel.component.pulsar.PulsarConfiguration;
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.impl.ConsumerBuilderImpl;
 import org.apache.pulsar.client.impl.conf.ConsumerConfigurationData;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +57,16 @@ class CommonCreationStrategyImplTest {
 
     private final PulsarEndpoint endpoint = mock(PulsarEndpoint.class);
     private final PulsarConfiguration configuration = new PulsarConfiguration();
+    private final List<String> warnings = new CopyOnWriteArrayList<>();
+    private final AbstractAppender warningsAppender
+            = new AbstractAppender("warnings", null, null, true, Property.EMPTY_ARRAY) {
+                @Override
+                public void append(LogEvent event) {
+                    if (event.getLevel() == Level.WARN) {
+                        warnings.add(event.getMessage().getFormattedMessage());
+                    }
+                }
+            };
     private static PulsarClient client;
 
     @BeforeAll
@@ -66,6 +86,14 @@ class CommonCreationStrategyImplTest {
         when(endpoint.getPulsarClient()).thenReturn(client);
         when(endpoint.getPulsarConfiguration()).thenReturn(configuration);
         when(endpoint.getUri()).thenReturn(TOPIC);
+        warningsAppender.start();
+        logger().addAppender(warningsAppender);
+    }
+
+    @AfterEach
+    void removeAppender() {
+        logger().removeAppender(warningsAppender);
+        warningsAppender.stop();
     }
 
     @Test
@@ -83,6 +111,7 @@ class CommonCreationStrategyImplTest {
         assertEquals("persistent://public/default/my-retry", policy.getRetryLetterTopic());
         assertEquals("persistent://public/default/my-dlq", policy.getDeadLetterTopic(),
                 "the dead letter topic must be passed to the Pulsar client in retry mode");
+        assertEquals(List.of(), warnings);
     }
 
     @Test
@@ -107,6 +136,7 @@ class CommonCreationStrategyImplTest {
 
         assertTrue(conf.isRetryEnable());
         assertNull(conf.getDeadLetterPolicy());
+        assertEquals(List.of(), warnings);
     }
 
     @Test
@@ -119,6 +149,20 @@ class CommonCreationStrategyImplTest {
 
         assertTrue(conf.isRetryEnable());
         assertNull(conf.getDeadLetterPolicy());
+        // before, this configuration failed at start, so the user noticed: now a WARN says the topics are ignored
+        assertEquals(1, warnings.size(), warnings::toString);
+        assertTrue(warnings.get(0).startsWith("The retryLetterTopic and deadLetterTopic options of the consumer of "
+                                              + TOPIC + " are ignored as maxRedeliverCount is not set."),
+                warnings.get(0));
+    }
+
+    @Test
+    void retryModeWithoutMaxRedeliverCountWarnsAlsoForOneTopic() {
+        configuration.setEnableRetry(true);
+        configuration.setDeadLetterTopic("persistent://public/default/my-dlq");
+
+        assertNull(build().getDeadLetterPolicy());
+        assertEquals(1, warnings.size(), warnings::toString);
     }
 
     @Test
@@ -132,6 +176,7 @@ class CommonCreationStrategyImplTest {
         assertFalse(conf.isRetryEnable());
         assertEquals(5, conf.getDeadLetterPolicy().getMaxRedeliverCount());
         assertEquals("persistent://public/default/my-dlq", conf.getDeadLetterPolicy().getDeadLetterTopic());
+        assertEquals(List.of(), warnings);
     }
 
     @Test
@@ -140,6 +185,26 @@ class CommonCreationStrategyImplTest {
         configuration.setDeadLetterTopic("persistent://public/default/my-dlq");
 
         assertNull(build().getDeadLetterPolicy());
+        assertEquals(List.of("The deadLetterTopic option of the consumer of " + TOPIC
+                             + " is ignored as maxRedeliverCount is not set. Without a dead letter policy the Pulsar"
+                             + " client sends no message to a dead letter topic. Set maxRedeliverCount to use the"
+                             + " configured topic."),
+                warnings);
+    }
+
+    @Test
+    void retryLetterTopicWithoutRetryModeIsIgnoredWithAWarning() {
+        configuration.setMaxRedeliverCount(5);
+        configuration.setRetryLetterTopic("persistent://public/default/my-retry");
+
+        assertEquals(5, build().getDeadLetterPolicy().getMaxRedeliverCount());
+        assertEquals(List.of("The retryLetterTopic option of the consumer of " + TOPIC
+                             + " is ignored as enableRetry is false."),
+                warnings);
+    }
+
+    private static Logger logger() {
+        return (Logger) LogManager.getLogger(CommonCreationStrategyImpl.class);
     }
 
     private ConsumerConfigurationData<byte[]> build() {

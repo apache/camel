@@ -27,8 +27,12 @@ import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
 import org.apache.pulsar.client.api.KeySharedPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CommonCreationStrategyImpl {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CommonCreationStrategyImpl.class);
 
     private CommonCreationStrategyImpl() {
     }
@@ -87,16 +91,34 @@ public final class CommonCreationStrategyImpl {
                     policy.deadLetterTopic(endpointConfiguration.getDeadLetterTopic());
                 }
                 builder.deadLetterPolicy(policy.build());
+            } else if (endpointConfiguration.getRetryLetterTopic() != null
+                    || endpointConfiguration.getDeadLetterTopic() != null) {
+                LOG.warn("The retryLetterTopic and deadLetterTopic options of the consumer of {} are ignored as"
+                         + " maxRedeliverCount is not set. In retry mode the Pulsar client then uses its default dead"
+                         + " letter policy: 16 redeliveries, then its default retry letter and dead letter topics."
+                         + " Set maxRedeliverCount to use the configured topics.",
+                        pulsarEndpoint.getUri());
             }
-        } else if (endpointConfiguration.getMaxRedeliverCount() != null) {
-            // or potentially dead-letter-topic mode
-            DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
-                    .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
-            if (endpointConfiguration.getDeadLetterTopic() != null) {
-                policy.deadLetterTopic(endpointConfiguration.getDeadLetterTopic());
-            }
+        } else {
+            if (endpointConfiguration.getMaxRedeliverCount() != null) {
+                // or potentially dead-letter-topic mode
+                DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
+                        .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
+                if (endpointConfiguration.getDeadLetterTopic() != null) {
+                    policy.deadLetterTopic(endpointConfiguration.getDeadLetterTopic());
+                }
 
-            builder.deadLetterPolicy(policy.build());
+                builder.deadLetterPolicy(policy.build());
+            } else if (endpointConfiguration.getDeadLetterTopic() != null) {
+                LOG.warn("The deadLetterTopic option of the consumer of {} is ignored as maxRedeliverCount is not set."
+                         + " Without a dead letter policy the Pulsar client sends no message to a dead letter topic."
+                         + " Set maxRedeliverCount to use the configured topic.",
+                        pulsarEndpoint.getUri());
+            }
+            if (endpointConfiguration.getRetryLetterTopic() != null) {
+                LOG.warn("The retryLetterTopic option of the consumer of {} is ignored as enableRetry is false.",
+                        pulsarEndpoint.getUri());
+            }
         }
 
         if (ObjectHelper.isNotEmpty(endpointConfiguration.getAckTimeoutRedeliveryBackoff())) {

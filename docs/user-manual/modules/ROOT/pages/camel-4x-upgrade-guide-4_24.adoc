@@ -1571,7 +1571,8 @@ With `enableRetry=true`, the consumer did not pass `deadLetterTopic` to the Puls
 With `enableRetry=true` and no `maxRedeliverCount`, the consumer failed to start with a `NullPointerException`. It now
 starts without a dead letter policy, as the `maxRedeliverCount` option documents, and the Pulsar client applies its own
 in retry mode: 16 redeliveries and its default retry letter and dead letter topics. As without retry mode,
-`retryLetterTopic` and `deadLetterTopic` only apply when `maxRedeliverCount` is set.
+`retryLetterTopic` and `deadLetterTopic` only apply when `maxRedeliverCount` is set. The consumer logs a WARN when it
+is created with one of these topics but no `maxRedeliverCount` (and for `retryLetterTopic` without `enableRetry`).
 
 === camel-twitter - twitter-search applies its query options again
 
