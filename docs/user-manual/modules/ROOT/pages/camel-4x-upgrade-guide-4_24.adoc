@@ -3725,6 +3725,13 @@ the YAML DSL validator and the Endpoint DSL, now accept a whatsapp endpoint as a
 of whatsapp gets the consumer options `bridgeErrorHandler`, `exceptionHandler` and `exchangePattern`. A whatsapp
 endpoint used directly in `from` still fails at startup: wrap it with the webhook component, as before.
 
+=== camel-cometd - the JSONP transport is disabled by default
+
+The CometD JSONP transport (`callback-polling`) is now disabled by default. Only `long-polling` (and `websocket`,
+when the CometD WebSocket transport is on the classpath) is enabled by default. Applications that require JSONP
+clients can configure `allowedTransports` on the endpoint to include `callback-polling`
+(for example, `allowedTransports=websocket,long-polling,callback-polling`).
+
 === camel-avro-rpc - the http consumer listens on the host of the endpoint
 
 The `avro:http` consumer now uses the host of the endpoint URI (`avro:http:[host]:[port]`) for its HTTP server, as the `avro:netty` consumer does.
