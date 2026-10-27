@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina;
 
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -31,9 +32,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalAnswers.delegatesTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -103,6 +107,25 @@ class MinaConsumerRestartTest extends BaseMinaTest {
         assertNotSame(first, consumer.getConnector());
         assertFalse(consumer.getConnector().isDisposed());
         assertEquals(1, consumer.getConnector().getManagedSessionCount(), "the restarted consumer is connected");
+    }
+
+    @Test
+    void theAcceptorIsReleasedWhenTheUnbindFails() throws Exception {
+        // a failing unbind must not skip the release: the acceptor and the worker pool are released, and a start of the
+        // same consumer creates a new acceptor instead of binding the old one again
+        MinaConsumer consumer = (MinaConsumer) context.getRoute("tcp").getConsumer();
+        IoAcceptor first = consumer.getAcceptor();
+        IoAcceptor failing = mock(IoAcceptor.class, delegatesTo(first));
+        doThrow(new IllegalStateException("unbind failed")).when(failing).unbind(any(SocketAddress.class));
+        consumer.setAcceptor(failing);
+
+        Exception e = assertThrows(IllegalStateException.class, consumer::stop);
+        assertEquals("unbind failed", e.getMessage());
+
+        assertReleased(first);
+        consumer.start();
+        assertNotSame(failing, consumer.getAcceptor());
+        sendAndExpect("mina:tcp://localhost:" + getPort() + "?sync=false&textline=true");
     }
 
     @Test
