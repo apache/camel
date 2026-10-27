@@ -1235,7 +1235,12 @@ public class A2AConsumer extends DefaultConsumer {
                 request.getConfiguration());
 
         if (response.isTaskResponse()) {
-            Task task = response.getTask();
+            // Route processing may overwrite the identity headers when calling another agent.
+            Task task = Task.builder(response.getTask())
+                    .id(taskId)
+                    .contextId(contextId)
+                    .build();
+            response.setTask(task);
             store.put(task.id(), task);
             if (task.status() != null) {
                 store.notifySubscribers(task.id(),
