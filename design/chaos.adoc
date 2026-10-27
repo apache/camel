@@ -309,8 +309,8 @@ listener throws, and the session rolls back or recovers.
 Without an expectation the report never says "lost", and the verdict is PASS: chaos makes exchanges fail on purpose.
 A rule can carry an expectation (`expect=orders:100 within=2m`: route `orders` completes 100 more messages within
 2m), which also finds messages lost before they became an exchange. Only an unmet expectation turns PASS into FAIL,
-with the reason, and "lost" only comes from one (100 expected, 97 completed: 3 lost). The report is plain text for the CLI and JSON for tools, and
-states the seed and the rules that were active.
+with the reason, and "lost" only comes from one (100 expected, 97 completed: 3 lost). The report is plain text for the
+CLI and JSON for tools, and states the seed and the rules that were active.
 
 === Control
 
