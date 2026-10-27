@@ -1540,7 +1540,8 @@ platform-http-vertx, servlet) set `CamelHttpPath` from the path of the request. 
 `from("undertow:http://0.0.0.0:8080/api?matchOnUriPrefix=true").to("undertow:http://backend/svc?key=1")`, or the same
 with a `vertx-http:` producer and `bridgeEndpoint=true`, now sends a request for `/api/orders/123` to
 `/svc/orders/123` instead of `/svc`. To keep the old target, remove the header before the producer, for example with
-`removeHeader(Exchange.HTTP_PATH)`.
+`removeHeader(Exchange.HTTP_PATH)`. The path comes from the client request, and the producer sends it with the query
+of the endpoint (`key=1` in the example): a proxy route should validate or restrict the path, or remove the header.
 
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 
