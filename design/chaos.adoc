@@ -32,7 +32,8 @@ are installed and stay idle until a rule is added. Without the JAR, as in produc
 run in real time, and the same rules can run inside a `camel-test-dst` world in virtual time.
 
 Chaos needs two small changes in camel-core: a hook for every send to an endpoint (CAMEL-26331) and a hook for every
-step in the channel. The other levels use SPIs that exist today.
+step, inside the error handler of the step (CAMEL-26338). Both are general extension points, not chaos-specific: their
+API names no chaos type, so other features and tests can use them. The other levels use SPIs that exist today.
 
 == Motivation
 
@@ -57,9 +58,10 @@ AI tools that write and change routes need the same: a way to try a route agains
   added, changed and removed live.
 - Configuration through `camel.chaos.*` options of camel-main, as for `camel.debug.*` and `camel.trace.*`.
 - A report per route with counts and a verdict, readable by a person and by a tool.
-- Control from the CLI (`camel cmd chaos`) and the camel-jbang MCP server; a dev console shows the rules and the report.
+- Control from the CLI (`camel cmd chaos-add` and the other `chaos-*` commands, `camel get chaos`) and the
+  camel-jbang MCP server; a dev console shows the rules and the report.
 - Real time by default; the same rules in virtual time inside a DST world.
-- A seed makes a run repeatable.
+- A seed fixes the random draws of the rules. The same report again needs a DST world (see Time).
 
 == Non-goals
 
@@ -85,8 +87,9 @@ The plugin installs the hooks below only with profile `dev`, the default of `cam
 `camel.chaos.enabled=true` (a plain `Main`, tests, DST worlds), and never with `prod`. Otherwise it fails closed. That
 includes no profile, the usual case for a plain `Main`, Spring Boot and Quarkus: the profile is then null, not `prod`
 (`ProfileConfigurer.configureMain` returns early), and a `camel.chaos.rules` left in `application.properties` does
-nothing. When it installs the hooks, it logs a WARN that chaos is active. Each hook asks the `ChaosManager` whether a
-rule matches; with no rules that is one volatile read, and the call goes on unchanged.
+nothing, unless `camel.chaos.enabled=true` is left there too. When it installs the hooks, it logs a WARN that chaos is
+active. Each hook asks the `ChaosManager` whether a rule matches; with no rules that is one volatile read, and the call
+goes on unchanged.
 
 === Getting it
 
@@ -105,7 +108,7 @@ rule matches; with no rules that is one volatile read, and the call goes on unch
 
 |`camel.chaos.enabled` |`false`, `true` with profile `dev` |Install the hooks: `true` for a plain `Main`, tests and
 DST worlds, ignored with profile `prod`. They do nothing until a rule is added.
-|`camel.chaos.seed` | |Seed of the random choices; without it a seed is picked and shown in the report.
+|`camel.chaos.seed` | |Seed of the random draws of the rules; without it a seed is picked and shown in the report.
 |`camel.chaos.rules` | |Rules to add at startup, in the text form of Rule syntax, separated by `;` (marked
 `insecure:dev`, see Risks).
 |`camel.chaos.maxDuration` |`10m` |Upper bound for every rule: a rule without `until` ends after it, and a
@@ -123,21 +126,22 @@ A rule has a target, a fault, how often it fires, and when it ends:
 [source]
 ----
 target:  route=<id or pattern> | endpoint=<uri pattern> | component=<name> | step=<processor id pattern>
+at:      send | poll | entry | step   (optional, see Target and hooks)
 fault:   error | delay | drop | corrupt | lifecycle (stall)   (parameters: see Rule syntax)
 rate:    a probability (0.3), or every Nth match
 until:   a number of matches, a duration, or removed by hand
 ----
 
-Rules are added, changed, listed and removed live. A rule ends by itself after its count or duration (at most
-`camel.chaos.maxDuration`), so a forgotten rule cannot keep breaking a dev instance. Rules stay when the routes are
-reloaded in dev mode.
+Rules are added, changed, listed and removed live; a rule gets an id when it is added, which change and remove take.
+A rule ends by itself after its count or duration (at most `camel.chaos.maxDuration`), so a forgotten rule cannot keep
+breaking a dev instance. Rules stay when the routes are reloaded in dev mode.
 
 ==== Rule syntax
 
-A rule is one line: the target, the fault and its parameters as `name=value`, then `rate` and `until`. `rate=0.3` is a
-probability and `rate=every:5` fires on every 5th match; without `rate` every match fires. `until=100` is a number of
-matches and `until=2m` a duration; without `until` the rule ends after `camel.chaos.maxDuration`. A value with spaces
-is quoted. Which hooks a fault can use is in the table of the next section.
+A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `rate` and `until`.
+`rate=0.3` is a probability and `rate=every:5` fires on every 5th match; without `rate` every match fires. `until=100`
+is a number of matches and `until=2m` a duration; without `until` the rule ends after `camel.chaos.maxDuration`. A
+value with spaces is quoted. Where a rule fires is in Target and hooks below.
 
 A rule can also carry an expectation, `expect=<route id>:<count>` with an optional `within=<time>` (default: the rule's
 `until` duration, else `camel.chaos.maxDuration`): the route must complete at least that many more exchanges after the
@@ -184,6 +188,41 @@ target; a rule with another target is rejected when it is added.
 `stall` and `lifecycle` act once on the route when the rule is added; `rate` and `until` do not apply to them, and
 their `duration` is bounded by `camel.chaos.maxDuration`.
 
+==== Target and hooks
+
+Each target has these hooks, and each hook offers some of the faults:
+
+[cols="2,3,3"]
+|===
+|Target |Hooks (`at=`) |Faults
+
+|`endpoint=`, `component=`
+|The sends to a matching endpoint (`send`) and the polls of its consumer (`poll`).
+|`send`: `error`, `delay`, `drop`, `corrupt`. `poll`: `error`, `delay`, `drop`.
+
+|`route=`
+|The messages that enter the route (`entry`), and the route lifecycle.
+|`entry`: `corrupt`. Lifecycle: `stall`, `lifecycle`.
+
+|`step=`
+|The matching steps (`step`).
+|`error`, `delay`.
+|===
+
+A rule fires at every hook of its target that offers its fault; `at=` narrows it to one (`stall` and `lifecycle`
+take no `at`). A rule whose `at` is not a hook of its target, or whose fault no hook of its target (after `at`) offers,
+is rejected when it is added, with an error that names the hooks of the target. A rule that matches nothing, such as a
+poll rule for a consumer that does not poll on a schedule (Kafka, JMS), fires 0 times, as the report shows. So:
+
+- `endpoint=file:inbox* drop` (or `error`) fires at both hooks: a poll of the `file:inbox` consumer is skipped, and a
+  send to `file:inbox` reports success without writing. `at=poll` or `at=send` keeps one. With `corrupt` the rule
+  fires at the sends only.
+- `route=orders error` and `route=orders delay` are rejected: the entry of a route offers only `corrupt`. `route=`
+  does not reach the sends and steps of the route; they are targeted with `endpoint=`, `component=` or `step=`. One
+  kind of target per hook keeps a rule, and its counts in the report, in one kind of place.
+- `component=kafka` matches the sends to `kafka:` endpoints and the polls of its consumers (none: they do not poll
+  on a schedule), not the entry of a route that starts from Kafka, which is `route=`.
+
 In `application.properties`:
 
 [source,properties]
@@ -195,13 +234,15 @@ camel.chaos.rules = \
   route=poller stall duration=20s
 ----
 
-With the CLI, against a running application:
+With the CLI, against the running integration `myapp` (see Control):
 
 [source,bash]
 ----
-camel cmd chaos add --rule='endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m'
-camel cmd chaos add --rule='route=orders corrupt mode=truncate rate=0.1 until=20'
-camel cmd chaos add --rule='route=orders lifecycle action=remove duration=10s'
+camel cmd chaos-add myapp --rule='endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m'
+camel cmd chaos-add myapp --rule='endpoint=file:inbox* drop at=poll rate=0.5 until=2m'
+camel cmd chaos-add myapp --rule='route=orders corrupt mode=truncate rate=0.1 until=20'
+camel cmd chaos-add myapp --rule='route=orders lifecycle action=remove duration=10s'
+camel get chaos myapp --report
 ----
 
 === Hooks at all levels
@@ -231,10 +272,9 @@ while a rule is active and puts it back when the rule ends.
 |A failed poll (`error`), a slow poll (`delay`), a skipped poll (`drop`).
 
 |Every step
-|The channel (`CamelInternalProcessor`), next to the check that skips a processor disabled with
-`camel cmd disable-processor`. That check runs before the error handler of the step, so a failure is raised where the
-error handler calls the step, as for a send. A small change in camel-core, CAMEL-26338.
-|`delay` or `error` at a step.
+|Inside the error handler of the step (CAMEL-26338).
+|`delay` or `error` at a step, raised where the error handler calls the step, as for a send. (The check that skips a
+processor disabled with `camel cmd disable-processor` runs before the error handler, so the hook is not there.)
 
 |Route lifecycle
 |The `RouteController` (suspend, resume, stop, start), and `CamelContext.removeRoute` with the route definition added
@@ -260,12 +300,16 @@ The timed actions (the resume or restart after `stall` or `lifecycle`, the end o
 executor of the `ExecutorServiceManager`, not threads of their own or a `java.util.Timer`. By default that is the
 system clock, so a person sees a 20 s stall last 20 s.
 
+The seed fixes the sequence of random draws, not which exchange gets which draw. In real time with concurrent
+consumers the threads decide that, so two runs with the same seed can give different reports.
+
 In a `camel-test-dst` world the harness runs those executors and installs its virtual clock in `TimeSource`: a 10 minute
-stall takes milliseconds, and a seed gives the same report again, times included, as they come from `TimeSource`. Event
-timestamps stay on `System` in a DST run (`test-dst.adoc`), so the report does not use them. A `stall` or `lifecycle`
-rule meets the one-stack model of `test-dst.adoc`: a suspend or stop cannot see an exchange that is blocked in a
-synchronous call below it on the stack finish, so such a world calls its downstream with `DstCamel.asyncStep`. Chaos
-does not need DST.
+stall takes milliseconds, and the DST seed decides the order of the tasks. The world sets `camel.chaos.seed` to that
+seed (`Dst.seed()`, from `@DstTest`, `@DstSeed` or `-Ddst.seed`), or to a value of its own; with both fixed, a run
+gives the same report again, times included. `camel-chaos` does not depend on `camel-test-dst`. Event timestamps stay
+on `System` in a DST run (`test-dst.adoc`), so the report does not use them. A `stall` or `lifecycle` rule meets the
+one-stack model of `test-dst.adoc`: a suspend or stop cannot see an exchange that is blocked in a synchronous call
+below it on the stack finish, so such a world calls its downstream with `DstCamel.asyncStep`. Chaos does not need DST.
 
 The Javadoc of `TimeSource` says it is internal and not an API for components. `camel-chaos` may use it: it reads the
 clock and sleeps through it, and never installs a provider (only a test harness such as `camel-test-dst` does that).
@@ -312,13 +356,23 @@ A rule can carry an expectation (`expect=orders:100 within=2m`: route `orders` c
 with the reason, and "lost" only comes from one (100 expected, 97 completed: 3 lost). The report is plain text for the
 CLI and JSON for tools, and states the seed and the rules that were active.
 
+An expectation is decided only when its count is reached (met) or when `within` has elapsed without it (unmet, FAIL).
+Before that it is "pending", with the count so far and the time left, and the verdict stays PASS. It stays pending
+when the context stops first (the report of `reportOnShutdown`) or the rule is removed first: the messages may still
+arrive, so they are not called lost. A tool must treat a pending expectation as not yet decided, so a PASS with one
+pending is not final.
+
 === Control
 
 - A `chaos` dev console lists the rules and shows the report, so it is `@DevConsole(readOnly = true)`. It does not add,
   change or remove: the flag is metadata only, and `/q/dev/*` (`ManagementHttpServer`) takes GET and POST with the
   options in the query string, without checking it. So over HTTP chaos only lists and reports.
 - A `chaos` action of the CLI connector (`LocalCliConnector`) adds, changes and removes rules through the
-  `ChaosManager`. `camel cmd chaos add|change|list|remove|report` uses it.
+  `ChaosManager`. The CLI has the flat verb-noun shape of every `camel cmd` today (`stop-route`, `stub`), with the
+  reads under `camel get` (as `camel get circuit-breaker`): `camel cmd chaos-add`, `chaos-change`, `chaos-remove`,
+  `chaos-clear`, and `camel get chaos` (the rules, or the report with `--report`), the same six operations as the MCP
+  tools. Each takes the integration name or pid first. `chaos-add` and `chaos-change` need it to match exactly one
+  integration, as `camel cmd sql` does; the others may omit it and then act on all, as `stop-route` does.
 - The camel-jbang MCP server gets a `chaos` runtime tool group next to `sql`, `tracing`, `resilience` and `http`,
   offered only when the application has `camel-chaos`. The tools are in `RuntimeTools` (`@McpSecured`) and go through
   the CLI connector, as the other runtime tools do; the shared `ToolRegistry` (also used by the TUI) has the same marks:
@@ -345,7 +399,8 @@ Each step is its own pull request after this document:
 
 . camel-core: the send hook (CAMEL-26331).
 . The module, the plugin, the options, the rule model, the report, and the faults on sends.
-. The dev console, the `chaos` action of the CLI connector, `camel cmd chaos` and `camel run --chaos`.
+. The dev console, the `chaos` action of the CLI connector, the `chaos-*` commands, `camel get chaos` and
+  `camel run --chaos`.
 . Faults on the messages that enter a route, and on consumer polls.
 . camel-core: the step hook in the channel (CAMEL-26338), then the faults at steps.
 . Route lifecycle faults.
@@ -400,7 +455,7 @@ Each has a proposed answer; the maintainers decide.
 - Should chaos stay off when no profile is set? Decided in review: yes (see "Switched on by the classpath"). No
   profile is the usual case in production too, and `camel run` already defaults to `dev`.
 - The rule format. Proposed: the one-line text form of Rule syntax, the same in `camel.chaos.rules`,
-  `camel cmd chaos add` and the MCP tools. A YAML form can come later if wanted.
+  `camel cmd chaos-add` and the MCP tools. A YAML form can come later if wanted.
 
 == Related tickets
 
