@@ -165,6 +165,9 @@ of its kind, the kind in bold (such as `setBody`), and its detail below (such as
 camel cmd route-diagram orders.camel.yaml --theme=card --output=orders.png
 ----
 
+`camel cmd route-diagram` saves a `.png` file in the `card` theme when no `--theme` is given (in the terminal it shows
+the `unicode` text diagram), and so does the `camel_render_route_diagram` MCP tool.
+
 image::ROOT:route-diagram-card.png[A route diagram in the card style: a file read, a groovy mapping, an http call and a JMS send as white cards]
 
 With `--node-label=both` (the default of `camel cmd route-diagram`) a step with a description shows the description

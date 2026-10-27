@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Stream;
@@ -103,8 +104,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Use ascii/unicode for plain text output. "
-                                      + "Can also be set via DIAGRAM_COLORS env var.",
-                        defaultValue = "unicode")
+                                      + "Can also be set via DIAGRAM_COLORS env var. "
+                                      + "Default: unicode in the terminal, and card when --output is a .png file.")
     String theme;
 
     @CommandLine.Option(names = { "--font-size" },
@@ -171,6 +172,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
 
+        resolveTheme();
         boolean textMode = isTextTheme();
         if (!textMode) {
             String colorSpec = System.getenv("DIAGRAM_COLORS");
@@ -204,6 +206,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     @Override
     protected Integer doWatchCall() throws Exception {
+        resolveTheme();
         // only attempt to resolve a running integration when a single token is given (or none, defaulting to "*"):
         // multiple tokens can only be a set of source files
         String nameOrPid = files.isEmpty() ? "*" : files.get(0);
@@ -465,6 +468,16 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     List<RouteInfo> parseRoutes(JsonObject jo) {
         return RouteDiagramHelper.parseRoutes(jo);
+    }
+
+    /**
+     * The theme when none is given: a diagram in the terminal is text (an image needs a terminal with a graphics
+     * protocol), and a diagram saved as a .png file is an image in the card style.
+     */
+    private void resolveTheme() {
+        if (theme == null || theme.isBlank()) {
+            theme = output != null && output.toLowerCase(Locale.ROOT).endsWith(".png") ? "card" : "unicode";
+        }
     }
 
     private boolean isTextTheme() {

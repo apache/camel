@@ -150,7 +150,8 @@ public class RouteDiagramRenderer {
          * pairs separated by colons. The key {@code style=card} draws the steps as cards.
          */
         public static DiagramColors parse(String spec) {
-            String resolved = COLOR_PRESETS.getOrDefault(spec, spec);
+            // no spec is the dark theme (the presets are an immutable map, which cannot look up null)
+            String resolved = spec == null ? DARK_COLORS : COLOR_PRESETS.getOrDefault(spec, spec);
             Map<String, String> map = new HashMap<>();
             for (String entry : DARK_COLORS.split(":")) {
                 int eq = entry.indexOf('=');

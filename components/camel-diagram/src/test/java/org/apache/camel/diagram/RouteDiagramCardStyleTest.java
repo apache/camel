@@ -77,6 +77,13 @@ class RouteDiagramCardStyleTest {
     }
 
     @Test
+    void noSpecIsTheDarkTheme() {
+        DiagramColors none = DiagramColors.parse(null);
+        assertThat(none.isCard()).isFalse();
+        assertThat(none.getBg()).isEqualTo(DiagramColors.parse("dark").getBg());
+    }
+
+    @Test
     void cardLabelSplitsKindAndDetail() {
         assertThat(RouteDiagramLayoutEngine.cardLabel(node("setBody", "setBody[groovy{body.items}]", 1),
                 NodeLabelMode.CODE)).containsExactly("setBody", "groovy: body.items");

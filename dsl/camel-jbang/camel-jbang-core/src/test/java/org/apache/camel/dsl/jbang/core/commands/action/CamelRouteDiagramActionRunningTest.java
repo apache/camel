@@ -142,6 +142,34 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void pngFileIsInTheCardStyleByDefault() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path card = dir.resolve("card.png");
+        Path byDefault = dir.resolve("default.png");
+
+        assertThat(callWithResponse(command("--theme=card", "--output=" + card)::doCall, structure("route1")))
+                .isZero();
+        assertThat(callWithResponse(command("--output=" + byDefault)::doCall, structure("route1"))).isZero();
+
+        // without a theme a .png file gets the image in the card style, not the text diagram next to it
+        assertThat(dir.resolve("default.txt")).doesNotExist();
+        BufferedImage cardImage = ImageIO.read(card.toFile());
+        BufferedImage defaultImage = ImageIO.read(byDefault.toFile());
+        assertThat(defaultImage.getHeight()).isEqualTo(cardImage.getHeight());
+        assertThat(defaultImage.getRGB(0, 0)).isEqualTo(cardImage.getRGB(0, 0));
+    }
+
+    @Test
+    void otherFileIsTextByDefault() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path txt = dir.resolve("diagram.txt");
+
+        assertThat(callWithResponse(command("--output=" + txt)::doCall, structure("route1"))).isZero();
+
+        assertThat(Files.readString(txt)).contains("route1", "─");
+    }
+
+    @Test
     void anIntegrationWithoutRoutesIsAFailure() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
         CamelRouteDiagramAction command = command("--theme=ascii");
