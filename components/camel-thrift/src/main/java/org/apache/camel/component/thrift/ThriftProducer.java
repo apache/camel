@@ -70,8 +70,15 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
 
         PendingCallback pending = new PendingCallback(exchange, callback);
         pendingCallbacks.add(pending);
+        // read after the registration: doStop clears the client before it fails the pending calls
+        Object client = thriftClient;
+        if (client == null) {
+            // the producer is stopped
+            pending.stopped();
+            return false;
+        }
         try {
-            ThriftUtils.invokeAsyncMethod(thriftClient, configuration.getMethod(), message.getBody(), pending);
+            ThriftUtils.invokeAsyncMethod(client, configuration.getMethod(), message.getBody(), pending);
         } catch (Exception e) {
             // the call was not made
             if (!pending.discard()) {
@@ -86,9 +93,10 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             callback.done(true);
             return true;
         }
-        if (isStoppingOrStopped()) {
-            // the stop may have failed the pending calls before this one was registered, and a selector thread that
-            // is still ending accepts the call without ever completing it
+        if (client != thriftClient) {
+            // the producer stopped meanwhile, and may have started again with a new client: the stop may have failed
+            // the pending calls before this one was registered, and the selector thread of the stopped client manager,
+            // which may still be ending, accepts the call without ever completing it
             pending.stopped();
         }
 
@@ -159,6 +167,8 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
                 syncTransport.close();
                 syncTransport = null;
             } else if (asyncTransport != null) {
+                // before the pending calls are failed: process() fails a call whose client was cleared or replaced
+                thriftClient = null;
                 LOG.debug("Terminating asynchronous transport the remote Thrift server");
                 asyncTransport.close();
                 asyncTransport = null;

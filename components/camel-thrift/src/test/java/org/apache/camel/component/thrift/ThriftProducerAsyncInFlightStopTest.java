@@ -176,9 +176,37 @@ class ThriftProducerAsyncInFlightStopTest extends CamelTestSupport {
 
     @Test
     void aCallAcceptedAfterTheProducerFailedItsPendingCallsIsFailed() throws Exception {
+        aCallTheStopDoesNotSeeIsFailed(false);
+    }
+
+    @Test
+    void aCallAcceptedAfterTheProducerFailedItsPendingCallsIsFailedAlsoWhenTheProducerStartsAgain() throws Exception {
+        aCallTheStopDoesNotSeeIsFailed(true);
+    }
+
+    private void aCallTheStopDoesNotSeeIsFailed(boolean startAgain) throws Exception {
         ThriftProducer producer = startProducerOnClosedPort();
-        // a selector thread that is still ending after the stop accepts the call and never completes it
-        setClient(producer, new AcceptingClient());
+        try {
+            // the stop fails the pending calls while this call is being registered, so it does not see it, and a
+            // selector thread that is still ending accepts the call and never completes it
+            setClient(producer, new UnseenByTheStopClient(producer, startAgain));
+            Exchange exchange = producer.getEndpoint().createExchange();
+            List<Boolean> done = new CopyOnWriteArrayList<>();
+
+            boolean sync = producer.process(exchange, done::add);
+
+            assertEquals(List.of(false), done, "the exchange must complete once");
+            assertFalse(sync);
+            assertStoppedBeforeTheCallCompleted(exchange);
+            assertEquals(0, producer.getPendingCallbackCount());
+        } finally {
+            producer.stop();
+        }
+    }
+
+    @Test
+    void aCallToAStoppedProducerIsFailed() throws Exception {
+        ThriftProducer producer = startProducerOnClosedPort();
         producer.stop();
 
         Exchange exchange = producer.getEndpoint().createExchange();
@@ -227,9 +255,25 @@ class ThriftProducerAsyncInFlightStopTest extends CamelTestSupport {
         }
     }
 
-    public static class AcceptingClient {
-        public void ping(AsyncMethodCallback<Void> resultHandler) {
-            // accepted, never completed
+    // accepts the call and never completes it, while the producer stops without seeing the call (and may start again)
+    public static class UnseenByTheStopClient {
+        private final ThriftProducer producer;
+        private final boolean startAgain;
+
+        UnseenByTheStopClient(ThriftProducer producer, boolean startAgain) {
+            this.producer = producer;
+            this.startAgain = startAgain;
+        }
+
+        public void ping(AsyncMethodCallback<Void> resultHandler) throws Exception {
+            // the stop fails the pending calls before this one is registered
+            Field field = ThriftProducer.class.getDeclaredField("pendingCallbacks");
+            field.setAccessible(true);
+            ((Set<?>) field.get(producer)).clear();
+            producer.stop();
+            if (startAgain) {
+                producer.start();
+            }
         }
     }
 
