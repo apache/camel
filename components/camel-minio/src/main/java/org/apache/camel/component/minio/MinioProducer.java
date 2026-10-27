@@ -156,15 +156,12 @@ public class MinioProducer extends DefaultProducer {
                 } else {
                     inputStream = exchange.getMessage().getMandatoryBody(InputStream.class);
                     contentLength = bodyLength(object, inputStream, contentLength);
-                    if (contentLength <= 0) {
+                    if (contentLength == -1) {
+                        // fallback to copy the data to calculate the length, which uses stream caching
+                        // so big payloads are spooled to disk when spooling is enabled
+                        LOG.debug("The content length is not defined. It needs to be determined by copying the data");
+                        inputStream = PayloadHelper.cacheStream(exchange, inputStream);
                         contentLength = PayloadHelper.getLength(inputStream);
-                        if (contentLength == -1) {
-                            // fallback to copy the data to calculate the length, which uses stream caching
-                            // so big payloads are spooled to disk when spooling is enabled
-                            LOG.debug("The content length is not defined. It needs to be determined by copying the data");
-                            inputStream = PayloadHelper.cacheStream(exchange, inputStream);
-                            contentLength = PayloadHelper.getLength(inputStream);
-                        }
                     }
                 }
                 if (contentLength > 0) {
@@ -182,17 +179,22 @@ public class MinioProducer extends DefaultProducer {
     }
 
     /**
-     * The length of the body when it is known without reading it (such as a file, java.nio.file.Path, byte[], String or
-     * stream cache), otherwise the given content length (the content-length header, or the length of a WrappedFile).
-     * The header is not used for a body of known length, as it can be stale once the route changed the body (for
-     * example the length of an object read by the consumer), and the client sends exactly that many bytes.
+     * The length of the body when it is known without reading it: the body is a file, java.nio.file.Path, byte[] or
+     * stream cache, or its input stream is backed by a byte array or a file (a String body is converted to a
+     * ByteArrayInputStream). Otherwise the given content length (the content-length header, or the length of a
+     * WrappedFile) when it is positive, else -1. The header is not used for a body of known length, as it can be stale
+     * once the route changed the body (for example the length of an object read by the consumer), and the client sends
+     * exactly that many bytes.
      */
     private static long bodyLength(Object body, InputStream inputStream, long contentLength) {
         long length = PayloadHelper.getLength(body);
         if (length < 0) {
             length = PayloadHelper.getLength(inputStream);
         }
-        return length >= 0 ? length : contentLength;
+        if (length >= 0) {
+            return length;
+        }
+        return contentLength > 0 ? contentLength : -1;
     }
 
     private void doPutObject(
