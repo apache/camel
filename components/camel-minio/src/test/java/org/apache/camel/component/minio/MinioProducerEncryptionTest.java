@@ -36,6 +36,7 @@ import org.mockito.ArgumentCaptor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -135,7 +136,7 @@ class MinioProducerEncryptionTest extends CamelTestSupport {
     }
 
     @Test
-    void copyObjectWithEncryption() throws Exception {
+    void putObjectWithBothEncryptionThrows() throws Exception {
         ServerSideEncryption.S3 sse = new ServerSideEncryption.S3();
         ServerSideEncryption.CustomerKey ssec = new ServerSideEncryption.CustomerKey(secretKey);
 
@@ -143,6 +144,52 @@ class MinioProducerEncryptionTest extends CamelTestSupport {
         MinioEndpoint endpoint = (MinioEndpoint) component.createEndpoint("minio://mybucket?autoCreateBucket=false");
         endpoint.getConfiguration().setMinioClient(minioClient);
         endpoint.getConfiguration().setServerSideEncryption(sse);
+        endpoint.getConfiguration().setServerSideEncryptionCustomerKey(ssec);
+
+        MinioProducer producer = createProducer(endpoint);
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
+        exchange.getIn().setBody("content");
+
+        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
+        producer.stop();
+        endpoint.stop();
+    }
+
+    @Test
+    void copyObjectWithServerSideEncryption() throws Exception {
+        ServerSideEncryption.S3 sse = new ServerSideEncryption.S3();
+
+        MinioComponent component = context.getComponent("minio", MinioComponent.class);
+        MinioEndpoint endpoint = (MinioEndpoint) component.createEndpoint("minio://mybucket?autoCreateBucket=false");
+        endpoint.getConfiguration().setMinioClient(minioClient);
+        endpoint.getConfiguration().setServerSideEncryption(sse);
+
+        when(minioClient.copyObject(any(CopyObjectArgs.class))).thenReturn(mock(ObjectWriteResponse.class));
+
+        MinioProducer producer = createProducer(endpoint);
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.copyObject);
+        exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "source.txt");
+        exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "dest.txt");
+        exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "dest-bucket");
+
+        producer.process(exchange);
+
+        ArgumentCaptor<CopyObjectArgs> captor = ArgumentCaptor.forClass(CopyObjectArgs.class);
+        verify(minioClient).copyObject(captor.capture());
+        assertSame(sse, captor.getValue().sse());
+        producer.stop();
+        endpoint.stop();
+    }
+
+    @Test
+    void copyObjectWithCustomerKey() throws Exception {
+        ServerSideEncryption.CustomerKey ssec = new ServerSideEncryption.CustomerKey(secretKey);
+
+        MinioComponent component = context.getComponent("minio", MinioComponent.class);
+        MinioEndpoint endpoint = (MinioEndpoint) component.createEndpoint("minio://mybucket?autoCreateBucket=false");
+        endpoint.getConfiguration().setMinioClient(minioClient);
         endpoint.getConfiguration().setServerSideEncryptionCustomerKey(ssec);
 
         when(minioClient.copyObject(any(CopyObjectArgs.class))).thenReturn(mock(ObjectWriteResponse.class));
@@ -161,6 +208,29 @@ class MinioProducerEncryptionTest extends CamelTestSupport {
         assertSame(ssec, captor.getValue().sse());
         assertNotNull(captor.getValue().source());
         assertSame(ssec, captor.getValue().source().ssec());
+        producer.stop();
+        endpoint.stop();
+    }
+
+    @Test
+    void copyObjectWithBothEncryptionThrows() throws Exception {
+        ServerSideEncryption.S3 sse = new ServerSideEncryption.S3();
+        ServerSideEncryption.CustomerKey ssec = new ServerSideEncryption.CustomerKey(secretKey);
+
+        MinioComponent component = context.getComponent("minio", MinioComponent.class);
+        MinioEndpoint endpoint = (MinioEndpoint) component.createEndpoint("minio://mybucket?autoCreateBucket=false");
+        endpoint.getConfiguration().setMinioClient(minioClient);
+        endpoint.getConfiguration().setServerSideEncryption(sse);
+        endpoint.getConfiguration().setServerSideEncryptionCustomerKey(ssec);
+
+        MinioProducer producer = createProducer(endpoint);
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.copyObject);
+        exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "source.txt");
+        exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "dest.txt");
+        exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "dest-bucket");
+
+        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
         producer.stop();
         endpoint.stop();
     }

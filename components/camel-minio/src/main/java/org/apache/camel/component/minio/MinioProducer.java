@@ -196,10 +196,16 @@ public class MinioProducer extends DefaultProducer {
                 .object(objectName)
                 .userMetadata(objectMetadata);
 
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
-                getConfiguration()::getServerSideEncryption, putObjectRequest::sse);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
-                getConfiguration()::getServerSideEncryptionCustomerKey, putObjectRequest::sse);
+        if (getConfiguration().getServerSideEncryption() != null
+                && getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            throw new IllegalArgumentException(
+                    "Only one of serverSideEncryption or serverSideEncryptionCustomerKey may be configured, not both");
+        }
+        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            putObjectRequest.sse(getConfiguration().getServerSideEncryptionCustomerKey());
+        } else if (getConfiguration().getServerSideEncryption() != null) {
+            putObjectRequest.sse(getConfiguration().getServerSideEncryption());
+        }
 
         if (!extraHeaders.isEmpty()) {
             putObjectRequest.extraHeaders(extraHeaders);
@@ -266,18 +272,25 @@ public class MinioProducer extends DefaultProducer {
                     .bucket(bucketName)
                     .object(sourceKey);
 
-            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
-                    getConfiguration()::getServerSideEncryptionCustomerKey, copySourceBuilder::ssec);
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                copySourceBuilder.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
+            }
 
             CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
                     .bucket(destinationBucketName)
                     .object(destinationKey)
                     .source(copySourceBuilder.build());
 
-            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
-                    getConfiguration()::getServerSideEncryption, copyObjectRequest::sse);
-            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
-                    getConfiguration()::getServerSideEncryptionCustomerKey, copyObjectRequest::sse);
+            if (getConfiguration().getServerSideEncryption() != null
+                    && getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                throw new IllegalArgumentException(
+                        "Only one of serverSideEncryption or serverSideEncryptionCustomerKey may be configured, not both");
+            }
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                copyObjectRequest.sse(getConfiguration().getServerSideEncryptionCustomerKey());
+            } else if (getConfiguration().getServerSideEncryption() != null) {
+                copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
+            }
 
             ObjectWriteResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
 
@@ -363,8 +376,9 @@ public class MinioProducer extends DefaultProducer {
                     .bucket(bucketName)
                     .object(sourceKey);
 
-            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
-                    getConfiguration()::getServerSideEncryptionCustomerKey, getObjectRequest::ssec);
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
+            }
 
             InputStream respond = minioClient.getObject(getObjectRequest.build());
 
@@ -399,8 +413,9 @@ public class MinioProducer extends DefaultProducer {
                     .offset(Long.parseLong(offset))
                     .length(Long.parseLong(length));
 
-            MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
-                    getConfiguration()::getServerSideEncryptionCustomerKey, getObjectRequest::ssec);
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
+            }
 
             InputStream respond = minioClient.getObject(getObjectRequest.build());
 
