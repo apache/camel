@@ -987,7 +987,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile>, Sft
             }
             return true;
         }
-        return cause != null;
+        return cause instanceof java.io.IOException;
     }
 
     /**

@@ -1231,7 +1231,7 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile>,
             }
             return true;
         }
-        return cause != null;
+        return cause instanceof IOException;
     }
 
     @Override

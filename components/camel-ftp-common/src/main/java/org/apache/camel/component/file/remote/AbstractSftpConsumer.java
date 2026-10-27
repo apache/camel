@@ -93,9 +93,16 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
     }
 
     @Override
+    protected void doStop() throws Exception {
+        unresolvableLinks.clear();
+        super.doStop();
+    }
+
+    @Override
     protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
         // resolved lazily during this poll on the first symbolic link encountered, as the starting directory can be replaced between polls
         resolvedStartingDirectory = null;
+        unresolvableLinks.clear();
 
         String currentDir = null;
         if (isStepwise()) {
