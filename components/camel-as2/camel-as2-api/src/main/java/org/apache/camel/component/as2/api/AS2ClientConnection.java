@@ -276,8 +276,10 @@ public class AS2ClientConnection {
                         "Proxy " + route.getProxyHost().toHostString() + " refused to forward the request to "
                                         + targetHost.toHostString() + ": " + new StatusLine(response));
             }
-            if (response instanceof ClassicHttpResponse classicResponse && classicResponse.getEntity() != null) {
+            if (response instanceof ClassicHttpResponse classicResponse && classicResponse.getEntity() != null
+                    && classicResponse.getEntity().isStreaming()) {
                 // read the body while the connection is ours: release may close it, or hand it to another send.
+                // A parsed entity was already read by EntityParser in receiveResponseEntity and is kept as it is.
                 // The entity stays a streaming one: EntityParser rejects any other
                 HttpEntity entity = classicResponse.getEntity();
                 try {
