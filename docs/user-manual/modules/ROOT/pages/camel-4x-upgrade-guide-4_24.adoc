@@ -13,6 +13,42 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-a2a - consumer context is separate from producer headers
+
+An A2A consumer no longer populates producer control headers with the incoming operation and
+identity. Update consumer routes that read these headers:
+
+[cols="1,1",options="header"]
+|===
+| Previous consumer header | Replacement consumer header / exchange property
+| `CamelA2AOperation` | `CamelA2ARequestOperation`
+| `CamelA2ATaskId` | `CamelA2ARequestTaskId`
+| `CamelA2AContextId` | `CamelA2ARequestContextId`
+|===
+
+To control a consumer's `SendMessage` reply, replace writes to `CamelA2ATaskState` with
+`CamelA2AReplyTaskState`, and writes to `CamelA2AResponseType` with `CamelA2AReplyType`.
+The old names continue to control producers or describe their responses. Explicit producer
+operation headers still override the endpoint's `operation` option.
+
+Java code using `A2AConstants` must also migrate even though the existing constant names and values
+remain. For consumer metadata reads, replace `OPERATION`, `TASK_ID` and `CONTEXT_ID` with
+`REQUEST_OPERATION`, `REQUEST_TASK_ID` and `REQUEST_CONTEXT_ID`, respectively. For consumer reply
+controls, replace `TASK_STATE` and `RESPONSE_TYPE` with `REPLY_TASK_STATE` and `REPLY_TYPE`.
+
+No Endpoint DSL header helper methods were removed. The new `a2ARequestOperation()`,
+`a2ARequestTaskId()` and `a2ARequestContextId()` methods provide the consumer metadata header names;
+`a2AReplyTaskState()` and `a2AReplyType()` provide the consumer reply control header names.
+Existing helpers retain their producer roles.
+
+Downstream results no longer replace the outer task ID, context, state or reply type, and progress
+updates remain attached to the outer task. Consumer reply messages use the outer context and task
+identity. With `dataFormat=POJO`, forwarding the same incoming `Message` instance to another agent
+no longer carries the outer task/context IDs. A new message supplied by the route retains its IDs,
+including an equal copy made with `Message.builder(incoming).build()`. When copying or transforming
+the incoming message to start a new downstream conversation, clear inherited IDs with
+`.taskId(null).contextId(null)`. Set explicit downstream IDs when continuing a downstream conversation.
+
 === camel-ai-tool - required arguments with reserved names reject the call
 
 Required tool arguments whose names start with `camel` or `org.apache.camel.` (case-insensitive)
