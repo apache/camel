@@ -169,7 +169,8 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     }
 
     /**
-     * Reconnects if needed. If connection is lost and auto-reconnect is turned off, endpoint will be shutdown.
+     * Reconnects if needed. If connection is lost and auto-reconnect is turned off, endpoint will be shutdown, once for
+     * each lost connection.
      * <p>
      *
      * @throws PlcConnectionException If reconnect failed and auto-reconnect is turned on
@@ -189,6 +190,12 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
                 LOGGER.debug("Successfully reconnected");
                 return;
             }
+            if (connection == null) {
+                // no connection left to lose, as when an earlier call shut the lost one down or none could be set up
+                return;
+            }
+            // closed under the lock, so that only one caller shuts the endpoint down for the lost connection
+            closeConnection();
         }
         // stop() is called outside the lock, as a concurrent stop() holds the service lock while doStop() waits for it
         LOGGER.warn("Connection lost and auto-reconnect is turned off, shutting down Plc4XEndpoint");
@@ -220,6 +227,13 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     public boolean isConnected() {
         PlcConnection current = connection;
         return current != null && current.isConnected();
+    }
+
+    /**
+     * @return false if the lost connection was shut down, or none was set up
+     */
+    boolean hasConnection() {
+        return connection != null;
     }
 
     @Override
