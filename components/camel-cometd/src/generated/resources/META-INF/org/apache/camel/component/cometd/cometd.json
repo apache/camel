@@ -40,6 +40,12 @@
     "CometdClientId": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The clientId of the session", "constantName": "org.apache.camel.component.cometd.CometdBinding#COMETD_CLIENT_ID_HEADER_NAME" },
     "subscription": { "index": 1, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The subscription", "constantName": "org.apache.camel.component.cometd.CometdBinding#COMETD_SUBSCRIPTION_HEADER_NAME" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text", "value", "map", "list", "null" ], "description": "The data of the Bayeux message, parsed from JSON: a String, a number or a boolean, a Map for an object, a List for an array, or null. From a cometd producer in the same JVM the body that producer sent, as is" },
+    "consumerReply": { "carriers": [ "text", "value", "map", "list" ], "description": "Only when the exchange is InOut (exchangePattern=InOut, or set in the route): the body the route ends with is sent back to the client that published, as JSON. Bytes become an array of numbers; a stream, a file or another object is sent as the text of its toString" },
+    "producerIn": { "carriers": [ "text", "value", "map", "list" ], "description": "The data published to the channel, sent as JSON to the subscribed clients: text, a number or a boolean, a Map or a List. Bytes become an array of numbers; a stream, a file or another object is sent as the text of its toString: convert it first. The headers go in the ext field of the message" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Hostname" },
     "port": { "index": 1, "kind": "path", "displayName": "Port", "group": "common", "label": "", "required": true, "type": "integer", "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Host port number" },

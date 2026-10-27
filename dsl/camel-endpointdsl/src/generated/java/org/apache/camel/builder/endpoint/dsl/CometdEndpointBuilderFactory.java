@@ -61,8 +61,11 @@ public interface CometdEndpointBuilderFactory {
             return this;
         }
         /**
-         * The transport types allowed by the CometD server. Default is
-         * websocket,long-polling.
+         * A comma-separated list of transport names allowed by the CometD
+         * server (e.g. websocket, long-polling, callback-polling).
+         * callback-polling is the JSONP transport mechanism. This option
+         * applies to the shared CometD server on the host and port; the first
+         * endpoint to configure the server sets this value.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -548,8 +551,11 @@ public interface CometdEndpointBuilderFactory {
             return this;
         }
         /**
-         * The transport types allowed by the CometD server. Default is
-         * websocket,long-polling.
+         * A comma-separated list of transport names allowed by the CometD
+         * server (e.g. websocket, long-polling, callback-polling).
+         * callback-polling is the JSONP transport mechanism. This option
+         * applies to the shared CometD server on the host and port; the first
+         * endpoint to configure the server sets this value.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -966,8 +972,11 @@ public interface CometdEndpointBuilderFactory {
             return this;
         }
         /**
-         * The transport types allowed by the CometD server. Default is
-         * websocket,long-polling.
+         * A comma-separated list of transport names allowed by the CometD
+         * server (e.g. websocket, long-polling, callback-polling).
+         * callback-polling is the JSONP transport mechanism. This option
+         * applies to the shared CometD server on the host and port; the first
+         * endpoint to configure the server sets this value.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
