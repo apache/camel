@@ -74,6 +74,8 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
     private boolean crossOriginFilterOn;
     @UriParam(defaultValue = "*")
     private String allowedOrigins;
+    @UriParam(defaultValue = "websocket,long-polling")
+    private String allowedTransports = "websocket,long-polling";
     @UriParam
     private String filterPath;
     @UriParam(label = "producer")
@@ -272,6 +274,19 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
 
     public String getFilterPath() {
         return filterPath;
+    }
+
+    public String getAllowedTransports() {
+        return allowedTransports;
+    }
+
+    /**
+     * A comma-separated list of transport names allowed by the CometD server (e.g. websocket, long-polling,
+     * callback-polling). callback-polling is the JSONP transport mechanism. This option applies to the shared CometD
+     * server on the host and port; the first endpoint to configure the server sets this value.
+     */
+    public void setAllowedTransports(String allowedTransports) {
+        this.allowedTransports = allowedTransports;
     }
 
     /**

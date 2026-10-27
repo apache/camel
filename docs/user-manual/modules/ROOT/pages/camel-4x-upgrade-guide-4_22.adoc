@@ -2128,3 +2128,10 @@ When configuring TLS through `SSLContextParameters` with a standalone `TrustMana
 
 When both a `TrustManager` and a keystore are configured on `TrustManagersParameters`, the `TrustManager` is now used,
 as with the other components that use `SSLContextParameters`; before, the keystore-based trust options were used.
+
+=== camel-cometd - the JSONP transport is disabled by default
+
+The CometD JSONP transport (`callback-polling`) is now disabled by default. Only `long-polling` (and `websocket`,
+when the CometD WebSocket transport is on the classpath) is enabled by default. Applications that require JSONP
+clients can configure `allowedTransports` on the endpoint to include `callback-polling`
+(for example, `allowedTransports=websocket,long-polling,callback-polling`).
