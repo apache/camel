@@ -46,10 +46,12 @@ final class XsltSaxonHelper {
     private static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
     private static final String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
 
-    // Configured once: a SAXParserFactory on the classpath that does not recognise one of the required features fails
-    // here, on the first use of this class, rather than silently degrading on every exchange. The pool hands out a
-    // reader for a single parse and is safe to share between threads.
-    private static final XMLReaderPool SECURE_XML_READER_POOL = new XMLReaderPool(createSecureSaxParserFactory());
+    private static final class SecureReaderPoolHolder {
+        // Configured once: a SAXParserFactory on the classpath that does not recognise one of the required features fails
+        // on first use of the holder rather than silently degrading on every exchange. The pool hands out a
+        // reader for a single parse and is safe to share between threads.
+        static final XMLReaderPool POOL = new XMLReaderPool(createSecureSaxParserFactory());
+    }
 
     private XsltSaxonHelper() {
     }
@@ -133,7 +135,7 @@ final class XsltSaxonHelper {
             return source;
         }
         try {
-            XMLReader xmlReader = SECURE_XML_READER_POOL.createXMLReader();
+            XMLReader xmlReader = SecureReaderPoolHolder.POOL.createXMLReader();
             return new SAXSource(xmlReader, inputSource);
         } catch (ParserConfigurationException | SAXException e) {
             // Fail closed: this is the security control, so do not fall back to an unrestricted parse.

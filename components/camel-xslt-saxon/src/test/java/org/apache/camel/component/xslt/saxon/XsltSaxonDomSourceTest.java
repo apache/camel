@@ -230,6 +230,17 @@ class XsltSaxonDomSourceTest {
         assertTrue(payload.conversions >= 2);
     }
 
+    @Test
+    void testStreamSourceUnwrappedWhenSecureProcessingDisabled() throws Exception {
+        XsltSaxonEndpoint endpoint = context.getEndpoint(ENDPOINT + "?secureProcessing=false", XsltSaxonEndpoint.class);
+        endpoint.start();
+        XsltSaxonBuilder builder = (XsltSaxonBuilder) endpoint.getXslt();
+        Exchange exchange = new DefaultExchange(context);
+        StreamSource source = new StreamSource(new StringReader(INPUT));
+        exchange.getMessage().setBody(source);
+        assertSame(source, builder.getSourceHandlerFactory().getSource(exchange, (Expression) null));
+    }
+
     /**
      * A source that is already parsed ({@code DOMSource}) or read through a reader the caller controls
      * ({@code StAXSource}) is passed through unchanged; a stream-based source still to be parsed is wrapped with a
