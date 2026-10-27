@@ -269,9 +269,14 @@ Selected forage 1.6.2 for Camel CLI 4.22.2 (built for Camel 4.22.2)
 Plugin forage added
 ----
 
-To select the release, the CLI reads the POMs of the releases of the plugin, newest first (at most 10), from the Maven
-repositories it is configured with (including `--repos` and the Maven `settings.xml`). The Camel versions a release
-supports are:
+To select the release, the CLI lists the releases of the plugin from the Maven repositories it is configured with:
+Maven Central, the repositories of the active profiles in the Maven `settings.xml` (with its mirrors applied), and the
+repositories given with `--repos` (or by the catalog of known plugins). The list is always checked again in these
+repositories, so a new release is found. Releases with a qualifier, such as `-SNAPSHOT` or `-RC1`, are not used.
+
+The releases are grouped by release line of the plugin (its major and minor version: `1.6.0`, `1.6.1` and `1.6.2` are
+the line `1.6`), and the CLI reads the POM of the newest release of each line, newest line first (at most 10 lines). The
+Camel versions a release supports are:
 
 . the Maven version range in the property `camel.jbang.plugin.camel-versions` of its POM, when the plugin declares it
 (see <<Building custom plugins>>)
@@ -287,9 +292,18 @@ run `camel plugin add <name>` again to select the newest matching release, for e
 plugin. When the CLI is upgraded to a Camel version that the stored release does not support, the CLI warns when the
 plugin is loaded, and tells to run `camel plugin add <name>` again. Plugins added with an older CLI are not checked.
 
-When no release is known to support the CLI version (for example, the plugin has no release for a new Camel version
-yet), or the releases cannot be read (for example, when offline), `camel plugin add` warns and uses the newest release
-(Maven `LATEST`), as older versions of the CLI do. The warning lists the newest release per Camel version found.
+The CLI selects the newest release of the first line that supports its version. When no release read supports it:
+
+* if the CLI is newer than the Camel versions of all the releases (for example, the plugin has no release for a new
+Camel version yet), `camel plugin add` warns and uses the newest release (Maven `LATEST`), as older versions of the CLI
+do
+* if the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, and warns
+* if the CLI is older than the Camel versions of all the releases read, or no release tells which Camel versions it
+supports, it warns and uses `LATEST`
+
+The warnings list the newest release per Camel version found. When the releases cannot be read (for example, when
+offline), `camel plugin add` warns that it could not check the compatibility, and uses `LATEST`.
 
 To use a specific release, give its version, or the Maven coordinates of the plugin. It is used as given; the CLI only
 warns when the release is known to be built for another Camel version:
@@ -300,12 +314,15 @@ camel plugin add forage --version 1.6.2
 camel plugin add forage --gav io.kaoto.forage:camel-jbang-plugin-forage:1.6.2
 ----
 
-Older versions of the CLI do not select a release, and use the newest one. To use a release built for your CLI with them:
+Older versions of the CLI do not select a release, and use the newest one. With them, give the release the plugin
+documents for your Camel version with `--version`, or with `--gav` before Camel 4.21, where the CLI does not know the
+Maven `groupId` of community plugins yet (and `--version` alone looks for the plugin in the `org.apache.camel` group).
+For example, Forage 1.4.2 is built for Camel 4.18:
 
-* Camel 4.22 LTS: `camel plugin add forage --version 1.6.2`
-* Camel 4.18 LTS: `camel plugin add forage --gav io.kaoto.forage:camel-jbang-plugin-forage:1.4.2`. The CLI knows the
-community plugins (and their Maven `groupId`) since Camel 4.21, so before that `--version` alone looks for the plugin in
-the `org.apache.camel` group.
+[source,bash]
+----
+camel plugin add forage --gav io.kaoto.forage:camel-jbang-plugin-forage:1.4.2
+----
 
 === Building custom plugins
 
