@@ -226,12 +226,22 @@ public class LangChain4jIngestProducer extends DefaultProducer {
             return;
         }
         // the media type depends on the id alone, so it is resolved here as well: a document
-        // whose type cannot be told, or whose medium the model lacks, never occupies its id and
-        // never pays for the payload
+        // whose type cannot be told is filtered, one whose medium the model lacks fails, and
+        // neither occupies its id or pays for the payload
         String mimeType = null;
         ContentType medium = null;
         if (media) {
             mimeType = mediaTypeOf(documentId);
+            if (mimeType == null) {
+                // typically another kind of file beside the media, a README or an editor backup:
+                // failing it would fail it again on every poll, as a failed exchange keeps no idempotent key
+                LOG.debug("Ingestion pipeline '{}': cannot tell the media type of document '{}' from its extension,"
+                          + " so it is filtered out. Fix the extension, or set the contentType endpoint option,"
+                          + " to ingest it.",
+                        endpoint.getPipelineName(), documentId);
+                exchange.getMessage().setBody(filtered(documentId));
+                return;
+            }
             medium = requireSupported(mimeType, "document '" + documentId + "'");
         }
 
@@ -360,19 +370,9 @@ public class LangChain4jIngestProducer extends DefaultProducer {
         return new IngestResult(endpoint.getPipelineName(), documentId, 0, IngestResult.Outcome.FILTERED);
     }
 
-    /** The configured contentType, else the type the document id's file extension implies. */
+    /** The configured contentType, else the type the document id's file extension implies, or null without one. */
     private String mediaTypeOf(String documentId) {
-        if (contentType != null) {
-            return contentType;
-        }
-        String type = MediaTypes.fromDocumentId(documentId);
-        if (type == null) {
-            throw new IllegalArgumentException(
-                    "Ingestion pipeline '" + endpoint.getPipelineName() + "': cannot tell the media type of document '"
-                                               + documentId + "' from its extension. Set the contentType endpoint"
-                                               + " option.");
-        }
-        return type;
+        return contentType != null ? contentType : MediaTypes.fromDocumentId(documentId);
     }
 
     /**
