@@ -94,9 +94,10 @@ the check above.
 |`camel.chaos.enabled` |`true` |Install the hooks (only when the JAR is present, with profile `dev` or no profile,
 never with `prod`). They do nothing until a rule is added.
 |`camel.chaos.seed` | |Seed of the random choices; without it a seed is picked and shown in the report.
-|`camel.chaos.rules` | |Rules to add at startup, in the text form of Rule syntax, separated by `;`. An
-`insecure:dev` option (see Risks).
-|`camel.chaos.maxDuration` |`10m` |Upper bound for every rule; a rule without its own limit ends after this.
+|`camel.chaos.rules` | |Rules to add at startup, in the text form of Rule syntax, separated by `;` (marked
+`insecure:dev`, see Risks).
+|`camel.chaos.maxDuration` |`10m` |Upper bound for every rule: a rule without `until` ends after it, and a
+`duration` of `stall` or `lifecycle` may not be longer (such a rule is rejected when it is added).
 |`camel.chaos.reportOnShutdown` |`true` |Log the report when the context stops.
 |===
 
@@ -110,7 +111,7 @@ A rule has a target, a fault, how often it fires, and when it ends:
 [source]
 ----
 target:  route=<id or pattern> | endpoint=<uri pattern> | component=<name> | step=<processor id pattern>
-fault:   error | delay | stall | drop | corrupt | lifecycle   (parameters: see Rule syntax)
+fault:   error | delay | drop | corrupt | lifecycle (stall)   (parameters: see Rule syntax)
 rate:    a probability (0.3), or every Nth match
 until:   a number of matches, a duration, or removed by hand
 ----
@@ -132,15 +133,13 @@ is quoted. Which hooks a fault can use is in the table of the next section.
 
 |`error`
 |`exception=<class>`, `message=<text>`; for the HTTP components `status=<code>` and `header.<name>=<value>`
-|Throws that exception. With `status` it is the exception the HTTP component throws for that status.
+|Throws that exception. With `status` it is the exception the HTTP component throws for that status. A rule whose
+exception class is not found, is not a `Throwable`, or has neither a constructor taking a `String` message nor a
+no-argument one is rejected when it is added, with an error that names the class.
 
 |`delay`
 |`duration=<time>`, such as `500ms` or `2s`
 |Waits that long before the send, the step or the poll.
-
-|`stall`
-|`duration=<time>`
-|Suspends the target route and resumes it after the duration (short for `lifecycle action=suspend`).
 
 |`drop`
 |none
@@ -149,15 +148,19 @@ is quoted. Which hooks a fault can use is in the table of the next section.
 |`corrupt`
 |`mode=headers\|charset\|truncate`
 |Changes the message: header values with random data, a body in an unusual charset (characters outside US-ASCII), or
-an `InputStream` body that ends too soon.
+an `InputStream` body that ends too soon. `charset` applies to a body that is text or converts to text, and `truncate`
+to an `InputStream` or stream cache body; on another body the message is left as it is and the report counts the rule
+as skipped for that message, so a fault that did nothing is visible.
 
 |`lifecycle`
 |`action=suspend\|stop\|remove`, `duration=<time>`
 |Suspends, stops or removes the target route, then resumes it, starts it or adds its definition again after the
-duration.
+duration. `stall duration=<time>` is short for `lifecycle action=suspend duration=<time>`. Both take only a `route=`
+target; a rule with another target is rejected when it is added.
 |===
 
-`stall` and `lifecycle` act once on the route when the rule is added; `rate` and `until` do not apply to them.
+`stall` and `lifecycle` act once on the route when the rule is added; `rate` and `until` do not apply to them, and
+their `duration` is bounded by `camel.chaos.maxDuration`.
 
 In `application.properties`:
 
@@ -194,7 +197,10 @@ camel cmd chaos add --rule='route=orders lifecycle action=remove duration=10s'
 |Messages that enter a route
 |A `RoutePolicy`, added to every route by a `RoutePolicyFactory`. Its `onExchangeBegin` sees every exchange that
 enters a route and can change the message.
-|`corrupt`: header values with random data, a body in an unusual charset, an `InputStream` that ends too soon.
+|`corrupt`: header values with random data, a body in an unusual charset, an `InputStream` that ends too soon. Not
+`drop`: the exchange already belongs to its consumer, and dropping it there would make the consumer commit a message
+the route never processed (a file consumer deletes the file), a loss caused by chaos rather than by the route. `drop`
+is at the sends and the polls instead.
 
 |Consumer polls
 |The `PollingConsumerPollStrategy` of a `ScheduledPollConsumer`, which can be changed at runtime with
@@ -248,8 +254,8 @@ for the CLI and JSON for tools, and states the seed and the rules that were acti
 === Control
 
 - A `chaos` dev console: list, add, change and remove rules, and show the report. The CLI connector uses it, so
-  `camel cmd chaos add|list|remove|report` works against any running application with the JAR, and so can any other
-  client of the dev consoles.
+  `camel cmd chaos add|change|list|remove|report` works against any running application with the JAR, and so can
+  any other client of the dev consoles.
 - The camel-jbang MCP server (`camel-jbang-mcp`) gets tools for the same (add a fault, report, clear), in a `chaos`
   runtime tool group next to the `sql`, `tracing`, `resilience` and `http` groups, offered only when the application
   has `camel-chaos`.
