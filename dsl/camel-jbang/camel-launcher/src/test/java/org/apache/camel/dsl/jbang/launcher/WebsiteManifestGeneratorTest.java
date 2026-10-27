@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -379,5 +380,237 @@ class WebsiteManifestGeneratorTest {
 
         assertThat(r.exit).isEqualTo(2);
         assertThat(r.stderr).contains("install.sh not found");
+    }
+
+    private Result publish(Path work, Path output, String version, String content, boolean latest, boolean lts)
+            throws Exception {
+        Path tar = writeFixture(work, version + "-" + content + ".tar.gz", "tar-" + content);
+        Path zip = writeFixture(work, version + "-" + content + ".zip", "zip-" + content);
+        return run("--version", version, "--tar", tar.toString(), "--zip", zip.toString(), "--output",
+                output.toString(), "--latest", String.valueOf(latest), "--lts", String.valueOf(lts));
+    }
+
+    private String aliasVersion(Path releases, String alias) throws IOException {
+        for (String line : Files.readAllLines(releases.resolve(alias + ".properties"), StandardCharsets.UTF_8)) {
+            if (line.startsWith("version=")) {
+                return line.substring("version=".length());
+            }
+        }
+        throw new IllegalStateException("no version in " + alias);
+    }
+
+    @Test
+    void lineAliasMovesForwardOnly(@TempDir Path work) throws Exception {
+        Path output = work.resolve("website");
+        Path releases = output.resolve("releases");
+
+        assertThat(publish(work, output, "4.22.1", "a", false, false).exit).isZero();
+        assertThat(releases.resolve("4.22.properties")).hasSameBinaryContentAs(releases.resolve("4.22.1.properties"));
+        assertThat(releases.resolve("lts.properties")).doesNotExist();
+        assertThat(releases.resolve("latest.properties")).doesNotExist();
+
+        assertThat(publish(work, output, "4.22.2", "b", false, false).exit).isZero();
+        assertThat(aliasVersion(releases, "4.22")).isEqualTo("4.22.2");
+
+        // A late, older patch of the same line is published but leaves the line alias alone.
+        Result late = publish(work, output, "4.22.0", "c", false, false);
+        assertThat(late.exit).as(late.stderr).isZero();
+        assertThat(releases.resolve("4.22.0.properties")).exists();
+        assertThat(aliasVersion(releases, "4.22")).isEqualTo("4.22.2");
+
+        // Another line gets its own alias.
+        assertThat(publish(work, output, "4.23.0", "d", true, false).exit).isZero();
+        assertThat(aliasVersion(releases, "4.23")).isEqualTo("4.23.0");
+        assertThat(aliasVersion(releases, "4.22")).isEqualTo("4.22.2");
+        assertThat(aliasVersion(releases, "latest")).isEqualTo("4.23.0");
+    }
+
+    @Test
+    void olderLtsPatchDoesNotMoveLts(@TempDir Path work) throws Exception {
+        Path output = work.resolve("website");
+        Path releases = output.resolve("releases");
+
+        assertThat(publish(work, output, "4.18.5", "a", false, true).exit).isZero();
+        assertThat(aliasVersion(releases, "lts")).isEqualTo("4.18.5");
+        assertThat(publish(work, output, "4.22.2", "b", false, true).exit).isZero();
+        assertThat(releases.resolve("lts.properties")).hasSameBinaryContentAs(releases.resolve("4.22.2.properties"));
+
+        // A non-LTS release never touches lts.properties.
+        assertThat(publish(work, output, "4.23.0", "c", true, false).exit).isZero();
+        assertThat(aliasVersion(releases, "lts")).isEqualTo("4.22.2");
+
+        // A patch on the older 4.18 LTS line moves 4.18 but not lts.
+        Result r = publish(work, output, "4.18.6", "d", false, true);
+        assertThat(r.exit).as(r.stderr).isZero();
+        assertThat(aliasVersion(releases, "4.18")).isEqualTo("4.18.6");
+        assertThat(aliasVersion(releases, "lts")).isEqualTo("4.22.2");
+        assertThat(aliasVersion(releases, "latest")).isEqualTo("4.23.0");
+    }
+
+    @Test
+    void aliasChecksumConflictFailsWithoutTouchingAliases(@TempDir Path work) throws Exception {
+        Path output = work.resolve("website");
+        Path releases = output.resolve("releases");
+        Files.createDirectories(releases);
+
+        // lts.properties claims 4.22.2 with checksums that 4.22.2 will not have.
+        Path staleTar = writeFixture(work, "stale.tar.gz", "stale-tar");
+        Path staleZip = writeFixture(work, "stale.zip", "stale-zip");
+        byte[] staleLts = expectedManifest("4.22.2", sha256Hex(staleTar), sha256Hex(staleZip))
+                .getBytes(StandardCharsets.UTF_8);
+        Files.write(releases.resolve("lts.properties"), staleLts);
+
+        Result r = publish(work, output, "4.22.2", "real", true, true);
+
+        assertThat(r.exit).isEqualTo(1);
+        assertThat(r.stderr).contains("lts.properties already has different checksums");
+        assertThat(Files.readAllBytes(releases.resolve("lts.properties"))).isEqualTo(staleLts);
+        assertThat(releases.resolve("4.22.2.properties")).exists();
+        // Aliases are all-or-nothing: neither the line alias nor latest moved.
+        assertThat(releases.resolve("4.22.properties")).doesNotExist();
+        assertThat(releases.resolve("latest.properties")).doesNotExist();
+    }
+
+    @Test
+    void lineAliasPointingAtAnotherLineFails(@TempDir Path work) throws Exception {
+        Path output = work.resolve("website");
+        Path releases = output.resolve("releases");
+        assertThat(publish(work, output, "4.23.0", "a", false, false).exit).isZero();
+        Files.copy(releases.resolve("4.23.0.properties"), releases.resolve("4.22.properties"));
+
+        Result r = publish(work, output, "4.22.2", "b", false, false);
+
+        assertThat(r.exit).isEqualTo(1);
+        assertThat(r.stderr).contains("not on that release line");
+    }
+
+    @Test
+    void invalidLtsValueRejected(@TempDir Path work) throws Exception {
+        Path tar = writeFixture(work, "x.tar.gz", "x-tar");
+        Path zip = writeFixture(work, "x.zip", "x-zip");
+        Path output = work.resolve("website");
+
+        Result r = run("--version", "4.22.2", "--tar", tar.toString(), "--zip", zip.toString(), "--output",
+                output.toString(), "--latest", "false", "--lts", "yes");
+
+        assertThat(r.exit).isEqualTo(2);
+        assertThat(output).doesNotExist();
+    }
+
+    private Path seedReleases(Path work, String... versions) throws Exception {
+        Path output = work.resolve("website");
+        Path releases = output.resolve("releases");
+        Files.createDirectories(releases);
+        for (String v : versions) {
+            Path tar = writeFixture(work, v + ".tar.gz", "tar-" + v);
+            Path zip = writeFixture(work, v + ".zip", "zip-" + v);
+            Files.writeString(releases.resolve(v + ".properties"), expectedManifest(v, sha256Hex(tar), sha256Hex(zip)),
+                    StandardCharsets.UTF_8);
+        }
+        return output;
+    }
+
+    @Test
+    void rebuildAliasesUsesNumericOrderingAndIsIdempotent(@TempDir Path work) throws Exception {
+        // 4.9.0 < 4.10.0 < 4.18.10 numerically, the opposite of lexical order.
+        Path output = seedReleases(work, "4.9.0", "4.10.0", "4.18.9", "4.18.10", "4.22.2", "4.23.0");
+        Path releases = output.resolve("releases");
+
+        Result r = run("--rebuild-aliases", "--output", output.toString(), "--lts-versions", "4.10.0, 4.18.10,4.22.2,4.18.9");
+        assertThat(r.exit).as(r.stderr).isZero();
+
+        assertThat(releases.resolve("latest.properties")).hasSameBinaryContentAs(releases.resolve("4.23.0.properties"));
+        assertThat(releases.resolve("lts.properties")).hasSameBinaryContentAs(releases.resolve("4.22.2.properties"));
+        assertThat(releases.resolve("4.18.properties")).hasSameBinaryContentAs(releases.resolve("4.18.10.properties"));
+        assertThat(aliasVersion(releases, "4.9")).isEqualTo("4.9.0");
+        assertThat(aliasVersion(releases, "4.10")).isEqualTo("4.10.0");
+        assertThat(aliasVersion(releases, "4.22")).isEqualTo("4.22.2");
+        assertThat(aliasVersion(releases, "4.23")).isEqualTo("4.23.0");
+
+        byte[] ltsBefore = Files.readAllBytes(releases.resolve("lts.properties"));
+
+        Result again
+                = run("--rebuild-aliases", "--output", output.toString(), "--lts-versions", "4.10.0,4.18.10,4.22.2,4.18.9");
+        assertThat(again.exit).as(again.stderr).isZero();
+        assertThat(again.stdout).contains("up to date");
+        assertThat(Files.readAllBytes(releases.resolve("lts.properties"))).isEqualTo(ltsBefore);
+
+        Result check = run("--rebuild-aliases", "--check", "--output", output.toString(), "--lts-versions",
+                "4.10.0,4.18.10,4.22.2,4.18.9");
+        assertThat(check.exit).as(check.stderr).isZero();
+    }
+
+    @Test
+    void rebuildAliasesMatchesPublishedAliases(@TempDir Path work) throws Exception {
+        Path output = work.resolve("website");
+        assertThat(publish(work, output, "4.18.5", "a", false, true).exit).isZero();
+        assertThat(publish(work, output, "4.22.2", "b", true, true).exit).isZero();
+        assertThat(publish(work, output, "4.23.0", "c", true, false).exit).isZero();
+        assertThat(publish(work, output, "4.18.6", "d", false, true).exit).isZero();
+
+        Result check = run("--rebuild-aliases", "--check", "--output", output.toString(), "--lts-versions",
+                "4.18.5,4.18.6,4.22.2");
+
+        assertThat(check.exit).as(check.stderr).isZero();
+    }
+
+    @Test
+    void checkModeReportsDriftAndWritesNothing(@TempDir Path work) throws Exception {
+        Path output = seedReleases(work, "4.18.5", "4.22.2", "4.23.0");
+        Path releases = output.resolve("releases");
+        assertThat(run("--rebuild-aliases", "--output", output.toString(), "--lts-versions", "4.18.5,4.22.2").exit)
+                .isZero();
+
+        // lts points back at 4.18.5, 4.23 is missing and an orphan 4.99 alias appeared.
+        Files.copy(releases.resolve("4.18.5.properties"), releases.resolve("lts.properties"),
+                StandardCopyOption.REPLACE_EXISTING);
+        Files.delete(releases.resolve("4.23.properties"));
+        Files.copy(releases.resolve("4.23.0.properties"), releases.resolve("4.99.properties"));
+        byte[] ltsBefore = Files.readAllBytes(releases.resolve("lts.properties"));
+
+        Result check = run("--rebuild-aliases", "--check", "--output", output.toString(), "--lts-versions",
+                "4.18.5,4.22.2");
+
+        assertThat(check.exit).isEqualTo(1);
+        assertThat(check.stderr)
+                .contains("lts.properties points at 4.18.5")
+                .contains("4.23.properties is missing")
+                .contains("4.99.properties is not expected");
+        assertThat(Files.readAllBytes(releases.resolve("lts.properties"))).isEqualTo(ltsBefore);
+        assertThat(releases.resolve("4.23.properties")).doesNotExist();
+
+        // Rebuilding refuses to delete the orphan, so the published files stay as they are.
+        Result rebuild = run("--rebuild-aliases", "--output", output.toString(), "--lts-versions", "4.18.5,4.22.2");
+        assertThat(rebuild.exit).isEqualTo(1);
+        assertThat(rebuild.stderr).contains("refusing to delete");
+        assertThat(Files.readAllBytes(releases.resolve("lts.properties"))).isEqualTo(ltsBefore);
+
+        Files.delete(releases.resolve("4.99.properties"));
+        assertThat(run("--rebuild-aliases", "--output", output.toString(), "--lts-versions", "4.18.5,4.22.2").exit)
+                .isZero();
+        assertThat(aliasVersion(releases, "lts")).isEqualTo("4.22.2");
+        assertThat(aliasVersion(releases, "4.23")).isEqualTo("4.23.0");
+    }
+
+    @Test
+    void rebuildFailsForLtsVersionWithoutManifest(@TempDir Path work) throws Exception {
+        Path output = seedReleases(work, "4.18.5", "4.22.2");
+
+        Result r = run("--rebuild-aliases", "--output", output.toString(), "--lts-versions", "4.18.5,4.22.3");
+
+        assertThat(r.exit).isEqualTo(1);
+        assertThat(r.stderr).contains("LTS version 4.22.3 has no manifest");
+        assertThat(output.resolve("releases").resolve("lts.properties")).doesNotExist();
+        assertThat(output.resolve("releases").resolve("latest.properties")).doesNotExist();
+    }
+
+    @Test
+    void rebuildRejectsMissingLtsVersionsOption(@TempDir Path work) throws Exception {
+        Path output = seedReleases(work, "4.22.2");
+
+        Result r = run("--rebuild-aliases", "--check", "--output", output.toString());
+
+        assertThat(r.exit).isEqualTo(2);
+        assertThat(r.stderr).contains("--lts-versions");
     }
 }
