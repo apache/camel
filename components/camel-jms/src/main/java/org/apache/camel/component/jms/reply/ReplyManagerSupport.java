@@ -220,11 +220,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         Session session = holder.getSession();
         JmsMessage response = new JmsMessage(exchange, message, session, endpoint.getBinding());
         // keep the attachments of the exchange, as an OUT message created by exchange.getOut() does
-        @SuppressWarnings("unchecked")
-        Map<String, Object> attachments
-                = (Map<String, Object>) exchange.getIn().getPayloadForTrait(MessageTrait.ATTACHMENTS);
-        if (attachments != null) {
-            response.setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
+        if (exchange.getIn().hasTrait(MessageTrait.ATTACHMENTS)) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> attachments
+                    = (Map<String, Object>) exchange.getIn().getPayloadForTrait(MessageTrait.ATTACHMENTS);
+            if (attachments != null) {
+                response.setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
+            }
         }
         exchange.setOut(response);
 
