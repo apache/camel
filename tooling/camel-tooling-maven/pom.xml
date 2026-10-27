@@ -99,6 +99,12 @@
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-xml</artifactId>
         </dependency>
+        <!-- to read the effective model properties of an artifact descriptor (also a dependency of standalone-static) -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-resolver-provider</artifactId>
+            <version>${maven-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>

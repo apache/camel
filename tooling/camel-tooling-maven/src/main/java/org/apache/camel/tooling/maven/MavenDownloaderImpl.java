@@ -26,8 +26,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -42,6 +44,8 @@ import org.apache.camel.util.StopWatch;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
+import org.apache.maven.model.Model;
+import org.apache.maven.repository.internal.ArtifactDescriptorReaderDelegate;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
@@ -61,6 +65,9 @@ import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.resolution.ArtifactDescriptorException;
+import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
+import org.eclipse.aether.resolution.ArtifactDescriptorResult;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -69,6 +76,7 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.MetadataRequest;
 import org.eclipse.aether.resolution.MetadataResult;
+import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -591,19 +599,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         StopWatch watch = new StopWatch();
 
-        List<RemoteRepository> repositories = new ArrayList<>(remoteRepositories);
-        if (useApacheSnapshots && apacheSnapshotsResolutionRepository != null) {
-            repositories.add(apacheSnapshotsResolutionRepository);
-        }
-
-        // Add extra repositories if specified
-        if (extraRepositories != null && !extraRepositories.isEmpty()) {
-            List<RemoteRepository> extraRepos = new ArrayList<>();
-            configureRepositories(extraRepos, extraRepositories);
-            List<RemoteRepository> resolvedExtraRepos = repositorySystem.newResolutionRepositories(
-                    session, extraRepos);
-            repositories.addAll(resolvedExtraRepos);
-        }
+        List<RemoteRepository> repositories = resolutionRepositories(extraRepositories, useApacheSnapshots, session);
 
         List<MavenArtifact> result = new ArrayList<>();
 
@@ -683,6 +679,95 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             MavenResolutionException mre = new MavenResolutionException(e.getMessage(), e);
             repositories.forEach(r -> mre.getRepositories().add(r.getUrl()));
             throw mre;
+        }
+    }
+
+    /**
+     * The configured repositories (after mirroring), plus Apache Snapshots and the extra repositories if requested.
+     */
+    private List<RemoteRepository> resolutionRepositories(
+            Set<String> extraRepositories, boolean useApacheSnapshots, RepositorySystemSession session) {
+        List<RemoteRepository> repositories = new ArrayList<>(remoteRepositories);
+        if (useApacheSnapshots && apacheSnapshotsResolutionRepository != null) {
+            repositories.add(apacheSnapshotsResolutionRepository);
+        }
+
+        // Add extra repositories if specified
+        if (extraRepositories != null && !extraRepositories.isEmpty()) {
+            List<RemoteRepository> extraRepos = new ArrayList<>();
+            configureRepositories(extraRepos, extraRepositories);
+            List<RemoteRepository> resolvedExtraRepos = repositorySystem.newResolutionRepositories(
+                    session, extraRepos);
+            repositories.addAll(resolvedExtraRepos);
+        }
+        return repositories;
+    }
+
+    @Override
+    public MavenArtifactDescriptor resolveArtifactDescriptor(String gav, Set<String> extraRepositories)
+            throws MavenResolutionException {
+        RepositorySystemSession session = preferLocal && !fresh ? getPreferLocalSession() : repositorySystemSession;
+        List<RemoteRepository> repositories = resolutionRepositories(extraRepositories, false, session);
+
+        DefaultRepositorySystemSession descriptorSession = new DefaultRepositorySystemSession(session);
+        // fail on a missing or invalid POM, instead of returning an empty descriptor
+        descriptorSession.setArtifactDescriptorPolicy(new SimpleArtifactDescriptorPolicy(false, false));
+        if (!embeddedMode) {
+            // the default descriptor reader does not expose the model properties, so a delegate copies them.
+            // Not in embedded mode, where Maven loads the reader (and its delegate type) from its own class loader
+            descriptorSession.setConfigProperty(ArtifactDescriptorReaderDelegate.class.getName(),
+                    new ModelPropertiesDelegate());
+        }
+
+        try {
+            ArtifactDescriptorRequest request = new ArtifactDescriptorRequest(new DefaultArtifact(gav), repositories, null);
+            ArtifactDescriptorResult result = repositorySystem.readArtifactDescriptor(descriptorSession, request);
+
+            List<MavenGav> dependencies = new ArrayList<>();
+            for (Dependency d : result.getDependencies()) {
+                Artifact a = d.getArtifact();
+                MavenGav dep = MavenGav.fromCoordinates(a.getGroupId(), a.getArtifactId(), a.getVersion(),
+                        a.getExtension(), a.getClassifier());
+                dep.setScope(d.getScope());
+                dependencies.add(dep);
+            }
+
+            Map<String, String> properties = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> e : result.getProperties().entrySet()) {
+                if (e.getKey().startsWith(ModelPropertiesDelegate.PREFIX) && e.getValue() != null) {
+                    String value = e.getValue().toString();
+                    // a value that could not be interpolated is of no use
+                    if (!value.contains("${")) {
+                        properties.put(e.getKey().substring(ModelPropertiesDelegate.PREFIX.length()), value);
+                    }
+                }
+            }
+
+            Artifact artifact = result.getArtifact();
+            MavenGav descriptorGav = MavenGav.fromCoordinates(artifact.getGroupId(), artifact.getArtifactId(),
+                    artifact.getVersion(), artifact.getExtension(), artifact.getClassifier());
+            return new MavenArtifactDescriptor(descriptorGav, dependencies, properties);
+        } catch (ArtifactDescriptorException e) {
+            MavenResolutionException mre = new MavenResolutionException(e.getMessage(), e);
+            repositories.forEach(r -> mre.getRepositories().add(r.getUrl()));
+            throw mre;
+        }
+    }
+
+    /**
+     * Adds the effective model properties to the descriptor result properties, under a prefix so they do not clash with
+     * the properties set by the default delegate (such as {@code license.count}).
+     */
+    private static final class ModelPropertiesDelegate extends ArtifactDescriptorReaderDelegate {
+
+        static final String PREFIX = "camel.model.property.";
+
+        @Override
+        public void populateResult(RepositorySystemSession session, ArtifactDescriptorResult result, Model model) {
+            super.populateResult(session, result, model);
+            Map<String, Object> properties = new LinkedHashMap<>(result.getProperties());
+            model.getProperties().forEach((k, v) -> properties.put(PREFIX + k, v));
+            result.setProperties(properties);
         }
     }
 

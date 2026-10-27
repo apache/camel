@@ -701,4 +701,146 @@ class MavenDownloaderImplTest {
             }
         }
     }
+
+    @Test
+    void testResolveArtifactDescriptor() throws Exception {
+        File repo = createDescriptorFixtureRepository();
+        File localRepo = new File(tempDir, "descriptor-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI().toString());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            MavenArtifactDescriptor descriptor
+                    = customDownloader.resolveArtifactDescriptor("org.example.fixture:fixture-plugin:1.0.0", null);
+
+            assertEquals("org.example.fixture:fixture-plugin:1.0.0", descriptor.gav().toString());
+
+            // the version comes from the BOM imported by the parent
+            MavenGav core = descriptor.findDependency("org.apache.camel", "camel-jbang-core");
+            assertNotNull(core);
+            assertEquals("4.22.2", core.getVersion());
+            assertEquals("provided", core.getScope());
+            MavenGav other = descriptor.findDependency("org.example.fixture", "fixture-lib");
+            assertNotNull(other);
+            assertEquals("compile", other.getScope());
+
+            // effective model properties: literal, interpolated, and inherited from the parent
+            assertEquals("[4.22.0,4.23.0)", descriptor.properties().get("camel.jbang.plugin.camel-versions"));
+            assertEquals("4.22.2", descriptor.properties().get("fixture.derived"));
+            assertEquals("4.22.2", descriptor.properties().get("camel.version"));
+            // a value that cannot be interpolated is left out
+            assertFalse(descriptor.properties().containsKey("fixture.unresolved"));
+        }
+    }
+
+    @Test
+    void testResolveArtifactDescriptorWithExtraRepository() throws Exception {
+        File repo = createDescriptorFixtureRepository();
+        File localRepo = new File(tempDir, "descriptor-extra-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            // not found without the extra repository
+            try {
+                customDownloader.resolveArtifactDescriptor("org.example.fixture:fixture-plugin:1.0.0", null);
+                fail("Should not resolve the descriptor without the fixture repository");
+            } catch (MavenResolutionException e) {
+                // expected
+            }
+
+            MavenArtifactDescriptor descriptor = customDownloader.resolveArtifactDescriptor(
+                    "org.example.fixture:fixture-plugin:1.0.0", Set.of(repo.toURI().toString()));
+            assertEquals("4.22.2", descriptor.findDependency("org.apache.camel", "camel-jbang-core").getVersion());
+        }
+    }
+
+    /**
+     * A file:// repository with a plugin whose parent imports a BOM that manages camel-jbang-core.
+     */
+    private File createDescriptorFixtureRepository() throws Exception {
+        File repo = new File(tempDir, "descriptor-repo");
+        writePom(repo, "fixture-bom", """
+                <packaging>pom</packaging>
+                <dependencyManagement>
+                  <dependencies>
+                    <dependency>
+                      <groupId>org.apache.camel</groupId>
+                      <artifactId>camel-jbang-core</artifactId>
+                      <version>4.22.2</version>
+                    </dependency>
+                    <dependency>
+                      <groupId>org.example.fixture</groupId>
+                      <artifactId>fixture-lib</artifactId>
+                      <version>1.0.0</version>
+                    </dependency>
+                  </dependencies>
+                </dependencyManagement>
+                """);
+        writePom(repo, "fixture-parent", """
+                <packaging>pom</packaging>
+                <properties>
+                  <camel.version>4.22.2</camel.version>
+                </properties>
+                <dependencyManagement>
+                  <dependencies>
+                    <dependency>
+                      <groupId>org.example.fixture</groupId>
+                      <artifactId>fixture-bom</artifactId>
+                      <version>1.0.0</version>
+                      <type>pom</type>
+                      <scope>import</scope>
+                    </dependency>
+                  </dependencies>
+                </dependencyManagement>
+                """);
+        writePom(repo, "fixture-plugin", """
+                <parent>
+                  <groupId>org.example.fixture</groupId>
+                  <artifactId>fixture-parent</artifactId>
+                  <version>1.0.0</version>
+                </parent>
+                <properties>
+                  <camel.jbang.plugin.camel-versions>[4.22.0,4.23.0)</camel.jbang.plugin.camel-versions>
+                  <fixture.derived>${camel.version}</fixture.derived>
+                  <fixture.unresolved>${does.not.exist}</fixture.unresolved>
+                </properties>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-jbang-core</artifactId>
+                    <scope>provided</scope>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.example.fixture</groupId>
+                    <artifactId>fixture-lib</artifactId>
+                  </dependency>
+                </dependencies>
+                """);
+        return repo;
+    }
+
+    private static void writePom(File repo, String artifactId, String body) throws Exception {
+        File dir = new File(repo, "org/example/fixture/" + artifactId + "/1.0.0");
+        assertTrue(dir.mkdirs() || dir.isDirectory());
+        String pom = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <project xmlns="http://maven.apache.org/POM/4.0.0">
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>org.example.fixture</groupId>
+                  <artifactId>%s</artifactId>
+                  <version>1.0.0</version>
+                %s</project>
+                """.formatted(artifactId, body);
+        Files.writeString(new File(dir, artifactId + "-1.0.0.pom").toPath(), pom);
+    }
 }

@@ -81,6 +81,19 @@ public interface MavenDownloader extends Service {
             throws MavenResolutionException;
 
     /**
+     * Reads the resolved (effective) POM of a single artifact, without downloading the artifact itself or its
+     * dependencies. Uses the same repositories, mirrors, settings and offline mode as
+     * {@link #resolveArtifacts(List, Set, boolean, boolean)}.
+     *
+     * @param gav               the Maven coordinates ({@code groupId:artifactId:version})
+     * @param extraRepositories nullable set of additional repositories to use (except the discovered ones)
+     */
+    default MavenArtifactDescriptor resolveArtifactDescriptor(String gav, Set<String> extraRepositories)
+            throws MavenResolutionException {
+        throw new UnsupportedOperationException("resolveArtifactDescriptor is not supported by " + getClass().getName());
+    }
+
+    /**
      * Existing, configured {@link MavenDownloader} can be used as a template to create customized version which shares
      * most of the configuration except underlying {@code org.eclipse.aether.RepositorySystemSession}, which can't be
      * shared.

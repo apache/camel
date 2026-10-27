@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenArtifactDescriptor;
 import org.apache.camel.tooling.maven.RepositoryResolver;
 
 /**
@@ -199,6 +200,20 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      *                        spring-boot or quarkus)
      */
     List<String[]> resolveAvailableVersions(String groupId, String artifactId, String minimumVersion, String repo);
+
+    /**
+     * Reads the resolved (effective) POM of the given maven artifact, without downloading the artifact itself.
+     *
+     * @param  groupId    maven group id
+     * @param  artifactId maven artifact id
+     * @param  version    maven version
+     * @param  repos      optional comma separated list of additional maven repositories to use
+     * @return            the artifact descriptor with its dependencies and properties
+     */
+    default MavenArtifactDescriptor resolveArtifactDescriptor(
+            String groupId, String artifactId, String version, String repos) {
+        throw new UnsupportedOperationException("resolveArtifactDescriptor is not supported by " + getClass().getName());
+    }
 
     /**
      * Checks whether the dependency is already on the classpath
