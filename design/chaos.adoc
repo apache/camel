@@ -133,7 +133,9 @@ is quoted. Which hooks a fault can use is in the table of the next section.
 
 |`error`
 |`exception=<class>`, `message=<text>`; for the HTTP components `status=<code>` and `header.<name>=<value>`
-|Throws that exception. With `status` it is the exception the HTTP component throws for that status. A rule whose
+|Throws that exception. With `status` it is the exception the HTTP component throws for that status. All parameters
+are optional: without `exception` (and without `status`) the fault throws a `ChaosException`, a
+`RuntimeCamelException` of camel-chaos, with the `message` or a default one, on any endpoint. A rule whose
 exception class is not found, is not a `Throwable`, or has neither a constructor taking a `String` message nor a
 no-argument one is rejected when it is added, with an error that names the class.
 
@@ -227,7 +229,8 @@ real failure for `onException`, redelivery and the dead letter channel.
 A fault has a real type where it matters, so that the `onException` of the route is what gets tested: for the HTTP
 components, the exception the component throws for a status code (`HttpOperationFailedException` of
 camel-http-base, `NettyHttpOperationFailedException` for camel-netty-http) with the status code and headers given in
-the rule; for any other endpoint, an exception class and message given in the rule.
+the rule; for any other endpoint, the exception class and message given in the rule, or a `ChaosException` when the
+rule gives none.
 
 === Time
 
