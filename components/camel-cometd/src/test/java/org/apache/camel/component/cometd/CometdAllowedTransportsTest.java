@@ -44,7 +44,7 @@ public class CometdAllowedTransportsTest extends CamelTestSupport {
     void testDefaultTransportsRejectsJsonp() throws Exception {
         HttpResponse<String> response = sendJsonpHandshake(defaultTransportsPort.getPort());
         // Default allowedTransports is "websocket,long-polling", so JSONP (callback-polling) is rejected
-        assertTrue(response.statusCode() == 400 || response.body().contains("\"successful\":false"));
+        assertEquals(400, response.statusCode());
         assertFalse(response.body().contains("\"successful\":true"));
     }
 
@@ -96,7 +96,7 @@ public class CometdAllowedTransportsTest extends CamelTestSupport {
                 from("cometd://127.0.0.1:" + defaultTransportsPort.getPort() + "/service/test")
                         .to("mock:default");
                 from("cometd://127.0.0.1:" + customTransportsPort.getPort()
-                     + "/service/custom?allowedTransports=websocket,long-polling,callback-polling")
+                     + "/service/custom?allowedTransports=websocket, long-polling, callback-polling")
                         .to("mock:custom");
             }
         };
