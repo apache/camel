@@ -152,15 +152,10 @@ public class MinioProducer extends DefaultProducer {
                 if (object instanceof File file) {
                     filePayload = file;
                     inputStream = new FileInputStream(filePayload);
-                    if (contentLength <= 0) {
-                        contentLength = filePayload.length();
-                    }
+                    contentLength = bodyLength(filePayload, inputStream, contentLength);
                 } else {
-                    if (contentLength <= 0) {
-                        // such as a java.nio.file.Path, byte[] or stream cache
-                        contentLength = PayloadHelper.getLength(object);
-                    }
                     inputStream = exchange.getMessage().getMandatoryBody(InputStream.class);
+                    contentLength = bodyLength(object, inputStream, contentLength);
                     if (contentLength <= 0) {
                         contentLength = PayloadHelper.getLength(inputStream);
                         if (contentLength == -1) {
@@ -184,6 +179,20 @@ public class MinioProducer extends DefaultProducer {
                 FileUtil.deleteFile(filePayload);
             }
         }
+    }
+
+    /**
+     * The length of the body when it is known without reading it (such as a file, java.nio.file.Path, byte[], String or
+     * stream cache), otherwise the given content length (the content-length header, or the length of a WrappedFile).
+     * The header is not used for a body of known length, as it can be stale once the route changed the body (for
+     * example the length of an object read by the consumer), and the client sends exactly that many bytes.
+     */
+    private static long bodyLength(Object body, InputStream inputStream, long contentLength) {
+        long length = PayloadHelper.getLength(body);
+        if (length < 0) {
+            length = PayloadHelper.getLength(inputStream);
+        }
+        return length >= 0 ? length : contentLength;
     }
 
     private void doPutObject(

@@ -17,6 +17,7 @@
 package org.apache.camel.component.minio;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
@@ -34,9 +35,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
 /**
- * A minimal in-process fake of the S3 API calls the minio consumer makes for a single bucket: head bucket, list objects
- * (v2, paginated with max-keys and start-after/continuation-token), stat, get (also of a byte range) and delete object.
- * The gets (or the stats and gets) of an object can be refused with 403 (AccessDenied).
+ * A minimal in-process fake of the S3 API calls the minio consumer and producer make for a single bucket: head bucket,
+ * list objects (v2, paginated with max-keys and start-after/continuation-token), stat, get (also of a byte range), put
+ * and delete object. The gets (or the stats and gets) of an object can be refused with 403 (AccessDenied).
  */
 final class FakeS3Server {
 
@@ -104,6 +105,13 @@ final class FakeS3Server {
         return objects.containsKey(key);
     }
 
+    /**
+     * The content of the object as it was stored, or null.
+     */
+    byte[] content(String key) {
+        return objects.get(key);
+    }
+
     int gets(String key) {
         AtomicInteger n = gets.get(key);
         return n != null ? n.get() : 0;
@@ -161,6 +169,16 @@ final class FakeS3Server {
                         os.write(data);
                     }
                 }
+            }
+            case "PUT" -> {
+                // a single part upload: the body is the content of the object (the client sends the length it was
+                // given as Content-Length)
+                try (InputStream is = http.getRequestBody()) {
+                    objects.put(key, is.readAllBytes());
+                }
+                http.getResponseHeaders().add("ETag", "\"0123456789abcdef0123456789abcdef\"");
+                http.sendResponseHeaders(200, -1);
+                http.close();
             }
             case "DELETE" -> {
                 objects.remove(key);
