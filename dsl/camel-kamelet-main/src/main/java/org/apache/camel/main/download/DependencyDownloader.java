@@ -202,6 +202,23 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
     List<String[]> resolveAvailableVersions(String groupId, String artifactId, String minimumVersion, String repo);
 
     /**
+     * Resolves the available versions of the given maven artifact from all the repositories this downloader is
+     * configured with: Maven Central (unless disabled), the repositories of the active profiles in the Maven settings
+     * (with mirrors applied), and the configured repositories (see {@link #setRepositories(String)}). A repository that
+     * cannot be reached is skipped.
+     *
+     * @param  groupId           maven group id
+     * @param  artifactId        maven artifact id
+     * @param  fresh             whether to check the remote repositories again, instead of using the metadata
+     *                           downloaded before
+     * @return                   the versions, in no particular order
+     * @throws DownloadException when none of the repositories can be reached
+     */
+    default List<String> resolveAvailableVersions(String groupId, String artifactId, boolean fresh) {
+        throw new UnsupportedOperationException("resolveAvailableVersions is not supported by " + getClass().getName());
+    }
+
+    /**
      * Reads the resolved (effective) POM of the given maven artifact, without downloading the artifact itself.
      *
      * @param  groupId    maven group id

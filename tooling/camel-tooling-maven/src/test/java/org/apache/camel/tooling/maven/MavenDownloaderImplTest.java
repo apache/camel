@@ -764,6 +764,136 @@ class MavenDownloaderImplTest {
         }
     }
 
+    @Test
+    void testResolveAvailableVersionsFresh() throws Exception {
+        File repo = new File(tempDir, "versions-repo");
+        writeMetadata(repo, "1.0.0");
+        File localRepo = new File(tempDir, "versions-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI().toString());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            assertEquals(List.of("1.0.0"), versions(customDownloader, false));
+
+            // a new release is published
+            writeMetadata(repo, "1.0.0", "1.1.0");
+
+            // the metadata downloaded before is used
+            assertEquals(List.of("1.0.0"), versions(customDownloader, false));
+            // unless fresh
+            assertEquals(List.of("1.0.0", "1.1.0"), versions(customDownloader, true));
+        }
+    }
+
+    @Test
+    void testResolveAvailableVersionsFromSettingsProfileRepository() throws Exception {
+        File repo = new File(tempDir, "profile-repo");
+        writeMetadata(repo, "2.0.0", "2.1.0");
+        File settings = new File(tempDir, "profile-settings.xml");
+        Files.writeString(settings.toPath(), """
+                <settings>
+                  <profiles>
+                    <profile>
+                      <id>plugins</id>
+                      <repositories>
+                        <repository>
+                          <id>plugins-repo</id>
+                          <url>%s</url>
+                        </repository>
+                      </repositories>
+                    </profile>
+                  </profiles>
+                  <activeProfiles>
+                    <activeProfile>plugins</activeProfile>
+                  </activeProfiles>
+                </settings>
+                """.formatted(repo.toURI()));
+        File localRepo = new File(tempDir, "profile-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation(settings.getAbsolutePath());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            assertEquals(List.of("2.0.0", "2.1.0"), versions(customDownloader, true));
+        }
+    }
+
+    @Test
+    void testResolveAvailableVersionsSkipsUnreachableRepository() throws Exception {
+        File repo = new File(tempDir, "reachable-repo");
+        writeMetadata(repo, "1.0.0");
+        File localRepo = new File(tempDir, "unreachable-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI() + ",http://localhost:1/maven2");
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 2000, 2000);
+
+            assertEquals(List.of("1.0.0"), versions(customDownloader, true));
+        }
+    }
+
+    @Test
+    void testResolveAvailableVersionsFailsWhenNoRepositoryCanBeReached() throws Exception {
+        File repo = new File(tempDir, "offline-repo");
+        writeMetadata(repo, "1.0.0");
+        File localRepo = new File(tempDir, "offline-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI().toString());
+            // offline: no repository can be reached
+            downloader.setOffline(true);
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 2000, 2000);
+
+            try {
+                versions(customDownloader, true);
+                fail("Should fail when no repository can be reached");
+            } catch (MavenResolutionException e) {
+                assertTrue(e.getRepositories().contains(repo.toURI().toString()), e.getRepositories().toString());
+            }
+        }
+    }
+
+    private static List<String> versions(MavenDownloader downloader, boolean fresh) throws Exception {
+        return downloader.resolveAvailableVersions("org.example.fixture", "fixture-plugin", null, fresh).stream()
+                .map(MavenGav::getVersion).sorted().toList();
+    }
+
+    private static void writeMetadata(File repo, String... versions) throws Exception {
+        File dir = new File(repo, "org/example/fixture/fixture-plugin");
+        assertTrue(dir.mkdirs() || dir.isDirectory());
+        StringBuilder sb = new StringBuilder();
+        for (String v : versions) {
+            sb.append("      <version>").append(v).append("</version>\n");
+        }
+        Files.writeString(new File(dir, "maven-metadata.xml").toPath(), """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <metadata>
+                  <groupId>org.example.fixture</groupId>
+                  <artifactId>fixture-plugin</artifactId>
+                  <versioning>
+                    <versions>
+                %s    </versions>
+                  </versioning>
+                </metadata>
+                """.formatted(sb));
+    }
+
     /**
      * A file:// repository with a plugin whose parent imports a BOM that manages camel-jbang-core.
      */
