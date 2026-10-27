@@ -28,7 +28,8 @@ import org.apache.logging.log4j.core.config.Property;
 
 /**
  * Captures the log events of one logger, down to DEBUG, while it is open. Only one capture is open at a time: opening
- * another one resets the level of the loggers.
+ * another one resets the level of the loggers. The level is set for the whole JVM, so a test class that uses it is
+ * {@code @Isolated} and does not run in parallel with other test classes.
  */
 final class LogCapture extends AbstractAppender implements AutoCloseable {
 
