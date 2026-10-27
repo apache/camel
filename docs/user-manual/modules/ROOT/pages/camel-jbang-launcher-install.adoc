@@ -15,9 +15,16 @@ curl -fsSL https://camel.apache.org/install.sh | sh
 irm https://camel.apache.org/install.ps1 | iex
 ----
 
-With no arguments, both installers resolve and install the latest published release. An exact
-version can be requested instead with `--version X.Y.Z` (`install.sh`) or `-Version X.Y.Z`
-(`install.ps1`).
+With no arguments, both installers resolve and install the latest published release. The latest
+release can be newer than the current LTS release, so if you need an LTS version (for example because
+a plugin you use does not support the latest release yet), ask for it explicitly with `--version`
+(`install.sh`) or `-Version` (`install.ps1`), which accept:
+
+* an exact version, `X.Y.Z` (for example `4.22.2`)
+* a release line, `X.Y` (for example `4.22`): the newest patch release of that line
+* `LTS` (case-insensitive): the newest LTS release
+
+See <<_installing_a_specific_version,Installing a specific version>> and <<_pinning_and_camel_self_update,Pinning and `camel self-update`>>.
 
 Both installers download the release archive from Maven Central, verify it against a SHA-256
 recorded in a signed-path manifest before extracting it, and reject archives containing absolute
@@ -27,11 +34,12 @@ the previously active installation, if any, is left untouched and the installer 
 
 == Installing a specific version
 
-On Linux and macOS, pass the argument through to the piped shell with `-s --`:
+On Linux and macOS, pass the argument through to the piped shell with `-s --`. For example, to
+install the 4.22.2 LTS release exactly:
 
 [source,bash]
 ----
-curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version 4.22.0
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version 4.22.2
 ----
 
 On Windows, download the script first, then run it with the parameter:
@@ -39,8 +47,71 @@ On Windows, download the script first, then run it with the parameter:
 [source,powershell]
 ----
 irm https://camel.apache.org/install.ps1 -OutFile install.ps1
-.\install.ps1 -Version 4.22.0
+.\install.ps1 -Version 4.22.2
 ----
+
+Check which version is installed with `camel version`:
+
+[source,bash]
+----
+$ camel version
+Camel CLI version: 4.22.2
+----
+
+Instead of an exact version, you can ask for the newest LTS release, or for the newest patch release
+of a release line:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version LTS
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version 4.22
+----
+
+[source,powershell]
+----
+.\install.ps1 -Version LTS
+.\install.ps1 -Version 4.22
+----
+
+The installer resolves `LTS` or `4.22` once, through the `lts.properties` or `4.22.properties` file
+published next to the release manifests on the Camel website, and then installs and verifies that
+exact release in the same way as an exact `--version`. For a release line, it refuses a published
+version outside that line. If the website does not publish the requested alias, or the download or
+verification fails, the installer exits nonzero and leaves the current installation untouched.
+
+== Pinning and `camel self-update`
+
+Running the installer with `--version`/`-Version` pins the installation: it records the value you
+asked for (`4.22.2`, `4.22` or `LTS`, not the version it resolved to) in a `pinned-version` file next
+to the `versions` directory. Running the installer without `--version`/`-Version` installs the latest
+release and removes the pin. `camel self-update` treats the pin as follows:
+
+[cols="1,3",options="header"]
+|===
+| Installed with | `camel self-update`
+
+| no `--version`
+| Moves to the latest release.
+
+| `--version 4.22.2` (exact)
+| Refuses to move. Re-run the installer to change the version, or remove the `pinned-version` file to
+  track the latest release again.
+
+| `--version 4.22` (release line)
+| Moves to the newest patch release of 4.22, never to 4.23 or later.
+
+| `--version LTS`
+| Moves to the newest LTS release, which can be a newer release line.
+|===
+
+On an installation pinned to a release line or to `LTS`, `camel self-update --version X.Y.Z` is refused
+too, because it would leave the pinned selector. `camel self-update --check` and the update notice
+described below compare against the newest release of the pinned line or the newest LTS release.
+
+NOTE: Camel CLI 4.22.x and older do not understand a release line or `LTS` pin. If such a CLI finds
+one (for example after a `--version LTS` install that resolved to 4.22.2), `camel self-update` refuses
+with a "pinned to version LTS" message. Re-run the installer with `--version LTS` (or `--version 4.22`)
+to update instead.
 
 == Requirements
 
@@ -91,13 +162,16 @@ script itself is downloaded fresh and verified against a SHA-256 published along
 `camel self-update` refuses to run in two cases. If the currently running installation was not made
 by `install.sh`/`install.ps1` (it was installed through Homebrew, Chocolatey, WinGet, Scoop,
 SDKMAN, or JBang instead), the message names that manager and its own upgrade command, e.g.
-`brew upgrade apache-camel`. If the installation was pinned to an explicit version by a user running
-`install.sh --version 4.22.0`/`install.ps1 -Version 4.22.0` directly (running
-`camel self-update --version ...` does not create a pin), the message names the pin file to remove
-to resume tracking new releases.
+`brew upgrade apache-camel`. If the installation was pinned to an exact version by a user running
+`install.sh --version 4.22.2`/`install.ps1 -Version 4.22.2` directly (running
+`camel self-update --version ...` does not create or change a pin), the message names the pin file to
+remove to resume tracking new releases. An installation pinned to a release line or to `LTS` moves
+within that selector, see <<_pinning_and_camel_self_update,Pinning and `camel self-update`>>.
 
 Every `camel` invocation (except `camel self-update` itself) checks, at most once every 24 hours,
-whether a newer release has been published, and prints a one-line notice if so:
+whether a newer release has been published (for a release line or `LTS` pin, a newer release of that
+line or a newer LTS release), and prints a one-line notice if so. An installation pinned to an exact
+version gets no notice.
 
 [source]
 ----
@@ -106,6 +180,18 @@ camel: a new version is available (4.22.0 -> 4.23.0). Run 'camel self-update' to
 
 The check runs on a background thread and never blocks or fails the command actually being run. Set
 `CAMEL_SELF_UPDATE_CHECK=false` to disable it entirely.
+
+== Installed CLI version and the Camel version used to run
+
+The version you install is the version of the Camel CLI itself, as shown by `camel version`. The
+launcher installed by these scripts runs integrations with that same Camel version: it does not
+support `camel run --camel-version`, so to run with another Camel version, install another CLI
+version (for example `--version LTS`).
+
+A Camel CLI installed with JBang can run integrations with a different Camel version than the
+installed CLI, with `camel run --camel-version=X.Y.Z` or a persistent `camel version set X.Y.Z` (see
+xref:camel-jbang-projects.adoc[Camel CLI - Projects]). This does not change the installed CLI
+version, and `camel self-update` and the installers described here do not affect it.
 
 == Detecting conflicting installations
 
