@@ -18,6 +18,8 @@ package org.apache.camel.component.lucene;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +31,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
@@ -41,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -130,6 +137,28 @@ class LuceneIndexProducerLifecycleTest extends CamelTestSupport {
         Exchange next = template.send("direct:index", e -> e.getIn().setBody("next"));
         assertNull(next.getException(), "a failed commit must not leave the index write lock held");
         assertEquals(1, countIndexedMessages());
+    }
+
+    @Test
+    void failedSourceDirectoryInsertDoesNotHoldTheLock(@TempDir File oldIndexDir, @TempDir File srcDir) throws Exception {
+        Files.writeString(new File(srcDir, "quote.txt").toPath(), "A day without sunshine is like night",
+                StandardCharsets.UTF_8);
+        // an index written by an older Camel: contents is stored but not indexed
+        try (FSDirectory dir = FSDirectory.open(oldIndexDir.toPath());
+             IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {
+            Document doc = new Document();
+            doc.add(new StoredField("contents", "old"));
+            writer.addDocument(doc);
+        }
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new LuceneIndexer(srcDir, oldIndexDir, new StandardAnalyzer()));
+        assertTrue(e.getMessage().contains("from index options=NONE"), e.getMessage());
+
+        try (FSDirectory dir = FSDirectory.open(oldIndexDir.toPath());
+             IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {
+            assertTrue(writer.isOpen(), "a failed source directory insert must not leave the index write lock held");
+        }
     }
 
     @Test

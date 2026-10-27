@@ -160,8 +160,18 @@ public class LuceneIndexer {
                 add(doc, "path", file.getPath(), false);
                 add(doc, "contents", contents, true);
                 openIndexWriter();
-                indexWriter.addDocument(doc);
-                closeIndexWriter();
+                try {
+                    indexWriter.addDocument(doc);
+                    closeIndexWriter();
+                } catch (Exception e) {
+                    // discard the document of this file and release the index write lock
+                    try {
+                        indexWriter.rollback();
+                    } catch (Exception re) {
+                        e.addSuppressed(re);
+                    }
+                    throw e;
+                }
 
                 LOG.trace("Added {} successfully", file);
             }
