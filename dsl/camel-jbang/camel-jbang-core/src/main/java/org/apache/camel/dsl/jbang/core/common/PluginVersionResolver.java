@@ -36,13 +36,17 @@ import org.slf4j.LoggerFactory;
 /**
  * Selects the newest release of a plugin that supports the version of the Camel CLI, from the resolved POMs of its
  * releases (see {@link PluginCompatibility}).
+ * <p>
+ * The releases are grouped by release line of the plugin (its major and minor version, such as {@code 1.6} for
+ * {@code 1.6.0}, {@code 1.6.1} and {@code 1.6.2}), and only the POM of the newest release of each line is read, newest
+ * line first, so a release for an older Camel version is found with few reads.
  */
 public final class PluginVersionResolver {
 
     /**
-     * The most releases whose POM is read, newest first.
+     * The most release lines of the plugin whose newest POM is read, newest line first.
      */
-    static final int MAX_DESCRIPTORS = 10;
+    static final int MAX_RELEASE_LINES = 10;
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginVersionResolver.class);
 
@@ -50,7 +54,7 @@ public final class PluginVersionResolver {
     // a release without qualifier, such as 1.6.2 (no SNAPSHOT, RC, or other qualifier)
     private static final Pattern RELEASE = Pattern.compile("^\\d+(\\.\\d+)*$");
 
-    public sealed interface Result permits Selected, NoMatch, Unavailable {
+    public sealed interface Result permits Selected, Older, NoMatch, Unavailable {
     }
 
     /**
@@ -60,14 +64,47 @@ public final class PluginVersionResolver {
     }
 
     /**
-     * No release among the ones read supports the Camel CLI.
+     * No release read supports the Camel CLI, which is between the Camel versions of the releases read: the newest
+     * release for the nearest older Camel version.
      *
+     * @param version       the release
+     * @param compat        what is known about the release
+     * @param newestPerLine the newest release per Camel line (such as {@code 4.22 -> 1.6.2}), newest release first,
+     *                      from the releases read
+     */
+    public record Older(String version, Compat compat, Map<String, String> newestPerLine) implements Result {
+    }
+
+    /**
+     * Why no release can be selected.
+     */
+    public enum Reason {
+        /**
+         * The Camel CLI is newer than the Camel versions of all the releases read.
+         */
+        CLI_NEWER,
+        /**
+         * The Camel CLI is older than the Camel versions of all the releases read.
+         */
+        CLI_OLDER,
+        /**
+         * No release read tells which Camel versions it supports.
+         */
+        UNKNOWN
+    }
+
+    /**
+     * No release can be selected.
+     *
+     * @param reason        why
      * @param newest        what is known about the newest release
      * @param newestVersion the newest release
-     * @param newestPerLine the newest release per Camel line (such as {@code 4.22 -> 1.6.2}), newest line first, from
-     *                      the releases read
+     * @param newestPerLine the newest release per Camel line (such as {@code 4.22 -> 1.6.2}), newest release first,
+     *                      from the releases read
      */
-    public record NoMatch(Compat newest, String newestVersion, Map<String, String> newestPerLine) implements Result {
+    public record NoMatch(Reason reason, Compat newest, String newestVersion, Map<String, String> newestPerLine)
+            implements
+                Result {
     }
 
     /**
@@ -76,10 +113,13 @@ public final class PluginVersionResolver {
     public record Unavailable(String reason) implements Result {
     }
 
+    private record Read(String version, Compat compat) {
+    }
+
     private final DependencyDownloader downloader;
 
     /**
-     * @param downloader a started downloader, configured with the repositories to read the POMs from
+     * @param downloader a started downloader, configured with the repositories to read the releases and POMs from
      */
     public PluginVersionResolver(DependencyDownloader downloader) {
         this.downloader = downloader;
@@ -91,45 +131,36 @@ public final class PluginVersionResolver {
      * @param groupId    the groupId of the plugin
      * @param artifactId the artifactId of the plugin
      * @param cliVersion the version of the Camel CLI
-     * @param repos      optional comma separated list of additional repositories to list the releases from (Maven
-     *                   Central is always used)
      */
-    public Result resolve(String groupId, String artifactId, String cliVersion, String repos) {
-        List<String> versions = new ArrayList<>();
-        String failure = null;
-        boolean anyListed = false;
-        for (String repo : repositories(repos)) {
-            try {
-                for (String[] v : downloader.resolveAvailableVersions(groupId, artifactId, null, repo)) {
-                    if (v[0] != null && !versions.contains(v[0])) {
-                        versions.add(v[0]);
-                    }
-                }
-                anyListed = true;
-            } catch (Exception e) {
-                // skip a repository that cannot be reached, or that does not have the plugin
-                LOG.debug("Cannot list versions of {}:{} in {}: {}", groupId, artifactId, repo, e.getMessage(), e);
-                failure = e.getMessage();
-            }
-        }
-        if (!anyListed) {
-            return new Unavailable(failure != null ? failure : "cannot list the releases of " + groupId + ":" + artifactId);
+    public Result resolve(String groupId, String artifactId, String cliVersion) {
+        List<String> versions;
+        try {
+            // the releases change, so check the repositories again (the POM of a release does not change)
+            versions = downloader.resolveAvailableVersions(groupId, artifactId, true);
+        } catch (Exception e) {
+            LOG.debug("Cannot list versions of {}:{}: {}", groupId, artifactId, e.getMessage(), e);
+            return new Unavailable(
+                    e.getMessage() != null
+                            ? e.getMessage()
+                            : "cannot list the releases of " + groupId + ":" + artifactId);
         }
 
-        List<String> releases = newestFirst(versions);
-        if (releases.isEmpty()) {
+        // the newest release of each release line, newest line first
+        Map<String, String> lines = new LinkedHashMap<>();
+        for (String version : newestFirst(versions)) {
+            lines.putIfAbsent(releaseLine(version), version);
+        }
+        if (lines.isEmpty()) {
             return new Unavailable("no release of " + groupId + ":" + artifactId + " found");
         }
 
-        Compat newest = null;
-        String newestVersion = null;
+        String failure = null;
+        List<Read> reads = new ArrayList<>();
         Map<String, String> newestPerLine = new LinkedHashMap<>();
-        int read = 0;
-        for (String version : releases) {
-            if (read >= MAX_DESCRIPTORS) {
+        for (String version : lines.values()) {
+            if (reads.size() >= MAX_RELEASE_LINES) {
                 break;
             }
-            read++;
             Compat compat;
             try {
                 MavenArtifactDescriptor descriptor
@@ -138,12 +169,11 @@ public final class PluginVersionResolver {
             } catch (Exception e) {
                 LOG.debug("Cannot read the POM of {}:{}:{}: {}", groupId, artifactId, version, e.getMessage(), e);
                 failure = e.getMessage();
+                // counts as a read, so an unreachable repository does not read every release
+                reads.add(new Read(version, null));
                 continue;
             }
-            if (newest == null) {
-                newest = compat;
-                newestVersion = version;
-            }
+            reads.add(new Read(version, compat));
             if (compat.source() != Source.UNKNOWN && PluginCompatibility.accepts(compat.range(), cliVersion)) {
                 return new Selected(version, compat);
             }
@@ -152,39 +182,44 @@ public final class PluginVersionResolver {
                 newestPerLine.putIfAbsent(line, version);
             }
         }
-        if (newest == null) {
+
+        List<Read> read = reads.stream().filter(r -> r.compat() != null).toList();
+        if (read.isEmpty()) {
             return new Unavailable(failure != null ? failure : "cannot read the POMs of " + groupId + ":" + artifactId);
         }
-        return new NoMatch(newest, newestVersion, newestPerLine);
-    }
-
-    // Maven Central (null) first, then the additional repositories
-    private static List<String> repositories(String repos) {
-        List<String> answer = new ArrayList<>();
-        answer.add(null);
-        if (repos != null) {
-            for (String repo : repos.split("\\s*,\\s*")) {
-                if (repo.isBlank()) {
-                    continue;
-                }
-                // a repository can be given as id=url
-                int eq = repo.indexOf('=');
-                if (eq > 0 && !repo.startsWith("http")) {
-                    repo = repo.substring(eq + 1);
-                }
-                if (!answer.contains(repo)) {
-                    answer.add(repo);
-                }
+        Read newest = read.get(0);
+        List<Read> known = read.stream().filter(r -> r.compat().source() != Source.UNKNOWN).toList();
+        if (known.isEmpty()) {
+            return new NoMatch(Reason.UNKNOWN, newest.compat(), newest.version(), newestPerLine);
+        }
+        List<Read> older = known.stream().filter(r -> PluginCompatibility.isOlder(r.compat().range(), cliVersion)).toList();
+        if (older.isEmpty()) {
+            return new NoMatch(Reason.CLI_OLDER, newest.compat(), newest.version(), newestPerLine);
+        }
+        if (older.size() == known.size()) {
+            return new NoMatch(Reason.CLI_NEWER, newest.compat(), newest.version(), newestPerLine);
+        }
+        // between Camel versions: the newest release for the nearest older one
+        Read nearest = older.get(0);
+        for (Read r : older) {
+            if (PluginCompatibility.compareUpperBounds(r.compat().range(), nearest.compat().range()) > 0) {
+                nearest = r;
             }
         }
-        return answer;
+        return new Older(nearest.version(), nearest.compat(), newestPerLine);
+    }
+
+    // the release line of a version: its major and minor version, such as 1.6 for 1.6.2
+    static String releaseLine(String version) {
+        String[] parts = version.split("\\.");
+        return parts.length >= 2 ? parts[0] + "." + parts[1] : version;
     }
 
     // the releases without qualifier, newest first
     static List<String> newestFirst(List<String> versions) {
         TreeMap<Version, String> sorted = new TreeMap<>();
         for (String v : versions) {
-            if (RELEASE.matcher(v).matches()) {
+            if (v != null && RELEASE.matcher(v).matches()) {
                 try {
                     sorted.putIfAbsent(VERSION_SCHEME.parseVersion(v), v);
                 } catch (InvalidVersionSpecificationException e) {

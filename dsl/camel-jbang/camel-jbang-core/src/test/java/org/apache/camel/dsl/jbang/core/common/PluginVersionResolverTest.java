@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.common.PluginCompatibility.Source;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.NoMatch;
+import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Older;
+import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Reason;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Result;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Selected;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Unavailable;
@@ -32,7 +34,6 @@ class PluginVersionResolverTest {
 
     private static final String GROUP = "org.example.plugins";
     private static final String ARTIFACT = "camel-jbang-plugin-fixture";
-    private static final String CUSTOM_REPO = "https://repo.example.org/maven2";
 
     @Test
     void selectsNewestPatchOfTheLine() {
@@ -41,7 +42,7 @@ class PluginVersionResolverTest {
                 .release("2.0.0", "4.22.0", null)
                 .release("1.0.0", "4.18.5", null);
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.22.0", null);
+        Result result = resolve(downloader, "4.22.0");
 
         assertThat(result).isInstanceOfSatisfying(Selected.class, s -> {
             assertThat(s.version()).isEqualTo("2.0.1");
@@ -53,21 +54,68 @@ class PluginVersionResolverTest {
     }
 
     @Test
-    void fallsBackToAnOlderRelease() {
-        // the newest releases are for newer Camel versions
+    void listsTheReleasesFresh() {
+        FakePluginDownloader downloader = new FakePluginDownloader().release("1.0.0", "4.22.2", null);
+
+        resolve(downloader, "4.22.0");
+
+        // a new release must be found when plugin add runs again; only the listing is fresh
+        assertThat(downloader.listedFresh).isTrue();
+    }
+
+    @Test
+    void readsOnlyTheNewestReleaseOfEachLine() {
+        // the releases of Forage on Maven Central, and one more line for 4.23
         FakePluginDownloader downloader = new FakePluginDownloader()
-                .release("3.0.0", "4.23.0", "[4.23.0,4.24.0)")
-                .release("2.0.2", "4.22.2", null)
-                .release("2.0.1", "4.22.1", null)
-                .release("1.0.0", "4.18.5", null);
+                .release("1.7.0", "4.23.0", "[4.23.0,4.24.0)")
+                .release("1.6.2", "4.22.2", null)
+                .release("1.6.1", "4.22.1", null)
+                .release("1.6.0", "4.22.0", null)
+                .release("1.5.0", "4.20.0", null)
+                .release("1.4.2", "4.18.5", null)
+                .release("1.4.1", "4.18.4", null)
+                .release("1.4.0", "4.18.3", null)
+                .release("1.3", "4.16.0", null)
+                .release("1.2", "4.14.0", null)
+                .release("1.1", "4.12.0", null)
+                .release("1.0", "4.10.0", null);
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.22.2", null);
+        Result result = resolve(downloader, "4.18.2");
 
-        assertThat(result).isInstanceOfSatisfying(Selected.class, s -> assertThat(s.version()).isEqualTo("2.0.2"));
-        assertThat(downloader.descriptorsRead).containsExactly("3.0.0", "2.0.2");
+        assertThat(result).isInstanceOfSatisfying(Selected.class, s -> assertThat(s.version()).isEqualTo("1.4.2"));
+        assertThat(downloader.descriptorsRead).containsExactly("1.7.0", "1.6.2", "1.5.0", "1.4.2");
+    }
 
-        result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.18.3", null);
-        assertThat(result).isInstanceOfSatisfying(Selected.class, s -> assertThat(s.version()).isEqualTo("1.0.0"));
+    @Test
+    void findsADeepLineAmongManyReleases() {
+        // 30 releases: 3 patches of 10 lines, and the CLI's line is the oldest one
+        FakePluginDownloader downloader = new FakePluginDownloader();
+        for (int line = 10; line >= 1; line--) {
+            for (int patch = 2; patch >= 0; patch--) {
+                downloader.release("1." + line + "." + patch, "4." + (12 + line) + "." + patch, null);
+            }
+        }
+
+        Result result = resolve(downloader, "4.13.1");
+
+        assertThat(result).isInstanceOfSatisfying(Selected.class, s -> assertThat(s.version()).isEqualTo("1.1.2"));
+        assertThat(downloader.descriptorsRead).hasSize(10).startsWith("1.10.2").endsWith("1.1.2");
+    }
+
+    @Test
+    void readsAtMostTenLines() {
+        FakePluginDownloader downloader = new FakePluginDownloader();
+        for (int line = 12; line >= 1; line--) {
+            downloader.release("1." + line + ".0", "4." + (12 + line) + ".0", null);
+        }
+
+        // only the oldest line (1.1, for Camel 4.13) supports the CLI, and it is not read
+        Result result = resolve(downloader, "4.13.0");
+
+        assertThat(downloader.descriptorsRead).hasSize(PluginVersionResolver.MAX_RELEASE_LINES);
+        assertThat(downloader.descriptorsRead.get(0)).isEqualTo("1.12.0");
+        assertThat(result).isInstanceOfSatisfying(NoMatch.class,
+                n -> assertThat(n.reason()).isEqualTo(Reason.CLI_OLDER));
     }
 
     @Test
@@ -76,7 +124,7 @@ class PluginVersionResolverTest {
                 .release("3.0.0", "4.23.0", "[4.23.0,4.24.0)")
                 .release("2.0.2", "4.22.2", null);
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.23.0-SNAPSHOT", null);
+        Result result = resolve(downloader, "4.23.0-SNAPSHOT");
 
         assertThat(result).isInstanceOfSatisfying(Selected.class, s -> {
             assertThat(s.version()).isEqualTo("3.0.0");
@@ -86,15 +134,47 @@ class PluginVersionResolverTest {
     }
 
     @Test
-    void noMatchWhenNewestDeclaresARange() {
+    void selectsTheNearestOlderLineWhenBetweenLines() {
+        FakePluginDownloader downloader = new FakePluginDownloader()
+                .release("3.0.0", "4.23.0", "[4.23.0,4.24.0)")
+                .release("2.1.0", "4.20.1", null)
+                .release("2.0.0", "4.18.5", null);
+
+        // no release for 4.21 or 4.22
+        Result result = resolve(downloader, "4.21.0");
+
+        assertThat(result).isInstanceOfSatisfying(Older.class, o -> {
+            assertThat(o.version()).isEqualTo("2.1.0");
+            assertThat(o.compat().range()).isEqualTo("[4.20.0,4.21.0)");
+            assertThat(o.newestPerLine())
+                    .containsExactly(Map.entry("4.23", "3.0.0"), Map.entry("4.20", "2.1.0"), Map.entry("4.18", "2.0.0"));
+        });
+    }
+
+    @Test
+    void selectsTheNewestReleaseOfTheNearestOlderCamelVersion() {
+        // two release lines of the plugin for the same Camel version
+        FakePluginDownloader downloader = new FakePluginDownloader()
+                .release("3.0.0", "4.23.0", null)
+                .release("2.1.0", "4.18.5", null)
+                .release("2.0.0", "4.18.2", null);
+
+        Result result = resolve(downloader, "4.20.0");
+
+        assertThat(result).isInstanceOfSatisfying(Older.class, o -> assertThat(o.version()).isEqualTo("2.1.0"));
+    }
+
+    @Test
+    void noMatchWhenCliIsNewerThanAllReleases() {
         FakePluginDownloader downloader = new FakePluginDownloader()
                 .release("3.0.0", "4.23.0", "[4.23.0,4.24.0)")
                 .release("2.0.2", "4.22.2", null)
                 .release("2.0.1", "4.22.1", null);
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.24.0", null);
+        Result result = resolve(downloader, "4.24.0");
 
         assertThat(result).isInstanceOfSatisfying(NoMatch.class, n -> {
+            assertThat(n.reason()).isEqualTo(Reason.CLI_NEWER);
             assertThat(n.newestVersion()).isEqualTo("3.0.0");
             assertThat(n.newest().source()).isEqualTo(Source.DECLARED);
             assertThat(n.newestPerLine()).containsExactly(Map.entry("4.23", "3.0.0"), Map.entry("4.22", "2.0.2"));
@@ -102,16 +182,16 @@ class PluginVersionResolverTest {
     }
 
     @Test
-    void noMatchWhenInferred() {
+    void noMatchWhenCliIsOlderThanAllReleases() {
         FakePluginDownloader downloader = new FakePluginDownloader()
                 .release("2.0.2", "4.22.2", null)
                 .release("1.0.0", "4.18.5", null);
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.23.0", null);
+        Result result = resolve(downloader, "4.14.0");
 
         assertThat(result).isInstanceOfSatisfying(NoMatch.class, n -> {
+            assertThat(n.reason()).isEqualTo(Reason.CLI_OLDER);
             assertThat(n.newestVersion()).isEqualTo("2.0.2");
-            assertThat(n.newest().source()).isEqualTo(Source.INFERRED);
             assertThat(n.newest().builtFor()).isEqualTo("4.22.2");
         });
     }
@@ -122,9 +202,10 @@ class PluginVersionResolverTest {
                 .release("2.0.0", null, null)
                 .release("1.0.0", null, null);
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.23.0", null);
+        Result result = resolve(downloader, "4.23.0");
 
         assertThat(result).isInstanceOfSatisfying(NoMatch.class, n -> {
+            assertThat(n.reason()).isEqualTo(Reason.UNKNOWN);
             assertThat(n.newestVersion()).isEqualTo("2.0.0");
             assertThat(n.newest().source()).isEqualTo(Source.UNKNOWN);
             assertThat(n.newestPerLine()).isEmpty();
@@ -132,19 +213,15 @@ class PluginVersionResolverTest {
     }
 
     @Test
-    void readsAtMostTenPoms() {
-        FakePluginDownloader downloader = new FakePluginDownloader();
-        for (int i = 20; i > 0; i--) {
-            downloader.release("1." + i + ".0", "4.23.0", null);
-        }
-        // only the oldest release supports the CLI
-        downloader.release("1.0.0", "4.18.0", null);
+    void releasesWithUnknownCompatibilityAreSkipped() {
+        FakePluginDownloader downloader = new FakePluginDownloader()
+                .release("3.0.0", null, null)
+                .release("2.0.0", "4.23.0", null)
+                .release("1.0.0", "4.18.0", null);
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.18.0", null);
+        Result result = resolve(downloader, "4.20.0");
 
-        assertThat(result).isInstanceOf(NoMatch.class);
-        assertThat(downloader.descriptorsRead).hasSize(PluginVersionResolver.MAX_DESCRIPTORS);
-        assertThat(downloader.descriptorsRead.get(0)).isEqualTo("1.20.0");
+        assertThat(result).isInstanceOfSatisfying(Older.class, o -> assertThat(o.version()).isEqualTo("1.0.0"));
     }
 
     @Test
@@ -155,7 +232,7 @@ class PluginVersionResolverTest {
                 .release("2.0.0.Final", "4.22.2", null)
                 .release("1.0.0", "4.22.2", null);
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.22.2", null);
+        Result result = resolve(downloader, "4.22.2");
 
         assertThat(result).isInstanceOfSatisfying(Selected.class, s -> assertThat(s.version()).isEqualTo("1.0.0"));
         assertThat(downloader.descriptorsRead).containsExactly("1.0.0");
@@ -168,56 +245,41 @@ class PluginVersionResolverTest {
     }
 
     @Test
-    void mergesTheReleasesOfAllRepositories() {
-        FakePluginDownloader downloader = new FakePluginDownloader()
-                .release("2.0.0", "4.22.0", null)
-                .releaseIn(CUSTOM_REPO, "2.1.0", "4.22.1", null);
-
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.22.1", "custom=" + CUSTOM_REPO);
-
-        assertThat(result).isInstanceOfSatisfying(Selected.class, s -> assertThat(s.version()).isEqualTo("2.1.0"));
+    void releaseLine() {
+        assertThat(PluginVersionResolver.releaseLine("1.6.2")).isEqualTo("1.6");
+        assertThat(PluginVersionResolver.releaseLine("1.0")).isEqualTo("1.0");
+        assertThat(PluginVersionResolver.releaseLine("2")).isEqualTo("2");
     }
 
     @Test
-    void skipsARepositoryThatIsDown() {
-        FakePluginDownloader downloader = new FakePluginDownloader()
-                .releaseIn(CUSTOM_REPO, "2.1.0", "4.22.1", null);
-        downloader.down.add(null);
+    void unavailableWhenTheReleasesCannotBeListed() {
+        FakePluginDownloader downloader = new FakePluginDownloader().release("2.0.0", "4.22.0", null);
+        downloader.listingDown = true;
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.22.1", CUSTOM_REPO);
-
-        assertThat(result).isInstanceOfSatisfying(Selected.class, s -> assertThat(s.version()).isEqualTo("2.1.0"));
-    }
-
-    @Test
-    void unavailableWhenAllRepositoriesAreDown() {
-        FakePluginDownloader downloader = new FakePluginDownloader()
-                .release("2.0.0", "4.22.0", null);
-        downloader.down.add(null);
-        downloader.down.add(CUSTOM_REPO);
-
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.22.1", CUSTOM_REPO);
+        Result result = resolve(downloader, "4.22.1");
 
         assertThat(result).isInstanceOfSatisfying(Unavailable.class,
-                u -> assertThat(u.reason()).contains("cannot be reached"));
+                u -> assertThat(u.reason()).contains("Cannot resolve available versions"));
     }
 
     @Test
     void unavailableWhenNoRelease() {
-        // such as offline, when the metadata cannot be downloaded
-        Result result = new PluginVersionResolver(new FakePluginDownloader()).resolve(GROUP, ARTIFACT, "4.22.1", null);
+        Result result = resolve(new FakePluginDownloader(), "4.22.1");
 
         assertThat(result).isInstanceOf(Unavailable.class);
     }
 
     @Test
     void unavailableWhenNoPomCanBeRead() {
-        FakePluginDownloader downloader = new FakePluginDownloader()
-                .release("2.0.0", "4.22.0", null);
+        FakePluginDownloader downloader = new FakePluginDownloader().release("2.0.0", "4.22.0", null);
         downloader.descriptorsDown = true;
 
-        Result result = new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, "4.22.1", null);
+        Result result = resolve(downloader, "4.22.1");
 
         assertThat(result).isInstanceOf(Unavailable.class);
+    }
+
+    private static Result resolve(FakePluginDownloader downloader, String cliVersion) {
+        return new PluginVersionResolver(downloader).resolve(GROUP, ARTIFACT, cliVersion);
     }
 }
