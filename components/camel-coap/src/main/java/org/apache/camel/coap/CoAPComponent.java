@@ -304,9 +304,12 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
     @Override
     protected void doStop() throws Exception {
+        // destroy (not only stop) the servers: stop() keeps their executors, whose threads are not daemon threads
+        // and would keep the JVM running after the CamelContext is stopped; a later start creates them again
         for (CoapServer s : servers.values()) {
-            s.stop();
+            s.destroy();
         }
+        servers.clear();
         super.doStop();
     }
 }
