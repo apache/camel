@@ -39,10 +39,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Navigate;
@@ -68,10 +68,10 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.SendHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
@@ -896,12 +896,7 @@ public class MulticastProcessor extends BaseProcessorSupport
         final Exchange e = pair.getExchange();
         final Producer p = pair.getProducer();
         if (p != null) {
-            boolean sending = EventHelper.notifyExchangeSending(e.getContext(), e, p.getEndpoint());
-            if (sending) {
-                watch = new StopWatch();
-            } else {
-                watch = null;
-            }
+            watch = SendHelper.notifySending(e, p.getEndpoint());
         } else {
             watch = null;
         }
@@ -919,12 +914,9 @@ public class MulticastProcessor extends BaseProcessorSupport
 
         // okay we are done, so notify the exchange was sent
         final Producer producer = pair.getProducer();
-        if (producer != null && watch != null) {
-            long timeTaken = watch.taken();
-            final Exchange e = pair.getExchange();
-            Endpoint endpoint = producer.getEndpoint();
+        if (producer != null) {
             // emit event that the exchange was sent to the endpoint
-            EventHelper.notifyExchangeSent(e.getContext(), e, endpoint, timeTaken);
+            SendHelper.notifySent(pair.getExchange(), producer.getEndpoint(), watch);
         }
     }
 
@@ -1206,7 +1198,7 @@ public class MulticastProcessor extends BaseProcessorSupport
 
             LOG.trace("Creating error handler for: {}", key);
             try {
-                processor = wrapInErrorHandler(route, key);
+                processor = wrapInErrorHandler(route, withSendHook(key, errorHandlers != null));
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
@@ -1223,10 +1215,25 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = createUnitOfWorkProcessor(route, processor, exchange);
+            answer = createUnitOfWorkProcessor(route, withSendHook(processor, false), exchange);
         }
 
         return answer;
+    }
+
+    /**
+     * Puts the send hook around an output that is a producer (the producers of the recipient list), so the hook runs
+     * inside the error handler of the output, as a failure of the producer does, and again on every redelivery.
+     *
+     * @param output the output
+     * @param kept   whether the error handler of the output is cached and used again for later exchanges: then the
+     *               producer looks up the hook on every send, so it also sees a hook installed later
+     */
+    private Processor withSendHook(Processor output, boolean kept) {
+        if (output instanceof AsyncProducer producer) {
+            return kept ? SendHelper.newSendHookProducer(producer) : SendHelper.withSendHook(camelContext, producer);
+        }
+        return output;
     }
 
     private Processor wrapInErrorHandler(Route route, Processor processor) throws Exception {

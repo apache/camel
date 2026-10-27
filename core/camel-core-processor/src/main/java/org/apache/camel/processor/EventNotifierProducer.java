@@ -23,9 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.SendHelper;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,31 +55,10 @@ public final class EventNotifierProducer extends DefaultAsyncProducer {
             return true;
         }
 
-        final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, getEndpoint());
-        // record timing for sending the exchange using the producer
-        StopWatch watch;
-        if (sending) {
-            watch = new StopWatch();
-        } else {
-            watch = null;
-        }
-
         try {
             LOG.debug(">>>> {} {}", getEndpoint(), exchange);
-            return producer.process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    try {
-                        // emit event that the exchange was sent to the endpoint
-                        if (watch != null) {
-                            long timeTaken = watch.taken();
-                            EventHelper.notifyExchangeSent(exchange.getContext(), exchange, getEndpoint(), timeTaken);
-                        }
-                    } finally {
-                        callback.done(doneSync);
-                    }
-                }
-            });
+            // emit the sending and sent events around the send (and run the send hook if any)
+            return SendHelper.send(exchange, getEndpoint(), true, producer, callback);
         } catch (Exception throwable) {
             exchange.setException(throwable);
             callback.done(true);
