@@ -87,6 +87,14 @@ public final class ThriftUtils {
         return clientInstance;
     }
 
+    /**
+     * Constructs an async client with a new client manager, which the caller cannot stop: its selector thread and
+     * selector stay until the JVM exits.
+     *
+     * @deprecated use the overload with a {@link TAsyncClientManager} argument, and stop that manager when the client
+     *             is no longer used.
+     */
+    @Deprecated(since = "4.24.0")
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Object constructAsyncClientInstance(
             String packageName, String serviceName, TNonblockingTransport transport, ThriftExchangeProtocol exchangeProtocol,

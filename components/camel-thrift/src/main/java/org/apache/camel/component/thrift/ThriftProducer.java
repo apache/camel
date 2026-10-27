@@ -17,9 +17,13 @@
 package org.apache.camel.component.thrift;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
@@ -51,6 +55,8 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     private TNonblockingTransport asyncTransport;
     private TAsyncClientManager asyncClientManager;
     private Object thriftClient;
+    // the callbacks of the asynchronous calls that have not completed yet, failed when this producer stops
+    private final Set<PendingCallback> pendingCallbacks = ConcurrentHashMap.newKeySet();
 
     public ThriftProducer(ThriftEndpoint endpoint, ThriftConfiguration configuration) {
         super(endpoint);
@@ -62,10 +68,13 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Message message = exchange.getIn();
 
+        PendingCallback pending = new PendingCallback(exchange, callback);
+        pendingCallbacks.add(pending);
         try {
-            ThriftUtils.invokeAsyncMethod(thriftClient, configuration.getMethod(), message.getBody(),
-                    new AsyncClientMethodCallback(exchange, callback));
+            ThriftUtils.invokeAsyncMethod(thriftClient, configuration.getMethod(), message.getBody(), pending);
         } catch (Exception e) {
+            // the call was not made
+            pending.discard();
             if (e.getCause() instanceof TException) {
                 exchange.setException(e.getCause());
             } else {
@@ -145,12 +154,73 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             asyncTransport.close();
             asyncTransport = null;
         }
+        // the selector thread ends without completing the calls it still has, so fail their exchanges now (a call
+        // that completes meanwhile is completed once)
+        for (PendingCallback pending : pendingCallbacks) {
+            pending.stopped();
+        }
         if (asyncClientManager != null) {
             // stops the selector thread and closes the selector of the async client
             asyncClientManager.stop();
             asyncClientManager = null;
         }
         super.doStop();
+    }
+
+    /**
+     * The number of asynchronous calls that have not completed yet (for tests).
+     */
+    int getPendingCallbacks() {
+        return pendingCallbacks.size();
+    }
+
+    /**
+     * Completes the exchange of an asynchronous call once: with the response or error of the call, or with an error
+     * when the producer stops first.
+     */
+    private final class PendingCallback extends AsyncClientMethodCallback {
+        private final Exchange exchange;
+        private final AtomicBoolean done = new AtomicBoolean();
+
+        PendingCallback(Exchange exchange, AsyncCallback callback) {
+            super(exchange, callback);
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void onComplete(Object response) {
+            if (finish()) {
+                super.onComplete(response);
+            }
+        }
+
+        @Override
+        public void onError(Exception exception) {
+            if (finish()) {
+                super.onError(exception);
+            }
+        }
+
+        void stopped() {
+            if (finish()) {
+                super.onError(new CamelExchangeException(
+                        "The Thrift producer was stopped before the call of method " + configuration.getMethod()
+                                                         + " completed",
+                        exchange));
+            }
+        }
+
+        void discard() {
+            finish();
+        }
+
+        private boolean finish() {
+            if (done.compareAndSet(false, true)) {
+                pendingCallbacks.remove(this);
+                return true;
+            }
+            return false;
+        }
     }
 
     protected void initializeSyncTransport() throws TTransportException {
