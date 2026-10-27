@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
@@ -123,10 +124,22 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Reads the trigger and the tags in one request; fails unless every tag was read and the trigger is a boolean.
+     * Reads the trigger and the tags in one request; fails unless every tag was read and the trigger is a boolean. A
+     * connection that is lost without autoReconnect also stops the polling.
      */
     private PlcReadResponse read() throws Exception {
         plc4XEndpoint.reconnectIfNeeded();
+        // a connection that is lost after reconnectIfNeeded() fails the read instead, and the next poll shuts it down
+        if (!plc4XEndpoint.isAutoReconnect() && plc4XEndpoint.connection == null) {
+            // the endpoint shut the lost connection down, so no later poll could read: polling stops until the route is
+            // restarted, and this poll fails, so the health check of the consumer stays down
+            getScheduler().unscheduleTask();
+            // unscheduling cancels the task this poll runs in, which interrupts this thread: clear it, so that the
+            // failure is reported as for any other poll
+            Thread.interrupted();
+            throw new PlcConnectionException(
+                    "Connection lost and auto-reconnect is turned off, polling stops until the route is restarted");
+        }
         CompletableFuture<? extends PlcReadResponse> future
                 = plc4XEndpoint.buildPlcReadRequest(Map.of(Constants.TRIGGER, trigger)).execute();
         PlcReadResponse response;
@@ -162,8 +175,8 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
 
     /**
      * Logs like the default exception handler of a consumer, but a failed poll only at WARN with the stack trace when
-     * it starts a run of failed polls, and the following failed polls of the run at DEBUG without it, so that a PLC
-     * that cannot be reached is not logged on every poll.
+     * it starts a run of failed polls or stops the polling, and the following failed polls of the run at DEBUG without
+     * it, so that a PLC that cannot be reached is not logged on every poll.
      */
     private final class FailedPollExceptionHandler extends LoggingExceptionHandler {
         FailedPollExceptionHandler(CamelContext camelContext) {
@@ -173,8 +186,8 @@ public class Plc4XTriggeredConsumer extends ScheduledPollConsumer {
         @Override
         public void handleException(String message, Throwable exception) {
             // a failed poll is reported without an exchange and before it is counted, so the first one of a run finds an
-            // error counter of 0
-            if (getErrorCounter() == 0) {
+            // error counter of 0, and the one that stops the polling finds its task unscheduled
+            if (getErrorCounter() == 0 || !isSchedulerStarted()) {
                 super.handleException(message, exception);
             } else {
                 // the first failed poll of the run is logged with the stack trace already

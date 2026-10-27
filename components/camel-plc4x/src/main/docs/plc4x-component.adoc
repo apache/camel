@@ -105,9 +105,10 @@ continues. The default exception handler logs the first failed poll of a run at 
 following ones at DEBUG without it; the first successful poll after a run of failed polls is logged at INFO.
 The trigger value read before the failure is forgotten, so a trigger that is `true` at the first successful poll after
 a failure counts as a rising edge. Automatic recovery after a lost connection needs `autoReconnect=true`: a poll then
-replaces a lost connection with a new one. With the default `autoReconnect=false`, the endpoint stops on the first lost
-connection and does not recover. Likewise, a connection that cannot be set up when the route starts is retried by the
-polls with `autoReconnect=true`, and fails the start of the route without it.
+replaces a lost connection with a new one. With the default `autoReconnect=false`, the endpoint stops on each lost
+connection, and the consumer fails that poll and stops polling until the route is restarted. Likewise, a connection
+that cannot be set up when the route starts is retried by the polls with `autoReconnect=true`, and fails the start of
+the route without it.
 
 The following route reads a register of a Modbus TCP device each time coil 1 goes from `false` to `true`, checking the
 coil every 100 milliseconds:

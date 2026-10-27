@@ -19,13 +19,10 @@ package org.apache.camel.component.plc4x;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
@@ -361,37 +358,6 @@ public class Plc4XConsumerRouteTest extends CamelTestSupport {
             cause = cause.getCause();
         }
         return cause;
-    }
-
-    /**
-     * Collects the failures the consumer reports to its exception handler.
-     */
-    private static final class PollFailures implements ExceptionHandler {
-
-        private final List<Throwable> causes = new CopyOnWriteArrayList<>();
-
-        @Override
-        public void handleException(Throwable exception) {
-            causes.add(exception);
-        }
-
-        @Override
-        public void handleException(String message, Throwable exception) {
-            causes.add(exception);
-        }
-
-        @Override
-        public void handleException(String message, Exchange exchange, Throwable exception) {
-            causes.add(exception);
-        }
-
-        int count() {
-            return causes.size();
-        }
-
-        List<Throwable> causes() {
-            return causes;
-        }
     }
 
 }

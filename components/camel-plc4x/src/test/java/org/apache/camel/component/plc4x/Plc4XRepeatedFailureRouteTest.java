@@ -17,19 +17,26 @@
 package org.apache.camel.component.plc4x;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
+import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,12 +44,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * How a route reports a PLC that keeps failing its requests: the triggered consumer logs the first failed poll of a run
  * at WARN and the end of the run at INFO, instead of a WARN with a stack trace on every poll, while
- * {@code bridgeErrorHandler} still gets every failure.
+ * {@code bridgeErrorHandler} still gets every failure. Without {@code autoReconnect}, a lost connection shuts the
+ * endpoint down once, and the triggered consumer stops polling until the route is restarted.
  */
 public class Plc4XRepeatedFailureRouteTest extends CamelTestSupport {
 
     private static final String PLC = "plc4x:mock:10.10.10.1/1/1?trigger=TRIG&period=50&tag.temperature=TEMP";
     private static final String BRIDGED = PLC + "&bridgeErrorHandler=true";
+    private static final String REPORTED = PLC + "&exceptionHandler=#pollFailures";
+    private static final String WRITE = "plc4x:mock:10.10.10.2/1/1";
+    private static final String SHUTDOWN = "Connection lost and auto-reconnect is turned off";
+    private static final String POLLING_STOPS = "polling stops until the route is restarted";
+
+    private final PollFailures pollFailures = new PollFailures();
 
     @BeforeEach
     void resetMockDriver() {
@@ -100,6 +114,79 @@ public class Plc4XRepeatedFailureRouteTest extends CamelTestSupport {
                 () -> "Unexpected failures: " + failures.getExchanges());
     }
 
+    @Test
+    public void aLostConnectionWithoutAutoReconnectStopsPollingUntilTheRouteIsRestarted() throws Exception {
+        MockDriver.programRead("TRIG", false);
+        MockDriver.programRead("TEMP", 21);
+        MockEndpoint result = getMockEndpoint("mock:reported");
+
+        try (LogCapture log = new LogCapture(Plc4XEndpoint.class)) {
+            context.getRouteController().startRoute("reported");
+            Plc4XTriggeredConsumer consumer = (Plc4XTriggeredConsumer) context.getRoute("reported").getConsumer();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getSuccessCounter() >= 2);
+
+            MockDriver.dropConnections();
+
+            // the poll that finds the connection lost fails, and no poll follows it
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !pollFailures.failures().isEmpty());
+            await().during(500, TimeUnit.MILLISECONDS).atMost(1, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertEquals(1, pollFailures.failures().size(), "the failed polls"));
+            assertEquals(1, log.eventsContaining(SHUTDOWN).size(), "the endpoint is shut down once");
+            assertEquals(1, consumer.getErrorCounter(), "the failed poll keeps the health check of the consumer down");
+            PollFailures.Failure failure = pollFailures.failures().get(0);
+            assertInstanceOf(PlcConnectionException.class, failure.cause());
+            assertFalse(failure.interrupted(), "the failure is reported on a thread that is not interrupted");
+
+            // the restarted route sets up a new connection and polls again
+            MockDriver.programRead("TRIG", false, true);
+            result.expectedMessageCount(1);
+            context.getRouteController().stopRoute("reported");
+            context.getRouteController().startRoute("reported");
+            result.assertIsSatisfied(10000);
+
+            // and a loss of the new connection shuts the endpoint down again
+            MockDriver.dropConnections();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> log.eventsContaining(SHUTDOWN).size() == 2);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> pollFailures.failures().size() == 2);
+        }
+    }
+
+    @Test
+    public void logsTheFailedPollThatStopsPollingAtWarnAfterAFailedRead() throws Exception {
+        MockDriver.programRead("TRIG", false, MockDriver.failedRead());
+        MockDriver.programRead("TEMP", 21);
+
+        try (LogCapture log = new LogCapture(Plc4XTriggeredConsumer.class)) {
+            context.getRouteController().startRoute("logged");
+            Plc4XTriggeredConsumer consumer = (Plc4XTriggeredConsumer) context.getRoute("logged").getConsumer();
+            // a read fails as the PLC goes away, and a later poll finds the connection lost within the same run
+            await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getErrorCounter() >= 1);
+
+            MockDriver.dropConnections();
+
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !log.eventsContaining(POLLING_STOPS).isEmpty());
+            assertEquals(List.of(Level.WARN),
+                    log.eventsContaining(POLLING_STOPS).stream().map(LogEvent::getLevel).toList(),
+                    () -> "Unexpected log: " + messages(log.events()));
+        }
+    }
+
+    @Test
+    public void aProducerReportsALostConnectionWithoutAutoReconnectOnce() throws Exception {
+        Map<String, Map<String, Object>> tags = Map.of("temperature", Map.of("%DB1:DINT", 21));
+        template.sendBody(WRITE, tags);
+
+        try (LogCapture log = new LogCapture(Plc4XEndpoint.class)) {
+            MockDriver.dropConnections();
+
+            for (int i = 0; i < 3; i++) {
+                Exchange exchange = template.send(WRITE, e -> e.getIn().setBody(tags));
+                assertInstanceOf(PlcConnectionException.class, exchange.getException(), "each write fails");
+            }
+            assertEquals(1, log.eventsContaining(SHUTDOWN).size(), "the endpoint is shut down once");
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -109,8 +196,14 @@ public class Plc4XRepeatedFailureRouteTest extends CamelTestSupport {
                 from(BRIDGED).routeId("bridged").autoStartup(false)
                         .onException(Exception.class).handled(true).to("mock:failures").end()
                         .to("mock:bridged");
+                from(REPORTED).routeId("reported").autoStartup(false).to("mock:reported");
             }
         };
+    }
+
+    @Override
+    protected void bindToRegistry(Registry registry) {
+        registry.bind("pollFailures", pollFailures);
     }
 
     private static List<String> messages(List<LogEvent> events) {

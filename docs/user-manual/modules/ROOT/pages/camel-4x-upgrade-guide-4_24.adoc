@@ -3628,7 +3628,8 @@ and read the tags in a later, separate request on another connection. A failed r
 handler of the consumer (or to the error handler of the route with `bridgeErrorHandler=true`), and polling continues;
 before, the consumer stopped triggering after the first failed read of the trigger. After a failed poll the remembered
 trigger value is unknown, so a trigger that is still `true` when the PLC returns emits once. Since the consumer now uses
-the connection of the endpoint, `autoReconnect` governs its reconnects. A connection that cannot be set up when the
+the connection of the endpoint, `autoReconnect` governs its reconnects: without it, a lost connection stops
+the endpoint and the polling until the route is restarted. A connection that cannot be set up when the
 route starts fails the start of the route, unless `autoReconnect=true`, in which case the polls retry it. A route that
 starts with the CamelContext then fails the start of the CamelContext too, unless the route is supervised by the
 xref:route-controller.adoc[supervising route controller] or has `autoStartup=false`. As before, `period` must be
