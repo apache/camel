@@ -24,6 +24,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
@@ -45,6 +46,7 @@ final class FakeS3Server {
     private final HttpServer server;
     private final NavigableMap<String, byte[]> objects = new ConcurrentSkipListMap<>();
     private final Map<String, AtomicInteger> gets = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, String>> userMetadata = new ConcurrentHashMap<>();
     private final Set<String> deleteWhenListed = ConcurrentHashMap.newKeySet();
     private final Set<String> deleteWhenStatted = ConcurrentHashMap.newKeySet();
     private final Set<String> refusedGets = ConcurrentHashMap.newKeySet();
@@ -112,6 +114,13 @@ final class FakeS3Server {
         return objects.get(key);
     }
 
+    /**
+     * The user metadata (x-amz-meta-* request headers, names in lower case) of the last put of the object, or null.
+     */
+    Map<String, String> userMetadata(String key) {
+        return userMetadata.get(key);
+    }
+
     int gets(String key) {
         AtomicInteger n = gets.get(key);
         return n != null ? n.get() : 0;
@@ -176,6 +185,13 @@ final class FakeS3Server {
                 try (InputStream is = http.getRequestBody()) {
                     objects.put(key, is.readAllBytes());
                 }
+                Map<String, String> meta = new HashMap<>();
+                http.getRequestHeaders().forEach((name, values) -> {
+                    if (name.toLowerCase(Locale.ROOT).startsWith("x-amz-meta-")) {
+                        meta.put(name.toLowerCase(Locale.ROOT), values.get(0));
+                    }
+                });
+                userMetadata.put(key, meta);
                 http.getResponseHeaders().add("ETag", "\"0123456789abcdef0123456789abcdef\"");
                 http.sendResponseHeaders(200, -1);
                 http.close();

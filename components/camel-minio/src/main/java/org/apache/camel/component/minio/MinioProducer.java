@@ -164,7 +164,8 @@ public class MinioProducer extends DefaultProducer {
                         contentLength = PayloadHelper.getLength(inputStream);
                     }
                 }
-                if (contentLength > 0) {
+                if (contentLength >= 0) {
+                    // also an empty body, so a stale content-length header is not stored as metadata
                     objectMetadata.put(Exchange.CONTENT_LENGTH, String.valueOf(contentLength));
                 }
                 doPutObject(exchange, bucketName, objectName, objectMetadata, extraHeaders, inputStream, contentLength);

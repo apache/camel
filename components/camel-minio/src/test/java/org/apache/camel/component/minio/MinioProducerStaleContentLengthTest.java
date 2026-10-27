@@ -92,6 +92,16 @@ class MinioProducerStaleContentLengthTest extends CamelTestSupport {
     }
 
     @Test
+    void emptyBodyStoresItsLengthAsContentLengthMetadata() {
+        Exchange result = put("empty.txt", 10L, new byte[0]);
+
+        assertNull(result.getException());
+        assertEquals("", stored("empty.txt"));
+        assertEquals("0", s3.userMetadata("empty.txt").get("x-amz-meta-content-length"),
+                "the content-length metadata must be the length of the upload, not the stale header");
+    }
+
+    @Test
     void fileBodyIsStoredWithItsLength() throws Exception {
         File file = Files.writeString(dir.resolve("data.txt"), "the content of the file").toFile();
 
