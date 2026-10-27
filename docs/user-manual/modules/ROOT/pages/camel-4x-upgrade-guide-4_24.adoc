@@ -2307,6 +2307,16 @@ bucket. The poll still fails when none of the listed objects could be got, and w
 lists `maxMessagesPerPoll` objects, the next poll now continues after the last listed object (before, after the last
 object that was consumed), so an object that cannot be got at the end of a page does not hold the listing back.
 
+=== camel-minio - Server-side encryption options now apply to MinioProducer
+
+The `serverSideEncryption` and `serverSideEncryptionCustomerKey` endpoint options now apply to producer operations:
+- Put operations apply the configured server-side encryption or customer-supplied key.
+- Copy operations apply the configured encryption to the destination object (and `serverSideEncryptionCustomerKey` to the
+  source object when configured).
+- Get operations (`getObject` and `getObjectRange`) pass the customer key when configured.
+- Only one of `serverSideEncryption` or `serverSideEncryptionCustomerKey` can be configured on an endpoint; configuring
+  both throws `IllegalArgumentException` on producer startup.
+
 === camel-box - getEnterpriseEvents returns the events of every chunk
 
 The `getEnterpriseEvents` operation of the `event-logs` API now returns all the events between `after` and `before`.

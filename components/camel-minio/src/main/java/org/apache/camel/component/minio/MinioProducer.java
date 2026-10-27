@@ -67,6 +67,16 @@ public class MinioProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (getConfiguration().getServerSideEncryption() != null
+                && getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            throw new IllegalArgumentException(
+                    "Only one of serverSideEncryption or serverSideEncryptionCustomerKey can be configured");
+        }
+    }
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
@@ -208,6 +218,12 @@ public class MinioProducer extends DefaultProducer {
                 .object(objectName)
                 .userMetadata(objectMetadata);
 
+        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            putObjectRequest.sse(getConfiguration().getServerSideEncryptionCustomerKey());
+        } else if (getConfiguration().getServerSideEncryption() != null) {
+            putObjectRequest.sse(getConfiguration().getServerSideEncryption());
+        }
+
         if (!extraHeaders.isEmpty()) {
             putObjectRequest.extraHeaders(extraHeaders);
         }
@@ -268,10 +284,20 @@ public class MinioProducer extends DefaultProducer {
                     .bucket(bucketName)
                     .object(sourceKey);
 
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                copySourceBuilder.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
+            }
+
             CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
                     .bucket(destinationBucketName)
                     .object(destinationKey)
                     .source(copySourceBuilder.build());
+
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                copyObjectRequest.sse(getConfiguration().getServerSideEncryptionCustomerKey());
+            } else if (getConfiguration().getServerSideEncryption() != null) {
+                copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
+            }
 
             ObjectWriteResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
 
@@ -353,10 +379,15 @@ public class MinioProducer extends DefaultProducer {
             final String bucketName = determineBucketName(exchange);
             final String sourceKey = determineObjectName(exchange);
 
-            InputStream respond = minioClient.getObject(GetObjectArgs.builder()
+            GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder()
                     .bucket(bucketName)
-                    .object(sourceKey)
-                    .build());
+                    .object(sourceKey);
+
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
+            }
+
+            InputStream respond = minioClient.getObject(getObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(respond);
@@ -383,12 +414,17 @@ public class MinioProducer extends DefaultProducer {
                         "A Offset and length header must be configured to perform a partial get operation.");
             }
 
-            InputStream respond = minioClient.getObject(GetObjectArgs.builder()
+            GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder()
                     .bucket(bucketName)
                     .object(sourceKey)
                     .offset(Long.parseLong(offset))
-                    .length(Long.parseLong(length))
-                    .build());
+                    .length(Long.parseLong(length));
+
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
+            }
+
+            InputStream respond = minioClient.getObject(getObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(respond);
