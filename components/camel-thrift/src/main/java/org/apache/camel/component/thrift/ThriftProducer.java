@@ -145,32 +145,48 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
 
     @Override
     protected void doStop() throws Exception {
-        if (syncTransport != null) {
-            LOG.debug("Terminating synchronous transport the remote Thrift server");
-            syncTransport.close();
-            syncTransport = null;
-        } else if (asyncTransport != null) {
-            LOG.debug("Terminating asynchronous transport the remote Thrift server");
-            asyncTransport.close();
-            asyncTransport = null;
-        }
-        // the selector thread ends without completing the calls it still has, so fail their exchanges now (a call
-        // that completes meanwhile is completed once)
-        for (PendingCallback pending : pendingCallbacks) {
-            pending.stopped();
-        }
-        if (asyncClientManager != null) {
-            // stops the selector thread and closes the selector of the async client
-            asyncClientManager.stop();
-            asyncClientManager = null;
+        try {
+            if (syncTransport != null) {
+                LOG.debug("Terminating synchronous transport the remote Thrift server");
+                syncTransport.close();
+                syncTransport = null;
+            } else if (asyncTransport != null) {
+                LOG.debug("Terminating asynchronous transport the remote Thrift server");
+                asyncTransport.close();
+                asyncTransport = null;
+            }
+        } finally {
+            if (asyncClientManager != null) {
+                // stops the selector thread and closes the selector of the async client
+                asyncClientManager.stop();
+                asyncClientManager = null;
+            }
+            // after the stop, so that a call registered meanwhile is failed too
+            failPendingCallbacks();
         }
         super.doStop();
     }
 
     /**
+     * Fails the exchanges of the asynchronous calls that have not completed: the stopped selector thread does not
+     * complete them. A call that completes meanwhile is completed once, and a continuation that throws does not skip
+     * the other calls.
+     */
+    private void failPendingCallbacks() {
+        for (PendingCallback pending : pendingCallbacks) {
+            try {
+                pending.stopped();
+            } catch (Exception e) {
+                LOG.warn("Error completing the exchange of a pending call of method {} when stopping the Thrift producer",
+                        configuration.getMethod(), e);
+            }
+        }
+    }
+
+    /**
      * The number of asynchronous calls that have not completed yet (for tests).
      */
-    int getPendingCallbacks() {
+    int getPendingCallbackCount() {
         return pendingCallbacks.size();
     }
 

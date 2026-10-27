@@ -19,16 +19,19 @@ package org.apache.camel.component.thrift;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,40 +45,64 @@ class ThriftProducerAsyncInFlightStopTest extends CamelTestSupport {
     void stoppingTheProducerFailsAnInFlightCall() throws Exception {
         CountDownLatch requestReceived = new CountDownLatch(1);
         try (ServerSocket server = new ServerSocket(0)) {
-            // a server that reads the request and never answers
-            Thread silent = new Thread(() -> {
-                try (Socket socket = server.accept(); InputStream in = socket.getInputStream()) {
-                    if (in.read() != -1) {
-                        requestReceived.countDown();
-                    }
-                    while (in.read() != -1) {
-                        // keep the connection open until the client closes it
-                    }
-                } catch (Exception e) {
-                    // the test ends
-                }
-            });
-            silent.setDaemon(true);
-            silent.start();
+            startSilentServer(server, requestReceived);
 
-            String uri = "thrift://localhost:" + server.getLocalPort()
-                         + "/org.apache.camel.component.thrift.generated.Calculator?method=ping";
+            String uri = pingUri(server.getLocalPort());
             ThriftProducer producer = (ThriftProducer) context.getEndpoint(uri).createProducer();
             producer.start();
-            Exchange exchange = context.getEndpoint(uri).createExchange();
-            CountDownLatch done = new CountDownLatch(1);
-            ((AsyncProducer) producer).process(exchange, doneSync -> done.countDown());
-            assertTrue(requestReceived.await(10, TimeUnit.SECONDS), "the call must be sent");
-            assertEquals(1, producer.getPendingCallbacks());
+            try {
+                Exchange exchange = context.getEndpoint(uri).createExchange();
+                CountDownLatch done = new CountDownLatch(1);
+                producer.process(exchange, doneSync -> done.countDown());
+                assertTrue(requestReceived.await(10, TimeUnit.SECONDS), "the call must be sent");
+                assertEquals(1, producer.getPendingCallbackCount());
 
-            producer.stop();
+                producer.stop();
 
-            assertTrue(done.await(10, TimeUnit.SECONDS), "the exchange of the call must complete");
-            assertInstanceOf(CamelExchangeException.class, exchange.getException());
-            assertTrue(exchange.getException().getMessage().startsWith(
-                    "The Thrift producer was stopped before the call of method ping completed"),
-                    exchange.getException().getMessage());
-            assertEquals(0, producer.getPendingCallbacks());
+                assertTrue(done.await(10, TimeUnit.SECONDS), "the exchange of the call must complete");
+                assertStoppedBeforeTheCallCompleted(exchange);
+                assertEquals(0, producer.getPendingCallbackCount());
+            } finally {
+                producer.stop();
+            }
+        }
+    }
+
+    @Test
+    void aContinuationThatThrowsDoesNotKeepTheSelectorThreadRunning() throws Exception {
+        CountDownLatch requestReceived = new CountDownLatch(1);
+        try (ServerSocket server = new ServerSocket(0)) {
+            startSilentServer(server, requestReceived);
+
+            String uri = pingUri(server.getLocalPort());
+            ThriftProducer producer = (ThriftProducer) context.getEndpoint(uri).createProducer();
+            Set<Thread> before = Thread.getAllStackTraces().keySet();
+            producer.start();
+            try {
+                List<Thread> selectors = Thread.getAllStackTraces().keySet().stream()
+                        .filter(t -> !before.contains(t) && t.getName().startsWith("TAsyncClientManager#SelectorThread"))
+                        .toList();
+                assertEquals(1, selectors.size(), "the selector thread of the producer");
+
+                Exchange exchange = context.getEndpoint(uri).createExchange();
+                CountDownLatch done = new CountDownLatch(1);
+                producer.process(exchange, doneSync -> {
+                    done.countDown();
+                    throw new IllegalStateException("the continuation of the exchange fails");
+                });
+                assertTrue(requestReceived.await(10, TimeUnit.SECONDS), "the call must be sent");
+
+                // the continuation runs on the stopping thread and throws
+                assertDoesNotThrow(producer::stop);
+
+                assertTrue(done.await(10, TimeUnit.SECONDS), "the exchange of the call must complete");
+                assertStoppedBeforeTheCallCompleted(exchange);
+                assertEquals(0, producer.getPendingCallbackCount());
+                selectors.get(0).join(TimeUnit.SECONDS.toMillis(10));
+                assertFalse(selectors.get(0).isAlive(), "the selector thread must end");
+            } finally {
+                producer.stop();
+            }
         }
     }
 
@@ -86,8 +113,7 @@ class ThriftProducerAsyncInFlightStopTest extends CamelTestSupport {
         try (ServerSocket closed = new ServerSocket(0)) {
             port = closed.getLocalPort();
         }
-        String uri = "thrift://localhost:" + port
-                     + "/org.apache.camel.component.thrift.generated.Calculator?method=ping";
+        String uri = pingUri(port);
         ThriftProducer producer = (ThriftProducer) context.getEndpoint(uri).createProducer();
         producer.start();
         try {
@@ -97,9 +123,38 @@ class ThriftProducerAsyncInFlightStopTest extends CamelTestSupport {
 
             assertTrue(done.await(10, TimeUnit.SECONDS));
             assertTrue(exchange.isFailed());
-            assertEquals(0, producer.getPendingCallbacks());
+            assertEquals(0, producer.getPendingCallbackCount());
         } finally {
             producer.stop();
         }
+    }
+
+    private static String pingUri(int port) {
+        return "thrift://localhost:" + port + "/org.apache.camel.component.thrift.generated.Calculator?method=ping";
+    }
+
+    // a server that reads the request and never answers
+    private static void startSilentServer(ServerSocket server, CountDownLatch requestReceived) {
+        Thread silent = new Thread(() -> {
+            try (Socket socket = server.accept(); InputStream in = socket.getInputStream()) {
+                if (in.read() != -1) {
+                    requestReceived.countDown();
+                }
+                while (in.read() != -1) {
+                    // keep the connection open until the client closes it
+                }
+            } catch (Exception e) {
+                // the test ends
+            }
+        });
+        silent.setDaemon(true);
+        silent.start();
+    }
+
+    private static void assertStoppedBeforeTheCallCompleted(Exchange exchange) {
+        assertInstanceOf(CamelExchangeException.class, exchange.getException());
+        assertTrue(exchange.getException().getMessage().startsWith(
+                "The Thrift producer was stopped before the call of method ping completed"),
+                exchange.getException().getMessage());
     }
 }
