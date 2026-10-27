@@ -69,12 +69,6 @@ public class StripeProducer extends DefaultProducer {
         this.requestOptions = builder.build();
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        this.requestOptions = null;
-        super.doStop();
-    }
-
     RequestOptions getRequestOptions() {
         return requestOptions;
     }
@@ -271,8 +265,7 @@ public class StripeProducer extends DefaultProducer {
             case StripeConstants.METHOD_CANCEL:
                 String cancelId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 Subscription cancelSub = Subscription.retrieve(cancelId, requestOptions);
-                Map<String, Object> cancelParams = getParametersFromBody(exchange);
-                return cancelSub.cancel(cancelParams.isEmpty() ? null : cancelParams, requestOptions);
+                return cancelSub.cancel((Map<String, Object>) null, requestOptions);
             case StripeConstants.METHOD_LIST:
                 return Subscription.list(getParametersFromBody(exchange), requestOptions);
             default:

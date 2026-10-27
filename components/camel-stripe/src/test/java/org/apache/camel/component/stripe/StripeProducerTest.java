@@ -70,6 +70,7 @@ public class StripeProducerTest {
                 assertEquals("sk_test_custom_key_1", ((BearerTokenAuthenticator) options.getAuthenticator()).getApiKey());
                 assertEquals("http://localhost:8999", options.getBaseUrl());
                 assertNotEquals("sk_test_custom_key_1", Stripe.apiKey);
+                assertEquals(Stripe.LIVE_API_BASE, Stripe.getApiBase());
             } finally {
                 producer.stop();
             }
