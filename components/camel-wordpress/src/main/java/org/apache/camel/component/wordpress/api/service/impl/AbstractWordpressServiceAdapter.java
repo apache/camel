@@ -24,8 +24,6 @@ import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.component.wordpress.api.auth.WordpressAuthentication;
 import org.apache.camel.component.wordpress.api.service.WordpressService;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.cxf.ext.logging.LoggingInInterceptor;
-import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
@@ -51,12 +49,6 @@ abstract class AbstractWordpressServiceAdapter<A> implements WordpressService {
 
         // TODO: leave this kind of configuration to API clients
         WebClient.getConfig(spi).getHttpConduit().getClient().setAutoRedirect(true);
-
-        /*
-         * TODO: aggregate a configuration object to customize the JAXRS behavior, eg.: adding handlers or interceptors
-         */
-        WebClient.getConfig(spi).getInInterceptors().add(new LoggingInInterceptor());
-        WebClient.getConfig(spi).getOutInterceptors().add(new LoggingOutInterceptor());
 
         LOGGER.info("******* {} API initialized *********", spi.getClass().getSimpleName());
     }

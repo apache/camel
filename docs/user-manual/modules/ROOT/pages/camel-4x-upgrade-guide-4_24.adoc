@@ -3798,3 +3798,9 @@ an `IllegalArgumentException` if missing rather than falling back to unauthentic
 Applications whose custom code (such as beans calling `Customer.retrieve(...)` directly) previously relied on
 `camel-stripe` setting `Stripe.apiKey` globally in the JVM at startup must now configure `Stripe.apiKey` directly or
 pass `RequestOptions` explicitly.
+
+=== camel-wordpress - requests and responses are no longer logged
+
+The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
+level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
+`camel-wordpress` JAR no longer contains a `log4j.properties` file.
