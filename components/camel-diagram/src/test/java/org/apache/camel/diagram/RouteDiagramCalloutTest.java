@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Callout;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
@@ -120,6 +121,53 @@ class RouteDiagramCalloutTest {
         assertThat(lr.callouts.get(1).node.type).isEqualTo("marshal");
         assertThat(lr.callouts.get(0).y).isGreaterThan(plain.maxY);
         assertThat(lr.maxY).isGreaterThan(plain.maxY);
+    }
+
+    @Test
+    void eachProblemFromALineOfItsOwn() {
+        RouteDiagramLayoutEngine engine = engine(true);
+        int width = engine.getNodeWidth();
+        String first = "the first problem " + "of the step ".repeat(6);
+        String second = "the second problem " + "of the step ".repeat(12);
+        String third = "the third problem";
+
+        // two that fit: the second from a new line, never on a line of the first
+        List<String> two = engine.problemLines(List.of(third, second), width);
+        assertThat(two.get(0)).isEqualTo(third);
+        assertThat(two.get(1)).startsWith("the second problem");
+        assertThat(two).hasSizeLessThanOrEqualTo(6);
+
+        // more than six lines: the one cut has the rest of its own text on its last line, the next is left out
+        List<String> lines = engine.problemLines(List.of(first, second, third), width);
+        assertThat(lines).hasSize(6);
+        assertThat(lines).noneMatch(l -> l.contains("first") && l.contains("second"));
+        assertThat(lines).anyMatch(l -> l.startsWith("the second problem"));
+        assertThat(String.join(" ", lines)).doesNotContain("third");
+        assertThat(lines.get(5)).endsWith("…");
+    }
+
+    @Test
+    void drawTheNumberedList() {
+        DiagramColors colors = DiagramColors.parse("dark");
+        RouteDiagramLayoutEngine engine = engine(true);
+        LayoutRoute lr = engine.layoutRoute(choice(), RouteDiagramLayoutEngine.PADDING);
+        BufferedImage image = new RouteDiagramRenderer().renderDiagram(List.of(lr), lr.maxY, colors);
+
+        Callout kafka = lr.callouts.get(0);
+        assertThat(kafka.lines).hasSize(1);
+        // the badge with the number of the problem, in front of its text
+        int badgeX = kafka.x + RouteDiagramLayoutEngine.PROBLEM_NUMBER_WIDTH / 2;
+        int badgeY = kafka.y + kafka.height / 2;
+        assertThat(new Color(image.getRGB(badgeX - 6 * RouteDiagramLayoutEngine.SCALE, badgeY)))
+                .isEqualTo(colors.getWarning());
+        // and the same badge on the card of its step, which has a warning border
+        LayoutNode step = kafka.node;
+        assertThat(new Color(image.getRGB(step.x + 1, step.y + step.height / 2))).isEqualTo(colors.getWarning());
+        assertThat(new Color(
+                image.getRGB(step.x + engine.getNodeWidth() - 2 * RouteDiagramLayoutEngine.SCALE
+                             - 6 * RouteDiagramLayoutEngine.SCALE,
+                        step.y + 2 * RouteDiagramLayoutEngine.SCALE)))
+                .isEqualTo(colors.getWarning());
     }
 
     @Test

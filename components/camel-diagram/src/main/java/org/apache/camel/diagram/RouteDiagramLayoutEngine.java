@@ -677,16 +677,21 @@ public class RouteDiagramLayoutEngine {
         }
     }
 
-    /** The problems wrapped to the width, at most six lines: the renderer cuts the last one with an ellipsis. */
-    private List<String> problemLines(List<String> problems, int width) {
+    /**
+     * The problems wrapped to the width, each from a line of its own, at most six lines: a problem that does not fit
+     * has the rest of its text on its last line, which the renderer cuts with an ellipsis, and the problems after it
+     * are left out, which an ellipsis says.
+     */
+    List<String> problemLines(List<String> problems, int width) {
         List<String> lines = new ArrayList<>();
         for (String problem : problems) {
-            lines.addAll(wrapLabel(problem, width, MAX_CALLOUT_LINES));
-        }
-        if (lines.size() > MAX_CALLOUT_LINES) {
-            String rest = String.join(" ", lines.subList(MAX_CALLOUT_LINES - 1, lines.size()));
-            lines = new ArrayList<>(lines.subList(0, MAX_CALLOUT_LINES - 1));
-            lines.add(rest);
+            int room = MAX_CALLOUT_LINES - lines.size();
+            if (room == 0) {
+                int last = lines.size() - 1;
+                lines.set(last, lines.get(last) + " …");
+                break;
+            }
+            lines.addAll(wrapLabel(problem, width, room));
         }
         return lines;
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.IOException;
+import java.nio.charset.CharacterCodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ final class RouteDiagramProblems {
     /**
      * Puts the problems of the source files on the steps of their routes ({@link NodeInfo#problems}): a problem on the
      * step whose line is the last one before it (the line of the option or expression that is wrong is inside its
-     * step), a problem of the file on the first step.
+     * step), a problem of the file on the first step: also that the file cannot be read to check it.
      */
     static void attach(List<RouteInfo> routes, List<String> files) {
         CamelCatalog catalog = null;
@@ -74,18 +75,24 @@ final class RouteDiagramProblems {
             try {
                 content = Files.readString(path);
             } catch (IOException e) {
+                // the diagram shows the routes of the file, so it says why their problems are not there
+                add(nodes.get(0), "the file cannot be read to check it: "
+                                  + (e instanceof CharacterCodingException ? "it is not UTF-8 text" : e.getMessage()));
                 continue;
             }
             if (catalog == null) {
                 catalog = new DefaultCamelCatalog();
             }
             for (Problem p : problems(name, content, catalog, path.toAbsolutePath().getParent())) {
-                NodeInfo node = stepAt(nodes, p.line());
-                List<String> list = new ArrayList<>(node.problems);
-                list.add(p.text());
-                node.problems = List.copyOf(list);
+                add(stepAt(nodes, p.line()), p.text());
             }
         }
+    }
+
+    private static void add(NodeInfo node, String problem) {
+        List<String> list = new ArrayList<>(node.problems);
+        list.add(problem);
+        node.problems = List.copyOf(list);
     }
 
     /** The problems of a source file. */

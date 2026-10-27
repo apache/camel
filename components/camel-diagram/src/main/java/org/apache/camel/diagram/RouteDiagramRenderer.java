@@ -71,23 +71,24 @@ public class RouteDiagramRenderer {
 
     // the steps are cards (card, cardBorder, cardText for the kind, cardDetail for the detail) with an icon in a
     // circle of the color of the kind of step (from, to, eip, ...); text is the text in the nodes of the topology;
-    // warning, warningBg and warningText are the colors of the body types of a step reached with more than one kind
+    // warning, warningBg and warningText are the colors of the body types of a step reached with more than one kind,
+    // and of the problems of a step; badgeText is the mark in the warning circle of a problem
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
               + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
               + ":card=#151b23:cardBorder=#3d444d:cardText=#f0f6fc:cardDetail=#9198a1"
-              + ":warning=#d29922:warningBg=#272115:warningText=#e3b341";
+              + ":warning=#d29922:warningBg=#272115:warningText=#e3b341:badgeText=#1f2328";
     private static final String LIGHT_COLORS
             = "bg=#f6f8fa:text=#f0f6fc:arrow=#59636e:label=#1f2328:from=#238636:to=#1f6feb:eip=#8957e5"
               + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
               + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e"
-              + ":warning=#d4a72c:warningBg=#fff8c5:warningText=#7d4e00";
+              + ":warning=#d4a72c:warningBg=#fff8c5:warningText=#7d4e00:badgeText=#1f2328";
     // white cards, readable on any background
     private static final String TRANSPARENT_COLORS
             = "bg=:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
               + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
               + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e"
-              + ":warning=#d4a72c:warningBg=#fff8c5:warningText=#7d4e00";
+              + ":warning=#d4a72c:warningBg=#fff8c5:warningText=#7d4e00:badgeText=#1f2328";
 
     private static final Map<String, String> COLOR_PRESETS = Map.of(
             "dark", DARK_COLORS,

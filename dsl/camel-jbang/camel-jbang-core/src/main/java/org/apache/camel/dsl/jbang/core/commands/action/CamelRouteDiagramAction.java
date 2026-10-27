@@ -291,7 +291,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         // an image draws the steps as cards: a title and its detail beside an icon
         engine.setCardStyle(!isTextTheme());
         engine.setBodyTypes(bodyTypes && !isTextTheme());
-        engine.setProblems(problems && !isTextTheme());
+        // the problems are those of the source files, checked without running them
+        engine.setProblems(problems && sourceMode && !isTextTheme());
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;

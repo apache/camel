@@ -131,6 +131,25 @@ class RouteDiagramProblemsTest {
     }
 
     @Test
+    void aFileThatCannotBeRead() throws Exception {
+        Path file = dir.resolve("orders.camel.yaml");
+        // not UTF-8 text
+        Files.write(file, new byte[] { '-', ' ', (byte) 0xff, (byte) 0xfe, '\n' });
+        RouteInfo route = new RouteInfo();
+        route.routeId = "orders";
+        route.source = "orders.camel.yaml";
+        route.nodes.add(node("route", "route[orders]", 0, 1));
+        route.nodes.add(node("from", "from[file:orders]", 1, 2));
+
+        RouteDiagramProblems.attach(List.of(route), List.of(file.toString()));
+
+        // on the first step, as a problem of the file, not as a file without problems
+        assertThat(route.nodes.get(0).problems)
+                .containsExactly("the file cannot be read to check it: it is not UTF-8 text");
+        assertThat(route.nodes.get(1).problems).isEmpty();
+    }
+
+    @Test
     void aFileWithoutRoutesOfTheDiagramIsNotChecked() throws Exception {
         Path file = dir.resolve("other.camel.yaml");
         Files.writeString(file, "- route:\n    from:\n      uri: nope:\n");
