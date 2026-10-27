@@ -42,7 +42,9 @@ import picocli.CommandLine;
                              "%nExamples:",
                              "  camel self-update",
                              "  camel self-update --version 4.23.0",
-                             "  camel self-update --check" })
+                             "  camel self-update --check",
+                             "%nAn install pinned with the web installer's --version X.Y.Z never moves; one pinned with",
+                             "--version X.Y or --version LTS moves to the newest release of that line, or the newest LTS." })
 public class SelfUpdateCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--version" }, description = "Install a specific version instead of the latest")
@@ -80,9 +82,13 @@ public class SelfUpdateCommand extends CamelCommand {
             return 1;
         }
 
+        // An exact X.Y.Z pin (or a pin file this version does not understand) never moves. An X.Y or LTS pin moves
+        // only within its selector, so an explicit --version, which could leave it, is refused as well.
         Optional<String> pinned = InstallDetector.pinnedVersion();
-        if (pinned.isPresent()) {
-            printer().printErr("this install is pinned to version " + pinned.get() + " - remove "
+        Pin pin = pinned.map(Pin::parse).orElse(null);
+        if (pin != null && (!pin.tracksAlias() || version != null)) {
+            String label = pin.tracksAlias() ? pin.describe() : "version " + pinned.get();
+            printer().printErr("this install is pinned to " + label + " - remove "
                                + InstallDetector.pinnedVersionFile() + " to resume tracking new releases");
             return 1;
         }
@@ -90,7 +96,11 @@ public class SelfUpdateCommand extends CamelCommand {
         ManifestFetcher fetcher = fetcherOverride != null ? fetcherOverride : ManifestFetcher.fromEnvironment();
         ManifestFetcher.Manifest manifest;
         try {
-            manifest = version != null ? fetcher.fetch(version) : fetcher.fetchLatest();
+            if (pin != null) {
+                manifest = fetcher.fetchAlias(pin.aliasName());
+            } else {
+                manifest = version != null ? fetcher.fetch(version) : fetcher.fetchLatest();
+            }
         } catch (SelfUpdateException e) {
             printer().printErr(e.getMessage());
             return 1;
@@ -101,27 +111,37 @@ public class SelfUpdateCommand extends CamelCommand {
                                + version + ")");
             return 1;
         }
+        if (pin != null && !pin.accepts(manifest.version())) {
+            printer().printErr("manifest version (" + manifest.version() + ") is not in the pinned release line ("
+                               + pin.value() + ")");
+            return 1;
+        }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
         String running = catalog.getCatalogVersion();
         boolean newer = VersionHelper.compare(manifest.version(), running) > 0;
 
+        String upToDate = pin != null
+                ? "Camel CLI is already on the latest version for " + pin.describe() + " (" + running + ")"
+                : "Camel CLI is already on the latest version (" + running + ")";
+
         if (checkOnly) {
             printer().println(newer
                     ? "A new version is available (" + running + " -> " + manifest.version() + ")"
-                    : "Camel CLI is already on the latest version (" + running + ")");
+                    : upToDate);
             return 0;
         }
 
         if (!newer && version == null) {
-            printer().println("Camel CLI is already on the latest version (" + running + ")");
+            printer().println(upToDate);
             return 0;
         }
 
         // Always pin the exact resolved version, even for a bare `camel self-update` with no --version: without
         // this, a new release could land in the window between the version compare above and the delegated
         // script's own manifest fetch below, and the script would silently install a version this command never
-        // actually decided on.
+        // actually decided on. For an X.Y or LTS pin this is the version the alias resolved to; the delegated run
+        // (CAMEL_INSTALL_SELF_UPDATE=true) leaves the selector in the pin file untouched.
         return runInstaller(manifest.version());
     }
 
