@@ -431,6 +431,24 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
+    public List<String> resolveAvailableVersions(String groupId, String artifactId, boolean fresh) {
+        if (verbose) {
+            LOG.info("Downloading available versions: {}:{}", groupId, artifactId);
+        } else {
+            LOG.debug("Downloading available versions: {}:{}", groupId, artifactId);
+        }
+        try {
+            List<String> answer = new ArrayList<>();
+            for (MavenGav gav : mavenDownloader.resolveAvailableVersions(groupId, artifactId, null, fresh)) {
+                answer.add(gav.getVersion());
+            }
+            return answer;
+        } catch (MavenResolutionException e) {
+            throw new DownloadException(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public MavenArtifactDescriptor resolveArtifactDescriptor(
             String groupId, String artifactId, String version, String repos) {
         String gav = groupId + ":" + artifactId + ":" + version;

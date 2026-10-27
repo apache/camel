@@ -76,6 +76,8 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.MetadataRequest;
 import org.eclipse.aether.resolution.MetadataResult;
+import org.eclipse.aether.transfer.MetadataNotFoundException;
+import org.eclipse.aether.transfer.RepositoryOfflineException;
 import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +104,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             true, RepositoryPolicy.UPDATE_POLICY_ALWAYS, RepositoryPolicy.CHECKSUM_POLICY_WARN);
     private static final RepositoryPolicy POLICY_DISABLED = new RepositoryPolicy(
             false, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
+    // see org.eclipse.aether.internal.impl.DefaultUpdateCheckManager
+    private static final String UPDATE_CHECK_SESSION_STATE = "aether.updateCheckManager.sessionState";
     private static final DependencyFilter ACCEPT_ALL = (node, parents) -> true;
 
     // Configuration
@@ -806,24 +810,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             List<MetadataResult> result = repositorySystem.resolveMetadata(repositorySystemSession, List.of(req));
             for (MetadataResult mr : result) {
                 if (mr.isResolved() && mr.getMetadata().getFile() != null) {
-                    File f = mr.getMetadata().getFile();
-                    if (f.exists() && f.isFile()) {
-                        MetadataXpp3Reader reader = new MetadataXpp3Reader();
-                        try (InputStream is = new BufferedInputStream(Files.newInputStream(f.toPath()))) {
-                            Metadata md = reader.read(is);
-                            Versioning versioning = md.getVersioning();
-                            if (versioning != null) {
-                                List<String> versions = versioning.getVersions();
-                                if (versions != null) {
-                                    for (String v : versions) {
-                                        if (v != null) {
-                                            gavs.add(MavenGav.fromCoordinates(groupId, artifactId, v, null, null));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    readVersions(mr.getMetadata().getFile(), groupId, artifactId, gavs);
                 }
             }
             return gavs;
@@ -832,6 +819,95 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             MavenResolutionException mre = new MavenResolutionException(msg, e);
             mre.getRepositories().add(req.getRepository().getUrl());
             throw mre;
+        }
+    }
+
+    @Override
+    public List<MavenGav> resolveAvailableVersions(
+            String groupId, String artifactId, Set<String> extraRepositories, boolean fresh)
+            throws MavenResolutionException {
+        List<RemoteRepository> repositories
+                = resolutionRepositories(extraRepositories, false, repositorySystemSession);
+        RepositorySystemSession session = repositorySystemSession;
+        if (fresh) {
+            // check the remote repositories again, instead of using the metadata downloaded before
+            DefaultRepositorySystemSession freshSession = new DefaultRepositorySystemSession(repositorySystemSession);
+            freshSession.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
+            // also when checked before in this session
+            freshSession.setConfigProperty(UPDATE_CHECK_SESSION_STATE, "bypass");
+            session = freshSession;
+        }
+
+        List<MetadataRequest> requests = new ArrayList<>();
+        for (RemoteRepository repository : repositories) {
+            MetadataRequest req = new MetadataRequest();
+            req.setRepository(repository);
+            req.setFavorLocalRepository(false);
+            req.setMetadata(new DefaultMetadata(
+                    groupId, artifactId, "maven-metadata.xml",
+                    org.eclipse.aether.metadata.Metadata.Nature.RELEASE));
+            requests.add(req);
+        }
+
+        // merge the versions of all repositories, and skip a repository that cannot be reached
+        Set<String> versions = new LinkedHashSet<>();
+        List<Exception> failures = new ArrayList<>();
+        for (MetadataResult mr : repositorySystem.resolveMetadata(session, requests)) {
+            Exception failure = mr.getException();
+
+            // not found means the repository does not have the artifact, unless it cannot be accessed offline
+            boolean notFound = failure instanceof MetadataNotFoundException
+                    && !(failure.getCause() instanceof RepositoryOfflineException);
+            if (failure != null && !notFound) {
+                LOG.debug("Cannot resolve available versions of {}:{} in {}: {}", groupId, artifactId,
+                        mr.getRequest().getRepository().getUrl(), failure.getMessage());
+                failures.add(failure);
+                continue;
+            }
+            if (mr.isResolved() && mr.getMetadata().getFile() != null) {
+                List<MavenGav> gavs = new ArrayList<>();
+                try {
+                    readVersions(mr.getMetadata().getFile(), groupId, artifactId, gavs);
+                } catch (Exception e) {
+                    failures.add(e);
+                    continue;
+                }
+                gavs.forEach(g -> versions.add(g.getVersion()));
+            }
+        }
+        if (!requests.isEmpty() && failures.size() == requests.size()) {
+            MavenResolutionException mre = new MavenResolutionException(
+                    "Cannot resolve available versions of " + groupId + ":" + artifactId + ": "
+                                                                        + failures.get(0).getMessage(),
+                    failures.get(0));
+            repositories.forEach(r -> mre.getRepositories().add(r.getUrl()));
+            throw mre;
+        }
+
+        List<MavenGav> answer = new ArrayList<>(versions.size());
+        for (String v : versions) {
+            answer.add(MavenGav.fromCoordinates(groupId, artifactId, v, null, null));
+        }
+        return answer;
+    }
+
+    private static void readVersions(File f, String groupId, String artifactId, List<MavenGav> gavs) throws Exception {
+        if (f.exists() && f.isFile()) {
+            MetadataXpp3Reader reader = new MetadataXpp3Reader();
+            try (InputStream is = new BufferedInputStream(Files.newInputStream(f.toPath()))) {
+                Metadata md = reader.read(is);
+                Versioning versioning = md.getVersioning();
+                if (versioning != null) {
+                    List<String> versions = versioning.getVersions();
+                    if (versions != null) {
+                        for (String v : versions) {
+                            if (v != null) {
+                                gavs.add(MavenGav.fromCoordinates(groupId, artifactId, v, null, null));
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
