@@ -69,6 +69,17 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-kamelet-main</artifactId>
         </dependency>
+        <!-- Maven version ranges, to select the plugin release built for the Camel CLI -->
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-api</artifactId>
+            <version>${maven-resolver-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-util</artifactId>
+            <version>${maven-resolver-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-resourceresolver-github</artifactId>

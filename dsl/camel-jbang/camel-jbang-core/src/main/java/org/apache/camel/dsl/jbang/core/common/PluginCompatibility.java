@@ -23,7 +23,9 @@ import org.apache.camel.tooling.maven.MavenArtifactDescriptor;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
+import org.eclipse.aether.version.Version;
 import org.eclipse.aether.version.VersionConstraint;
+import org.eclipse.aether.version.VersionRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,16 +117,75 @@ public final class PluginCompatibility {
      * @return true if included, false if not, or when the range or the version is invalid
      */
     public static boolean accepts(String range, String cliVersion) {
-        if (range == null || cliVersion == null) {
+        Version cli = parseCliVersion(cliVersion);
+        if (range == null || cli == null) {
             return false;
+        }
+        try {
+            VersionConstraint constraint = VERSION_SCHEME.parseVersionConstraint(range);
+            return constraint.containsVersion(cli);
+        } catch (InvalidVersionSpecificationException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Whether the whole range is below the given Camel CLI version, that is, the range is for older Camel versions
+     * only. A SNAPSHOT version is compared without -SNAPSHOT.
+     *
+     * @return true if the range has an upper bound below the version, false if not, or when the range or the version is
+     *         invalid
+     */
+    public static boolean isOlder(String range, String cliVersion) {
+        VersionRange.Bound upper = upperBound(range);
+        Version cli = parseCliVersion(cliVersion);
+        if (upper == null || cli == null) {
+            return false;
+        }
+        int cmp = cli.compareTo(upper.getVersion());
+        return cmp > 0 || cmp == 0 && !upper.isInclusive();
+    }
+
+    /**
+     * Compares two ranges by their upper bound: a range for older Camel versions comes first. A range without upper
+     * bound comes last.
+     */
+    public static int compareUpperBounds(String range1, String range2) {
+        VersionRange.Bound b1 = upperBound(range1);
+        VersionRange.Bound b2 = upperBound(range2);
+        if (b1 == null || b2 == null) {
+            return b1 == null ? (b2 == null ? 0 : 1) : -1;
+        }
+        int cmp = b1.getVersion().compareTo(b2.getVersion());
+        if (cmp == 0 && b1.isInclusive() != b2.isInclusive()) {
+            return b1.isInclusive() ? 1 : -1;
+        }
+        return cmp;
+    }
+
+    private static VersionRange.Bound upperBound(String range) {
+        if (range == null) {
+            return null;
+        }
+        try {
+            VersionConstraint constraint = VERSION_SCHEME.parseVersionConstraint(range);
+            VersionRange r = constraint.getRange();
+            return r != null ? r.getUpperBound() : null;
+        } catch (InvalidVersionSpecificationException e) {
+            return null;
+        }
+    }
+
+    private static Version parseCliVersion(String cliVersion) {
+        if (cliVersion == null) {
+            return null;
         }
         String v = cliVersion.endsWith("-SNAPSHOT")
                 ? cliVersion.substring(0, cliVersion.length() - "-SNAPSHOT".length()) : cliVersion;
         try {
-            VersionConstraint constraint = VERSION_SCHEME.parseVersionConstraint(range);
-            return constraint.containsVersion(VERSION_SCHEME.parseVersion(v));
+            return VERSION_SCHEME.parseVersion(v);
         } catch (InvalidVersionSpecificationException e) {
-            return false;
+            return null;
         }
     }
 

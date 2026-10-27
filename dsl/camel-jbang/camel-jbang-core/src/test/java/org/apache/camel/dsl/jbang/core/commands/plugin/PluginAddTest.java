@@ -206,7 +206,8 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         Assertions.assertEquals(0, command.doCall());
 
         String warning = printer.getStderr();
-        Assertions.assertTrue(warning.startsWith("WARN: No release of fixture is known to support Camel CLI 4.24.0."),
+        Assertions.assertTrue(warning.startsWith("WARN: No release of fixture is built for Camel CLI 4.24.0 yet."
+                                                 + " The newest, fixture 2.0.0, is built for Camel 4.23.0. Using LATEST."),
                 warning);
         Assertions.assertTrue(warning.contains("Camel 4.23: fixture 2.0.0"), warning);
         Assertions.assertTrue(warning.contains("Camel 4.22: fixture 1.6.2"), warning);
@@ -219,13 +220,65 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
-    public void shouldUseLatestWhenCompatibilityCannotBeChecked() throws Exception {
-        downloader.down.add(null);
+    public void shouldSelectNearestOlderReleaseWhenBetweenCamelVersions() throws Exception {
+        downloader.release("2.0.0", "4.23.0", "[4.23.0,4.24.0)")
+                .release("1.4.2", "4.18.5", null);
+
+        TestPluginAdd command = newFixtureCommand();
+        command.cli = "4.21.0";
+        Assertions.assertEquals(0, command.doCall());
+
+        Assertions.assertEquals("WARN: No release of fixture is built for Camel CLI 4.21.0. Selected fixture 1.4.2,"
+                                + " the newest release for an older Camel version (built for Camel 4.18.5).",
+                printer.getStderr());
+        Assertions.assertEquals(List.of("org.example.plugins:camel-jbang-plugin-fixture:1.4.2"), command.downloaded);
+        JsonObject plugin = fixtureEntry();
+        Assertions.assertEquals("org.example.plugins:camel-jbang-plugin-fixture:1.4.2", plugin.getString("dependency"));
+        Assertions.assertEquals("[4.18.0,4.19.0)", plugin.getString("camelVersions"));
+        Assertions.assertEquals("inferred", plugin.getString("camelVersionsSource"));
+    }
+
+    @Test
+    public void shouldUseLatestWhenCliIsOlderThanAllReleases() throws Exception {
+        downloader.release("2.0.0", "4.23.0", "[4.23.0,4.24.0)")
+                .release("1.4.2", "4.18.5", null);
+
+        TestPluginAdd command = newFixtureCommand();
+        command.cli = "4.14.0";
+        Assertions.assertEquals(0, command.doCall());
+
+        String warning = printer.getStderr();
+        Assertions.assertTrue(warning.startsWith(
+                "WARN: No release of fixture is built for Camel CLI 4.14.0 or an older Camel version. Using LATEST."),
+                warning);
+        Assertions.assertTrue(warning.contains("Camel 4.18: fixture 1.4.2"), warning);
+        Assertions.assertTrue(command.downloaded.isEmpty());
+        JsonObject plugin = fixtureEntry();
+        Assertions.assertEquals("org.example.plugins:camel-jbang-plugin-fixture:LATEST", plugin.getString("dependency"));
+    }
+
+    @Test
+    public void shouldUseLatestWhenNoReleaseTellsItsCamelVersions() throws Exception {
+        downloader.release("2.0.0", null, null);
 
         TestPluginAdd command = newFixtureCommand();
         Assertions.assertEquals(0, command.doCall());
 
-        Assertions.assertEquals("WARN: Could not check plugin compatibility (Maven Central cannot be reached). Using LATEST.",
+        Assertions.assertEquals("WARN: No release of fixture tells which Camel versions it supports. Using LATEST.",
+                printer.getStderr());
+        JsonObject plugin = fixtureEntry();
+        Assertions.assertEquals("org.example.plugins:camel-jbang-plugin-fixture:LATEST", plugin.getString("dependency"));
+    }
+
+    @Test
+    public void shouldUseLatestWhenCompatibilityCannotBeChecked() throws Exception {
+        downloader.listingDown = true;
+
+        TestPluginAdd command = newFixtureCommand();
+        Assertions.assertEquals(0, command.doCall());
+
+        Assertions.assertEquals("WARN: Could not check plugin compatibility (Cannot resolve available versions of"
+                                + " org.example.plugins:camel-jbang-plugin-fixture). Using LATEST.",
                 printer.getStderr());
         JsonObject plugin = fixtureEntry();
         Assertions.assertEquals("org.example.plugins:camel-jbang-plugin-fixture:LATEST", plugin.getString("dependency"));

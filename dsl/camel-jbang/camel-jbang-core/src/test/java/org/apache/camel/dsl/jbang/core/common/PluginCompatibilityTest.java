@@ -102,6 +102,26 @@ public class PluginCompatibilityTest {
     }
 
     @Test
+    void isOlder() {
+        String range = "[4.22.0,4.23.0)";
+        assertThat(PluginCompatibility.isOlder(range, "4.23.0")).isTrue();
+        assertThat(PluginCompatibility.isOlder(range, "4.24.0-SNAPSHOT")).isTrue();
+        assertThat(PluginCompatibility.isOlder(range, "4.22.9")).isFalse();
+        assertThat(PluginCompatibility.isOlder(range, "4.21.0")).isFalse();
+        assertThat(PluginCompatibility.isOlder("[4.22.0,4.23.0]", "4.23.0")).isFalse();
+        assertThat(PluginCompatibility.isOlder("[4.22.0,)", "5.0.0")).isFalse();
+        assertThat(PluginCompatibility.isOlder("[4.22.0,", "5.0.0")).isFalse();
+    }
+
+    @Test
+    void compareUpperBounds() {
+        assertThat(PluginCompatibility.compareUpperBounds("[4.20.0,4.21.0)", "[4.22.0,4.23.0)")).isNegative();
+        assertThat(PluginCompatibility.compareUpperBounds("[4.22.0,4.23.0)", "[4.18.0,4.19.0)")).isPositive();
+        assertThat(PluginCompatibility.compareUpperBounds("[4.22.0,4.23.0)", "[4.21.0,4.23.0)")).isZero();
+        assertThat(PluginCompatibility.compareUpperBounds("[4.22.0,)", "[4.21.0,4.23.0)")).isPositive();
+    }
+
+    @Test
     void minorLine() {
         assertThat(PluginCompatibility.minorLine("4.22.2")).isEqualTo("4.22");
         assertThat(PluginCompatibility.minorLine("4.23.0-SNAPSHOT")).isEqualTo("4.23");

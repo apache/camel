@@ -18,10 +18,8 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -32,33 +30,26 @@ import org.apache.camel.tooling.maven.MavenArtifactDescriptor;
  */
 public class FakePluginDownloader extends MavenDependencyDownloader {
 
-    public final Map<String, List<String>> versionsPerRepo = new HashMap<>();
+    public final List<String> versions = new ArrayList<>();
     public final Map<String, MavenArtifactDescriptor> descriptors = new HashMap<>();
-    public final Set<String> down = new HashSet<>();
     public final List<String> descriptorsRead = new ArrayList<>();
+    public boolean listingDown;
     public boolean descriptorsDown;
+    public Boolean listedFresh;
 
     public FakePluginDownloader release(String version, String camelJBangCoreVersion, String camelVersions) {
-        return releaseIn(null, version, camelJBangCoreVersion, camelVersions);
-    }
-
-    public FakePluginDownloader releaseIn(String repo, String version, String camelJBangCoreVersion, String camelVersions) {
-        versionsPerRepo.computeIfAbsent(repo, r -> new ArrayList<>()).add(version);
+        versions.add(version);
         descriptors.put(version, PluginCompatibilityTest.descriptor(camelJBangCoreVersion, camelVersions));
         return this;
     }
 
     @Override
-    public List<String[]> resolveAvailableVersions(
-            String groupId, String artifactId, String minimumVersion, String repo) {
-        if (down.contains(repo)) {
-            throw new DownloadException((repo != null ? repo : "Maven Central") + " cannot be reached");
+    public List<String> resolveAvailableVersions(String groupId, String artifactId, boolean fresh) {
+        listedFresh = fresh;
+        if (listingDown) {
+            throw new DownloadException("Cannot resolve available versions of " + groupId + ":" + artifactId);
         }
-        List<String[]> answer = new ArrayList<>();
-        for (String v : versionsPerRepo.getOrDefault(repo, List.of())) {
-            answer.add(new String[] { v, null });
-        }
-        return answer;
+        return new ArrayList<>(versions);
     }
 
     @Override

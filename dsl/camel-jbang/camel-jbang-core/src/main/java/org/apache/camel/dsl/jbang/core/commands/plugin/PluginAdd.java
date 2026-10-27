@@ -29,6 +29,7 @@ import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.NoMatch;
+import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Older;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Result;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Selected;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Unavailable;
@@ -202,34 +203,34 @@ public class PluginAdd extends PluginBaseCommand {
         Result result;
         DependencyDownloader downloader = newDownloader();
         try {
-            result = new PluginVersionResolver(downloader).resolve(groupId, artifactId, cli, repositories);
+            result = new PluginVersionResolver(downloader).resolve(groupId, artifactId, cli);
         } finally {
             downloader.stop();
             downloader.close();
         }
 
         if (result instanceof Selected selected) {
-            version = selected.version();
-            String selectedGav = "%s:%s:%s".formatted(groupId, artifactId, version);
-            Optional<Plugin> resolved;
-            try {
-                resolved = downloadPlugin(selectedGav);
-            } catch (Exception e) {
-                printer().printErr("Cannot download " + selectedGav, e);
+            if (!useRelease(plugin, selected.version(), selected.compat())) {
                 return false;
             }
-            if (resolved.isEmpty()) {
-                printer().printErr("Cannot download " + selectedGav);
+            printer().printf("Selected %s %s for Camel CLI %s (%s)%n", name, version, cli, selected.compat().describe());
+        } else if (result instanceof Older older) {
+            if (!useRelease(plugin, older.version(), older.compat())) {
                 return false;
             }
-            Compat compat = selected.compat();
-            plugin.put("camelVersions", compat.range());
-            plugin.put("camelVersionsSource", compat.source().label());
-            printer().printf("Selected %s %s for Camel CLI %s (%s)%n", name, version, cli, compat.describe());
+            printer().printWarn(
+                    "No release of %s is built for Camel CLI %s. Selected %s %s, the newest release for an older Camel version (%s)."
+                            .formatted(name, cli, name, version, older.compat().describe()));
         } else if (result instanceof NoMatch noMatch) {
             StringBuilder sb = new StringBuilder();
-            sb.append("No release of %s is known to support Camel CLI %s. The newest, %s %s, is %s. Using LATEST."
-                    .formatted(name, cli, name, noMatch.newestVersion(), noMatch.newest().describe()));
+            switch (noMatch.reason()) {
+                case CLI_NEWER -> sb.append("No release of %s is built for Camel CLI %s yet. The newest, %s %s, is %s."
+                        .formatted(name, cli, name, noMatch.newestVersion(), noMatch.newest().describe()));
+                case CLI_OLDER -> sb.append("No release of %s is built for Camel CLI %s or an older Camel version."
+                        .formatted(name, cli));
+                default -> sb.append("No release of %s tells which Camel versions it supports.".formatted(name));
+            }
+            sb.append(" Using LATEST.");
             if (!noMatch.newestPerLine().isEmpty()) {
                 sb.append(System.lineSeparator()).append("Newest release per Camel version:");
                 noMatch.newestPerLine().forEach((line, v) -> sb.append(System.lineSeparator())
@@ -241,6 +242,30 @@ public class PluginAdd extends PluginBaseCommand {
         } else if (result instanceof Unavailable unavailable) {
             printer().printWarn("Could not check plugin compatibility (%s). Using LATEST.".formatted(unavailable.reason()));
         }
+        return true;
+    }
+
+    /**
+     * Downloads the release, and stores the Camel versions it supports in the plugin entry.
+     *
+     * @return false when the release cannot be downloaded
+     */
+    private boolean useRelease(JsonObject plugin, String release, Compat compat) {
+        version = release;
+        String releaseGav = "%s:%s:%s".formatted(groupId, artifactId, version);
+        Optional<Plugin> resolved;
+        try {
+            resolved = downloadPlugin(releaseGav);
+        } catch (Exception e) {
+            printer().printErr("Cannot download " + releaseGav, e);
+            return false;
+        }
+        if (resolved.isEmpty()) {
+            printer().printErr("Cannot download " + releaseGav);
+            return false;
+        }
+        plugin.put("camelVersions", compat.range());
+        plugin.put("camelVersionsSource", compat.source().label());
         return true;
     }
 
