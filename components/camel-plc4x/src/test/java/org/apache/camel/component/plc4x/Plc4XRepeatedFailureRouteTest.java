@@ -32,6 +32,7 @@ import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +47,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * at WARN and the end of the run at INFO, instead of a WARN with a stack trace on every poll, while
  * {@code bridgeErrorHandler} still gets every failure. Without {@code autoReconnect}, a lost connection shuts the
  * endpoint down once, and the triggered consumer stops polling until the route is restarted.
+ * <p>
+ * Isolated because {@link LogCapture} changes the level of a logger of the JVM and {@link MockDriver} is programmed
+ * statically, so another test class must not run at the same time.
  */
+@Isolated
 public class Plc4XRepeatedFailureRouteTest extends CamelTestSupport {
 
     private static final String PLC = "plc4x:mock:10.10.10.1/1/1?trigger=TRIG&period=50&tag.temperature=TEMP";
