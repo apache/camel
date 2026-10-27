@@ -33,7 +33,9 @@ import org.eclipse.californium.core.network.Endpoint;
  */
 public class CoAPProducer extends DefaultProducer {
     private final CoAPEndpoint endpoint;
-    private CoapClient client;
+    // set by initClient under the lock, and set to null by doStop, which BaseService.stop runs under the same lock;
+    // volatile for the readers that do not take the lock (getClient)
+    private volatile CoapClient client;
     private boolean shutdownClient;
 
     public CoAPProducer(CoAPEndpoint endpoint) {
@@ -51,9 +53,16 @@ public class CoAPProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        initClient();
-        // doStop sets the client field to null, possibly while this request is in flight
-        CoapClient coapClient = client;
+        // doStop sets the client field to null, possibly while this request is in flight: take the client once, under
+        // the lock that doStop holds, so it cannot become null between initClient and this read
+        CoapClient coapClient;
+        lock.lock();
+        try {
+            initClient();
+            coapClient = client;
+        } finally {
+            lock.unlock();
+        }
 
         String ct = exchange.getIn().getHeader(CoAPConstants.CONTENT_TYPE, String.class);
         if (ct == null) {
