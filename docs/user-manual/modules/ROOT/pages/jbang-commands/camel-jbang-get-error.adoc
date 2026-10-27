@@ -33,7 +33,7 @@ camel get error [options]
 | `--route` | Filter by route ID |  | String
 | `--show` | Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace, or 'all' for all sections |  | String
 | `--sort` | Sort by pid, name or age | pid | String
-| `--theme` | Diagram color theme (ascii, unicode, dark, light, transparent, or custom) | unicode | String
+| `--theme` | Diagram color theme (ascii, unicode, dark, light, transparent, card, card-dark, or custom) | unicode | String
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

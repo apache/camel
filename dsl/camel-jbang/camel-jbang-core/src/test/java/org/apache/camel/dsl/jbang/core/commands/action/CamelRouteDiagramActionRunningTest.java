@@ -16,9 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -119,6 +122,23 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
         Path txt = dir.resolve("out").resolve("diagram.txt");
         assertThat(Files.readString(txt)).contains("route1", "timer:tick");
         assertThat(printer.getOutput()).contains("Diagram saved to: " + txt.toAbsolutePath());
+    }
+
+    @Test
+    void cardThemeDrawsTheStepsAsCards() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path light = dir.resolve("light.png");
+        Path card = dir.resolve("card.png");
+
+        assertThat(callWithResponse(command("--theme=light", "--output=" + light)::doCall, structure("route1")))
+                .isZero();
+        assertThat(callWithResponse(command("--theme=card", "--output=" + card)::doCall, structure("route1")))
+                .isZero();
+
+        // the cards have their title and detail on two lines, so the same route is taller than in the light theme
+        BufferedImage lightImage = ImageIO.read(light.toFile());
+        BufferedImage cardImage = ImageIO.read(card.toFile());
+        assertThat(cardImage.getHeight()).isGreaterThan(lightImage.getHeight());
     }
 
     @Test

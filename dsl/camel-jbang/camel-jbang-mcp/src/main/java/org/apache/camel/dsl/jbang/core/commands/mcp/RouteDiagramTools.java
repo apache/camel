@@ -55,7 +55,8 @@ public class RouteDiagramTools {
             @ToolArg(description = "Optional output file path. For image themes a PNG is written; for text themes a .txt "
                                    + "file is written. If not specified, a temporary file is created.",
                      required = false) String outputFile,
-            @ToolArg(description = "Color theme: 'dark' (default), 'light', 'transparent', 'ascii' (plain ASCII art), "
+            @ToolArg(description = "Color theme: 'dark' (default), 'light', 'transparent', 'card' (white cards with an icon, "
+                                   + "the kind of each step and its detail), 'card-dark', 'ascii' (plain ASCII art), "
                                    + "'unicode' (box-drawing characters), or a custom spec like "
                                    + "'bg=#1e1e1e:from=#2e7d32:to=#1565c0'. "
                                    + "Use 'ascii' or 'unicode' to get a text diagram that can be read directly.",

@@ -99,7 +99,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     String output;
 
     @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
+                        description = "Color theme preset (dark, light, transparent, card, card-dark, ascii, unicode) or custom colors "
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Use ascii/unicode for plain text output. "
@@ -271,6 +271,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
         NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
+        // the card themes lay the steps out as cards: a title and its detail beside an icon
+        engine.setCardStyle(colors != null && colors.isCard());
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;

@@ -24,6 +24,8 @@ import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Layout engine that builds a tree from flat route node lists and computes positions for diagram rendering.
@@ -41,6 +43,16 @@ public class RouteDiagramLayoutEngine {
     private static final int MIN_BOX_WIDTH = 80;
     private static final int DEFAULT_NODE_HEIGHT = 32;
 
+    /** The space between the border of a card and its icon, and its text. */
+    public static final int CARD_PAD = 10 * SCALE;
+    /** The space above and below the text of a card. */
+    public static final int CARD_PAD_Y = 9 * SCALE;
+    /** The diameter of the circle of the icon of a card. */
+    public static final int CARD_ICON_SIZE = 24 * SCALE;
+    /** Where the text of a card starts, from its left border: after the icon. */
+    public static final int CARD_TEXT_INSET = CARD_PAD + CARD_ICON_SIZE + CARD_PAD;
+    private static final Pattern CARD_EXPRESSION = Pattern.compile("^([A-Za-z][\\w-]*)\\{(.*)\\}$", Pattern.DOTALL);
+
     public enum NodeLabelMode {
         CODE,
         DESCRIPTION,
@@ -52,8 +64,10 @@ public class RouteDiagramLayoutEngine {
     private final int nodeTextPadding;
     private final int baseNodeHeight;
     private final FontMetrics fontMetrics;
+    private final FontMetrics titleMetrics;
     private final NodeLabelMode nodeLabelMode;
     private boolean tableLayout;
+    private boolean cardStyle;
 
     static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
@@ -120,13 +134,33 @@ public class RouteDiagramLayoutEngine {
         try {
             g.setFont(new Font("SansSerif", Font.PLAIN, fontSize * SCALE));
             this.fontMetrics = g.getFontMetrics();
+            g.setFont(cardTitleFont(fontSize * SCALE));
+            this.titleMetrics = g.getFontMetrics();
         } finally {
             g.dispose();
         }
     }
 
+    /** The font of the title of a card: bold, a size larger than the text of the nodes. */
+    public static Font cardTitleFont(int fontSizeScaled) {
+        return new Font("SansSerif", Font.BOLD, fontSizeScaled + SCALE);
+    }
+
     public int getNodeWidth() {
         return nodeWidth;
+    }
+
+    /**
+     * Lays the nodes out as cards: a title (the kind of step, such as setBody) and the detail below it (such as
+     * {@code groovy: body.items}), after an icon. The first of the {@link LayoutNode#wrappedLines} is the title. Off by
+     * default: a renderer turns it on when it draws cards.
+     */
+    public void setCardStyle(boolean cardStyle) {
+        this.cardStyle = cardStyle;
+    }
+
+    public boolean isCardStyle() {
+        return cardStyle;
     }
 
     /**
@@ -298,7 +332,10 @@ public class RouteDiagramLayoutEngine {
     }
 
     private List<String> wrapLabel(String label) {
-        int maxTextWidth = nodeWidth - nodeTextPadding;
+        return wrapLabel(label, nodeWidth - nodeTextPadding);
+    }
+
+    private List<String> wrapLabel(String label, int maxTextWidth) {
         if (fontMetrics.stringWidth(label) <= maxTextWidth) {
             return List.of(label);
         }
@@ -366,6 +403,69 @@ public class RouteDiagramLayoutEngine {
         }
         int lineSpacing = fontMetrics.getHeight();
         return baseNodeHeight + (lineCount - 1) * lineSpacing;
+    }
+
+    /** The lines of a card: its title, then its detail wrapped to the width beside the icon, at most three lines. */
+    private List<String> cardLines(NodeInfo info) {
+        List<String> label = cardLabel(info, nodeLabelMode);
+        List<String> lines = new ArrayList<>();
+        lines.add(label.get(0));
+        int maxTextWidth = nodeWidth - CARD_TEXT_INSET - CARD_PAD;
+        List<String> detail = new ArrayList<>();
+        for (String text : label.subList(1, label.size())) {
+            detail.addAll(wrapLabel(text, maxTextWidth));
+        }
+        if (detail.size() > MAX_WRAP_LINES) {
+            // the renderer cuts the last line with an ellipsis
+            String rest = String.join(" ", detail.subList(MAX_WRAP_LINES - 1, detail.size()));
+            detail = new ArrayList<>(detail.subList(0, MAX_WRAP_LINES - 1));
+            detail.add(rest);
+        }
+        lines.addAll(detail);
+        return lines;
+    }
+
+    private int computeCardHeight(List<String> lines) {
+        int textHeight = titleMetrics.getHeight() + (lines.size() - 1) * fontMetrics.getHeight();
+        return Math.max(baseNodeHeight, Math.max(textHeight, CARD_ICON_SIZE) + 2 * CARD_PAD_Y);
+    }
+
+    /**
+     * The text of a node as a card: the kind of step first (such as {@code setBody}), then its detail (such as
+     * {@code groovy: body.items} for the code {@code setBody[groovy{body.items}]}), or its description, by the label
+     * mode. A step without detail (such as {@code choice}) has only its kind.
+     */
+    public static List<String> cardLabel(NodeInfo info, NodeLabelMode mode) {
+        String code = cleanLabel(info.code);
+        String kind = code;
+        String detail = "";
+        int bracket = code.indexOf('[');
+        if (bracket > 0 && code.endsWith("]")) {
+            kind = code.substring(0, bracket);
+            detail = code.substring(bracket + 1, code.length() - 1);
+            Matcher m = CARD_EXPRESSION.matcher(detail);
+            if (m.matches()) {
+                // an expression in its language: groovy{body.items} as groovy: body.items
+                detail = m.group(1) + ": " + m.group(2);
+            }
+        }
+        if (kind.isEmpty() && info.type != null) {
+            kind = info.type;
+        }
+        boolean hasDesc = info.description != null && !info.description.isBlank() && !info.description.equals(code);
+        List<String> below = switch (mode) {
+            case DESCRIPTION -> List.of(hasDesc ? info.description : detail);
+            case BOTH -> hasDesc ? List.of(info.description, detail) : List.of(detail);
+            default -> List.of(detail);
+        };
+        List<String> lines = new ArrayList<>();
+        lines.add(kind);
+        for (String line : below) {
+            if (!line.isBlank()) {
+                lines.add(line);
+            }
+        }
+        return lines;
     }
 
     public static List<String> resolveLabel(NodeInfo info, NodeLabelMode mode) {
@@ -474,9 +574,14 @@ public class RouteDiagramLayoutEngine {
         ln.id = node.info.id;
         ln.x = nodeX;
         ln.y = y;
-        ln.wrappedLines = resolveLabel(node.info, nodeLabelMode).stream()
-                .flatMap(s -> wrapLabel(s).stream()).toList();
-        ln.height = computeNodeHeight(ln.wrappedLines);
+        if (cardStyle) {
+            ln.wrappedLines = cardLines(node.info);
+            ln.height = computeCardHeight(ln.wrappedLines);
+        } else {
+            ln.wrappedLines = resolveLabel(node.info, nodeLabelMode).stream()
+                    .flatMap(s -> wrapLabel(s).stream()).toList();
+            ln.height = computeNodeHeight(ln.wrappedLines);
+        }
         ln.treeNode = node;
         node.layoutNode = ln;
         lr.nodes.add(ln);

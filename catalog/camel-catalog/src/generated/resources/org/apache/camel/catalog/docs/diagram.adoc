@@ -135,6 +135,8 @@ The following built-in themes are available:
 * `dark` - dark background (default)
 * `light` - light background
 * `transparent` - transparent background
+* `card` - each step as a white card (see <<_card_style,Card Style>>)
+* `card-dark` - each step as a dark card
 
 Custom colors can be specified using the format:
 
@@ -151,6 +153,36 @@ To use dark theme
 ----
 camel cmd route-diagram MyRoute.java --theme=dark
 ----
+
+=== Card Style
+
+The `card` and `card-dark` themes draw each step as a card: an icon for the kind of step, in a circle of the color
+of its kind, the kind in bold (such as `setBody`), and its detail below (such as `groovy: body.items`, from the code
+`setBody[groovy{body.items}]`). A step without detail, such as `choice`, shows only its kind.
+
+[source,bash]
+----
+camel cmd route-diagram orders.camel.yaml --theme=card --output=orders.png
+----
+
+image::ROOT:route-diagram-card.png[A route diagram in the card style: a file read, a groovy mapping, an http call and a JMS send as white cards]
+
+With `--node-label=both` (the default of `camel cmd route-diagram`) a step with a description shows the description
+and then the detail below its kind.
+
+A custom color spec draws cards with the key `style=card`, and sets the colors of the cards with `card` (the
+background of a card), `cardBorder`, `cardText` (the kind) and `cardDetail` (the detail):
+
+[source,properties]
+----
+style=card:bg=#ffffff:card=#fafafa:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e
+----
+
+The icons are from https://lucide.dev[Lucide] (ISC License), the same as the embeddable web components.
+
+The card themes are for the PNG diagrams of the Camel CLI (`camel cmd route-diagram`, `camel get history --diagram`,
+`camel get error --diagram`) and its MCP tool. The developer console and the `RouteDiagramDumper` keep the `dark`, `light`
+and `transparent` themes.
 
 == ASCII Art Rendering
 

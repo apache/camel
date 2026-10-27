@@ -17,6 +17,7 @@
 package org.apache.camel.diagram;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,10 +80,28 @@ public class RouteDiagramRenderer {
             = "bg=:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
               + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a";
 
+    // the card style: white (or dark) cards with an icon in a circle of the color of the kind of step
+    private static final String CARD_COLORS
+            = "style=card:bg=#f6f8fa:arrow=#8c959f:label=#1f2328:card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328"
+              + ":cardDetail=#59636e:from=#238636:to=#1f6feb:eip=#8957e5:choice=#d29922:default=#59636e"
+              + ":transform=#1b7c83:processor=#bf4b8a";
+    private static final String CARD_DARK_COLORS
+            = "style=card:bg=#0d1117:arrow=#656c76:label=#d1d7e0:card=#151b23:cardBorder=#3d444d:cardText=#f0f6fc"
+              + ":cardDetail=#9198a1:from=#238636:to=#1f6feb:eip=#8957e5:choice=#d29922:default=#656c76"
+              + ":transform=#1b7c83:processor=#bf4b8a";
+
     private static final Map<String, String> COLOR_PRESETS = Map.of(
             "dark", DARK_COLORS,
             "light", LIGHT_COLORS,
-            "transparent", TRANSPARENT_COLORS);
+            "transparent", TRANSPARENT_COLORS,
+            "card", CARD_COLORS,
+            "card-dark", CARD_DARK_COLORS);
+
+    /** The size of the icon inside its circle on a card. */
+    private static final int CARD_ICON_GLYPH = 14 * SCALE;
+    private static final float CARD_ICON_STROKE_WIDTH = 1.4f * SCALE;
+    private static final Color CARD_SHADOW = new Color(0, 0, 0, 22);
+    private static final Color CARD_SHADOW_SOFT = new Color(0, 0, 0, 10);
 
     public RouteDiagramRenderer() {
         this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE,
@@ -120,7 +139,16 @@ public class RouteDiagramRenderer {
         private Color nodeTransform;
         private Color nodeProcessor;
         private Color nodeExternal;
+        private boolean card;
+        private Color cardBg;
+        private Color cardBorder;
+        private Color cardText;
+        private Color cardDetail;
 
+        /**
+         * The colors of a theme: a preset (dark, light, transparent, card, card-dark) or a spec of {@code key=color}
+         * pairs separated by colons. The key {@code style=card} draws the steps as cards.
+         */
         public static DiagramColors parse(String spec) {
             String resolved = COLOR_PRESETS.getOrDefault(spec, spec);
             Map<String, String> map = new HashMap<>();
@@ -151,6 +179,11 @@ public class RouteDiagramRenderer {
             c.nodeTransform = parseColor(map.getOrDefault("transform", "#00838f"));
             c.nodeProcessor = parseColor(map.getOrDefault("processor", "#d84315"));
             c.nodeExternal = parseColor(map.getOrDefault("external", "#0277bd"));
+            c.card = "card".equalsIgnoreCase(map.get("style"));
+            c.cardBg = parseColor(map.getOrDefault("card", "#ffffff"));
+            c.cardBorder = parseColor(map.getOrDefault("cardBorder", "#d0d7de"));
+            c.cardText = parseColor(map.getOrDefault("cardText", "#1f2328"));
+            c.cardDetail = parseColor(map.getOrDefault("cardDetail", "#59636e"));
             return c;
         }
 
@@ -226,6 +259,30 @@ public class RouteDiagramRenderer {
 
         public Color getNodeExternal() {
             return nodeExternal;
+        }
+
+        /**
+         * Whether the steps are drawn as cards (the style key {@code style=card}): the layout engine must lay them out
+         * as cards too ({@link RouteDiagramLayoutEngine#setCardStyle}).
+         */
+        public boolean isCard() {
+            return card;
+        }
+
+        public Color getCardBg() {
+            return cardBg;
+        }
+
+        public Color getCardBorder() {
+            return cardBorder;
+        }
+
+        public Color getCardText() {
+            return cardText;
+        }
+
+        public Color getCardDetail() {
+            return cardDetail;
         }
     }
 
@@ -495,6 +552,10 @@ public class RouteDiagramRenderer {
     }
 
     private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors, boolean highlightFail) {
+        if (colors.isCard()) {
+            drawCard(g, node, colors, highlightFail);
+            return;
+        }
         Color color = getNodeColor(node.type, colors);
 
         g.setColor(color);
@@ -520,16 +581,82 @@ public class RouteDiagramRenderer {
         int startY = node.y + (node.height - totalTextHeight) / 2 + fm.getAscent();
 
         for (int i = 0; i < lines.size(); i++) {
-            String text = lines.get(i);
-            if (fm.stringWidth(text) > nodeWidth - nodeTextPadding) {
-                while (text.length() > 1 && fm.stringWidth(text + "…") > nodeWidth - nodeTextPadding) {
-                    text = text.substring(0, text.length() - 1);
-                }
-                text = text + "…";
-            }
+            String text = fit(fm, lines.get(i), nodeWidth - nodeTextPadding);
             int textX = node.x + (nodeWidth - fm.stringWidth(text)) / 2;
             g.drawString(text, textX, startY + i * lineHeight);
         }
+    }
+
+    /**
+     * A step as a card: a white (or dark) card with a soft shadow, the icon of its kind in a circle of the color of the
+     * kind, its title in bold and its detail below ({@link RouteDiagramLayoutEngine#setCardStyle}).
+     */
+    private void drawCard(Graphics2D g, LayoutNode node, DiagramColors colors, boolean highlightFail) {
+        int x = node.x;
+        int y = node.y;
+        int h = node.height;
+
+        g.setColor(CARD_SHADOW_SOFT);
+        g.fillRoundRect(x - SCALE, y + SCALE, nodeWidth + 2 * SCALE, h + 2 * SCALE, ARC + 2 * SCALE, ARC + 2 * SCALE);
+        g.setColor(CARD_SHADOW);
+        g.fillRoundRect(x, y + SCALE, nodeWidth, h, ARC, ARC);
+
+        g.setColor(colors.getCardBg());
+        g.fillRoundRect(x, y, nodeWidth, h, ARC, ARC);
+        if (highlightFail) {
+            g.setColor(HIGHLIGHT_FAIL_COLOR);
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
+        } else {
+            g.setColor(colors.getCardBorder());
+            g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        }
+        g.drawRoundRect(x, y, nodeWidth, h, ARC, ARC);
+
+        // the icon of the kind of step, in a circle of its color
+        int d = RouteDiagramLayoutEngine.CARD_ICON_SIZE;
+        int circleX = x + RouteDiagramLayoutEngine.CARD_PAD;
+        int circleY = y + (h - d) / 2;
+        g.setColor(getNodeColor(node.type, colors));
+        g.fillOval(circleX, circleY, d, d);
+        double scale = (double) CARD_ICON_GLYPH / RouteDiagramIcons.GRID;
+        AffineTransform at = new AffineTransform();
+        at.translate(circleX + (d - CARD_ICON_GLYPH) / 2.0, circleY + (d - CARD_ICON_GLYPH) / 2.0);
+        at.scale(scale, scale);
+        g.setColor(Color.WHITE);
+        g.setStroke(new BasicStroke(CARD_ICON_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.draw(at.createTransformedShape(RouteDiagramIcons.iconFor(node.type)));
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
+
+        // the title, and the detail below it, centered in the height of the card
+        List<String> lines = node.wrappedLines;
+        int textX = x + RouteDiagramLayoutEngine.CARD_TEXT_INSET;
+        int maxWidth = nodeWidth - RouteDiagramLayoutEngine.CARD_TEXT_INSET - RouteDiagramLayoutEngine.CARD_PAD;
+        g.setFont(RouteDiagramLayoutEngine.cardTitleFont(fontSizeNode));
+        FontMetrics titleFm = g.getFontMetrics();
+        Font detailFont = new Font("SansSerif", Font.PLAIN, fontSizeNode);
+        FontMetrics detailFm = g.getFontMetrics(detailFont);
+        int textHeight = titleFm.getHeight() + (lines.size() - 1) * detailFm.getHeight();
+        int baseline = y + (h - textHeight) / 2 + titleFm.getAscent();
+        g.setColor(colors.getCardText());
+        g.drawString(fit(titleFm, lines.get(0), maxWidth), textX, baseline);
+        g.setFont(detailFont);
+        g.setColor(colors.getCardDetail());
+        baseline += titleFm.getDescent() + detailFm.getAscent();
+        for (int i = 1; i < lines.size(); i++) {
+            g.drawString(fit(detailFm, lines.get(i), maxWidth), textX, baseline);
+            baseline += detailFm.getHeight();
+        }
+    }
+
+    /** The text cut with an ellipsis when it is wider than the given width. */
+    private static String fit(FontMetrics fm, String text, int maxWidth) {
+        if (fm.stringWidth(text) <= maxWidth) {
+            return text;
+        }
+        while (text.length() > 1 && fm.stringWidth(text + "…") > maxWidth) {
+            text = text.substring(0, text.length() - 1);
+        }
+        return text + "…";
     }
 
     private void drawArrow(
