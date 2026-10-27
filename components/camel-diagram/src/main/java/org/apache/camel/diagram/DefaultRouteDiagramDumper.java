@@ -204,7 +204,7 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse(theme);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                 nodeWidth, fontSize, RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
-        engine.setCardStyle(colors.isCard());
+        engine.setCardStyle(true);
 
         List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;

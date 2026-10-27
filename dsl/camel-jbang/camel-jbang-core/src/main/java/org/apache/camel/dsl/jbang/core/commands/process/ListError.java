@@ -118,7 +118,7 @@ public class ListError extends ProcessWatchCommand {
     boolean diagram;
 
     @CommandLine.Option(names = { "--theme" }, defaultValue = "unicode",
-                        description = "Diagram color theme (ascii, unicode, dark, light, transparent, card, card-dark, or custom)")
+                        description = "Diagram color theme (ascii, unicode, dark, light, transparent, or custom)")
     String theme = "unicode";
 
     public ListError(CamelJBangMain main) {
@@ -387,7 +387,7 @@ public class ListError extends ProcessWatchCommand {
         // layout
         RouteDiagramLayoutEngine engine
                 = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
-        engine.setCardStyle(!isTextTheme() && DiagramColors.parse(theme).isCard());
+        engine.setCardStyle(!isTextTheme());
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;

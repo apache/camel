@@ -2517,15 +2517,25 @@ cannot work out, such as a lambda or a processor, is shown as a placeholder, and
 listed (with `--json`, as an `unread` array in the JSON). Use the new `--compile` option to compile the sources and
 load their routes as before.
 
-=== camel-jbang - route-diagram saves a .png file in the card style
+=== camel-diagram - a route diagram image draws the steps as cards
 
-`camel cmd route-diagram --output=diagram.png` without `--theme` now saves the PNG image in the new `card` theme, which
-draws each step as a card with an icon, its kind and its detail. Before, the default theme was `unicode` also for a
-file, so the command saved the text diagram in `diagram.txt` instead. A diagram in the terminal is still text
-(`unicode`) by default, and a file that does not end with `.png` still gets the text diagram. Use `--theme=unicode` to
-save the text diagram, or `--theme=dark` for the image as before.
+The PNG image of a route diagram draws each step as a card: an icon for the kind of step, in a circle of the color of
+its kind, the kind in bold (such as `setBody`) and its detail below (such as `groovy: body.items`). Before, a step was
+a box filled with the color of its kind, with its code (`setBody[groovy{body.items}]`) in one line. This applies to
+the `dark`, `light` and `transparent` themes, in `camel cmd route-diagram`, `camel get history --diagram`,
+`camel get error --diagram`, the `camel_render_route_diagram` MCP tool, the `route-diagram` developer console
+(`format=png`) and the `RouteDiagramDumper`. A card is taller than a box, so the image of the same route is taller.
+The ASCII and Unicode diagrams, the topology diagram and the web component do not change.
 
-The `camel_render_route_diagram` MCP tool also draws in the `card` theme when no theme is given (before, it failed
+A custom color spec sets the colors of the cards with `card`, `cardBorder`, `cardText` and `cardDetail`. The `text`
+color no longer applies to the steps of a route diagram (it still does to the topology diagram).
+
+`camel cmd route-diagram --output=diagram.png` without `--theme` now saves the PNG image in the `light` theme. Before,
+the default theme was `unicode` also for a file, so the command saved the text diagram in `diagram.txt` instead. A
+diagram in the terminal is still text (`unicode`) by default, and a file that does not end with `.png` still gets the
+text diagram. Use `--theme=unicode` to save the text diagram.
+
+The `camel_render_route_diagram` MCP tool also draws in the `light` theme when no theme is given (before, it failed
 without a theme).
 
 === camel-jbang - export to Quarkus keeps the names in `quarkus.*` keys

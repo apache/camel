@@ -67,35 +67,28 @@ public class RouteDiagramRenderer {
     private final int nodeWidth;
     private final int fontSizeNode;
     private final int fontSizeLabel;
-    private final int nodeTextPadding;
     private final boolean metrics;
 
+    // the steps are cards (card, cardBorder, cardText for the kind, cardDetail for the detail) with an icon in a
+    // circle of the color of the kind of step (from, to, eip, ...); text is the text in the nodes of the topology
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
-              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a";
+              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
+              + ":card=#151b23:cardBorder=#3d444d:cardText=#f0f6fc:cardDetail=#9198a1";
     private static final String LIGHT_COLORS
             = "bg=#f6f8fa:text=#f0f6fc:arrow=#59636e:label=#1f2328:from=#238636:to=#1f6feb:eip=#8957e5"
-              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a";
+              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
+              + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e";
+    // white cards, readable on any background
     private static final String TRANSPARENT_COLORS
             = "bg=:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
-              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a";
-
-    // the card style: white (or dark) cards with an icon in a circle of the color of the kind of step
-    private static final String CARD_COLORS
-            = "style=card:bg=#f6f8fa:arrow=#8c959f:label=#1f2328:card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328"
-              + ":cardDetail=#59636e:from=#238636:to=#1f6feb:eip=#8957e5:choice=#d29922:default=#59636e"
-              + ":transform=#1b7c83:processor=#bf4b8a";
-    private static final String CARD_DARK_COLORS
-            = "style=card:bg=#0d1117:arrow=#656c76:label=#d1d7e0:card=#151b23:cardBorder=#3d444d:cardText=#f0f6fc"
-              + ":cardDetail=#9198a1:from=#238636:to=#1f6feb:eip=#8957e5:choice=#d29922:default=#656c76"
-              + ":transform=#1b7c83:processor=#bf4b8a";
+              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
+              + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e";
 
     private static final Map<String, String> COLOR_PRESETS = Map.of(
             "dark", DARK_COLORS,
             "light", LIGHT_COLORS,
-            "transparent", TRANSPARENT_COLORS,
-            "card", CARD_COLORS,
-            "card-dark", CARD_DARK_COLORS);
+            "transparent", TRANSPARENT_COLORS);
 
     /** The size of the icon inside its circle on a card. */
     private static final int CARD_ICON_GLYPH = 14 * SCALE;
@@ -104,24 +97,23 @@ public class RouteDiagramRenderer {
     private static final Color CARD_SHADOW_SOFT = new Color(0, 0, 0, 10);
 
     public RouteDiagramRenderer() {
-        this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE,
-             RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
-             new RouteDiagramLayoutEngine().getNodeTextPadding(),
+        this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
              false);
     }
 
     public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, boolean metrics) {
-        this(nodeWidth, fontSizeScaled, new RouteDiagramLayoutEngine(
-                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding(),
-             metrics);
-    }
-
-    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
         this.nodeWidth = nodeWidth;
         this.fontSizeNode = fontSizeScaled;
         this.fontSizeLabel = fontSizeScaled + SCALE;
-        this.nodeTextPadding = nodeTextPadding;
         this.metrics = metrics;
+    }
+
+    /**
+     * @param nodeTextPadding not used: the text of a card starts after its icon
+     *                        ({@link RouteDiagramLayoutEngine#CARD_TEXT_INSET})
+     */
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
+        this(nodeWidth, fontSizeScaled, metrics);
     }
 
     public static class DiagramColors {
@@ -139,15 +131,14 @@ public class RouteDiagramRenderer {
         private Color nodeTransform;
         private Color nodeProcessor;
         private Color nodeExternal;
-        private boolean card;
         private Color cardBg;
         private Color cardBorder;
         private Color cardText;
         private Color cardDetail;
 
         /**
-         * The colors of a theme: a preset (dark, light, transparent, card, card-dark) or a spec of {@code key=color}
-         * pairs separated by colons. The key {@code style=card} draws the steps as cards.
+         * The colors of a theme: a preset (dark, light, transparent) or a spec of {@code key=color} pairs separated by
+         * colons, on top of the dark theme.
          */
         public static DiagramColors parse(String spec) {
             // no spec is the dark theme (the presets are an immutable map, which cannot look up null)
@@ -180,11 +171,10 @@ public class RouteDiagramRenderer {
             c.nodeTransform = parseColor(map.getOrDefault("transform", "#00838f"));
             c.nodeProcessor = parseColor(map.getOrDefault("processor", "#d84315"));
             c.nodeExternal = parseColor(map.getOrDefault("external", "#0277bd"));
-            c.card = "card".equalsIgnoreCase(map.get("style"));
-            c.cardBg = parseColor(map.getOrDefault("card", "#ffffff"));
-            c.cardBorder = parseColor(map.getOrDefault("cardBorder", "#d0d7de"));
-            c.cardText = parseColor(map.getOrDefault("cardText", "#1f2328"));
-            c.cardDetail = parseColor(map.getOrDefault("cardDetail", "#59636e"));
+            c.cardBg = parseColor(map.getOrDefault("card", "#151b23"));
+            c.cardBorder = parseColor(map.getOrDefault("cardBorder", "#3d444d"));
+            c.cardText = parseColor(map.getOrDefault("cardText", "#f0f6fc"));
+            c.cardDetail = parseColor(map.getOrDefault("cardDetail", "#9198a1"));
             return c;
         }
 
@@ -260,14 +250,6 @@ public class RouteDiagramRenderer {
 
         public Color getNodeExternal() {
             return nodeExternal;
-        }
-
-        /**
-         * Whether the steps are drawn as cards (the style key {@code style=card}): the layout engine must lay them out
-         * as cards too ({@link RouteDiagramLayoutEngine#setCardStyle}).
-         */
-        public boolean isCard() {
-            return card;
         }
 
         public Color getCardBg() {
@@ -552,47 +534,11 @@ public class RouteDiagramRenderer {
         drawArrowFromMerge(g, to, colors, false, null);
     }
 
-    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors, boolean highlightFail) {
-        if (colors.isCard()) {
-            drawCard(g, node, colors, highlightFail);
-            return;
-        }
-        Color color = getNodeColor(node.type, colors);
-
-        g.setColor(color);
-        g.fillRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
-
-        if (highlightFail) {
-            g.setColor(HIGHLIGHT_FAIL_COLOR);
-            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
-        } else {
-            g.setColor(color.brighter());
-            g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
-        }
-        g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
-
-        g.setColor(colors.getText());
-        g.setFont(new Font("SansSerif", Font.PLAIN, fontSizeNode));
-        FontMetrics fm = g.getFontMetrics();
-
-        List<String> lines = node.wrappedLines;
-
-        int lineHeight = fm.getHeight();
-        int totalTextHeight = lines.size() * lineHeight;
-        int startY = node.y + (node.height - totalTextHeight) / 2 + fm.getAscent();
-
-        for (int i = 0; i < lines.size(); i++) {
-            String text = fit(fm, lines.get(i), nodeWidth - nodeTextPadding);
-            int textX = node.x + (nodeWidth - fm.stringWidth(text)) / 2;
-            g.drawString(text, textX, startY + i * lineHeight);
-        }
-    }
-
     /**
-     * A step as a card: a white (or dark) card with a soft shadow, the icon of its kind in a circle of the color of the
-     * kind, its title in bold and its detail below ({@link RouteDiagramLayoutEngine#setCardStyle}).
+     * A step as a card: a card with a soft shadow, the icon of its kind in a circle of the color of the kind, its title
+     * in bold and its detail below (laid out by {@link RouteDiagramLayoutEngine#setCardStyle}).
      */
-    private void drawCard(Graphics2D g, LayoutNode node, DiagramColors colors, boolean highlightFail) {
+    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors, boolean highlightFail) {
         int x = node.x;
         int y = node.y;
         int h = node.height;

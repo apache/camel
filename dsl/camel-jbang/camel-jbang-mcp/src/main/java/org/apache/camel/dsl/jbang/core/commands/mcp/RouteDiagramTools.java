@@ -46,7 +46,7 @@ public class RouteDiagramTools {
                         + "Java routes are read by the Java DSL parser, without compiling them; a step it cannot "
                         + "work out (a lambda, a processor) is shown as a placeholder, and the parts it could not read "
                         + "are listed in the message. "
-                        + "For image themes (card, card-dark, dark, light, transparent) the PNG is written to disk and the absolute path "
+                        + "For image themes (light, dark, transparent) the PNG is written to disk and the absolute path "
                         + "is returned. For text themes (ascii, unicode) the diagram is returned directly as text so "
                         + "it can be read and understood by the caller. "
                         + "Useful to visualize a route structure for review, documentation, or troubleshooting.")
@@ -55,8 +55,7 @@ public class RouteDiagramTools {
             @ToolArg(description = "Optional output file path. For image themes a PNG is written; for text themes a .txt "
                                    + "file is written. If not specified, a temporary file is created.",
                      required = false) String outputFile,
-            @ToolArg(description = "Color theme: 'card' (default: white cards with an icon, the kind of each step and its "
-                                   + "detail), 'card-dark', 'dark', 'light', 'transparent', 'ascii' (plain ASCII art), "
+            @ToolArg(description = "Color theme: 'light' (default), 'dark', 'transparent', 'ascii' (plain ASCII art), "
                                    + "'unicode' (box-drawing characters), or a custom spec like "
                                    + "'bg=#1e1e1e:from=#2e7d32:to=#1565c0'. "
                                    + "Use 'ascii' or 'unicode' to get a text diagram that can be read directly.",

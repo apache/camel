@@ -100,12 +100,12 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     String output;
 
     @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme preset (dark, light, transparent, card, card-dark, ascii, unicode) or custom colors "
+                        description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Use ascii/unicode for plain text output. "
                                       + "Can also be set via DIAGRAM_COLORS env var. "
-                                      + "Default: unicode in the terminal, and card when --output is a .png file.")
+                                      + "Default: unicode in the terminal, and light when --output is a .png file.")
     String theme;
 
     @CommandLine.Option(names = { "--font-size" },
@@ -274,8 +274,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
         NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
-        // the card themes lay the steps out as cards: a title and its detail beside an icon
-        engine.setCardStyle(colors != null && colors.isCard());
+        // an image draws the steps as cards: a title and its detail beside an icon
+        engine.setCardStyle(!isTextTheme());
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
@@ -472,11 +472,11 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     /**
      * The theme when none is given: a diagram in the terminal is text (an image needs a terminal with a graphics
-     * protocol), and a diagram saved as a .png file is an image in the card style.
+     * protocol), and a diagram saved as a .png file is an image in the light theme.
      */
     private void resolveTheme() {
         if (theme == null || theme.isBlank()) {
-            theme = output != null && output.toLowerCase(Locale.ROOT).endsWith(".png") ? "card" : "unicode";
+            theme = output != null && output.toLowerCase(Locale.ROOT).endsWith(".png") ? "light" : "unicode";
         }
     }
 

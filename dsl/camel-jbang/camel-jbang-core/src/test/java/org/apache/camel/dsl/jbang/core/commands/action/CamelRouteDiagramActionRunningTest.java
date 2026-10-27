@@ -23,6 +23,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.camel.diagram.RouteDiagramHelper;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -125,38 +129,38 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
     }
 
     @Test
-    void cardThemeDrawsTheStepsAsCards() throws Exception {
+    void imageDrawsTheStepsAsCards() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
         Path light = dir.resolve("light.png");
-        Path card = dir.resolve("card.png");
 
         assertThat(callWithResponse(command("--theme=light", "--output=" + light)::doCall, structure("route1")))
                 .isZero();
-        assertThat(callWithResponse(command("--theme=card", "--output=" + card)::doCall, structure("route1")))
-                .isZero();
 
-        // the cards have their title and detail on two lines, so the same route is taller than in the light theme
-        BufferedImage lightImage = ImageIO.read(light.toFile());
-        BufferedImage cardImage = ImageIO.read(card.toFile());
-        assertThat(cardImage.getHeight()).isGreaterThan(lightImage.getHeight());
+        // the route laid out as cards (a title and its detail), not as boxes of one line of code
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
+        engine.setCardStyle(true);
+        RouteInfo route = RouteDiagramHelper.parseRoutes(structure("route1")).get(0);
+        int height = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING).maxY + RouteDiagramLayoutEngine.V_GAP
+                     + RouteDiagramLayoutEngine.PADDING;
+        assertThat(ImageIO.read(light.toFile()).getHeight()).isEqualTo(height);
     }
 
     @Test
-    void pngFileIsInTheCardStyleByDefault() throws Exception {
+    void pngFileIsInTheLightThemeByDefault() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
-        Path card = dir.resolve("card.png");
+        Path light = dir.resolve("light.png");
         Path byDefault = dir.resolve("default.png");
 
-        assertThat(callWithResponse(command("--theme=card", "--output=" + card)::doCall, structure("route1")))
+        assertThat(callWithResponse(command("--theme=light", "--output=" + light)::doCall, structure("route1")))
                 .isZero();
         assertThat(callWithResponse(command("--output=" + byDefault)::doCall, structure("route1"))).isZero();
 
-        // without a theme a .png file gets the image in the card style, not the text diagram next to it
+        // without a theme a .png file gets the image, not the text diagram next to it
         assertThat(dir.resolve("default.txt")).doesNotExist();
-        BufferedImage cardImage = ImageIO.read(card.toFile());
+        BufferedImage lightImage = ImageIO.read(light.toFile());
         BufferedImage defaultImage = ImageIO.read(byDefault.toFile());
-        assertThat(defaultImage.getHeight()).isEqualTo(cardImage.getHeight());
-        assertThat(defaultImage.getRGB(0, 0)).isEqualTo(cardImage.getRGB(0, 0));
+        assertThat(defaultImage.getHeight()).isEqualTo(lightImage.getHeight());
+        assertThat(defaultImage.getRGB(0, 0)).isEqualTo(lightImage.getRGB(0, 0));
     }
 
     @Test

@@ -77,7 +77,7 @@ class RouteDiagramToolsTest {
     }
 
     @Test
-    void cardThemeWithoutATheme(@TempDir Path dir) throws Exception {
+    void imageWithoutATheme(@TempDir Path dir) throws Exception {
         Path source = dir.resolve("orders.camel.yaml");
         Files.writeString(source, """
                 - route:

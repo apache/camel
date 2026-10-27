@@ -63,24 +63,21 @@ class RouteDiagramCardStyleTest {
     }
 
     @Test
-    void cardPresetsDrawCards() {
-        assertThat(DiagramColors.parse("card").isCard()).isTrue();
-        assertThat(DiagramColors.parse("card").getCardBg()).isEqualTo(Color.WHITE);
-        assertThat(DiagramColors.parse("card-dark").isCard()).isTrue();
-        assertThat(DiagramColors.parse("card-dark").getCardBg()).isNotEqualTo(Color.WHITE);
-        assertThat(DiagramColors.parse("dark").isCard()).isFalse();
-        assertThat(DiagramColors.parse("light").isCard()).isFalse();
-        // a custom spec turns the card style on with style=card
-        DiagramColors custom = DiagramColors.parse("style=card:bg=#ffffff:card=#fafafa");
-        assertThat(custom.isCard()).isTrue();
+    void themesHaveCardColors() {
+        assertThat(DiagramColors.parse("light").getCardBg()).isEqualTo(Color.WHITE);
+        assertThat(DiagramColors.parse("transparent").getCardBg()).isEqualTo(Color.WHITE);
+        assertThat(DiagramColors.parse("dark").getCardBg()).isNotEqualTo(Color.WHITE);
+        // a custom spec is on top of the dark theme, and can set the colors of the cards
+        DiagramColors custom = DiagramColors.parse("bg=#ffffff:card=#fafafa");
         assertThat(custom.getCardBg()).isEqualTo(new Color(0xfafafa));
+        assertThat(custom.getCardText()).isEqualTo(DiagramColors.parse("dark").getCardText());
     }
 
     @Test
     void noSpecIsTheDarkTheme() {
         DiagramColors none = DiagramColors.parse(null);
-        assertThat(none.isCard()).isFalse();
         assertThat(none.getBg()).isEqualTo(DiagramColors.parse("dark").getBg());
+        assertThat(none.getCardBg()).isEqualTo(DiagramColors.parse("dark").getCardBg());
     }
 
     @Test
@@ -198,7 +195,7 @@ class RouteDiagramCardStyleTest {
 
     @Test
     void renderCards() {
-        for (String theme : List.of("card", "card-dark")) {
+        for (String theme : List.of("light", "dark", "transparent")) {
             DiagramColors colors = DiagramColors.parse(theme);
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
             engine.setCardStyle(true);

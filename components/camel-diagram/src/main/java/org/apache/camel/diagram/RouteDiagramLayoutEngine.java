@@ -152,8 +152,8 @@ public class RouteDiagramLayoutEngine {
 
     /**
      * Lays the nodes out as cards: a title (the kind of step, such as setBody) and the detail below it (such as
-     * {@code groovy: body.items}), after an icon. The first of the {@link LayoutNode#wrappedLines} is the title. Off by
-     * default: a renderer turns it on when it draws cards.
+     * {@code groovy: body.items}), after an icon. The first of the {@link LayoutNode#wrappedLines} is the title. On for
+     * an image ({@link RouteDiagramRenderer} draws cards), off (the default) for the ASCII and Unicode diagrams.
      */
     public void setCardStyle(boolean cardStyle) {
         this.cardStyle = cardStyle;
