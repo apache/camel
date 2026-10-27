@@ -665,16 +665,17 @@ public interface AS2EndpointBuilderFactory {
          * Comma separated list of hosts an asynchronous MDN may be delivered
          * to. The delivery address is chosen by the sender of the AS2 message,
          * so this is the list of destinations the operator vouches for. Each
-         * entry is a host with an optional port in host:port form; a bare-host
-         * entry (for example partner.example) matches only the default port for
-         * the scheme (80 or 443), so a non-default port is listed explicitly
-         * (for example partner.example:8443). When set, an asynchronous MDN
-         * whose delivery address is not on the list is refused, and the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached only
-         * to an address on the list. When not set, the MDN is still delivered
-         * to the sender-supplied address but no credentials are attached. The
-         * option applies to the consumer endpoint it is set on: consumers
-         * sharing a serverPortNumber each apply their own list.
+         * entry is a host with an optional port in host:port form (IPv6
+         * literals use bracket notation, for example ::1 or ::1:8443); a
+         * bare-host entry (for example partner.example) matches only the
+         * default port for the scheme (80 or 443), so a non-default port is
+         * listed explicitly (for example partner.example:8443). When set, an
+         * asynchronous MDN whose delivery address is not on the list is
+         * refused, and the configured mdnUserName/mdnPassword/mdnAccessToken
+         * are attached only to an address on the list. When not set, the MDN is
+         * still delivered to the sender-supplied address but no credentials are
+         * attached. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1934,16 +1935,17 @@ public interface AS2EndpointBuilderFactory {
          * Comma separated list of hosts an asynchronous MDN may be delivered
          * to. The delivery address is chosen by the sender of the AS2 message,
          * so this is the list of destinations the operator vouches for. Each
-         * entry is a host with an optional port in host:port form; a bare-host
-         * entry (for example partner.example) matches only the default port for
-         * the scheme (80 or 443), so a non-default port is listed explicitly
-         * (for example partner.example:8443). When set, an asynchronous MDN
-         * whose delivery address is not on the list is refused, and the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached only
-         * to an address on the list. When not set, the MDN is still delivered
-         * to the sender-supplied address but no credentials are attached. The
-         * option applies to the consumer endpoint it is set on: consumers
-         * sharing a serverPortNumber each apply their own list.
+         * entry is a host with an optional port in host:port form (IPv6
+         * literals use bracket notation, for example ::1 or ::1:8443); a
+         * bare-host entry (for example partner.example) matches only the
+         * default port for the scheme (80 or 443), so a non-default port is
+         * listed explicitly (for example partner.example:8443). When set, an
+         * asynchronous MDN whose delivery address is not on the list is
+         * refused, and the configured mdnUserName/mdnPassword/mdnAccessToken
+         * are attached only to an address on the list. When not set, the MDN is
+         * still delivered to the sender-supplied address but no credentials are
+         * attached. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3069,16 +3071,17 @@ public interface AS2EndpointBuilderFactory {
          * Comma separated list of hosts an asynchronous MDN may be delivered
          * to. The delivery address is chosen by the sender of the AS2 message,
          * so this is the list of destinations the operator vouches for. Each
-         * entry is a host with an optional port in host:port form; a bare-host
-         * entry (for example partner.example) matches only the default port for
-         * the scheme (80 or 443), so a non-default port is listed explicitly
-         * (for example partner.example:8443). When set, an asynchronous MDN
-         * whose delivery address is not on the list is refused, and the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached only
-         * to an address on the list. When not set, the MDN is still delivered
-         * to the sender-supplied address but no credentials are attached. The
-         * option applies to the consumer endpoint it is set on: consumers
-         * sharing a serverPortNumber each apply their own list.
+         * entry is a host with an optional port in host:port form (IPv6
+         * literals use bracket notation, for example ::1 or ::1:8443); a
+         * bare-host entry (for example partner.example) matches only the
+         * default port for the scheme (80 or 443), so a non-default port is
+         * listed explicitly (for example partner.example:8443). When set, an
+         * asynchronous MDN whose delivery address is not on the list is
+         * refused, and the configured mdnUserName/mdnPassword/mdnAccessToken
+         * are attached only to an address on the list. When not set, the MDN is
+         * still delivered to the sender-supplied address but no credentials are
+         * attached. The option applies to the consumer endpoint it is set on:
+         * consumers sharing a serverPortNumber each apply their own list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
