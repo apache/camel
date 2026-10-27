@@ -76,9 +76,14 @@ The `CamelContext` loads the plugins found on the classpath while it is built, b
 
 In camel-main the profile and the `camel.chaos.*` options are set after the plugins are loaded, so the plugin reads
 them when the context initializes (`LifecycleStrategy.onContextInitializing`), which is still before the routes are
-created. When the profile is `prod`, or `camel.chaos.enabled=false`, it installs nothing. Otherwise it installs the
-hooks below, logs a WARN that chaos is active, and waits for rules. Each hook asks the `ChaosManager` whether a rule
-matches; with no rules that is one volatile read, and the call goes on unchanged.
+created. When the profile is `prod`, or `camel.chaos.enabled=false`, it installs nothing. With profile `dev` or with
+no profile (a plain `Main`, a test) it installs the hooks below, logs a WARN that chaos is active, and waits for rules.
+Each hook asks the `ChaosManager` whether a rule matches; with no rules that is one volatile read, and the call goes on
+unchanged.
+
+`camel.chaos.enabled` defaults to `true` on purpose: CAMEL-26330 asks for hooks that wait idle when the JAR is on the
+classpath. A fault needs both the JAR and a rule. With no rules the hooks do nothing and nothing fires; the only cost is
+the check above.
 
 === Options
 
@@ -86,9 +91,11 @@ matches; with no rules that is one volatile read, and the call goes on unchanged
 |===
 |Option |Default |Description
 
-|`camel.chaos.enabled` |`true` |Install the hooks (only when the JAR is present, and never with profile `prod`).
+|`camel.chaos.enabled` |`true` |Install the hooks (only when the JAR is present, with profile `dev` or no profile,
+never with `prod`). They do nothing until a rule is added.
 |`camel.chaos.seed` | |Seed of the random choices; without it a seed is picked and shown in the report.
-|`camel.chaos.rules` | |Rules to add at startup, in the same text form as `camel cmd chaos add`.
+|`camel.chaos.rules` | |Rules to add at startup, in the text form of Rule syntax, separated by `;`. An
+`insecure:dev` option (see Risks).
 |`camel.chaos.maxDuration` |`10m` |Upper bound for every rule; a rule without its own limit ends after this.
 |`camel.chaos.reportOnShutdown` |`true` |Log the report when the context stops.
 |===
@@ -103,7 +110,7 @@ A rule has a target, a fault, how often it fires, and when it ends:
 [source]
 ----
 target:  route=<id or pattern> | endpoint=<uri pattern> | component=<name> | step=<processor id pattern>
-fault:   error | delay | stall | drop | corrupt | lifecycle   (with parameters, see below)
+fault:   error | delay | stall | drop | corrupt | lifecycle   (parameters: see Rule syntax)
 rate:    a probability (0.3), or every Nth match
 until:   a number of matches, a duration, or removed by hand
 ----
@@ -111,6 +118,66 @@ until:   a number of matches, a duration, or removed by hand
 Rules are added, changed, listed and removed live. A rule ends by itself after its count or duration (at most
 `camel.chaos.maxDuration`), so a forgotten rule cannot keep breaking a dev instance. Rules stay when the routes are
 reloaded in dev mode.
+
+==== Rule syntax
+
+A rule is one line: the target, the fault and its parameters as `name=value`, then `rate` and `until`. `rate=0.3` is a
+probability and `rate=every:5` fires on every 5th match; without `rate` every match fires. `until=100` is a number of
+matches and `until=2m` a duration; without `until` the rule ends after `camel.chaos.maxDuration`. A value with spaces
+is quoted. Which hooks a fault can use is in the table of the next section.
+
+[cols="1,2,3"]
+|===
+|Fault |Parameters |Effect
+
+|`error`
+|`exception=<class>`, `message=<text>`; for the HTTP components `status=<code>` and `header.<name>=<value>`
+|Throws that exception. With `status` it is the exception the HTTP component throws for that status.
+
+|`delay`
+|`duration=<time>`, such as `500ms` or `2s`
+|Waits that long before the send, the step or the poll.
+
+|`stall`
+|`duration=<time>`
+|Suspends the target route and resumes it after the duration (short for `lifecycle action=suspend`).
+
+|`drop`
+|none
+|A send that reports success without calling the producer, or a skipped poll.
+
+|`corrupt`
+|`mode=headers\|charset\|truncate`
+|Changes the message: header values with random data, a body in an unusual charset (characters outside US-ASCII), or
+an `InputStream` body that ends too soon.
+
+|`lifecycle`
+|`action=suspend\|stop\|remove`, `duration=<time>`
+|Suspends, stops or removes the target route, then resumes it, starts it or adds its definition again after the
+duration.
+|===
+
+`stall` and `lifecycle` act once on the route when the rule is added; `rate` and `until` do not apply to them.
+
+In `application.properties`:
+
+[source,properties]
+----
+camel.chaos.seed = 42
+camel.chaos.rules = \
+  endpoint=kafka:orders* error exception=java.net.ConnectException message="broker down" rate=0.3 until=1m;\
+  endpoint=https:inventory* error status=503 header.Retry-After=5 rate=every:4 until=50;\
+  route=poller stall duration=20s
+----
+
+With the CLI, against a running application:
+
+[source,bash]
+----
+camel cmd chaos add --rule='endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m'
+camel cmd chaos add --rule='route=orders corrupt mode=truncate rate=0.1 until=20'
+camel cmd chaos add --rule='route=orders lifecycle action=remove duration=10s'
+----
 
 === Hooks at all levels
 
@@ -122,30 +189,28 @@ reloaded in dev mode.
 |The send hook of camel-core (CAMEL-26331): one helper that the six places that fire `ExchangeSendingEvent` share
 (`SendProcessor`, `DefaultProducerCache` twice, `EventNotifierCallback`, `MulticastProcessor`,
 `EventNotifierProducer`), with a hook before and after the producer.
-|Stop the send with an exception (the producer is not called), a delay, a dropped send that reports success, a changed
-message or reply.
+|`error` (the producer is not called), `delay`, `drop` (a send that reports success), `corrupt` (the message sent).
 
 |Messages that enter a route
 |A `RoutePolicy`, added to every route by a `RoutePolicyFactory`. Its `onExchangeBegin` sees every exchange that
 enters a route and can change the message.
-|Header values with random data, a body in an unusual charset (characters outside US-ASCII), an `InputStream` that
-ends too soon.
+|`corrupt`: header values with random data, a body in an unusual charset, an `InputStream` that ends too soon.
 
 |Consumer polls
 |The `PollingConsumerPollStrategy` of a `ScheduledPollConsumer`, which can be changed at runtime with
 `setPollStrategy`. Its `begin`, `commit` and `rollback` run around every poll. Chaos wraps the consumer's own strategy
 while a rule is active and puts it back when the rule ends.
-|A failed poll, a slow poll, a skipped poll.
+|A failed poll (`error`), a slow poll (`delay`), a skipped poll (`drop`).
 
 |Every step
 |The channel (`CamelInternalProcessor`), next to the check that skips a processor disabled with
 `camel cmd disable-processor`. A small change in camel-core, in a follow-up ticket.
-|A delay or an exception at a step.
+|`delay` or `error` at a step.
 
 |Route lifecycle
 |The `RouteController` (suspend, resume, stop, start), and `CamelContext.removeRoute` with the route definition added
 again.
-|Stall a route (suspend, then resume), stop and start it, remove it and add it again.
+|`stall` (suspend, then resume); `lifecycle` (suspend, stop or remove the route, then bring it back).
 |===
 
 The send hook covers every send whatever started it: `to`, `toD`, `wireTap`, `enrich`, `recipientList`, `multicast`
@@ -232,16 +297,24 @@ route and per step, a development-time cost only. The new options are in a new g
 - The JAR left on the classpath of a production build. Mitigations: the `prod` profile guard, a WARN at startup when
   the hooks are installed, and rules that expire. Rules come only from `camel.chaos.rules`, the CLI connector of
   `camel run` and the dev console; the dev console over HTTP needs `camel.management.devConsoleEnabled`, which the
-  security policy marks `insecure:dev` (design/security.adoc). `camel.chaos.rules` can be marked `insecure:dev` too,
-  so profile `prod` refuses to start with rules configured.
+  security policy marks `insecure:dev` (design/security.adoc).
+- `camel.chaos.rules` is an `insecure:dev` option: `@Metadata(security = "insecure:dev")` on its field in
+  `ChaosConfigurationProperties`, as on `devConsoleEnabled` in `DefaultConfigurationProperties`. Profile `prod` sets
+  `camel.security.policy=fail`, so it refuses to start with rules configured; profile `dev` allows it, and with no
+  profile the default policy `warn` logs a WARN. `SecurityUtils.isInsecureValue` compares the value with one insecure
+  value, which fits boolean options; the chaos module pull request lets any non-empty value of a String option count.
 - A verdict that is wrong. The report states what it counted and from where, so a person can check it.
 
 == Open questions
 
-- Module location: `components/camel-chaos`, next to `camel-debug`?
-- Should chaos also stay off when no profile is set (a plain `Main`), so that only `dev` and test runs turn it on?
-- Is the rule text form above good enough for `camel.chaos.rules` in `application.properties`, or should rules be
-  YAML?
+Each has a proposed answer; the maintainers decide.
+
+- Module location. Proposed: `components/camel-chaos`, next to `camel-debug`.
+- Should chaos stay off when no profile is set (a plain `Main`)? Proposed: no. The hooks are installed with profile
+  `dev` or no profile and never with `prod`, nothing fires without a rule, and `camel.chaos.rules` logs a WARN when
+  no profile is set.
+- The rule format. Proposed: the one-line text form of Rule syntax, the same in `camel.chaos.rules`,
+  `camel cmd chaos add` and the dev console. A YAML form can come later if wanted.
 
 == Related tickets
 
