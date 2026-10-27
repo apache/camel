@@ -173,11 +173,14 @@ public class DaprPubSubConsumer extends DefaultConsumer {
         }
     }
 
-    private void resubscribe() {
+    // package-private for tests
+    void resubscribe() {
         lock.lock();
         try {
             pendingResubscribe = null;
-            if (!isRunAllowed()) {
+            // a subscription is already there when the consumer was stopped and started again while this attempt
+            // waited for the lock: keep it, subscribing again would replace it without closing it
+            if (!isRunAllowed() || subscription != null) {
                 return;
             }
             try {

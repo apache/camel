@@ -80,7 +80,8 @@ class DaprPubSubConsumerResubscribeTest extends CamelTestSupport {
         return previewClient;
     }
 
-    private ExceptionHandler recordingHandler() {
+    @BindToRegistry("recordingHandler")
+    public ExceptionHandler recordingHandler() {
         return new ExceptionHandler() {
             @Override
             public void handleException(Throwable exception) {
@@ -104,7 +105,8 @@ class DaprPubSubConsumerResubscribeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("dapr:pubSub?pubSubName=myPubSub&topic=myTopic").routeId("pubSub")
+                from("dapr:pubSub?pubSubName=myPubSub&topic=myTopic&exceptionHandler=#recordingHandler")
+                        .routeId("pubSub")
                         .to("mock:result");
             }
         };
@@ -140,9 +142,8 @@ class DaprPubSubConsumerResubscribeTest extends CamelTestSupport {
 
     @Test
     void aFailureToSubscribeAgainGoesToTheExceptionHandlerAndIsTriedAgain() throws Exception {
+        // the exceptionHandler endpoint option of the route
         assertTrue(subscribed.tryAcquire(10, TimeUnit.SECONDS));
-        // set on the consumer: DaprEndpoint.createConsumer does not apply the exceptionHandler endpoint option
-        ((DaprPubSubConsumer) context.getRoute("pubSub").getConsumer()).setExceptionHandler(recordingHandler());
         failingSubscribes.set(1);
 
         listeners.get(0).onError(streamFailure());
@@ -222,6 +223,27 @@ class DaprPubSubConsumerResubscribeTest extends CamelTestSupport {
         assertTrue(subscribed.tryAcquire(10, TimeUnit.SECONDS));
         verify(previewClient, times(2)).subscribeToEvents(anyString(), anyString(), any(SubscriptionListener.class),
                 any(TypeRef.class));
+    }
+
+    @Test
+    void anAttemptThatRunsAfterTheConsumerWasStartedAgainKeepsTheNewSubscription() throws Exception {
+        // the delay of an attempt fired while the consumer was stopping, and the attempt got the lock only after the
+        // same consumer was started again (a route policy stops and starts the consumer of its route, see
+        // RoutePolicySupport.stopConsumer): it must not replace the subscription of that start, which would then never
+        // be closed
+        assertTrue(subscribed.tryAcquire(10, TimeUnit.SECONDS));
+        DaprPubSubConsumer consumer = (DaprPubSubConsumer) context.getRoute("pubSub").getConsumer();
+        listeners.get(0).onError(streamFailure());
+        consumer.stop();
+        consumer.start();
+        assertTrue(subscribed.tryAcquire(10, TimeUnit.SECONDS));
+
+        // the late attempt
+        consumer.resubscribe();
+
+        verify(previewClient, times(2)).subscribeToEvents(anyString(), anyString(), any(SubscriptionListener.class),
+                any(TypeRef.class));
+        verify(subscriptions.get(1), never()).close();
     }
 
     /**
