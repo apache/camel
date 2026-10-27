@@ -108,6 +108,8 @@ public class CosmosDbEndpoint extends DefaultEndpoint implements EndpointService
     private CosmosDbConfiguration configuration;
 
     private CosmosAsyncClient cosmosAsyncClient;
+    // whether cosmosAsyncClient was created by this endpoint (and is closed when it stops)
+    private boolean clientCreated;
 
     public CosmosDbEndpoint(final String uri, final Component component, final CosmosDbConfiguration configuration) {
         super(uri, component);
@@ -136,14 +138,22 @@ public class CosmosDbEndpoint extends DefaultEndpoint implements EndpointService
     public void doStart() throws Exception {
         super.doStart();
 
-        cosmosAsyncClient = configuration.getCosmosAsyncClient() != null
-                ? configuration.getCosmosAsyncClient() : CosmosDbClientFactory.createCosmosAsyncClient(configuration);
+        if (configuration.getCosmosAsyncClient() != null) {
+            cosmosAsyncClient = configuration.getCosmosAsyncClient();
+            clientCreated = false;
+        } else {
+            cosmosAsyncClient = CosmosDbClientFactory.createCosmosAsyncClient(configuration);
+            clientCreated = true;
+        }
     }
 
     @Override
     public void doStop() throws Exception {
-        if (cosmosAsyncClient != null) {
+        // only close a client that this endpoint created: a configured or autowired client can be shared with other
+        // endpoints and the application, and is used again when the endpoint is started again
+        if (clientCreated && cosmosAsyncClient != null) {
             cosmosAsyncClient.close();
+            clientCreated = false;
         }
 
         super.doStop();
