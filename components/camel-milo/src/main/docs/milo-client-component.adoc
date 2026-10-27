@@ -172,7 +172,7 @@ and `${body.value.value}` is the value. A producer writes the message body to it
 ----
 
 A producer does not write a `null` body: the exchange fails with an `InvalidPayloadException`. To write a null
-value, set a `DataValue` or `Variant` body.
+value, set the body to `Variant.NULL_VALUE` or to a `DataValue` that carries it.
 
 === Monitoring several nodes
 

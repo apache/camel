@@ -77,7 +77,7 @@ public class MiloClientProducer extends DefaultAsyncProducer {
         if (value == null && !read && this.methodId == null) {
             // a write needs a value, a null body is not written
             exchange.setException(new InvalidPayloadException(
-                    exchange, Object.class, msg, "set a DataValue or Variant body to write a null value"));
+                    exchange, Object.class, msg, "set the body to Variant.NULL_VALUE to write a null value"));
             async.done(true);
             return true;
         }

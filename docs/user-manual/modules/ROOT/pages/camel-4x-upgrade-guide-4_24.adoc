@@ -2588,8 +2588,8 @@ A `sessionTimeout` configured on the `milo-client` or `milo-browse` component (f
 A `milo-client` producer no longer writes a `null` body; the exchange now fails with an `InvalidPayloadException`,
 whether or not the write is awaited. Before, it wrote a null value, which a server typically refused with
 `Bad_TypeMismatch`, and an awaited write completed without an error and with that status as the body. To write a null
-value, set a `DataValue` or `Variant` body. A method call with a `null` body still calls the method without input
-arguments.
+value, set the body to `Variant.NULL_VALUE` or to a `DataValue` that carries it. A method call with a `null` body still
+calls the method without input arguments.
 
 === camel-infinispan - the key option of the producer takes precedence over the key header
 
