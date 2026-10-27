@@ -181,6 +181,26 @@ and then the detail below its kind.
 
 The icons are from https://lucide.dev[Lucide] (ISC License), the same as the embeddable web components.
 
+=== Body Types on the Arrows
+
+The diagram of a running Camel application shows on each arrow the body types the step after it has been reached
+with, when the message history recorded them (such as in the dev profile): their simple class names, such as
+`GenericFile` or `LinkedHashMap`. A step reached with bodies of more than one kind (payload, data, collection or null)
+has a yellow warning label with the kinds, as such a step needs attention: a step that writes or sends fails for the
+data, and a step that reads fields fails for the payload.
+
+image::ROOT:route-diagram-body-types.png[The orders route of a running application: GenericFile on the arrow into setBody, a warning label LinkedHashMap | String (data and payload) on the arrow into the http call, and InputStream on the last two arrows]
+
+The arrows are longer to hold the labels, so a route with body types takes more room. Turn them off with
+`--body-types=false`:
+
+[source,bash]
+----
+camel cmd route-diagram myapp --output=myapp.png --body-types=false
+----
+
+A diagram of a source file has no body types, as its routes have not run.
+
 == ASCII Art Rendering
 
 The ASCII art renderer produces plain text diagrams using box-drawing characters.

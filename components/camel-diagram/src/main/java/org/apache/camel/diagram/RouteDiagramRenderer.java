@@ -70,20 +70,24 @@ public class RouteDiagramRenderer {
     private final boolean metrics;
 
     // the steps are cards (card, cardBorder, cardText for the kind, cardDetail for the detail) with an icon in a
-    // circle of the color of the kind of step (from, to, eip, ...); text is the text in the nodes of the topology
+    // circle of the color of the kind of step (from, to, eip, ...); text is the text in the nodes of the topology;
+    // warning, warningBg and warningText are the colors of the body types of a step reached with more than one kind
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
               + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
-              + ":card=#151b23:cardBorder=#3d444d:cardText=#f0f6fc:cardDetail=#9198a1";
+              + ":card=#151b23:cardBorder=#3d444d:cardText=#f0f6fc:cardDetail=#9198a1"
+              + ":warning=#d29922:warningBg=#272115:warningText=#e3b341";
     private static final String LIGHT_COLORS
             = "bg=#f6f8fa:text=#f0f6fc:arrow=#59636e:label=#1f2328:from=#238636:to=#1f6feb:eip=#8957e5"
               + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
-              + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e";
+              + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e"
+              + ":warning=#d4a72c:warningBg=#fff8c5:warningText=#7d4e00";
     // white cards, readable on any background
     private static final String TRANSPARENT_COLORS
             = "bg=:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
               + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
-              + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e";
+              + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e"
+              + ":warning=#d4a72c:warningBg=#fff8c5:warningText=#7d4e00";
 
     private static final Map<String, String> COLOR_PRESETS = Map.of(
             "dark", DARK_COLORS,
@@ -135,6 +139,9 @@ public class RouteDiagramRenderer {
         private Color cardBorder;
         private Color cardText;
         private Color cardDetail;
+        private Color warning;
+        private Color warningBg;
+        private Color warningText;
 
         /**
          * The colors of a theme: a preset (dark, light, transparent) or a spec of {@code key=color} pairs separated by
@@ -175,6 +182,9 @@ public class RouteDiagramRenderer {
             c.cardBorder = parseColor(map.getOrDefault("cardBorder", "#3d444d"));
             c.cardText = parseColor(map.getOrDefault("cardText", "#f0f6fc"));
             c.cardDetail = parseColor(map.getOrDefault("cardDetail", "#9198a1"));
+            c.warning = parseColor(map.getOrDefault("warning", "#d29922"));
+            c.warningBg = parseColor(map.getOrDefault("warningBg", "#272115"));
+            c.warningText = parseColor(map.getOrDefault("warningText", "#e3b341"));
             return c;
         }
 
@@ -266,6 +276,18 @@ public class RouteDiagramRenderer {
 
         public Color getCardDetail() {
             return cardDetail;
+        }
+
+        public Color getWarning() {
+            return warning;
+        }
+
+        public Color getWarningBg() {
+            return warningBg;
+        }
+
+        public Color getWarningText() {
+            return warningText;
         }
     }
 
@@ -430,6 +452,12 @@ public class RouteDiagramRenderer {
             }
         }
 
+        if (lr.bodyTypes) {
+            for (LayoutNode ln : lr.nodes) {
+                drawBodyTypes(g, ln, colors);
+            }
+        }
+
         // find the last highlighted node (for FAIL mode box highlighting)
         LayoutNode lastHighlightedNode = null;
         if (highlightedNodeIds != null && highlightStyle == RouteDiagramHelper.HighlightStyle.FAIL) {
@@ -512,7 +540,7 @@ public class RouteDiagramRenderer {
         if (mergeCx == toCx) {
             g.drawLine(mergeCx, mergeY, toCx, toTy - ARROW_SIZE / 2);
         } else {
-            int midY = mergeY + (toTy - mergeY) / 2;
+            int midY = mergeY + V_GAP / 2;
             g.drawLine(mergeCx, mergeY, mergeCx, midY);
             g.drawLine(mergeCx, midY, toCx, midY);
             g.drawLine(toCx, midY, toCx, toTy - ARROW_SIZE / 2);
@@ -593,6 +621,54 @@ public class RouteDiagramRenderer {
             g.drawString(fit(detailFm, lines.get(i), maxWidth), textX, baseline);
             baseline += detailFm.getHeight();
         }
+    }
+
+    /**
+     * The body types the step has been reached with, as a label on the arrow into it, below the bend of the arrow and
+     * above the counters of the metrics ({@link RouteDiagramLayoutEngine#setBodyTypes}). A step reached with bodies of
+     * more than one kind has a warning label: the warning icon, the types and their kinds.
+     */
+    private void drawBodyTypes(Graphics2D g, LayoutNode node, DiagramColors colors) {
+        if (node.parentNode == null || node.tableRow || node.treeNode == null
+                || node.treeNode.info.bodyTypes.isEmpty()) {
+            return;
+        }
+        List<String> types = node.treeNode.info.bodyTypes;
+        List<String> kinds = node.treeNode.info.bodyKinds;
+        boolean mixed = RouteDiagramBodyTypes.mixed(kinds);
+
+        Font font = new Font("SansSerif", Font.PLAIN, fontSizeNode - SCALE);
+        FontMetrics fm = g.getFontMetrics(font);
+        int padX = 8 * SCALE;
+        int icon = mixed ? fm.getAscent() : 0;
+        int iconGap = mixed ? 4 * SCALE : 0;
+        int maxWidth = RouteDiagramLayoutEngine.bodyTypesLabelWidth(nodeWidth);
+        String text = RouteDiagramBodyTypes.fit(types, kinds, fm, maxWidth - 2 * padX - icon - iconGap);
+        int w = 2 * padX + icon + iconGap + fm.stringWidth(text);
+        int h = fm.getHeight() + 4 * SCALE;
+        int startY = node.connectFromMerge ? node.mergeY : node.parentNode.y + node.parentNode.height;
+        int x = node.x + nodeWidth / 2 - w / 2;
+        int y = startY + V_GAP / 2 + 4 * SCALE;
+
+        g.setColor(mixed ? colors.getWarningBg() : colors.getCardBg());
+        g.fillRoundRect(x, y, w, h, h, h);
+        g.setColor(mixed ? colors.getWarning() : colors.getCardBorder());
+        g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        g.drawRoundRect(x, y, w, h, h, h);
+        int textX = x + padX;
+        if (mixed) {
+            double scale = (double) icon / RouteDiagramIcons.GRID;
+            AffineTransform at = new AffineTransform();
+            at.translate(textX, y + (h - icon) / 2.0);
+            at.scale(scale, scale);
+            g.setStroke(new BasicStroke(CARD_ICON_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.draw(at.createTransformedShape(RouteDiagramIcons.icon("alert-triangle")));
+            textX += icon + iconGap;
+        }
+        g.setFont(font);
+        g.setColor(mixed ? colors.getWarningText() : colors.getCardDetail());
+        g.drawString(text, textX, y + (h - fm.getHeight()) / 2 + fm.getAscent());
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
     }
 
     /** The text cut with an ellipsis when it is wider than the given width. */
