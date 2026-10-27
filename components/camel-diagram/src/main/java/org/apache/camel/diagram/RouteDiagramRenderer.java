@@ -142,6 +142,7 @@ public class RouteDiagramRenderer {
         private Color warning;
         private Color warningBg;
         private Color warningText;
+        private Color badgeText;
 
         /**
          * The colors of a theme: a preset (dark, light, transparent) or a spec of {@code key=color} pairs separated by
@@ -185,6 +186,7 @@ public class RouteDiagramRenderer {
             c.warning = parseColor(map.getOrDefault("warning", "#d29922"));
             c.warningBg = parseColor(map.getOrDefault("warningBg", "#272115"));
             c.warningText = parseColor(map.getOrDefault("warningText", "#e3b341"));
+            c.badgeText = parseColor(map.getOrDefault("badgeText", "#1f2328"));
             return c;
         }
 
@@ -288,6 +290,10 @@ public class RouteDiagramRenderer {
 
         public Color getWarningText() {
             return warningText;
+        }
+
+        public Color getBadgeText() {
+            return badgeText;
         }
     }
 
@@ -471,6 +477,76 @@ public class RouteDiagramRenderer {
         for (LayoutNode ln : lr.nodes) {
             drawNode(g, ln, colors, ln == lastHighlightedNode);
         }
+
+        for (RouteDiagramLayoutEngine.Callout c : lr.callouts) {
+            drawProblems(g, c, colors, lr.problemList, c.node == lastHighlightedNode);
+        }
+    }
+
+    /**
+     * The problems of a step ({@link RouteDiagramLayoutEngine#setProblems}): a warning border and a badge on its card,
+     * and their text in a callout beside the route, pointed at the card, or in an entry of the numbered list below the
+     * route, with the number of the badge.
+     */
+    private void drawProblems(
+            Graphics2D g, RouteDiagramLayoutEngine.Callout c, DiagramColors colors, boolean list,
+            boolean highlightFail) {
+        LayoutNode node = c.node;
+        if (!highlightFail) {
+            g.setColor(colors.getWarning());
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
+            g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
+        }
+        String mark = list ? Integer.toString(c.number) : "!";
+        drawBadge(g, node.x + nodeWidth - 2 * SCALE, node.y + 2 * SCALE, mark, colors);
+
+        Font font = new Font("SansSerif", Font.PLAIN, fontSizeNode);
+        FontMetrics fm = g.getFontMetrics(font);
+        int pad = RouteDiagramLayoutEngine.CALLOUT_PAD;
+        int textX;
+        int textWidth;
+        int baseline;
+        if (list) {
+            drawBadge(g, c.x + RouteDiagramLayoutEngine.PROBLEM_NUMBER_WIDTH / 2, c.y + fm.getHeight() / 2, mark, colors);
+            textX = c.x + RouteDiagramLayoutEngine.PROBLEM_NUMBER_WIDTH;
+            textWidth = c.width - RouteDiagramLayoutEngine.PROBLEM_NUMBER_WIDTH;
+            baseline = c.y + fm.getAscent();
+            g.setColor(colors.getRouteLabel());
+        } else {
+            // the pointer from the card to its callout
+            int cardY = node.y + node.height / 2;
+            int pointY = Math.max(c.y + pad, Math.min(cardY, c.y + c.height - pad));
+            g.setColor(colors.getWarning());
+            g.setStroke(new BasicStroke(STROKE_WIDTH));
+            g.drawLine(node.x + nodeWidth, cardY, c.x, pointY);
+            g.setColor(colors.getWarningBg());
+            g.fillRoundRect(c.x, c.y, c.width, c.height, ARC, ARC);
+            g.setColor(colors.getWarning());
+            g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+            g.drawRoundRect(c.x, c.y, c.width, c.height, ARC, ARC);
+            textX = c.x + pad;
+            textWidth = c.width - 2 * pad;
+            baseline = c.y + pad + fm.getAscent();
+            g.setColor(colors.getWarningText());
+        }
+        g.setFont(font);
+        for (String line : c.lines) {
+            g.drawString(fit(fm, line, textWidth), textX, baseline);
+            baseline += fm.getHeight();
+        }
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
+    }
+
+    /** A badge of a problem: a circle of the warning color with a mark ("!" or the number of the problem). */
+    private void drawBadge(Graphics2D g, int cx, int cy, String mark, DiagramColors colors) {
+        int d = 18 * SCALE;
+        g.setColor(colors.getWarning());
+        g.fillOval(cx - d / 2, cy - d / 2, d, d);
+        Font font = new Font("SansSerif", Font.BOLD, fontSizeNode - SCALE);
+        FontMetrics fm = g.getFontMetrics(font);
+        g.setFont(font);
+        g.setColor(colors.getBadgeText());
+        g.drawString(mark, cx - fm.stringWidth(mark) / 2, cy - fm.getHeight() / 2 + fm.getAscent());
     }
 
     private void drawRoute(Graphics2D g, LayoutRoute lr, DiagramColors colors) {

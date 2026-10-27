@@ -46,6 +46,8 @@ public class RouteDiagramTools {
                         + "Java routes are read by the Java DSL parser, without compiling them; a step it cannot "
                         + "work out (a lambda, a processor) is shown as a placeholder, and the parts it could not read "
                         + "are listed in the message. "
+                        + "An image marks the steps that the checks of camel validate find a problem with, and says "
+                        + "what the problem is beside the route. "
                         + "For image themes (light, dark, transparent) the PNG is written to disk and the absolute path "
                         + "is returned. For text themes (ascii, unicode) the diagram is returned directly as text so "
                         + "it can be read and understood by the caller. "

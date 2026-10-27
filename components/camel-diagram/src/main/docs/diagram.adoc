@@ -201,6 +201,21 @@ camel cmd route-diagram myapp --output=myapp.png --body-types=false
 
 A diagram of a source file has no body types, as its routes have not run.
 
+=== Problems of the Steps
+
+A diagram of source files marks the steps that the checks of `camel validate` find a problem with: the card has a
+yellow border and a badge, and the problem is in a callout beside the route, at the height of the step. For example a
+Groovy step that reads fields of the file as it was read, before it is unmarshalled:
+
+image::ROOT:route-diagram-problems.png[The orders route: the setBody step reads body.items of the file as it was read, and a callout beside it says to unmarshal it first]
+
+In a route with branches (`choice`, `multicast`, `doTry`, ...) a callout beside the route would cross the steps of
+another branch, so the badge has a number, and the problems are a numbered list below the route.
+
+A YAML route is checked as `camel validate` does: the YAML DSL schema, the endpoints and expressions against the
+catalog, and the body flow. A Java or XML route is checked with the checks that read the source without compiling it,
+as the route diagram reads Java routes without compiling them. Turn the problems off with `--problems=false`.
+
 == ASCII Art Rendering
 
 The ASCII art renderer produces plain text diagrams using box-drawing characters.
