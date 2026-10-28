@@ -175,7 +175,7 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
 
         // the arrows are longer to hold the labels of the body types
         assertThat(ImageIO.read(with.toFile()).getHeight())
-                .isEqualTo(ImageIO.read(without.toFile()).getHeight() + RouteDiagramLayoutEngine.BODY_TYPES_GAP);
+                .isEqualTo(ImageIO.read(without.toFile()).getHeight() + new RouteDiagramLayoutEngine().getBodyTypesGap());
     }
 
     @Test

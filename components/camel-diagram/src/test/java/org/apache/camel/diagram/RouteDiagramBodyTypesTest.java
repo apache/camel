@@ -27,7 +27,9 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
+import org.apache.camel.diagram.TopologyErrorFrame.LineStyle;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -111,8 +113,9 @@ class RouteDiagramBodyTypesTest {
         assertThat(labels.bodyTypes).isTrue();
         LayoutNode from = labels.nodes.get(1);
         LayoutNode setBody = labels.nodes.get(2);
+        assertThat(engine.getBodyTypesGap()).isGreaterThanOrEqualTo(RouteDiagramLayoutEngine.BODY_TYPES_GAP);
         assertThat(setBody.y - (from.y + from.height))
-                .isEqualTo(RouteDiagramLayoutEngine.V_GAP + RouteDiagramLayoutEngine.BODY_TYPES_GAP);
+                .isEqualTo(RouteDiagramLayoutEngine.V_GAP + engine.getBodyTypesGap());
         // and room on both sides for a label wider than a step
         int overhang = (RouteDiagramLayoutEngine.bodyTypesLabelWidth(engine.getNodeWidth()) - engine.getNodeWidth()) / 2;
         assertThat(from.x).isEqualTo(RouteDiagramLayoutEngine.PADDING + overhang);
@@ -144,5 +147,107 @@ class RouteDiagramBodyTypesTest {
         int warnTop = setBody.y + setBody.height + RouteDiagramLayoutEngine.V_GAP / 2
                       + 4 * RouteDiagramLayoutEngine.SCALE;
         assertThat(new Color(image.getRGB(cx, warnTop + 3))).isEqualTo(colors.getWarningBg());
+    }
+
+    @Test
+    void labelsOfTheErrorHandling() {
+        // only the onException clause has been reached with a body
+        List<String> none = List.of();
+        RouteInfo r = new RouteInfo();
+        r.routeId = "checkout";
+        r.nodes.add(node("route", "route[checkout]", 0, none, none));
+        r.nodes.add(node("from", "from[direct:checkout]", 1, none, none));
+        r.nodes.add(node("to", "to[direct:charge]", 2, none, none));
+        r.nodes.add(node("onException", "onException[IOException]", 2, none, none));
+        r.nodes.add(node("log", "log[failed]", 3, List.of("java.lang.String"), List.of("payload")));
+
+        DiagramColors colors = DiagramColors.parse("dark");
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        engine.setCardStyle(true);
+        engine.setBodyTypes(true);
+        LayoutRoute lr = RouteErrorFrame.layout(engine, r, RouteDiagramLayoutEngine.PADDING, true, null, List.of(),
+                LineStyle.TEXT, RouteDiagramRenderer.rowHeight(RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE));
+        assertThat(lr.bodyTypes).isTrue();
+        BufferedImage image = new RouteDiagramRenderer().renderDiagram(List.of(lr), lr.maxY, colors);
+
+        // the label on the arrow into the log of the onException clause
+        LayoutNode onException = lr.nodes.stream().filter(n -> "onException".equals(n.type)).findFirst().orElseThrow();
+        int cx = onException.x + engine.getNodeWidth() / 2;
+        int top = onException.y + onException.height + RouteDiagramLayoutEngine.bodyTypesLabelOffset();
+        assertThat(new Color(image.getRGB(cx, top + 3))).isEqualTo(colors.getCardBg());
+    }
+
+    @Test
+    void labelsDoNotHideTheCounters() {
+        DiagramColors colors = DiagramColors.parse("dark");
+        for (int fontSize : new int[] { 12, 16, 20 }) {
+            RouteDiagramLayoutEngine engine
+                    = new RouteDiagramLayoutEngine(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, fontSize);
+            engine.setCardStyle(true);
+            engine.setBodyTypes(true);
+            RouteInfo r = orders(true);
+            for (NodeInfo n : r.nodes) {
+                n.stat = new StatInfo();
+                n.stat.exchangesTotal = 120;
+                n.stat.exchangesFailed = 3;
+            }
+            LayoutRoute lr = engine.layoutRoute(r, RouteDiagramLayoutEngine.PADDING);
+            RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, true);
+            BufferedImage labels = renderer.renderDiagram(List.of(lr), lr.maxY, colors);
+            // the same layout without the labels
+            lr.bodyTypes = false;
+            BufferedImage plain = renderer.renderDiagram(List.of(lr), lr.maxY, colors);
+
+            assertThat(count(labels, colors.getCounter())).as("font size %d", fontSize)
+                    .isPositive().isEqualTo(count(plain, colors.getCounter()));
+            assertThat(count(labels, colors.getCounterFail())).as("font size %d", fontSize)
+                    .isPositive().isEqualTo(count(plain, colors.getCounterFail()));
+        }
+    }
+
+    @Test
+    void labelInsideTheBoxOfTheSplit() {
+        List<String> none = List.of();
+        RouteInfo r = new RouteInfo();
+        r.routeId = "split";
+        r.nodes.add(node("route", "route[split]", 0, none, none));
+        r.nodes.add(node("from", "from[file:orders]", 1, none, none));
+        r.nodes.add(node("split", "split[jsonpath{$.items}]", 2, none, none));
+        r.nodes.add(node("to", "to[http:pricing]", 3,
+                List.of("java.util.LinkedHashMap", "java.lang.String"), List.of("data", "payload")));
+
+        DiagramColors colors = DiagramColors.parse("dark");
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        engine.setCardStyle(true);
+        engine.setBodyTypes(true);
+        LayoutRoute lr = engine.layoutRoute(r, RouteDiagramLayoutEngine.PADDING);
+        BufferedImage image = new RouteDiagramRenderer().renderDiagram(List.of(lr), lr.maxY, colors);
+
+        LayoutNode split = lr.nodes.get(2);
+        int labelY = split.y + split.height + RouteDiagramLayoutEngine.bodyTypesLabelOffset() + 3;
+        int cx = split.x + engine.getNodeWidth() / 2;
+        assertThat(new Color(image.getRGB(cx, labelY))).isEqualTo(colors.getWarningBg());
+        // nothing of the label outside the dashed box, on either side
+        int boxLeft = split.x - RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
+        int boxRight = split.x + engine.getNodeWidth() + RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
+        for (int x = 0; x < boxLeft - RouteDiagramLayoutEngine.SCALE; x++) {
+            assertThat(new Color(image.getRGB(x, labelY))).as("x=%d", x).isEqualTo(colors.getBg());
+        }
+        for (int x = boxRight + RouteDiagramLayoutEngine.SCALE; x < image.getWidth(); x++) {
+            assertThat(new Color(image.getRGB(x, labelY))).as("x=%d", x).isEqualTo(colors.getBg());
+        }
+    }
+
+    private static int count(BufferedImage image, Color color) {
+        int n = 0;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                if (image.getRGB(x, y) == color.getRGB()) {
+                    n++;
+                }
+            }
+        }
+        return n;
     }
 }
