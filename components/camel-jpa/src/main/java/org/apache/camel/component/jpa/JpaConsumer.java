@@ -370,7 +370,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
      *
      * @param  entity        the entity to be locked
      * @param  entityManager entity manager
-     * @return               true if the entity was locked
+     * @return               true if the result can be processed: it was locked, or it is not an entity and there is
+     *                       nothing to lock
      */
     protected boolean lockEntity(Object entity, EntityManager entityManager) {
         if (!getEndpoint().isConsumeLockEntity()) {
@@ -512,8 +513,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 } else if (notEntityWarned.compareAndSet(false, true)) {
                     // once per consumer, as each poll delivers the same results again
                     LOG.warn("Cannot auto-delete a query result of type {} that is not an entity (e.g. a selected column,"
-                             + " or a native query result without resultClass). Set consumeDelete=false or configure a"
-                             + " resultClass.",
+                             + " or a native query result without resultClass), so each poll delivers it again. Select the"
+                             + " entity (or set resultClass of a nativeQuery), or set consumeDelete=false and make the query"
+                             + " exclude the rows already handled.",
                             entityBean != null ? entityBean.getClass().getName() : "null");
                 } else {
                     LOG.debug("Cannot auto-delete a query result of type {} that is not an entity",

@@ -41,34 +41,36 @@ import static org.mockito.Mockito.when;
  * A query that selects values that are not entities (such as a column) delivers them with the default
  * consumeLockEntity=true and consumeDelete=true: there is no entity to lock or to delete.
  */
-public class JpaConsumerScalarResultTest extends AbstractJpaTest {
+class JpaConsumerScalarResultTest extends AbstractJpaTest {
 
     private static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
     @Test
-    public void testScalarResultsAreDelivered() throws Exception {
+    void testScalarResultsAreDelivered() throws Exception {
         saveEntityInDB(new SendEmail("bar@beer.org"));
         saveEntityInDB(new SendEmail("foo@beer.org"));
+        // a NULL column gives a message with a null body
+        saveEntityInDB(new SendEmail(null));
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("bar@beer.org", "foo@beer.org");
+        mock.expectedBodiesReceivedInAnyOrder("bar@beer.org", "foo@beer.org", null);
 
         JpaConsumer consumer = (JpaConsumer) context.getRoute("scalar").getConsumer();
         // one poll in the test thread (the scheduler is not started)
-        assertEquals(2, consumer.poll());
+        assertEquals(3, consumer.poll());
 
         mock.assertIsSatisfied();
         entityManager.clear();
         List<?> rows = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
-        assertEquals(2, rows.size(), "a value that is not an entity cannot be deleted, so the rows stay: " + rows);
+        assertEquals(3, rows.size(), "a value that is not an entity cannot be deleted, so the rows stay: " + rows);
 
         // the values were not deleted, so the next poll delivers them again
-        assertEquals(2, consumer.poll());
-        assertEquals(4, mock.getReceivedCounter());
+        assertEquals(3, consumer.poll());
+        assertEquals(6, mock.getReceivedCounter());
     }
 
     @Test
-    public void testNoLockIsAttemptedForAValueThatIsNotAnEntity() {
+    void testNoLockIsAttemptedForAValueThatIsNotAnEntity() {
         // a failed lock marks the transaction rollback only on some JPA providers, so it must not be attempted
         EntityManager em = mock(EntityManager.class);
         Metamodel metamodel = entityManager.getMetamodel();
