@@ -2143,3 +2143,10 @@ When configuring TLS through `SSLContextParameters` with a standalone `TrustMana
 
 When both a `TrustManager` and a keystore are configured on `TrustManagersParameters`, the `TrustManager` is now used,
 as with the other components that use `SSLContextParameters`; before, the keystore-based trust options were used.
+
+=== camel-oauth - session identifier logging removed and session rotation on login
+
+`InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
+identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
+and emitting an updated session cookie. Custom `OAuthSessionStore` implementations can override the default
+`rotateSession` method to support session rotation on login.
