@@ -2530,6 +2530,10 @@ The ASCII and Unicode diagrams, the topology diagram and the web component do no
 A custom color spec sets the colors of the cards with `card`, `cardBorder`, `cardText` and `cardDetail`. The `text`
 color no longer applies to the steps of a route diagram (it still does to the topology diagram).
 
+The `RouteDiagramRenderer(nodeWidth, fontSizeScaled, nodeTextPadding, metrics)` constructor is deprecated, as the text
+of a card starts after its icon and `nodeTextPadding` is not used. Use `RouteDiagramRenderer(nodeWidth, fontSizeScaled,
+metrics)` instead.
+
 `camel cmd route-diagram --output=diagram.png` without `--theme` now saves the PNG image in the `light` theme. Before,
 the default theme was `unicode` also for a file, so the command saved the text diagram in `diagram.txt` instead. A
 diagram in the terminal is still text (`unicode`) by default, and a file that does not end with `.png` still gets the
