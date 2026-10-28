@@ -181,7 +181,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private List<QName> path;
         private List<Map<String, String>> namespaces;
         private List<String> segments;
-        private List<QName> segmentlog;
+        private List<Integer> segmentdepths;
         private List<String> tokens;
         private int code;
         private int consumed;
@@ -222,7 +222,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             // wrapped mode needs the segments and the injected mode needs the namespaces
             if (this.mode == 'w') {
                 this.segments = new ArrayList<>();
-                this.segmentlog = new ArrayList<>();
+                this.segmentdepths = new ArrayList<>();
             } else if (this.mode == 'i') {
                 this.namespaces = new ArrayList<>();
             }
@@ -291,21 +291,21 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             return path.remove(path.size() - 1);
         }
 
-        private void pushSegment(QName qname, String token) {
+        private void pushSegment(String token) {
             segments.add(token);
-            segmentlog.add(qname);
+            segmentdepths.add(depth);
         }
 
-        private String popSegment() {
-            return segments.remove(segments.size() - 1);
-        }
-
-        private QName peekLog() {
-            return segmentlog.get(segmentlog.size() - 1);
-        }
-
-        private QName popLog() {
-            return segmentlog.remove(segmentlog.size() - 1);
+        /**
+         * Removes the segments of the elements inside the element that ends at the given depth. The segment at that
+         * depth stays, as the next sibling uses it too. This goes by depth and not by name: an element inside may have
+         * the same name, and an element that started right after a match has no segment of its own.
+         */
+        private void popSegments(int endDepth) {
+            while (segmentdepths.get(segmentdepths.size() - 1) > endDepth) {
+                segments.remove(segments.size() - 1);
+                segmentdepths.remove(segmentdepths.size() - 1);
+            }
         }
 
         private void pushNamespaces(XMLStreamReader reader) {
@@ -468,9 +468,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         }
 
                         String token = getCurrentText();
-                        // perform the second compliance test
+                        // perform the second compliance test: a reader that gives the location of the start of this
+                        // start tag has not given the tag in the token yet, whatever precedes it (declaration, comments,
+                        // doctype)
                         if (!compliant) {
-                            if (token != null && token.startsWith("<") && !token.startsWith("<?")) {
+                            if (!in.startsWithStartTag(makeName(name))) {
                                 throw new XMLStreamException("XMLStreamReader does not supporting getting location");
                             }
                             compliant = true;
@@ -478,7 +480,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
                         LOG.trace("token={}", token);
                         if (!backtrack && mode == 'w') {
-                            pushSegment(name, token);
+                            pushSegment(token);
                         }
                         pushName(name);
                         if (mode == 'i') {
@@ -528,24 +530,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                             popNamespaces();
                         }
 
-                        int pc = 0;
                         if (backtrack || trackdepth > 0 && depth == trackdepth - 1) {
                             // reactive backtrack if not backtracking and update the track depth
                             backtrack = true;
                             trackdepth--;
                             if (mode == 'w') {
-                                while (!endname.equals(peekLog())) {
-                                    pc++;
-                                    popLog();
-                                }
-                            }
-                        }
-
-                        if (backtrack) {
-                            if (mode == 'w') {
-                                for (int i = 0; i < pc; i++) {
-                                    popSegment();
-                                }
+                                popSegments(depth + 1);
                             }
                         }
 

@@ -1,6 +1,6 @@
-= Camel MCP Server
+= Camel CLI MCP Server
 
-The Camel MCP Server gives AI coding assistants deep knowledge of Apache Camel.
+The Camel CLI MCP Server gives AI coding assistants deep knowledge of Apache Camel.
 It exposes the full Camel Catalog — components, EIPs, data formats, Kamelets, examples — plus
 runtime introspection tools for live Camel applications, all through the
 https://modelcontextprotocol.io/[Model Context Protocol (MCP)].
@@ -15,6 +15,10 @@ https://docs.quarkiverse.io/quarkus-mcp-server/dev/index.html[quarkus-mcp-server
 
 The Camel TUI has an MCP server of its own, `camel tui --mcp`, that also lets an agent see and drive the TUI screen;
 see xref:camel-jbang-tui-ai-ways.adoc[Camel TUI Ways to Use AI] for how the two compare.
+
+NOTE: This page is about a developer tool that helps your AI assistant write Camel. To turn the routes of your own
+integration into MCP tools and resources, so that MCP clients can call them, use the
+xref:components:others:mcp-server.adoc[MCP Server component] (`camel-mcp-server`) instead.
 
 == Getting Started
 
@@ -187,7 +191,7 @@ Open http://localhost:6274/, set Transport Type to `SSE`, URL to `http://localho
 
 | `--version`
 | _(current Camel version)_
-| Camel MCP server version to use. Defaults to the version of the Camel CLI.
+| Camel CLI MCP server version to use. Defaults to the version of the Camel CLI.
 |===
 
 == Examples

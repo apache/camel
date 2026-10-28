@@ -6563,7 +6563,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             displayName = "GZip Deflater",
             description = "Compress and decompress messages using java.util.zip.GZIP*Stream",
             deprecated = false,
-            properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxDecompressedSize", type = "number", defaultValue = "1073741824", description = "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.", displayName = "Max Decompressed Size")
+            }
     )
     public static class GzipDeflaterDataFormatDeserializer extends YamlDeserializerBase<GzipDeflaterDataFormat> {
         public GzipDeflaterDataFormatDeserializer() {
@@ -6583,6 +6586,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "maxDecompressedSize": {
+                    String val = asText(node);
+                    target.setMaxDecompressedSize(val);
                     break;
                 }
                 default: {
@@ -21818,7 +21826,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "compressionLevel", type = "enum:-1,0,1,2,3,4,5,6,7,8,9", defaultValue = "-1", description = "Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression.", displayName = "Compression Level"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxDecompressedSize", type = "number", defaultValue = "1073741824", description = "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.", displayName = "Max Decompressed Size")
             }
     )
     public static class ZipDeflaterDataFormatDeserializer extends YamlDeserializerBase<ZipDeflaterDataFormat> {
@@ -21844,6 +21853,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "maxDecompressedSize": {
+                    String val = asText(node);
+                    target.setMaxDecompressedSize(val);
                     break;
                 }
                 default: {

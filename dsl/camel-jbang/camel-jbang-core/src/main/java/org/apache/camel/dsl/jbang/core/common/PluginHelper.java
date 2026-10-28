@@ -34,6 +34,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -71,6 +72,9 @@ public final class PluginHelper {
      * even if the target name is registered as a built-in subcommand.
      */
     private static final Set<String> PLUGIN_CONSUMING_BUILTINS = Set.of("shell", "run", "export", "cmd");
+
+    // the plugins warned about by compatibilityCheck, to warn once
+    private static final Set<String> COMPATIBILITY_WARNED = ConcurrentHashMap.newKeySet();
 
     private static final FactoryFinder FACTORY_FINDER
             = new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
@@ -268,6 +272,10 @@ public final class PluginHelper {
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
                 if (!version.isBlank() && !firstVersion.isBlank()) {
                     versionCheck(main, version, firstVersion, command);
+                }
+                // check if the plugin release is built for this camel version (only stored data, no download)
+                if (!version.isBlank()) {
+                    compatibilityCheck(main.getOut(), version, name, properties);
                 }
 
                 ResolveResult res = resolvePlugin(properties, command, version, gav, repos, main.getOut());
@@ -531,6 +539,31 @@ public final class PluginHelper {
         if (!accept) {
             throw CliException.failure("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
                                        + " because plugin has first version: " + firstVersion);
+        }
+    }
+
+    /**
+     * Warns, once per plugin, when the stored Camel versions of a plugin release (see {@link PluginCompatibility}) do
+     * not include the Camel CLI version, such as after upgrading the CLI. Plugins registered without them are not
+     * checked.
+     */
+    static void compatibilityCheck(Printer printer, String version, String name, JsonObject properties) {
+        String range = asString(properties.get("camelVersions"));
+        if (range == null || range.isBlank() || PluginCompatibility.accepts(range, version)) {
+            return;
+        }
+        // the nearest older release, selected for this Camel version as no release is built for it
+        String selectedFor = asString(properties.get("selectedForCamel"));
+        if (selectedFor != null && selectedFor.equals(PluginCompatibility.minorLine(version))) {
+            return;
+        }
+        String gav = asString(properties.get("dependency"));
+        MavenGav mavenGav = dependencyAsMavenGav(gav);
+        String pluginVersion = mavenGav != null && mavenGav.getVersion() != null ? " " + mavenGav.getVersion() : "";
+        if (COMPATIBILITY_WARNED.add(name + ":" + gav + ":" + range)) {
+            printer.printWarn(
+                    "%s%s is built for Camel %s but this CLI is %s. Run 'camel plugin add %s' to select a matching release."
+                            .formatted(name, pluginVersion, range, version, name));
         }
     }
 

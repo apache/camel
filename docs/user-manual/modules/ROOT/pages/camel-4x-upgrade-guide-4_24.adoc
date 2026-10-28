@@ -1529,6 +1529,17 @@ the content of the earlier file was lost. The later entry is now added with a nu
 `orders (1).csv`, `orders (2).csv`, and so on. Entry names can therefore differ from the file names (or the
 `CamelFileName` header). Use `preserveFolderStructure=true` to keep the folders in the entry names instead.
 
+=== camel-zip-deflater - gzipDeflater and zipDeflater limit the decompressed size
+
+The `gzipDeflater` and `zipDeflater` data formats have the `maxDecompressedSize` option of the `zipFile` and
+`tarFile` data formats, with the same default of 1073741824 bytes (1 GiB). An unmarshal of a message that decompresses
+to more than that now fails with an `IOException` ("The InputStream entry being copied exceeds the maximum allowed
+size"). Routes that unmarshal larger messages set a higher limit, or `-1` for no limit, for example
+`<gzipDeflater maxDecompressedSize="-1"/>` or `unmarshal(dataFormat().zipDeflater().maxDecompressedSize(-1).end())`.
+The limit counts the whole decompressed message. For example, when a `.tar.gz` file is unmarshalled with
+`gzipDeflater` and then split into its entries, the limit applies to the whole tar archive, not to each entry as the
+limit of `tarFile` does.
+
 === camel-milo - each client connection has thread pools of its own
 
 A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse
@@ -1615,6 +1626,11 @@ with `OAuthHelper.validateOAuthToken` from camel-support instead.
 
 For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
 a value that also appears in the query string of the request.
+
+`InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
+identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
+and emitting an updated session cookie. Custom `OAuthSessionStore` implementations can override the default
+`rotateSession` method to support session rotation on login.
 
 === camel-platform-http-vertx - the charset parameter of the request Content-Type in any case
 
@@ -2803,7 +2819,7 @@ contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepte
 
 === camel-jbang-mcp - runtime tools that changed behaviour
 
-Some runtime tools of the Camel MCP server now do what their description says, which changes what a client sees:
+Some runtime tools of the Camel CLI MCP server now do what their description says, which changes what a client sees:
 
 * `camel_runtime_receive` receives a message in one call: it starts a consumer on the endpoint, waits up to
   `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer. It returns one message
@@ -3839,6 +3855,20 @@ fields of its exchange or file.
 The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
 level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
 `camel-wordpress` JAR no longer contains a `log4j.properties` file.
+
+=== camel-jbang - camel plugin add selects the plugin release built for the CLI
+
+`camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`
+version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
+the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
+`camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
+moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
+`LATEST` as before.
+
+`--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
+registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
 
 === camel-jpa - a consumer query that selects values delivers them
 
