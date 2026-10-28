@@ -218,6 +218,8 @@ public class PluginAdd extends PluginBaseCommand {
             if (!useRelease(plugin, older.version(), older.compat())) {
                 return false;
             }
+            // warned here, so the load-time check stays quiet until the CLI moves to another Camel version
+            plugin.put("selectedForCamel", PluginCompatibility.minorLine(cli));
             printer().printWarn(
                     "No release of %s is built for Camel CLI %s. Selected %s %s, the newest release for an older Camel version (%s)."
                             .formatted(name, cli, name, version, older.compat().describe()));

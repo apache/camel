@@ -344,6 +344,22 @@ public class PluginHelperTest {
     }
 
     @Test
+    void testNoCompatibilityWarningForNearestOlderReleaseOnTheSameCamelVersion() {
+        StringPrinter printer = new StringPrinter();
+        JsonObject entry = new JsonObject();
+        entry.put("dependency", "org.example.plugins:camel-jbang-plugin-fixture:1.4.2");
+        entry.put("camelVersions", "[4.18.0,4.19.0)");
+        entry.put("selectedForCamel", "4.21");
+        PluginHelper.compatibilityCheck(printer, "4.21.3", "fixture-older", entry);
+        assertEquals("", printer.getOutput());
+        // the CLI moved to another Camel version, where a matching release may exist
+        PluginHelper.compatibilityCheck(printer, "4.22.0", "fixture-older", entry);
+        assertEquals("WARN: fixture-older 1.4.2 is built for Camel [4.18.0,4.19.0) but this CLI is 4.22.0."
+                     + " Run 'camel plugin add fixture-older' to select a matching release.",
+                printer.getStderr());
+    }
+
+    @Test
     void testNoCompatibilityWarningForLegacyEntry() {
         // registered before the Camel versions were stored
         StringPrinter printer = new StringPrinter();

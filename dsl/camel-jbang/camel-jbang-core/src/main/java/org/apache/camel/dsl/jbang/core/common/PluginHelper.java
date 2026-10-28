@@ -552,6 +552,11 @@ public final class PluginHelper {
         if (range == null || range.isBlank() || PluginCompatibility.accepts(range, version)) {
             return;
         }
+        // the nearest older release, selected for this Camel version as no release is built for it
+        String selectedFor = asString(properties.get("selectedForCamel"));
+        if (selectedFor != null && selectedFor.equals(PluginCompatibility.minorLine(version))) {
+            return;
+        }
         String gav = asString(properties.get("dependency"));
         MavenGav mavenGav = dependencyAsMavenGav(gav);
         String pluginVersion = mavenGav != null && mavenGav.getVersion() != null ? " " + mavenGav.getVersion() : "";
