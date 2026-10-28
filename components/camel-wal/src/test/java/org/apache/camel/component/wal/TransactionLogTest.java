@@ -36,7 +36,9 @@ public class TransactionLogTest {
     @Test
     void testCannotUpdateRolledOverRecord() {
         assertFalse(TransactionLog.canUpdate(1, 3, 0, 1));
-        assertFalse(TransactionLog.canUpdate(1, 3, 0, 3));
+        assertFalse(TransactionLog.canUpdate(1, 3, 0, 2));
+        // two layers behind: the previous layer has replaced it already
+        assertFalse(TransactionLog.canUpdate(2, 3, 0, 5));
     }
 
     @DisplayName("Tests that can update records after a roll-over has started")
@@ -44,6 +46,8 @@ public class TransactionLogTest {
     void testCanUpdateDifferentLayerWithRollOver() {
         assertTrue(TransactionLog.canUpdate(1, 10, 0, 11));
         assertTrue(TransactionLog.canUpdate(1, 10, 1, 10));
-        assertFalse(TransactionLog.canUpdate(1, 10, 0, 10));
+        // the current index is the index of the next entry to add, so the entry there is not replaced yet
+        assertTrue(TransactionLog.canUpdate(1, 10, 0, 10));
+        assertTrue(TransactionLog.canUpdate(1, 3, 0, 3));
     }
 }

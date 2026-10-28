@@ -322,7 +322,9 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         } else if (state.get() == STATE_OPEN) {
             if (!keepOpenBool.get()) {
                 long elapsedTimeSinceOpened = TimeSource.currentTimeMillis() - openedAt;
-                if (halfOpenAfter <= elapsedTimeSinceOpened) {
+                // read once, as halfOpenAfter can be changed at runtime (such as over JMX)
+                long openFor = halfOpenAfter;
+                if (openFor <= elapsedTimeSinceOpened) {
                     LOG.debug("Checking an open circuit...");
                     if (halfOpenHandler != null) {
                         if (halfOpenHandler.isReadyToBeClosed()) {
@@ -337,7 +339,13 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                         LOG.debug("Half opening circuit...");
                         halfOpenCircuit(route);
                     }
+                } else if (exchangeFailed == null) {
+                    LOG.debug("Keeping circuit open (time not elapsed)...");
+                    // the half open timer fired before halfOpenAfter, as it was raised after the timer was scheduled:
+                    // the consumer is suspended, so no exchange comes to check again. Check when the time is up
+                    addHalfOpenTimer(route, openFor - elapsedTimeSinceOpened);
                 } else {
+                    // an exchange still in flight when the circuit opened: the half open timer does the check
                     LOG.debug("Keeping circuit open (time not elapsed)...");
                 }
             } else {
@@ -407,11 +415,18 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     protected void addHalfOpenTimer(Route route) {
+        addHalfOpenTimer(route, halfOpenAfter);
+    }
+
+    /**
+     * Schedules the half open check after the given delay, replacing the one that is scheduled.
+     */
+    protected void addHalfOpenTimer(Route route, long delay) {
         lock.lock();
         try {
             Timer previous = halfOpenTimer;
             Timer timer = new Timer();
-            timer.schedule(new HalfOpenTask(route, timer), halfOpenAfter);
+            timer.schedule(new HalfOpenTask(route, timer), delay);
             halfOpenTimer = timer;
             if (previous != null) {
                 // only one half open check at a time (each timer has its own thread)

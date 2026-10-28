@@ -81,6 +81,39 @@ public interface MavenDownloader extends Service {
             throws MavenResolutionException;
 
     /**
+     * Resolves the available versions for groupId + artifactId from all the configured remote repositories: Maven
+     * Central (unless disabled), the repositories of the active profiles in the Maven settings, and the configured
+     * repositories (see {@link #setRepos(String)}), with mirrors applied, plus the given extra repositories. The
+     * versions of all repositories are merged, and a repository that cannot be reached is skipped.
+     *
+     * @param  groupId                  groupId
+     * @param  artifactId               artifactId
+     * @param  extraRepositories        nullable set of additional repositories to use
+     * @param  fresh                    whether to check the remote repositories again, instead of using the metadata
+     *                                  downloaded before
+     * @return                          the versions, in no particular order, without duplicates
+     * @throws MavenResolutionException when none of the repositories can be reached
+     */
+    default List<MavenGav> resolveAvailableVersions(
+            String groupId, String artifactId, Set<String> extraRepositories, boolean fresh)
+            throws MavenResolutionException {
+        throw new UnsupportedOperationException("resolveAvailableVersions is not supported by " + getClass().getName());
+    }
+
+    /**
+     * Reads the resolved (effective) POM of a single artifact, without downloading the artifact itself or its
+     * dependencies. Uses the same repositories, mirrors, settings and offline mode as
+     * {@link #resolveArtifacts(List, Set, boolean, boolean)}.
+     *
+     * @param gav               the Maven coordinates ({@code groupId:artifactId:version})
+     * @param extraRepositories nullable set of additional repositories to use (except the discovered ones)
+     */
+    default MavenArtifactDescriptor resolveArtifactDescriptor(String gav, Set<String> extraRepositories)
+            throws MavenResolutionException {
+        throw new UnsupportedOperationException("resolveArtifactDescriptor is not supported by " + getClass().getName());
+    }
+
+    /**
      * Existing, configured {@link MavenDownloader} can be used as a template to create customized version which shares
      * most of the configuration except underlying {@code org.eclipse.aether.RepositorySystemSession}, which can't be
      * shared.
