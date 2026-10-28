@@ -1252,6 +1252,14 @@ keys gets a null value in its column (an empty field, or the `nullString` when i
 values moved one column to the left. Each message body starts again with no columns, as before. Set `header` (with
 `headerDisabled=false`) to get a fixed set and order of columns.
 
+This also changes the output of a body that mixes record types on purpose, such as a header row
+`{type=H, date=d}`, detail rows `{type=D, sku=s, qty=q}` and a trailer row `{type=T, count=n}` (common in flat-file
+exchanges): it was written as `H,d`, `D,s,q` and `T,n`, and is now written as `H,d`, `D,,s,q` and `T,,,,n`. To keep
+the previous output, convert the rows to `List` before marshalling, or set a custom `marshallerFactory`
+(`marshallerFactoryRef` in XML and YAML) whose `CsvMarshaller` returns the values of each map. Every row
+now has all the columns seen so far in the body, so rows that each have keys of their own (sparse or pivoted data)
+give about N²/2 fields for N rows, where the output was linear in the input before.
+
 === camel-github2 - the commit consumer routes the commits beyond the newest 100
 
 The `commit` consumer read only the 100 newest commits of the branch at each poll, so when more than 100 commits were

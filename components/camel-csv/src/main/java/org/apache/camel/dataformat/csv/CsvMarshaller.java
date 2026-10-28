@@ -134,6 +134,7 @@ public abstract class CsvMarshaller {
      * each body, so it can keep the columns of the rows already written.
      *
      * @return the function that gives the CSV record values of a map row
+     * @since  4.24
      */
     protected Function<Map<?, ?>, Iterable<?>> createMapRecordValues() {
         return this::getMapRecordValues;
@@ -181,10 +182,29 @@ public abstract class CsvMarshaller {
                 columns.addAll(map.keySet());
                 List<Object> result = new ArrayList<>(columns.size());
                 for (Object column : columns) {
-                    result.add(map.get(column));
+                    result.add(valueOf(map, column));
                 }
                 return result;
             };
+        }
+
+        private static Object valueOf(Map<?, ?> map, Object column) {
+            if (column == null) {
+                // a null key of an earlier row: maps such as Map.of(...) do not permit get(null)
+                for (Map.Entry<?, ?> entry : map.entrySet()) {
+                    if (entry.getKey() == null) {
+                        return entry.getValue();
+                    }
+                }
+                return null;
+            }
+            try {
+                return map.get(column);
+            } catch (ClassCastException e) {
+                // a sorted map, such as a TreeMap, cannot compare a key of an earlier row of another type, so it
+                // has no value for it
+                return null;
+            }
         }
 
         @Override

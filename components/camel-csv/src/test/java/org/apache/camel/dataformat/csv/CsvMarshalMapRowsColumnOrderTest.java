@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.csv;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -84,6 +85,61 @@ class CsvMarshalMapRowsColumnOrderTest extends CamelTestSupport {
         output.assertIsSatisfied();
 
         assertArrayEquals(new String[] { "1,Alice", "2,,Rome", "3,Carol,Bergen" }, readOutputLines(0));
+    }
+
+    @Test
+    void rowsOfDifferentRecordTypesGetTheColumnsOfAllRows() throws Exception {
+        output.expectedMessageCount(1);
+
+        template.sendBody("direct:default", List.of(
+                row("type", "H", "date", "20261028"),
+                row("type", "D", "sku", "A1", "qty", "2"),
+                row("type", "T", "count", "1")));
+        output.assertIsSatisfied();
+
+        assertArrayEquals(new String[] { "H,20261028", "D,,A1,2", "T,,,,1" }, readOutputLines(0));
+    }
+
+    @Test
+    void listRowsOfDifferentRecordTypesKeepTheirOwnFields() throws Exception {
+        output.expectedMessageCount(1);
+
+        template.sendBody("direct:default", List.of(
+                List.of("H", "20261028"),
+                List.of("D", "A1", "2"),
+                List.of("T", "1")));
+        output.assertIsSatisfied();
+
+        assertArrayEquals(new String[] { "H,20261028", "D,A1,2", "T,1" }, readOutputLines(0));
+    }
+
+    @Test
+    void nullKeyOfAnEarlierRowWithAMapThatDoesNotPermitNullKeys() throws Exception {
+        output.expectedMessageCount(1);
+
+        Map<String, Object> withNullKey = new LinkedHashMap<>();
+        withNullKey.put("id", "1");
+        withNullKey.put(null, "x");
+        // Map.of(...) throws a NullPointerException on get(null)
+        template.sendBody("direct:default", List.of(withNullKey, Map.of("id", "2")));
+        output.assertIsSatisfied();
+
+        assertArrayEquals(new String[] { "1,x", "2," }, readOutputLines(0));
+    }
+
+    @Test
+    void keyOfAnotherTypeOfAnEarlierRowWithASortedMap() throws Exception {
+        output.expectedMessageCount(1);
+
+        Map<Object, Object> first = new LinkedHashMap<>();
+        first.put(1, "x");
+        first.put("id", "1");
+        // a TreeMap of String keys throws a ClassCastException on get(1)
+        Map<Object, Object> sorted = new TreeMap<>(Map.of("id", "2"));
+        template.sendBody("direct:default", List.of(first, sorted));
+        output.assertIsSatisfied();
+
+        assertArrayEquals(new String[] { "x,1", ",2" }, readOutputLines(0));
     }
 
     @Test
