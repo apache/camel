@@ -339,12 +339,14 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                         LOG.debug("Half opening circuit...");
                         halfOpenCircuit(route);
                     }
-                } else {
+                } else if (exchangeFailed == null) {
                     LOG.debug("Keeping circuit open (time not elapsed)...");
                     // the half open timer fired before halfOpenAfter, as it was raised after the timer was scheduled:
-                    // the consumer is suspended, so no exchange comes to check again. Check when the time is up (for an
-                    // exchange still in flight, this replaces the timer with one that is due at the same time)
+                    // the consumer is suspended, so no exchange comes to check again. Check when the time is up
                     addHalfOpenTimer(route, openFor - elapsedTimeSinceOpened);
+                } else {
+                    // an exchange still in flight when the circuit opened: the half open timer does the check
+                    LOG.debug("Keeping circuit open (time not elapsed)...");
                 }
             } else {
                 LOG.debug("Keeping circuit open (keepOpen is true)...");
@@ -416,7 +418,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         addHalfOpenTimer(route, halfOpenAfter);
     }
 
-    private void addHalfOpenTimer(Route route, long delay) {
+    /**
+     * Schedules the half open check after the given delay, replacing the one that is scheduled.
+     */
+    protected void addHalfOpenTimer(Route route, long delay) {
         lock.lock();
         try {
             Timer previous = halfOpenTimer;
