@@ -1553,9 +1553,7 @@ If your participants reach the same coordinator under different URLs, for exampl
 other coordinator URLs, including the context path, in the new `allowedCoordinatorUrls` option
 (`camel.lra.allowedCoordinatorUrls`).
 
-This also applies to the LRAs the service starts itself, which a nested saga route looks up again: when the
-coordinator returns LRA URLs under another base URL than `coordinatorUrl`, for example behind a proxy, add that
-base URL to `allowedCoordinatorUrls` as well.
+This also applies to the LRAs the service starts itself: when the coordinator returns LRA URLs under another base URL than `coordinatorUrl`, for example behind a proxy, starting a saga fails until that base URL is added to `allowedCoordinatorUrls`.
 
 === camel-lra - warning for unsigned participant callbacks, and reserved saga option names
 
