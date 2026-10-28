@@ -42,6 +42,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -200,23 +201,33 @@ class ApicurioRegistryConsumerTest {
     }
 
     @Test
-    void testContentNotFoundIsRetriedOnceThenSkipped() throws Exception {
+    void testContentNotFoundIsRetriedUntilDelayPassedThenSkipped() throws Exception {
         pages.add(1, 2);
         stubContent("1", new byte[] { 1 });
         when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().byVersionExpression("2").content().get())
-                .thenThrow(notFound()).thenThrow(notFound());
+                .versions().byVersionExpression("2").content().get()).thenThrow(notFound());
         List<Exchange> received = new ArrayList<>();
-        ApicurioRegistryConsumer consumer = createConsumer(ENDPOINT_URI + "&fetchContent=true", received);
+        // a short delay so the test does not wait long before the version is given up
+        ApicurioRegistryConsumer consumer = createConsumer(
+                "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3"
+                                                           + "&delay=200&fetchContent=true",
+                received);
 
         // the first 404 stops the poll without moving the watermark past version 2
         assertThat(consumer.poll()).isEqualTo(1);
-        // still not found on the next poll: skipped for good
+        // an immediate retry, as with greedy polling, does not give up on the version yet
         assertThat(consumer.poll()).isZero();
         pages.add(3);
         stubContent("3", new byte[] { 3 });
-        assertThat(consumer.poll()).isEqualTo(1);
-        assertThat(globalIds(received)).containsExactly(1L, 3L);
+        assertThat(consumer.poll()).isZero();
+        assertThat(globalIds(received)).containsExactly(1L);
+
+        // once a polling delay has passed, version 2 is skipped and version 3 is delivered
+        await().atMost(5, TimeUnit.SECONDS).pollInterval(50, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    consumer.poll();
+                    assertThat(globalIds(received)).containsExactly(1L, 3L);
+                });
     }
 
     @Test

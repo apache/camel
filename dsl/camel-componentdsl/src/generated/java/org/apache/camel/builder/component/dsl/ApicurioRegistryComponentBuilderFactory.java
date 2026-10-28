@@ -36,7 +36,7 @@ public interface ApicurioRegistryComponentBuilderFactory {
      * Manage artifacts, versions, and groups in Apicurio Registry v3.
      * 
      * Category: cloud,api
-     * Since: 4.23
+     * Since: 4.24
      * Maven coordinates: org.apache.camel:camel-apicurio-registry
      * 
      * @return the dsl builder

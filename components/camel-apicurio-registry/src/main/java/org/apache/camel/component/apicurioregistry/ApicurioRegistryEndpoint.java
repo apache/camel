@@ -50,7 +50,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage artifacts, versions, and groups in Apicurio Registry v3.
  */
-@UriEndpoint(firstVersion = "4.23.0", scheme = "apicurio-registry", title = "Apicurio Registry",
+@UriEndpoint(firstVersion = "4.24.0", scheme = "apicurio-registry", title = "Apicurio Registry",
              syntax = "apicurio-registry:groupId/artifactId",
              category = { Category.CLOUD, Category.API }, headersClass = ApicurioRegistryConstants.class)
 public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
@@ -114,6 +114,7 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        // only clean up what this endpoint created; a client set with setRegistryClient() survives a restart
         if (ownedWebClient != null) {
             registryClient = null;
             closeOwnedResources();

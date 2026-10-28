@@ -45,7 +45,9 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
     private final ApicurioRegistryEndpoint endpoint;
     private final ApicurioRegistryConfiguration configuration;
     private volatile Long lastSeenGlobalId;
+    // only accessed from the single poll thread managed by ScheduledPollConsumer, so volatile is not needed
     private Long notFoundGlobalId;
+    private long notFoundSince;
 
     public ApicurioRegistryConsumer(ApicurioRegistryEndpoint endpoint, Processor processor,
                                     ApicurioRegistryConfiguration configuration) {
@@ -92,17 +94,22 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
                         if (e.getStatus() == null || e.getStatus() != 404) {
                             throw e;
                         }
+                        // a 404 is not always final: with replicated storage another registry node may not have
+                        // the version yet, so only give up on it once at least one polling delay has passed. This
+                        // also holds when greedy polling runs the next poll immediately.
+                        long now = System.currentTimeMillis();
                         if (!globalId.equals(notFoundGlobalId)) {
-                            // a 404 is not always final: with replicated storage another registry node may not have
-                            // the version yet, so only give up on it if it is still missing on the next poll
-                            LOG.debug("Content of artifact version {} (globalId {}) not found, retrying on the next poll",
-                                    version.getVersion(), globalId);
                             notFoundGlobalId = globalId;
+                            notFoundSince = now;
+                        }
+                        if (now - notFoundSince < getDelay()) {
+                            LOG.debug("Content of artifact version {} (globalId {}) not found, retrying on a later poll",
+                                    version.getVersion(), globalId);
                             break;
                         }
                         LOG.warn("Skipping artifact version {} (globalId {}) whose content is still not available (HTTP 404)"
-                                 + " on a second attempt; it will not be delivered: {}",
-                                version.getVersion(), globalId, e.getDetail());
+                                 + " after {} ms; it will not be delivered: {}",
+                                version.getVersion(), globalId, now - notFoundSince, e.getDetail());
                         notFoundGlobalId = null;
                         lastSeenGlobalId = globalId;
                         continue;

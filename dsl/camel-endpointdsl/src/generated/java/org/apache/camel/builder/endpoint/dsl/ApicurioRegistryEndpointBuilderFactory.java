@@ -1653,7 +1653,7 @@ public interface ApicurioRegistryEndpointBuilderFactory {
          * Manage artifacts, versions, and groups in Apicurio Registry v3.
          * 
          * Category: cloud,api
-         * Since: 4.23
+         * Since: 4.24
          * Maven coordinates: org.apache.camel:camel-apicurio-registry
          * 
          * @return the dsl builder for the headers' name.
@@ -1666,7 +1666,7 @@ public interface ApicurioRegistryEndpointBuilderFactory {
          * Manage artifacts, versions, and groups in Apicurio Registry v3.
          * 
          * Category: cloud,api
-         * Since: 4.23
+         * Since: 4.24
          * Maven coordinates: org.apache.camel:camel-apicurio-registry
          * 
          * Syntax: <code>apicurio-registry:groupId/artifactId</code>
@@ -1688,7 +1688,7 @@ public interface ApicurioRegistryEndpointBuilderFactory {
          * Manage artifacts, versions, and groups in Apicurio Registry v3.
          * 
          * Category: cloud,api
-         * Since: 4.23
+         * Since: 4.24
          * Maven coordinates: org.apache.camel:camel-apicurio-registry
          * 
          * Syntax: <code>apicurio-registry:groupId/artifactId</code>

@@ -3,7 +3,7 @@
 :shortname: apicurio-registry
 :artifactid: camel-apicurio-registry
 :description: Manage artifacts, versions, and groups in Apicurio Registry v3.
-:since: 4.23
+:since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
@@ -136,8 +136,9 @@ All version states are listed, so `DRAFT` versions are delivered as soon as they
 registry allows changing the content of a version, a version is not delivered again after its
 content changes. With `fetchContent=true`, `DISABLED` versions are skipped, because the registry
 does not return their content. If the content of a version is not found (HTTP 404), the consumer
-retries it on the next poll, since a registry node with replicated storage may not have the version
-yet; if it is still not found, the version is skipped with a warning. Skipped versions are not
+retries it on later polls, since a registry node with replicated storage may not have the version
+yet; if it is still not found once at least one polling `delay` has passed (also with `greedy=true`),
+the version is skipped with a warning. Skipped versions are not
 delivered again, even if a disabled version is enabled later.
 
 If fetching content fails, or the route fails to process a version (including failures
