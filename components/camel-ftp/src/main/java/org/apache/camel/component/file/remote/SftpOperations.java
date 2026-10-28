@@ -980,12 +980,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile>, Sft
         if (!isConnected()) {
             return true;
         }
-        Throwable cause = e.getCause();
-        if (cause instanceof SftpException sftp) {
-            return sftp.id == ChannelSftp.SSH_FX_NO_CONNECTION
-                    || sftp.id == ChannelSftp.SSH_FX_CONNECTION_LOST;
-        }
-        return cause instanceof java.io.IOException;
+        // JSch reports a status sent by the server as an SftpException without a cause, and wraps an I/O or session
+        // failure as an SftpException (SSH_FX_FAILURE) with that failure as its cause
+        return e.getCause() instanceof SftpException sftp && sftp.getCause() != null;
     }
 
     /**

@@ -815,19 +815,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // reported by the remote server and is not necessarily a single path segment, and a local file
         // can be a symbolic link
         if (endpoint.isJailStartingDirectory() && !isWithinStartingDirectory(file, absoluteFilePath)) {
+            String message = isUnresolvableLink(absoluteFilePath)
+                    ? "Skipping file as symbolic link cannot be resolved: {}"
+                    : "Skipping file as it resolves outside the starting directory: {}";
             // such a file usually stays where it is and is listed again on every poll, so only warn the first time
             if (skippedOutsideStartingDirectory.put(absoluteFilePath, Boolean.TRUE) == null) {
-                if (isUnresolvableLink(absoluteFilePath)) {
-                    LOG.warn("Skipping file as symbolic link cannot be resolved: {}", absoluteFilePath);
-                } else {
-                    LOG.warn("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
-                }
+                LOG.warn(message, absoluteFilePath);
             } else {
-                if (isUnresolvableLink(absoluteFilePath)) {
-                    LOG.debug("Skipping file as symbolic link cannot be resolved: {}", absoluteFilePath);
-                } else {
-                    LOG.debug("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
-                }
+                LOG.debug(message, absoluteFilePath);
             }
             return false;
         }

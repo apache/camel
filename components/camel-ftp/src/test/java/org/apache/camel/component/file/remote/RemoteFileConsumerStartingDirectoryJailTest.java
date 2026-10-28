@@ -221,15 +221,17 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
             }
         };
 
-        // Whitelisted transport errors
+        // JSch wraps an I/O or session failure as SSH_FX_FAILURE with that failure as the cause
         assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
-                "connection lost", new SftpException(ChannelSftp.SSH_FX_CONNECTION_LOST, "connection lost"))));
-        assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
-                "no connection", new SftpException(ChannelSftp.SSH_FX_NO_CONNECTION, "no connection"))));
-        assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
-                "io exception", new IOException("broken pipe"))));
+                "broken pipe", new SftpException(
+                        ChannelSftp.SSH_FX_FAILURE, "java.io.IOException: broken pipe", new IOException("broken pipe")))));
 
-        // Application-level errors are not transport errors
+        // A status sent by the server is not a transport error, whatever its code. JSch never raises the
+        // SSH_FX_CONNECTION_LOST and SSH_FX_NO_CONNECTION pseudo-errors itself, so they can only be such a status too
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "connection lost", new SftpException(ChannelSftp.SSH_FX_CONNECTION_LOST, "connection lost"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "no connection", new SftpException(ChannelSftp.SSH_FX_NO_CONNECTION, "no connection"))));
         assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
                 "no such file", new SftpException(ChannelSftp.SSH_FX_NO_SUCH_FILE, "no such file"))));
         assertFalse(connected.isTransportError(new GenericFileOperationFailedException(

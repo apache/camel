@@ -78,6 +78,8 @@ import org.apache.sshd.sftp.client.SftpClient;
 import org.apache.sshd.sftp.client.SftpClient.DirEntry;
 import org.apache.sshd.sftp.client.SftpClient.OpenMode;
 import org.apache.sshd.sftp.client.SftpClientFactory;
+import org.apache.sshd.sftp.common.SftpConstants;
+import org.apache.sshd.sftp.common.SftpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1224,9 +1226,9 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile>,
             return true;
         }
         Throwable cause = e.getCause();
-        if (cause instanceof org.apache.sshd.sftp.common.SftpException sftp) {
-            return sftp.getStatus() == org.apache.sshd.sftp.common.SftpConstants.SSH_FX_NO_CONNECTION
-                    || sftp.getStatus() == org.apache.sshd.sftp.common.SftpConstants.SSH_FX_CONNECTION_LOST;
+        if (cause instanceof SftpException sftp) {
+            return sftp.getStatus() == SftpConstants.SSH_FX_NO_CONNECTION
+                    || sftp.getStatus() == SftpConstants.SSH_FX_CONNECTION_LOST;
         }
         return cause instanceof IOException;
     }

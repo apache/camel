@@ -28,7 +28,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * With jailStartingDirectory (the default) the mina-sftp consumer resolves a listed symbolic link on the server, and
@@ -143,6 +145,66 @@ class MinaSftpConsumerJailStartingDirectorySymlinkIT extends MinaSftpServerTestS
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         // the links are not part of the batch of the poll that picked up hello.txt (latest.txt is skipped, not consumed)
+        mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(1);
+
+        consume("inbox", "");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Windows does not allow * and ? in file names")
+    void consumesLinksNamedWithWildcardsResolvingInsideStartingDirectory() throws Exception {
+        Path inbox = Files.createDirectories(base.resolve("inbox"));
+        Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        createSymbolicLink(inbox.resolve("star*.txt"), Path.of("hello.txt"));
+        createSymbolicLink(inbox.resolve("what?.txt"), Path.of("hello.txt"));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World", "Hello World", "Hello World");
+        mock.expectedHeaderValuesReceivedInAnyOrder(Exchange.FILE_NAME, "hello.txt", "star*.txt", "what?.txt");
+
+        consume("inbox", "");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Windows does not allow * and ? in file names")
+    void consumesLinksResolvingInsideThroughWildcardNamedDirectories() throws Exception {
+        Path inbox = Files.createDirectories(base.resolve("inbox"));
+        Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        // read as a pattern, each of the two directory names matches both directories
+        Files.writeString(Files.createDirectories(inbox.resolve("sub*dir")).resolve("report.txt"), "Star");
+        Files.writeString(Files.createDirectories(inbox.resolve("sub?dir")).resolve("report.txt"), "Question");
+        createSymbolicLink(inbox.resolve("star.txt"), Path.of("sub*dir", "report.txt"));
+        createSymbolicLink(inbox.resolve("question.txt"), Path.of("sub?dir", "report.txt"));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Star", "Question");
+        mock.expectedHeaderValuesReceivedInAnyOrder(Exchange.FILE_NAME, "hello.txt", "star.txt", "question.txt");
+
+        consume("inbox", "");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Windows does not allow * and ? in file names")
+    void skipsLinksNamedWithWildcardsResolvingOutsideStartingDirectory() throws Exception {
+        Path inbox = Files.createDirectories(base.resolve("inbox"));
+        Path archive = Files.createDirectories(base.resolve("archive"));
+        Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        Files.writeString(archive.resolve("report.txt"), "Archived");
+        createSymbolicLink(inbox.resolve("star*.txt"), Path.of("..", "archive", "report.txt"));
+        createSymbolicLink(inbox.resolve("what?.txt"), Path.of("..", "archive", "report.txt"));
+        // a link to the directory outside, and a link whose target steps through it
+        createSymbolicLink(inbox.resolve("arch*ve"), Path.of("..", "archive"));
+        createSymbolicLink(inbox.resolve("latest.txt"), Path.of("arch*ve", "report.txt"));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        // the links are not part of the batch of the poll that picked up hello.txt
         mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(1);
 
         consume("inbox", "");
