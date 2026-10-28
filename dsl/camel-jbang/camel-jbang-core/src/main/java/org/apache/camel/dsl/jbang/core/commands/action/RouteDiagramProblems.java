@@ -98,8 +98,9 @@ final class RouteDiagramProblems {
                 problems = checks.problems(name, content, catalog, path.toAbsolutePath().getParent());
             } catch (RuntimeException e) {
                 // a check that fails (a parser bug on a broken file) must not fail the diagram, which is drawn anyway
+                String message = e.getMessage();
                 add(nodes.get(0), "the file could not be checked: "
-                                  + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
+                                  + (message != null && !message.isBlank() ? text(message) : e.getClass().getSimpleName()));
                 continue;
             }
             for (Problem p : problems) {
