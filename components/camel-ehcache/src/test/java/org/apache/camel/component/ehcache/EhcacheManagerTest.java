@@ -52,7 +52,8 @@ public class EhcacheManagerTest {
 
             assertEquals(e1.getManager(), e2.getManager());
             assertEquals(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
-            assertEquals(2, e1.getManager().getReferenceCount().get());
+            // the two endpoints and their producers
+            assertEquals(4, e1.getManager().getReferenceCount().get());
             assertEquals(Status.AVAILABLE, e1.getManager().getCacheManager().getStatus());
 
             context.stop();
@@ -89,7 +90,8 @@ public class EhcacheManagerTest {
 
             assertEquals(e1.getManager(), e2.getManager());
             assertEquals(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
-            assertEquals(2, e1.getManager().getReferenceCount().get());
+            // the two endpoints and their producers
+            assertEquals(4, e1.getManager().getReferenceCount().get());
             assertEquals(Status.AVAILABLE, e1.getManager().getCacheManager().getStatus());
 
             context.stop();
@@ -125,7 +127,8 @@ public class EhcacheManagerTest {
 
                 assertSame(e1.getManager(), e2.getManager());
                 assertSame(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
-                assertEquals(2, e1.getManager().getReferenceCount().get());
+                // the two endpoints and their producers
+                assertEquals(4, e1.getManager().getReferenceCount().get());
                 assertEquals(Status.AVAILABLE, e1.getManager().getCacheManager().getStatus());
 
                 context.stop();

@@ -115,7 +115,11 @@ public class EhcacheEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(cacheManager);
+        // the endpoint is shut down when a route that consumes from it is removed, also when other routes still use
+        // it, and other endpoints may share the manager: its caches are closed only when nothing uses it any more
+        if (cacheManager != null && cacheManager.getReferenceCount().get() == 0) {
+            ServiceHelper.stopAndShutdownService(cacheManager);
+        }
     }
 
     EhcacheManager getManager() {

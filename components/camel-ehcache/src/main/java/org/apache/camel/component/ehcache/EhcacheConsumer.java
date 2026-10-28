@@ -28,6 +28,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     private final EhcacheConfiguration configuration;
     private final String cacheName;
     private Cache cache;
+    private EhcacheManager manager;
 
     public EhcacheConsumer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration,
                            Processor processor) {
@@ -53,18 +54,32 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
         if (configuration.getValueType() != null) {
             vt = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getValueType());
         }
-        this.cache = getEndpoint().getManager().getCache(cacheName, kt, vt);
+        EhcacheManager endpointManager = getEndpoint().getManager();
+        this.cache = endpointManager.getCache(cacheName, kt, vt);
 
         this.cache.getRuntimeConfiguration().registerCacheEventListener(
                 this,
                 configuration.getEventOrdering(),
                 configuration.getEventFiring(),
                 configuration.getEventTypesSet());
+        // the cache manager (and its caches) are kept while the consumer uses them
+        endpointManager.incRef();
+        this.manager = endpointManager;
     }
 
     @Override
     protected void doStop() throws Exception {
-        cache.getRuntimeConfiguration().deregisterCacheEventListener(this);
+        try {
+            // a consumer that never started (its route was removed before it started) has no cache
+            if (cache != null) {
+                cache.getRuntimeConfiguration().deregisterCacheEventListener(this);
+            }
+        } finally {
+            if (manager != null) {
+                manager.decRef();
+                manager = null;
+            }
+        }
 
         super.doStop();
     }

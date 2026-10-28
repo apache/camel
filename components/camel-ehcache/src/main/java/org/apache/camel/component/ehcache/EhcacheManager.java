@@ -48,7 +48,13 @@ public class EhcacheManager extends ServiceSupport {
         this.refCount = ReferenceCount.on(
                 managed ? cacheManager::init : () -> {
                 },
-                managed ? cacheManager::close : () -> {
+                () -> {
+                    // the last user closes the caches created without a configuration, as the endpoint that shuts
+                    // the manager down may have been shut down while other routes still used them
+                    closeUserCaches();
+                    if (managed) {
+                        cacheManager.close();
+                    }
                 });
     }
 
@@ -62,6 +68,10 @@ public class EhcacheManager extends ServiceSupport {
 
     @Override
     protected void doShutdown() throws Exception {
+        closeUserCaches();
+    }
+
+    private void closeUserCaches() {
         if (userCaches != null && !userCaches.isEmpty()) {
             for (UserManagedCache cache : userCaches.values()) {
                 try {
