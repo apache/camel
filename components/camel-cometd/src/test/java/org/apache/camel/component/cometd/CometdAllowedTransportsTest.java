@@ -72,9 +72,8 @@ public class CometdAllowedTransportsTest extends CamelTestSupport {
                 URI.create("http://127.0.0.1:" + port + "/cometd/handshake?jsonp=cb&message=" + encodedMsg))
                 .GET()
                 .build();
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            return client.send(request, HttpResponse.BodyHandlers.ofString());
-        }
+        HttpClient client = HttpClient.newHttpClient();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> sendLongPollingHandshake(int port) throws Exception {
@@ -83,9 +82,8 @@ public class CometdAllowedTransportsTest extends CamelTestSupport {
                         "[{\"channel\":\"/meta/handshake\",\"version\":\"1.0\",\"supportedConnectionTypes\":[\"long-polling\"]}]"))
                 .header("Content-Type", "application/json")
                 .build();
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            return client.send(request, HttpResponse.BodyHandlers.ofString());
-        }
+        HttpClient client = HttpClient.newHttpClient();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
