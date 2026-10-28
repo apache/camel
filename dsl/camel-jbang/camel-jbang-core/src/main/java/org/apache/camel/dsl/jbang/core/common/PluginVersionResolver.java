@@ -44,7 +44,8 @@ import org.slf4j.LoggerFactory;
 public final class PluginVersionResolver {
 
     /**
-     * The most release lines of the plugin whose newest POM is read, newest line first.
+     * The most POMs of the plugin that are read, from the newest release of each release line, newest line first. When
+     * the POM of the newest release of a line cannot be read, the next release of the line is read.
      */
     static final int MAX_RELEASE_LINES = 10;
 
@@ -145,10 +146,10 @@ public final class PluginVersionResolver {
                             : "cannot list the releases of " + groupId + ":" + artifactId);
         }
 
-        // the newest release of each release line, newest line first
-        Map<String, String> lines = new LinkedHashMap<>();
+        // the releases of each release line, newest line and newest release first
+        Map<String, List<String>> lines = new LinkedHashMap<>();
         for (String version : newestFirst(versions)) {
-            lines.putIfAbsent(releaseLine(version), version);
+            lines.computeIfAbsent(releaseLine(version), l -> new ArrayList<>()).add(version);
         }
         if (lines.isEmpty()) {
             return new Unavailable("no release of " + groupId + ":" + artifactId + " found");
@@ -157,20 +158,28 @@ public final class PluginVersionResolver {
         String failure = null;
         List<Read> reads = new ArrayList<>();
         Map<String, String> newestPerLine = new LinkedHashMap<>();
-        for (String version : lines.values()) {
-            if (reads.size() >= MAX_RELEASE_LINES) {
-                break;
+        for (List<String> releases : lines.values()) {
+            String version = null;
+            Compat compat = null;
+            // the newest release of the line, or the next one when its POM cannot be read
+            for (String release : releases) {
+                if (reads.size() >= MAX_RELEASE_LINES) {
+                    break;
+                }
+                try {
+                    MavenArtifactDescriptor descriptor
+                            = downloader.resolveArtifactDescriptor(groupId, artifactId, release, null);
+                    version = release;
+                    compat = PluginCompatibility.of(descriptor);
+                    break;
+                } catch (Exception e) {
+                    LOG.debug("Cannot read the POM of {}:{}:{}: {}", groupId, artifactId, release, e.getMessage(), e);
+                    failure = e.getMessage();
+                    // counts as a read, so an unreachable repository does not read every release
+                    reads.add(new Read(release, null));
+                }
             }
-            Compat compat;
-            try {
-                MavenArtifactDescriptor descriptor
-                        = downloader.resolveArtifactDescriptor(groupId, artifactId, version, null);
-                compat = PluginCompatibility.of(descriptor);
-            } catch (Exception e) {
-                LOG.debug("Cannot read the POM of {}:{}:{}: {}", groupId, artifactId, version, e.getMessage(), e);
-                failure = e.getMessage();
-                // counts as a read, so an unreachable repository does not read every release
-                reads.add(new Read(version, null));
+            if (compat == null) {
                 continue;
             }
             reads.add(new Read(version, compat));

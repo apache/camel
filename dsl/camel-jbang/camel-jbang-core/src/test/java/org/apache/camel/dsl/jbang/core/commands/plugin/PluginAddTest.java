@@ -238,6 +238,8 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         Assertions.assertEquals("org.example.plugins:camel-jbang-plugin-fixture:1.4.2", plugin.getString("dependency"));
         Assertions.assertEquals("[4.18.0,4.19.0)", plugin.getString("camelVersions"));
         Assertions.assertEquals("inferred", plugin.getString("camelVersionsSource"));
+        // the load-time check does not warn on this Camel version again
+        Assertions.assertEquals("4.21", plugin.getString("selectedForCamel"));
     }
 
     @Test

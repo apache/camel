@@ -103,6 +103,20 @@ class PluginVersionResolverTest {
     }
 
     @Test
+    void fallsBackToTheNextReleaseOfTheLineWhenAPomCannotBeRead() {
+        FakePluginDownloader downloader = new FakePluginDownloader()
+                .release("2.0.0", "4.22.0", null)
+                .release("1.0.0", "4.18.5", null);
+        // listed, but its POM cannot be read
+        downloader.versions.add(0, "2.0.1");
+
+        Result result = resolve(downloader, "4.22.3");
+
+        assertThat(result).isInstanceOfSatisfying(Selected.class, s -> assertThat(s.version()).isEqualTo("2.0.0"));
+        assertThat(downloader.descriptorsRead).containsExactly("2.0.1", "2.0.0");
+    }
+
+    @Test
     void readsAtMostTenLines() {
         FakePluginDownloader downloader = new FakePluginDownloader();
         for (int line = 12; line >= 1; line--) {
