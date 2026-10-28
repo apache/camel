@@ -105,8 +105,13 @@ public final class LogWriter implements AutoCloseable {
     }
 
     public void reset() throws IOException {
-        fileChannel.truncate(startOfRecords);
-        fileChannel.position(startOfRecords);
+        lock.lock();
+        try {
+            fileChannel.truncate(startOfRecords);
+            fileChannel.position(startOfRecords);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -140,33 +145,43 @@ public final class LogWriter implements AutoCloseable {
      * @throws IOException for lower-level I/O errors
      */
     public EntryInfo.CachedEntryInfo append(LogEntry entry) throws IOException {
-        final TransactionLog.LayerInfo layerInfo = transactionLog.add(entry);
-        if (layerInfo.getLayer() == 0) {
-            return persist(layerInfo, entry);
+        // an update of the state writes at the position of the entry, which an append after a roll-over moves
+        lock.lock();
+        try {
+            final TransactionLog.EntryContainer container = transactionLog.add(entry);
+            final TransactionLog.LayerInfo layerInfo = container.layerInfo;
+            if (layerInfo.getLayer() == 0) {
+                return persist(container);
+            }
+
+            if (layerInfo.isRollingOver()) {
+                reset();
+            }
+
+            LOG.trace("Writing at position {}", fileChannel.position());
+            EntryInfo.CachedEntryInfo spear = persist(container);
+
+            final List<EntryInfo> collect = transactionLog.stream()
+                    .filter(c -> c != null && c.layerInfo.getLayer() != transactionLog.currentLayer())
+                    .map(this::tryPersist).collect(Collectors.toList());
+
+            // the entries of the previous layer may be shorter than before in total
+            fileChannel.truncate(fileChannel.position());
+
+            if (!collect.isEmpty()) {
+                final EntryInfo lastOnLayer = collect.get(0);
+
+                LOG.trace("Current pos is: {}", fileChannel.position());
+                LOG.trace("Next pos should be: {}", lastOnLayer.getPosition());
+
+                fileChannel.position(lastOnLayer.getPosition());
+                LOG.trace("Current pos now is: {}", fileChannel.position());
+            }
+
+            return spear;
+        } finally {
+            lock.unlock();
         }
-
-        if (layerInfo.isRollingOver()) {
-            reset();
-        }
-
-        LOG.trace("Writing at position {}", fileChannel.position());
-        EntryInfo.CachedEntryInfo spear = persist(layerInfo, entry);
-
-        final List<EntryInfo> collect = transactionLog.stream()
-                .filter(c -> c != null && c.layerInfo.getLayer() != transactionLog.currentLayer())
-                .map(e -> tryPersist(layerInfo, e.logEntry)).collect(Collectors.toList());
-
-        if (!collect.isEmpty()) {
-            final EntryInfo lastOnLayer = collect.get(0);
-
-            LOG.trace("Current pos is: {}", fileChannel.position());
-            LOG.trace("Next pos should be: {}", lastOnLayer.getPosition());
-
-            fileChannel.position(lastOnLayer.getPosition());
-            LOG.trace("Current pos now is: {}", fileChannel.position());
-        }
-
-        return spear;
     }
 
     /**
@@ -194,14 +209,14 @@ public final class LogWriter implements AutoCloseable {
     }
 
     /**
-     * Persists an entry to the log
+     * Persists an entry to the log at the current position of the channel, and keeps that position in the container
      *
-     * @param  layerInfo   the in-memory layer information about the record being persisted
-     * @param  entry       the entry to persist
+     * @param  container   the in-memory container of the entry to persist
      * @return             an {@link EntryInfo} instance with details of the entry that was just persisted
      * @throws IOException in case of lower-level I/O errors
      */
-    private EntryInfo.CachedEntryInfo persist(TransactionLog.LayerInfo layerInfo, LogEntry entry) throws IOException {
+    private EntryInfo.CachedEntryInfo persist(TransactionLog.EntryContainer container) throws IOException {
+        final LogEntry entry = container.logEntry;
         final byte[] key = entry.getKey();
         final byte[] value = entry.getValue();
 
@@ -210,20 +225,20 @@ public final class LogWriter implements AutoCloseable {
 
         long recordPosition = fileChannel.position();
         IOUtil.write(fileChannel, writeBuffer);
+        container.position = recordPosition;
 
-        return EntryInfo.createForCached(recordPosition, layerInfo);
+        return EntryInfo.createForCached(recordPosition, container.layerInfo);
     }
 
     /**
-     * A wrapper for {@link LogWriter#persist(TransactionLog.LayerInfo, LogEntry)} that throws runtime errors on failure
+     * A wrapper for {@link LogWriter#persist(TransactionLog.EntryContainer)} that throws runtime errors on failure
      *
-     * @param  layerInfo the in-memory layer information about the record being persisted
-     * @param  entry     the entry to persist
+     * @param  container the in-memory container of the entry to persist
      * @return           an {@link EntryInfo} instance with details of the entry that was just persisted
      */
-    private EntryInfo tryPersist(TransactionLog.LayerInfo layerInfo, LogEntry entry) {
+    private EntryInfo tryPersist(TransactionLog.EntryContainer container) {
         try {
-            return persist(layerInfo, entry);
+            return persist(container);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
@@ -247,10 +262,16 @@ public final class LogWriter implements AutoCloseable {
          */
         assert layerInfo != null;
 
-        final LogEntry logEntry = transactionLog.update(layerInfo, state);
+        lock.lock();
+        try {
+            final TransactionLog.EntryContainer container = transactionLog.update(layerInfo, state);
 
-        if (logEntry != null) {
-            persist(layerInfo, logEntry, entryInfo.getPosition());
+            if (container != null) {
+                // not the position of the entry info: a roll-over may have written the entry again elsewhere
+                persist(layerInfo, container.logEntry, container.position);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -273,10 +294,15 @@ public final class LogWriter implements AutoCloseable {
             LOG.trace("Position: {} with key {}", entryInfo.getPosition(), new String(entry.getKey()));
         }
 
-        long size = IOUtil.write(fileChannel, updateBuffer, entryInfo.getPosition());
+        lock.lock();
+        try {
+            long size = IOUtil.write(fileChannel, updateBuffer, entryInfo.getPosition());
 
-        if (size == 0) {
-            LOG.warn("No bytes written for the given record!");
+            if (size == 0) {
+                LOG.warn("No bytes written for the given record!");
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

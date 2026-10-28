@@ -39,6 +39,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.SendHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -221,15 +222,9 @@ public class SendProcessor extends BaseProcessorSupport
         // set property which endpoint we send to
         exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, destination.getEndpointUri());
 
-        final boolean sending = camelContext.getCamelContextExtension().isEventNotificationApplicable()
-                && EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
-        // record timing for sending the exchange using the producer
-        StopWatch watch;
-        if (sending) {
-            watch = new StopWatch();
-        } else {
-            watch = null;
-        }
+        // emit event that the exchange is being sent to the endpoint, and record timing for sending the exchange
+        final StopWatch watch = camelContext.getCamelContextExtension().isEventNotificationApplicable()
+                ? SendHelper.notifySending(target, destination) : null;
 
         // optimize to only create a new callback if really needed, otherwise we can use the provided callback as-is
         AsyncCallback ac = callback;
@@ -247,10 +242,7 @@ public class SendProcessor extends BaseProcessorSupport
                     // restore previous MEP
                     target.setPattern(existingPattern);
                     // emit event that the exchange was sent to the endpoint
-                    if (watch != null) {
-                        long timeTaken = watch.taken();
-                        EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
-                    }
+                    SendHelper.notifySent(target, destination, watch);
                 } finally {
                     callback.done(doneSync);
                 }
@@ -264,7 +256,8 @@ public class SendProcessor extends BaseProcessorSupport
             }
 
             LOG.debug(">>>> {} {}", destination, exchange);
-            boolean sync = producer.process(exchange, ac);
+            // call the producer (with the send hook around it if any)
+            boolean sync = SendHelper.process(exchange, destination, producer, ac);
             if (!sync) {
                 // Deprecated since 4.19.0
                 EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);

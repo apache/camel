@@ -18,7 +18,17 @@ On Windows (PowerShell):
 irm https://camel.apache.org/install.ps1 | iex
 ----
 
-See xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for upgrading and switching versions.
+Both install the latest release, which can be newer than the current LTS release.
+To install the newest LTS release, or an exact version such as `4.22.2`, pass `--version`
+(`-Version` on Windows):
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version LTS
+----
+
+See xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for release line
+selectors, pinning, upgrading with `camel self-update` and switching versions.
 
 If you use https://www.jbang.dev/[JBang], you can install the Camel CLI with it instead:
 

@@ -31,6 +31,7 @@ public class ZipDataFormatReifier extends DataFormatReifier<ZipDeflaterDataForma
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("compressionLevel", definition.getCompressionLevel());
+        properties.put("maxDecompressedSize", definition.getMaxDecompressedSize());
     }
 
 }

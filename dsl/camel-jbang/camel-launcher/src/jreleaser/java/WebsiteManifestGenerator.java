@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
@@ -35,26 +36,54 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * JDK-only tool that computes SHA-256 checksums for a release TAR/ZIP pair and writes the
  * website's four-field release manifest ({@code format}, {@code version}, {@code tar_sha256},
- * {@code zip_sha256}). Per-version manifests are immutable; {@code latest.properties} can only
- * move forward to a higher semantic version and cannot silently change checksums for the same
- * version. Writes are atomic.
+ * {@code zip_sha256}). Writes are atomic.
  *
  * <p>
- * Usage: {@code java WebsiteManifestGenerator.java --version X.Y.Z --tar <path> --zip <path>
- * --output <dir> --latest <true|false>}
+ * Manifests live in {@code <output>/releases}:
+ * <ul>
+ * <li>{@code X.Y.Z.properties}: one per release, immutable.</li>
+ * <li>{@code X.Y.properties}: the newest release of the {@code X.Y} line.</li>
+ * <li>{@code lts.properties}: the newest LTS release.</li>
+ * <li>{@code latest.properties}: the newest release.</li>
+ * </ul>
+ * An alias is a byte-identical copy of the {@code X.Y.Z.properties} it points at. When publishing,
+ * aliases only move forward to a higher version (numeric ordering) and never silently change the
+ * checksums of the version they already point at, so a patch on an older LTS line (for example
+ * 4.18.6 after 4.22.2) leaves {@code lts.properties} unchanged.
+ *
+ * <p>
+ * Publish a release: {@code java WebsiteManifestGenerator.java --version X.Y.Z --tar <path>
+ * --zip <path> --output <dir> --latest <true|false> [--lts <true|false>] [--install-sh <path>
+ * --install-ps1 <path>]}
+ *
+ * <p>
+ * Rebuild every alias from the existing {@code X.Y.Z.properties} files and the list of LTS
+ * versions (backfill), or with {@code --check} only verify them and exit with status 1 on drift:
+ * {@code java WebsiteManifestGenerator.java --rebuild-aliases --output <dir>
+ * --lts-versions <X.Y.Z,...> [--check]}
  */
 public class WebsiteManifestGenerator {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)$");
+    private static final Pattern VERSION_FILE_PATTERN = Pattern.compile("^(\\d+\\.\\d+\\.\\d+)\\.properties$");
+    private static final Pattern LINE_ALIAS_FILE_PATTERN = Pattern.compile("^\\d+\\.\\d+\\.properties$");
+    private static final String LATEST_FILE = "latest.properties";
+    private static final String LTS_FILE = "lts.properties";
     private static final Set<String> REQUIRED_OPTIONS
             = new LinkedHashSet<>(List.of("--version", "--tar", "--zip", "--output", "--latest"));
-    private static final Set<String> OPTIONAL_OPTIONS = Set.of("--install-sh", "--install-ps1");
+    private static final Set<String> OPTIONAL_OPTIONS = Set.of("--install-sh", "--install-ps1", "--lts");
+    private static final String REBUILD_FLAG = "--rebuild-aliases";
+    private static final String CHECK_FLAG = "--check";
+    private static final Set<String> REBUILD_REQUIRED_OPTIONS = new LinkedHashSet<>(List.of("--output", "--lts-versions"));
     private static final Set<String> MANIFEST_KEYS
             = new LinkedHashSet<>(List.of("format", "version", "tar_sha256", "zip_sha256"));
     private static final String MANIFEST_FORMAT = "1";
@@ -93,6 +122,14 @@ public class WebsiteManifestGenerator {
     }
 
     private static void run(String[] args) throws IOException {
+        if (Arrays.asList(args).contains(REBUILD_FLAG)) {
+            rebuildAliases(args);
+        } else {
+            publish(args);
+        }
+    }
+
+    private static void publish(String[] args) throws IOException {
         Map<String, String> options = parseArgs(args);
 
         String version = options.get("--version");
@@ -126,15 +163,8 @@ public class WebsiteManifestGenerator {
             }
         }
 
-        String latestValue = options.get("--latest");
-        boolean latest;
-        if ("true".equals(latestValue)) {
-            latest = true;
-        } else if ("false".equals(latestValue)) {
-            latest = false;
-        } else {
-            throw new UsageException("--latest must be 'true' or 'false' (got '" + latestValue + "').");
-        }
+        boolean latest = parseBoolean("--latest", options.get("--latest"));
+        boolean lts = options.containsKey("--lts") && parseBoolean("--lts", options.get("--lts"));
 
         Path output = Paths.get(options.get("--output"));
 
@@ -143,16 +173,68 @@ public class WebsiteManifestGenerator {
         byte[] manifest = renderManifest(version, tarSha256, zipSha256);
 
         Path releasesDir = output.resolve("releases");
+        if (!latest) {
+            rejectNewHighestWithoutLatest(releasesDir, version);
+        }
         Files.createDirectories(releasesDir);
         writeVersionManifest(releasesDir.resolve(version + ".properties"), manifest, version);
 
+        // Validate every alias before touching any of them, so a rejected alias (for example latest
+        // moving backward) does not leave the others half-updated. The immutable version manifest
+        // above is still written, as before.
+        Map<Path, byte[]> aliasUpdates = new LinkedHashMap<>();
+        // An older release (a late patch on the same line, or a patch on an older LTS line) leaves the
+        // X.Y and lts aliases where they are. latest is only requested for a new release, so asking
+        // to move it backward is an error.
+        planForwardOnlyAlias(releasesDir.resolve(lineOf(version) + ".properties"), manifest, version, false,
+                aliasUpdates);
+        if (lts) {
+            planForwardOnlyAlias(releasesDir.resolve(LTS_FILE), manifest, version, false, aliasUpdates);
+        }
         if (latest) {
-            writeLatestManifest(releasesDir.resolve("latest.properties"), manifest, version);
+            planForwardOnlyAlias(releasesDir.resolve(LATEST_FILE), manifest, version, true, aliasUpdates);
+        }
+        for (Map.Entry<Path, byte[]> update : aliasUpdates.entrySet()) {
+            atomicWrite(update.getKey(), update.getValue());
         }
 
         if (installSh != null && installPs1 != null) {
             writeInstallChecksums(output.getParent(), installSh, installPs1);
         }
+    }
+
+    /**
+     * {@code --rebuild-aliases --check} expects {@code latest.properties} to match the highest {@code X.Y.Z} manifest.
+     * Publishing a version higher than every existing manifest without {@code --latest true} would leave
+     * {@code latest} behind and fail that check after the manifests were written, so refuse it before writing anything.
+     * An empty (or missing) releases directory, such as a fresh staging build, has nothing to compare with.
+     */
+    private static void rejectNewHighestWithoutLatest(Path releasesDir, String version) throws IOException {
+        if (!Files.isDirectory(releasesDir)) {
+            return;
+        }
+        String highest = null;
+        try (Stream<Path> files = Files.list(releasesDir)) {
+            for (Path file : files.toList()) {
+                Matcher m = VERSION_FILE_PATTERN.matcher(file.getFileName().toString());
+                if (m.matches() && (highest == null || compareSemver(m.group(1), highest) > 0)) {
+                    highest = m.group(1);
+                }
+            }
+        }
+        if (highest != null && compareSemver(version, highest) > 0) {
+            throw new UsageException(version + " is higher than every published release (highest is " + highest
+                                     + "), so latest.properties must move to it - pass --latest true.");
+        }
+    }
+
+    private static boolean parseBoolean(String option, String value) {
+        if ("true".equals(value)) {
+            return true;
+        } else if ("false".equals(value)) {
+            return false;
+        }
+        throw new UsageException(option + " must be 'true' or 'false' (got '" + value + "').");
     }
 
     private static Map<String, String> parseArgs(String[] args) {
@@ -201,33 +283,199 @@ public class WebsiteManifestGenerator {
         atomicWrite(versionFile, manifest);
     }
 
-    private static void writeLatestManifest(Path latestFile, byte[] manifest, String version) throws IOException {
-        if (!Files.exists(latestFile)) {
-            atomicWrite(latestFile, manifest);
+    /**
+     * Checks whether {@code aliasFile} moves to {@code version} and, if it needs to change, records the new content in
+     * {@code updates}. It never moves backward: an older {@code version} is an error when {@code failIfOlder} is set,
+     * and leaves the alias unchanged otherwise. Different checksums for the version it already points at are always an
+     * error.
+     */
+    private static void planForwardOnlyAlias(
+            Path aliasFile, byte[] manifest, String version, boolean failIfOlder, Map<Path, byte[]> updates)
+            throws IOException {
+        String aliasName = aliasFile.getFileName().toString();
+        if (!Files.exists(aliasFile)) {
+            updates.put(aliasFile, manifest);
             return;
         }
 
-        byte[] existing = Files.readAllBytes(latestFile);
+        byte[] existing = Files.readAllBytes(aliasFile);
         if (Arrays.equals(existing, manifest)) {
             return;
         }
 
-        Map<String, String> existingFields = parseStrictManifest(existing, latestFile);
+        Map<String, String> existingFields = parseStrictManifest(existing, aliasFile);
         String existingVersion = existingFields.get("version");
+        if (LINE_ALIAS_FILE_PATTERN.matcher(aliasName).matches()
+                && !(lineOf(existingVersion) + ".properties").equals(aliasName)) {
+            throw new ConflictException(aliasName + " points at version " + existingVersion
+                                         + ", which is not on that release line - refusing to update it.");
+        }
         int cmp = compareSemver(version, existingVersion);
-        if (cmp < 0) {
+        if (cmp < 0 && !failIfOlder) {
+            System.out.println(aliasName + " stays at " + existingVersion + " (newer than " + version + ").");
+            return;
+        } else if (cmp < 0) {
             throw new ConflictException(
-                    "latest.properties already points at a newer version (" + existingVersion + "); refusing to"
+                    aliasName + " already points at a newer version (" + existingVersion + "); refusing to"
                                          + " move backward to " + version + ".");
         } else if (cmp == 0) {
-            throw new ConflictException("latest.properties already has different checksums for version " + version
+            throw new ConflictException(aliasName + " already has different checksums for version " + version
                                          + " - refusing to overwrite.");
         }
-        atomicWrite(latestFile, manifest);
+        updates.put(aliasFile, manifest);
+    }
+
+    /**
+     * Regenerates {@code latest}, {@code lts} and every {@code X.Y} alias from the immutable {@code X.Y.Z.properties}
+     * files. Unlike publishing, this is not forward-only: the immutable manifests and the LTS list are the source of
+     * truth. With {@code --check} nothing is written and any drift fails with status 1.
+     */
+    private static void rebuildAliases(String[] args) throws IOException {
+        Map<String, String> options = new LinkedHashMap<>();
+        boolean check = false;
+        int i = 0;
+        while (i < args.length) {
+            String key = args[i];
+            if (REBUILD_FLAG.equals(key) || CHECK_FLAG.equals(key)) {
+                if (CHECK_FLAG.equals(key)) {
+                    check = true;
+                }
+                i++;
+                continue;
+            }
+            if (!REBUILD_REQUIRED_OPTIONS.contains(key)) {
+                throw new UsageException("unknown option '" + key + "' for " + REBUILD_FLAG + ".");
+            }
+            if (i + 1 >= args.length) {
+                throw new UsageException("option '" + key + "' requires a value.");
+            }
+            if (options.containsKey(key)) {
+                throw new UsageException("option '" + key + "' was specified more than once.");
+            }
+            options.put(key, args[i + 1]);
+            i += 2;
+        }
+        for (String required : REBUILD_REQUIRED_OPTIONS) {
+            if (!options.containsKey(required)) {
+                throw new UsageException("missing required option '" + required + "'.");
+            }
+        }
+
+        Set<String> ltsVersions = new LinkedHashSet<>();
+        for (String entry : options.get("--lts-versions").split(",", -1)) {
+            String v = entry.trim();
+            if (v.isEmpty()) {
+                continue;
+            }
+            if (!VERSION_PATTERN.matcher(v).matches()) {
+                throw new UsageException("'" + v + "' in --lts-versions is not a valid release version (expected X.Y.Z).");
+            }
+            ltsVersions.add(v);
+        }
+
+        Path releasesDir = Paths.get(options.get("--output")).resolve("releases");
+        if (!Files.isDirectory(releasesDir)) {
+            throw new UsageException("releases directory not found: " + releasesDir);
+        }
+
+        // Read every immutable manifest and every existing alias.
+        Map<String, byte[]> versions = new TreeMap<>(WebsiteManifestGenerator::compareSemver);
+        Set<String> existingAliases = new TreeSet<>();
+        try (Stream<Path> files = Files.list(releasesDir)) {
+            for (Path file : files.sorted().toList()) {
+                String name = file.getFileName().toString();
+                Matcher m = VERSION_FILE_PATTERN.matcher(name);
+                if (m.matches()) {
+                    byte[] bytes = Files.readAllBytes(file);
+                    String declared = parseStrictManifest(bytes, file).get("version");
+                    if (!declared.equals(m.group(1))) {
+                        throw new ConflictException(file + " declares version " + declared + ", expected " + m.group(1) + ".");
+                    }
+                    versions.put(declared, bytes);
+                } else if (LATEST_FILE.equals(name) || LTS_FILE.equals(name)
+                        || LINE_ALIAS_FILE_PATTERN.matcher(name).matches()) {
+                    existingAliases.add(name);
+                }
+            }
+        }
+        if (versions.isEmpty()) {
+            throw new ConflictException("no X.Y.Z.properties manifests found in " + releasesDir + ".");
+        }
+        for (String v : ltsVersions) {
+            if (!versions.containsKey(v)) {
+                throw new ConflictException("LTS version " + v + " has no manifest (" + releasesDir.resolve(v + ".properties")
+                                             + ") - refusing to pick another version.");
+            }
+        }
+
+        // Expected alias -> version. versions is sorted ascending, so later entries win.
+        Map<String, String> expected = new TreeMap<>();
+        for (String v : versions.keySet()) {
+            expected.put(lineOf(v) + ".properties", v);
+            expected.put(LATEST_FILE, v);
+            if (ltsVersions.contains(v)) {
+                expected.put(LTS_FILE, v);
+            }
+        }
+
+        List<String> drift = new ArrayList<>();
+        Map<Path, byte[]> writes = new LinkedHashMap<>();
+        for (Map.Entry<String, String> alias : expected.entrySet()) {
+            Path file = releasesDir.resolve(alias.getKey());
+            byte[] want = versions.get(alias.getValue());
+            if (!Files.exists(file)) {
+                drift.add(alias.getKey() + " is missing (expected " + alias.getValue() + ")");
+                writes.put(file, want);
+                continue;
+            }
+            byte[] have = Files.readAllBytes(file);
+            if (!Arrays.equals(have, want)) {
+                String described;
+                try {
+                    described = "points at " + parseStrictManifest(have, file).get("version");
+                } catch (ConflictException e) {
+                    described = "is malformed";
+                }
+                drift.add(alias.getKey() + " " + described + " (expected a copy of " + alias.getValue() + ".properties)");
+                writes.put(file, want);
+            }
+        }
+        List<String> unexpected = new ArrayList<>();
+        for (String name : existingAliases) {
+            if (!expected.containsKey(name)) {
+                unexpected.add(name);
+                drift.add(name + " is not expected (no matching release manifest or LTS version)");
+            }
+        }
+
+        if (check) {
+            if (!drift.isEmpty()) {
+                for (String d : drift) {
+                    System.err.println("drift: " + d);
+                }
+                throw new ConflictException(drift.size() + " alias manifest(s) in " + releasesDir
+                                             + " are out of date; regenerate them with " + REBUILD_FLAG + ".");
+            }
+            System.out.println("All " + expected.size() + " alias manifests in " + releasesDir + " are up to date.");
+            return;
+        }
+
+        if (!unexpected.isEmpty()) {
+            throw new ConflictException("unexpected alias manifest(s) " + unexpected + " in " + releasesDir
+                                         + " - refusing to delete published files; remove them manually.");
+        }
+        for (Map.Entry<Path, byte[]> write : writes.entrySet()) {
+            atomicWrite(write.getKey(), write.getValue());
+            System.out.println("wrote " + write.getKey().getFileName() + " -> "
+                               + expected.get(write.getKey().getFileName().toString()));
+        }
+        if (writes.isEmpty()) {
+            System.out.println("All " + expected.size() + " alias manifests in " + releasesDir + " are up to date.");
+        }
     }
 
     // install.sh/install.ps1 aren't versioned the way the release archive is - they always describe
-    // "how to install whatever is currently latest," so unlike writeVersionManifest/writeLatestManifest
+    // "how to install whatever is currently latest," so unlike writeVersionManifest/planForwardOnlyAlias
     // there's no immutability or monotonic-version invariant to enforce here: this file is simply
     // overwritten every release with the checksums of whatever install.sh/install.ps1 currently are.
     private static void writeInstallChecksums(Path websiteRoot, Path installSh, Path installPs1) throws IOException {
@@ -288,6 +536,11 @@ public class WebsiteManifestGenerator {
             }
         }
         return 0;
+    }
+
+    private static String lineOf(String version) {
+        int[] parts = semverParts(version);
+        return parts[0] + "." + parts[1];
     }
 
     private static int[] semverParts(String version) {

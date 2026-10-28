@@ -285,4 +285,4 @@ told what became of the edit with your next question.
   slowest routes on the diagram, draws red boxes around them, and adds labels with the
   processing times.
 
-See xref:camel-jbang-mcp.adoc[Camel MCP Server] for more about MCP and AI integration with Camel.
+See xref:camel-jbang-mcp.adoc[Camel CLI MCP Server] for more about MCP and AI integration with Camel.

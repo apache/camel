@@ -40,6 +40,13 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
               description = "Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression.")
     private String compressionLevel;
 
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Long", defaultValue = "1073741824",
+              description = "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte."
+                            + " An IOException is thrown if the decompressed size exceeds this amount."
+                            + " Set to -1 to disable setting a maximum decompressed size.")
+    private String maxDecompressedSize;
+
     public ZipDeflaterDataFormat() {
         super("zipDeflater");
     }
@@ -47,11 +54,13 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
     protected ZipDeflaterDataFormat(ZipDeflaterDataFormat source) {
         super(source);
         this.compressionLevel = source.compressionLevel;
+        this.maxDecompressedSize = source.maxDecompressedSize;
     }
 
     private ZipDeflaterDataFormat(Builder builder) {
         this();
         this.compressionLevel = builder.compressionLevel;
+        this.maxDecompressedSize = builder.maxDecompressedSize;
     }
 
     @Override
@@ -67,6 +76,14 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
         this.compressionLevel = compressionLevel;
     }
 
+    public String getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(String maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link ZipDeflaterDataFormat}.
      */
@@ -74,6 +91,7 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
     public static class Builder implements DataFormatBuilder<ZipDeflaterDataFormat> {
 
         private String compressionLevel;
+        private String maxDecompressedSize;
 
         /**
          * To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the
@@ -90,6 +108,30 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
          */
         public Builder compressionLevel(int compressionLevel) {
             this.compressionLevel = Integer.toString(compressionLevel);
+            return this;
+        }
+
+        /**
+         * Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1
+         * gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable
+         * setting a maximum decompressed size.
+         *
+         * @param maxDecompressedSize the maximum decompressed size of the data (in bytes)
+         */
+        public Builder maxDecompressedSize(String maxDecompressedSize) {
+            this.maxDecompressedSize = maxDecompressedSize;
+            return this;
+        }
+
+        /**
+         * Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1
+         * gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable
+         * setting a maximum decompressed size.
+         *
+         * @param maxDecompressedSize the maximum decompressed size of the data (in bytes)
+         */
+        public Builder maxDecompressedSize(long maxDecompressedSize) {
+            this.maxDecompressedSize = Long.toString(maxDecompressedSize);
             return this;
         }
 

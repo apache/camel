@@ -632,7 +632,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: Poison JMS message due to ${exception.message}
+         * Default: Poison JMS message payload: ${exception.message}
          * Group: consumer (advanced)
          * 
          * @param eagerPoisonBody the value to set

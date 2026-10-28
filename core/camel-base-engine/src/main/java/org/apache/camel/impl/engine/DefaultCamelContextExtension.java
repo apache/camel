@@ -74,6 +74,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -120,6 +121,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile HeadersMapFactory headersMapFactory;
     private volatile boolean eventNotificationApplicable;
+    private volatile SendHook sendHook;
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ManagementNameStrategy managementNameStrategy;
     private volatile PropertiesComponent propertiesComponent;
@@ -551,6 +553,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
         this.eventNotificationApplicable = eventNotificationApplicable;
+    }
+
+    @Override
+    public SendHook getSendHook() {
+        return sendHook;
+    }
+
+    @Override
+    public void setSendHook(SendHook sendHook) {
+        this.sendHook = sendHook;
     }
 
     @Override

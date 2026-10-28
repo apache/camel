@@ -1842,7 +1842,10 @@ public class ModelParser extends BaseParser {
             }, noElementHandler(), noValueHandler());
     }
     protected GzipDeflaterDataFormat doParseGzipDeflaterDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new GzipDeflaterDataFormat(), identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
+        return doParse(new GzipDeflaterDataFormat(), (def, key, val) -> switch (key) {
+                case "maxDecompressedSize": def.setMaxDecompressedSize(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
     }
     protected HL7DataFormat doParseHL7DataFormat() throws IOException, XmlPullParserException {
         return doParse(new HL7DataFormat(), (def, key, val) -> switch (key) {
@@ -2205,6 +2208,7 @@ public class ModelParser extends BaseParser {
     protected ZipDeflaterDataFormat doParseZipDeflaterDataFormat() throws IOException, XmlPullParserException {
         return doParse(new ZipDeflaterDataFormat(), (def, key, val) -> switch (key) {
                 case "compressionLevel": def.setCompressionLevel(val); yield true;
+                case "maxDecompressedSize": def.setMaxDecompressedSize(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
