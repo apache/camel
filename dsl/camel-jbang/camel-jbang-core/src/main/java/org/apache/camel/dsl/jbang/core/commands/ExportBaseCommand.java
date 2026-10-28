@@ -959,11 +959,22 @@ public abstract class ExportBaseCommand extends CamelCommand {
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
 
-        String localKameletDir = prop.getProperty(LOCAL_KAMELET_DIR);
-        if (localKameletDir != null) {
-            String scheme = getScheme(localKameletDir);
-            if (scheme != null) {
-                localKameletDir = localKameletDir.substring(scheme.length() + 1);
+        // LOCAL_KAMELET_DIR may contain multiple comma-separated directories, each optionally
+        // prefixed with "file:".  Strip the scheme from each element individually so that
+        // Paths.get() receives a clean file system path.
+        List<String> localKameletDirs = new ArrayList<>();
+        String localKameletDirRaw = prop.getProperty(LOCAL_KAMELET_DIR);
+        if (localKameletDirRaw != null) {
+            for (String part : localKameletDirRaw.split(",")) {
+                part = part.trim();
+                if (part.isEmpty()) {
+                    continue;
+                }
+                String scheme = getScheme(part);
+                if (scheme != null) {
+                    part = part.substring(scheme.length() + 1);
+                }
+                localKameletDirs.add(part);
             }
         }
         // the files the routes reference as resource:classpath:x or resource:file:x (a Groovy mapping script used as an
@@ -1036,9 +1047,15 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     Files.createDirectories(targetDir);
 
                     Path source;
-                    if ("kamelet".equals(k) && localKameletDir != null) {
-                        // source is a local kamelet
-                        source = Paths.get(localKameletDir, f + ".kamelet.yaml");
+                    if ("kamelet".equals(k) && !localKameletDirs.isEmpty()) {
+                        // search each local-kamelet directory in order; fall back to the first
+                        // entry if none exists (preserves the original error behaviour)
+                        String kameletFileName = f + ".kamelet.yaml";
+                        source = localKameletDirs.stream()
+                                .map(dir -> Paths.get(dir, kameletFileName))
+                                .filter(Files::exists)
+                                .findFirst()
+                                .orElse(Paths.get(localKameletDirs.get(0), kameletFileName));
                     } else {
                         source = Paths.get(f);
                     }
