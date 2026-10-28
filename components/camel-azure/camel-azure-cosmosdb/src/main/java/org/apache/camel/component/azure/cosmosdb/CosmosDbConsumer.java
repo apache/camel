@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -32,12 +33,29 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.Disposable;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+import reactor.util.retry.Retry;
 
 public class CosmosDbConsumer extends DefaultConsumer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CosmosDbConsumer.class);
+
+    // the backoff between the attempts to start the change feed processor
+    private static final Duration START_RETRY_MIN_BACKOFF = Duration.ofSeconds(1);
+    private static final Duration START_RETRY_MAX_BACKOFF = Duration.ofSeconds(30);
+
     private final Synchronization onCompletion = new ConsumerOnCompletion();
     private CosmosAsyncClientWrapper clientWrapper;
-    private ChangeFeedProcessor changeFeedProcessor;
+    // replaced after a failed start, see doStart
+    private volatile ChangeFeedProcessor changeFeedProcessor;
+    private volatile Disposable startSubscription;
+    // the number of attempts to start the change feed processor that failed (logged when it starts)
+    private volatile long failedStarts;
 
     public CosmosDbConsumer(final CosmosDbEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -46,8 +64,13 @@ public class CosmosDbConsumer extends DefaultConsumer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+        this.changeFeedProcessor = createChangeFeedProcessor();
+    }
+
+    // Visible for testing.
+    ChangeFeedProcessor createChangeFeedProcessor() {
         this.clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
-        this.changeFeedProcessor = getContainerOperations().captureEventsWithChangeFeed(
+        return getContainerOperations().captureEventsWithChangeFeed(
                 getLeaseContainerOperations().getContainer(), getHostName(),
                 this::onEventListener, getConfiguration().getChangeFeedProcessorOptions());
     }
@@ -55,18 +78,65 @@ public class CosmosDbConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        failedStarts = 0;
 
-        // start our changeFeedProcessor
-        changeFeedProcessor.start()
+        // start our changeFeedProcessor. The start reads the lease and feed containers, so it fails when Cosmos DB
+        // cannot be reached yet, the lease container does not exist yet or a role assignment is not applied yet: try
+        // again with a backoff until it starts or the consumer is stopped, or the consumer stays started without ever
+        // receiving a change
+        startSubscription = Mono.defer(this::startChangeFeedProcessor)
+                // building a change feed processor blocks (block(), and with the create*IfNotExists options it creates
+                // the containers), and the start fails on a thread of the Cosmos DB client or of a Reactor scheduler,
+                // where blocking is not allowed: each attempt runs on a thread that may block. A failure to build the
+                // processor is retried as a failure to start it
+                .subscribeOn(Schedulers.boundedElastic())
+                .retryWhen(Retry.backoff(Long.MAX_VALUE, START_RETRY_MIN_BACKOFF)
+                        .maxBackoff(START_RETRY_MAX_BACKOFF)
+                        // one line per failed attempt, as it is tried again for as long as it fails: the stack trace
+                        // at DEBUG
+                        .doBeforeRetry(signal -> {
+                            String uri = URISupport.sanitizeUri(getEndpoint().getEndpointUri());
+                            LOG.warn("Cannot start the change feed processor of {} (attempt {}), trying again: {}", uri,
+                                    signal.totalRetries() + 1, signal.failure().toString());
+                            LOG.debug("Cannot start the change feed processor of {}", uri, signal.failure());
+                            // try again with a new change feed processor: one whose start failed after it built its
+                            // partition manager cannot start again (azure-cosmos marks its partition load balancer as
+                            // started before the leases are initialized, and every later start() throws "Partition
+                            // load balancer already started"). The next attempt builds it, on a thread that may block
+                            changeFeedProcessor = null;
+                            failedStarts = signal.totalRetries() + 1;
+                        }))
+                .doOnSuccess(aVoid -> {
+                    if (failedStarts > 0) {
+                        LOG.info("Started the change feed processor of {} after {} failed attempt(s)",
+                                URISupport.sanitizeUri(getEndpoint().getEndpointUri()), failedStarts);
+                    }
+                })
                 .subscribe(aVoid -> {
                 }, this::onErrorListener);
     }
 
+    private Mono<Void> startChangeFeedProcessor() {
+        ChangeFeedProcessor processor = changeFeedProcessor;
+        if (processor == null) {
+            processor = createChangeFeedProcessor();
+            changeFeedProcessor = processor;
+        }
+        return processor.start();
+    }
+
     @Override
     protected void doStop() throws Exception {
-        if (changeFeedProcessor != null) {
+        if (startSubscription != null) {
+            // no further attempt to start
+            startSubscription.dispose();
+            startSubscription = null;
+        }
+        // stop() fails on a change feed processor that has not started, for example one that could not start yet
+        final ChangeFeedProcessor processor = changeFeedProcessor;
+        if (processor != null && processor.isStarted()) {
             // we wait until it stops
-            changeFeedProcessor.stop().block();
+            processor.stop().block();
         }
 
         super.doStop();
