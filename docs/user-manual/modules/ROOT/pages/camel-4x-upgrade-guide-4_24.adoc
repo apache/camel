@@ -1656,8 +1656,8 @@ a value that also appears in the query string of the request.
 
 `InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
 identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
-and emitting an updated session cookie. Custom `OAuthSessionStore` implementations can override the default
-`rotateSession` method to support session rotation on login.
+and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
+unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
 
 === camel-platform-http-vertx - the charset parameter of the request Content-Type in any case
 

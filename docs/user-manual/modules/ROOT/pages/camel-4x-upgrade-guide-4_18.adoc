@@ -516,8 +516,8 @@ level (the `org.apache.cxf.services` loggers). The component no longer depends o
 
 `InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
 identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
-and emitting an updated session cookie. Custom `OAuthSessionStore` implementations can override the default
-`rotateSession` method to support session rotation on login.
+and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
+unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
 
 == Upgrading from 4.18.4 to 4.18.5
 
