@@ -39,6 +39,8 @@ class InOnlyPreserveMessageQosTest extends JmsTestSupport {
     private static final String EXPIRY_QUEUE = "sjms:queue:in.only.preserve.qos.expiry.InOnlyPreserveMessageQosTest";
     private static final String REQUEST_QUEUE = "sjms:queue:in.only.preserve.qos.request.InOnlyPreserveMessageQosTest";
     private static final String REPLY_QUEUE = "sjms:queue:in.only.preserve.qos.reply.InOnlyPreserveMessageQosTest";
+    private static final String FAILING_QUEUE = "sjms:queue:in.only.preserve.qos.failing.InOnlyPreserveMessageQosTest";
+    private static final String EXCEPTION_REPLY_QUEUE = "in.only.preserve.qos.exception.reply.InOnlyPreserveMessageQosTest";
 
     @Test
     void priorityAndDeliveryModeFromTheHeadersAreUsed() throws Exception {
@@ -78,6 +80,34 @@ class InOnlyPreserveMessageQosTest extends JmsTestSupport {
                 Map.of("JMSPriority", 2, "JMSDeliveryMode", "PERSISTENT"));
 
         result.assertIsSatisfied();
+    }
+
+    @Test
+    void priorityAndDeliveryModeOfTheEndpointAreUsedWithExplicitQosDisabled() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("Hello World");
+        result.message(0).header("JMSPriority").isEqualTo(7);
+        result.message(0).header("JMSDeliveryMode").isEqualTo(DeliveryMode.NON_PERSISTENT);
+
+        template.sendBody(QUEUE + "?preserveMessageQos=true&explicitQosEnabled=false&priority=7&deliveryPersistent=false",
+                "Hello World");
+
+        result.assertIsSatisfied();
+    }
+
+    @Test
+    void exceptionReplyOfAConsumerUsesThePriorityAndDeliveryModeOfTheEndpoint() throws Exception {
+        MockEndpoint reply = getMockEndpoint("mock:exceptionReply");
+        reply.expectedMessageCount(1);
+        reply.message(0).header("JMSPriority").isEqualTo(7);
+        reply.message(0).header("JMSDeliveryMode").isEqualTo(DeliveryMode.NON_PERSISTENT);
+        reply.message(0).body().isInstanceOf(IllegalStateException.class);
+
+        // InOnly with a JMSReplyTo header: the failing consumer sends the exception reply to the reply queue
+        template.sendBodyAndHeader(FAILING_QUEUE + "?preserveMessageQos=true", "Hello World", "JMSReplyTo",
+                EXCEPTION_REPLY_QUEUE);
+
+        reply.assertIsSatisfied();
     }
 
     @Test
@@ -172,6 +202,12 @@ class InOnlyPreserveMessageQosTest extends JmsTestSupport {
                         .transform().constant("Bye World");
 
                 from(EXPIRY_QUEUE).routeId("expiry").autoStartup(false).to("mock:expiry");
+
+                // an exception reply is an ObjectMessage, which needs objectMessageEnabled on both sides
+                from(FAILING_QUEUE + "?preserveMessageQos=true&transferException=true&objectMessageEnabled=true"
+                     + "&priority=7&deliveryPersistent=false")
+                        .throwException(new IllegalStateException("Forced"));
+                from("sjms:queue:" + EXCEPTION_REPLY_QUEUE + "?objectMessageEnabled=true").to("mock:exceptionReply");
             }
         };
     }

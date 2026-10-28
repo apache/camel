@@ -225,6 +225,8 @@ public class SjmsTemplate {
 
     private static int resolveDeliveryMode(Message message) throws JMSException {
         int resolvedDeliveryMode;
+        // the sjms binding sets the JMSDeliveryMode header with setJMSDeliveryMode, so the binding never creates this
+        // property; it is kept for a JMS message that carries it as a property
         if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
             resolvedDeliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
             // remove the temporary property
