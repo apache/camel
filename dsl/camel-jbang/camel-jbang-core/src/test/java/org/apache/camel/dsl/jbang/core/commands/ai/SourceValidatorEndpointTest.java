@@ -344,14 +344,31 @@ class SourceValidatorEndpointTest {
         org.assertj.core.api.Assertions.assertThat(msgs.get(0))
                 .contains("not applicable in producer only mode")
                 .contains("it writes the body")
-                .contains("poll EIP");
+                .contains("poll EIP")
+                // a data file the route needs is read, not consumed
+                .contains("to read a data file the route needs, such as a lookup table: setVariable with constant:"
+                          + " resource:file:<path>");
+
+        // another component does not get the file's hint
+        String kafka = """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to:
+                          uri: "kafka:orders?groupId=orders"
+                """;
+        org.assertj.core.api.Assertions
+                .assertThat(SourceValidator.validateYamlEndpoints(kafka, new org.apache.camel.catalog.DefaultCamelCatalog()))
+                .singleElement().asString().contains("poll EIP").doesNotContain("resource:file");
     }
 
     @org.junit.jupiter.api.Test
     void componentDocSaysWhereItGoes() {
         org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("file"))).contains("from: consumes")
-                .contains("poll EIP");
+                .contains("poll EIP").contains("setVariable with constant: resource:file:stock.json");
+        org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("jms"))).contains("poll EIP")
+                .doesNotContain("resource:file");
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("timer")))
                 .startsWith("consumer only");
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("log")))
@@ -372,6 +389,23 @@ class SourceValidatorEndpointTest {
         assertThat(msgs.get(0)).contains("Unknown option 'interval'").contains("write period=<millis>");
         assertThat(msgs.get(1)).contains("Unknown option 'body'").contains("setBody step");
         assertThat(msgs.get(2)).contains("Unknown option 'mkdir'").contains("autoCreate=true");
+    }
+
+    @Test
+    void anOptionNamedAfterTheComponentSaysWhatTheEndpointTakes() {
+        // the closest name was cronService, and the quick fix renamed cron= to that
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: cron:cron?cron=0/10 * * * * ?
+                    steps:
+                      - log:
+                          message: "x"
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("Unknown option 'cron'")
+                .contains("no option is named after the component: write cron:name?schedule=...")
+                .doesNotContain("Did you mean"));
+        assertThat(QuickFixes.fixFor(msgs.get(0), "    uri: cron:cron?cron=0/10 * * * * ?")).isNull();
     }
 
     @Test
@@ -425,16 +459,335 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
-    void aTimerExchangePropertyUsedAsAHeaderIsNamed() {
-        // TimerConsumer sets the counter, name, period and time as exchange properties; only the fired time is a header
+    void aTimerExchangePropertyIsSetOnlyWithIncludeMetadata() {
+        // TimerConsumer sets the counter, name, period and time as exchange properties, and only with includeMetadata
         List<String> msgs = SourceValidator.validateKnownHeaders("""
                 - from:
                     uri: "timer:tick?period=1000"
                     steps:
                       - log: "${header.CamelTimerCounter} ${header.CamelTimerFiredTime} ${exchangeProperty.CamelTimerName}"
                 """, catalog);
-        assertThat(msgs).hasSize(1);
-        assertThat(msgs.get(0)).contains("CamelTimerCounter is an exchange property set by timer, not a header")
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 4:")
+                .contains("timer sets CamelTimerCounter only with includeMetadata=true")
+                .contains("${exchangeProperty.CamelTimerCounter}");
+        assertThat(msgs.get(1)).startsWith("Line 4:").contains("timer sets CamelTimerName only with includeMetadata=true");
+    }
+
+    /** CAMEL-25744: the counter is 1 on the first fire, so a comparison with 0 never picks it. */
+    @Test
+    void aTimerCounterComparisonThatCanNeverBeTrueIsReported() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "timer:tick?repeatCount=2&includeMetadata=true"
+                    steps:
+                      - setBody:
+                          simple: "resource:file:${exchangeProperty.CamelTimerCounter == 0 ? 'a.json' : 'b.json'}"
+                      - choice:
+                          when:
+                            - simple: "${header.CamelTimerCounter} != 0"
+                              steps:
+                                - log: "${body}"
+                      - filter:
+                          groovy: "exchange.getProperty('CamelTimerCounter', Integer) < 1"
+                """, catalog);
+        assertThat(msgs).hasSize(3);
+        assertThat(msgs.get(0)).startsWith("Line 5:").contains("counts the fires from 1").contains("== 0 is never true")
+                .contains("compare with 1");
+        assertThat(msgs.get(1)).startsWith("Line 8:").contains("!= 0 is always true");
+        assertThat(msgs.get(2)).startsWith("Line 12:").contains("< 1 is never true");
+    }
+
+    @Test
+    void aTimerCounterComparisonThatIsAlwaysTrueIsReported() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "timer:tick?repeatCount=2&includeMetadata=true"
+                    steps:
+                      - filter:
+                          simple: "${exchangeProperty.CamelTimerCounter} > 0"
+                      - filter:
+                          groovy: "exchange.getProperty('CamelTimerCounter', Integer) >= 1"
+                      - filter:
+                          simple: "${exchangeProperty.CamelTimerCounter} >= 0"
+                """, catalog);
+        assertThat(msgs).hasSize(3);
+        assertThat(msgs.get(0)).startsWith("Line 5:").contains("> 0 is always true");
+        assertThat(msgs.get(1)).startsWith("Line 7:").contains(">= 1 is always true");
+        assertThat(msgs.get(2)).startsWith("Line 9:").contains(">= 0 is always true");
+    }
+
+    @Test
+    void aTimerCounterComparedWithOneIsFine() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "timer:tick?repeatCount=2&includeMetadata=true"
+                    steps:
+                      - setBody:
+                          simple: "resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'a.json' : 'b.json'}"
+                      - filter:
+                          simple: "${exchangeProperty.CamelTimerCounter} > 1"
+                      - filter:
+                          simple: "${exchangeProperty.CamelTimerCounter} >= 2"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    /** The routes of a REST DSL use direct, which has no header metadata: a wrong status header is still reported. */
+    @Test
+    void aWrongHttpStatusHeaderIsReportedInADirectRoute() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - rest:
+                    get:
+                      - path: /orders/{id}
+                        to: direct:get-order
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setHeader:
+                            name: CamelHttpStatusCode
+                            constant: 404
+                        - setHeader:
+                            name: Exchange.HTTP_STATUS
+                            constant: 404
+                        - log: "${header.CamelHttpStatusCode}"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 10:").contains("Camel has no header CamelHttpStatusCode")
+                .contains("the header CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)");
+        assertThat(msgs.get(1)).startsWith("Line 13:").contains("Exchange has no constant HTTP_STATUS")
+                .contains("the route fails to start").contains("the header CamelHttpResponseCode");
+    }
+
+    @Test
+    void aConstantOfExchangeIsTheNameCamelLooksUp() {
+        // Camel looks the constant up when it creates the route (DefaultCamelContextExtension.resolvePropertyPlaceholders)
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setHeader:
+                          name: Exchange.HTTP_RESPONSE_CODE
+                          constant: 404
+                      - setHeader:
+                          name: CamelHttpResponseCode
+                          constant: 404
+                      - setProperty:
+                          name: Exchange.HTTP_STATUS
+                          constant: 404
+                      - setHeader:
+                          name: Exchange.FILE_NAM
+                          constant: out.json
+                """, catalog);
+        // the name of a setProperty is looked up as well
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 11:").contains("Exchange has no constant HTTP_STATUS");
+        assertThat(msgs.get(1)).startsWith("Line 14:").contains("Exchange has no constant FILE_NAM")
+                .contains("did you mean Exchange.FILE_NAME");
+    }
+
+    /** "did you mean JMSReplyTo?" led to replies set by hand: Camel does request-reply with pattern InOut (r20). */
+    @Test
+    void aReplyHeaderGetsTheRequestReplyHint() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: jms:queue:orders
+                    steps:
+                      - setHeader:
+                          name: CamelJmsReplyTo
+                          constant: stock-reply
+                      - to:
+                          uri: jms:queue:stock
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("header CamelJmsReplyTo is not set by jms")
+                .contains("send with pattern: InOut on the to: and Camel sets JMSReplyTo and waits for the reply")
+                .contains("you do not need to set JMSReplyTo or replyTo yourself")
+                .doesNotContain("did you mean"));
+    }
+
+    /** CAMEL-26018: the smtp producer reads the alternative body of an HTML mail from CamelMailAlternativeBody. */
+    @Test
+    void aHeaderTheProducerReadsIsKnown() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setHeader:
+                          name: CamelMailAlternativeBody
+                          constant: Hello plain text
+                      - setBody:
+                          constant: <p>Hello HTML</p>
+                      - to:
+                          uri: smtp://localhost?to=info@acme.com&contentType=text/html
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    /**
+     * A reply header set by hand in a route that sends nothing InOut gets a note, in any case of its name (r21 of the
+     * local-model benchmark: the service route set JMSReplyTo and the request went one way). The endpoints are written
+     * as the scheme alone with parameters, as well as in a URI.
+     */
+    @Test
+    void aJmsReplyHeaderSetByHandGetsANote() {
+        String route = """
+                - route:
+                    id: reserve-order
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationType: queue
+                        destinationName: orders
+                      steps:
+                        - toD:
+                            uri: "jms:queue:stock"
+                        - log:
+                            message: "Stock service answered: ${header.camelJmsReplyTo}"
+                - route:
+                    id: stock-service
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationName: stock
+                      steps:
+                        - setHeader:
+                            name: JMSReplyTo
+                            expression:
+                              simple: "jms:queue:orders"
+                        - setBody:
+                            constant: reserved
+                """;
+        assertThat(HeaderChecks.replyHeaderNotes(route)).containsExactly(
+                "Line 12: camelJmsReplyTo is read, and no message is sent with pattern: InOut. "
+                                                                         + HeaderChecks.JMS_REQUEST_REPLY_HINT,
+                "Line 21: JMSReplyTo is set by hand, and no message is sent with pattern: InOut. "
+                                                                                                                + HeaderChecks.JMS_REQUEST_REPLY_HINT);
+        // with the request sent InOut, the reply is Camel's: no note
+        assertThat(HeaderChecks.replyHeaderNotes(route.replace("uri: \"jms:queue:stock\"",
+                "uri: \"jms:queue:stock\"\n            pattern: InOut"))).isEmpty();
+        // not a JMS route: no note
+        assertThat(HeaderChecks.replyHeaderNotes(route.replace("uri: jms", "uri: seda").replace("jms:queue:", "seda:")))
+                .isEmpty();
+    }
+
+    /** The headers of an endpoint written as the scheme alone (uri: jms, with parameters:) are checked too. */
+    @Test
+    void theHeadersOfAnEndpointWrittenAsTheSchemeAloneAreChecked() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationName: orders
+                      steps:
+                        - log:
+                            message: "${header.CamelJmsDestinationNam}"
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("header CamelJmsDestinationNam is not set by jms")
+                .contains("did you mean CamelJmsDestination, CamelJmsDestinationName?"));
+    }
+
+    /** The JMS request-reply hint is for JMS only: the reply headers of other components keep their "did you mean". */
+    @Test
+    void aReplyHeaderOfAnotherComponentGetsDidYouMean() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: ftp:localhost/inbox
+                    steps:
+                      - log:
+                          message: "${header.CamelFtpReplycode}"
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("header CamelFtpReplycode is not set by ftp")
+                .contains("did you mean CamelFtpReplyCode")
+                .doesNotContain("request-reply over JMS"));
+    }
+
+    /** CAMEL-26039: the short form of a to: names the component as well as to: {uri: ...} does. */
+    @Test
+    void aHeaderOfAComponentInTheShortFormOfAToIsKnown() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setHeader:
+                            name: CamelAwsSecretsManagerSecretId
+                            constant: my-secret
+                        - to: aws-secrets-manager:sm?operation=getSecret
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void theShortFormsOfTheEndpointStepsNameTheirComponents() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - interceptSendToEndpoint: "kafka:audit"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setHeader:
+                            name: CamelSqlQuery
+                            constant: select 1
+                        - setHeader:
+                            name: CamelKafkaKey
+                            constant: k
+                        - setHeader:
+                            name: CamelFtpReplyCode
+                            constant: 200
+                        - toD: 'sql:select 1'
+                        - poll: "ftp:localhost/inbox"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void aKeyAfterAnEndpointStepIsNotAComponent() {
+        // the long form of a to: has the uri on the next line; an option such as replyTo is not a to:
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: jms:queue:orders
+                            parameters:
+                              replyTo: "queue:stock"
+                        - to:
+                            steps: x
+                        - log: "${header.CamelInventedOne}"
+                """, catalog);
+        assertThat(msgs).singleElement().asString().contains("header CamelInventedOne is not set by timer, jms ");
+    }
+
+    @Test
+    void withIncludeMetadataAHeaderLookupFindsTheExchangeProperty() {
+        // Simple's ${header.x} falls back to the exchange properties, so it reads the counter
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "timer:tick?period=1000&includeMetadata=true"
+                    steps:
+                      - log: "${header.CamelTimerCounter} ${exchangeProperty.CamelTimerName}"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void withIncludeMetadataTheHeadersMapStillHasNoSuchHeader() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:tick
+                    parameters:
+                      includeMetadata: true
+                    steps:
+                      - log: "${headers.CamelTimerCounter}"
+                """, catalog);
+        assertThat(msgs).singleElement().asString()
+                .contains("CamelTimerCounter is an exchange property set by timer, not a header")
                 .contains("${exchangeProperty.CamelTimerCounter}");
     }
 
@@ -591,6 +944,30 @@ class SourceValidatorEndpointTest {
                 """;
         assertThat(SourceValidator.validateYamlEndpoints(fromYaml, catalog))
                 .anyMatch(e -> e.startsWith("Line 3: file: the directory archived/${header.monthDir} cannot be dynamic"));
+    }
+
+    /**
+     * CAMEL-25374: quotes escaped with a backslash in a plain YAML value are text, so they are part of the regex. The
+     * hint gives the line to write, without echoing the stray quotes back.
+     */
+    @Test
+    void quoteCharactersInAnIncludeRegexAreReported() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      parameters:
+                        include: \\".*\\\\.json\\"
+                      steps:
+                        - to:
+                            uri: log:done
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).anyMatch(e -> e.startsWith("Line 5: file: include has quote characters in its value")
+                && e.contains("Write the line as include: '.*\\.json'"));
+        assertThat(errors).noneMatch(e -> e.contains("matches a literal backslash"));
+        assertThat(EndpointChecks.withoutQuoteCharacters("'.*\\.json'")).isEqualTo(".*\\.json");
+        assertThat(EndpointChecks.withoutQuoteCharacters(".*\\.json")).isEqualTo(".*\\.json");
     }
 
     /** CAMEL-24854: a doubled backslash in an include regex (kept as is inside single quotes) matches no file. */

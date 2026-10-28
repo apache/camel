@@ -16,12 +16,18 @@
  */
 package org.apache.camel.component.google.sheets.stream;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.google.api.services.sheets.v4.Sheets;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,10 +43,20 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-sheets-stream:spreadsheetId",
              consumerOnly = true,
              category = { Category.CLOUD, Category.DOCUMENT }, headersClass = GoogleSheetsStreamConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = @BodyType.When(option = "splitResults", value = "true",
+                                                             carriers = { Carrier.LIST, Carrier.POJO }),
+                                   description = "One message per poll with the Spreadsheet, or, when range is set, one"
+                                                 + " message per range with its ValueRange. splitResults with range gives"
+                                                 + " one message per row (or column, by majorDimension) with the List of its"
+                                                 + " values. The Spreadsheet and the ValueRange are GenericJson, which is"
+                                                 + " also a Map of the JSON fields"))
 public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleSheetsStreamConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Sheets client;
 
     public GoogleSheetsStreamEndpoint(String uri, GoogleSheetsStreamComponent component,
                                       GoogleSheetsStreamConfiguration endpointConfiguration) {
@@ -60,8 +76,24 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements
         return consumer;
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Sheets getClient() {
-        return ((GoogleSheetsStreamComponent) getComponent()).getClient(configuration);
+        Sheets answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleSheetsStreamComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     public GoogleSheetsClientFactory getClientFactory() {

@@ -68,7 +68,9 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport {
     private LongHistogram sentTimer;
 
     public OpenTelemetryExchangeEventNotifier() {
-        // no-op
+        // AI events are ExchangeEvents but a specialized category; skip them so each one does not trigger a route
+        // lookup here (they are not metered as exchange lifecycle events anyway)
+        setIgnoreAiEvents(true);
     }
 
     // Use the base endpoint to avoid increasing the number of separate events on dynamic endpoints (ie, toD).

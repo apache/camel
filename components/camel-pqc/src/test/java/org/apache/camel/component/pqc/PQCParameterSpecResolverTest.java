@@ -62,6 +62,7 @@ class PQCParameterSpecResolverTest {
         // the underscore form matching the BouncyCastle constant names is accepted as an alias
         assertNotNull(PQCParameterSpecResolver.resolve("MLDSA", "ml_dsa_87"));
         assertNotNull(PQCParameterSpecResolver.resolve("MLKEM", "ml_kem_1024"));
+        assertNotNull(PQCParameterSpecResolver.resolve("SPHINCSPLUS", "sha2_128s"));
     }
 
     @Test
@@ -106,13 +107,14 @@ class PQCParameterSpecResolverTest {
     void testIsSupported() {
         assertTrue(PQCParameterSpecResolver.isSupported("MLDSA"));
         assertTrue(PQCParameterSpecResolver.isSupported("MLKEM"));
-        // Stateful hash-based signatures and MAYO/SNOVA have no name-addressable parameter spec
+        // MAYO and SNOVA are stateless and MayoParameterSpec/SnovaParameterSpec both expose fromName in BC 1.86
+        assertTrue(PQCParameterSpecResolver.isSupported("MAYO"));
+        assertTrue(PQCParameterSpecResolver.isSupported("SNOVA"));
+        // Stateful hash-based signatures have no name-addressable parameter spec
         assertFalse(PQCParameterSpecResolver.isSupported("XMSS"));
         assertFalse(PQCParameterSpecResolver.isSupported("XMSSMT"));
         assertFalse(PQCParameterSpecResolver.isSupported("LMS"));
         assertFalse(PQCParameterSpecResolver.isSupported("HSS"));
-        assertFalse(PQCParameterSpecResolver.isSupported("MAYO"));
-        assertFalse(PQCParameterSpecResolver.isSupported("SNOVA"));
         assertFalse(PQCParameterSpecResolver.isSupported(null));
     }
 
@@ -140,6 +142,9 @@ class PQCParameterSpecResolverTest {
         IllegalArgumentException frodo = assertThrows(IllegalArgumentException.class,
                 () -> PQCParameterSpecResolver.resolve("FRODO", "frodokem640aes"));
         assertTrue(frodo.getMessage().contains("Unknown parameterSpec"));
+        IllegalArgumentException dilithium = assertThrows(IllegalArgumentException.class,
+                () -> PQCParameterSpecResolver.resolve("DILITHIUM", "dilithium2"));
+        assertTrue(dilithium.getMessage().contains("Unknown parameterSpec"));
     }
 
     @Test

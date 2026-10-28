@@ -52,6 +52,15 @@ include::partial$component-endpoint-headers.adoc[]
 |CamelSchematronValidationReport |The schematron report body in XML format. See an example below |String |IN
 |=======================================================================
 
+== Message body
+
+The message body is the XML document to validate. A message without a body fails with an `InvalidPayloadException`.
+
+The body can be a `String`, a `javax.xml.transform.Source`, or bytes such as a `byte[]`, an `InputStream` or a file.
+The parser reads bytes using the encoding of the XML declaration (or UTF-8 when there is none),
+unless the exchange has a charset set (the `CamelCharsetName` exchange property), in which case
+the body is decoded with that charset. A `String` is already decoded, so the encoding in its XML declaration is ignored.
+
 == Examples
 
 === URI and path syntax

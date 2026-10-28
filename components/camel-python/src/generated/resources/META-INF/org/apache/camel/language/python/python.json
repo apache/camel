@@ -11,9 +11,16 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-python",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "python",
     "modelJavaType": "org.apache.camel.model.language.PythonExpression"
+  },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in the variable body: a String is a Python unicode string, and other Java objects keep their methods" },
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "The Java value of what the script returns: a dict as a Map, a list or a tuple as a List, a set as a Set, and None as null" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

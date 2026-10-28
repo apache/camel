@@ -20,7 +20,11 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -59,10 +63,9 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -83,6 +86,9 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
     protected final ElasticsearchConfiguration configuration;
     private volatile RestClient client;
+    // true when this producer created the client, false when the client is the one of the component, which is
+    // shared by every endpoint of the component and is not this producer's to close
+    private volatile boolean clientCreated;
     private Sniffer sniffer;
 
     public ElasticsearchProducer(ElasticsearchEndpoint endpoint, ElasticsearchConfiguration configuration) {
@@ -466,14 +472,9 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             if (ctx.isConfigFrom()) {
                 message.removeHeader(ElasticsearchConstants.PARAM_FROM);
             }
-            if (configuration.isDisconnect()) {
+            if (configuration.isDisconnect() && clientCreated) {
+                closeClient();
                 IOHelper.close(ctx.getTransport());
-                if (configuration.isEnableSniffer()) {
-                    IOHelper.close(sniffer);
-                    sniffer = null;
-                }
-                IOHelper.close(client);
-                client = null;
             }
         } catch (Exception e) {
             LOG.warn("Could not execute the cleanup task", e);
@@ -497,6 +498,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                     if (configuration.getHostAddressesList() != null
                             && !configuration.getHostAddressesList().isEmpty()) {
                         client = createClient();
+                        clientCreated = true;
                     } else {
                         LOG.warn("Incorrect ip address and port parameters settings for Elasticsearch cluster");
                     }
@@ -509,14 +511,14 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
     private RestClient createClient() {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
+        // the credentials provider reads the nodes from the client, as the sniffer can change them
+        final AtomicReference<RestClient> restClientRef = new AtomicReference<>();
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
                 .setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
-            if (configuration.getUser() != null && configuration.getPassword() != null) {
-                final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(AuthScope.ANY,
-                        new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword()));
+            CredentialsProvider credentialsProvider = createCredentialsProvider(() -> nodeHosts(restClientRef.get()));
+            if (credentialsProvider != null) {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
             if (configuration.getSslContextParameters() != null) {
@@ -534,6 +536,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             return httpClientBuilder;
         });
         final RestClient restClient = builder.build();
+        restClientRef.set(restClient);
         if (configuration.isEnableSniffer()) {
             SnifferBuilder snifferBuilder = Sniffer.builder(restClient);
             snifferBuilder.setSniffIntervalMillis(configuration.getSnifferInterval());
@@ -543,16 +546,49 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         return restClient;
     }
 
+    /**
+     * Creates the provider of the configured user and password, which offers them only to the given nodes, or returns
+     * null when no credentials are configured.
+     */
+    CredentialsProvider createCredentialsProvider(Supplier<? extends Collection<HttpHost>> nodes) {
+        if (configuration.getUser() == null || configuration.getPassword() == null) {
+            return null;
+        }
+        return new NodeScopedCredentialsProvider(
+                new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword()), nodes);
+    }
+
+    private List<HttpHost> nodeHosts(RestClient restClient) {
+        if (restClient == null) {
+            return configuration.getHostAddressesList();
+        }
+        return restClient.getNodes().stream().map(Node::getHost).toList();
+    }
+
     @Override
     protected void doStop() throws Exception {
-        if (client != null) {
+        if (clientCreated) {
             LOG.info("Disconnecting from Elasticsearch cluster: {}", configuration.getClusterName());
-            client.close();
-            if (sniffer != null) {
-                sniffer.close();
-            }
+            closeClient();
         }
         super.doStop();
+    }
+
+    /**
+     * Closes the client this producer created, so that a start creates a new one.
+     */
+    private void closeClient() {
+        lock.lock();
+        try {
+            // the sniffer is closed first, it uses the client
+            IOHelper.close(sniffer);
+            sniffer = null;
+            IOHelper.close(client);
+            client = null;
+            clientCreated = false;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public RestClient getClient() {

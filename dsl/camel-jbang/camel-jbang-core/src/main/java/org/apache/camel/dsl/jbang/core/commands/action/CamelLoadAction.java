@@ -17,17 +17,16 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.util.StopWatch;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import org.jline.jansi.Ansi;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "load",
@@ -49,6 +48,9 @@ public class CamelLoadAction extends ActionBaseCommand {
                         description = "To force restart all routes after loading source files")
     boolean restart;
 
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     public CamelLoadAction(CamelJBangMain main) {
         super(main);
     }
@@ -56,27 +58,11 @@ public class CamelLoadAction extends ActionBaseCommand {
     @Override
     public Integer doCall() throws Exception {
         if (source == null || source.isEmpty()) {
-            printer().printErr("No source files provided. Specify files using --source option");
-            return 1;
+            throw CliException.usage("No source files provided. Specify files using --source option");
         }
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
-        long pid = pids.get(0);
+        CamelProcess process = findOne(name);
 
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "load");
-        root.put("restart", restart);
         // turn into absolute path
         JsonArray arr = new JsonArray();
         for (String s : source) {
@@ -88,65 +74,22 @@ public class CamelLoadAction extends ActionBaseCommand {
             }
             arr.add(s);
         }
-        root.put("source", arr);
-        Path f = getActionFile(Long.toString(pid));
-        Files.writeString(f, root.toJson());
 
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            String status = jo.getString("status");
-            if ("success".equals(status)) {
-                printer().println("Successfully loaded " + source.size() + " source files");
-            } else {
-                printer().printErr("Error loading " + source.size() + " source files");
+        ActionResult result = ActionClient.execute(process, "load", root -> {
+            root.put("restart", restart);
+            root.put("source", arr);
+        }, timeout());
+        if (!result.isOk()) {
+            JsonObject cause = result.reply() != null ? result.reply().getMap("exception") : null;
+            String st = cause != null ? cause.getString("stackTrace") : null;
+            if (st != null) {
+                printer().printDiagnostic(Jsoner.unescape(st));
             }
-            JsonObject cause = jo.getMap("exception");
-            if (cause != null) {
-                String msg = cause.getString("message");
-                if (msg != null) {
-                    msg = Jsoner.unescape(msg);
-                }
-                String st = cause.getString("stackTrace");
-                if (st != null) {
-                    st = Jsoner.unescape(st);
-                }
-                if (msg != null) {
-                    String text = Ansi.ansi().fgRed().a(msg).reset().toString();
-                    printer().printErr(text);
-                    printer().println();
-                }
-                if (st != null) {
-                    String text = Ansi.ansi().fgRed().a(st).reset().toString();
-                    printer().printErr(text);
-                    printer().println();
-                }
-                return 1;
-            }
+            throw new CliException(
+                    result.exitCode(), "Error loading " + source.size() + " source files: " + result.error());
         }
-
+        printer().println("Successfully loaded " + source.size() + " source files");
         return 0;
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        StopWatch watch = new StopWatch();
-        long wait = 10000;
-        while (watch.taken() < wait) {
-            File f = outputFile.toFile();
-            try {
-                // give time for response to be ready
-                Thread.sleep(20);
-
-                if (Files.exists(outputFile) && f.length() > 0) {
-                    String text = Files.readString(outputFile);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return null;
     }
 
 }

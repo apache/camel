@@ -73,6 +73,16 @@ public class PollDynamicFileNameTest extends FtpServerTestSupport {
         Assertions.assertEquals(1, c, "There should only be 1 ftp endpoint");
     }
 
+    @Test
+    public void testPollFileNameFromBody() throws Exception {
+        // CAMEL-25792: a fileName without the file functions is evaluated on the message, so ${body} is its body
+        getMockEndpoint("mock:body").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:body", "myfile.txt");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want
         // to unit test that we can pool and store as a local file
@@ -99,6 +109,10 @@ public class PollDynamicFileNameTest extends FtpServerTestSupport {
                 from("direct:start")
                         .poll(getFtpUrl() + "&fileName=${header.target}", 2000)
                         .to("mock:result");
+
+                from("direct:body")
+                        .poll(getFtpUrl() + "&fileName=${body}", 2000)
+                        .to("mock:body");
             }
         };
     }

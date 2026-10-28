@@ -97,8 +97,7 @@ class CouchbaseConsumerTest {
 
     /**
      * A failing route does not throw out of {@code process()} - the failure is left on the exchange - so a consumer
-     * that only catches never learns about the common case. With {@code consumerProcessedStrategy=delete} the document
-     * is already gone by then, so an unreported failure loses the message outright.
+     * that only catches never learns about the common case.
      */
     @Test
     void aRouteFailureIsReportedToTheExceptionHandler() throws Exception {

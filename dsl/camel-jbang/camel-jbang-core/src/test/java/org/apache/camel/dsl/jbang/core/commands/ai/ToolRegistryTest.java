@@ -16,14 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -55,6 +59,33 @@ class ToolRegistryTest {
         for (ToolDescriptor t : ToolRegistry.allTools()) {
             assertNotNull(t.executor(), t.name() + " has no executor");
         }
+    }
+
+    @Test
+    void routeStructureKeepsOnlyTheVariedSteps() throws Exception {
+        String structure = """
+                {"routes":[{"routeId":"orders","code":[
+                  {"id":"orders","code":"route[orders]"},
+                  {"id":"to1","code":"to[file:outbox]","bodyTypes":["java.lang.String","java.util.LinkedHashMap"],
+                   "bodyKinds":["payload","data"]},
+                  {"id":"log1","code":"log[${body}]","bodyTypes":["java.lang.String"],"bodyKinds":["payload"]}]}]}
+                """;
+
+        JsonObject varied = (JsonObject) Jsoner.deserialize(ToolRegistry.onlyVaried(structure));
+        JsonArray code = ((JsonObject) ((JsonArray) varied.getCollection("routes")).get(0)).getCollection("code");
+        assertEquals(1, code.size());
+        assertEquals("to1", ((JsonObject) code.get(0)).getString("id"));
+        assertNull(varied.get("message"));
+
+        // nothing varied: the answer says so, and why that may be
+        String none
+                = "{\"routes\":[{\"routeId\":\"orders\",\"code\":[{\"id\":\"log1\",\"bodyTypes\":[\"java.lang.String\"]}]}]}";
+        JsonObject empty = (JsonObject) Jsoner.deserialize(ToolRegistry.onlyVaried(none));
+        assertTrue(((JsonArray) empty.getCollection("routes")).isEmpty());
+        assertTrue(empty.getString("message").contains("camel run --dev"), empty.getString("message"));
+
+        // not JSON: given back as it is
+        assertEquals("Integration not running", ToolRegistry.onlyVaried("Integration not running"));
     }
 
     @Test
@@ -166,6 +197,62 @@ class ToolRegistryTest {
         // execute_sql should throw for empty query parameter
         assertThrows(ToolExecutionException.class,
                 () -> ToolRegistry.execute("execute_sql", ctx, Map.of()));
+    }
+
+    @Test
+    void theToolGroupsToolIsInternal() {
+        // the MCP servers export every camel_* tool by name; get_tool_groups is reached through
+        // camel_runtime_tool_groups only
+        ToolDescriptor tool = ToolRegistry.findTool("get_tool_groups");
+        assertNotNull(tool);
+        assertTrue(tool.isReadOnly());
+        assertFalse(tool.isDeterministic());
+        assertFalse(ToolRegistry.authoringTools().contains(tool));
+    }
+
+    @Test
+    void theHttpToolsAreInternal(@TempDir Path home) {
+        // CAMEL-25307: reached through camel_runtime_http_endpoints and camel_runtime_http_request
+        ToolDescriptor endpoints = ToolRegistry.findTool("get_http_endpoints");
+        ToolDescriptor request = ToolRegistry.findTool("http_request");
+        assertNotNull(endpoints);
+        assertNotNull(request);
+        assertTrue(endpoints.isReadOnly());
+        assertFalse(request.isReadOnly());
+        assertFalse(request.isDestructive());
+        assertFalse(ToolRegistry.authoringTools().contains(endpoints));
+        assertFalse(ToolRegistry.authoringTools().contains(request));
+        // without a running integration: a home of its own, as the one of the machine may have one, which the tool
+        // would select
+        Path previous = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            assertThrows(ToolExecutionException.class,
+                    () -> ToolRegistry.execute("http_request", new ToolContext(), Map.of("path", "/hello")));
+        } finally {
+            CommandLineHelper.useHomeDir(previous.toString());
+        }
+    }
+
+    @Test
+    void toolGroupsAnswerFromTheStatus() throws Exception {
+        ToolContext ctx = new ToolContext();
+        ctx.selectProcess(99999);
+        String json = "{'context': {'name': 'shop'}, 'dataSources': {'dataSources': [{'name': 'orders',"
+                      + " 'poolType': 'HikariCP'}]}}";
+        JsonObject status = (JsonObject) Jsoner.deserialize(json.replace('\'', '"'));
+        JsonObject answer = ToolRegistry.toolGroups(ctx, status);
+        assertEquals("shop", answer.get("app"));
+        assertEquals(99999L, answer.get("pid"));
+        assertEquals("sql|orders", answer.get("fingerprint"));
+        JsonArray groups = (JsonArray) answer.get("groups");
+        assertEquals(1, groups.size());
+        JsonObject sql = (JsonObject) groups.get(0);
+        assertEquals("sql", sql.get("id"));
+        assertTrue(((JsonArray) sql.get("tools")).contains("camel_runtime_sql"));
+        assertTrue(sql.get("guidance").toString().contains("orders (HikariCP)"));
+        assertTrue(((JsonArray) answer.get("core")).contains("camel_get_errors"));
+        assertEquals("orders", ((JsonObject) answer.get("signals")).get("dataSources"));
     }
 
     @Test

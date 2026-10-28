@@ -22,9 +22,10 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -37,6 +38,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.function.ThrowingSupplier;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,7 @@ import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleRespon
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsResultEntry;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
@@ -170,6 +173,11 @@ public class EventbridgeProducer extends DefaultProducer {
             }
             String eventPattern = getOptionalHeader(exchange, EventbridgeConstants.EVENT_PATTERN, String.class);
             if (ObjectHelper.isEmpty(eventPattern)) {
+                if (ObjectHelper.isEmpty(getConfiguration().getEventPatternFile())) {
+                    throw new IllegalArgumentException(
+                            "The putRule operation needs an event pattern: set the " + EventbridgeConstants.EVENT_PATTERN
+                                                       + " header or the eventPatternFile option");
+                }
                 try (InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getEndpoint().getCamelContext(),
                         getConfiguration().getEventPatternFile())) {
                     eventPattern = IOUtils.toString(s, Charset.defaultCharset());
@@ -410,7 +418,10 @@ public class EventbridgeProducer extends DefaultProducer {
                     PutEventsRequestEntry.Builder entryBuilder = PutEventsRequestEntry.builder();
                     String resourcesArn = getRequiredHeader(exchange, EventbridgeConstants.EVENT_RESOURCES_ARN, String.class,
                             "At least one resource ARN must be specified");
-                    entryBuilder.resources(Stream.of(resourcesArn.split(",")).toList());
+                    entryBuilder.resources(Stream.of(resourcesArn.split(","))
+                            .map(String::trim)
+                            .filter(ObjectHelper::isNotEmpty)
+                            .toList());
                     String detailType = getRequiredHeader(exchange, EventbridgeConstants.EVENT_DETAIL_TYPE, String.class,
                             "Detail Type must be specified");
                     entryBuilder.detailType(detailType);
@@ -418,18 +429,37 @@ public class EventbridgeProducer extends DefaultProducer {
                             "Source must be specified");
                     entryBuilder.source(source);
                     entryBuilder.eventBusName(getConfiguration().getEventbusName());
-                    try {
-                        entryBuilder.detail(exchange.getMessage().getMandatoryBody(String.class));
-                    } catch (InvalidPayloadException e) {
-                        throw new RuntimeException(e);
-                    }
+                    entryBuilder.detail(exchange.getMessage().getMandatoryBody(String.class));
                     builder.entries(entryBuilder.build());
                     return eventbridgeClient.putEvents(builder.build());
                 },
                 "Put Events",
                 (PutEventsResponse response, Message message) -> {
                     message.setHeader(EventbridgeConstants.FAILED_ENTRY_COUNT, response.failedEntryCount());
+                    failOnRejectedEvents(response, exchange);
                 });
+    }
+
+    private static void failOnRejectedEvents(PutEventsResponse response, Exchange exchange) {
+        Integer failedEntryCount = response.failedEntryCount();
+        if (failedEntryCount == null || failedEntryCount == 0) {
+            return;
+        }
+        // the result entries are in the order of the request entries, and a rejected one has an error code
+        String errors = response.entries().stream()
+                .filter(entry -> ObjectHelper.isNotEmpty(entry.errorCode()))
+                .map(EventbridgeProducer::describeError)
+                .collect(Collectors.joining("; "));
+        String what = response.entries().size() > 1
+                ? failedEntryCount + " of " + response.entries().size() + " events"
+                : "the event";
+        throw new CamelExecutionException("EventBridge rejected " + what + ": " + errors, exchange);
+    }
+
+    private static String describeError(PutEventsResultEntry entry) {
+        return ObjectHelper.isNotEmpty(entry.errorMessage())
+                ? entry.errorCode() + ": " + entry.errorMessage()
+                : entry.errorCode();
     }
 
     @Override
@@ -448,7 +478,7 @@ public class EventbridgeProducer extends DefaultProducer {
             Exchange exchange,
             Class<REQ> requestClass,
             Function<REQ, RES> pojoExecutor,
-            Supplier<RES> headerExecutor,
+            ThrowingSupplier<RES, InvalidPayloadException> headerExecutor,
             String operationName)
             throws InvalidPayloadException {
         executeOperation(exchange, requestClass, pojoExecutor, headerExecutor, operationName, null);
@@ -461,7 +491,7 @@ public class EventbridgeProducer extends DefaultProducer {
             Exchange exchange,
             Class<REQ> requestClass,
             Function<REQ, RES> pojoExecutor,
-            Supplier<RES> headerExecutor,
+            ThrowingSupplier<RES, InvalidPayloadException> headerExecutor,
             String operationName,
             BiConsumer<RES, Message> responseProcessor)
             throws InvalidPayloadException {

@@ -16,12 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "reload",
@@ -34,21 +29,16 @@ public class CamelReloadAction extends ActionBaseCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     public CamelReloadAction(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        for (long pid : pids) {
-            JsonObject root = new JsonObject();
-            root.put("action", "reload");
-            Path f = getActionFile(Long.toString(pid));
-            Files.writeString(f, root.toJson());
-        }
-
-        return 0;
+        return sendAction(findProcesses(name), "reload", null);
     }
 
 }

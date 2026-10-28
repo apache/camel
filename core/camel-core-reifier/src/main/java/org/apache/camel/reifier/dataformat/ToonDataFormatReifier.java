@@ -32,7 +32,6 @@ public class ToonDataFormatReifier extends DataFormatReifier<ToonDataFormat> {
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("indent", definition.getIndent());
         properties.put("delimiter", definition.getDelimiter());
-        properties.put("lengthMarker", definition.getLengthMarker());
         properties.put("strict", definition.getStrict());
     }
 }

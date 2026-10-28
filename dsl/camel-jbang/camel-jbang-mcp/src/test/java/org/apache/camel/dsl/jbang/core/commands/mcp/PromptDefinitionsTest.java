@@ -16,8 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import io.quarkiverse.mcp.server.Prompt;
 import io.quarkiverse.mcp.server.PromptMessage;
 import org.junit.jupiter.api.Test;
 
@@ -140,6 +147,10 @@ class PromptDefinitionsTest {
         assertThat(text).contains("camel_migration_wildfly_karaf");
         assertThat(text).contains("camel_migration_recipes");
         assertThat(text).contains("camel_migration_guide_search");
+        // the arguments the tools take: camel_migration_compatibility has no components argument
+        assertThat(text).contains(
+                "`camel_migration_compatibility` with `currentVersion`, `targetVersion`, `runtime`, and `javaVersion`.");
+        assertThat(text).contains("`quarkusPlatformVersion`").contains("`runtime=quarkus`");
     }
 
     @Test
@@ -226,6 +237,32 @@ class PromptDefinitionsTest {
         assertThat(text).contains("Warnings");
         assertThat(text).contains("Positive Findings");
         assertThat(text).contains("Recommendations");
+    }
+
+    // ---- every prompt ----
+
+    @Test
+    void everyToolAPromptNamesExists() throws Exception {
+        // a prompt names its tools as `snake_case`: each must be a tool the server lists
+        Set<String> tools = McpToolClasses.toolNames();
+        Pattern named = Pattern.compile("`([a-z][a-z0-9]*(?:_[a-z0-9]+)+)`");
+        Set<String> mentioned = new TreeSet<>();
+        for (Method m : PromptDefinitions.class.getDeclaredMethods()) {
+            if (!m.isAnnotationPresent(Prompt.class)) {
+                continue;
+            }
+            Object[] args = new Object[m.getParameterCount()];
+            Arrays.fill(args, "myRoute");
+            @SuppressWarnings("unchecked")
+            List<PromptMessage> messages = (List<PromptMessage>) m.invoke(prompts, args);
+            Matcher matcher = named.matcher(extractText(messages));
+            while (matcher.find()) {
+                mentioned.add(matcher.group(1));
+            }
+        }
+
+        assertThat(mentioned).contains("camel_runtime_context", "camel_runtime_top", "camel_catalog_find");
+        assertThat(mentioned).as("tools named by the prompts").isSubsetOf(tools);
     }
 
     // ---- helper ----

@@ -1127,6 +1127,46 @@ public class StaticEndpointBuilders {
         return AWSConfigEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * Syntax: <code>aws-parameter-store:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static ParameterStoreEndpointBuilderFactory.ParameterStoreEndpointBuilder awsParameterStore(String path) {
+        return awsParameterStore("aws-parameter-store", path);
+    }
+    /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * Syntax: <code>aws-parameter-store:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static ParameterStoreEndpointBuilderFactory.ParameterStoreEndpointBuilder awsParameterStore(String componentName, String path) {
+        return ParameterStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 
@@ -1772,9 +1812,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
-     * Category: cloud,messaging
+     * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
      * 
@@ -1791,9 +1831,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
-     * Category: cloud,messaging
+     * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
      * 
@@ -2477,6 +2517,46 @@ public class StaticEndpointBuilders {
      */
     public static CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(String componentName, String path) {
         return CosmosDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * Syntax: <code>azure-eventgrid:topicEndpoint</code>
+     * 
+     * Path parameter: topicEndpoint (required)
+     * The topic endpoint URL where events will be published.
+     * 
+     * @param path topicEndpoint
+     * @return the dsl builder
+     */
+    public static EventGridEndpointBuilderFactory.EventGridEndpointBuilder azureEventgrid(String path) {
+        return azureEventgrid("azure-eventgrid", path);
+    }
+    /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * Syntax: <code>azure-eventgrid:topicEndpoint</code>
+     * 
+     * Path parameter: topicEndpoint (required)
+     * The topic endpoint URL where events will be published.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topicEndpoint
+     * @return the dsl builder
+     */
+    public static EventGridEndpointBuilderFactory.EventGridEndpointBuilder azureEventgrid(String componentName, String path) {
+        return EventGridEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
@@ -3373,6 +3453,60 @@ public class StaticEndpointBuilders {
      */
     public static ChunkEndpointBuilderFactory.ChunkEndpointBuilder chunk(String componentName, String path) {
         return ChunkEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Citrus (camel-test-citrus)
+     * Citrus message validation component for testing
+     * 
+     * Category: testing
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-test-citrus
+     * 
+     * Syntax: <code>citrus:operation/name</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform. 'validate' validates exchanges without
+     * modifying them. 'receive' validates exchanges and returns a simulated
+     * response.
+     * There are 2 enums and the value can be one of: validate, receive
+     * 
+     * Path parameter: name
+     * A unique name to identify this endpoint. Allows multiple Citrus endpoints
+     * with different validation expectations in the same route.
+     * 
+     * @param path operation/name
+     * @return the dsl builder
+     */
+    public static CitrusEndpointBuilderFactory.CitrusEndpointBuilder citrus(String path) {
+        return citrus("citrus", path);
+    }
+    /**
+     * Citrus (camel-test-citrus)
+     * Citrus message validation component for testing
+     * 
+     * Category: testing
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-test-citrus
+     * 
+     * Syntax: <code>citrus:operation/name</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform. 'validate' validates exchanges without
+     * modifying them. 'receive' validates exchanges and returns a simulated
+     * response.
+     * There are 2 enums and the value can be one of: validate, receive
+     * 
+     * Path parameter: name
+     * A unique name to identify this endpoint. Allows multiple Citrus endpoints
+     * with different validation expectations in the same route.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation/name
+     * @return the dsl builder
+     */
+    public static CitrusEndpointBuilderFactory.CitrusEndpointBuilder citrus(String componentName, String path) {
+        return CitrusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Class (camel-bean)
@@ -4936,7 +5070,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup.
+     * The type of the lookup. The wikipedia type is deprecated, as the
+     * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param path dnsType
@@ -4956,7 +5091,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup.
+     * The type of the lookup. The wikipedia type is deprecated, as the
+     * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -7538,6 +7674,48 @@ public class StaticEndpointBuilders {
         return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String path) {
+        return hibernate("hibernate", path);
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String componentName, String path) {
+        return HibernateEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 
@@ -9725,6 +9903,50 @@ public class StaticEndpointBuilders {
         return KafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Kafka Share (camel-kafka-share)
+     * Consume messages from Apache Kafka topics as a queue, using a share
+     * group.
+     * 
+     * Category: messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-kafka-share
+     * 
+     * Syntax: <code>kafka-share:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic to consume from. Use comma to separate multiple topics.
+     * Topic patterns are not supported by share groups.
+     * 
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static KafkaShareEndpointBuilderFactory.KafkaShareEndpointBuilder kafkaShare(String path) {
+        return kafkaShare("kafka-share", path);
+    }
+    /**
+     * Kafka Share (camel-kafka-share)
+     * Consume messages from Apache Kafka topics as a queue, using a share
+     * group.
+     * 
+     * Category: messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-kafka-share
+     * 
+     * Syntax: <code>kafka-share:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic to consume from. Use comma to separate multiple topics.
+     * Topic patterns are not supported by share groups.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static KafkaShareEndpointBuilderFactory.KafkaShareEndpointBuilder kafkaShare(String componentName, String path) {
+        return KafkaShareEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kamelet (camel-kamelet)
      * To call Kamelets
      * 
@@ -11086,10 +11308,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * There are 27 enums and the value can be one of: bean, constant,
+     * There are 26 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
      * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
-     * simple, spel, tokenize, variable, wasm, xpath, xquery, xtokenize
+     * simple, spel, tokenize, variable, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -11115,10 +11337,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * There are 27 enums and the value can be one of: bean, constant,
+     * There are 26 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
      * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
-     * simple, spel, tokenize, variable, wasm, xpath, xquery, xtokenize
+     * simple, spel, tokenize, variable, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -11245,14 +11467,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>llm:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 
@@ -11605,8 +11827,9 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>micrometer:metricsType:metricsName</code>
      * 
-     * Path parameter: metricsType (required)
+     * Path parameter: metricsType
      * Type of metrics
+     * Default value: counter
      * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
@@ -11629,8 +11852,9 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>micrometer:metricsType:metricsName</code>
      * 
-     * Path parameter: metricsType (required)
+     * Path parameter: metricsType
      * Type of metrics
+     * Default value: counter
      * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
@@ -12565,6 +12789,46 @@ public class StaticEndpointBuilders {
         return OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OData (camel-odata)
+     * Camel OData Component
+     * 
+     * Category: http
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-odata
+     * 
+     * Syntax: <code>odata:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The base OData service URI
+     * 
+     * @param path httpUri
+     * @return the dsl builder
+     */
+    public static ODataEndpointBuilderFactory.ODataEndpointBuilder odata(String path) {
+        return odata("odata", path);
+    }
+    /**
+     * OData (camel-odata)
+     * Camel OData Component
+     * 
+     * Category: http
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-odata
+     * 
+     * Syntax: <code>odata:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The base OData service URI
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path httpUri
+     * @return the dsl builder
+     */
+    public static ODataEndpointBuilderFactory.ODataEndpointBuilder odata(String componentName, String path) {
+        return ODataEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
      * 
@@ -12769,14 +13033,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 
@@ -12799,14 +13063,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 
@@ -12817,6 +13081,60 @@ public class StaticEndpointBuilders {
      */
     public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String componentName, String path) {
         return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OpenFeature (camel-openfeature)
+     * Evaluate feature flags using the OpenFeature specification with flagd.
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-openfeature
+     * 
+     * Syntax: <code>openfeature:domain/evaluationType</code>
+     * 
+     * Path parameter: domain (required)
+     * The OpenFeature domain to bind the provider to.
+     * 
+     * Path parameter: evaluationType
+     * The evaluation type. 'boolean' and 'isEnabled' use boolean evaluation
+     * (getBooleanValue). 'variant' uses string evaluation (getStringValue).
+     * When not set, the type is inferred from defaultValue.
+     * There are 3 enums and the value can be one of: boolean, variant,
+     * isEnabled
+     * 
+     * @param path domain/evaluationType
+     * @return the dsl builder
+     */
+    public static OpenFeatureEndpointBuilderFactory.OpenFeatureEndpointBuilder openfeature(String path) {
+        return openfeature("openfeature", path);
+    }
+    /**
+     * OpenFeature (camel-openfeature)
+     * Evaluate feature flags using the OpenFeature specification with flagd.
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-openfeature
+     * 
+     * Syntax: <code>openfeature:domain/evaluationType</code>
+     * 
+     * Path parameter: domain (required)
+     * The OpenFeature domain to bind the provider to.
+     * 
+     * Path parameter: evaluationType
+     * The evaluation type. 'boolean' and 'isEnabled' use boolean evaluation
+     * (getBooleanValue). 'variant' uses string evaluation (getStringValue).
+     * When not set, the type is inferred from defaultValue.
+     * There are 3 enums and the value can be one of: boolean, variant,
+     * isEnabled
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path domain/evaluationType
+     * @return the dsl builder
+     */
+    public static OpenFeatureEndpointBuilderFactory.OpenFeatureEndpointBuilder openfeature(String componentName, String path) {
+        return OpenFeatureEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * OpenFGA (camel-openfga)
@@ -12834,8 +13152,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 7 enums and the value can be one of: check, batchCheck,
-     * listObjects, listRelations, listUsers, writeTuples, deleteTuples
+     * There are 10 enums and the value can be one of: check, batchCheck,
+     * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
+     * writeTuples, deleteTuples
      * 
      * @param path operation
      * @return the dsl builder
@@ -12859,8 +13178,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 7 enums and the value can be one of: check, batchCheck,
-     * listObjects, listRelations, listUsers, writeTuples, deleteTuples
+     * There are 10 enums and the value can be one of: check, batchCheck,
+     * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
+     * writeTuples, deleteTuples
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17555,18 +17875,20 @@ public class StaticEndpointBuilders {
     }
     /**
      * Wasm (camel-wasm)
-     * Invoke Wasm functions.
+     * Run Wasm programs (WASI Preview 1 command modules) with the message body
+     * as standard input.
      * 
      * Category: core,script
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-wasm
      * 
-     * Syntax: <code>wasm:functionName</code>
+     * Syntax: <code>wasm:module</code>
      * 
-     * Path parameter: functionName (required)
-     * The Function Name
+     * Path parameter: module (required)
+     * The WASI Preview 1 command module to run, as a resource: by default from
+     * the classpath, or with a prefix such as classpath:, file: or http:
      * 
-     * @param path functionName
+     * @param path module
      * @return the dsl builder
      */
     public static WasmEndpointBuilderFactory.WasmEndpointBuilder wasm(String path) {
@@ -17574,20 +17896,22 @@ public class StaticEndpointBuilders {
     }
     /**
      * Wasm (camel-wasm)
-     * Invoke Wasm functions.
+     * Run Wasm programs (WASI Preview 1 command modules) with the message body
+     * as standard input.
      * 
      * Category: core,script
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-wasm
      * 
-     * Syntax: <code>wasm:functionName</code>
+     * Syntax: <code>wasm:module</code>
      * 
-     * Path parameter: functionName (required)
-     * The Function Name
+     * Path parameter: module (required)
+     * The WASI Preview 1 command module to run, as a resource: by default from
+     * the classpath, or with a prefix such as classpath:, file: or http:
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path functionName
+     * @param path module
      * @return the dsl builder
      */
     public static WasmEndpointBuilderFactory.WasmEndpointBuilder wasm(String componentName, String path) {
@@ -17757,7 +18081,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19
@@ -17776,7 +18100,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19

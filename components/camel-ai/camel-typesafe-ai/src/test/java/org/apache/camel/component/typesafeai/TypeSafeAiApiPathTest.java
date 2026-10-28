@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.typesafeai;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
-import org.apache.camel.semantic.SemanticQuestion;
-import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -83,9 +81,8 @@ class TypeSafeAiApiPathTest extends TypeSafeAiTestSupport {
         assertThat(configuration.getApiPath()).isEqualTo("/component");
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void componentPropertiesConfigureProducerAndSemanticAdapter(boolean semantic) throws Exception {
+    @Test
+    void componentPropertiesConfigureProducer() throws Exception {
         Main main = new Main();
         main.addProperty("camel.component.typesafe-ai.api-key", "test-key");
         main.addProperty("camel.component.typesafe-ai.base-url",
@@ -94,26 +91,15 @@ class TypeSafeAiApiPathTest extends TypeSafeAiTestSupport {
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() {
-                if (semantic) {
-                    SemanticQuestions.get(getContext()).replace("test", Map.of("refund", new SemanticQuestion(
-                            SemanticQuestion.Type.BOOLEAN, "Refund requested?", null,
-                            Map.of(), List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
-                    from("direct:request").setBody().language("semantic", "ref:refund");
-                } else {
-                    from("direct:request").to("typesafe-ai:configured");
-                }
+                from("direct:request").to("typesafe-ai:configured");
             }
         });
-        respond = request -> result(Map.of(semantic ? "question" : "predicate", Map.of("type", "noul", "noul", 0.9)));
+        respond = request -> result(Map.of("predicate", Map.of("type", "noul", "noul", 0.9)));
         try {
             main.start();
             try (var producer = main.getCamelContext().createProducerTemplate()) {
-                Object response = producer.requestBody("direct:request", semantic ? "Refund" : request("Refund"));
-                if (semantic) {
-                    assertThat(response).isEqualTo(true);
-                } else {
-                    assertThat(((JsonObject) response).getJsonObject("answers")).containsKey("predicate");
-                }
+                Object response = producer.requestBody("direct:request", request("Refund"));
+                assertThat(((JsonObject) response).getJsonObject("answers")).containsKey("predicate");
                 assertThat(paths).containsExactly("/gateway/v1/decision");
                 assertThat(requests).hasSize(1);
                 assertThat(requests.peek().get("state")).isEqualTo("Refund");

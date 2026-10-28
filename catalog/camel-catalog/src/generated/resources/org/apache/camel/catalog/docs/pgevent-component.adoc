@@ -48,6 +48,39 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Listening and notifying
+
+The consumer listens on a channel (`LISTEN`), and the message body is the payload of each notification.
+The producer sends the message body as the payload of a notification on the channel (`NOTIFY`):
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: pgevent://localhost:5432/mydb/orders
+      parameters:
+        user: postgres
+        pass: "{{pg.password}}"
+      steps:
+        - log:
+            message: "Notification on channel orders: ${body}"
+- route:
+    from:
+      uri: timer:notify
+      parameters:
+        period: 5000
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "new order at ${date:now:HH:mm:ss}"
+        - to:
+            uri: pgevent://localhost:5432/mydb/orders
+            parameters:
+              user: postgres
+              pass: "{{pg.password}}"
+----
+
 === Common problems
 
 ==== Unable to connect to PostgreSQL database using DataSource

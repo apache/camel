@@ -25,6 +25,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
@@ -35,7 +36,7 @@ import picocli.CommandLine;
                      footer = {
                              "%nExamples:",
                              "  camel plugin get",
-                             "  camel plugin get --all" })
+                             "  camel plugin get --json" })
 public class PluginGet extends PluginBaseCommand {
 
     @Deprecated
@@ -46,6 +47,9 @@ public class PluginGet extends PluginBaseCommand {
     @CommandLine.Option(names = { "--repos" }, defaultValue = "false", description = "Display maven repository column")
     public boolean repos;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    public boolean jsonOutput;
+
     public PluginGet(CamelJBangMain main) {
         super(main);
     }
@@ -55,9 +59,29 @@ public class PluginGet extends PluginBaseCommand {
         if (all) {
             PluginList delegate = new PluginList(getMain());
             delegate.repos = this.repos;
+            delegate.jsonOutput = this.jsonOutput;
             return delegate.doCall();
         }
 
+        List<Row> rows = installedRows();
+        if (jsonOutput) {
+            printJson(rows, "installed");
+            return 0;
+        }
+
+        if (!rows.isEmpty()) {
+            printer().println("Installed plugins:");
+            printer().println();
+        }
+        printRows(rows);
+
+        return 0;
+    }
+
+    /**
+     * The plugins in the plugin configuration of the user.
+     */
+    List<Row> installedRows() {
         List<Row> rows = new ArrayList<>();
 
         JsonObject plugins = loadConfig().getMap("plugins");
@@ -75,14 +99,31 @@ public class PluginGet extends PluginBaseCommand {
             String vendor = resolveVendor(name);
             rows.add(new Row(name, command, dependency, description, repos, vendor));
         });
+        return rows;
+    }
 
-        if (!rows.isEmpty()) {
-            printer().println("Installed plugins:");
-            printer().println();
+    /**
+     * Prints the plugins as a JSON array.
+     *
+     * @param rows   the plugins
+     * @param status installed, or available when not installed
+     */
+    protected void printJson(List<Row> rows, String status) {
+        JsonOutput.printList(printer(), rows.stream().map(r -> toJson(r, status)).toList());
+    }
+
+    protected static JsonObject toJson(Row r, String status) {
+        JsonObject jo = new JsonObject();
+        jo.put("name", r.name);
+        jo.put("command", r.command);
+        jo.put("status", status);
+        jo.put("vendor", r.vendor);
+        jo.put("dependency", r.dependency);
+        if (r.repos != null) {
+            jo.put("repos", r.repos);
         }
-        printRows(rows);
-
-        return 0;
+        jo.put("description", r.description);
+        return jo;
     }
 
     private String resolveVendor(String name) {

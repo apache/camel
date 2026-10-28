@@ -152,13 +152,13 @@ XML::
 <route>
     <from uri="direct:a"/>
     <setHeaders>
-	    <setHeader name="foo">
-			<simple>${body}</simple>
-		</setHeader>
-		<setHeader name="bar">
-			<simple resultType="java.lang.Boolean">${header.foo} > 10</simple>
-		</setHeader>
-	</setHeaders>
+        <setHeader name="foo">
+            <simple>${body}</simple>
+        </setHeader>
+        <setHeader name="bar">
+            <simple resultType="java.lang.Boolean">${header.foo} > 10</simple>
+        </setHeader>
+    </setHeaders>
     <to uri="direct:b"/>
 </route>
 ----
@@ -195,7 +195,7 @@ If the order in which the headers should be set is important, use a `LinkedHashM
 ._Java-only: using a LinkedHashMap to set headers in order_
 [source,java]
 ----
-private Map<String, Expression> headerMap = new java.util.LinkedHashMap<>();
+Map<String, Expression> headerMap = new java.util.LinkedHashMap<>();
 headerMap.put("foo", ConstantLanguage.constant("ABC"));
 headerMap.put("bar", ConstantLanguage.constant("XYZ"));
 

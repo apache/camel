@@ -46,7 +46,7 @@ public abstract class AbstractKeyManagersParametersFactoryBean extends AbstractJ
     @XmlAttribute
     @Metadata(label = "advanced", description = "The algorithm name for the KeyManagerFactory used to create"
                                                 + " the KeyManagers represented by this object's configuration."
-                                                + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                                                + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     protected String algorithm;
 
     @XmlTransient

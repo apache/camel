@@ -36,3 +36,4 @@ SQL text, endpoint URI, route, exchange ID, timing, and row counts.
 - `s` — cycle sort column
 - `S` — reverse sort order
 - `w` — toggle word wrap
+- `F4` — edit the selected statement in the SQL Query tab

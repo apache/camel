@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -27,6 +28,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedRouteGroupMBean;
 import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.TimeUtils;
 
 @ManagedResource(description = "Managed Route Group")
@@ -211,6 +213,32 @@ public class ManagedRouteGroup extends ManagedPerformanceCounter implements Mana
                 }
             };
         }
+    }
+
+    @Override
+    public void processExchange(Exchange exchange, String type) {
+        if (isOutermostRouteOfGroup(exchange)) {
+            super.processExchange(exchange, type);
+        }
+    }
+
+    @Override
+    public void completedExchange(Exchange exchange, long time) {
+        if (isOutermostRouteOfGroup(exchange)) {
+            super.completedExchange(exchange, time);
+        }
+    }
+
+    @Override
+    public void failedExchange(Exchange exchange) {
+        if (isOutermostRouteOfGroup(exchange)) {
+            super.failedExchange(exchange);
+        }
+    }
+
+    private boolean isOutermostRouteOfGroup(Exchange exchange) {
+        UnitOfWork uow = exchange.getUnitOfWork();
+        return uow == null || uow.routeStackLevel(r -> group.equals(r.getGroup())) <= 1;
     }
 
     @Override

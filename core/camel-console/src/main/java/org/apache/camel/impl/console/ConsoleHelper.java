@@ -19,8 +19,12 @@ package org.apache.camel.impl.console;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Resource;
@@ -145,6 +149,71 @@ public final class ConsoleHelper {
             return location.substring(0, pos);
         }
         return location;
+    }
+
+    /**
+     * Validates the capacity of a console buffer.
+     *
+     * @throws IllegalArgumentException if the capacity is not between the given minimum and 1000
+     */
+    static void checkCapacity(int capacity, int min) {
+        if (capacity > 1000 || capacity < min) {
+            throw new IllegalArgumentException("Capacity must be between " + min + " and 1000");
+        }
+    }
+
+    /**
+     * Adds the element to the bounded queue, removing the oldest elements to make room.
+     */
+    static <T> void offerLast(Queue<T> queue, T element) {
+        while (!queue.offer(element)) {
+            queue.poll();
+        }
+    }
+
+    /**
+     * Creates a bounded queue of the given capacity holding the newest elements of the given queue.
+     */
+    static <T> Queue<T> resize(Queue<T> queue, int capacity) {
+        Queue<T> answer = new LinkedBlockingQueue<>(Math.max(1, capacity));
+        for (T element : queue) {
+            offerLast(answer, element);
+        }
+        return answer;
+    }
+
+    /**
+     * Creates a ring buffer of the given capacity holding the newest entries of the given ring buffer, so that slot 0
+     * is the next one to write.
+     *
+     * @param ring the ring buffer
+     * @param next the next slot to write in the given ring buffer
+     */
+    static <T> T[] resize(T[] ring, int next, int capacity) {
+        int length = Math.max(1, capacity);
+        List<T> entries = new ArrayList<>(ring.length);
+        for (int i = 0; i < ring.length; i++) {
+            T entry = ring[(next + i) % ring.length];
+            if (entry != null) {
+                entries.add(entry);
+            }
+        }
+        T[] answer = Arrays.copyOf(ring, length);
+        Arrays.fill(answer, null);
+        // the newest entries, oldest first, at the end: slot 0 holds the oldest (or nothing) and is written next
+        int kept = Math.min(entries.size(), length);
+        for (int i = 0; i < kept; i++) {
+            answer[length - kept + i] = entries.get(entries.size() - kept + i);
+        }
+        return answer;
+    }
+
+    /**
+     * Returns the slot to write in a ring buffer of the given length, and moves the position to the next slot.
+     */
+    static int nextSlot(AtomicInteger pos, int length) {
+        // the position may come from a larger ring buffer that has just been resized
+        return pos.getAndUpdate(operand -> (operand + 1) % length) % length;
     }
 
 }

@@ -426,6 +426,10 @@ Kamelet-style deployments you may want to constrain this to a fixed set of compo
 option takes a comma-separated allow-list of component schemes; a resolved recipient whose scheme is not in the list
 is rejected (independently of `ignoreInvalidEndpoint`). By default the option is unset and any scheme is allowed.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -433,8 +437,8 @@ from("direct:start")
     .toD().allowedSchemes("http,https").uri("${header.target}");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -443,16 +447,18 @@ And in XML:
 </route>
 ----
 
-And in YAML:
-
+YAML::
++
 [source,yaml]
 ----
-- from:
-    uri: direct:start
-    steps:
-      - toD:
-          uri: "${header.target}"
-          allowedSchemes: "http,https"
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - toD:
+            uri: "${header.target}"
+            allowedSchemes: "http,https"
 ----
+====
 
 NOTE: `wireTap` extends `toD` and therefore honours the same `allowedSchemes` option.

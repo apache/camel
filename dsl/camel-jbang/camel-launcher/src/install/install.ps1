@@ -42,6 +42,27 @@ function Test-ValidVersion {
     return $Value -match '\A[0-9]+\.[0-9]+\.[0-9]+\z'
 }
 
+function Test-ValidLine {
+    param([string] $Value)
+    return $Value -match '\A[0-9]+\.[0-9]+\z'
+}
+
+# Classifies a -Version value as an exact release (X.Y.Z), a release line (X.Y) or the newest LTS release (LTS,
+# case-insensitive). Returns 'exact', 'line' or 'lts', or $null for a malformed value.
+function Get-SelectorKind {
+    param([string] $Value)
+    if ($Value -ieq 'LTS') {
+        return 'lts'
+    }
+    if (Test-ValidVersion $Value) {
+        return 'exact'
+    }
+    if (Test-ValidLine $Value) {
+        return 'line'
+    }
+    return $null
+}
+
 function Test-ValidSha256 {
     param([string] $Value, [string] $Label)
     if ($Value -notmatch '\A[0-9a-f]{64}\z') {
@@ -103,9 +124,10 @@ public static class CamelInstallCertValidator {
     }
 }
 
-# Downloads $Url to $OutFile; used for both the manifest and archive fetches.
+# Downloads $Url to $OutFile; used for both the manifest and archive fetches. $FailureMessage, when set,
+# replaces the generic "failed to download" message (the download error detail is still appended).
 function Save-RemoteFile {
-    param([string] $Url, [string] $OutFile)
+    param([string] $Url, [string] $OutFile, [string] $FailureMessage)
     try {
         if ($UseSkipCertificateCheck) {
             Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing -SkipCertificateCheck | Out-Null
@@ -116,6 +138,9 @@ function Save-RemoteFile {
         $detail = $_.Exception.Message
         if ($_.Exception.InnerException) {
             $detail = "$detail -- $($_.Exception.InnerException.Message)"
+        }
+        if ($FailureMessage) {
+            Fail "$FailureMessage ($detail)"
         }
         Fail "failed to download $Url ($detail)"
     }
@@ -226,17 +251,17 @@ function Test-ArchiveEntry {
     }
 }
 
-# Runs the freshly staged upstream launcher; a nonzero exit (e.g. no Java 17+ available) aborts the
+# Runs the freshly staged upstream launcher; a nonzero exit (e.g. no Java 21+ available) aborts the
 # install and leaves the previously active installation untouched.
 function Test-StagedLauncher {
     param([string] $LauncherPath)
     try {
         & $LauncherPath 'version' *> $null
     } catch {
-        Fail "staged launcher failed verification (Java 17+ required)"
+        Fail "staged launcher failed verification (Java 21+ required)"
     }
     if ($LASTEXITCODE -ne 0) {
-        Fail "staged launcher failed verification (Java 17+ required)"
+        Fail "staged launcher failed verification (Java 21+ required)"
     }
 }
 
@@ -266,18 +291,19 @@ function Set-CamelShim {
     Move-Item -LiteralPath $tempShim -Destination $finalShim -Force
 }
 
-# Records whether this install is pinned to an explicit version, so `camel self-update` can refuse to move
-# a deliberately pinned install. Skipped when CAMEL_INSTALL_SELF_UPDATE=true: self-update always passes its
-# own resolved -Version for TOCTOU-safety (see SelfUpdateCommand), which is not a human pinning a version
-# and must not create or clear a pin either way.
+# Records whether this install is pinned, so `camel self-update` can honour it: an exact X.Y.Z pin refuses to
+# move, an X.Y or LTS pin only moves within that selector. The selector the user asked for is written, not the
+# version it resolved to, so an exact pin is unchanged and a selector pin keeps tracking its alias. Skipped when
+# CAMEL_INSTALL_SELF_UPDATE=true: self-update always passes its own resolved -Version for TOCTOU-safety (see
+# SelfUpdateCommand), which is not a human pinning a version and must not create or clear a pin either way.
 function Update-PinState {
-    param([string] $RequestedVersion, [string] $ResolvedVersion)
+    param([string] $RequestedVersion)
 
     if ($env:CAMEL_INSTALL_SELF_UPDATE -eq 'true') {
         return
     }
     if ($RequestedVersion) {
-        Set-Content -LiteralPath $PinnedVersionFile -Value $ResolvedVersion -NoNewline
+        Set-Content -LiteralPath $PinnedVersionFile -Value $RequestedVersion -NoNewline
     } elseif (Test-Path -LiteralPath $PinnedVersionFile) {
         Remove-Item -LiteralPath $PinnedVersionFile -Force
     }
@@ -311,8 +337,15 @@ function Add-UserPath {
     }
 }
 
-if ($Version -and -not (Test-ValidVersion $Version)) {
-    Fail "invalid -Version value: $Version (expected X.Y.Z)"
+$SelectorKind = $null
+if ($Version) {
+    $SelectorKind = Get-SelectorKind $Version
+    if (-not $SelectorKind) {
+        Fail "invalid -Version value: $Version (expected X.Y.Z, X.Y or LTS)"
+    }
+    if ($SelectorKind -eq 'lts') {
+        $Version = 'LTS'
+    }
 }
 
 New-Item -ItemType Directory -Force -Path $InstallRoot | Out-Null
@@ -320,19 +353,29 @@ $stagingRoot = Join-Path $InstallRoot ("staging." + [Guid]::NewGuid().ToString('
 New-Item -ItemType Directory -Path $stagingRoot | Out-Null
 
 try {
-    if ($Version) {
+    $manifestFailure = $null
+    if ($SelectorKind -eq 'lts') {
+        $manifestUrl = "$ManifestBaseUrl/lts.properties"
+    } elseif ($Version) {
         $manifestUrl = "$ManifestBaseUrl/$Version.properties"
     } else {
         $manifestUrl = "$ManifestBaseUrl/latest.properties"
     }
+    if ($SelectorKind -eq 'lts' -or $SelectorKind -eq 'line') {
+        $manifestFailure = "no manifest for $Version at $manifestUrl; the website may not publish aliases yet"
+    }
     $manifestFile = Join-Path $stagingRoot 'manifest.properties'
-    Save-RemoteFile -Url $manifestUrl -OutFile $manifestFile
+    Save-RemoteFile -Url $manifestUrl -OutFile $manifestFile -FailureMessage $manifestFailure
 
     $manifest = Read-Manifest -Path $manifestFile
     $resolvedVersion = $manifest['version']
 
-    if ($Version -and $Version -ne $resolvedVersion) {
+    # Resolve the selector once: everything below works on the exact resolved version.
+    if ($SelectorKind -eq 'exact' -and $Version -cne $resolvedVersion) {
         Fail "manifest version ($resolvedVersion) does not match requested version ($Version)"
+    }
+    if ($SelectorKind -eq 'line' -and -not $resolvedVersion.StartsWith("$Version.", [StringComparison]::Ordinal)) {
+        Fail "manifest version ($resolvedVersion) is not in the requested release line ($Version)"
     }
 
     $archiveUrl = "$MavenBaseUrl/$resolvedVersion/camel-launcher-$resolvedVersion-bin.zip"
@@ -354,7 +397,7 @@ try {
     Test-StagedLauncher -LauncherPath $stagedLauncher
 
     Set-CamelShim -Version $resolvedVersion -StagedRoot $stagedRoot
-    Update-PinState -RequestedVersion $Version -ResolvedVersion $resolvedVersion
+    Update-PinState -RequestedVersion $Version
     Add-UserPath -Dir $BinDir
 
     Write-Host "Installed Camel CLI $resolvedVersion to $(Join-Path $DataRoot $resolvedVersion)"

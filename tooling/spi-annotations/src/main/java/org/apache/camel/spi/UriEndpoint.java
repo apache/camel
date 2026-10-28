@@ -201,6 +201,28 @@ public @interface UriEndpoint {
     /**
      * Whether the component does remote communication such as connecting to an external system over the network. Set
      * this to false for internal components such as log, message transformations and other kinds.
+     * <p/>
+     * Not remote does not mean that the component stays inside the CamelContext: a component that runs code, or reads a
+     * file or a template, is not remote either. See {@link #internal()}.
      */
     boolean remote() default true;
+
+    /**
+     * Whether the component stays inside the CamelContext: it only reaches the routes, the in-memory state (a queue, a
+     * cache, metrics) and the log of the CamelContext. It never reads or writes a file, uses the network, runs a
+     * process, or runs code or loads a resource named in its URI. A message it hands to a route (direct, seda) still
+     * does whatever that route does.
+     * <p/>
+     * This is about what the component can do, not what it is usually used for: a capability counts even when it sits
+     * behind an option that is off by default and seldom used, or in a feature that ships with the component. So
+     * dataset-test is not internal (it polls the endpoint named in its URI), nor is once (it can read its body from a
+     * file), nor micrometer (it evaluates its options with the simple language, which can load its text from a file or
+     * a URL).
+     * <p/>
+     * An internal component is not remote, so it sets {@code remote = false} too. Tooling uses this to tell what stays
+     * inside the integration, for example to send a test message to log or direct without asking the user first.
+     *
+     * @since 4.24
+     */
+    boolean internal() default false;
 }

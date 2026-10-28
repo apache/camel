@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.mail;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.services.gmail.Gmail;
 import org.apache.camel.Category;
@@ -27,6 +29,9 @@ import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.component.google.mail.internal.GoogleMailConstants;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -45,6 +50,26 @@ import org.apache.camel.util.ObjectHelper;
              apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer",
              category = { Category.CLOUD, Category.API, Category.MAIL })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   description = "One message per poll with the return value of the method: a Gmail model"
+                                                 + " object, such as the ListMessagesResponse of messages/list, which is one"
+                                                 + " message and not split per mail. The model classes are GenericJson,"
+                                                 + " which is also a Map of the JSON fields"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names a parameter of the method, and"
+                                                + " must then be of the type of that parameter: a Message for content of"
+                                                + " messages/send, a Draft for content of drafts/create, a"
+                                                + " ModifyMessageRequest for modifyMessageRequest of messages/modify, or text"
+                                                + " for id. JSON text or a Map is not turned into a model object: the"
+                                                + " google-mail:draft and google-mail:update-message-labels transformers build"
+                                                + " the Draft and the ModifyMessageRequest. Without inBody the arguments come"
+                                                + " from the options and the CamelGoogleMail. headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                   description = "The return value of the method: a Gmail model object, such as the Message"
+                                                 + " of messages/send and messages/get, the Draft of drafts/create or the"
+                                                 + " ListMessagesResponse of messages/list; null for the methods without a"
+                                                 + " response, such as the deletes, messages/batchModify and users/stop. The"
+                                                 + " model classes are GenericJson, which is also a Map of the JSON fields"))
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration>
         implements EndpointServiceLocation {
 
@@ -52,6 +77,8 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
 
     @UriParam
     private GoogleMailConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Gmail client;
 
     public GoogleMailEndpoint(String uri, GoogleMailComponent component, GoogleMailApiName apiName, String methodName,
                               GoogleMailConfiguration endpointConfiguration) {
@@ -116,8 +143,24 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
         }
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Gmail getClient() {
-        return ((GoogleMailComponent) getComponent()).getClient(configuration);
+        Gmail answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleMailComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     @Override

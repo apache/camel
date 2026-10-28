@@ -48,7 +48,7 @@ public class ParamDefinition {
     @XmlAttribute(required = true)
     @Metadata(description = "The parameter name.", required = true)
     private String name;
-    @XmlAttribute(required = true)
+    @XmlAttribute
     @Metadata(description = "Sets the parameter type such as body, form, header, path, or query.",
               defaultValue = "path")
     private RestParamType type;

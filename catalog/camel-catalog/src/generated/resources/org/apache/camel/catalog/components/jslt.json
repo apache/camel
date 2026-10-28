@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jslt",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "jslt",
     "extendsScheme": "",
     "syntax": "jslt:resourceUri",
@@ -34,6 +34,10 @@
   "headers": {
     "CamelJsltString": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The JSLT Template as String", "constantName": "org.apache.camel.component.jslt.JsltConstants#HEADER_JSLT_STRING" },
     "CamelJsltResourceUri": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The resource URI", "constantName": "org.apache.camel.component.jslt.JsltConstants#HEADER_JSLT_RESOURCE_URI" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "json", "description": "JSON as text, bytes, a stream, a Reader or a java.io.File, such as the file of the file consumer. A Map, a List, a JsonNode or no body fails: marshal parsed JSON first" },
+    "producerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "format": "json", "description": "The result as JSON text, pretty printed with prettyPrint=true" }
   },
   "properties": {
     "resourceUri": { "index": 0, "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },

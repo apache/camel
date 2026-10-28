@@ -64,7 +64,7 @@ public class RawMailMessageTest extends CamelTestSupport {
 
     @Override
     protected void cleanupResources() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(jonesPop3, jonesRawPop3, jonesImap, jonesRawImap, davsclaus);
     }
 
     @Test

@@ -20,11 +20,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.support.PatternHelper;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
@@ -37,51 +38,62 @@ abstract class ProcessBaseCommand extends CamelCommand {
     }
 
     List<Long> findPids(String name) {
-        List<Long> pids = new ArrayList<>();
+        // the running integrations that match the name or pid (see ProcessFinder)
+        return ProcessFinder.find(name).stream().map(ProcessFinder.CamelProcess::pid)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
 
-        // we need to know the pids of the running camel integrations
-        if (name.matches("\\d+")) {
-            return List.of(Long.parseLong(name));
-        } else {
-            if (name.endsWith("!")) {
-                // exclusive this name only
-                name = name.substring(0, name.length() - 1);
-            } else if (!name.endsWith("*")) {
-                // lets be open and match all that starts with this pattern
-                name = name + "*";
-            }
-        }
+    /**
+     * What a listing does with the status of a running integration.
+     */
+    @FunctionalInterface
+    interface StatusConsumer {
+        void accept(ProcessHandle ph, JsonObject root) throws Exception;
+    }
 
-        final long cur = ProcessHandle.current().pid();
-        final String pattern = name;
+    /**
+     * Calls the consumer with the status of each running integration that matches the name or pid. A status that the
+     * listing cannot read, such as one of an older Camel without a key the listing needs, does not break the listing of
+     * the other integrations: that integration is skipped with a warning on stderr.
+     *
+     * @param  name         the name or pid; all the running integrations with the default {@code *}
+     * @param  consumer     reads the status of an integration
+     * @throws CliException with exit code 3 when a name or pid given on the command line matches no running integration
+     */
+    protected void forEachIntegration(String name, StatusConsumer consumer) {
+        List<Long> pids = findIntegrationPids(name);
         ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
+                .filter(ph -> pids.contains(ph.pid()))
                 .forEach(ph -> {
                     JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
                     if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        // ignore file extension, so it is easier to match by name
-                        pName = FileUtil.onlyName(pName);
-                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                            pids.add(ph.pid());
-                        } else {
-                            // try camel context name
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
+                        try {
+                            consumer.accept(ph, root);
+                        } catch (Exception e) {
+                            printer().printWarn("Skipped the integration with pid " + ph.pid()
+                                                + ": cannot read its status (" + e.getClass().getSimpleName()
+                                                + (e.getMessage() != null ? ": " + e.getMessage() : "") + ")");
                         }
                     }
                 });
+    }
 
-        return pids;
+    /**
+     * The pids of the running integrations that match the name or pid, all of them with the default {@code *}. Without
+     * a name and with nothing running, prints {@code No running Camel integrations} on stderr.
+     *
+     * @throws CliException with exit code 3 when a name or pid given on the command line matches no running integration
+     */
+    List<Long> findIntegrationPids(String name) {
+        if (name == null || name.isBlank() || "*".equals(name)) {
+            List<Long> pids = findPids("*");
+            if (pids.isEmpty()) {
+                printer().printDiagnostic("No running Camel integrations");
+            }
+            return pids;
+        }
+        return ProcessFinder.requireAny(name).stream().map(ProcessFinder.CamelProcess::pid)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static long extractSince(ProcessHandle ph) {

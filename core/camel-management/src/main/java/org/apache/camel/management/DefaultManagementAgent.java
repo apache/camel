@@ -17,9 +17,11 @@
 package org.apache.camel.management;
 
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -36,6 +38,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ManagementMBeansLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.support.management.DefaultManagementMBeanAssembler;
@@ -60,6 +64,13 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     // need a name -> actual name mapping as some servers changes the names (such as WebSphere)
     private final ConcurrentMap<ObjectName, ObjectName> mbeansRegistered = new ConcurrentHashMap<>();
+    // the registered processor and step mbeans by the route they belong to and by their id, so they can be found
+    // without reading every processor mbean of the CamelContext (or walking every route) which is slow with many routes
+    private final ConcurrentMap<ObjectName, ProcessorMBean> processorMBeans = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Set<ObjectName>> routeProcessors = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Set<ObjectName>> routeSteps = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ManagedProcessorMBean> processorsById = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ManagedProcessorMBean> stepsById = new ConcurrentHashMap<>();
 
     private String mBeanServerDefaultDomain = DEFAULT_DOMAIN;
     private String mBeanObjectDomainName = DEFAULT_DOMAIN;
@@ -355,27 +366,95 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     @Override
     public void register(Object obj, ObjectName name, boolean forceRegistration) throws JMException {
+        ObjectName registeredName;
         try {
-            registerMBeanWithServer(obj, name, forceRegistration);
+            registeredName = registerMBeanWithServer(obj, name, forceRegistration);
         } catch (NotCompliantMBeanException e) {
             // If this is not a "normal" MBean, then try to deploy it using JMX annotations
             ObjectHelper.notNull(assembler, "ManagementMBeanAssembler", camelContext);
             Object mbean = assembler.assemble(server, obj, name);
+            registeredName = null;
             if (mbean != null) {
                 // and register the mbean
-                registerMBeanWithServer(mbean, name, forceRegistration);
+                registeredName = registerMBeanWithServer(mbean, name, forceRegistration);
+            }
+        }
+        if (registeredName != null) {
+            removeProcessorMBean(name);
+            if (obj instanceof ManagedProcessorMBean mp) {
+                addProcessorMBean(name, registeredName, mp);
             }
         }
     }
 
     @Override
     public void unregister(ObjectName name) throws JMException {
+        removeProcessorMBean(name);
         if (isRegistered(name)) {
             ObjectName on = mbeansRegistered.remove(name);
             server.unregisterMBean(on);
             LOG.debug("Unregistered MBean with ObjectName: {}", name);
         } else {
             mbeansRegistered.remove(name);
+        }
+    }
+
+    /**
+     * Gets the names of the registered processor mbeans that belong to the given route.
+     * <p/>
+     * This avoids querying (and reading the route id of) every processor mbean of the CamelContext, which is slow when
+     * there are many routes.
+     *
+     * @param  routeId the route id
+     * @param  steps   whether to get the step mbeans, instead of the processor mbeans
+     * @return         the names the mbeans are registered with in the mbean server, or an empty list
+     */
+    public List<ObjectName> getRouteProcessorMBeanNames(String routeId, boolean steps) {
+        Set<ObjectName> names = (steps ? routeSteps : routeProcessors).get(routeId);
+        return names != null ? new ArrayList<>(names) : new ArrayList<>();
+    }
+
+    /**
+     * Gets the managed object of the registered processor mbean with the given id.
+     * <p/>
+     * This avoids walking every route to find the processor and its definition, which is slow when there are many
+     * routes.
+     *
+     * @param  id    the processor id
+     * @param  steps whether to get a step mbean, instead of a processor mbean
+     * @return       the managed object, or {@code null} if no such mbean is registered
+     */
+    public ManagedProcessorMBean getProcessorMBean(String id, boolean steps) {
+        return (steps ? stepsById : processorsById).get(id);
+    }
+
+    private void addProcessorMBean(ObjectName name, ObjectName registeredName, ManagedProcessorMBean mbean) {
+        ProcessorMBean pm = new ProcessorMBean(
+                registeredName, mbean, mbean.getRouteId(), mbean.getProcessorId(),
+                mbean instanceof ManagedStepMBean);
+        processorMBeans.put(name, pm);
+        if (pm.routeId() != null) {
+            (pm.step() ? routeSteps : routeProcessors).computeIfAbsent(pm.routeId(), k -> ConcurrentHashMap.newKeySet())
+                    .add(registeredName);
+        }
+        if (pm.id() != null) {
+            // keep the first if a custom name strategy registers more mbeans with the same id
+            (pm.step() ? stepsById : processorsById).putIfAbsent(pm.id(), mbean);
+        }
+    }
+
+    private void removeProcessorMBean(ObjectName name) {
+        ProcessorMBean old = processorMBeans.remove(name);
+        if (old != null) {
+            if (old.routeId() != null) {
+                (old.step() ? routeSteps : routeProcessors).computeIfPresent(old.routeId(), (k, names) -> {
+                    names.remove(old.registeredName());
+                    return names.isEmpty() ? null : names;
+                });
+            }
+            if (old.id() != null) {
+                (old.step() ? stepsById : processorsById).remove(old.id(), old.mbean());
+            }
         }
     }
 
@@ -450,7 +529,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         ServiceHelper.stopService(assembler);
     }
 
-    private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceRegistration)
+    private ObjectName registerMBeanWithServer(Object obj, ObjectName name, boolean forceRegistration)
             throws JMException {
 
         // have we already registered the bean, there can be shared instances in the camel routes
@@ -477,7 +556,9 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             ObjectName registeredName = instance.getObjectName();
             LOG.debug("Registered MBean with ObjectName: {}", registeredName);
             mbeansRegistered.put(name, registeredName);
+            return registeredName;
         }
+        return null;
     }
 
     protected void createMBeanServer() {
@@ -506,4 +587,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         return MBeanServerFactory.createMBeanServer(mBeanServerDefaultDomain);
     }
 
+    private record ProcessorMBean(
+            ObjectName registeredName, ManagedProcessorMBean mbean, String routeId, String id, boolean step) {
+    }
 }

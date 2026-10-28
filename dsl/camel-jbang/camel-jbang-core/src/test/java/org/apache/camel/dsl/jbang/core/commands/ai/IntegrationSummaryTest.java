@@ -189,6 +189,152 @@ class IntegrationSummaryTest {
     }
 
     @Test
+    void errorHandlingIsNotAFlow() {
+        // fail-well/error-handling: a global dead letter channel and onException to parked, and payment-provider with
+        // no error handler
+        String yaml = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:parked
+                - onException:
+                    exception:
+                      - java.lang.IllegalStateException
+                    handled:
+                      constant: "true"
+                    steps:
+                      - to:
+                          uri: direct:parked
+                - route:
+                    id: checkout
+                    from:
+                      uri: file:orders
+                      steps:
+                        - to:
+                            uri: direct:charge
+                - route:
+                    id: payment-provider
+                    errorHandler:
+                      noErrorHandler: {}
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - log:
+                            message: charging
+                - route:
+                    id: parked
+                    from:
+                      uri: direct:parked
+                      steps:
+                        - to:
+                            uri: file:parked
+                """;
+        Overview o = ProjectOverview.analyze(
+                Path.of("shop"), Map.of("error-handling.camel.yaml", yaml), ProjectOverviewTest.CATALOG);
+        String md = IntegrationSummary.render(o, null, null, null, "2026-10-08");
+
+        String flows = md.substring(md.indexOf("## Flows between routes"), md.indexOf("## Error handling"));
+        assertThat(flows).contains("`checkout` calls `payment-provider`").doesNotContain("parked")
+                .doesNotContain("error-handler@");
+        assertThat(md).contains("## Error handling")
+                .contains("- dead letter channel (global, error-handling.camel.yaml:1): failures to `parked`")
+                .contains("- onException IllegalStateException (global, error-handling.camel.yaml:4): failures to `parked`")
+                .contains("- no error handler in `payment-provider`: failures go back to the caller");
+    }
+
+    @Test
+    void errorHandlingNamesWhatNoRouteConsumesAndTheConsumersOfUncalledRoutes() {
+        // a dead letter queue on a broker, and a route with no error handler that no route calls (CAMEL-25467)
+        String yaml = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: kafka:dlq
+                - route:
+                    id: lonely
+                    errorHandler:
+                      noErrorHandler: {}
+                    from:
+                      uri: timer:lonely
+                      steps:
+                        - to:
+                            uri: kafka:out
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("shop"), Map.of("app.camel.yaml", yaml), ProjectOverviewTest.CATALOG);
+        String md = IntegrationSummary.render(o, null, null, null, "2026-10-13");
+
+        assertThat(md).contains("- dead letter channel (global, app.camel.yaml:1): failures to `kafka:dlq`")
+                .contains("- no error handler in `lonely`, and no route calls it: failures go back to the consumer of"
+                          + " `timer:lonely`")
+                .doesNotContain("failures go back to the caller");
+    }
+
+    @Test
+    void errorHandlingNamesTheErrorHandlerOfARoute() {
+        // fail-well/error-handling: the parked route has a file and a dead letter channel of its own
+        String parked = """
+                - route:
+                    id: parked
+                    errorHandler:
+                      deadLetterChannel:
+                        deadLetterUri: "log:parking-failed?level=ERROR"
+                    from:
+                      uri: direct:parked
+                      steps:
+                        - to:
+                            uri: file:parked
+                """;
+        String java = """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Audit extends RouteBuilder {
+                    public void configure() {
+                        from("direct:audit").routeId("audit").errorHandler(deadLetterChannel("log:audit-failed"))
+                            .to("file:audit");
+                    }
+                }
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("shop"),
+                Map.of("parked.camel.yaml", parked, "src/main/java/Audit.java", java), ProjectOverviewTest.CATALOG);
+        String md = IntegrationSummary.render(o, null, null, null, "2026-10-14");
+
+        assertThat(md).contains("- dead letter channel of `parked` (parked.camel.yaml:1): failures to `log:parking-failed`")
+                .contains("- dead letter channel of `audit` (src/main/java/Audit.java:")
+                .contains("failures to `log:audit-failed`")
+                // a route's own is not the error handling of its file
+                .doesNotContain("(global")
+                // what a route sends while it is not handling a failure is not its error handling
+                .doesNotContain("failures to `file:parked`");
+    }
+
+    @Test
+    void errorHandlingIsNotAFlowInJava() {
+        String java = """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Shop extends RouteBuilder {
+                    public void configure() {
+                        onException(IllegalStateException.class).handled(true).to("direct:parked");
+
+                        from("file:orders").routeId("checkout")
+                            .to("direct:charge");
+
+                        from("direct:charge").routeId("payment-provider").errorHandler(noErrorHandler())
+                            .log("charging");
+
+                        from("direct:parked").routeId("parked")
+                            .to("file:parked");
+                    }
+                }
+                """;
+        Overview o = ProjectOverview.analyze(
+                Path.of("shop"), Map.of("src/main/java/Shop.java", java), ProjectOverviewTest.CATALOG);
+        String md = IntegrationSummary.render(o, null, null, null, "2026-10-08");
+
+        assertThat(md).contains("`checkout` calls `payment-provider`")
+                .contains("- onException IllegalStateException (global, src/main/java/Shop.java:")
+                .contains("- no error handler in `payment-provider`: failures go back to the caller");
+    }
+
+    @Test
     void factsOnlySummary() {
         Overview o = ProjectOverviewTest.overview();
         String text = IntegrationSummary.render(o, null, null, null, "2026-09-29");

@@ -1327,7 +1327,7 @@ class YamlCompletionTest {
 
         AutocompletePopup.CompletionItem item = new AutocompletePopup.CompletionItem(
                 "expression", "The expression", "object", null, false, null, "common", true);
-        viewer.insertYamlCompletion(item, false, "          ");
+        viewer.completion().insertYamlCompletion(item, false, "          ");
 
         String result = viewer.editState().text();
         assertThat(result).contains("expression:\n            ");
@@ -1356,7 +1356,7 @@ class YamlCompletionTest {
 
         AutocompletePopup.CompletionItem item = new AutocompletePopup.CompletionItem(
                 "streaming", "Enable streaming", "boolean", "false", false, null, "common");
-        viewer.insertYamlCompletion(item, false, "          ");
+        viewer.completion().insertYamlCompletion(item, false, "          ");
 
         String result = viewer.editState().text();
         assertThat(result).contains("streaming: ");
@@ -1390,7 +1390,7 @@ class YamlCompletionTest {
 
         AutocompletePopup.CompletionItem item = new AutocompletePopup.CompletionItem(
                 "steps", "Steps", "array", null, false, null, "common");
-        viewer.insertYamlCompletion(item, false, "            ");
+        viewer.completion().insertYamlCompletion(item, false, "            ");
 
         String result = viewer.editState().text();
         // steps: should be at same indent as resilience4jConfiguration (child of circuitBreaker)
@@ -1417,7 +1417,7 @@ class YamlCompletionTest {
         SourceViewer viewer = new SourceViewer();
         viewer.loadFile(file);
         viewer.enterEditMode();
-        viewer.setListItemNodeChecker(key -> "steps".equals(key) || "root".equals(key));
+        viewer.completion().setListItemNodeChecker(key -> "steps".equals(key) || "root".equals(key));
         // move cursor to line 5 (steps:) and press Enter
         viewer.editState().moveCursorToStart();
         for (int i = 0; i < 5; i++) {
@@ -1458,13 +1458,13 @@ class YamlCompletionTest {
 
         AutocompletePopup.CompletionItem expressionItem = new AutocompletePopup.CompletionItem(
                 "expression", "The expression", "object", null, false, null, "common", true);
-        viewer.insertYamlCompletion(expressionItem, false, "          ");
+        viewer.completion().insertYamlCompletion(expressionItem, false, "          ");
 
         // cursor now sits on the auto-inserted (whitespace-only, but real) child line
         String childLine = viewer.editState().getLine(viewer.editState().cursorRow());
         AutocompletePopup.CompletionItem constantItem = new AutocompletePopup.CompletionItem(
                 "constant", "A fixed value", "object", null, false, null, "language,core");
-        viewer.insertYamlCompletion(constantItem, false, childLine);
+        viewer.completion().insertYamlCompletion(constantItem, false, childLine);
 
         String result = viewer.editState().text();
         assertThat(result).contains("          expression:\n            constant:");
@@ -1532,7 +1532,7 @@ class YamlCompletionTest {
         SourceViewer viewer = new SourceViewer();
         viewer.loadFile(file);
         viewer.enterEditMode();
-        viewer.setListItemNodeChecker(key -> "steps".equals(key) || "root".equals(key));
+        viewer.completion().setListItemNodeChecker(key -> "steps".equals(key) || "root".equals(key));
         viewer.editState().moveCursorToStart();
         for (int i = 0; i < 6; i++) {
             viewer.editState().moveCursorDown();
@@ -1550,7 +1550,7 @@ class YamlCompletionTest {
 
         AutocompletePopup.CompletionItem beanItem = new AutocompletePopup.CompletionItem(
                 "bean", "Invokes a method on a bean", "object", null, false, null, "eip,endpoint");
-        viewer.insertYamlCompletion(beanItem, false, currentLine, true, viewer.editState().cursorCol());
+        viewer.completion().insertYamlCompletion(beanItem, false, currentLine, true, viewer.editState().cursorCol());
 
         String result = viewer.editState().text();
         assertThat(result).contains("      - bean:");
@@ -1578,7 +1578,7 @@ class YamlCompletionTest {
         SourceViewer viewer = new SourceViewer();
         viewer.loadFile(file);
         viewer.enterEditMode();
-        viewer.setAutocompleteProvider(context -> List.of());
+        viewer.completion().setAutocompleteProvider(context -> List.of());
         viewer.editState().moveCursorToStart();
         for (int i = 0; i < 6; i++) {
             viewer.editState().moveCursorDown();

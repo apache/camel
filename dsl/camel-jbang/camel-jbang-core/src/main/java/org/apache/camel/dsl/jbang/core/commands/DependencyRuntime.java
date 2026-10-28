@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.model.DependencyRuntimeDTO;
@@ -56,7 +57,7 @@ public class DependencyRuntime extends CamelCommand {
         // read pom.xml
         if (!Files.exists(pomXml)) {
             printer().printErr(String.format("Cannot find %s", pomXml));
-            return 1;
+            return CliExitCode.NOT_FOUND;
         }
 
         Model model = RunHelper.loadMavenModel(pomXml);

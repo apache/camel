@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TuiToolRegistryCoreToolsTest {
@@ -76,5 +79,25 @@ class TuiToolRegistryCoreToolsTest {
                 "camel_run", "tui_infra")) {
             assertFalse(TuiToolRegistry.READ_ONLY_TOOLS.contains(mutating), mutating + " changes something");
         }
+    }
+
+    // a tool is one entry of TuiToolDefinitions: name, schema, handler and flags together, so none can be missed
+    @Test
+    void everyToolIsDefinedOnceWithItsHandler() {
+        TuiToolRegistry registry = new TuiToolRegistry(null);
+        Set<String> names = new HashSet<>();
+        for (TuiTool tool : TuiToolDefinitions.all(registry)) {
+            assertTrue(names.add(tool.name()), "defined twice: " + tool.name());
+        }
+        assertEquals(names, registry.getToolDefinitions().stream()
+                .map(TuiToolRegistry.ToolDef::name).collect(Collectors.toSet()));
+    }
+
+    @Test
+    void anUnknownToolIsRejected() {
+        TuiToolRegistry registry = new TuiToolRegistry(null);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> registry.execute("tui_no_such_tool", Map.of()));
+        assertTrue(e.getMessage().contains("Unknown tool: tui_no_such_tool"), e.getMessage());
     }
 }

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ibm-watson-language",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "ibm-watson-language",
     "extendsScheme": "",
     "syntax": "ibm-watson-language:label",
@@ -52,6 +52,10 @@
     "CamelIBMWatsonLanguageLanguage": { "index": 9, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The language of the text", "constantName": "org.apache.camel.component.ibm.watson.language.WatsonLanguageConstants#LANGUAGE" },
     "CamelIBMWatsonLanguageSentimentScore": { "index": 10, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Double", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The sentiment score", "constantName": "org.apache.camel.component.ibm.watson.language.WatsonLanguageConstants#SENTIMENT_SCORE" },
     "CamelIBMWatsonLanguageSentimentLabel": { "index": 11, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The sentiment label (positive, negative, neutral)", "constantName": "org.apache.camel.component.ibm.watson.language.WatsonLanguageConstants#SENTIMENT_LABEL" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "The text to analyze for analyzeText, or the URL of the page for analyzeUrl, read as text, unless the CamelIBMWatsonLanguageText or CamelIBMWatsonLanguageUrl header gives it. Without the header, no body or a blank one fails, and a Map or a POJO is analyzed as its toString(): marshal it first" },
+    "producerOut": { "carriers": [ "pojo" ], "javaType": "com.ibm.watson.natural_language_understanding.v1.model.AnalysisResults", "description": "The results of the features enabled (sentiment, entities, keywords and so on), with the sentiment score and label and the language in headers too. Converted to text, it is the JSON of the results" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Logical name" },

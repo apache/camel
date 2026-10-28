@@ -41,6 +41,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "authenticationScheme": target.getConfiguration().setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
         case "authenticationtoken":
         case "authenticationToken": target.getConfiguration().setAuthenticationToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "batchfailonfirsterror":
         case "batchFailOnFirstError": target.getConfiguration().setBatchFailOnFirstError(property(camelContext, boolean.class, value)); return true;
         case "batchparallelism":
@@ -49,6 +55,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": target.getConfiguration().setBatchSize(property(camelContext, int.class, value)); return true;
         case "batchtimeout":
         case "batchTimeout": target.getConfiguration().setBatchTimeout(property(camelContext, long.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunkingincluderawtext":
         case "chunkingIncludeRawText": target.getConfiguration().setChunkingIncludeRawText(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "chunkingmaxtokens":
@@ -61,6 +69,7 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "chunkingUseMarkdownTables": target.getConfiguration().setChunkingUseMarkdownTables(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "contentinbody":
         case "contentInBody": target.getConfiguration().setContentInBody(property(camelContext, boolean.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "docodeenrichment":
         case "doCodeEnrichment": target.getConfiguration().setDoCodeEnrichment(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "doformulaenrichment":
@@ -81,8 +90,13 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "documentTimeout": target.getConfiguration().setDocumentTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "enableocr":
         case "enableOCR": target.getConfiguration().setEnableOCR(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "forceocr":
         case "forceOcr": target.getConfiguration().setForceOcr(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "imageexportmode":
         case "imageExportMode": target.getConfiguration().setImageExportMode(property(camelContext, java.lang.String.class, value)); return true;
         case "imagesscale":
@@ -95,6 +109,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeMetadataInHeaders": target.getConfiguration().setIncludeMetadataInHeaders(property(camelContext, boolean.class, value)); return true;
         case "includerawmetadata":
         case "includeRawMetadata": target.getConfiguration().setIncludeRawMetadata(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "inputbasedirectory":
         case "inputBaseDirectory": target.getConfiguration().setInputBaseDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -117,18 +133,37 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "pdfbackend":
         case "pdfBackend": target.getConfiguration().setPdfBackend(property(camelContext, java.lang.String.class, value)); return true;
         case "pipeline": target.getConfiguration().setPipeline(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "processtimeout":
         case "processTimeout": target.getConfiguration().setProcessTimeout(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "splitbatchresults":
         case "splitBatchResults": target.getConfiguration().setSplitBatchResults(property(camelContext, boolean.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "tablecellmatching":
         case "tableCellMatching": target.getConfiguration().setTableCellMatching(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "tablemode":
         case "tableMode": target.getConfiguration().setTableMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "useasyncmode":
         case "useAsyncMode": target.getConfiguration().setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
         case "useDoclingServe": target.getConfiguration().setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "workingdirectory":
         case "workingDirectory": target.getConfiguration().setWorkingDirectory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -156,6 +191,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
         case "authenticationtoken":
         case "authenticationToken": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
         case "batchfailonfirsterror":
         case "batchFailOnFirstError": return boolean.class;
         case "batchparallelism":
@@ -164,6 +205,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": return int.class;
         case "batchtimeout":
         case "batchTimeout": return long.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "chunkingincluderawtext":
         case "chunkingIncludeRawText": return java.lang.Boolean.class;
         case "chunkingmaxtokens":
@@ -176,6 +219,7 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "chunkingUseMarkdownTables": return java.lang.Boolean.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
+        case "delay": return long.class;
         case "docodeenrichment":
         case "doCodeEnrichment": return java.lang.Boolean.class;
         case "doformulaenrichment":
@@ -196,8 +240,13 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "documentTimeout": return java.lang.Long.class;
         case "enableocr":
         case "enableOCR": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "forceocr":
         case "forceOcr": return java.lang.Boolean.class;
+        case "greedy": return boolean.class;
         case "imageexportmode":
         case "imageExportMode": return java.lang.String.class;
         case "imagesscale":
@@ -210,6 +259,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeMetadataInHeaders": return boolean.class;
         case "includerawmetadata":
         case "includeRawMetadata": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
         case "inputbasedirectory":
         case "inputBaseDirectory": return java.lang.String.class;
         case "lazystartproducer":
@@ -232,18 +283,37 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "pdfbackend":
         case "pdfBackend": return java.lang.String.class;
         case "pipeline": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "processtimeout":
         case "processTimeout": return long.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
         case "splitbatchresults":
         case "splitBatchResults": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
         case "tablecellmatching":
         case "tableCellMatching": return java.lang.Boolean.class;
         case "tablemode":
         case "tableMode": return java.lang.String.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "useasyncmode":
         case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
         case "useDoclingServe": return boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
         case "workingdirectory":
         case "workingDirectory": return java.lang.String.class;
         default: return null;
@@ -272,6 +342,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "authenticationScheme": return target.getConfiguration().getAuthenticationScheme();
         case "authenticationtoken":
         case "authenticationToken": return target.getConfiguration().getAuthenticationToken();
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
+        case "backoffmultiplier":
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "batchfailonfirsterror":
         case "batchFailOnFirstError": return target.getConfiguration().isBatchFailOnFirstError();
         case "batchparallelism":
@@ -280,6 +356,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": return target.getConfiguration().getBatchSize();
         case "batchtimeout":
         case "batchTimeout": return target.getConfiguration().getBatchTimeout();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunkingincluderawtext":
         case "chunkingIncludeRawText": return target.getConfiguration().getChunkingIncludeRawText();
         case "chunkingmaxtokens":
@@ -292,6 +370,7 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "chunkingUseMarkdownTables": return target.getConfiguration().getChunkingUseMarkdownTables();
         case "contentinbody":
         case "contentInBody": return target.getConfiguration().isContentInBody();
+        case "delay": return target.getDelay();
         case "docodeenrichment":
         case "doCodeEnrichment": return target.getConfiguration().getDoCodeEnrichment();
         case "doformulaenrichment":
@@ -312,8 +391,13 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "documentTimeout": return target.getConfiguration().getDocumentTimeout();
         case "enableocr":
         case "enableOCR": return target.getConfiguration().isEnableOCR();
+        case "exceptionhandler":
+        case "exceptionHandler": return target.getExceptionHandler();
+        case "exchangepattern":
+        case "exchangePattern": return target.getExchangePattern();
         case "forceocr":
         case "forceOcr": return target.getConfiguration().getForceOcr();
+        case "greedy": return target.isGreedy();
         case "imageexportmode":
         case "imageExportMode": return target.getConfiguration().getImageExportMode();
         case "imagesscale":
@@ -326,6 +410,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeMetadataInHeaders": return target.getConfiguration().isIncludeMetadataInHeaders();
         case "includerawmetadata":
         case "includeRawMetadata": return target.getConfiguration().isIncludeRawMetadata();
+        case "initialdelay":
+        case "initialDelay": return target.getInitialDelay();
         case "inputbasedirectory":
         case "inputBaseDirectory": return target.getConfiguration().getInputBaseDirectory();
         case "lazystartproducer":
@@ -348,20 +434,48 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "pdfbackend":
         case "pdfBackend": return target.getConfiguration().getPdfBackend();
         case "pipeline": return target.getConfiguration().getPipeline();
+        case "pollstrategy":
+        case "pollStrategy": return target.getPollStrategy();
         case "processtimeout":
         case "processTimeout": return target.getConfiguration().getProcessTimeout();
+        case "repeatcount":
+        case "repeatCount": return target.getRepeatCount();
+        case "runlogginglevel":
+        case "runLoggingLevel": return target.getRunLoggingLevel();
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
+        case "schedulerproperties":
+        case "schedulerProperties": return target.getSchedulerProperties();
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "splitbatchresults":
         case "splitBatchResults": return target.getConfiguration().isSplitBatchResults();
+        case "startscheduler":
+        case "startScheduler": return target.isStartScheduler();
         case "tablecellmatching":
         case "tableCellMatching": return target.getConfiguration().getTableCellMatching();
         case "tablemode":
         case "tableMode": return target.getConfiguration().getTableMode();
+        case "timeunit":
+        case "timeUnit": return target.getTimeUnit();
         case "useasyncmode":
         case "useAsyncMode": return target.getConfiguration().isUseAsyncMode();
         case "usedoclingserve":
         case "useDoclingServe": return target.getConfiguration().isUseDoclingServe();
+        case "usefixeddelay":
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "workingdirectory":
         case "workingDirectory": return target.getConfiguration().getWorkingDirectory();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

@@ -59,6 +59,30 @@ public class YamlValidatorTest {
     }
 
     @Test
+    public void testMultiEnumOption() throws Exception {
+        // CAMEL-25739: the option of jsonpath takes several of its values, separated by comma
+        String route = """
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.store.book[*]"
+                                option: "%s"
+                """;
+        Assertions.assertTrue(validator.validate(route.formatted("ALWAYS_RETURN_LIST")).isEmpty());
+        Assertions.assertTrue(validator.validate(route.formatted("ALWAYS_RETURN_LIST,SUPPRESS_EXCEPTIONS")).isEmpty());
+        Assertions.assertTrue(validator.validate(route.formatted("ALWAYS_RETURN_LIST, SUPPRESS_EXCEPTIONS")).isEmpty());
+        var report = validator.validate(route.formatted("ALWAYS_RETURN_LIST,FOO"));
+        Assertions.assertEquals(1, report.size(), report.toString());
+        Assertions.assertTrue(report.get(0).getMessage().contains("write one or more of DEFAULT_PATH_LEAF_TO_NULL, "
+                                                                  + "ALWAYS_RETURN_LIST"),
+                report.get(0).getMessage());
+    }
+
+    @Test
     public void testScriptAndBuilderBeanWithoutType() throws Exception {
         // CAMEL-24775: the type (class name) is optional for a bean created by a script or a builder, in the
         // registry beans and in a route template, as it is for the runtime and the Java DSL

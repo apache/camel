@@ -19,14 +19,17 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
 import dev.tamboui.buffer.Buffer;
@@ -40,6 +43,7 @@ import dev.tamboui.widgets.tabs.TabsState;
 import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
@@ -58,9 +62,15 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 class McpFacade {
 
     /**
-     * Pending key event queued for injection into the TUI event loop.
+     * Pending key event queued for injection into the TUI event loop, by an MCP client or a tape. It fires on the first
+     * tick at or after fireAt, a {@link MonotonicClock} time.
      */
     record PendingKey(KeyEvent event, long fireAt) {
+
+        /** Whether the key fires at the given {@link MonotonicClock} time. */
+        boolean isDue(long now) {
+            return now >= fireAt;
+        }
     }
 
     /**
@@ -97,6 +107,15 @@ class McpFacade {
          * user answers. Returns false when the user declines, or when no one answers.
          */
         default boolean confirmFileWrite(FileWrite request) {
+            return false;
+        }
+
+        /**
+         * Asks the user to confirm a call of an AI tool that reaches beyond the integration, may destroy data or runs
+         * code ({@link ToolConfirms}), blocking the calling (tool) thread until the user answers. Returns false when
+         * the user declines, or when no one answers.
+         */
+        default boolean confirmToolCall(ToolConfirms.Call call) {
             return false;
         }
 
@@ -139,10 +158,23 @@ class McpFacade {
      * still holds the applied hunks ({@code content} is the buffer, not the file), {@code remaining} hunks wait.
      */
     record ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
-            int remaining) {
+            int remaining, boolean undecided) {
+
+        ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
+                      int remaining) {
+            this(saved, applied, skipped, content, question, remaining, false);
+        }
 
         ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content) {
-            this(saved, applied, skipped, content, null, 0);
+            this(saved, applied, skipped, content, null, 0, false);
+        }
+
+        /**
+         * The user has neither saved nor discarded the replayed edit for a long while: the tool call returns, the edit
+         * stays in the editor, and what the user does with it is told with the next question.
+         */
+        static ReplayOutcome undecidedOutcome() {
+            return new ReplayOutcome(false, 0, List.of(), null, null, 0, true);
         }
 
         boolean paused() {
@@ -205,6 +237,11 @@ class McpFacade {
     // the F2 menu's launcher: starts examples (tui_run_example) and infra services (tui_infra start). It is held
     // here, not in the tool registry, so the AI panel's registry and the MCP server's registry both see it.
     private volatile LaunchManager launchManager;
+    private volatile Confirmations confirmations;
+    // asks the data refresh for a scan of every integration, and counts the scans done: on the other tabs only the
+    // selected integration is refreshed, so the Overview rows of the others go stale while an agent reads them
+    private volatile Runnable fullScanRequest;
+    private volatile LongSupplier fullScansDone;
 
     McpFacade(
               MonitorContext ctx,
@@ -246,6 +283,47 @@ class McpFacade {
 
     void setLaunchManager(LaunchManager launchManager) {
         this.launchManager = launchManager;
+    }
+
+    void setConfirmations(Confirmations confirmations) {
+        this.confirmations = confirmations;
+    }
+
+    /**
+     * The dialog that asks the user to confirm an action and is open, or null: the keys an MCP client sends never
+     * answer it (CAMEL-25444).
+     */
+    String openConfirmation() {
+        Confirmations c = confirmations;
+        return c != null ? c.open() : null;
+    }
+
+    void setFullScan(Runnable request, LongSupplier done) {
+        this.fullScanRequest = request;
+        this.fullScansDone = done;
+    }
+
+    /**
+     * Brings the data of every integration up to date before an agent reads the Overview from another tab, waiting at
+     * most a few seconds for the next scan.
+     */
+    void awaitFullScan() {
+        Runnable request = fullScanRequest;
+        LongSupplier done = fullScansDone;
+        if (request == null || done == null) {
+            return;
+        }
+        long before = done.getAsLong();
+        request.run();
+        long deadline = MonotonicClock.millis() + FULL_SCAN_TIMEOUT_MS;
+        while (done.getAsLong() <= before && MonotonicClock.millis() < deadline) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
     }
 
     LaunchManager getLaunchManager() {
@@ -329,6 +407,28 @@ class McpFacade {
         }
         IntegrationInfo info = ctx.findSelectedIntegration();
         return info != null ? info.name : null;
+    }
+
+    /** How often the selected integration has reloaded its routes, 0 when nothing is selected. */
+    int getSelectedReloadCount() {
+        if (ctx == null) {
+            return 0;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.reloaded : 0;
+    }
+
+    /** The status document of the selected integration, null when nothing is selected or it has none yet. */
+    JsonObject readSelectedStatus() {
+        if (ctx == null || ctx.selectedPid == null) {
+            return null;
+        }
+        try {
+            return RuntimeHelper.readStatus(Long.parseLong(ctx.selectedPid));
+        } catch (RuntimeException e) {
+            // not a pid, or a status that cannot be read: no tool groups, the core set is still offered
+            return null;
+        }
     }
 
     String getSelectedCamelVersion() {
@@ -551,7 +651,7 @@ class McpFacade {
     // ---- Key injection ----
 
     int injectKeys(List<String> keys, int delayMs) {
-        long fireAt = System.currentTimeMillis();
+        long fireAt = MonotonicClock.millis();
         int count = 0;
         for (String key : keys) {
             KeyEvent ke = parseKey(key);
@@ -631,9 +731,14 @@ class McpFacade {
 
     /** How long a table read waits for a tab that loads its data on demand. The connector action timeout is 5s. */
     static final long ON_DEMAND_LOAD_TIMEOUT_MS = 8_000;
+    // a full scan runs at most every 2 seconds, on the next refresh
+    static final long FULL_SCAN_TIMEOUT_MS = 4_000;
 
     JsonObject getTableData(String tabName) {
         MonitorTab tab = resolveTab(tabName);
+        if (tab != null && tab == tabRegistry.overviewTab() && bridge != null && bridge.activeTab() != tab) {
+            awaitFullScan();
+        }
         return tab != null ? awaitTableData(tab, ON_DEMAND_LOAD_TIMEOUT_MS) : null;
     }
 
@@ -666,8 +771,8 @@ class McpFacade {
         if (data != null || !tab.ensureDataLoaded()) {
             return data;
         }
-        long deadline = System.currentTimeMillis() + timeoutMs;
-        while (data == null && System.currentTimeMillis() < deadline && tab.dataLoadError() == null) {
+        long deadline = MonotonicClock.millis() + timeoutMs;
+        while (data == null && MonotonicClock.millis() < deadline && tab.dataLoadError() == null) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -817,6 +922,12 @@ class McpFacade {
         return null;
     }
 
+    /** Zooms the diagram as an agent asks, and says how it is zoomed (tui_diagram_zoom). */
+    JsonObject diagramZoom(
+            String level, String fold, String unfold, boolean foldAll, boolean expandAll, Boolean panels) {
+        return tabRegistry.diagramTab().zoomForAgent(level, fold, unfold, foldAll, expandAll, panels);
+    }
+
     JsonObject getDiagramState() {
         return tabRegistry.diagramTab().getDiagramStateAsJson();
     }
@@ -830,23 +941,14 @@ class McpFacade {
         }
         String screen = ExportRequest.export(buf).text().toString();
         String[] lines = screen.split("\n", -1);
-        int searchWidth = 0;
-        for (int i = 0; i < search.length();) {
-            int cp = search.codePointAt(i);
-            searchWidth += Math.max(1, CharWidth.of(cp));
-            i += Character.charCount(cp);
-        }
+        // the width TamboUI gives the text: a combining mark or a variation selector takes no column of its own
+        int searchWidth = CharWidth.of(search);
         JsonArray matches = new JsonArray();
         for (int y = 0; y < lines.length; y++) {
             String line = lines[y];
             int idx = line.indexOf(search);
             while (idx >= 0) {
-                int visualCol = 0;
-                for (int i = 0; i < idx;) {
-                    int cp = line.codePointAt(i);
-                    visualCol += Math.max(1, CharWidth.of(cp));
-                    i += Character.charCount(cp);
-                }
+                int visualCol = CharWidth.of(line.substring(0, idx));
                 JsonObject match = new JsonObject();
                 match.put("x", visualCol);
                 match.put("y", y);
@@ -961,6 +1063,13 @@ class McpFacade {
         return tabRegistry.historyTab().toggleDisplaySection(section, enabled);
     }
 
+    /** Query the selected runtime without changing tabs, drafts, filters or the selected audit record. */
+    JsonObject queryAudit(JsonObject request) {
+        IntegrationInfo selected = ctx == null ? null : ctx.findSelectedIntegration();
+        String pid = selected == null ? null : selected.phantom ? selected.linkedPid : selected.pid;
+        return pid == null ? null : ctx.executeIndependentAction(pid, request, 10000);
+    }
+
     // ---- Integration data ----
 
     JsonObject getReadme(String name) {
@@ -1017,6 +1126,24 @@ class McpFacade {
         return result;
     }
 
+    /** The pid of the integration, or else the infra service, with the given name (alias) or pid. */
+    private String findPidByNameOrPid(String nameOrPid) {
+        for (IntegrationInfo info : data.get()) {
+            if (!info.vanishing && (nameOrPid.equals(info.name) || nameOrPid.equals(info.pid))) {
+                return info.pid;
+            }
+        }
+        List<InfraInfo> infras = ctx.infraData != null ? ctx.infraData.get() : null;
+        if (infras != null) {
+            for (InfraInfo info : infras) {
+                if (!info.vanishing && (nameOrPid.equals(info.alias) || nameOrPid.equals(info.pid))) {
+                    return info.pid;
+                }
+            }
+        }
+        return null;
+    }
+
     private IntegrationInfo findIntegration(String name) {
         if (name != null && !name.isEmpty()) {
             for (IntegrationInfo info : data.get()) {
@@ -1024,9 +1151,54 @@ class McpFacade {
                     return info;
                 }
             }
+            // the pid, which tells apart two integrations of the same name (see integrationWithSourceDirectory)
+            for (IntegrationInfo info : data.get()) {
+                if (!info.vanishing && name.equals(info.pid)) {
+                    return info;
+                }
+            }
             return null;
         }
         return ctx != null ? ctx.findSelectedIntegration() : null;
+    }
+
+    /**
+     * The pid of the integration whose source directory the given one is, as an agent passes it to a file tool: the
+     * selected integration's when it is that, else the first other one's; null when it is the source directory of none.
+     */
+    String integrationWithSourceDirectory(String directory) {
+        Path wanted;
+        try {
+            wanted = realDirectory(Path.of(directory));
+        } catch (InvalidPathException e) {
+            return null;
+        }
+        IntegrationInfo selected = findIntegration(null);
+        if (selected != null && !selected.vanishing && wanted.equals(sourceDirectory(selected))) {
+            return selected.pid;
+        }
+        for (IntegrationInfo info : data.get()) {
+            if (!info.vanishing && wanted.equals(sourceDirectory(info))) {
+                return info.pid;
+            }
+        }
+        return null;
+    }
+
+    private static Path sourceDirectory(IntegrationInfo info) {
+        Path dir = FilesBrowser.resolveSourceDirectory(info);
+        return dir != null ? realDirectory(dir) : null;
+    }
+
+    /**
+     * The directory with symlinks resolved (/tmp is /private/tmp on macOS), or as it is written when it is not there.
+     */
+    private static Path realDirectory(Path dir) {
+        try {
+            return dir.toRealPath();
+        } catch (IOException e) {
+            return dir.toAbsolutePath().normalize();
+        }
     }
 
     /**
@@ -1111,6 +1283,34 @@ class McpFacade {
         long wait = lastConfirmWaitMs;
         lastConfirmWaitMs = 0;
         return wait;
+    }
+
+    /**
+     * Asks the user to confirm a call of an AI tool ({@link ToolConfirms}), on the calling (tool) thread. Returns null
+     * when the call goes ahead: there is nothing to confirm, the user confirmed it, or a tape drives the monitor (then
+     * nothing asks, CAMEL-25444). Otherwise returns the result that tells the model the user rejected it.
+     */
+    JsonObject confirm(ToolConfirms.Call call) {
+        if (call == null || ctx != null && ctx.tapeDriven.getAsBoolean()) {
+            return null;
+        }
+        long waitStart = MonotonicClock.millis();
+        boolean confirmed = bridge != null && bridge.confirmToolCall(call);
+        lastConfirmWaitMs = MonotonicClock.millis() - waitStart;
+        if (confirmed) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("status", "rejected");
+        result.put("message", "The user did not confirm this in the TUI, so it did not run (" + call.title() + "). Do not"
+                              + " retry it unless the user asks for it: tell the user what you wanted to do, and why.");
+        return result;
+    }
+
+    /** The endpoint URIs of the selected integration, as its status lists them. */
+    List<String> selectedEndpointUris() {
+        IntegrationInfo info = ctx == null ? null : ctx.findSelectedIntegration();
+        return info == null ? List.of() : info.endpoints.stream().map(e -> e.uri).filter(uri -> uri != null).toList();
     }
 
     private static void describeSourceDirectory(IntegrationInfo info, Path dir, JsonObject result) {
@@ -1258,19 +1458,21 @@ class McpFacade {
                 return result;
             }
         }
-        if (writeMode == WriteMode.LIVE && exists && bridge != null) {
-            long waitStart = System.currentTimeMillis();
+        // while a tape drives the monitor nothing asks the user: the model or the tape writes the file itself
+        boolean ask = ctx == null || !ctx.tapeDriven.getAsBoolean();
+        if (writeMode == WriteMode.LIVE && exists && bridge != null && ask) {
+            long waitStart = MonotonicClock.millis();
             ReplayOutcome outcome = bridge.replayFileWrite(request);
-            lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
+            lastConfirmWaitMs = MonotonicClock.millis() - waitStart;
             if (outcome != null) {
                 return replayResult(target, dir, file, content, outcome);
             }
             // could not replay (for example unsaved edits in the editor): fall back to the dialog
         }
-        if (confirm || writeMode != WriteMode.AUTO) {
-            long waitStart = System.currentTimeMillis();
+        if ((confirm || writeMode != WriteMode.AUTO) && ask) {
+            long waitStart = MonotonicClock.millis();
             boolean confirmed = bridge != null && bridge.confirmFileWrite(request);
-            lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
+            lastConfirmWaitMs = MonotonicClock.millis() - waitStart;
             if (!confirmed) {
                 JsonObject result = new JsonObject();
                 result.put("status", "rejected");
@@ -1297,6 +1499,20 @@ class McpFacade {
         describeSourceDirectory(target, dir, result);
         result.put("lines", lines);
         result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
+        // a route sending to a direct: endpoint no route consumes yet: its route goes in the same call (CAMEL-25501)
+        List<String> notes = new ArrayList<>();
+        AuthoringTools.UnconsumedDirect waiting = AuthoringTools.unconsumedDirect(dir, file, content, null);
+        if (waiting != null) {
+            notes.add(waiting.note());
+        }
+        String lower = file.toLowerCase(Locale.ROOT);
+        if (lower.endsWith(".xsl") || lower.endsWith(".xslt")) {
+            // a {expression} in element content is written out as text (CAMEL-25514)
+            notes.addAll(SourceValidator.xsltNotes(content));
+        }
+        if (!notes.isEmpty()) {
+            result.put("notes", new JsonArray(notes));
+        }
         return result;
     }
 
@@ -1306,6 +1522,14 @@ class McpFacade {
      * write (CAMEL-24909). The reading and the matching are the shared tool's, only the writing is the TUI's.
      */
     JsonObject editFile(String name, String file, String find, String replace, boolean confirm) {
+        return editFile(name, file, find, replace, null, confirm);
+    }
+
+    /** As {@link #editFile(String, String, String, String, boolean)} with several edits, written once (CAMEL-25501). */
+    /** The statuses of a write that changed the file: written directly, or saved in the editor after a live replay. */
+    private static final Set<String> APPLIED_WRITES = Set.of("overwritten", "created", "written");
+
+    JsonObject editFile(String name, String file, String find, String replace, String edits, boolean confirm) {
         IntegrationInfo target = findIntegration(name);
         if (target == null) {
             return writeError(name != null && !name.isEmpty()
@@ -1315,16 +1539,21 @@ class McpFacade {
         if (dir == null || !Files.isDirectory(dir)) {
             return writeError("No source directory found for the integration");
         }
-        JsonObject edit = AuthoringTools.editedContent(dir, file, find, replace);
+        JsonObject edit = AuthoringTools.editedContent(dir, file, find, replace, edits);
         String content = edit.getString("content");
         if (content == null) {
             return edit; // not-found, ambiguous or an error: the shared answer says what to do
         }
         JsonObject result = writeFile(name, file, content, confirm);
-        if (!"invalid".equals(result.getString("status")) && !"error".equals(result.getString("status"))) {
+        // only an edit the file got is "edited": one the user rejected, or a live replay not yet saved, keeps saying so
+        if (APPLIED_WRITES.contains(result.getString("status"))) {
             result.put("status", "edited");
             result.put("editedAtLine", edit.getInteger("editedAtLine"));
             result.put("replacedLines", edit.getInteger("replacedLines"));
+            if (edit.get("edits") != null) {
+                result.put("edits", edit.get("edits"));
+                result.put("editedAtLines", edit.get("editedAtLines"));
+            }
         }
         return result;
     }
@@ -1335,6 +1564,14 @@ class McpFacade {
         result.put("file", file);
         JsonArray skipped = new JsonArray();
         skipped.addAll(outcome.skipped());
+        if (outcome.undecided()) {
+            result.put("status", "pending");
+            result.put("message", "The change is in the user's editor, replayed as a live edit, but the user has not"
+                                  + " saved or discarded it yet; the file on disk is unchanged. End your turn now:"
+                                  + " do not write " + file + " again and do not say it is saved. Your next message"
+                                  + " tells you what the user did with it.");
+            return result;
+        }
         if (outcome.paused()) {
             result.put("status", "paused");
             result.put("appliedHunks", outcome.applied());
@@ -1401,7 +1638,12 @@ class McpFacade {
         } catch (NumberFormatException e) {
             return null;
         }
-        return RuntimeHelper.sendMessage(pid, endpoint, body, headers);
+        // a body file:... makes the integration read that file, relative to its working directory
+        IntegrationInfo info = findIntegration(null);
+        String fileOutside = ToolConfirms.fileOutsideProject(
+                body, info != null ? info.directory : null, getSelectedSourceDirectory());
+        JsonObject rejected = confirm(ToolConfirms.sendMessage(endpoint, selectedEndpointUris(), fileOutside));
+        return rejected != null ? rejected : RuntimeHelper.sendMessage(pid, endpoint, body, headers);
     }
 
     JsonObject executeSql(String sql, String datasource, int maxRows, int queryTimeout) {
@@ -1414,7 +1656,8 @@ class McpFacade {
         } catch (NumberFormatException e) {
             return null;
         }
-        return RuntimeHelper.executeSqlQuery(pid, sql, datasource, maxRows, queryTimeout);
+        JsonObject rejected = confirm(ToolConfirms.sql(sql));
+        return rejected != null ? rejected : RuntimeHelper.executeSqlQuery(pid, sql, datasource, maxRows, queryTimeout);
     }
 
     JsonObject updateRow(String table, String datasource, String pkValuesJson, String colValuesJson) {
@@ -1427,16 +1670,78 @@ class McpFacade {
         } catch (NumberFormatException e) {
             return null;
         }
-        return RuntimeHelper.executeRowUpdate(pid, table, datasource, pkValuesJson, colValuesJson);
+        JsonObject rejected = confirm(ToolConfirms.updateRow(table, colValuesJson));
+        return rejected != null
+                ? rejected : RuntimeHelper.executeRowUpdate(pid, table, datasource, pkValuesJson, colValuesJson);
     }
 
     String controlIntegration(String action) {
+        return controlIntegration(action, null);
+    }
+
+    /**
+     * Waits until the restarted integration has started, or failed to start: the restart is watched as a launch.
+     *
+     * @throws ToolExecutionException when it failed to start, with the end of its log
+     */
+    static String awaitRestart(LaunchManager lm, String name) {
+        if (lm == null) {
+            return "Restarting " + name;
+        }
+        long deadline = MonotonicClock.millis() + TuiToolRegistry.RUN_EXAMPLE_WAIT_MS;
+        LaunchManager.LaunchOutcome outcome;
+        while ((outcome = lm.outcome(name)) == null && MonotonicClock.millis() < deadline) {
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return "Restarting " + name;
+            }
+        }
+        if (outcome == null) {
+            return "Restarting " + name + " (still starting)";
+        }
+        if (outcome.ok()) {
+            return "Restarted " + name;
+        }
+        throw new ToolExecutionException(
+                "Restart of " + name + " failed: it stopped while starting"
+                                         + (outcome.log() != null ? "\n" + outcome.log() : ""));
+    }
+
+    /**
+     * Controls the integration with the given name or pid, which becomes the selected one, so the screen shows what the
+     * agent acts on (CAMEL-25424). Without a name: the selected integration, or the only one running.
+     */
+    String controlIntegration(String action, String nameOrPid) {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
         if ("stop-all".equals(action)) {
             bridge.stopAll();
             return "Stopping all processes";
+        }
+        if (nameOrPid != null && !nameOrPid.isBlank()) {
+            String pid = findPidByNameOrPid(nameOrPid.trim());
+            if (pid == null) {
+                List<String> known = new ArrayList<>();
+                data.get().stream().filter(i -> !i.vanishing).forEach(i -> known.add(i.name + " (pid " + i.pid + ")"));
+                List<InfraInfo> infras = ctx.infraData != null ? ctx.infraData.get() : null;
+                if (infras != null) {
+                    // infra services can be named too
+                    infras.stream().filter(i -> !i.vanishing)
+                            .forEach(i -> known.add(i.alias + " (infra, pid " + i.pid + ")"));
+                }
+                String names = String.join(", ", known);
+                return "Error: no integration with name or pid " + nameOrPid
+                       + (names.isEmpty() ? "; none is running" : ". Known: " + names);
+            }
+            ctx.selectedPid = pid;
+        } else if (ctx.selectedPid == null) {
+            List<IntegrationInfo> running = data.get().stream().filter(i -> !i.vanishing && !i.phantom).toList();
+            if (running.size() == 1) {
+                ctx.selectedPid = running.get(0).pid;
+            }
         }
         if ("close".equals(action)) {
             if (ctx.selectedPid == null) {
@@ -1451,7 +1756,7 @@ class McpFacade {
             return "Closed project: " + info.name;
         }
         if (ctx.selectedPid == null) {
-            return "Error: no integration selected";
+            return "Error: no integration selected; give its name or pid";
         }
         String name = ctx.selectedName();
         return switch (action) {
@@ -1480,8 +1785,12 @@ class McpFacade {
                 if (ctx.isInfraSelected()) {
                     yield "Error: cannot restart infra service";
                 }
+                LaunchManager lm = launchManager;
+                if (lm != null) {
+                    lm.clearOutcome(name);
+                }
                 bridge.restartProcess();
-                yield "Restarting " + name;
+                yield awaitRestart(lm, name);
             }
             case "stop" -> {
                 bridge.stopProcess(false);

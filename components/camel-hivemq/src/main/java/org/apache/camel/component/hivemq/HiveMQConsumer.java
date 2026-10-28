@@ -67,7 +67,8 @@ public class HiveMQConsumer extends DefaultConsumer {
         }
         client = null;
         if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            // the client acknowledged the messages that are queued or being processed, so let them complete
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
             executor = null;
         }
         super.doStop();

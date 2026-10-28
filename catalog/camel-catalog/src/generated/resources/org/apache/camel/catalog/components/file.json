@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-file",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "file",
     "extendsScheme": "",
     "syntax": "file:directoryName",
@@ -48,6 +48,11 @@
     "CamelOverruleFileName": { "index": 14, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Is used for overruling CamelFileName header and use the value instead (but only once, as the producer will remove this header after writing the file). The value can be only be a String. Notice that if the option fileName has been configured, then this is still being evaluated.", "constantName": "org.apache.camel.component.file.FileConstants#OVERRULE_FILE_NAME" },
     "CamelFileInitialOffset": { "index": 15, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A long value containing the initial offset.", "constantName": "org.apache.camel.component.file.FileConstants#INITIAL_OFFSET" },
     "CamelFileChecksum": { "index": 16, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The checksum of the file written, when checksumAlgorithm is in use", "constantName": "org.apache.camel.component.file.FileConstants#FILE_CHECKSUM" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "file" ], "description": "The file as read: a GenericFile (a java.io.File with preMove), which converts to text, bytes or a stream" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "byOption": [ { "option": "allowNullBody", "value": "true", "carriers": [ "null", "text", "bytes", "stream", "file" ] } ], "description": "What converts to an InputStream: text, bytes, a stream or a file. A Map or a List fails: marshal it first" },
+    "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {
     "directoryName": { "index": 0, "kind": "path", "displayName": "Directory Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.io.File", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The starting directory" },

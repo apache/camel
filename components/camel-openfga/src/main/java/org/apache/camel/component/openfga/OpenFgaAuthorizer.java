@@ -17,6 +17,9 @@
 package org.apache.camel.component.openfga;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +27,7 @@ import java.util.concurrent.TimeoutException;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
+import dev.openfga.sdk.api.client.model.ClientTupleKey;
 import dev.openfga.sdk.api.configuration.ClientCheckOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
 import dev.openfga.sdk.errors.FgaError;
@@ -65,6 +69,9 @@ public class OpenFgaAuthorizer {
     private final Expression user;
     private final Expression object;
     private final Expression relation;
+    private final List<Expression[]> contextualTuples;
+    private final Map<String, Object> conditionContext;
+    private final Expression continuationToken;
     private final ConsistencyPreference consistency;
     private final boolean failOpen;
     private final long awaitTimeoutMillis;
@@ -76,6 +83,9 @@ public class OpenFgaAuthorizer {
         this.user = compile(camelContext, configuration.getUser());
         this.object = compile(camelContext, configuration.getObject());
         this.relation = compile(camelContext, configuration.getRelation());
+        this.contextualTuples = compileContextualTuples(camelContext, configuration.getContextualTuples());
+        this.conditionContext = configuration.getConditionContext();
+        this.continuationToken = compile(camelContext, configuration.getContinuationToken());
         this.consistency = parseConsistency(configuration.getConsistency());
         this.failOpen = configuration.isFailOpen();
         this.awaitTimeoutMillis = awaitTimeout(configuration);
@@ -96,6 +106,36 @@ public class OpenFgaAuthorizer {
         Expression expression = camelContext.resolveLanguage("simple").createExpression(text);
         expression.init(camelContext);
         return expression;
+    }
+
+    /**
+     * Compiles the {@code contextualTuples} option into one expression triple per tuple.
+     * <p/>
+     * Done once at startup rather than per exchange, both because compiling a Simple expression is not free and because
+     * a malformed option should stop the endpoint starting rather than deny every message at runtime with something
+     * that looks like a policy decision.
+     */
+    private static List<Expression[]> compileContextualTuples(CamelContext camelContext, String configured) {
+        if (ObjectHelper.isEmpty(configured)) {
+            return List.of();
+        }
+        List<Expression[]> compiled = new ArrayList<>();
+        for (String tuple : configured.split(";")) {
+            if (tuple.isBlank()) {
+                continue;
+            }
+            String[] parts = tuple.split(",");
+            if (parts.length != 3) {
+                throw new IllegalArgumentException(
+                        "Each contextual tuple must be user,relation,object but '" + tuple.trim() + "' has "
+                                                   + parts.length + " part(s); separate several tuples with ';'");
+            }
+            compiled.add(new Expression[] {
+                    compile(camelContext, parts[0].trim()),
+                    compile(camelContext, parts[1].trim()),
+                    compile(camelContext, parts[2].trim()) });
+        }
+        return List.copyOf(compiled);
     }
 
     private static ConsistencyPreference parseConsistency(String consistency) {
@@ -148,10 +188,21 @@ public class OpenFgaAuthorizer {
             return false;
         }
 
+        List<ClientTupleKey> resolvedContextualTuples = resolveContextualTuples(exchange);
+        if (resolvedContextualTuples == null) {
+            return false;
+        }
+
         ClientCheckRequest request = new ClientCheckRequest()
                 .user(resolvedUser)
                 .relation(resolvedRelation)
                 ._object(resolvedObject);
+        if (!resolvedContextualTuples.isEmpty()) {
+            request.contextualTuples(resolvedContextualTuples);
+        }
+        if (conditionContext != null && !conditionContext.isEmpty()) {
+            request.context(conditionContext);
+        }
 
         Boolean allowed;
         try {
@@ -233,6 +284,45 @@ public class OpenFgaAuthorizer {
         // OpenFGA was reachable. The list above is deliberately an allowlist - a failure this method does not
         // recognise must not become an allow just because it is unfamiliar.
         return looksUnavailable;
+    }
+
+    /**
+     * Resolves the configured contextual tuples for this exchange.
+     * <p/>
+     * A part that resolves to blank or to something that cannot be a tuple value denies the exchange instead of being
+     * dropped. Dropping it would be the safer direction arithmetically - a contextual tuple grants, so losing one can
+     * only make the check stricter - but it would answer a different question than the endpoint was configured to ask,
+     * silently, which is a miserable thing to debug on an authorization path.
+     *
+     * @return the tuples, or null when the exchange has been denied and the reason recorded on it
+     */
+    List<ClientTupleKey> resolveContextualTuples(Exchange exchange) {
+        if (contextualTuples.isEmpty()) {
+            return List.of();
+        }
+        List<ClientTupleKey> resolved = new ArrayList<>(contextualTuples.size());
+        for (Expression[] parts : contextualTuples) {
+            String tupleUser = evaluate(exchange, parts[0]);
+            String tupleRelation = evaluate(exchange, parts[1]);
+            String tupleObject = evaluate(exchange, parts[2]);
+            // a wildcard is allowed here, unlike on the check subject: "user:* reader document:x" is how a route says
+            // "this one is public for this request", and the route author wrote it
+            if (OpenFgaIdentifiers.validateTupleValue(tupleUser) != null
+                    || OpenFgaIdentifiers.validateRelation(tupleRelation) != null
+                    || OpenFgaIdentifiers.validateTupleValue(tupleObject) != null) {
+                deny(exchange, "invalid-contextual-tuple", "contextual tuple");
+                return null;
+            }
+            resolved.add(new ClientTupleKey()
+                    .user(tupleUser)
+                    .relation(tupleRelation)
+                    ._object(tupleObject));
+        }
+        return resolved;
+    }
+
+    Map<String, Object> getConditionContext() {
+        return conditionContext;
     }
 
     /**
@@ -394,6 +484,24 @@ public class OpenFgaAuthorizer {
     }
 
     /**
+     * Whether the {@code user} option was configured at all, as opposed to having been configured and then resolving to
+     * nothing on this exchange. The read filter needs the two kept apart: only an option that was never set means "do
+     * not filter on this", for the same reason {@link #hasConfiguredTuple()} asks the compiled expressions rather than
+     * the evaluated values.
+     */
+    boolean hasConfiguredUser() {
+        return user != null;
+    }
+
+    boolean hasConfiguredRelation() {
+        return relation != null;
+    }
+
+    boolean hasConfiguredObject() {
+        return object != null;
+    }
+
+    /**
      * Evaluates the {@code user}, {@code relation} and {@code object} options without the check-path guards and without
      * touching the decision headers, for the operations that write relationship tuples. There the values are not a
      * subject being judged but a tuple the route has decided to write, so a typed wildcard is allowed and the
@@ -409,6 +517,14 @@ public class OpenFgaAuthorizer {
 
     String rawObject(Exchange exchange) {
         return evaluate(exchange, object);
+    }
+
+    /**
+     * Evaluates the {@code continuationToken} option, so a route can page by feeding back the token the previous page
+     * left on the message.
+     */
+    String rawContinuationToken(Exchange exchange) {
+        return evaluate(exchange, continuationToken);
     }
 
     ConsistencyPreference getConsistency() {

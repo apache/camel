@@ -43,6 +43,6 @@ public class CamelTop extends CamelCommand {
         // default to top the integrations
         CamelContextTop cmd = new CamelContextTop(getMain());
         cmd.watch = watch;
-        return new CommandLine(cmd).execute();
+        return runDefault(cmd);
     }
 }

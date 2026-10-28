@@ -18,6 +18,7 @@ package org.apache.camel.semantic;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RoutesBuilderLoader;
@@ -33,6 +34,16 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
     public void load(CamelContext context) {
         installXmlLoader(context);
         lifecycle = new LifecycleStrategySupport() {
+            @Override
+            public void onContextStarting(CamelContext camelContext) {
+                SemanticAuditService.get(camelContext).activate();
+                SemanticEvaluations evaluations
+                        = camelContext.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
+                if (evaluations != null) {
+                    evaluations.validate();
+                }
+            }
+
             @Override
             public void onContextInitializing(CamelContext camelContext) {
                 // Applications can replace the registry after the context's eager build phase.
@@ -88,9 +99,9 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
         if (xmlLoader != null) {
             xmlLoader.resetLoaderDiscovery();
         }
-        SemanticQuestions questions = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
-        if (questions != null) {
-            questions.removeDeletedResources();
+        SemanticEvaluations evaluations = context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
+        if (evaluations != null) {
+            evaluations.removeDeletedResources();
         }
     }
 }

@@ -78,6 +78,19 @@ public final class Mailbox {
     }
 
     /**
+     * Purge all mail folders for the given users.
+     */
+    public static void clearAll(MailboxUser... users) {
+        if (users != null) {
+            for (MailboxUser user : users) {
+                if (user != null) {
+                    user.clear();
+                }
+            }
+        }
+    }
+
+    /**
      * @param  protocol the protocol whose should be returned
      * @return          the port of the given {@code protocol} the static test server instance is listening on
      */
@@ -214,6 +227,20 @@ public final class Mailbox {
 
         public String getPassword() {
             return user.getPassword();
+        }
+
+        public void clear() {
+            clear("INBOX");
+        }
+
+        public void clear(String folderName) {
+            final GreenMailUser greenMailUser = greenMail.getUserManager().getUserByEmail(user.getEmail());
+            if (greenMailUser != null) {
+                final MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(greenMailUser, folderName);
+                if (folder != null) {
+                    folder.deleteAllMessages();
+                }
+            }
         }
 
         public Mailbox getInbox() {

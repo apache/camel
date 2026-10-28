@@ -40,12 +40,22 @@ public final class QuickFixes {
      * @param oldText the text on the line to replace (its first occurrence)
      * @param newText what it is replaced with
      */
-    public record Fix(String label, String oldText, String newText) {
+    public record Fix(String label, String oldText, String newText, boolean removesLine) {
 
-        /** The line with the fix applied, or null when the line does not have the text to replace. */
+        public Fix(String label, String oldText, String newText) {
+            this(label, oldText, newText, false);
+        }
+
+        /**
+         * The line with the fix applied, or null when the line does not have the text to replace. A fix that removes
+         * the line gives an empty line: the caller removes it.
+         */
         public String apply(String line) {
             int i = line != null ? line.indexOf(oldText) : -1;
-            return i < 0 ? null : line.substring(0, i) + newText + line.substring(i + oldText.length());
+            if (i < 0) {
+                return null;
+            }
+            return removesLine ? "" : line.substring(0, i) + newText + line.substring(i + oldText.length());
         }
     }
 
@@ -58,12 +68,43 @@ public final class QuickFixes {
     private static final Pattern INVALID_BOOLEAN = Pattern.compile("Invalid boolean value '([^']*)' for option '([^']+)'");
     private static final Pattern SIMPLE_AS_PLACEHOLDER = Pattern.compile(
             "([\\w.-]+)=(\\$\\{[^}]*\\}) is a Simple expression, which an endpoint option is not evaluated as.*\\{\\{([^}]+)\\}\\}");
+    // the notes of a Kamelet file (CAMEL-25403): the dependency goes, with its line
+    private static final Pattern UNUSED_DEPENDENCY
+            = Pattern.compile("spec\\.dependencies: (camel:[\\w.-]+) (?:is not used by the template|is implied)");
     private static final Pattern DYNAMIC_TO = Pattern.compile("holds an expression \\(\\$\\{");
     private static final Pattern UNKNOWN_FUNCTION = Pattern.compile("Unknown function: (.+?) \\((?:the argument goes in"
                                                                     + " parentheses: )?(?:did you mean |function names are"
                                                                     + " case sensitive: )(\\$\\{.+\\})\\??\\)");
 
     private QuickFixes() {
+    }
+
+    /**
+     * The lines, from 0, a fix that removes the line of the row removes: the row, and the key above it when the row is
+     * its only item, so that the last dependency of a Kamelet does not leave an empty dependencies: behind.
+     *
+     * @return the first and the last line to remove
+     */
+    public static int[] linesToRemove(List<String> lines, int row) {
+        int first = row;
+        if (row > 0 && lines.get(row).trim().startsWith("- ") && lines.get(row - 1).trim().endsWith(":")
+                && !lines.get(row - 1).trim().startsWith("- ")) {
+            int itemIndent = indent(lines.get(row));
+            boolean more = row + 1 < lines.size() && !lines.get(row + 1).isBlank()
+                    && indent(lines.get(row + 1)) >= itemIndent && lines.get(row + 1).trim().startsWith("- ");
+            if (!more) {
+                first = row - 1;
+            }
+        }
+        return new int[] { first, row };
+    }
+
+    private static int indent(String line) {
+        int i = 0;
+        while (i < line.length() && line.charAt(i) == ' ') {
+            i++;
+        }
+        return i;
     }
 
     /**
@@ -82,7 +123,11 @@ public final class QuickFixes {
     }
 
     private static Fix find(String message, String line) {
-        Matcher m = UNKNOWN_OPTION.matcher(message);
+        Matcher m = UNUSED_DEPENDENCY.matcher(message);
+        if (m.find()) {
+            return line.contains(m.group(1)) ? new Fix("remove " + m.group(1), line, "", true) : null;
+        }
+        m = UNKNOWN_OPTION.matcher(message);
         if (m.find()) {
             return rename(line, m.group(1), m.group(2).trim());
         }

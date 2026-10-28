@@ -53,6 +53,9 @@ filtering performed by other components.
 
 Ordinary application headers are unaffected.
 
+NOTE: The filter was not installed in 4.14.9, so the producer still copied every header. It is applied from
+4.18.5, 4.22.2 and 4.23.0 (CAMEL-25227).
+
 === camel-atmosphere-websocket - potential breaking change
 
 The Exchange header constants in `WebsocketConstants` have been renamed to follow the

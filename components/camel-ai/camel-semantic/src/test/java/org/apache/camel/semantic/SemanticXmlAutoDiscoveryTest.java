@@ -47,9 +47,9 @@ class SemanticXmlAutoDiscoveryTest {
             <?xml version="1.0"?>
             <routes xmlns="http://camel.apache.org/schema/xml-io">
               <semantic xmlns="http://camel.apache.org/schema/semantic">
-                <question name="urgent" type="boolean">
+                <evaluation expert="classifier" name="urgent" type="boolean">
                   <instructions>Urgent?</instructions>
-                </question>
+                </evaluation>
               </semantic>
               <route id="located">
                 <from uri="direct:located"/>
@@ -71,10 +71,10 @@ class SemanticXmlAutoDiscoveryTest {
     void mainLoadsOrdinaryXmlWithoutLoaderRegistration(boolean standalone, String filename) throws Exception {
         String declarations = """
                 <semantic xmlns="http://camel.apache.org/schema/semantic">
-                  <question name="department" type="choice">
+                  <evaluation expert="classifier" name="department" type="choice">
                     <instructions>Which department?</instructions>
                     <criterion key="billing" value="Invoices"/>
-                  </question>
+                  </evaluation>
                 </semantic>
                 """;
         String route = """
@@ -85,18 +85,18 @@ class SemanticXmlAutoDiscoveryTest {
         Path routes = directory.resolve(filename);
         String files;
         if (standalone) {
-            Path questions = directory.resolve("my.questions.xml");
-            Files.writeString(questions, declarations);
+            Path evaluations = directory.resolve(filename.endsWith(".semantic.xml")
+                    ? "my.evaluations.semantic.xml" : "my.evaluations.xml");
+            Files.writeString(evaluations, declarations);
             Files.writeString(routes, "<routes>" + route + "</routes>");
             // The consumer is deliberately listed first.
-            files = routes.toUri() + "," + questions.toUri();
+            files = routes.toUri() + "," + evaluations.toUri();
         } else {
             Files.writeString(routes, "<routes>" + declarations + route + "</routes>");
             files = routes.toUri().toString();
         }
         Main main = new Main();
         main.bind("classifier", new SemanticLanguageTest.LabelAdapter());
-        main.addProperty("camel.language.semantic.adapter", "classifier");
         main.configure().setRoutesIncludePattern(files);
         try {
             main.start();
@@ -140,7 +140,7 @@ class SemanticXmlAutoDiscoveryTest {
                         assertThat(error).hasMessageContaining("invalid.tickets.xml, line 12")
                                 .hasMessageContaining("<semantic/>");
                     });
-            assertThat(SemanticQuestions.get(context).isEmpty()).isTrue();
+            assertThat(SemanticEvaluations.get(context).isEmpty()).isTrue();
         }
     }
 
@@ -168,6 +168,7 @@ class SemanticXmlAutoDiscoveryTest {
                     delegate.set(loader);
                 }
             });
+            context.getRegistry().bind("classifier", new SemanticLanguageTest.CountingAdapter());
             context.start();
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("ordinary.xml", """
                     <camel xmlns="http://camel.apache.org/schema/xml-io">
@@ -186,7 +187,7 @@ class SemanticXmlAutoDiscoveryTest {
                     """));
             assertThat(context.getRouteConfigurationDefinitions()).hasSize(1);
             assertThat(context.getRegistry().lookupByName("counter")).isInstanceOf(AtomicInteger.class);
-            assertThat(context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class)).isNull();
+            assertThat(context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class)).isNull();
             try (var template = context.createProducerTemplate()) {
                 assertThat(template.requestBody("direct:ordinary", "test", Integer.class)).isEqualTo(1);
             }
@@ -227,11 +228,13 @@ class SemanticXmlAutoDiscoveryTest {
     @Test
     void contextWithApplicationRegistryDiscoversXmlDeclarations() throws Exception {
         try (var context = new DefaultCamelContext(new SimpleRegistry())) {
+            context.getRegistry().bind("classifier", new SemanticLanguageTest.CountingAdapter());
             context.start();
-            PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("questions.xml", """
-                    <semantic><question name="urgent" type="boolean"><instructions>Urgent?</instructions></question></semantic>
-                    """));
-            assertThat(SemanticQuestions.get(context).get("urgent").getInstructions()).isEqualTo("Urgent?");
+            PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("evaluations.xml",
+                    """
+                            <semantic><evaluation expert="classifier" name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation></semantic>
+                            """));
+            assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("instructions")).isEqualTo("Urgent?");
         }
     }
 
@@ -239,12 +242,14 @@ class SemanticXmlAutoDiscoveryTest {
     void contextRestartReinstallsAutomaticLoader() throws Exception {
         try (var context = new DefaultCamelContext()) {
             for (int i = 0; i < 2; i++) {
+                context.getRegistry().bind("classifier", new SemanticLanguageTest.CountingAdapter());
                 context.start();
-                PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("questions.xml",
+                PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("evaluations.xml",
                         """
-                                <semantic><question name="urgent" type="boolean"><instructions>Urgent?</instructions></question></semantic>
+                                <semantic><evaluation expert="classifier" name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation></semantic>
                                 """));
-                assertThat(SemanticQuestions.get(context).get("urgent").getInstructions()).isEqualTo("Urgent?");
+                assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("instructions"))
+                        .isEqualTo("Urgent?");
                 context.stop();
                 assertThat(context.getRegistry().lookupByName(SemanticXmlLoader.REGISTRY_KEY)).isNull();
             }

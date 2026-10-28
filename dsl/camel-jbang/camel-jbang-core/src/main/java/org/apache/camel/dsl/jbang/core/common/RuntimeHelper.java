@@ -16,17 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
-import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -37,7 +34,7 @@ import org.apache.camel.util.json.Jsoner;
  * to {@code {pid}-action-{requestId}.json} and reading the response from {@code {pid}-output-{requestId}.json}. Each
  * request gets a unique ID so concurrent callers (CLI, MCP server, etc.) don't interfere with each other.
  * <p>
- * This class is used by both the {@code camel ask} CLI command and the MCP server's {@code RuntimeService}.
+ * This class is used by CLI commands, the TUI and the MCP server's {@code RuntimeService}.
  *
  * @since 4.21
  */
@@ -67,37 +64,8 @@ public final class RuntimeHelper {
      */
     public static List<ProcessInfo> discoverProcesses() {
         List<ProcessInfo> result = new ArrayList<>();
-        Path camelDir = CommandLineHelper.getCamelDir();
-        File dir = camelDir.toFile();
-        if (!dir.isDirectory()) {
-            return result;
-        }
-
-        File[] statusFiles = dir.listFiles((d, name) -> name.matches("\\d+-status\\.json"));
-        if (statusFiles == null) {
-            return result;
-        }
-
-        for (File sf : statusFiles) {
-            String fileName = sf.getName();
-            long pid = Long.parseLong(fileName.substring(0, fileName.indexOf('-')));
-            if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
-                continue;
-            }
-            try {
-                JsonObject root = readStatusFromFile(sf.toPath());
-                if (root != null) {
-                    String name = ProcessHelper.extractName(root, ProcessHandle.of(pid).orElse(null));
-                    String contextName = null;
-                    JsonObject context = (JsonObject) root.get("context");
-                    if (context != null) {
-                        contextName = context.getString("name");
-                    }
-                    result.add(new ProcessInfo(pid, name, contextName));
-                }
-            } catch (Exception e) {
-                // skip
-            }
+        for (ProcessFinder.CamelProcess p : ProcessFinder.findAll()) {
+            result.add(new ProcessInfo(p.pid(), p.name(), p.contextName()));
         }
         return result;
     }
@@ -110,32 +78,11 @@ public final class RuntimeHelper {
      * @param nameOrPid a process name (with optional wildcard), a numeric PID string, or {@code null} for auto-detect
      */
     public static ProcessInfo findProcess(String nameOrPid) {
-        List<ProcessInfo> processes = discoverProcesses();
-        if (processes.isEmpty()) {
-            return null;
-        }
-
-        if (nameOrPid != null && !nameOrPid.isBlank()) {
-            if (nameOrPid.matches("\\d+")) {
-                long pid = Long.parseLong(nameOrPid);
-                return processes.stream()
-                        .filter(p -> p.pid == pid)
-                        .findFirst()
-                        .orElse(null);
-            }
-            String pattern = nameOrPid.endsWith("*") ? nameOrPid : nameOrPid + "*";
-            List<ProcessInfo> matched = processes.stream()
-                    .filter(p -> (p.name != null && PatternHelper.matchPattern(FileUtil.onlyName(p.name), pattern))
-                            || (p.contextName != null && PatternHelper.matchPattern(p.contextName, pattern)))
-                    .toList();
-            if (matched.size() == 1) {
-                return matched.get(0);
-            }
-            return null;
-        }
-
-        if (processes.size() == 1) {
-            return processes.get(0);
+        List<ProcessFinder.CamelProcess> found = nameOrPid != null && !nameOrPid.isBlank()
+                ? ProcessFinder.find(nameOrPid) : ProcessFinder.findAll();
+        if (found.size() == 1) {
+            ProcessFinder.CamelProcess p = found.get(0);
+            return new ProcessInfo(p.pid(), p.name(), p.contextName());
         }
         return null;
     }
@@ -187,40 +134,31 @@ public final class RuntimeHelper {
     }
 
     public static String executeAction(long pid, String action, Consumer<JsonObject> configure, long timeoutMs) {
-        String requestId = UUID.randomUUID().toString().substring(0, 8);
-        Path camelDir = CommandLineHelper.getCamelDir();
-        Path outputFile = camelDir.resolve(pid + "-output-" + requestId + ".json");
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", action);
+        JsonObject request = new JsonObject();
+        request.put("action", action);
         if (configure != null) {
-            configure.accept(root);
+            configure.accept(request);
         }
-
-        Path actionFile = camelDir.resolve(pid + "-action-" + requestId + ".json");
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
         try {
-            StopWatch watch = new StopWatch();
-            while (watch.taken() < timeoutMs) {
-                try {
-                    Thread.sleep(POLL_INTERVAL_MS);
-                    if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
-                        return Files.readString(outputFile);
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                } catch (Exception e) {
-                    // retry
-                }
+            String response = ActionClient.executeText(pid, request, timeoutMs);
+            if (response != null) {
+                return response;
             }
-            return "Timeout waiting for response from PID " + pid + " for action: " + action;
-        } finally {
-            PathUtils.deleteFile(outputFile);
-            PathUtils.deleteFile(actionFile);
+        } catch (IOException e) {
+            // Preserve the existing text API's diagnostic when the request cannot be exchanged.
         }
+        return "Timeout waiting for response from PID " + pid + " for action: " + action;
+    }
+
+    /**
+     * Executes a request and waits for a complete JSON object (see {@link ActionClient}). Each request uses independent
+     * files, published atomically, and removing an unfinished request asks the connector to cancel it.
+     *
+     * @return             the response, or {@code null} on timeout or interruption
+     * @throws IOException if publishing or cleaning up the request fails
+     */
+    public static JsonObject executeAction(long pid, JsonObject request, long timeoutMs) throws IOException {
+        return ActionClient.execute(pid, request, timeoutMs).reply();
     }
 
     /**
@@ -257,14 +195,21 @@ public final class RuntimeHelper {
         return readStatusFromFile(historyFile);
     }
 
+    /**
+     * Sends a message to an endpoint of the integration.
+     *
+     * @param  headers                  the headers as key=value pairs separated by newlines, or null
+     * @throws IllegalArgumentException when a header is not a key=value pair
+     */
     public static JsonObject sendMessage(long pid, String endpoint, String body, String headers) {
+        JsonArray headerList = headers != null ? parseHeaders(headers) : null;
         String result = executeAction(pid, "send", root -> {
             root.put("endpoint", endpoint);
             if (body != null) {
                 root.put("body", body);
             }
-            if (headers != null) {
-                root.put("headers", headers);
+            if (headerList != null) {
+                root.put("headers", headerList);
             }
         });
         try {
@@ -274,6 +219,28 @@ public final class RuntimeHelper {
             wrapper.put("result", result);
             return wrapper;
         }
+    }
+
+    /**
+     * The headers as the send action of the CLI connector reads them: a key and a value for each header.
+     */
+    static JsonArray parseHeaders(String headers) {
+        JsonArray list = new JsonArray();
+        for (String line : headers.split("\\R")) {
+            String header = line.strip();
+            if (header.isEmpty()) {
+                continue;
+            }
+            int pos = header.indexOf('=');
+            if (pos <= 0) {
+                throw new IllegalArgumentException("Header must be in key=value format, was: " + header);
+            }
+            JsonObject jo = new JsonObject();
+            jo.put("key", header.substring(0, pos).strip());
+            jo.put("value", header.substring(pos + 1));
+            list.add(jo);
+        }
+        return list;
     }
 
     public static JsonObject executeRowUpdate(

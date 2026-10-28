@@ -2,7 +2,7 @@
 	"openapi": "3.0.3",
 	"info": {
 		"title": "Camel Dev Console API",
-		"version": "4.23.0-SNAPSHOT"
+		"version": "4.24.0-SNAPSHOT"
 	},
 	"paths": {
 		"\/q\/dev\/activity": {
@@ -617,6 +617,104 @@
 									"required": [
 										"blocked"
 									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/body-type": {
+			"get": {
+				"summary": "Body Type",
+				"description": "The body types each step of the routes has been reached with",
+				"operationId": "body-type",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by route id, route uri, and source location",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "varied",
+						"in": "query",
+						"description": "Whether to include only the steps that have been reached with more than one body type",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Body Type output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"source": {
+														"type": "string",
+														"description": "The source location (only present when known)"
+													},
+													"steps": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string",
+																	"description": "The processor ID"
+																},
+																"type": {
+																	"type": "string",
+																	"description": "The processor type"
+																},
+																"line": {
+																	"type": "integer",
+																	"description": "The source line number (only present when known)"
+																},
+																"code": {
+																	"type": "string",
+																	"description": "The code representation of this processor"
+																},
+																"bodyTypes": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The body types this processor has been reached with, across the messages, in the order first seen: more than one means the type varied"
+																},
+																"bodyKinds": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention"
+																}
+															}
+														},
+														"description": "The steps of the route that a message has reached, with their body types"
+													}
+												}
+											},
+											"description": "The routes with a step that a message has reached (the message history records the body types, such as in the dev profile)"
+										}
+									}
 								}
 							}
 						}
@@ -1735,6 +1833,10 @@
 											"type": "string",
 											"description": "The time to live for entries"
 										},
+										"includeRouteStopping": {
+											"type": "boolean",
+											"description": "Whether exchanges cut off by a route stop, a route reload or a CamelContext stop are also captured"
+										},
 										"errors": {
 											"type": "array",
 											"items": {
@@ -1747,7 +1849,8 @@
 									"required": [
 										"enabled",
 										"size",
-										"maximumEntries"
+										"maximumEntries",
+										"includeRouteStopping"
 									]
 								}
 							}
@@ -4383,6 +4486,84 @@
 				}
 			}
 		},
+		"\/q\/dev\/milo-client": {
+			"get": {
+				"summary": "OPC UA Client",
+				"description": "OPC UA client connections and their refused monitored items",
+				"operationId": "milo-client",
+				"responses": {
+					"200": {
+						"description": "OPC UA Client output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"connections": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"endpointUri": {
+														"type": "string",
+														"description": "The OPC UA server endpoint, with its password masked"
+													},
+													"clientId": {
+														"type": "string",
+														"description": "The client id of the connection (only present when one is set)"
+													},
+													"routeIds": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "The ids of the routes whose consumers use the connection"
+													},
+													"sessionActive": {
+														"type": "boolean",
+														"description": "Whether the session with the server is active"
+													},
+													"monitoredNodes": {
+														"type": "integer",
+														"description": "The number of nodes that have a monitored item on the server"
+													},
+													"refusedNodes": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"nodeId": {
+																	"type": "string",
+																	"description": "The node ID"
+																},
+																"status": {
+																	"type": "string",
+																	"description": "The status of the latest attempt to create the monitored item of the node: the refusal, or the failure of the attempt"
+																},
+																"reason": {
+																	"type": "string",
+																	"description": "Why the client refused the node without asking the server (only present when it did)"
+																}
+															}
+														},
+														"description": "The nodes whose monitored item was refused, which are created again every reconnectTimeout milliseconds"
+													}
+												},
+												"required": [
+													"sessionActive",
+													"monitoredNodes"
+												]
+											},
+											"description": "The connections of the consumers"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/opentelemetry": {
 			"get": {
 				"summary": "OpenTelemetry Spans",
@@ -4709,6 +4890,20 @@
 													"uri": {
 														"type": "string",
 														"description": "The destination URI, for processors that send to a destination (only present when applicable)"
+													},
+													"bodyTypes": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)"
+													},
+													"bodyKinds": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention (only present when the message history recorded any)"
 													},
 													"statistics": {
 														"type": "object",
@@ -5787,6 +5982,10 @@
 														"type": "boolean",
 														"description": "Whether the route was created by a route template"
 													},
+													"routeTemplateId": {
+														"type": "string",
+														"description": "The id of the route template (or Kamelet) the route was created from (only present when known)"
+													},
 													"from": {
 														"type": "string",
 														"description": "The route's endpoint URI"
@@ -5799,6 +5998,18 @@
 														"type": "string",
 														"description": "The source location (only present when known)"
 													},
+													"templatedRouteSource": {
+														"type": "string",
+														"description": "The source that declares the templated route the route was created from (only present when known)"
+													},
+													"checksum": {
+														"type": "string",
+														"description": "The checksum of the route as written, the same in every run: compare it with an earlier run to tell whether the route changed (only present when known, as it needs camel-xml-io)"
+													},
+													"revision": {
+														"type": "integer",
+														"description": "The revision of the route in this run: 1 when it is added, one more each time it is added again with another checksum, such as by a reload (only present when the checksum is known)"
+													},
 													"state": {
 														"type": "string",
 														"description": "The route state"
@@ -5810,6 +6021,14 @@
 													"uptime": {
 														"type": "string",
 														"description": "Route uptime, human readable text"
+													},
+													"variedBodyTypes": {
+														"type": "integer",
+														"description": "The number of steps that have been reached with more than one body type, across the messages: a part of the route that is dynamic (only present when there are any, as the message history records the body types, such as in the dev profile)"
+													},
+													"mixedBodyKinds": {
+														"type": "integer",
+														"description": "The number of steps that have been reached with bodies of more than one kind (null, payload, data or collection): these need attention, as a step that writes or sends fails for the data, and a step that reads fields fails for the payload. The route-structure console says which steps (only present when there are any)"
 													},
 													"lastError": {
 														"type": "object",
@@ -5878,6 +6097,18 @@
 																"type": "integer",
 																"description": "Number of inflight exchanges"
 															},
+															"remoteExchangesTotal": {
+																"type": "integer",
+																"description": "Total number of exchanges that came from a remote endpoint"
+															},
+															"remoteExchangesFailed": {
+																"type": "integer",
+																"description": "Number of failed exchanges that came from a remote endpoint"
+															},
+															"remoteExchangesInflight": {
+																"type": "integer",
+																"description": "Number of inflight exchanges that came from a remote endpoint"
+															},
 															"meanProcessingTime": {
 																"type": "integer",
 																"description": "Mean processing time in milliseconds"
@@ -5932,6 +6163,9 @@
 															"exchangesTotal",
 															"exchangesFailed",
 															"exchangesInflight",
+															"remoteExchangesTotal",
+															"remoteExchangesFailed",
+															"remoteExchangesInflight",
 															"meanProcessingTime",
 															"maxProcessingTime",
 															"minProcessingTime"
@@ -6011,6 +6245,20 @@
 																"uri": {
 																	"type": "string",
 																	"description": "The destination URI, for processors that send to a destination (only present when applicable)"
+																},
+																"bodyTypes": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)"
+																},
+																"bodyKinds": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention (only present when the message history recorded any)"
 																},
 																"statistics": {
 																	"type": "object",
@@ -6295,6 +6543,16 @@
 						}
 					},
 					{
+						"name": "errors",
+						"in": "query",
+						"description": "Whether to draw the error handling. In route mode the onException clauses of each route are drawn in a frame below its steps, with where its failures go (otherwise only the steps of the route are drawn). In topology mode the routes reached only on error are drawn in a frame below the other routes.",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
 						"name": "external",
 						"in": "query",
 						"description": "Whether to include external systems (kafka, http, etc.) in topology mode",
@@ -6505,6 +6763,10 @@
 													"source": {
 														"type": "string",
 														"description": "The source location (only present when known)"
+													},
+													"checksum": {
+														"type": "string",
+														"description": "The checksum of the route as written, the same in every run: the dump is of this version of the route (only present when known, as it needs camel-xml-io)"
 													},
 													"format": {
 														"type": "string",
@@ -6802,6 +7064,10 @@
 														"type": "string",
 														"description": "The route description (only present when configured)"
 													},
+													"checksum": {
+														"type": "string",
+														"description": "The checksum of the route as written, the same in every run: the facts a tool keeps per line hold for this version of the route (only present when known, as it needs camel-xml-io)"
+													},
 													"code": {
 														"type": "array",
 														"items": {
@@ -6838,6 +7104,20 @@
 																"remote": {
 																	"type": "boolean",
 																	"description": "Whether the endpoint is remote (only present when true)"
+																},
+																"bodyTypes": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)"
+																},
+																"bodyKinds": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)"
 																},
 																"statistics": {
 																	"type": "object",
@@ -6976,6 +7256,18 @@
 													"connectionType": {
 														"type": "string",
 														"description": "The connection type"
+													},
+													"kind": {
+														"type": "string",
+														"description": "call when the source route sends as it routes a message, or error when it sends only when it handles a failure (an error path)"
+													},
+													"via": {
+														"type": "string",
+														"description": "For an error path, what sends: errorHandler or onException"
+													},
+													"handling": {
+														"type": "string",
+														"description": "For an error path, what happens to the failure: handled (the message ends there), continued (the route goes on after it) or notHandled (the failure goes on to the caller); absent when a predicate decides it"
 													}
 												}
 											},
@@ -7025,6 +7317,586 @@
 												"additionalProperties": true
 											},
 											"description": "Route structure data, as opaque JSON objects (only present when requested)"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/semantic-audit": {
+			"get": {
+				"summary": "Semantic Audit",
+				"description": "Browse retained semantic audit records",
+				"operationId": "semantic-audit",
+				"parameters": [
+					{
+						"name": "breadcrumbId",
+						"in": "query",
+						"description": "Filter by Camel breadcrumb ID",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "caseEventId",
+						"in": "query",
+						"description": "Anchor event ID for a source-local case",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "category",
+						"in": "query",
+						"description": "Filter by category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "cursor",
+						"in": "query",
+						"description": "Backend cursor for an older page",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "definition",
+						"in": "query",
+						"description": "Filter by recorded definition name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "eventId",
+						"in": "query",
+						"description": "Event ID to inspect; legacy records remain exportable",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "eventIds",
+						"in": "query",
+						"description": "Event IDs for bounded bulk export; at most 1000",
+						"required": false,
+						"schema": {
+							"type": "object"
+						}
+					},
+					{
+						"name": "exchangeId",
+						"in": "query",
+						"description": "Filter by recorded exchange ID when supported by the reader",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "executingRouteId",
+						"in": "query",
+						"description": "Filter by executing route when supported by the reader",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "expert",
+						"in": "query",
+						"description": "Filter by expert bean reference",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "includeInput",
+						"in": "query",
+						"description": "Include untrusted captured input in explicit export",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Maximum records, between 1 and 200",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 50
+						}
+					},
+					{
+						"name": "maxRecords",
+						"in": "query",
+						"description": "Case or bulk retrieval record budget, between 1 and 1000",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 200
+						}
+					},
+					{
+						"name": "operation",
+						"in": "query",
+						"description": "Filter by recorded expert operation",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultLabel",
+						"in": "query",
+						"description": "Exact member of the captured Classification result; requires resultType=CLASSIFICATION",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultType",
+						"in": "query",
+						"description": "Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultValue",
+						"in": "query",
+						"description": "Exact Boolean, Choice or numeric Score value; requires resultType",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "routeId",
+						"in": "query",
+						"description": "Filter by route",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "scoreMax",
+						"in": "query",
+						"description": "Inclusive numeric upper bound; requires resultType=SCORE",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "scoreMin",
+						"in": "query",
+						"description": "Inclusive numeric lower bound; requires resultType=SCORE",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "since",
+						"in": "query",
+						"description": "UTC earliest timestamp in ISO-8601 format",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "until",
+						"in": "query",
+						"description": "Exclusive upper event timestamp in ISO-8601 format",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Semantic Audit output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/semantic-evaluate": {
+			"post": {
+				"summary": "Semantic Evaluation",
+				"description": "Evaluate sample input through a semantic definition or expert operation",
+				"operationId": "semantic-evaluate",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"body": {
+										"type": "object",
+										"description": "Sample message body"
+									},
+									"evaluation": {
+										"type": "string",
+										"description": "Name of the published evaluation to execute"
+									},
+									"expert": {
+										"type": "string",
+										"description": "Expert reference for direct evaluation"
+									},
+									"headers": {
+										"type": "object",
+										"description": "Sample message headers"
+									},
+									"input": {
+										"type": "object",
+										"description": "Already-selected input for direct evaluation"
+									},
+									"operation": {
+										"type": "string",
+										"description": "Expert operation for direct evaluation"
+									},
+									"parameters": {
+										"type": "object",
+										"description": "Expert operation parameters"
+									},
+									"timeout": {
+										"type": "integer",
+										"description": "Maximum evaluation time in milliseconds (1 to 50000, default 50000)"
+									},
+									"variables": {
+										"type": "object",
+										"description": "Sample exchange variables"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Semantic Evaluation output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"evaluation": {
+											"type": "string",
+											"description": "Evaluation name"
+										},
+										"status": {
+											"type": "string",
+											"description": "Success or failed"
+										},
+										"value": {
+											"description": "Validated result value"
+										},
+										"probability": {
+											"type": "number",
+											"description": "Provider probability"
+										},
+										"probabilities": {
+											"type": "object",
+											"additionalProperties": {
+												"type": "number"
+											},
+											"description": "Probabilities by label"
+										},
+										"confidence": {
+											"type": "number",
+											"description": "Provider confidence"
+										},
+										"metadata": {
+											"type": "object",
+											"additionalProperties": true,
+											"description": "Provider result metadata"
+										},
+										"elapsedMillis": {
+											"type": "integer",
+											"description": "Elapsed time in milliseconds"
+										},
+										"error": {
+											"type": "string",
+											"description": "Evaluation error, if any"
+										}
+									},
+									"required": [
+										"elapsedMillis"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/semantic-metadata": {
+			"get": {
+				"summary": "Semantic Metadata",
+				"description": "Semantic experts and evaluation definitions",
+				"operationId": "semantic-metadata",
+				"parameters": [
+					{
+						"name": "expert",
+						"in": "query",
+						"description": "Expert registry name, required for operation inspection",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "overview",
+						"in": "query",
+						"description": "List registered experts and published evaluation definitions",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Semantic Metadata output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"operations": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The expert-owned operation name"
+													},
+													"description": {
+														"type": "string",
+														"description": "The operation's purpose"
+													},
+													"resultType": {
+														"type": "string",
+														"description": "The shape of the returned value"
+													},
+													"contract": {
+														"type": "object",
+														"additionalProperties": true,
+														"description": "Input, parameter and result contract"
+													}
+												}
+											},
+											"description": "Operations for completion"
+										},
+										"experts": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"reference": {
+														"type": "string",
+														"description": "Registry reference"
+													},
+													"name": {
+														"type": "string",
+														"description": "Contract name"
+													},
+													"description": {
+														"type": "string",
+														"description": "Expert description"
+													},
+													"provider": {
+														"type": "string",
+														"description": "Provider name"
+													},
+													"artifactId": {
+														"type": "string",
+														"description": "Provider artifact"
+													},
+													"operations": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"name": {
+																	"type": "string",
+																	"description": "The expert-owned operation name"
+																},
+																"description": {
+																	"type": "string",
+																	"description": "The operation's purpose"
+																},
+																"resultType": {
+																	"type": "string",
+																	"description": "The shape of the returned value"
+																},
+																"contract": {
+																	"type": "object",
+																	"additionalProperties": true,
+																	"description": "Input, parameter and result contract"
+																}
+															}
+														},
+														"description": "Supported operations"
+													},
+													"error": {
+														"type": "string",
+														"description": "Contract resolution error, if any"
+													}
+												}
+											},
+											"description": "Known experts, when overview is requested"
+										},
+										"evaluations": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "Evaluation name"
+													},
+													"expert": {
+														"type": "string",
+														"description": "Resolved expert reference"
+													},
+													"operation": {
+														"type": "string",
+														"description": "Declared operation"
+													},
+													"state": {
+														"type": "string",
+														"description": "Effective state selector"
+													},
+													"parameters": {
+														"type": "object",
+														"additionalProperties": true,
+														"description": "Declared parameters"
+													},
+													"resultType": {
+														"type": "string",
+														"description": "Declared result shape"
+													},
+													"error": {
+														"type": "string",
+														"description": "Expert or operation resolution error, if any"
+													}
+												}
+											},
+											"description": "Published definitions, when overview is requested"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/semantic-monitoring": {
+			"get": {
+				"summary": "Semantic Monitoring",
+				"description": "Read current semantic measurements",
+				"operationId": "semantic-monitoring",
+				"parameters": [
+					{
+						"name": "source",
+						"in": "query",
+						"description": "Producer name to inspect",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Semantic Monitoring output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"snapshots": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"additionalProperties": true
+											},
+											"description": "Current producer-supplied measurements"
+										},
+										"scope": {
+											"type": "string",
+											"description": "Scope of the returned measurements"
+										},
+										"sources": {
+											"type": "object",
+											"additionalProperties": true,
+											"description": "Source sampling health"
+										},
+										"omittedSources": {
+											"type": "integer",
+											"description": "Sources beyond the registration limit"
+										},
+										"freshness": {
+											"type": "string",
+											"description": "How to interpret freshness"
+										},
+										"sourceErrors": {
+											"type": "integer",
+											"description": "Source sampling failures"
+										},
+										"evicted": {
+											"type": "integer",
+											"description": "Series evicted from the current-value cache"
+										},
+										"managementErrors": {
+											"type": "integer",
+											"description": "Management registration failures"
+										},
+										"capacity": {
+											"type": "integer",
+											"description": "Maximum cached series count"
+										},
+										"sampleIntervalSeconds": {
+											"type": "integer",
+											"description": "Sampling cadence in seconds"
+										},
+										"lastSample": {
+											"type": "string",
+											"description": "Last sampling time when available"
+										},
+										"error": {
+											"type": "string",
+											"description": "Query validation error when present"
 										}
 									}
 								}

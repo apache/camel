@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Properties;
 import java.util.function.Consumer;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -39,6 +40,11 @@ class SwitchValidationTest {
     @Test
     void rejectsDuplicateScalarValues() {
         rejects(s -> s.doCase("Billing", "mock:a").doCase("billing", "mock:b"), "Duplicate switch case");
+    }
+
+    @Test
+    void rejectsDuplicateValuesAfterResolvingPlaceholders() {
+        rejects(s -> s.doCase("{{switch.tier}}", "mock:a").doCase("gold", "mock:b"), "Duplicate switch case");
     }
 
     @Test
@@ -79,6 +85,9 @@ class SwitchValidationTest {
     private void rejects(Consumer<SwitchDefinition> configure, String message) {
         Exception failure = assertThrows(Exception.class, () -> {
             try (DefaultCamelContext context = new DefaultCamelContext()) {
+                Properties properties = new Properties();
+                properties.setProperty("switch.tier", "gold");
+                context.getPropertiesComponent().setInitialProperties(properties);
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() {

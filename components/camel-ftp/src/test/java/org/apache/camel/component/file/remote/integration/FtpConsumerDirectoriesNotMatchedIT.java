@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,12 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerDirectoriesNotMatchedIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/dirnotmatched/?password=admin" + "&recursive=true&include=^.*txt$";
+        return "ftp://admin@localhost:{{ftp.server.port}}/dirnotmatched/?password=admin"
+               + "&recursive=true&include=^.*txt$&noop=true";
+    }
+
+    private String getFtpProducerUrl(String subDir) {
+        return "ftp://admin@localhost:{{ftp.server.port}}/dirnotmatched/" + subDir + "?password=admin";
     }
 
     @Override
@@ -38,19 +44,20 @@ public class FtpConsumerDirectoriesNotMatchedIT extends FtpServerTestSupport {
     public void testSkipDirectories() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
+        mock.expectedHeaderValuesReceivedInAnyOrder(Exchange.FILE_NAME,
+                "readme.txt", "2007/report2007.txt", "2008/report2008.txt");
         mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() {
         // prepares the FTP Server by creating files on the server that we want
-        // to unit
-        // test that we can pool and store as a local file
+        // to unit test that we can poll and skip non-matching files and directories
 
-        sendFile(getFtpUrl() + "/?password=admin", "This is a dot file", ".skipme");
-        sendFile(getFtpUrl() + "/?password=admin", "This is a web file", "index.html");
-        sendFile(getFtpUrl() + "/?password=admin", "This is a readme file", "readme.txt");
-        sendFile(getFtpUrl() + "/2007/?password=admin", "2007 report", "report2007.txt");
-        sendFile(getFtpUrl() + "/2008/?password=admin", "2008 report", "report2008.txt");
+        sendFile(getFtpProducerUrl(""), "This is a dot file", ".skipme");
+        sendFile(getFtpProducerUrl(""), "This is a web file", "index.html");
+        sendFile(getFtpProducerUrl(""), "This is a readme file", "readme.txt");
+        sendFile(getFtpProducerUrl("2007"), "2007 report", "report2007.txt");
+        sendFile(getFtpProducerUrl("2008"), "2008 report", "report2008.txt");
     }
 
     @Override

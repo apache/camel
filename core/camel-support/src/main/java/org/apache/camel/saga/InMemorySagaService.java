@@ -26,11 +26,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An in-memory implementation of a saga service.
  */
 public class InMemorySagaService extends ServiceSupport implements CamelSagaService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InMemorySagaService.class);
 
     public static final int DEFAULT_MAX_RETRY_ATTEMPTS = 5;
 
@@ -86,6 +90,12 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
 
     @Override
     protected void doStop() throws Exception {
+        if (!coordinators.isEmpty()) {
+            // the saga status is not persisted: these sagas will not be compensated or completed
+            LOG.warn("Stopping the in-memory saga service with {} saga(s) not finalized, which will not be compensated"
+                     + " or completed: {}",
+                    coordinators.size(), coordinators.keySet());
+        }
         if (this.producerTemplate != null) {
             this.producerTemplate.stop();
             this.producerTemplate = null;

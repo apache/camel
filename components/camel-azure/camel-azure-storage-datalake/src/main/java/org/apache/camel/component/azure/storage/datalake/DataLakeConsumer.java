@@ -17,8 +17,10 @@
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 import com.azure.storage.file.datalake.DataLakeFileSystemClient;
@@ -92,12 +94,56 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         forceConsumerAsReady();
 
         final Queue<Exchange> exchanges = new LinkedList<>();
+        // the listed files that could not be got, other than those that no longer exist, by name
+        final Map<String, Exception> failures = new LinkedHashMap<>();
         for (PathItem pathItem : items) {
             if (!pathItem.isDirectory()) {
-                exchanges.add(createExchangeFromFile(pathItem.getName(), dataLakeFileSystemClient));
+                // a failure to get one listed file (access denied by its ACL, a key that cannot decrypt it) does not
+                // fail the poll as long as another listed file could be got: the file is skipped, the other listed
+                // files are consumed, and a later poll tries it again
+                try {
+                    exchanges.add(createExchangeFromFile(pathItem.getName(), dataLakeFileSystemClient));
+                } catch (DataLakeStorageException e) {
+                    if (NOT_FOUND == e.getStatusCode()) {
+                        // deleted (for example by another consumer) after it was listed
+                        LOG.debug("Skipping file {} as it no longer exists", pathItem.getName());
+                    } else {
+                        failures.put(pathItem.getName(), e);
+                    }
+                } catch (Exception e) {
+                    failures.put(pathItem.getName(), e);
+                }
+            }
+        }
+
+        if (!failures.isEmpty()) {
+            if (exchanges.isEmpty()) {
+                // none of the listed files could be got, so this is not about one file (expired credentials, no
+                // permission to read files, no connection): the poll fails, and the backoff of the scheduled consumer
+                // applies
+                final Map.Entry<String, Exception> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the listed files of file system {} could be got ({} failed, the first is {}): the poll fails",
+                        getEndpoint().getConfiguration().getFileSystemName(), failures.size(), first.getKey());
+                rethrow(first.getValue());
+            }
+            for (Map.Entry<String, Exception> failure : failures.entrySet()) {
+                getExceptionHandler().handleException("Error getting file " + failure.getKey() + " from file system "
+                                                      + getEndpoint().getConfiguration().getFileSystemName()
+                                                      + ". The file is skipped for this poll.",
+                        failure.getValue());
             }
         }
         return exchanges;
+    }
+
+    private static void rethrow(final Exception e) throws IOException {
+        if (e instanceof IOException ioe) {
+            throw ioe;
+        }
+        if (e instanceof RuntimeException re) {
+            throw re;
+        }
+        throw new IOException(e);
     }
 
     private Exchange createExchangeFromFile(final String fileName, final DataLakeFileSystemClient dataLakeFileSystemClient)

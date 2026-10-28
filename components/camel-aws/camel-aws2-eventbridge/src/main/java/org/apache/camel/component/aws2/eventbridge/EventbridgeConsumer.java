@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.aws2.eventbridge;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +65,7 @@ import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
  *
  * <p>
  * The consumer can auto-create an SQS queue and wire it to the EventBridge rule, or use a user-provided queue. On
- * shutdown, auto-provisioned resources are cleaned up by default.
+ * shutdown, auto-provisioned resources are cleaned up by default. A user-provided queue keeps its target on the rule.
  * </p>
  */
 public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
@@ -184,8 +188,12 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
                     "Either queueUrl must be specified or autoCreateQueue must be enabled for EventBridge consumer");
         }
 
-        // Add queue as EventBridge target
-        targetId = "camel-eb-" + UUID.randomUUID().toString().substring(0, 8);
+        // Add queue as EventBridge target. The target of a user-provided queue has an id derived from the queue, so
+        // every start and every consumer that shares the queue updates the same target (putTargets replaces a target
+        // with the same id): two targets for one queue would each put a copy of every event on the queue.
+        targetId = queueAutoCreated
+                ? "camel-eb-" + UUID.randomUUID().toString().substring(0, 8)
+                : targetIdForQueue(queueArn);
         Target target = Target.builder()
                 .id(targetId)
                 .arn(queueArn)
@@ -211,8 +219,9 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
         EventbridgeConfiguration config = getEndpoint().getConfiguration();
 
         try {
-            // Remove target from EventBridge rule
-            if (ObjectHelper.isNotEmpty(targetId)) {
+            // Remove the target of an auto-created queue. The target of a user-provided queue is kept: other consumers
+            // can share the queue, and the queue keeps collecting the events of the rule while this consumer is stopped.
+            if (queueAutoCreated && ObjectHelper.isNotEmpty(targetId)) {
                 EventBridgeClient ebClient = getEndpoint().getEventbridgeClient();
                 ebClient.removeTargets(
                         RemoveTargetsRequest.builder()
@@ -262,6 +271,19 @@ public class EventbridgeConsumer extends ScheduledBatchPollingConsumer {
                             .build());
         } catch (Exception e) {
             LOG.warn("Failed to delete message from SQS queue: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * The EventBridge target id for a user-provided queue: the same for every start and every consumer of the queue.
+     */
+    static String targetIdForQueue(String queueArn) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(queueArn.getBytes(StandardCharsets.UTF_8));
+            // a target id has at most 64 characters of [.-_A-Za-z0-9]
+            return "camel-eb-" + HexFormat.of().formatHex(digest, 0, 16);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is not available", e);
         }
     }
 

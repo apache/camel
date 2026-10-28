@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -26,9 +28,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.catalog.CamelCatalog;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.PropertiesChecks.closestName;
+import static org.apache.camel.dsl.jbang.core.commands.ai.PropertiesChecks.closestNames;
 
 /**
  * The Camel* header check of {@link SourceValidator}: a header a component never sets, against the header metadata of
@@ -42,7 +47,26 @@ final class HeaderChecks {
     static final Pattern CAMEL_HEADER_REF_PATTERN = Pattern.compile(
             "(?:\\$\\{headers?\\.|headers\\.|headers\\[['\"]|header\\(['\"]|(name):\\s*['\"]?)(Camel[A-Z][A-Za-z0-9]*(?:\\.[A-Za-z0-9_]+)*)");
 
-    static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile("uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*):");
+    private static final String HTTP_STATUS
+            = "the status code of an HTTP answer is the header CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)";
+
+    /**
+     * A name written as a constant of Exchange, such as name: Exchange.HTTP_RESPONSE_CODE: Camel looks the constant up
+     * when it creates the route, for the name of a setHeader, setProperty, setVariable and of the remove EIPs.
+     */
+    static final Pattern EXCHANGE_CONSTANT_NAME = Pattern.compile("name:\\s*['\"]?Exchange\\.([A-Z][A-Z0-9_]*)");
+
+    /**
+     * The scheme of an endpoint: of a uri: (from, to, wireTap...), and of the steps the YAML DSL takes in the short
+     * form, such as to: aws-secrets-manager:sm (CAMEL-26039). The value is on the line of the key, so the long form of
+     * a to: with its uri: on the next line does not name a key such as uri: or steps: as a scheme. A uri: can also hold
+     * the scheme alone (uri: jms, with the rest under parameters:).
+     */
+    static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile(
+            "(?m)(?<![A-Za-z0-9_-])(?:(?:uri|to|toD|to-d|poll|interceptFrom|intercept-from|interceptSendToEndpoint"
+                                                                 + "|intercept-send-to-endpoint):[ \\t]*['\"]?(?=[a-zA-Z][a-zA-Z0-9+.-]*:)"
+                                                                 + "|uri:[ \\t]*['\"]?(?=[a-zA-Z][a-zA-Z0-9+.-]*['\"]?[ \\t\\r]*$))"
+                                                                 + "([a-zA-Z][a-zA-Z0-9+.-]*)");
 
     /**
      * Names a component sets as exchange properties, not headers; the catalog has no metadata for those, so the ones a
@@ -50,6 +74,94 @@ final class HeaderChecks {
      */
     static final Map<String, List<String>> EXCHANGE_PROPERTIES = Map.of(
             "timer", List.of("CamelTimerCounter", "CamelTimerName", "CamelTimerPeriod", "CamelTimerTime"));
+
+    /**
+     * The option without which a component sets none of its {@link #EXCHANGE_PROPERTIES}: TimerConsumer sets them only
+     * with includeMetadata=true.
+     */
+    static final Map<String, String> METADATA_OPTION = Map.of("timer", "includeMetadata");
+
+    /**
+     * A comparison of the timer's counter with a number: the counter counts the fires from 1, so {@code == 0} is never
+     * true (CAMEL-25744: in 8 of 10 benchmark runs a model compared it with 0 to pick the first fire). The Simple forms
+     * (${exchangeProperty.CamelTimerCounter} == 0, ${header.CamelTimerCounter == 0 ? ...}) and the Groovy ones
+     * (exchange.getProperty('CamelTimerCounter', Integer) == 0).
+     */
+    static final Pattern TIMER_COUNTER_COMPARISON = Pattern.compile(
+            "CamelTimerCounter(?:\\}|['\"]\\s*(?:,\\s*[\\w.]+\\s*)?\\))?\\s*(==|!=|<=|<|>=|>)\\s*['\"]?(\\d+)['\"]?");
+
+    static final Pattern EXCHANGE_PROPERTY_REF_PATTERN = Pattern.compile("\\$\\{exchangeProperty\\.(Camel[A-Z][A-Za-z0-9]*)");
+
+    /** Whether the option that makes the component set its exchange properties is true somewhere in the content. */
+    static boolean setsExchangeProperties(String scheme, String content) {
+        String option = METADATA_OPTION.get(scheme);
+        return option == null
+                || Pattern.compile(Pattern.quote(option) + "\\s*[=:]\\s*[\"']?true").matcher(content).find();
+    }
+
+    /**
+     * Whether a header reference also finds an exchange property of that name: Simple's ${header.x} and the header("x")
+     * expression look in the exchange properties when the message has no such header; ${headers.x} reads the map.
+     */
+    static boolean fallsBackToProperties(String reference) {
+        return reference.startsWith("${header.") || reference.startsWith("header(");
+    }
+
+    private static String onlyWithOption(int line, String scheme, String name) {
+        return "Line " + line + ": " + scheme + " sets " + name + " only with " + METADATA_OPTION.get(scheme)
+               + "=true on the endpoint, as the exchange property ${exchangeProperty." + name + "}";
+    }
+
+    /** A name that reaches for the reply of a request-reply, such as CamelJmsReplyTo. */
+    private static final Pattern REPLY_NAME = Pattern.compile("Reply");
+
+    /**
+     * For a reply header read or set by hand on a JMS route: Camel does request-reply itself (r20 runs built replies by
+     * hand after "did you mean JMSReplyTo?"). Only given when the file's components set JMSReplyTo, so the reply
+     * headers of other components (CamelFtpReplyCode, CamelNatsReplyTo) keep their "did you mean".
+     */
+    static final String JMS_REQUEST_REPLY_HINT
+            = "For request-reply over JMS, send with pattern: InOut on the to: and Camel sets JMSReplyTo and waits for the"
+              + " reply (the body at the end of the service route); you do not need to set JMSReplyTo or replyTo"
+              + " yourself.";
+
+    /**
+     * A reply header of a JMS request-reply named by hand, in any case: JMSReplyTo, replyTo, jmsReplyTo,
+     * camelJmsReplyTo. The names that start with Camel and a capital are left to the header check, which reports them.
+     */
+    private static final Pattern REPLY_HEADER_REF = Pattern.compile(
+            "(?:\\$\\{headers?\\.|headers\\.|headers\\[['\"]|header\\(['\"]|(name):\\s*['\"]?)"
+                                                                    + "((?i:(?:camel)?(?:jms)?replyto))(?![A-Za-z0-9])");
+
+    /** An endpoint of a JMS component, in a URI (jms:queue:x) or as the scheme alone (uri: jms, with parameters). */
+    private static final Pattern JMS_URI = Pattern.compile(
+            "(?m)uri:\\s*['\"]?(?:jms|sjms2?|activemq6?|amqp)(?::|['\"]?\\s*$)");
+
+    /**
+     * Notes for a route that sets or reads a JMS reply header by hand when nothing is sent with InOut (r21 of the
+     * local-model benchmark: a model set JMSReplyTo in the service route and sent the request one way). A note, not an
+     * error: a reply queue set by hand for a reply that another route consumes is a design of its own.
+     */
+    static List<String> replyHeaderNotes(String content) {
+        List<String> notes = new ArrayList<>();
+        if (content == null || !JMS_URI.matcher(content).find() || content.contains("InOut")) {
+            return notes;
+        }
+        String[] lines = content.split("\n", -1);
+        Set<String> seen = new HashSet<>();
+        for (int i = 0; i < lines.length; i++) {
+            Matcher m = REPLY_HEADER_REF.matcher(lines[i]);
+            while (m.find()) {
+                String name = m.group(2);
+                if (name.startsWith("Camel") || (m.group(1) != null && !isHeaderName(lines, i)) || !seen.add(name)) {
+                    continue;
+                }
+                notes.add("Line " + (i + 1) + ": " + name + (m.group(1) != null ? " is set by hand" : " is read")
+                          + ", and no message is sent with pattern: InOut. " + JMS_REQUEST_REPLY_HINT);
+            }
+        }
+        return notes;
+    }
 
     /**
      * What an invented Camel* header is usually reaching for, keyed on a fragment of its name, and the expression that
@@ -69,6 +181,17 @@ final class HeaderChecks {
                                                               + " ${date:exchangeCreated:yyyy-MM-dd HH:mm:ss}; ${messageTimestamp} is set only by"
                                                               + " components that stamp their messages."));
 
+    /**
+     * Camel* names that are not headers of Camel, for a header that has another name, with what to write: the status
+     * code of an HTTP answer is CamelHttpResponseCode, which models write as CamelHttpStatusCode. Checked whatever the
+     * components of the file are: the routes of a REST DSL use direct, which has no header metadata, so the other
+     * checks skip them.
+     */
+    static final Map<String, String> WRONG_NAMES = Map.of(
+            "CamelHttpStatusCode", HTTP_STATUS, "CamelHttpStatus", HTTP_STATUS, "CamelHttpCode", HTTP_STATUS,
+            "CamelHttpResponseStatus", HTTP_STATUS, "CamelHttpResponseStatusCode", HTTP_STATUS, "CamelStatusCode",
+            HTTP_STATUS);
+
     static String intentHint(String name) {
         for (var e : INTENT_HINTS) {
             if (e.getKey().matcher(name).find()) {
@@ -78,11 +201,88 @@ final class HeaderChecks {
         return null;
     }
 
+    /**
+     * The comparisons of CamelTimerCounter that can never be true (== 0, <= 0, < 1) or never be false (!= 0, > 0, >=
+     * 1), as the counter is 1 on the first fire.
+     */
+    static List<String> timerCounterComparisons(String content) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            Matcher m = TIMER_COUNTER_COMPARISON.matcher(lines[i]);
+            while (m.find()) {
+                String op = m.group(1);
+                int n = Integer.parseInt(m.group(2));
+                boolean never = ("==".equals(op) || "<=".equals(op)) && n == 0 || "<".equals(op) && n <= 1;
+                boolean always = ("!=".equals(op) || ">".equals(op)) && n == 0 || ">=".equals(op) && n <= 1;
+                if (never || always) {
+                    msgs.add("Line " + (i + 1) + ": CamelTimerCounter counts the fires from 1 (the first fire is 1), so "
+                             + op + " " + n + " is " + (never ? "never true" : "always true")
+                             + ": compare with 1 to pick the first fire");
+                }
+            }
+        }
+        return msgs;
+    }
+
+    /**
+     * The {@link #WRONG_NAMES} the content uses as header names, and the names written as a constant that Exchange does
+     * not have, which fail the route when Camel creates it; once each, the names go into reported.
+     */
+    static List<String> wrongNames(String content, Set<String> reported) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            Matcher c = EXCHANGE_CONSTANT_NAME.matcher(lines[i]);
+            if (c.find() && isSetOrRemoveName(lines, i)) {
+                String hint = exchangeConstantHint(c.group(1));
+                if (hint != null && reported.add("Exchange." + c.group(1))) {
+                    msgs.add("Line " + (i + 1) + ": " + hint);
+                }
+            }
+            Matcher m = CAMEL_HEADER_REF_PATTERN.matcher(lines[i]);
+            while (m.find()) {
+                if (m.group(1) != null && !isHeaderName(lines, i)) {
+                    continue;
+                }
+                String name = m.group(2);
+                String right = WRONG_NAMES.get(name);
+                if (right != null && reported.add(name)) {
+                    msgs.add("Line " + (i + 1) + ": Camel has no header " + name + ": " + right);
+                }
+            }
+        }
+        return msgs;
+    }
+
+    /**
+     * The message for a name written as Exchange.<constant> when Exchange has no such constant, else null: Camel looks
+     * the constant up, so the name Exchange.HTTP_RESPONSE_CODE of a setHeader sets CamelHttpResponseCode.
+     */
+    static String exchangeConstantHint(String constant) {
+        if (ExchangeConstantProvider.lookup(constant) != null) {
+            return null;
+        }
+        String start = "Exchange has no constant " + constant + ", so the route fails to start (Constant field with name: "
+                       + constant + " not found on Exchange.class): ";
+        if (constant.contains("STATUS") || constant.contains("RESPONSE")) {
+            return start + HTTP_STATUS;
+        }
+        List<String> fields = Arrays.stream(Exchange.class.getFields()).map(Field::getName).toList();
+        List<String> closest = closestNames(constant, fields);
+        return start + (closest.isEmpty()
+                ? "write the name of the header, such as CamelFileName"
+                : "did you mean " + String.join(" or ", closest.stream().map(n -> "Exchange." + n).toList()) + "?");
+    }
+
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
         if (content == null) {
             return msgs;
         }
+        msgs.addAll(timerCounterComparisons(content));
+        Set<String> wrong = new HashSet<>();
+        msgs.addAll(wrongNames(content, wrong));
         Set<String> known = new LinkedHashSet<>();
         Map<String, String> owner = new LinkedHashMap<>();
         Matcher sm = SCHEME_IN_URI_PATTERN.matcher(content);
@@ -127,7 +327,7 @@ final class HeaderChecks {
                     continue;
                 }
                 String name = m.group(2);
-                if (common.contains(name) || reported.contains(name) || isKnown(name, known)) {
+                if (common.contains(name) || reported.contains(name) || wrong.contains(name) || isKnown(name, known)) {
                     continue;
                 }
                 String propertyOwner = null;
@@ -139,8 +339,12 @@ final class HeaderChecks {
                 if (propertyOwner != null) {
                     // before the header metadata: an exchange property is never a header, whatever the metadata says
                     reported.add(name);
-                    msgs.add("Line " + (i + 1) + ": " + name + " is an exchange property set by " + propertyOwner
-                             + ", not a header (the header would be null): write ${exchangeProperty." + name + "}");
+                    if (!setsExchangeProperties(propertyOwner, content)) {
+                        msgs.add(onlyWithOption(i + 1, propertyOwner, name));
+                    } else if (!fallsBackToProperties(m.group())) {
+                        msgs.add("Line " + (i + 1) + ": " + name + " is an exchange property set by " + propertyOwner
+                                 + ", not a header (the header would be null): write ${exchangeProperty." + name + "}");
+                    }
                     continue;
                 }
                 if (!reported.add(name)) {
@@ -150,8 +354,13 @@ final class HeaderChecks {
                 String scheme = best != null && owner.containsKey(best.split(", ")[0]) ? owner.get(best.split(", ")[0]) : null;
                 StringBuilder sb = new StringBuilder("Line ").append(i + 1).append(": header ").append(name)
                         .append(" is not set by ").append(String.join(", ", schemes)).append(" (the value would be null)");
-                if (best != null) {
+                if (best != null && "JMSReplyTo".equals(best.split(", ")[0])) {
+                    // "did you mean JMSReplyTo?" led to replies set by hand: request-reply is done by Camel
+                    sb.append(" ").append(JMS_REQUEST_REPLY_HINT);
+                } else if (best != null) {
                     sb.append(": did you mean ").append(best).append("?");
+                } else if (known.contains("JMSReplyTo") && REPLY_NAME.matcher(name).find()) {
+                    sb.append(" ").append(JMS_REQUEST_REPLY_HINT);
                 } else {
                     String hint = intentHint(name);
                     if (hint != null) {
@@ -179,14 +388,32 @@ final class HeaderChecks {
                 for (String sc : schemes) {
                     List<String> props = EXCHANGE_PROPERTIES.getOrDefault(sc, List.of());
                     if (!props.isEmpty()) {
-                        sb.append(" ").append(sc).append(" sets the exchange properties ").append(String.join(", ", props))
-                                .append(" (${exchangeProperty.").append(props.get(0)).append("}).");
+                        sb.append(" ").append(sc).append(" sets the exchange properties ").append(String.join(", ", props));
+                        if (METADATA_OPTION.containsKey(sc)) {
+                            sb.append(" with ").append(METADATA_OPTION.get(sc)).append("=true");
+                        }
+                        sb.append(" (${exchangeProperty.").append(props.get(0)).append("}).");
                     }
                 }
                 if (m.group(1) == null) {
                     sb.append(" A header no component sets stays null unless a setHeader step sets it earlier in the route.");
                 }
                 msgs.add(sb.toString());
+            }
+        }
+        // an exchange property read without the option that sets it stays null as well
+        for (String scheme : schemes) {
+            if (setsExchangeProperties(scheme, content)) {
+                continue;
+            }
+            List<String> props = EXCHANGE_PROPERTIES.getOrDefault(scheme, List.of());
+            for (int i = 0; i < lines.length; i++) {
+                Matcher pm = EXCHANGE_PROPERTY_REF_PATTERN.matcher(lines[i]);
+                while (pm.find()) {
+                    if (props.contains(pm.group(1)) && reported.add(pm.group(1))) {
+                        msgs.add(onlyWithOption(i + 1, scheme, pm.group(1)));
+                    }
+                }
             }
         }
         return msgs;
@@ -217,6 +444,20 @@ final class HeaderChecks {
 
     /** Whether the name: on this line belongs to a setHeader or removeHeader step, not a setProperty, a bean... */
     static boolean isHeaderName(String[] lines, int index) {
+        String step = parentStep(lines, index);
+        return step.startsWith("setHeader:") || step.startsWith("removeHeader:");
+    }
+
+    /**
+     * Whether the name: of the line names a header, property or variable, which Camel parses as a constant of Exchange.
+     */
+    static boolean isSetOrRemoveName(String[] lines, int index) {
+        String step = parentStep(lines, index);
+        return step.startsWith("set") || step.startsWith("remove");
+    }
+
+    /** The step the line belongs to, such as setHeader:, or an empty text. */
+    private static String parentStep(String[] lines, int index) {
         int indent = YamlLines.countLeadingSpaces(lines[index]);
         for (int j = index - 1; j >= 0; j--) {
             String line = lines[j];
@@ -228,10 +469,10 @@ final class HeaderChecks {
                 if (step.startsWith("- ")) {
                     step = step.substring(2).trim();
                 }
-                return step.startsWith("setHeader:") || step.startsWith("removeHeader:");
+                return step;
             }
         }
-        return false;
+        return "";
     }
 
 }

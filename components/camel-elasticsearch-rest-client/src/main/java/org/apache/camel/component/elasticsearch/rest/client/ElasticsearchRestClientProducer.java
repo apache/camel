@@ -22,8 +22,11 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLContext;
@@ -44,13 +47,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Node;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseListener;
@@ -375,16 +377,18 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * Creates Rest Client from information in the Endpoint
      */
     private RestClient createClient() throws Exception {
-        final RestClientBuilder builder = RestClient.builder(getHttpHosts());
+        final HttpHost[] httpHosts = getHttpHosts();
+        final RestClientBuilder builder = RestClient.builder(httpHosts);
+        // the credentials provider reads the nodes from the client, as the sniffer can change them
+        final AtomicReference<RestClient> restClientRef = new AtomicReference<>();
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
                 .setConnectTimeout(this.endpoint.getConnectionTimeout()).setSocketTimeout(this.endpoint.getSocketTimeout()));
 
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
-            if (this.endpoint.getUser() != null && this.endpoint.getPassword() != null) {
-                final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(AuthScope.ANY,
-                        new UsernamePasswordCredentials(this.endpoint.getUser(), this.endpoint.getPassword()));
+            CredentialsProvider credentialsProvider
+                    = createCredentialsProvider(() -> nodeHosts(restClientRef.get(), httpHosts));
+            if (credentialsProvider != null) {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
             if (this.endpoint.getSslContextParameters() != null) {
@@ -402,6 +406,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
             return httpClientBuilder;
         });
         final RestClient restClient = builder.build();
+        restClientRef.set(restClient);
 
         // initiate Sniffer
         if (this.endpoint.isEnableSniffer()) {
@@ -411,6 +416,25 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
                     .build();
         }
         return restClient;
+    }
+
+    /**
+     * Creates the provider of the configured user and password, which offers them only to the given nodes, or returns
+     * null when no credentials are configured.
+     */
+    CredentialsProvider createCredentialsProvider(Supplier<? extends Collection<HttpHost>> nodes) {
+        if (this.endpoint.getUser() == null || this.endpoint.getPassword() == null) {
+            return null;
+        }
+        return new NodeScopedCredentialsProvider(
+                new UsernamePasswordCredentials(this.endpoint.getUser(), this.endpoint.getPassword()), nodes);
+    }
+
+    private static List<HttpHost> nodeHosts(RestClient restClient, HttpHost[] configuredHosts) {
+        if (restClient == null) {
+            return List.of(configuredHosts);
+        }
+        return restClient.getNodes().stream().map(Node::getHost).toList();
     }
 
     private HttpHost[] getHttpHosts() {

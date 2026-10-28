@@ -11,9 +11,16 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-groovy",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "groovy",
     "modelJavaType": "org.apache.camel.model.language.GroovyExpression"
+  },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in the variable body" },
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the script returns" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

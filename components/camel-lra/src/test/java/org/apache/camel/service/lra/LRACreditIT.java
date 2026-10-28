@@ -69,7 +69,7 @@ public class LRACreditIT extends AbstractLRATestSupport {
     private void buy(int amount, boolean failAtTheEnd, boolean shouldFail) {
         try {
             context.createFluentProducerTemplate()
-                    .to("direct:saga")
+                    .to("direct:credit-saga")
                     .withHeader("amount", amount)
                     .withHeader("fail", failAtTheEnd)
                     .request();
@@ -95,48 +95,48 @@ public class LRACreditIT extends AbstractLRATestSupport {
 
                 creditService = new CreditService(100);
 
-                from("direct:saga")
+                from("direct:credit-saga")
                         .saga().propagation(SagaPropagation.REQUIRES_NEW)
                         .log("Creating a new order")
-                        .to("direct:newOrder")
+                        .to("direct:credit-newOrder")
                         .log("Taking the credit")
-                        .to("direct:reserveCredit")
+                        .to("direct:credit-reserveCredit")
                         .log("Finalizing")
-                        .to("direct:finalize")
+                        .to("direct:credit-finalize")
                         .log("Done!");
 
                 // Order service
 
-                from("direct:newOrder")
+                from("direct:credit-newOrder")
                         .saga()
                         .propagation(SagaPropagation.MANDATORY)
-                        .compensation("direct:cancelOrder")
+                        .compensation("direct:credit-cancelOrder")
                         .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(orderManagerService, "newOrder")
                         .log("Order ${body} created");
 
-                from("direct:cancelOrder")
+                from("direct:credit-cancelOrder")
                         .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(orderManagerService, "cancelOrder")
                         .log("Order ${body} cancelled");
 
                 // Credit service
 
-                from("direct:reserveCredit")
+                from("direct:credit-reserveCredit")
                         .saga()
                         .propagation(SagaPropagation.MANDATORY)
-                        .compensation("direct:refundCredit")
+                        .compensation("direct:credit-refundCredit")
                         .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(creditService, "reserveCredit")
                         .log("Credit ${header.amount} reserved in action ${body}");
 
-                from("direct:refundCredit")
+                from("direct:credit-refundCredit")
                         .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(creditService, "refundCredit")
                         .log("Credit for action ${body} refunded");
 
                 // Final actions
-                from("direct:finalize")
+                from("direct:credit-finalize")
                         .saga().propagation(SagaPropagation.NOT_SUPPORTED)
                         .choice()
                         .when(header("fail").isEqualTo(true))

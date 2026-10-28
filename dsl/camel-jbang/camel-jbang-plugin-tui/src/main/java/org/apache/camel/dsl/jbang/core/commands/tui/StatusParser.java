@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
@@ -201,6 +202,8 @@ final class StatusParser {
             Map<String, ?> reloadStats = (Map<String, ?>) stats.get("reload");
             if (reloadStats != null) {
                 info.reloaded = (int) objToLong(reloadStats.get("reloaded"));
+                Map<String, ?> lastError = (Map<String, ?>) reloadStats.get("lastError");
+                info.reloadError = lastError != null ? (String) lastError.get("message") : null;
             }
         }
     }
@@ -241,7 +244,7 @@ final class StatusParser {
     /**
      * Routes and their processors with statistics.
      */
-    private static void parseRoutes(IntegrationInfo info, JsonObject root) {
+    static void parseRoutes(IntegrationInfo info, JsonObject root) {
         JsonArray routes = (JsonArray) root.get("routes");
         if (routes != null) {
             for (Object r : routes) {
@@ -255,8 +258,15 @@ final class StatusParser {
                 ri.state = rj.getString("state");
                 ri.supportsSuspension = rj.getBooleanOrDefault("supportsSuspension", false);
                 ri.uptime = rj.getString("uptime");
+                // the steps reached with more than one body type, and with more than one kind (CAMEL-25750)
+                ri.variedBodyTypes = rj.getIntegerOrDefault("variedBodyTypes", 0);
+                ri.mixedBodyKinds = rj.getIntegerOrDefault("mixedBodyKinds", 0);
+                // the route as written, and how many times it was added again changed in this run (CAMEL-25771)
+                ri.checksum = rj.getString("checksum");
+                ri.revision = rj.getIntegerOrDefault("revision", 0);
 
                 Map<String, ?> rs = rj.getMap("statistics");
+                ri.statistics = rs;
                 if (rs != null) {
                     ri.coverage = objToString(rs.get("coverage"));
                     ri.throughput = objToString(rs.get("exchangesThroughput"));
@@ -295,11 +305,17 @@ final class StatusParser {
                         JsonObject pj = (JsonObject) p;
                         ProcessorInfo pi = new ProcessorInfo();
                         pi.id = pj.getString("id");
+                        pi.nodePrefixId = pj.getString("nodePrefixId");
                         pi.processor = pj.getString("processor");
                         pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);
+                        pi.uri = pj.getString("uri");
+                        // the body types the step has been reached with, and their kinds (CAMEL-25750)
+                        pi.bodyTypes = stringList(pj.get("bodyTypes"));
+                        pi.bodyKinds = stringList(pj.get("bodyKinds"));
 
                         Map<String, ?> ps = pj.getMap("statistics");
+                        pi.statistics = ps;
                         if (ps != null) {
                             pi.total = objToLong(ps.get("exchangesTotal"));
                             pi.failed = objToLong(ps.get("exchangesFailed"));
@@ -402,7 +418,8 @@ final class StatusParser {
                     ci.id = cj.getString("id");
                     ci.uri = cj.getString("uri");
                     ci.state = cj.getString("state");
-                    ci.className = cj.getString("class");
+                    // the consumers console says clazz (class in older versions)
+                    ci.className = cj.getStringOrDefault("clazz", cj.getString("class"));
                     ci.scheduled = Boolean.TRUE.equals(cj.get("scheduled"));
                     ci.remote = Boolean.TRUE.equals(cj.get("remote"));
                     ci.inflight = cj.getIntegerOrDefault("inflight", 0);
@@ -476,7 +493,7 @@ final class StatusParser {
                     ProducerInfo pi = new ProducerInfo();
                     pi.uri = pj.getString("uri");
                     pi.state = pj.getString("state");
-                    pi.className = pj.getString("class");
+                    pi.className = pj.getStringOrDefault("clazz", pj.getString("class"));
                     pi.routeId = pj.getString("routeId");
                     pi.stepId = pj.getString("stepId");
                     pi.remote = Boolean.TRUE.equals(pj.get("remote"));
@@ -556,6 +573,8 @@ final class StatusParser {
                         int idx = ep.uri.indexOf(':');
                         ep.component = idx > 0 ? ep.uri.substring(0, idx) : ep.uri;
                     }
+                    // here on the refresh thread, as the first look at the catalog loads it
+                    ep.scope = EndpointScope.of(ep.uri, ep.remote);
                     info.endpoints.add(ep);
                 }
             }
@@ -1570,6 +1589,18 @@ final class StatusParser {
         return TuiHelper.objToLong(o);
     }
 
+    /** The strings of a JSON array, or an empty list. */
+    static List<String> stringList(Object o) {
+        if (!(o instanceof List<?> list) || list.isEmpty()) {
+            return List.of();
+        }
+        List<String> answer = new ArrayList<>(list.size());
+        for (Object item : list) {
+            answer.add(String.valueOf(item));
+        }
+        return answer;
+    }
+
     private static void parseVaultSecrets(
             JsonObject vaults, String key, String vaultName, IntegrationInfo info, boolean hasRegion) {
         JsonObject vo = (JsonObject) vaults.get(key);
@@ -1602,7 +1633,7 @@ final class StatusParser {
         }
         long lastCheck = vo.getLongOrDefault("startCheckTimestamp", 0);
         long lastReload = vo.getLongOrDefault("lastReloadTimestamp", 0);
-        JsonArray arr = (JsonArray) vo.get("configmap");
+        JsonArray arr = (JsonArray) vo.get("configmaps");
         if (arr != null) {
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jo = (JsonObject) arr.get(i);

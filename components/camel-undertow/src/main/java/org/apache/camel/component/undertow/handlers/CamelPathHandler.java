@@ -23,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
+import io.undertow.util.URLUtils;
 
 /**
  * Extended PathHandler to monitor add/remove handlers.
@@ -30,10 +31,12 @@ import io.undertow.server.handlers.PathHandler;
 public class CamelPathHandler extends PathHandler {
     private final Lock lock = new ReentrantLock();
     private final Map<String, HttpHandler> handlers = new HashMap<>();
+    private final HttpHandler defaultHandler;
     private String handlerString;
 
     public CamelPathHandler(HttpHandler defaultHandler) {
         super(defaultHandler);
+        this.defaultHandler = defaultHandler;
     }
 
     @Override
@@ -67,6 +70,11 @@ public class CamelPathHandler extends PathHandler {
         lock.lock();
         try {
             super.removePrefixPath(path);
+            if ("/".equals(URLUtils.normalizeSlashes(path))) {
+                // Undertow keeps a prefix handler of / as its default handler, and removing it leaves none, so that
+                // every request that no other path matches would fail: use the default handler again
+                super.addPrefixPath("/", defaultHandler);
+            }
             handlers.remove(path);
             handlerString = null;
             return this;

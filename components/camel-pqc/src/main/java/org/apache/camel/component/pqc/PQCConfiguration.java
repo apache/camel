@@ -200,8 +200,8 @@ public class PQCConfiguration implements Cloneable {
      * the BouncyCastle parameter-set names: for example ML-DSA-44, ML-DSA-65 or ML-DSA-87 for MLDSA, and ML-KEM-512,
      * ML-KEM-768 or ML-KEM-1024 for MLKEM. Names are case-insensitive and the underscore form (ml_dsa_87) is accepted
      * as an alias. When set, the key material is generated with this parameter set instead of the algorithm default.
-     * Not supported for the stateful signature algorithms (XMSS, XMSSMT, LMS, HSS), for MAYO and SNOVA, nor for the
-     * hybrid operations: for those, register a KeyPair bean in the registry instead.
+     * Not supported for the stateful signature algorithms (XMSS, XMSSMT, LMS, HSS) nor for the hybrid operations: for
+     * those, register a KeyPair bean in the registry instead.
      */
     public void setParameterSpec(String parameterSpec) {
         this.parameterSpec = parameterSpec;

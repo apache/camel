@@ -7,12 +7,36 @@ For the standard installation, see xref:camel-jbang-getting-started.adoc[Getting
 
 == Installing a specific version
 
-By default, `jbang app install` installs the latest Camel release.
-To pin a specific version (for example 4.14.1):
+Every installation method installs the latest Camel release by default.
+The latest release can be newer than the current LTS release; if you need an LTS version,
+for example because a plugin you use does not support the latest release yet, install it explicitly.
+
+=== With the installer script
+
+The installer script (Linux, macOS and Windows) accepts an exact version, a release line or `LTS`:
 
 [source,bash]
 ----
-jbang app install --force --fresh -Dcamel.jbang.version=4.14.1 -Dcamel-kamelets.version=4.14.1 camel@apache/camel
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version 4.22.2   # exactly 4.22.2
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version 4.22     # newest 4.22.x
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version LTS      # newest LTS release
+----
+
+On Windows, download `install.ps1` and run it with `-Version 4.22.2`, `-Version 4.22` or `-Version LTS`.
+Run `camel version` to check the installed version.
+
+The value is recorded as a pin: `camel self-update` never moves an exact version, and moves a
+release line or `LTS` pin only to the newest release of that line or the newest LTS release.
+See xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for details.
+
+=== With JBang
+
+By default, `jbang app install` installs the latest Camel release.
+To pin a specific version (for example 4.22.2):
+
+[source,bash]
+----
+jbang app install --force --fresh -Dcamel.jbang.version=4.22.2 -Dcamel-kamelets.version=4.22.2 camel@apache/camel
 ----
 
 The `--force` and `--fresh` flags ensure JBang bypasses its download cache.
@@ -20,6 +44,14 @@ The `--force` and `--fresh` flags ensure JBang bypasses its download cache.
 IMPORTANT: From Camel 4.17, Kamelets are optional and downloaded on demand.
 Set the version with `--kamelets-version` on `camel run`, or pre-configure it:
 `camel config set kamelets-version=4.17.0`.
+
+=== Installed CLI version and the Camel version used to run
+
+The installed version is the version of the Camel CLI itself, shown by `camel version`.
+With a JBang install, `camel run --camel-version=X.Y.Z` or `camel version set X.Y.Z` run integrations
+with another Camel version without changing the installed CLI.
+The launcher installed by the installer script does not support `--camel-version`: install another
+CLI version instead.
 
 == Preventing automatic upgrades
 
@@ -85,32 +117,5 @@ that runs without JBang entirely.
 
 == Container image
 
-The Camel CLI is also available as a container image on https://hub.docker.com/r/apache/camel-jbang/[Docker Hub].
-
-NOTE: All examples below use `docker`. Replace with `podman` if you prefer — the commands are identical.
-
-Pull the image:
-
-[source,bash]
-----
-docker pull apache/camel-jbang:4.21.0
-----
-
-Verify it works:
-
-[source,bash]
-----
-docker run apache/camel-jbang:4.21.0 version
-----
-
-[source]
-----
-Camel CLI version: 4.21.0
-----
-
-Run a route by mounting your local directory:
-
-[source,bash]
-----
-docker run -v .:/integrations apache/camel-jbang:4.21.0 run /integrations/example.yaml
-----
+The Camel CLI is also available as a container image (`apache/camel-jbang` on Docker Hub),
+see xref:camel-jbang-container.adoc[Container Image].

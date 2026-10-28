@@ -1,0 +1,22 @@
+# Parked orders are written as files for someone to look at. The route has a file
+# and an error handler of its own: the error handling of error-handling.camel.yaml,
+# which sends the failed orders here, does not apply to it, so a failure in parking
+# an order is logged, instead of being sent back here.
+- route:
+    id: parked
+    errorHandler:
+      deadLetterChannel:
+        deadLetterUri: "log:parking-failed?level=ERROR"
+    from:
+      uri: direct:parked
+      steps:
+        - log:
+            message: "Order ${body[orderId]} parked for manual review: ${exception.message}"
+        - marshal:
+            json:
+              library: Jackson
+        - to:
+            uri: file
+            parameters:
+              directoryName: parked
+              fileName: "${header.CamelFileName}"

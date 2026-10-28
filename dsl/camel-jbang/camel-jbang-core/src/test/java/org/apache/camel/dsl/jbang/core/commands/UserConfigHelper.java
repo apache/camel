@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.util.HomeHelper;
 
 public final class UserConfigHelper {
 
@@ -39,11 +40,12 @@ public final class UserConfigHelper {
         Path userConfigDir;
         String configFileName = CommandLineHelper.USER_CONFIG;
         if (!local) {
-            CommandLineHelper.useHomeDir("target");
-            userConfigDir = Paths.get("target");
-            if (!userConfigDir.toFile().exists()) {
-                userConfigDir.toFile().mkdirs();
+            // the home of the test (CamelCommandBaseTestSupport.useTestHomeDir), never the home of the user
+            userConfigDir = CommandLineHelper.getHomeDir();
+            if (userConfigDir.equals(Paths.get(HomeHelper.resolveHomeDir()))) {
+                throw new IllegalStateException("Use a test home directory before writing the user configuration");
             }
+            Files.createDirectories(userConfigDir);
         } else {
             userConfigDir = Paths.get(".");
             configFileName = CommandLineHelper.LOCAL_USER_CONFIG;

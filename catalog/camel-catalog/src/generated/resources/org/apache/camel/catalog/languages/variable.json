@@ -11,9 +11,15 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-languages",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "variable",
     "modelJavaType": "org.apache.camel.model.language.VariableExpression"
+  },
+  "bodyTypes": {
+    "expressionOut": { "carriers": [ "unknown" ], "description": "The value of the variable as it is, null when there is none. A global: or route: prefix reads a global or a route variable" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

@@ -57,9 +57,11 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIToolExecutionProducer.class);
 
     private McpToolCallExecutor toolCallExecutor;
+    private final OpenAIToolSearch toolSearch;
 
     public OpenAIToolExecutionProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
+        this.toolSearch = new OpenAIToolSearch(endpoint.getToolSearchSessions());
     }
 
     @Override
@@ -149,7 +151,26 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                     "No tools configured on the endpoint. Configure mcpServer.* parameters and/or the tags option.");
         }
 
-        List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls);
+        boolean toolSearchEnabled = config.isToolSearch();
+        boolean sessionAlreadyPresent = toolSearchEnabled
+                && exchange.getProperty(OpenAIToolSearch.SESSION_PROPERTY) != null;
+        if (toolSearchEnabled) {
+            toolSearch.openSessionForExecution(exchange, config);
+        }
+        List<McpToolCallExecutor.ToolResult> results;
+        try {
+            results = toolSearchEnabled
+                    ? toolCallExecutor.execute(toolCalls, exchange,
+                            call -> toolSearch.execute(getEndpoint(), call, exchange),
+                            null)
+                    : toolCallExecutor.execute(toolCalls, exchange);
+        } finally {
+            // The preceding chat-completion step may own an exchange-scoped session. Do not remove it
+            // merely because this endpoint has conversationMemory=false.
+            if (toolSearchEnabled && !sessionAlreadyPresent) {
+                toolSearch.closeSession(exchange, config);
+            }
+        }
         for (McpToolCallExecutor.ToolResult result : results) {
             history.add(ChatCompletionMessageParam.ofTool(
                     ChatCompletionToolMessageParam.builder()

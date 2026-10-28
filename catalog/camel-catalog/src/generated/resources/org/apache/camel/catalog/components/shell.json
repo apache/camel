@@ -8,10 +8,10 @@
     "firstVersion": "4.21.0",
     "label": "api",
     "javaType": "org.apache.camel.component.shell.ShellComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-shell",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "shell",
     "extendsScheme": "",
     "syntax": "shell:prompt",
@@ -28,6 +28,10 @@
     "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "bannerResource": { "index": 2, "kind": "property", "displayName": "Banner Resource", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "camel-shell-banner.txt", "description": "Classpath resource path to a custom banner text file" },
     "showBanner": { "index": 3, "kind": "property", "displayName": "Show Banner", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to print the Camel banner on startup" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The line the user typed at the prompt, as typed (an empty line too); exit or end of input stops the CamelContext" },
+    "consumerReply": { "carriers": [ "text", "bytes", "stream", "value", "null" ], "description": "The body the route ends with, converted to text and printed to the terminal; null prints nothing, and a failed exchange prints the message of its exception. A Map or a List prints as its Java toString: marshal it first" }
   },
   "properties": {
     "prompt": { "index": 0, "kind": "path", "displayName": "Prompt", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Shell prompt" },

@@ -101,7 +101,7 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
                         .build())
                 .build();
         CompletableFuture<ConvertDocumentResponse> completedFuture = CompletableFuture.completedFuture(mockResponse);
-        pendingTasks.put("test-task-1", new AsyncTaskEntry("test-task-1", completedFuture));
+        pendingTasks.put("test-task-1", new AsyncTaskEntry("test-task-1", completedFuture, "markdown"));
 
         // Check the status — should find it in local map and return COMPLETED with result
         Exchange exchange = new DefaultExchange(context);
@@ -130,7 +130,7 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
 
         // Insert an incomplete future
         CompletableFuture<ConvertDocumentResponse> incompleteFuture = new CompletableFuture<>();
-        pendingTasks.put("test-task-2", new AsyncTaskEntry("test-task-2", incompleteFuture));
+        pendingTasks.put("test-task-2", new AsyncTaskEntry("test-task-2", incompleteFuture, "markdown"));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(DoclingHeaders.TASK_ID, "test-task-2");
@@ -161,7 +161,7 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
         // Insert a failed future
         CompletableFuture<ConvertDocumentResponse> failedFuture = new CompletableFuture<>();
         failedFuture.completeExceptionally(new RuntimeException("Server connection refused"));
-        pendingTasks.put("test-task-3", new AsyncTaskEntry("test-task-3", failedFuture));
+        pendingTasks.put("test-task-3", new AsyncTaskEntry("test-task-3", failedFuture, "markdown"));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(DoclingHeaders.TASK_ID, "test-task-3");

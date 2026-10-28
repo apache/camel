@@ -97,7 +97,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private Map<String, Object> templateParameters;
     private Map<String, Object> templateDefaultParameters;
     private RouteTemplateContext routeTemplateContext;
+    private String routeTemplateId;
+    private String checksum;
     private Resource resource;
+    private Resource templatedRouteResource;
     private String precondition;
 
     public RouteDefinition() {
@@ -893,6 +896,34 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         this.routeTemplateContext = routeTemplateContext;
     }
 
+    /**
+     * The id of the route template (or Kamelet) this route was created from, or <tt>null</tt> if the route was not
+     * created from a route template.
+     */
+    @Override
+    public String getRouteTemplateId() {
+        return routeTemplateId;
+    }
+
+    @XmlTransient
+    public void setRouteTemplateId(String routeTemplateId) {
+        this.routeTemplateId = routeTemplateId;
+    }
+
+    /**
+     * The checksum of the route as written, computed when the route is prepared, before the parts of route
+     * configurations are added to it; <tt>null</tt> when it is not known (camel-xml-io is not on the classpath).
+     */
+    @Override
+    public String getChecksum() {
+        return checksum;
+    }
+
+    @XmlTransient
+    public void setChecksum(String checksum) {
+        this.checksum = checksum;
+    }
+
     public Resource getResource() {
         return resource;
     }
@@ -900,6 +931,21 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     @XmlTransient
     public void setResource(Resource resource) {
         this.resource = resource;
+    }
+
+    /**
+     * The resource that declares the templated route this route was created from, or <tt>null</tt> if the route was not
+     * created from a templated route loaded from a resource. The route itself is in the resource with the route
+     * template, see {@link #getResource()}.
+     */
+    @Override
+    public Resource getTemplatedRouteResource() {
+        return templatedRouteResource;
+    }
+
+    @XmlTransient
+    public void setTemplatedRouteResource(Resource templatedRouteResource) {
+        this.templatedRouteResource = templatedRouteResource;
     }
 
     // Properties

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.util.json.JsonArray;
@@ -50,6 +51,54 @@ class StatusParserTest {
         assertEquals("myIntegration", info.name);
         assertEquals("4.21.0", info.camelVersion);
         assertEquals(5, info.state);
+    }
+
+    @Test
+    void anEndpointGetsItsScopeFromTheRemoteFlagAndTheCatalog() {
+        JsonArray endpoints = new JsonArray();
+        for (String[] e : new String[][] {
+                { "kafka://orders", "true" }, { "log://payment", "false" },
+                { "exec://wc", "false" } }) {
+            JsonObject ep = new JsonObject();
+            ep.put("uri", e[0]);
+            ep.put("remote", Boolean.parseBoolean(e[1]));
+            endpoints.add(ep);
+        }
+        JsonObject holder = new JsonObject();
+        holder.put("endpoints", endpoints);
+        JsonObject root = new JsonObject();
+        root.put("context", new JsonObject());
+        root.put("endpoints", holder);
+
+        IntegrationInfo info = StatusParser.parseIntegration(ProcessHandle.current(), root);
+
+        assertEquals(List.of("remote", "internal", "local"), info.endpoints.stream().map(ep -> ep.scope).toList());
+    }
+
+    @Test
+    void aFailedReloadIsReadAsCamelPsReadsIt() {
+        JsonObject root = new JsonObject();
+        JsonObject context = new JsonObject();
+        context.put("name", "routes");
+        JsonObject stats = new JsonObject();
+        JsonObject reload = new JsonObject();
+        reload.put("reloaded", 2);
+        reload.put("failed", 1);
+        JsonObject lastError = new JsonObject();
+        lastError.put("message", "Greeter.java does not exist");
+        reload.put("lastError", lastError);
+        stats.put("reload", reload);
+        context.put("statistics", stats);
+        root.put("context", context);
+
+        IntegrationInfo info = StatusParser.parseIntegration(ProcessHandle.current(), root);
+
+        assertEquals(2, info.reloaded);
+        assertEquals("Greeter.java does not exist", info.reloadError);
+
+        // a reload that succeeds again clears it
+        reload.remove("lastError");
+        assertNull(StatusParser.parseIntegration(ProcessHandle.current(), root).reloadError);
     }
 
     @Test
@@ -268,6 +317,38 @@ class StatusParserTest {
         assertTrue(info.endpoints.isEmpty());
         assertTrue(info.circuitBreakers.isEmpty());
         assertTrue(info.inflightExchanges.isEmpty());
+    }
+
+    @Test
+    void parseIntegrationWithKubernetesConfigMapVault() {
+        JsonObject root = new JsonObject();
+        JsonObject context = new JsonObject();
+        context.put("name", "myIntegration");
+        root.put("context", context);
+
+        // the kubernetes-configmaps dev console lists the config maps under "configmaps"
+        JsonArray configmaps = new JsonArray();
+        for (String name : new String[] { "app-config", "db-config" }) {
+            JsonObject cm = new JsonObject();
+            cm.put("name", name);
+            configmaps.add(cm);
+        }
+        JsonObject cmVault = new JsonObject();
+        cmVault.put("startCheckTimestamp", 1000L);
+        cmVault.put("configmaps", configmaps);
+        JsonObject vaults = new JsonObject();
+        vaults.put("kubernetes-configmaps", cmVault);
+        root.put("vaults", vaults);
+
+        ProcessHandle ph = ProcessHandle.current();
+        IntegrationInfo info = StatusParser.parseIntegration(ph, root);
+
+        assertNotNull(info);
+        assertEquals(2, info.vaultSecrets.size());
+        assertEquals("Kubernetes-cm", info.vaultSecrets.get(0).vault);
+        assertEquals("app-config", info.vaultSecrets.get(0).secret);
+        assertEquals("db-config", info.vaultSecrets.get(1).secret);
+        assertEquals(1000L, info.vaultSecrets.get(1).lastCheck);
     }
 
     // ---- parseTraceEntry tests ----

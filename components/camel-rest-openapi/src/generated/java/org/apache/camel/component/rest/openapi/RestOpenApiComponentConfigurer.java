@@ -58,6 +58,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "specificationUri": target.setSpecificationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "unmatchedrequesthandling":
+        case "unmatchedRequestHandling": target.setUnmatchedRequestHandling(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -102,6 +104,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "specificationUri": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "unmatchedrequesthandling":
+        case "unmatchedRequestHandling": return java.lang.String.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
@@ -147,6 +151,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "specificationUri": return target.getSpecificationUri();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
+        case "unmatchedrequesthandling":
+        case "unmatchedRequestHandling": return target.getUnmatchedRequestHandling();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;

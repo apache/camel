@@ -32,6 +32,7 @@ You can find the upgrade guide for each release in the following pages:
 - xref:camel-4x-upgrade-guide-4_21.adoc[Upgrade guide 4.20 -> 4.21]
 - xref:camel-4x-upgrade-guide-4_22.adoc[Upgrade guide 4.21 -> 4.22 LTS]
 - xref:camel-4x-upgrade-guide-4_23.adoc[Upgrade guide 4.22 -> 4.23]
+- xref:camel-4x-upgrade-guide-4_24.adoc[Upgrade guide 4.23 -> 4.24]
 
 [NOTE]
 ====

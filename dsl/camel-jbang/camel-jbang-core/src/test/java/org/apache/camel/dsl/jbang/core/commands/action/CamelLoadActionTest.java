@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,11 +63,11 @@ class CamelLoadActionTest extends ActionCommandTestSupport {
         command.name = "myApp";
 
         // the command rejects the missing --source before resolving any process, so no ProcessHandle mock is needed
-        int exit = command.doCall();
+        CliException e = assertThrows(CliException.class, command::doCall);
 
-        assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("No source files provided"),
-                "should report the missing source option, was: " + printer.getOutput());
+        assertEquals(CliExitCode.USAGE, e.getExitCode());
+        assertTrue(e.getMessage().contains("No source files provided"),
+                "should report the missing source option, was: " + e.getMessage());
     }
 
     @Test
@@ -75,9 +78,10 @@ class CamelLoadActionTest extends ActionCommandTestSupport {
         command.name = "doesNotExist";
         command.source = List.of("myRoute.yaml");
 
-        int exit = callWithSingleProcess(command);
+        CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
-        assertEquals(1, exit);
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("No running Camel integration matches: doesNotExist", e.getMessage());
         assertTrue(printer.getOutput().isEmpty(), "nothing should be rendered when no process matches");
     }
 

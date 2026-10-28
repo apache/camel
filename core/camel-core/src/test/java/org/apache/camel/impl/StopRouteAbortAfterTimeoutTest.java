@@ -93,7 +93,7 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
                 // shutdown this test faster
                 context.getShutdownStrategy().setTimeout(3);
 
-                from("seda:start").routeId("start").delay(100).to("mock:result");
+                from("seda:start").routeId("start").delay(2000).to("mock:result");
             }
         };
     }

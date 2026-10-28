@@ -60,6 +60,7 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
     @XmlAttribute
     @Metadata(label = "advanced",
               enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES",
+              multiEnum = true,
               description = "To configure additional options on JSONPath. Multiple values can be separated by comma.")
     private String option;
 

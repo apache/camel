@@ -22,6 +22,9 @@ import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.component.openstack.nova.producer.FlavorsProducer;
 import org.apache.camel.component.openstack.nova.producer.KeypairProducer;
 import org.apache.camel.component.openstack.nova.producer.ServerProducer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,23 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_NOVA, title = "OpenStack Nova", syntax = "openstack-nova:host",
              category = { Category.CONTAINER }, producerOnly = true, headersClass = NovaConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Read by create only: a Flavor or ServerCreate of openstack4j, or else the fields from headers "
+                                                + "such as CamelOpenstackName; for keypairs the public key as text, or no body to have the key "
+                                                + "pair generated. The other operations take the id or name from headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.TEXT, Carrier.NULL, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "create", carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "get",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "getAll", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "createSnapshot",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "delete",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "The Flavor, Server or Keypair of openstack4j created or read (null when get finds none), a List "
+                                                 + "of them for getAll, the id of the image as text for createSnapshot; delete and a server action "
+                                                 + "keep the body"))
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors,servers,keypairs")

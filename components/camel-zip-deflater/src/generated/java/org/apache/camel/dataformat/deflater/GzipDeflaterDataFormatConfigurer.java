@@ -22,12 +22,18 @@ public class GzipDeflaterDataFormatConfigurer extends org.apache.camel.support.c
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("MaxDecompressedSize", long.class);
         ALL_OPTIONS = map;
     }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        return false;
+        GzipDeflaterDataFormat target = (GzipDeflaterDataFormat) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "maxdecompressedsize":
+        case "maxDecompressedSize": target.setMaxDecompressedSize(property(camelContext, long.class, value)); return true;
+        default: return false;
+        }
     }
 
     @Override
@@ -37,12 +43,21 @@ public class GzipDeflaterDataFormatConfigurer extends org.apache.camel.support.c
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        return null;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "maxdecompressedsize":
+        case "maxDecompressedSize": return long.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        return null;
+        GzipDeflaterDataFormat target = (GzipDeflaterDataFormat) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "maxdecompressedsize":
+        case "maxDecompressedSize": return target.getMaxDecompressedSize();
+        default: return null;
+        }
     }
 }
 

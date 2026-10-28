@@ -26,18 +26,21 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletChecks;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteAssist;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteNodes;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
@@ -58,6 +61,7 @@ import org.apache.camel.util.json.JsonObject;
 final class SourceEditAssist {
 
     private final MonitorContext ctx;
+    private final SemanticCompletions semanticCompletions;
     private final CatalogCache catalogCache = new CatalogCache();
     private volatile CamelCatalog defaultCatalog;
     private Path rootDir;
@@ -115,6 +119,7 @@ final class SourceEditAssist {
 
     SourceEditAssist(MonitorContext ctx) {
         this.ctx = ctx;
+        this.semanticCompletions = new SemanticCompletions(ctx);
     }
 
     /**
@@ -128,6 +133,7 @@ final class SourceEditAssist {
      * Drops the per-integration completion tree so it is reloaded for the next selected integration.
      */
     void reset() {
+        semanticCompletions.reset();
         completionTreeLoaded = false;
         completionTree = null;
     }
@@ -151,40 +157,6 @@ final class SourceEditAssist {
             catalog = fallback;
         }
         return catalog;
-    }
-
-    Map<Integer, List<SourceViewer.DocEntry>> provideCamelQuickDocs(List<JsonObject> codeData) {
-        CamelCatalog catalog = validationCatalog();
-        if (catalog == null || codeData.isEmpty()) {
-            return Map.of();
-        }
-
-        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
-        for (int i = 0; i < codeData.size(); i++) {
-            String code = codeData.get(i).getString("code");
-            if (code == null) {
-                continue;
-            }
-
-            Matcher uriMatcher = YAML_URI_PATTERN.matcher(code);
-            if (uriMatcher.find()) {
-                String uri = uriMatcher.group(1);
-                if (uri.endsWith("\"")) {
-                    uri = uri.substring(0, uri.length() - 1);
-                }
-                EipDocSupport.buildEndpointInlineDoc(result, codeData, catalog, uri, i);
-                continue;
-            }
-
-            Matcher keyMatcher = YAML_KEY_PATTERN.matcher(code);
-            if (keyMatcher.find()) {
-                String key = keyMatcher.group(1);
-                if (catalog.eipModel(key) != null) {
-                    EipDocSupport.buildEipInlineDoc(result, codeData, catalog, key, null, i);
-                }
-            }
-        }
-        return result;
     }
 
     List<SourceViewer.DocEntry> provideEditQuickDoc(List<String> lines, int cursorRow) {
@@ -551,10 +523,10 @@ final class SourceEditAssist {
         } else if (keyPrefix.startsWith("camel.language.")) {
             // camel.language.<name>. options
             addPrefixedCompletions(items, catalog, keyPrefix, "camel.language.",
-                    catalog.findLanguageNames(),
+                    LanguageNames.withOptions(catalog),
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
-                        return m != null ? m.getOptions() : null;
+                        return m != null ? m.getConfigurationOptions() : null;
                     });
         } else if (!keyPrefix.isEmpty() && !keyPrefix.startsWith("camel.")
                 && springBootOptionsCache != null) {
@@ -818,7 +790,7 @@ final class SourceEditAssist {
             return lookupPrefixedOption(catalog, key, "camel.language.",
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
-                        return m != null ? m.getOptions() : null;
+                        return m != null ? m.getConfigurationOptions() : null;
                     });
         }
         // Spring Boot options
@@ -926,6 +898,14 @@ final class SourceEditAssist {
     }
 
     List<AutocompletePopup.CompletionItem> provideYamlKeyCompletions(String context) {
+        return provideYamlKeyCompletions(context, null);
+    }
+
+    /**
+     * As {@link #provideYamlKeyCompletions(String)}, with the directory of the file: the options of a kamelet: endpoint
+     * start with the properties of its Kamelet, from the project's own Kamelet file or the catalog (CAMEL-25411).
+     */
+    List<AutocompletePopup.CompletionItem> provideYamlKeyCompletions(String context, Path directory) {
         if (context == null) {
             return List.of();
         }
@@ -992,6 +972,9 @@ final class SourceEditAssist {
         }
 
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        if ("kamelet".equals(componentName)) {
+            items.addAll(kameletPropertyCompletions(uri, directory, existingKeys));
+        }
         for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
             if (!includeEndpointOption(opt, isConsumer)) {
                 continue;
@@ -1006,8 +989,43 @@ final class SourceEditAssist {
         }
 
         items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                // the properties of the Kamelet before the options of the kamelet component
+                .thenComparing(i -> i.group() == null || !i.group().startsWith(AutocompletePopup.KAMELET_GROUP))
                 .thenComparing((a, b) -> Boolean.compare(b.required(), a.required()))
                 .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    /**
+     * The properties of the Kamelet a kamelet: uri names, the ones not set yet: what goes under parameters: beside the
+     * options of the kamelet component itself (routeId, timeout...), which are all a model or a user saw before.
+     */
+    static List<AutocompletePopup.CompletionItem> kameletPropertyCompletions(
+            String uri, Path directory, Set<String> existingKeys) {
+        if (uri == null || !uri.startsWith("kamelet:")) {
+            return List.of();
+        }
+        String name = uri.substring("kamelet:".length());
+        int end = name.length();
+        for (char c : new char[] { '?', '/' }) {
+            int i = name.indexOf(c);
+            if (i >= 0) {
+                end = Math.min(end, i);
+            }
+        }
+        KameletDefinitions.Definition def = KameletDefinitions.find(name.substring(0, end).trim(), directory);
+        if (def == null) {
+            return List.of();
+        }
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (KameletDefinitions.Property p : def.properties()) {
+            if (existingKeys.contains(p.name())) {
+                continue;
+            }
+            items.add(new AutocompletePopup.CompletionItem(
+                    p.name(), p.description(), p.type() != null ? p.type() : "string", p.defaultValue(), false, null,
+                    AutocompletePopup.KAMELET_GROUP + def.name(), p.required()));
+        }
         return items;
     }
 
@@ -1248,6 +1266,15 @@ final class SourceEditAssist {
         return items;
     }
 
+    CompletableFuture<List<AutocompletePopup.CompletionItem>> provideSemanticCompletions(SemanticCompletionContext context) {
+        List<AutocompletePopup.CompletionItem> placeholders = loadPropertyPlaceholders();
+        return semanticCompletions.provide(context).thenApply(operations -> {
+            List<AutocompletePopup.CompletionItem> items = new ArrayList<>(operations);
+            items.addAll(placeholders);
+            return items;
+        });
+    }
+
     List<AutocompletePopup.CompletionItem> provideTreeValueCompletions(String contextAfterPrefix) {
         // The node is a name or slash-separated path with URL-encoded keys, followed by :optionName.
         String[] parts = contextAfterPrefix.split(":", 2);
@@ -1480,7 +1507,7 @@ final class SourceEditAssist {
             return List.of();
         }
 
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (placeholderCache != null && rootDir.equals(placeholderCacheDir) && (now - placeholderCacheTime) < 5000) {
             return placeholderCache;
         }
@@ -1568,56 +1595,6 @@ final class SourceEditAssist {
             answer.add(new SourceViewer.DocEntry(text, false, "Placeholder"));
         }
         return answer;
-    }
-
-    Map<Integer, List<SourceViewer.DocEntry>> providePropertiesQuickDocs(List<JsonObject> codeData) {
-        CamelCatalog catalog = getCatalog();
-        if (catalog == null || codeData.isEmpty()) {
-            return Map.of();
-        }
-        ensureMainOptionsCache(catalog);
-
-        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
-        for (int i = 0; i < codeData.size(); i++) {
-            String code = codeData.get(i).getString("code");
-            if (code == null) {
-                continue;
-            }
-            String trimmed = code.trim();
-            if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
-                continue;
-            }
-            int eq = trimmed.indexOf('=');
-            if (eq <= 0) {
-                continue;
-            }
-            String key = trimmed.substring(0, eq).trim();
-            BaseOptionModel opt = lookupPropertyOption(catalog, key);
-            if (opt != null) {
-                String doc = EipDocSupport.formatOptionDoc(opt);
-                if (doc != null) {
-                    result.put(i, List.of(opt.isDeprecated()
-                            ? SourceViewer.DocEntry.deprecated(doc)
-                            : SourceViewer.DocEntry.of(doc)));
-                }
-                continue;
-            }
-            // fallback to Spring Boot configuration metadata for non-camel properties
-            ensureSpringBootMetadataCache();
-            if (springBootMetadataCache != null) {
-                JsonObject sbProp = springBootMetadataCache.get(key);
-                if (sbProp != null) {
-                    String doc = SpringBootMetadataHelper.formatDoc(sbProp);
-                    if (doc != null) {
-                        boolean deprecated = Boolean.TRUE.equals(sbProp.get("deprecated"));
-                        result.put(i, List.of(deprecated
-                                ? SourceViewer.DocEntry.deprecated(doc)
-                                : SourceViewer.DocEntry.of(doc)));
-                    }
-                }
-            }
-        }
-        return result;
     }
 
     Set<Integer> scanDeprecatedProperties(List<JsonObject> codeData) {
@@ -1733,9 +1710,35 @@ final class SourceEditAssist {
     }
 
     /**
+     * The Kamelet checks of a YAML file, as camel_validate_source runs them (CAMEL-25411): the shape of a Kamelet file,
+     * then the kamelet: endpoints against the catalog and the Kamelets of the file's directory. A Kamelet no catalog or
+     * project has yet is not reported, as on a write: it may be the project's own one, not written yet.
+     */
+    static List<String> validateKamelets(Path file, String content) {
+        List<String> msgs = new ArrayList<>();
+        if (isKameletFile(file)) {
+            msgs.addAll(KameletChecks.validateKameletFile(content));
+        }
+        if (msgs.isEmpty()) {
+            msgs.addAll(KameletChecks.validateYaml(content, file.toAbsolutePath().getParent(), false));
+        }
+        return msgs;
+    }
+
+    /** The notes of a Kamelet file (CAMEL-25403): a camel: dependency its template does not use, and camel:core. */
+    static List<String> kameletNotes(Path file, String content) {
+        return isKameletFile(file) ? KameletChecks.unusedDependencies(content) : List.of();
+    }
+
+    static boolean isKameletFile(Path file) {
+        String name = file.getFileName().toString().toLowerCase(Locale.ROOT);
+        return name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml");
+    }
+
+    /**
      * The Camel checks of a Java or XML DSL route file (CAMEL-25208): the endpoint uris and simple expressions the
-     * compiler cannot see, as "Line N: message". The endpoints no route consumes are left to camel validate: the editor
-     * runs this while typing, and would read the whole project each time.
+     * compiler cannot see, as "Line N: message". The endpoints no route consumes are notes of their own, as finding
+     * them reads the whole project: ConsumedEndpoints reads it in the background.
      */
     List<String> validateRoutes(Path file, String content) {
         List<String> answer = new ArrayList<>();
@@ -1746,35 +1749,6 @@ final class SourceEditAssist {
             }
         }
         return answer;
-    }
-
-    /**
-     * The quick doc of each line of a Java or XML DSL route file (CAMEL-25208), read from its model: the component of
-     * an endpoint and the options it is given, the EIP of a step.
-     */
-    Map<Integer, List<SourceViewer.DocEntry>> provideRouteQuickDocs(Path file, List<JsonObject> codeData) {
-        CamelCatalog catalog = validationCatalog();
-        if (catalog == null || codeData.isEmpty()) {
-            return Map.of();
-        }
-        List<String> lines = new ArrayList<>(codeData.size());
-        for (JsonObject jo : codeData) {
-            lines.add(jo.getString("code") != null ? jo.getString("code") : "");
-        }
-        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
-        for (RouteNodes.Node n : routeNodes(file, lines)) {
-            int idx = n.line() - 1;
-            if (idx < 0 || idx >= codeData.size() || result.containsKey(idx)) {
-                continue;
-            }
-            if (n.kind() == RouteNodes.Kind.ENDPOINT) {
-                EipDocSupport.buildEndpointInlineDoc(result, codeData, catalog, n.uri(), idx);
-            } else if (n.kind() == RouteNodes.Kind.STEP && !hasEndpoint(file, lines, n.line())
-                    && catalog.eipModel(n.eip()) != null) {
-                EipDocSupport.buildEipInlineDoc(result, codeData, catalog, n.eip(), null, idx);
-            }
-        }
-        return result;
     }
 
     /**
@@ -1840,15 +1814,6 @@ final class SourceEditAssist {
         }
     }
 
-    private boolean hasEndpoint(Path file, List<String> lines, int line) {
-        for (RouteNodes.Node n : RouteNodes.at(routeNodes(file, lines), line)) {
-            if (n.kind() == RouteNodes.Kind.ENDPOINT) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /** The nodes of a route file's content, read again only when the content changed. */
     private List<RouteNodes.Node> routeNodes(Path file, List<String> lines) {
         String content = String.join("\n", lines);
@@ -1861,8 +1826,8 @@ final class SourceEditAssist {
     }
 
     /** The Java sources of the project, for the constants a route refers to in another class; kept for a while. */
-    private Map<String, Supplier<String>> javaSources() {
-        long now = System.currentTimeMillis();
+    Map<String, Supplier<String>> javaSources() {
+        long now = MonotonicClock.millis();
         if (javaSourcesCache == null || now - javaSourcesCacheTime > JAVA_SOURCES_TTL_MS
                 || !Objects.equals(javaSourcesCacheDir, rootDir)) {
             javaSourcesCache = RouteAssist.javaSources(rootDir);
@@ -1931,7 +1896,7 @@ final class SourceEditAssist {
             return lookupPrefixedOption(key, "camel.language.", languageOptionsCache,
                     name -> {
                         LanguageModel m = catalog.languageModel(name);
-                        return m != null ? m.getOptions() : null;
+                        return m != null ? m.getConfigurationOptions() : null;
                     });
         }
         if (key.startsWith("camel.dataformat.")) {

@@ -31,9 +31,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 final class RouteGraph {
 
-    /** The components whose endpoints link one route of the application to another. */
-    static final Set<String> INTERNAL = Set.of("direct", "seda", "direct-vm", "vm", "disruptor", "disruptor-vm");
-
     /** The steps that send a message to an endpoint. */
     static final Set<String> SENDS = Set.of("to", "toD", "enrich", "pollEnrich", "wireTap");
 
@@ -42,6 +39,15 @@ final class RouteGraph {
 
     /** One route of the file: where it starts, what it does, and the node it was read from. */
     record Route(String id, String fromUri, JsonNode steps, JsonNode node) {
+    }
+
+    /** The from of a route entry, in both the canonical and the short form; null for another entry. */
+    static JsonNode from(JsonNode entry) {
+        if (entry == null || !entry.isObject()) {
+            return null;
+        }
+        JsonNode route = entry.get("route");
+        return route != null ? route.get("from") : entry.get("from");
     }
 
     /** The routes of the file, in both the canonical and the short form. */

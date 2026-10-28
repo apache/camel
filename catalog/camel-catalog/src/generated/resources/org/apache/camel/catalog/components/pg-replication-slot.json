@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pg-replication-slot",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "pg-replication-slot",
     "extendsScheme": "",
     "syntax": "pg-replication-slot:host:port\/database\/slot:outputPlugin",
@@ -28,6 +28,9 @@
     "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "healthCheckConsumerEnabled": { "index": 2, "kind": "property", "displayName": "Health Check Consumer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all consumer based health checks from this component" },
     "healthCheckProducerEnabled": { "index": 3, "kind": "property", "displayName": "Health Check Producer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all producer based health checks from this component. Notice: Camel has by default disabled all producer based health-checks. You can turn on producer checks globally by setting camel.health.producersEnabled=true." }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "One message of the output plugin of the slot, as bytes: text for test_decoding, JSON for wal2json, the binary protocol for pgoutput; convert it to a String for the text plugins. The exchange id is the LSN of the message" }
   },
   "properties": {
     "slot": { "index": 0, "kind": "path", "displayName": "Slot", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Replication Slot name" },

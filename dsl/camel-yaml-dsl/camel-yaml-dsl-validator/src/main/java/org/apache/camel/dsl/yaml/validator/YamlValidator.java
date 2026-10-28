@@ -87,6 +87,9 @@ public class YamlValidator {
     private final boolean canonical;
     private final String schemaJson;
     private CamelCatalog catalog;
+    /** The catalog of another Camel version than the one of the validator (CAMEL-24711), if given. */
+    private final boolean otherCatalog;
+    private CatalogBodyTypes bodyTypes;
     private Schema schema;
     /**
      * The schema for a Kamelet: the envelope, with its {@code spec.template} being one entry of the route schema. A
@@ -121,6 +124,7 @@ public class YamlValidator {
         this.canonical = canonical;
         this.schemaJson = schemaJson;
         this.catalog = catalog;
+        this.otherCatalog = catalog != null;
     }
 
     public boolean isCanonical() {
@@ -179,16 +183,42 @@ public class YamlValidator {
      *                          GET operation of an OpenAPI specification the file binds to (CAMEL-24844)
      */
     public List<Error> validate(String content, Set<String> bodylessEndpoints) throws Exception {
+        return validate(content, new ProjectFacts(bodylessEndpoints, Map.of(), null));
+    }
+
+    /**
+     * @param facts what the caller read from the files beside the route: the endpoints of the OpenAPI operations that
+     *              carry no body, the verbs of the operations the routes use, and the REST binding mode of the project
+     *              (CAMEL-25762)
+     */
+    public List<Error> validate(String content, ProjectFacts facts) throws Exception {
+        return validate(content, facts, false);
+    }
+
+    /**
+     * The checks of the routes of a file whose YAML passes the schema: Simple syntax in a script, a dynamic uri, and
+     * the message body through the steps (CAMEL-24844). Empty when the YAML does not pass the schema, as for a file
+     * being typed: an editor says the errors of the schema when the file is saved, and these as soon as they are there
+     * (CAMEL-26295).
+     */
+    public List<Error> validateRoutes(String content) throws Exception {
+        return validate(content, ProjectFacts.NONE, true);
+    }
+
+    private List<Error> validate(String content, ProjectFacts facts, boolean routesOnly) throws Exception {
         if (schema == null) {
             init();
         }
+        if (routesOnly && (content == null || content.isBlank())) {
+            return List.of();
+        }
         Error extra = extraDocument(content);
         if (extra != null) {
-            return List.of(extra);
+            return routesOnly ? List.of() : List.of(extra);
         }
         Error deps = jbangDirective(content);
         if (deps != null) {
-            return List.of(deps);
+            return routesOnly ? List.of() : List.of(deps);
         }
         if (content == null || content.isBlank() || content.lines().allMatch(l -> l.isBlank() || l.trim().startsWith("#"))) {
             return List.of(Error.builder().messageKey("empty").format(new MessageFormat("{0}"))
@@ -198,9 +228,21 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            return validate(target, bodylessEndpoints);
+            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly);
+            if (routesOnly) {
+                return errors;
+            }
+            // CAMEL-25560: the tree keeps the last of two equal keys, so a key given twice is only seen in the YAML nodes
+            List<String> duplicates = DuplicateKeys.find(YamlPointerLines.root(content));
+            if (duplicates.isEmpty()) {
+                return errors;
+            }
+            List<Error> answer = new ArrayList<>();
+            duplicates.forEach(d -> answer.add(hint(d)));
+            answer.addAll(errors);
+            return answer;
         } catch (Exception e) {
-            return List.of(parseError(e, content));
+            return routesOnly ? List.of() : List.of(parseError(e, content));
         }
     }
 
@@ -221,6 +263,12 @@ public class YamlValidator {
         Error tab = tabIndentation(msg);
         if (tab != null) {
             return tab;
+        }
+        // period: {{welcome.period}}: braces open a YAML map, and a map as a key fails with "Expected a field name"
+        // and no line; the property placeholder must be quoted
+        Error placeholder = unquotedPlaceholder(lines);
+        if (placeholder != null) {
+            return placeholder;
         }
         // the message names several positions (the collection being parsed, then the token that broke it); the
         // problem is at the last one
@@ -278,6 +326,18 @@ public class YamlValidator {
             Error marked = indentationError(msg, lines);
             return marked != null ? marked : plain;
         }
+        // errorHandler: at column 1 in a file of - items is YAML, not prose: the list item marker is missing
+        Matcher key = TOP_KEY.matcher(text);
+        if (key.matches() && firstEntryIsListItem(lines)) {
+            String name = key.group(1);
+            return Error.builder()
+                    .messageKey("parser")
+                    .format(new MessageFormat("{0}"))
+                    .arguments("line " + line + ": " + name + ": is a top-level key in a file whose entries are list"
+                               + " items (- route:, ...): write it as a list item, - " + name + ":, and indent the lines"
+                               + " under it two spaces more, as the - route: entries are (CAMEL-25372)")
+                    .build();
+        }
         String cleaned = msg.replace("\n", " ").replaceAll("\\s+", " ").trim();
         int cut = cleaned.indexOf("in 'reader'");
         String head = cut > 0 ? cleaned.substring(0, cut).trim() : cleaned;
@@ -288,6 +348,44 @@ public class YamlValidator {
                            + "\"): a route file holds only the YAML, put explanations in a # comment or leave them out"
                            + " (" + head + ")")
                 .build();
+    }
+
+    /** A value (of a key or a list item) that starts with a property placeholder without quotes. */
+    private static final Pattern UNQUOTED_PLACEHOLDER = Pattern.compile("^(\\s*(?:-\\s+)?(?:[\\w.-]+:\\s+)?)(\\{\\{.*)$");
+
+    /** The first line whose value is an unquoted {{placeholder}}, said with the line to write; null when none. */
+    static Error unquotedPlaceholder(String[] lines) {
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.strip().startsWith("#")) {
+                continue;
+            }
+            Matcher m = UNQUOTED_PLACEHOLDER.matcher(line);
+            // a line of a block scalar (a script) that starts with {{ has no key or - in front: not this
+            if (m.matches() && !m.group(1).isBlank()) {
+                String value = m.group(2).strip();
+                String quoted = value.contains("\"") ? "'" + value + "'" : "\"" + value + "\"";
+                return hint("line " + (i + 1) + ": " + value + " without quotes is read as a YAML map (braces open a"
+                            + " map in YAML), not as a property placeholder: quote the value, write the line as "
+                            + (m.group(1) + quoted).strip());
+            }
+        }
+        return null;
+    }
+
+    /** A mapping key alone at column 1: errorHandler:, beans:, restConfiguration:. */
+    private static final Pattern TOP_KEY = Pattern.compile("^([A-Za-z][\\w-]*):\\s*$");
+
+    /** Whether the first entry of the file (past comments and blank lines) is a list item. */
+    private static boolean firstEntryIsListItem(String[] lines) {
+        for (String l : lines) {
+            String t = l.strip();
+            if (t.isEmpty() || t.startsWith("#") || t.equals("---")) {
+                continue;
+            }
+            return l.startsWith("- ");
+        }
+        return false;
     }
 
     private static final Pattern SNAKE_MARK = Pattern.compile("in 'reader', line (\\d+), column (\\d+):");
@@ -315,6 +413,10 @@ public class YamlValidator {
         }
         if (msg.contains("expected <block end>, but found '<block mapping start>'")) {
             return marks.size() > 1 ? mappingKeyColumn(marks.get(0), problem, lines) : null;
+        }
+        // a key in the column of the dashes of a list: '?' is the parser's name for a key
+        if (msg.contains("expected <block end>, but found '?'")) {
+            return marks.size() > 1 ? keyInListColumn(marks.get(0), problem, lines) : null;
         }
         if (msg.contains("mapping values are not allowed here")) {
             return mappingValue(problem, lines);
@@ -423,6 +525,45 @@ public class YamlValidator {
         return hint("line " + problem.line() + ": " + keyName(lines[problem.line() - 1]) + " starts in column "
                     + problem.column() + ", but the keys of the mapping that starts at line " + mapping.line()
                     + " are in column " + mapping.column() + "; every key of a mapping must start in the same column");
+    }
+
+    /**
+     * A key in the column of the dashes of the list above it, such as steps: under - simple: of a when: list, or
+     * onFallback: under the - to: of the steps: of a circuitBreaker: it is part of neither the list item nor the
+     * mapping that holds the list. Names both columns, one of which was meant.
+     */
+    private static Error keyInListColumn(Mark item, Mark problem, String[] lines) {
+        String itemLine = lines[item.line() - 1];
+        int dash = item.column() - 1;
+        if (dash < 0 || dash >= itemLine.length() || itemLine.charAt(dash) != '-') {
+            return null;
+        }
+        String afterDash = itemLine.substring(dash + 1);
+        int itemKeyColumn = dash + 2 + afterDash.length() - afterDash.stripLeading().length();
+        String key = keyName(lines[problem.line() - 1]);
+        String answer = "line " + problem.line() + ": " + key + " starts in column " + problem.column()
+                        + ", the column of the - of the list item at line " + item.line() + ", so it is part of neither"
+                        + " that item nor the key that holds the list. Write it in column " + itemKeyColumn
+                        + " to make it a key of the item, as " + keyName(afterDash) + " is";
+        // the key whose value the list is: the nearest line above that is indented less than the dashes
+        for (int i = item.line() - 2; i >= 0; i--) {
+            String stripped = lines[i].stripLeading();
+            if (stripped.isEmpty() || stripped.startsWith("#")) {
+                continue;
+            }
+            int indent = lines[i].length() - stripped.length();
+            if (indent < dash) {
+                int column = indent + 1;
+                if (stripped.startsWith("-")) {
+                    String rest = stripped.substring(1);
+                    stripped = rest.stripLeading();
+                    column += 1 + rest.length() - stripped.length();
+                }
+                return hint(answer + ", or in column " + column + " to make it a key next to " + keyName(stripped)
+                            + " (line " + (i + 1) + ")");
+            }
+        }
+        return hint(answer);
     }
 
     /**
@@ -601,8 +742,12 @@ public class YamlValidator {
      * <p/>
      * The envelope is described loosely on purpose. Camel does not own the Kamelet CRD, so the parts it does not read
      * are accepted as they come rather than failed for being unknown.
+     * <p/>
+     * The schema of the template is kept under {@code definitions}, where draft 4 (the dialect of the route schema)
+     * keeps a schema that is only referenced: under a key of its own at the root it is no keyword, and the validator
+     * warns about an unknown keyword each time a JVM loads the schema (CAMEL-25820).
      */
-    private JsonNode kameletModel(JsonNode routeModel) {
+    JsonNode kameletModel(JsonNode routeModel) {
         ObjectNode root = mapper.createObjectNode();
         JsonNode dialect = routeModel.get("$schema");
         if (dialect != null) {
@@ -622,14 +767,14 @@ public class YamlValidator {
         specProperties.putObject("types").put("type", "object");
         specProperties.putObject("dataTypes").put("type", "object");
         specProperties.putObject("dependencies").put("type", "array");
-        specProperties.putObject("template").put("$ref", "#/templateEntry");
+        specProperties.putObject("template").put("$ref", "#/definitions/templateEntry");
         // an entry of a route file is exactly one of route/from/beans/..., which is what maxProperties says. The
         // template of a Kamelet is not: counter-source declares its bean beside its from, and 60 of the 250 kamelets
         // of the library do the same. Everything else about an entry still holds, and the $refs inside the copy point
         // at #/items/definitions/..., which is why the items node is kept as well.
         ObjectNode template = routeModel.get("items").deepCopy();
         template.remove("maxProperties");
-        root.set("templateEntry", template);
+        root.putObject("definitions").set("templateEntry", template);
         root.set("items", routeModel.get("items"));
         return root;
     }
@@ -663,21 +808,17 @@ public class YamlValidator {
         return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
     }
 
-    private List<Error> validate(JsonNode target, Set<String> bodylessEndpoints) {
+    private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
-        // before the noise filter, which keeps one branch per construct: the alternatives of a construct are the
-        // keys its branches require, and they are only all present while nothing has been dropped yet
-        List<Error> raw = new ArrayList<>(against.validate(target));
-        removeSatisfiedAlternatives(raw);
-        var errors = filterOneOfNoise(raw);
+        // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
+        var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
         // the checks below walk the document looking for Camel nodes, and spec.definition of a Kamelet is a JSON
         // schema of its properties, not Camel: a property named delay is not the Delay EIP, which is what
         // aws-s3-source and eight others were told. Removing the branch leaves every path under spec.template as it
         // was, so the locations and the lines stay right.
         JsonNode camelOnly = isKamelet(target) ? withoutKameletMetadata(target) : target;
-        // the locations the runtime accepts after all, before they are dropped: a branch of an anyOf that failed only
-        // because of one of them leaves its companions behind, and those say the file needs a property it does not
-        // (fhir-sink unmarshals with fhirXml, whose fhirVersion is a placeholder, and was told fhirJson was required)
+        // Keep accepted scalar locations to remove their enclosing composition errors. Required fields remain
+        // mandatory even when another field in the same object accepts placeholders or scalar conversion.
         List<String> accepted = new ArrayList<>();
         for (Error e : errors) {
             if (isRuntimeAcceptedScalar(e)) {
@@ -688,7 +829,7 @@ public class YamlValidator {
         if (!accepted.isEmpty()) {
             errors.removeIf(e -> {
                 String keyword = e.getKeyword();
-                if (!"required".equals(keyword) && !"oneOf".equals(keyword) && !"anyOf".equals(keyword)) {
+                if (!"oneOf".equals(keyword) && !"anyOf".equals(keyword)) {
                     return false;
                 }
                 String at = String.valueOf(e.getInstanceLocation());
@@ -701,6 +842,8 @@ public class YamlValidator {
         errors = SchemaHints.apply(SchemaHints.EXPRESSION, errors, this);
         errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this);
         errors = SchemaHints.apply(SchemaHints.LIST, errors, this);
+        // before the step hints, which rewrite the error without its instance node
+        errors = SchemaHints.dropMisplacedOptionRepeats(errors, this);
         errors = SchemaHints.apply(SchemaHints.STEP, errors, this);
         // CAMEL-24707: the schema requires the expression, so a node without one fails its oneOf with "0 are valid"
         // plus one "required property <language> not found" per language; replace that with one line that says
@@ -725,11 +868,18 @@ public class YamlValidator {
             errors.removeIf(e -> hinted.contains(String.valueOf(e.getInstanceLocation()))
                     && ("oneOf".equals(e.getKeyword()) || "required".equals(e.getKeyword())));
         }
+        if (routesOnly && !errors.isEmpty()) {
+            // the YAML does not pass the schema, whose errors are not asked for: the routes are not checked either
+            return List.of();
+        }
         if (errors.isEmpty()) {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
-            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, bodylessEndpoints);
+            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
+                    bodyTypes());
+            // a field read on a body that is still text (CAMEL-24844)
+            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts, bodyTypes());
         }
         if (canonical) {
             checkOneOfCardinality(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
@@ -750,6 +900,34 @@ public class YamlValidator {
         String property = properties != null && properties.has("expression") ? "expression"
                 : properties != null && properties.has("token") ? "token" : "expression";
         return property + ": \"...\"";
+    }
+
+    /** The options of a language (resultType, suppressExceptions...) as the schema lists them, or empty. */
+    Set<String> languageOptions(String language) {
+        // the language's definition is referenced from an anyOf entry of ExpressionDefinition (the entry under its
+        // properties can be an empty placeholder)
+        JsonNode ref = null;
+        for (JsonNode value : model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition")
+                .findValues(language)) {
+            if (value.path("$ref").isTextual()) {
+                ref = value.path("$ref");
+                break;
+            }
+        }
+        JsonNode definition = ref != null ? model.at(ref.asText().substring(1)) : null;
+        Set<String> answer = new LinkedHashSet<>();
+        if (definition == null || definition.isMissingNode()) {
+            return answer;
+        }
+        // the definition is an object, or a oneOf of the short form (a string) and an object
+        List<JsonNode> shapes = new ArrayList<>();
+        shapes.add(definition);
+        definition.path("oneOf").forEach(shapes::add);
+        for (JsonNode shape : shapes) {
+            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+        }
+        answer.remove("expression");
+        return answer;
     }
 
     /**
@@ -776,24 +954,36 @@ public class YamlValidator {
             "delay", "delay: {expression: {constant: {expression: \"1000\"}}}");
 
     private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel", "ognl",
-            "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "wasm", "datasonnet");
+            "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "datasonnet");
 
     /**
      * ${body.value} < 1 written as a groovy expression: Simple syntax inside another language, which groovy reads as a
      * call to a method named $ and jsonpath as an invalid path. Says which language it is and how to write it there.
      */
     void checkSimpleSyntaxInScripts(JsonNode node, NodePath path, List<Error> errors) {
+        checkSimpleSyntaxInScripts(node, path, errors, false);
+    }
+
+    /**
+     * @param template inside a step that sets a template, such as setHeader CamelVelocityTemplate: its constant is
+     *                 template text with the template engine's own ${...}, not simple
+     */
+    private void checkSimpleSyntaxInScripts(JsonNode node, NodePath path, List<Error> errors, boolean template) {
         if (node == null) {
             return;
         }
         if (node.isArray()) {
             for (int i = 0; i < node.size(); i++) {
-                checkSimpleSyntaxInScripts(node.get(i), path.append(i), errors);
+                checkSimpleSyntaxInScripts(node.get(i), path.append(i), errors, template);
             }
             return;
         }
         if (!node.isObject()) {
             return;
+        }
+        if (node.has("name") && node.get("name").isTextual()
+                && node.get("name").asText().toLowerCase(Locale.ROOT).contains("template")) {
+            template = true;
         }
         var fields = node.fieldNames();
         while (fields.hasNext()) {
@@ -809,7 +999,8 @@ public class YamlValidator {
             }
             String outsideQuotes
                     = text != null ? text.replaceAll("\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'", "\"\"") : null;
-            if (outsideQuotes != null && outsideQuotes.contains("${") && !name.equals("js") && !name.equals("quickjs")) {
+            if (outsideQuotes != null && outsideQuotes.contains("${") && !name.equals("js") && !name.equals("quickjs")
+                    && !jsonPathWithInlineSimple(name, value, outsideQuotes)) {
                 // "${x}" inside quotes is a groovy GString (or a JS template) and is fine; ${...} outside quotes is simple
                 String example;
                 if (name.equals("groovy") || name.equals("mvel") || name.equals("ognl") || name.equals("jactl")) {
@@ -827,12 +1018,67 @@ public class YamlValidator {
                         .messageKey("type")
                         .format(new MessageFormat("{0}"))
                         .arguments(name + ": ${...} is simple syntax, not " + name + ": write the expression in " + name
-                                   + " (" + example + "), or use simple: {expression: \"" + text.replace("\"", "'")
-                                   + "\"}")
+                                   + " (" + example + "), or use simple: {expression: " + yamlQuoted(text) + "}")
                         .build());
             }
-            checkSimpleSyntaxInScripts(value, path.append(name), errors);
+            if ("constant".equals(name) && !template) {
+                checkConstantWithSimple(value, path.append(name), errors);
+            }
+            checkSimpleSyntaxInScripts(value, path.append(name), errors, template);
         }
+    }
+
+    /**
+     * The text as a quoted YAML value, as written: in single quotes when it holds a double quote, as a JSON text does,
+     * so a hint does not turn {"error": ...} into {'error': ...}, which is not JSON.
+     */
+    static String yamlQuoted(String text) {
+        return text.contains("\"") || text.contains("\\") ? "'" + text.replace("'", "''") + "'" : "\"" + text + "\"";
+    }
+
+    /** A simple function in a constant: ${header.sku}, ${body}, ${exchangeProperty.x}, ${date:now:...}. */
+    private static final Pattern SIMPLE_FUNCTION = Pattern.compile("\\$\\{[a-z][^}]*}");
+
+    /**
+     * A constant is used as written, so ${header.sku} in it stays the literal text ${header.sku}. Only simple evaluates
+     * it (the error message in an otherwise right route reads "unknown sku ${header.sku}").
+     */
+    private static void checkConstantWithSimple(JsonNode value, NodePath path, List<Error> errors) {
+        String text = null;
+        if (value.isTextual()) {
+            text = value.asText();
+        } else if (value.isObject() && value.has("expression") && value.get("expression").isTextual()) {
+            text = value.get("expression").asText();
+        }
+        if (text == null || text.startsWith("resource:")) {
+            return;
+        }
+        Matcher m = SIMPLE_FUNCTION.matcher(text);
+        if (m.find()) {
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path)
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(m.group() + " is not evaluated, a constant is used as written: use simple:"
+                               + " {expression: " + yamlQuoted(text) + "} for a value with expressions")
+                    .build());
+        }
+    }
+
+    /**
+     * A JsonPath with Simple inlined, such as $.store.book[?(@.price < ${header.max})]: the jsonpath language evaluates
+     * the ${...} first (allowSimple, on by default), so it is valid when the expression has a JsonPath root of its own.
+     * A whole ${...} (jsonpath: ${body.x}) has none and is simple syntax.
+     */
+    private static boolean jsonPathWithInlineSimple(String name, JsonNode value, String outsideQuotes) {
+        if (!name.equals("jsonpath")) {
+            return false;
+        }
+        if (value.isObject() && value.has("allowSimple") && "false".equals(value.get("allowSimple").asText())) {
+            return false;
+        }
+        return outsideQuotes.replaceAll("\\$\\{[^}]*}", "").contains("$");
     }
 
     /**
@@ -1029,6 +1275,7 @@ public class YamlValidator {
             }
 
             String prefix = meta.getEvaluationPath().toString();
+            String instance = meta.getInstanceLocation().toString();
 
             Map<String, List<Error>> branches = new LinkedHashMap<>();
             for (Error e : errors) {
@@ -1036,7 +1283,9 @@ public class YamlValidator {
                     continue;
                 }
                 String path = e.getEvaluationPath().toString();
-                if (path.startsWith(prefix + "/")) {
+                String location = e.getInstanceLocation().toString();
+                if (path.startsWith(prefix + "/")
+                        && (location.equals(instance) || location.startsWith(instance + "/"))) {
                     String rest = path.substring(prefix.length() + 1);
                     String branchIndex = rest.contains("/") ? rest.substring(0, rest.indexOf('/')) : rest;
                     branches.computeIfAbsent(branchIndex, k -> new ArrayList<>()).add(e);
@@ -1047,17 +1296,19 @@ public class YamlValidator {
                 continue;
             }
 
-            // find the best-matching branch using a three-tier priority:
-            //   1. property-level errors (additionalProperties, enum, pattern, etc.) — "right branch, wrong value/property"
-            //   2. type errors only — "wrong branch entirely" (less informative)
-            //   3. structural errors only (required, oneOf, not) — wrong-branch noise
+            // find the best-matching branch using a four-tier priority:
+            //   1. only runtime-accepted scalar errors — a matching branch once placeholders/conversions are allowed
+            //   2. property-level errors (additionalProperties, enum, pattern, etc.) — "right branch, wrong value/property"
+            //   3. type errors only — "wrong branch entirely" (less informative)
+            //   4. structural errors only (required, oneOf, not) — wrong-branch noise
             // within the same tier, prefer the deepest instance location
             String bestBranch = null;
             int bestDepth = -1;
             int bestTier = 0;
 
             for (Map.Entry<String, List<Error>> entry : branches.entrySet()) {
-                int tier = branchTier(entry.getValue());
+                int tier = entry.getValue().stream().allMatch(YamlValidator::isRuntimeAcceptedScalar)
+                        ? 3 : branchTier(entry.getValue());
                 int maxDepth = entry.getValue().stream()
                         .mapToInt(e -> e.getInstanceLocation().toString().length())
                         .max().orElse(0);
@@ -1214,52 +1465,6 @@ public class YamlValidator {
     }
 
     /**
-     * Drops "required property X not found" where one of the alternatives is in fact there.
-     * <p/>
-     * The branches of a {@code oneOf} each require their own key, and when all of them are reported the file is told it
-     * needs a key it does not: {@code unmarshal: {fhirXml: ...}} in one when branch of a choice was told "required
-     * property 'fhirJson' not found", because the winner of the other when branch was chosen for it as well. Collected
-     * per construct and per place, they name the keys the file did not write; if the object at that place has anything
-     * in it, a branch was chosen and the rest are noise. When it is empty, the file really does have to pick one and
-     * the errors stay (CAMEL-25238).
-     */
-    private static void removeSatisfiedAlternatives(List<Error> errors) {
-        Map<String, List<Error>> groups = new LinkedHashMap<>();
-        for (Error e : errors) {
-            if (!"required".equals(e.getKeyword())) {
-                continue;
-            }
-            String construct = constructOf(String.valueOf(e.getEvaluationPath()));
-            if (construct != null) {
-                groups.computeIfAbsent(construct + "@" + e.getInstanceLocation(), k -> new ArrayList<>()).add(e);
-            }
-        }
-        for (List<Error> group : groups.values()) {
-            JsonNode instance = group.get(0).getInstanceNode();
-            if (instance == null || !instance.isObject()) {
-                continue;
-            }
-            // the branches of a pick-one construct each require their own key, so one error per key the file did not
-            // write. The key it did write is the one missing from them: that branch got past its required check and
-            // failed, if at all, further in. So a non-empty object means a branch was chosen and the rest are noise.
-            // An object with nothing in it, or with a key no branch knows, still gets the construct's own error and
-            // the additionalProperties error, which is what actually tells the author what to do.
-            if (!instance.isEmpty() && group.size() > 1) {
-                errors.removeAll(group);
-            }
-        }
-    }
-
-    /**
-     * The schema construct an error came from when it came from inside a branch of a {@code oneOf} or an {@code anyOf}:
-     * its evaluation path up to and including that keyword, or null when it is not inside one.
-     */
-    private static String constructOf(String evaluationPath) {
-        int at = Math.max(evaluationPath.lastIndexOf("/oneOf/"), evaluationPath.lastIndexOf("/anyOf/"));
-        return at < 0 ? null : evaluationPath.substring(0, at + 7);
-    }
-
-    /**
      * Whether the schema rejected a scalar that the Camel runtime accepts, in which case the error is dropped.
      * <p>
      * Camel's model declares nearly every scalar attribute as a {@code String} field carrying the real type in
@@ -1319,6 +1524,7 @@ public class YamlValidator {
     private Set<String> languageKeys = Set.of();
     private Set<String> stepNames = Set.of();
     private Set<String> resilienceProperties = Set.of();
+    private Set<String> redeliveryPolicyProperties = Set.of();
 
     /** The keys of the file's entries (route, from, beans, rest, onException...), from the schema. */
     Set<String> topLevelEntries() {
@@ -1333,6 +1539,29 @@ public class YamlValidator {
     /** The names of the EIP steps, from the schema. */
     Set<String> stepNames() {
         return stepNames;
+    }
+
+    /** The options of an EIP as the YAML DSL schema lists them, or empty when the EIP is not known (CAMEL-25372). */
+    Set<String> optionsOf(String eip) {
+        JsonNode ref = model.at("/items/definitions/org.apache.camel.model.ProcessorDefinition/properties/" + eip + "/$ref");
+        JsonNode definition = ref.isTextual() ? model.at(ref.asText().substring(1)) : null;
+        Set<String> answer = new LinkedHashSet<>();
+        if (definition == null || definition.isMissingNode()) {
+            return answer;
+        }
+        // the definition is an object, or a oneOf of a short form and an object
+        List<JsonNode> shapes = new ArrayList<>();
+        shapes.add(definition);
+        definition.path("oneOf").forEach(shapes::add);
+        for (JsonNode shape : shapes) {
+            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+        }
+        return answer;
+    }
+
+    /** The properties of redeliveryPolicy (maximumRedeliveries, redeliveryDelay...), from the schema. */
+    Set<String> redeliveryPolicyProperties() {
+        return redeliveryPolicyProperties;
     }
 
     /** The properties of resilience4jConfiguration, from the schema. */
@@ -1390,6 +1619,17 @@ public class YamlValidator {
             catalog = new DefaultCamelCatalog();
         }
         return catalog;
+    }
+
+    /**
+     * The body types of the catalog (CAMEL-24961). The catalog of an older Camel version has none, so the body types of
+     * the validator's own catalog stand in for a model that has none.
+     */
+    private CatalogBodyTypes bodyTypes() {
+        if (bodyTypes == null) {
+            bodyTypes = new CatalogBodyTypes(catalog(), otherCatalog ? new DefaultCamelCatalog() : null);
+        }
+        return bodyTypes;
     }
 
     private void collectProperties(JsonNode node, Set<String> answer, int depth) {
@@ -1520,6 +1760,9 @@ public class YamlValidator {
         this.resilienceProperties = new LinkedHashSet<>();
         model.at("/items/definitions/org.apache.camel.model.Resilience4jConfigurationDefinition/properties").fieldNames()
                 .forEachRemaining(resilienceProperties::add);
+        this.redeliveryPolicyProperties = new LinkedHashSet<>();
+        model.at("/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition/properties").fieldNames()
+                .forEachRemaining(redeliveryPolicyProperties::add);
         this.languageKeys = new LinkedHashSet<>();
         model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties").fieldNames()
                 .forEachRemaining(languageKeys::add);

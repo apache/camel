@@ -25,7 +25,6 @@ public class ToonDataFormatConfigurer extends org.apache.camel.support.component
         map.put("ContentTypeHeader", boolean.class);
         map.put("Delimiter", java.lang.String.class);
         map.put("Indent", int.class);
-        map.put("LengthMarker", boolean.class);
         map.put("Strict", boolean.class);
         ALL_OPTIONS = map;
     }
@@ -38,8 +37,6 @@ public class ToonDataFormatConfigurer extends org.apache.camel.support.component
         case "contentTypeHeader": target.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "delimiter": target.setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
         case "indent": target.setIndent(property(camelContext, int.class, value)); return true;
-        case "lengthmarker":
-        case "lengthMarker": target.setLengthMarker(property(camelContext, boolean.class, value)); return true;
         case "strict": target.setStrict(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
@@ -57,8 +54,6 @@ public class ToonDataFormatConfigurer extends org.apache.camel.support.component
         case "contentTypeHeader": return boolean.class;
         case "delimiter": return java.lang.String.class;
         case "indent": return int.class;
-        case "lengthmarker":
-        case "lengthMarker": return boolean.class;
         case "strict": return boolean.class;
         default: return null;
         }
@@ -72,8 +67,6 @@ public class ToonDataFormatConfigurer extends org.apache.camel.support.component
         case "contentTypeHeader": return target.isContentTypeHeader();
         case "delimiter": return target.getDelimiter();
         case "indent": return target.getIndent();
-        case "lengthmarker":
-        case "lengthMarker": return target.isLengthMarker();
         case "strict": return target.isStrict();
         default: return null;
         }

@@ -8,11 +8,12 @@ routes.
 == Top Features
 
 * <<_live_run_data,*Live run data*>> -- the exchanges and failures of each line of the running integration, next to
-  the code.
+  the code, and the body types each step has been reached with at the end of its line.
+* <<_running_as_saved,*Running as saved*>> -- whether the integration runs the file as it is saved, or needs a restart.
 * <<_problems_as_you_type,*Problems as you type*>> -- endpoint options, Simple expressions and more are checked as soon
   as a file opens and while you type, in YAML, Java and XML routes; a YAML or XML file with problems is not saved.
 * <<_quick_fixes,*Quick fixes*>> -- *Shift+F9* applies the fix a problem names, such as an option typo.
-* <<_fix_with_ai,*Fix with AI*>> -- *Shift+F8* asks the AI to fix the problem of a line; you confirm every change.
+* <<_fix_with_ai,*Fix with AI*>> -- *Shift+F8* asks the AI to fix the problem of a line, or a line that fails at runtime; you confirm every change.
 * <<_completion,*Completion*>> -- *Tab* completes components, endpoint options and their values, Java DSL chains, XML
   elements and attributes, and simple expressions; light help for hand-written edits, see
   <<_known_limitations,Known limitations>>.
@@ -22,6 +23,8 @@ routes.
   with *Ctrl+G*, see where the cursor is in the route.
 * <<_changes_and_diff,*Changes and diff*>> -- changed lines are marked, and *F7* shows the unsaved changes as a diff.
 * <<_yaml_java_and_xml,*YAML, Java and XML*>> -- *Space* shows a route in any of the three DSLs.
+* <<_kamelets,*Kamelets*>> -- write your own Kamelets with the same checks, and *Tab* completes the properties of a
+  Kamelet where a route uses it.
 
 == Browsing and Editing
 
@@ -52,11 +55,55 @@ In the example the timer fired 227 times; the `filter` let 137 of those through 
 The column keeps its width, so the code does not move as the numbers grow. It works for YAML, Java and XML routes, as
 `camel run` records the source line of every processor.
 
+=== Body Types
+
+With the message history on, such as with `camel run --dev`, the body types each step has been reached with go at the
+end of its line, dimmed and lined up. A step reached with bodies of more than one kind (`null`, `payload`, `data` or
+`collection`) needs attention, as its body depends on the path a message takes: it has a `⚠` in the gutter, and its
+types and kinds are in the warning color. The quick documentation of the line lists all the types, which the end of the
+line cuts to the room there is.
+
+image::jbang/camel-tui-source-body-types.png[The orders route in the source view: the steps after the choice are reached with a map and a stream, as only one branch marshals, so they have a warning in the gutter, and the quick documentation of the selected line says why]
+
+The same body types are in the Routes and Diagram tabs (see
+xref:camel-jbang-tui-diagram.adoc#_body_types[Body Types]).
+
+The live run data and the body types are of the version of the file the integration runs. While it does not run the
+file as saved (see <<_running_as_saved,Running as Saved>>), the numbers are dimmed and the body types are left out, as
+the lines of the version that runs may be others.
+
+== Running as Saved
+
+The bottom border of the source says whether the integration runs the routes of the file as it is saved:
+
+* `● running as saved` -- the integration loaded the file after it was last saved.
+* `○ reloading...` -- the file was saved a moment ago, and the integration runs in dev mode, which reloads it.
+* `○ not running yet` -- the file was saved after the integration loaded it. An integration that runs without `--dev`
+  does not reload a file when it is saved: restart it. The log of one in dev mode says why it did not reload the file.
+* `⚠ the reload failed` -- the integration runs the routes it ran before the reload, until a reload succeeds.
+* `○ the routes of this file are stopped` -- stopped (or suspended) by hand. The live run data and the body types still
+  show when the integration loaded the file as saved, which is not known for a route stopped after a reload.
+
+image::jbang/camel-tui-source-running-as-saved.png[The bottom border of an edited route file: the integration runs without --dev, so the saved file is not running yet]
+
+The Source tab compares when the file was saved with when the integration loaded the routes it has from the file, and
+shows nothing for a file it has no route from. It does not load the file itself, as loading a route file runs parts of
+it, such as creating its beans. Edits not saved yet are not part of it: the title of the editor marks them with `*`.
+To compare a file with the running routes one by one, `camel cmd route-structure <file>` gives the checksum of each
+route of the file, and `camel get route --checksum` the checksum of each running route.
+
 == Problems as You Type
 
 The editor checks your routes while you type: endpoint URIs and their options against the Camel catalog, Simple
-expressions, the YAML DSL schema, and a `to` whose URI holds `+${...}+` and should be a `toD`. Java routes are read
-without compiling them, so endpoints built with the endpoint DSL or from a constant are checked too.
+expressions, and a `to` whose URI holds `+${...}+` and should be a `toD`. Java routes are read without compiling them,
+so endpoints built with the endpoint DSL or from a constant are checked too.
+
+A YAML route is also followed through its steps with the message body each step gives and needs, as soon as the file
+passes the YAML DSL schema: a `to: file` after `unmarshal: json` cannot write the `Map` it gets, and the line says to add
+`marshal: json` before it (see xref:camel-jbang-validation.adoc[Validation]). The schema itself is checked when you
+save, as a file being typed is often not valid YAML yet.
+
+image::jbang/camel-tui-source-body-problem-on-open.png[A route that writes the parsed JSON to a file, marked as soon as the file opens: the file producer needs text, bytes, a stream or a file, and the Error panel says to add marshal json before it]
 
 The problems are marked as soon as a file opens, before you change anything: a red `✗` on the line, and the count in
 the title. The panel at the bottom says the problem of the selected line, and *F9* goes to the next one.
@@ -64,8 +111,17 @@ the title. The panel at the bottom says the problem of the selected line, and *F
 image::jbang/camel-tui-source-problems-on-open.png[The problem of a YAML route marked when the file opens]
 
 In the editor, a line with a problem has a red line number, the title shows how many errors there are, and the Error
-panel at the bottom says what is wrong with the line the cursor is on. They are checked again as you type, and *F9*
+panel at the bottom says what is wrong with the line the cursor is on. A note, something that works but is not right
+(such as a dependency a Kamelet does not use), is marked as a warning instead: a yellow `⚠`, an amber line number, and
+counted apart in the title as `notes`. A note does not keep the file from being saved. They are checked again as you type, and *F9*
 jumps to the next problem.
+
+A route that sends to a `direct` or `seda` endpoint no route consumes gets a note on that line, such as
+`to: direct:cheese` while no route has `from: direct:cheese`. This works for YAML, Java and XML routes, and the routes
+of the other YAML, Java and XML files of the project count too. They are read in the background each time a file
+opens, and again while you type once the last read is a few seconds old. It is a note rather than an error, as the
+route that consumes it is often the next one you write. The check says nothing when the other files cannot tell, such as a route whose input is a property
+placeholder or a route template, or a project with more files than the check reads.
 
 image::jbang/camel-tui-source-problems.png[A misspelled seda option marked while typing]
 
@@ -79,13 +135,13 @@ image::jbang/camel-tui-source-save-blocked.png[A YAML file with a problem is not
 A Java file is saved anyway and its problems are reported: it is the application's code, and a check cannot know
 everything a Java route computes at runtime.
 
-The checks can be turned off in the Settings (*F2* > Settings).
+The checks can be turned off in the Settings (*F2* > Settings > *Validate on Save*, or `camel.tui.validateOnSave=false`).
 
 == Quick Fixes
 
 Many problems say how to fix them: an option typo (`siz` instead of `size`), an enum value a letter off, a `to` that
 should be a `toD`, `+${key}+` where the property placeholder `+{{key}}+` is meant, or a Simple function the error names
-the right one of (`+${bdy}+` for `+${body}+`). For these, the Error panel shows the fix, and *Shift+F9* applies it to the
+the right one of (`+${bdy}+` for `+${body}+`), or a dependency a Kamelet does not use, whose line is removed. For these, the Error panel shows the fix, and *Shift+F9* applies it to the
 line:
 
 image::jbang/camel-tui-source-quick-fix.png[Shift+F9 fixed the option typo]
@@ -95,15 +151,31 @@ The same fixes are part of the result of the `camel_validate_source` MCP tool, s
 == Fix with AI
 
 When a problem has no quick fix, *Shift+F8* asks the AI. The file is saved as it is, and the AI panel opens with the
-question already written: the file, the line, the problem, and how to fix it. Press *Enter* to send it, or change it
-first.
+question already written: the file, the line, the problem, and how to fix it. The question quotes the source around
+the line, like a diff: the whole step the line starts (in the canonical YAML form the endpoint of a `- to:` is on the
+lines below it), up to 8 lines, with 2 lines of context before and after, the line marked with `>`. Press *Enter* to
+send it, or change it first.
 
 image::jbang/camel-tui-source-fix-with-ai.png[Shift+F8 writes the question for the AI]
+
+*Shift+F8* also works on a line that fails at runtime. While the integration runs, the live run data at the end of the
+lines counts the failed exchanges (✗); on such a line, *Shift+F8* asks the AI with how many exchanges failed and the
+exception of the last one, from the integration's errors. The cause is not always on that line (a `direct:` endpoint
+that no route consumes, for example), so the AI is asked to find it first. This works in the view as well as in the
+editor, as long as the file has no unsaved edits, and a problem on the line goes first.
+
+image::jbang/camel-tui-source-fix-runtime-failure.png[Shift+F8 on a line that fails at runtime writes the question for the AI]
 
 The AI changes the file with the same tools an AI agent uses over MCP, and every change waits for you: the dialog shows
 what the AI wants to change, *d* shows the diff, *Enter* applies it and *Esc* rejects it.
 
 image::jbang/camel-tui-source-ai-edit-confirm.png[The change of the AI waits for your confirmation]
+
+The whole loop with a local model, from orders that fail at runtime to the fix: *Shift+F8* on the error, the
+question with the source around the line, the change and its diff, and dev mode reloading the route (the time the
+model thinks is sped up):
+
+image::jbang/camel-tui-fix-with-ai.gif[Shift+F8 on a failing route: a local model finds the mismatched endpoint, the change is confirmed with its diff, and dev mode reloads the route]
 
 A file the AI writes is checked like one you save, and a write that brings new problems is refused, so the AI gets the
 problems back and can try again. The view shows the file as the AI wrote it as soon as you apply the change. With `/write live` in the AI panel, you can also watch the AI type its change in the
@@ -164,6 +236,22 @@ image::jbang/camel-tui-source-simple-bean-completion.png[After ${bean: Tab lists
 image::jbang/camel-tui-source-java-completion.png[After a split in a Java route, Tab lists the options of the split first, then the EIPs]
 
 image::jbang/camel-tui-source-java-argument-completion.png[In the argument of a filter, Tab lists the methods of the header builder]
+
+=== Semantic evaluation operations
+
+In YAML `semantic.evaluation` declarations, *Tab* on `operation:` or `type:` suggests the operations declared by
+the selected expert in the running integration. Completion uses the `expert` in the current editor buffer,
+including unsaved edits. Every evaluation must declare its own `expert`. If it is missing,
+completion offers property placeholders only.
+
+Suggestions show the operation's description and result type. For example, an expert declaring only `injection`
+with a boolean result offers `injection`; returning a boolean does not imply an operation named `boolean`.
+The `type` shorthand lowercases operation names, so case-sensitive names are offered only for `operation`.
+
+This requires a running integration, including a running process linked to a local project. If metadata is
+unavailable or the expert cannot be resolved, completion offers property placeholders only. It does not call the
+expert's validation or inference methods. An unreadable semantic declaration must be corrected before its expert
+can be identified.
 
 === Known limitations
 
@@ -227,14 +315,17 @@ image::jbang/camel-tui-source-xml-quick-doc.png[The documentation of the logging
 
 * *Jump links* -- a line that sends to another route, such as `to("seda:shipping")`, shows `↵ shipping`. Press *Enter*
   on the line to go to that route, also when it is in another file or another DSL. A `from` shows which route calls
-  it.
+  it; when more than one does, it shows `↵ 2 callers`, and *Enter* opens a list of them to choose from.
 * *Go to route* -- *g* lists all the routes of the project; type to filter, and *Enter* opens the route.
 * *Bean jumps* -- a line that refers to a bean shows `↵ name`, and *Enter* goes to where the project declares it.
 * *Usages* -- *u* on a line with an endpoint lists where it is used: the routes that consume from it and the steps that
-  send to it, across the project and its DSLs. *Enter* goes there.
+  send to it, across the project and its DSLs, without the line you are on. *Enter* goes there.
 * *Go to node* -- *Ctrl+G* shows the routes of the YAML, Java and XML files and their processors as a tree (the `when`
   and `otherwise` of a choice included). Type to filter by route ID, EIP or label, or type a line number, and *Enter*
   jumps there.
+* *Route tree* -- *Ctrl+T* shows the tree of the route the cursor is in at the top right of the source, from its `from`
+  through each step, with the step under the cursor marked. It follows the cursor as you move and edit, for YAML, XML
+  and Java routes. The *Route Tree* setting says whether it is shown at first (off by default).
 * *Search* -- */* searches the source, *n*/*N* go to the next and previous match, and *h* highlights a text.
 
 image::jbang/camel-tui-source-usages.png[The usages of a seda endpoint: its consumer and the steps sending to it]
@@ -273,6 +364,29 @@ something it cannot say (a lambda processor, a predicate built in Java code) is 
 
 image::jbang/camel-tui-source-convert.png[An XML route converted to YAML, with the note of what did not carry over]
 
+== Kamelets
+
+A Kamelet file (`name.kamelet.yaml`) in the project opens and edits like a route file, with syntax highlighting and the
+same checks, and more that are particular to Kamelets:
+
+* *The shape of the file* -- the properties go under `spec.definition` (with the required ones listed in
+  `spec.definition.required`), and the template of an action or a sink starts `from: kamelet:source`, never from the
+  Kamelet itself.
+* *Where a route uses it* -- a `kamelet:` endpoint is checked against the properties of its Kamelet: a misspelled one
+  (`tagg` for `tag`) and a required one left out are marked. The project's own Kamelet files are read, so this works for
+  the Kamelets you write as well as for the ones of the catalog.
+* *Dependencies* -- a `camel:` dependency the template does not use, and `camel:core`, which every Camel runtime has, are
+  marked as notes. *Shift+F9* removes the line (and the `dependencies:` key when it was the last one).
+
+*Tab* under the `parameters:` of a `kamelet:` endpoint lists the properties of the Kamelet first, the required ones on
+top, with their type, default and description. Below a divider come the options of the kamelet component itself
+(`routeId`, `timeout`...), which are for special uses only.
+
+image::jbang/camel-tui-source-kamelet-completion.png[Tab under the parameters of a kamelet: endpoint lists the properties of the Kamelet first]
+
+The template of a Kamelet is a route of the project: *g* lists it under the name of the Kamelet, a route's
+`to: kamelet:name` has a jump link to it, and the `from` of the template links back to the routes that use it.
+
 == Keyboard Shortcuts
 
 === Viewing
@@ -294,6 +408,7 @@ image::jbang/camel-tui-source-convert.png[An XML route converted to YAML, with t
 | *p* | Toggle plain mode (borderless)
 | *g* | Go to route
 | *Ctrl+G* | Go to node or line
+| *Ctrl+T* | Show or hide the route tree
 | *u* | Usages of the endpoint of the line
 | *F9* | Next problem
 | *Esc* / *c* | Close source viewer
@@ -312,12 +427,13 @@ image::jbang/camel-tui-source-convert.png[An XML route converted to YAML, with t
 | *Alt+Up/Down* | Move YAML block up/down
 | *Ctrl+D* | Duplicate block
 | *Ctrl+K* | Delete current line
+| *Ctrl+/* | Comment out the current block, or bring it back (`#` in YAML and properties, `//` in Java)
 | *Ctrl+Left/Right* | Word navigation
 | *Home* | Smart home (content indent / column 0)
 | *Ctrl+R* | Refactoring menu: replace URI, extract to property, extract a step to a new file (YAML, XML)
 | *F9* | Next problem
 | *Shift+F9* | Apply the quick fix of the problem on the line
-| *Shift+F8* | Ask the AI to fix the problem on the line
+| *Shift+F8* | Ask the AI to fix the problem on the line, or what fails on it at runtime
 | *F7* | Diff view (unsaved changes)
 | *Ctrl+S* | Save and continue editing
 | *F5* | Save and close

@@ -168,15 +168,58 @@ public final class DependencyLookup {
                     "org.apache.camel:camel-bom:" + camelVersion));
         }
         if (rt == null || rt.equals("spring-boot")) {
-            declare.put("pomSpringBoot", pom("org.apache.camel.springboot", "camel-" + shortName + "-starter", null,
+            RuntimeArtifact sb = runtimeArtifact("camel-" + shortName, "spring-boot");
+            declare.put("pomSpringBoot", pom(sb.groupId(), sb.artifactId(), null,
                     "org.apache.camel.springboot:camel-spring-boot-bom:" + camelVersion));
         }
         if (rt == null || rt.equals("quarkus")) {
-            declare.put("pomQuarkus", pom("org.apache.camel.quarkus", "camel-quarkus-" + shortName, null,
+            RuntimeArtifact q = runtimeArtifact("camel-" + shortName, "quarkus");
+            declare.put("pomQuarkus", pom(q.groupId(), q.artifactId(), null,
                     "org.apache.camel.quarkus:camel-quarkus-bom:<camel-quarkus version>"));
         }
         answer.put("declare", declare);
         return answer;
+    }
+
+    /** The Maven coordinates (without version) of a Camel artifact in one runtime. */
+    public record RuntimeArtifact(String groupId, String artifactId) {
+    }
+
+    /**
+     * The artifact that provides a Camel artifact ({@code camel-kafka}) in a runtime: {@code camel-kafka} on Camel
+     * Main, {@code org.apache.camel.springboot:camel-kafka-starter} on Spring Boot and
+     * {@code org.apache.camel.quarkus:camel-quarkus-kafka} on Quarkus.
+     *
+     * @param camelArtifactId the artifact id of the Camel catalog, starting with {@code camel-}
+     * @param runtime         main, spring-boot or quarkus; null means main
+     */
+    public static RuntimeArtifact runtimeArtifact(String camelArtifactId, String runtime) {
+        String shortName = camelArtifactId.startsWith("camel-") ? camelArtifactId.substring(6) : camelArtifactId;
+        if ("spring-boot".equals(runtime)) {
+            return new RuntimeArtifact("org.apache.camel.springboot", "camel-" + shortName + "-starter");
+        }
+        if ("quarkus".equals(runtime)) {
+            return new RuntimeArtifact("org.apache.camel.quarkus", "camel-quarkus-" + shortName);
+        }
+        return new RuntimeArtifact("org.apache.camel", "camel-" + shortName);
+    }
+
+    /**
+     * The reverse of {@link #runtimeArtifact}: the Camel catalog artifact id provided by an artifact of any runtime
+     * ({@code camel-kafka-starter} and {@code camel-quarkus-kafka} both give {@code camel-kafka}), or the artifact id
+     * itself when it is not a runtime-specific Camel artifact.
+     */
+    public static String camelArtifactId(String artifactId) {
+        if (artifactId == null) {
+            return null;
+        }
+        if (artifactId.startsWith("camel-quarkus-") && artifactId.length() > 14) {
+            return "camel-" + artifactId.substring(14);
+        }
+        if (artifactId.startsWith("camel-") && artifactId.endsWith("-starter") && artifactId.length() > 14) {
+            return artifactId.substring(0, artifactId.length() - 8);
+        }
+        return artifactId;
     }
 
     /** A third-party library: the same coordinates in every runtime. */

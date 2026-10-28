@@ -61,9 +61,23 @@ Pay attention to Spring XML DSL. The type attribute is used to declare which err
 And in XML the `<errorHandler>` must be configured with an id.
 The id must then be enabled on either the `<camelContext>` (global scope), or per route that should use this error handler.
 
-The following listing is an equivalent of the prior Java DSL listing:
+The following listing shows the error handler together with a route:
 
-._XML-only:_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+errorHandler(deadLetterChannel("log:dead?level=ERROR"));
+
+from("direct:newOrder")
+    .bean("orderService", "validate")
+    .bean("orderService", "store");
+----
+
+Spring XML::
++
 [source,xml]
 ----
 <camelContext errorHandlerRef="myErrorHandler">
@@ -77,9 +91,30 @@ The following listing is an equivalent of the prior Java DSL listing:
 </camelContext>
 ----
 
-Notice how we have enabled the error handler on the `<camelContext>` via `errorHandlerRef`
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: "log:dead?level=ERROR"
+- route:
+    from:
+      uri: direct:newOrder
+      steps:
+        - bean:
+            ref: orderService
+            method: validate
+        - bean:
+            ref: orderService
+            method: store
+----
+====
+
+Notice how in Spring XML we have enabled the error handler on the `<camelContext>` via `errorHandlerRef`
 which means this error handler is used globally. You can override this per route, and have
 individual routes used another error handler.
+In Java and YAML, the error handler applies to the routes in the same `RouteBuilder` class or YAML file.
 
 NOTE: The DSLs is planned to be improved in the near future to have a unified
 way of configuring error handling across all DSLs with xref:manual::route-configuration.adoc[Route Configuration].
@@ -264,7 +299,7 @@ Java::
 ----
 // will use the original message (body and headers)
 errorHandler(deadLetterChannel("jms:queue:dead")
-   .useOriginalMessage().maximumRedeliveries(5).redeliveryDelay(5000);
+   .useOriginalMessage().maximumRedeliveries(5).redeliveryDelay(5000));
 ----
 
 Spring XML::
@@ -324,7 +359,7 @@ Java::
 ----
 errorHandler(deadLetterChannel("jms:queue:dead")
   .maximumRedeliveries(3)
-  .onRedelivery(new MyOnRedeliveryProcessor()));
+  .onRedelivery(new MyRedeliveryProcessor()));
 ----
 
 Spring XML::
@@ -396,8 +431,7 @@ Configuring this from Spring XML is done with the `onPrepareFailureRef` to refer
 +
 [source,xml]
 ----
-<bean id="myPrepare"
-      class="org.apache.camel.processor.DeadLetterChannelOnPrepareTest.MyPrepareProcessor"/>
+<bean id="myPrepare" class="com.foo.MyPrepareProcessor"/>
 
 <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="jms:dead" onPrepareFailureRef="myPrepare"/>
 ----

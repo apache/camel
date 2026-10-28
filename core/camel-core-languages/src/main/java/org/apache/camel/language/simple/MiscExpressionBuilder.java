@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -897,6 +898,26 @@ public final class MiscExpressionBuilder {
     }
 
     /**
+     * The load function reads the classpath only, so a prefix such as file: is not used:
+     * ${load(file:/var/inbox/data.json)} looks for /var/inbox/data.json on the classpath. When it is not there, the
+     * error says so, and for file: what reads a file of the file-system.
+     */
+    private static FileNotFoundException notOnTheClasspath(FileNotFoundException e, String scheme, String part) {
+        if (scheme == null || "classpath".equals(scheme)) {
+            return e;
+        }
+        String message = e.getMessage() + ". The load function loads from the classpath only, so the " + scheme
+                         + ": prefix is not used"
+                         + ("file".equals(scheme)
+                                 ? "; to read a file of the file-system, use the constant language with resource:file:"
+                                   + part
+                                 : "");
+        FileNotFoundException answer = new FileNotFoundException(message);
+        answer.initCause(e);
+        return answer;
+    }
+
+    /**
      * Loads the given resource from classpath
      */
     public static Expression loadExpression(final String expression) {
@@ -916,6 +937,7 @@ public final class MiscExpressionBuilder {
                 if (name != null) {
                     name = name.trim();
                     String part = StringHelper.after(name, ":", name);
+                    String scheme = name.indexOf(':') > 0 ? name.substring(0, name.indexOf(':')) : null;
                     boolean optional = part.endsWith("?optional=true");
                     if (optional) {
                         part = part.substring(0, part.length() - 14);
@@ -934,6 +956,8 @@ public final class MiscExpressionBuilder {
                             return null;
                         }
                         return IOHelper.loadText(is, false);
+                    } catch (FileNotFoundException e) {
+                        throw RuntimeCamelException.wrapRuntimeException(notOnTheClasspath(e, scheme, part));
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeException(e);
                     }

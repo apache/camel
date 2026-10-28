@@ -39,6 +39,7 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
     private RaftHandle raftHandle;
     private String raftId;
     private volatile boolean isMaster;
+    private ClusterRoleChangeListener roleListener;
 
     protected JGroupsRaftClusterView(CamelClusterService cluster, String namespace, String jgroupsConfig,
                                      String jgroupsClusterName, RaftHandle raftHandle, String raftId) {
@@ -83,12 +84,16 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
         }
         fireLeadershipChangedEvent((CamelClusterMember) null);
 
+        // Register the listener once before attempting to connect; registering inside
+        // the retry loop would accumulate duplicate listeners across retries.
+        roleListener = new ClusterRoleChangeListener(this);
+        raftHandle.addRoleListener(roleListener);
+
         // it may take a while for event to trigger and allow us to join so retry a while
         Exception cause = null;
         for (int i = 1; i < 11; i++) {
             LOG.debug("Attempt #{} for raft {} to join {}", i, raftId, jgroupsClusterName);
             try {
-                raftHandle.addRoleListener(new ClusterRoleChangeListener(this));
                 raftHandle.channel().connect(jgroupsClusterName);
                 LOG.debug("Joined and connected to {} with raft id: {}", jgroupsClusterName, raftId);
                 cause = null;
@@ -108,8 +113,14 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
     protected void doStop() throws Exception {
         isMaster = false;
         fireLeadershipChangedEvent((CamelClusterMember) null);
-        LOG.info("Disconnecting JGroupsraft Channel for JGroupsRaftClusterView with Id {}", raftId);
-        raftHandle.channel().disconnect();
+        if (raftHandle != null && raftHandle.channel() != null) {
+            LOG.info("Disconnecting JGroupsraft Channel for JGroupsRaftClusterView with Id {}", raftId);
+            raftHandle.channel().disconnect();
+        }
+        if (roleListener != null) {
+            raftHandle.removeRoleListener(roleListener);
+            roleListener = null;
+        }
         if (raftHandle != null && raftHandle.log() != null) {
             raftHandle.log().close();
             LOG.info("Closed Log for JGroupsRaftClusterView with Id {}", raftId);
@@ -126,6 +137,11 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
                 LOG.info("Closing JGroupsraft Channel for JGroupsRaftClusterView with Id {}", raftId);
                 raftHandle.channel().close();
                 LOG.info("Closed JGroupsraft Channel Channel for JGroupsRaftClusterView with Id {}", raftId);
+            }
+
+            if (roleListener != null) {
+                raftHandle.removeRoleListener(roleListener);
+                roleListener = null;
             }
 
             if (raftHandle.log() != null) {

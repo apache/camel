@@ -1,0 +1,242 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.kafka;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedStartupListener;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.support.PropertyBindingSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Base class for the Kafka components, holding the component options that are not tied to a specific Kafka client: the
+ * poll exception strategy, the backoff used when creating a consumer, global SSL, and the deferred start of consumers
+ * until the CamelContext is started.
+ */
+public abstract class AbstractKafkaComponent extends HealthCheckComponent
+        implements SSLContextParametersAware, ExtendedStartupListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractKafkaComponent.class);
+
+    private final List<Runnable> pendingConsumers = new CopyOnWriteArrayList<>();
+    private final Lock pendingConsumersLock = new ReentrantLock();
+    // whether the CamelContext has been started since this component was started, which a CamelContext that resumes
+    // does not notify again
+    private boolean pendingConsumersStarted;
+
+    @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
+    private boolean useGlobalSslContextParameters;
+    @Metadata(autowired = true, label = "consumer,advanced",
+              description = "To use a custom strategy with the consumer to control how to handle exceptions thrown from the "
+                            + "Kafka broker while polling messages.")
+    private PollExceptionStrategy pollExceptionStrategy;
+    @Metadata(label = "consumer,advanced",
+              description = "Maximum attempts to create the kafka consumer (kafka-client), before eventually giving up and "
+                            + "failing. Error during creating the consumer may be fatal due to invalid configuration and as "
+                            + "such recovery is not possible. However, one part of the validation is DNS resolution of the "
+                            + "bootstrap broker hostnames. This may be a temporary networking problem, and could potentially "
+                            + "be recoverable. While other errors are fatal, such as some invalid kafka configurations. "
+                            + "Unfortunately, kafka-client does not separate this kind of errors. Camel will by default retry "
+                            + "forever, and therefore never give up. If you want to give up after many attempts then set this "
+                            + "option and Camel will then when giving up terminate the consumer. To try again, you can "
+                            + "manually restart the consumer by stopping, and starting the route.")
+    private int createConsumerBackoffMaxAttempts;
+    @Metadata(label = "consumer,advanced", defaultValue = "5000",
+              description = "The delay in millis seconds to wait before trying again to create the kafka consumer "
+                            + "(kafka-client).")
+    private long createConsumerBackoffInterval = 5000;
+
+    protected AbstractKafkaComponent() {
+    }
+
+    protected AbstractKafkaComponent(CamelContext context) {
+        super(context);
+    }
+
+    /**
+     * Completes the configuration of a new endpoint: sets the global SSL context parameters when the endpoint has none,
+     * and adds the additional properties of the endpoint uri, with their values resolved (#bean / #class etc).
+     *
+     * @param configuration                the configuration of the endpoint
+     * @param endpointAdditionalProperties the properties of the endpoint uri with the additionalProperties. prefix
+     */
+    protected void configureEndpoint(
+            KafkaClientConfiguration configuration, Map<String, Object> endpointAdditionalProperties) {
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
+        if (!endpointAdditionalProperties.isEmpty()) {
+            Map<String, Object> map = new HashMap<>();
+            // resolve parameter values from the values (#bean / #class etc)
+            PropertyBindingSupport.bindProperties(getCamelContext(), map, endpointAdditionalProperties);
+            // overwrite the additional properties from the endpoint
+            configuration.getAdditionalProperties().putAll(map);
+        }
+    }
+
+    /**
+     * Resolves the values of the additional properties of the component configuration (#bean / #class etc).
+     */
+    protected void bindAdditionalProperties(KafkaClientConfiguration configuration) {
+        Map<String, Object> map = new HashMap<>();
+        PropertyBindingSupport.bindProperties(getCamelContext(), map, configuration.getAdditionalProperties());
+        configuration.setAdditionalProperties(map);
+    }
+
+    /**
+     * Starts the task once the CamelContext is started, so that a consumer does not process messages before the
+     * CamelContext is fully started.
+     */
+    public void pendingConsumer(Runnable task) {
+        pendingConsumers.add(task);
+    }
+
+    /**
+     * Starts the task now if the CamelContext has been started, or else once the CamelContext is started, so that a
+     * consumer does not process messages before the CamelContext is fully started.
+     * <p/>
+     * Unlike checking only whether the CamelContext is started, this also starts at once a consumer that is started
+     * while the CamelContext resumes (a suspend of the CamelContext stops the consumers that cannot be suspended, and
+     * its resume starts them again), as the CamelContext does not notify that it is started again after a resume.
+     */
+    public void startConsumer(Runnable task) {
+        pendingConsumersLock.lock();
+        try {
+            // the CamelContext is also checked, as a component added with addComponent to a started CamelContext is
+            // not notified that the CamelContext started
+            if (pendingConsumersStarted || getCamelContext().isStarted()) {
+                task.run();
+            } else {
+                pendingConsumers.add(task);
+            }
+        } finally {
+            pendingConsumersLock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public PollExceptionStrategy getPollExceptionStrategy() {
+        return pollExceptionStrategy;
+    }
+
+    /**
+     * To use a custom strategy with the consumer to control how to handle exceptions thrown from the Kafka broker while
+     * polling messages.
+     */
+    public void setPollExceptionStrategy(PollExceptionStrategy pollExceptionStrategy) {
+        this.pollExceptionStrategy = pollExceptionStrategy;
+    }
+
+    public int getCreateConsumerBackoffMaxAttempts() {
+        return createConsumerBackoffMaxAttempts;
+    }
+
+    /**
+     * Maximum attempts to create the kafka consumer (kafka-client), before eventually giving up and failing.
+     *
+     * Error during creating the consumer may be fatal due to invalid configuration and as such recovery is not
+     * possible. However, one part of the validation is DNS resolution of the bootstrap broker hostnames. This may be a
+     * temporary networking problem, and could potentially be recoverable. While other errors are fatal, such as some
+     * invalid kafka configurations. Unfortunately, kafka-client does not separate this kind of errors.
+     *
+     * Camel will by default retry forever, and therefore never give up. If you want to give up after many attempts then
+     * set this option and Camel will then when giving up terminate the consumer. To try again, you can manually restart
+     * the consumer by stopping, and starting the route.
+     */
+    public void setCreateConsumerBackoffMaxAttempts(int createConsumerBackoffMaxAttempts) {
+        this.createConsumerBackoffMaxAttempts = createConsumerBackoffMaxAttempts;
+    }
+
+    public long getCreateConsumerBackoffInterval() {
+        return createConsumerBackoffInterval;
+    }
+
+    /**
+     * The delay in millis seconds to wait before trying again to create the kafka consumer (kafka-client).
+     */
+    public void setCreateConsumerBackoffInterval(long createConsumerBackoffInterval) {
+        this.createConsumerBackoffInterval = createConsumerBackoffInterval;
+    }
+
+    @Override
+    public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        if (alreadyStarted) {
+            startPendingConsumers();
+        }
+    }
+
+    @Override
+    public void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        startPendingConsumers();
+    }
+
+    private void startPendingConsumers() {
+        pendingConsumersLock.lock();
+        try {
+            pendingConsumersStarted = true;
+            if (!pendingConsumers.isEmpty()) {
+                LOG.info("Starting {} pending Kafka consumers as CamelContext is fully started", pendingConsumers.size());
+                pendingConsumers.forEach(Runnable::run);
+                pendingConsumers.clear();
+            }
+        } finally {
+            pendingConsumersLock.unlock();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        pendingConsumersLock.lock();
+        try {
+            // the consumers started after the CamelContext is started again wait for it
+            pendingConsumersStarted = false;
+        } finally {
+            pendingConsumersLock.unlock();
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        pendingConsumers.clear();
+    }
+
+}

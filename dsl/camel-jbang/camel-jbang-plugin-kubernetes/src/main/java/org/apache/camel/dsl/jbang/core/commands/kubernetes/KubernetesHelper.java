@@ -28,12 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.fabric8.kubernetes.api.model.APIGroup;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
@@ -46,6 +40,12 @@ import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.yaml.snakeyaml.Yaml;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Helper class provides access to cached Kubernetes client. Also provides access to generic Json and Yaml mappers.
@@ -60,17 +60,19 @@ public final class KubernetesHelper {
     private static final ObjectMapper OBJECT_MAPPER;
 
     static {
-        OBJECT_MAPPER = JsonMapper.builder()
+        // Jackson 3 to match the Kubernetes client, so that the model's own serializers (IntOrString, Quantity, etc.) are used.
+        // MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES no longer exists in Jackson 3, and this mapper does not use
+        // polymorphic typing (no default typing, no @JsonTypeInfo on the trait model).
+        OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .enable(EnumFeature.READ_ENUMS_USING_TO_STRING)
                 .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE)
-                .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
+                .enable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                .disable(StreamReadFeature.AUTO_CLOSE_SOURCE)
                 .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
-                .build()
-                .setDefaultPropertyInclusion(
-                        JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY));
+                .changeDefaultPropertyInclusion(
+                        incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY))
+                .build();
     }
 
     private KubernetesHelper() {
@@ -176,10 +178,7 @@ public final class KubernetesHelper {
             GenericKubernetesResourceList list = getKubernetesClient().genericKubernetesResources(nodecrd)
                     .withLabels(Collections.singletonMap("minikube.k8s.io/name", null)).list();
             minikube = list.getItems().size() > 0;
-            // thse env properties are set when running eval $(minikube docker-env) in the console
-            // this is important for the docker builder to actually build the image in the exposed docker from the minikube registry
-            minikubeEnv = System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
-                    && System.getenv("DOCKER_TLS_VERIFY") != null;
+            minikubeEnv = isMinikubeDockerEnv();
             if (minikube && !minikubeEnv) {
                 System.out.println(
                         "It seems you have minikube running but forgot to run \"eval $(minikube docker-env)\", default cluster to kubernetes.");
@@ -188,6 +187,15 @@ public final class KubernetesHelper {
             // ignore it, since we try to discover the cluster and don't want the caller to handle any error
         }
         return minikube && minikubeEnv;
+    }
+
+    /**
+     * Whether the Minikube Docker environment is active in this console, which is what {@code eval $(minikube
+     * docker-env)} sets. The docker image builder needs it to build the image in the Docker daemon of Minikube.
+     */
+    static boolean isMinikubeDockerEnv() {
+        return System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
+                && System.getenv("DOCKER_TLS_VERIFY") != null;
     }
 
     // when minikube is used with the registry addon exposed
@@ -341,7 +349,8 @@ public final class KubernetesHelper {
 
     public static File getKubernetesManifest(String clusterType, File workingDir, String extension) {
         String manifestFile;
-        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)
+                || ClusterType.K3S.isEqualTo(clusterType)) {
             manifestFile = "kubernetes";
         } else {
             manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
@@ -355,7 +364,8 @@ public final class KubernetesHelper {
 
     public static Path getKubernetesManifestPath(String clusterType, Path workingDir, String extension) {
         String manifestFile;
-        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)
+                || ClusterType.K3S.isEqualTo(clusterType)) {
             manifestFile = "kubernetes";
         } else {
             manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");

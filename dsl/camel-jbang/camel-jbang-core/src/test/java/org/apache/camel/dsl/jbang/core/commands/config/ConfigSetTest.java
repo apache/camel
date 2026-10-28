@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.config;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -70,6 +72,31 @@ class ConfigSetTest extends BaseConfigTestSupport {
             Assertions.assertEquals(1, properties.size());
             Assertions.assertEquals("local", properties.get("foo"));
         }, true);
+    }
+
+    @Test
+    public void shouldRejectConfigWithoutKey() throws Exception {
+        UserConfigHelper.createUserConfig("");
+
+        ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
+        command.configuration = "=bar";
+
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+        Assertions.assertEquals(CliExitCode.USAGE, e.getExitCode());
+        Assertions.assertEquals("Configuration parameter not in key=value format: =bar", e.getMessage());
+        CommandLineHelper.loadProperties(properties -> Assertions.assertTrue(properties.isEmpty()));
+    }
+
+    @Test
+    public void shouldRejectConfigWithoutValue() throws Exception {
+        ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
+        command.configuration = "foo";
+        command.global = false;
+
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+        Assertions.assertEquals(CliExitCode.USAGE, e.getExitCode());
+        // no local configuration file is created
+        Assertions.assertFalse(CommandLineHelper.hasLocalUserConfig());
     }
 
 }

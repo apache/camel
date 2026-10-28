@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -35,6 +36,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
+
+    // each test uses its own queue: the broker is shared and outlives the CamelContext, so a message rolled back at
+    // the end of one test would otherwise be redelivered to the consumer of the next one
+    private final String queueName;
+
+    RouteIdTransactedIT(TestInfo testInfo) {
+        queueName = "RouteIdTransactedIT." + testInfo.getTestMethod().orElseThrow().getName();
+    }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -51,7 +60,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:RouteIdTransactedIT", "Hello World");
+        template.sendBody("activemq:queue:" + queueName, "Hello World");
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
@@ -68,7 +77,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:RouteIdTransactedIT", "Kaboom");
+        template.sendBody("activemq:queue:" + queueName, "Kaboom");
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
@@ -81,7 +90,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:RouteIdTransactedIT?transacted=true").id("myCoolRoute")
+                from("activemq:queue:" + queueName + "?transacted=true").id("myCoolRoute")
                         .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
                         .transacted()
                         .choice()

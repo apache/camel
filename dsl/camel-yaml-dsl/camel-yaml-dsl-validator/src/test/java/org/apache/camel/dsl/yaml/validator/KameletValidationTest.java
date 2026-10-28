@@ -16,9 +16,20 @@
  */
 package org.apache.camel.dsl.yaml.validator;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,6 +69,40 @@ class KameletValidationTest {
         YamlValidator v = new YamlValidator();
         List<Error> errors = v.validate(content);
         return YamlValidator.describeAll(content, errors);
+    }
+
+    @Test
+    void aKameletIsValidatedWithoutAWarningAboutTheSchema() throws Exception {
+        // CAMEL-25820: the schema of a Kamelet kept the schema of its template under a key of its own at the root, which
+        // is no keyword, and the validator warned "Unknown keyword templateEntry" each time it loaded the schema
+        List<String> warnings = new CopyOnWriteArrayList<>();
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        Appender appender = new AbstractAppender("kamelet-schema-warnings", null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                if (event.getLevel().isMoreSpecificThan(Level.WARN)) {
+                    warnings.add(event.getLoggerName() + ": " + event.getMessage().getFormattedMessage());
+                }
+            }
+        };
+        appender.start();
+        context.getConfiguration().getRootLogger().addAppender(appender, Level.ALL, null);
+        context.updateLoggers();
+        try {
+            assertThat(validate(WORKING)).isEmpty();
+        } finally {
+            context.getConfiguration().getRootLogger().removeAppender(appender.getName());
+            context.updateLoggers();
+            appender.stop();
+        }
+
+        assertThat(warnings).noneMatch(w -> w.contains("Unknown keyword"));
+        // the validator warns once in a JVM, so the schema is checked as well: only keywords at its root
+        YamlValidator validator = new YamlValidator();
+        JsonNode model = new ObjectMapper().readTree(YamlValidator.class.getResourceAsStream("/schema/camelYamlDsl.json"));
+        List<String> keys = new ArrayList<>();
+        validator.kameletModel(model).fieldNames().forEachRemaining(keys::add);
+        assertThat(keys).containsOnly("$schema", "type", "additionalProperties", "properties", "definitions", "items");
     }
 
     @Test

@@ -309,11 +309,12 @@ And in the YAML routes you can assign which configurations to use:
       uri: timer:yaml
       parameters:
         period: 3s
+        includeMetadata: true
       steps:
         - setBody:
             expression:
               simple:
-                expression: "Timer fired ${header.CamelTimerCounter} times"
+                expression: "Timer fired ${exchangeProperty.CamelTimerCounter} times"
         - to:
             uri: "log:yaml"
             parameters:

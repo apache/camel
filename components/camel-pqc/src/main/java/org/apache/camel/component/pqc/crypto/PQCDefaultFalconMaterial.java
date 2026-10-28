@@ -19,6 +19,7 @@ package org.apache.camel.component.pqc.crypto;
 import java.security.*;
 
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
@@ -49,7 +50,7 @@ public class PQCDefaultFalconMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm(),
                 PQCSignatureAlgorithms.FALCON.getBcProvider());
-        kpGen.initialize(FalconParameterSpec.falcon_1024);
+        kpGen.initialize(FalconParameterSpec.falcon_1024, SecureRandomHelper.getSecureRandom());
         return kpGen;
     }
 }

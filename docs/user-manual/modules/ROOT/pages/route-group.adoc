@@ -177,6 +177,12 @@ Camel has optional support for xref:jmx.adoc[JMX management]. This includes mana
 The following code will get the JMX MBean `ManagedRouteGroupMBean` for the route group with name `order`.
 Using this MBean you can get metrics, and also operations to start and stop all routes in this group.
 
+Each exchange is counted once per entry into the group: calls nested inside another route of the
+same group are not counted again. For example, if route A (group G) calls route B (group G) via
+`direct:`, the group counts it once. However, if an outside route calls A and then B sequentially,
+each call is a separate entry, so the group counts two.
+The per-route statistics are available on each route's `ManagedRouteMBean`.
+
 For example to get the total number of `Exchange`(s) that has failed within this group:
 
 [source,java]

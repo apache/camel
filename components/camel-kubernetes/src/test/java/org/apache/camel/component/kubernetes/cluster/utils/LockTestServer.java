@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kubernetes.cluster.utils;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,8 +25,6 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodListBuilder;
@@ -36,6 +33,7 @@ import io.fabric8.kubernetes.api.model.PodStatusBuilder;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.RequestConfig;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
+import io.fabric8.kubernetes.client.utils.Serialization;
 import io.fabric8.mockwebserver.http.Headers;
 import io.fabric8.mockwebserver.http.RecordedRequest;
 import io.fabric8.mockwebserver.utils.ResponseProvider;
@@ -338,9 +336,8 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
         }
     }
 
-    private T convert(RecordedRequest request, Class<T> targetClass) throws IOException {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        return mapper.readValue(request.getBody().readByteArray(), targetClass);
+    private T convert(RecordedRequest request, Class<T> targetClass) {
+        return Serialization.unmarshal(request.getBody().readUtf8(), targetClass);
     }
 
 }

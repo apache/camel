@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hivemq",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "hivemq",
     "extendsScheme": "",
     "syntax": "hivemq:topic",
@@ -44,6 +44,11 @@
     "CamelHiveMQQos": { "index": 1, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "com.hivemq.client.mqtt.datatypes.MqttQos", "enum": [ "AT_MOST_ONCE", "AT_LEAST_ONCE", "EXACTLY_ONCE" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The QoS level of the message.", "constantName": "org.apache.camel.component.hivemq.HiveMQConstants#MQTT_QOS" },
     "CamelHiveMQRetained": { "index": 2, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Whether the message should be retained.", "constantName": "org.apache.camel.component.hivemq.HiveMQConstants#MQTT_RETAINED" },
     "CamelHiveMQOverrideTopic": { "index": 3, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Header to dynamically override the target topic for publishing.", "constantName": "org.apache.camel.component.hivemq.HiveMQConstants#OVERRIDE_TOPIC" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "The payload of the MQTT message, an empty byte array for an empty payload. The topic is in the CamelHiveMQTopic header" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "null" ], "description": "What converts to a byte array: text, bytes, a stream or a file, sent as the payload; no body is sent as an empty payload. A Map, a POJO or a number does not convert and is sent as an empty payload too, without an error: marshal it first" },
+    "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {
     "topic": { "index": 0, "kind": "path", "displayName": "Topic", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The MQTT topic name or pattern to subscribe to or publish on." },

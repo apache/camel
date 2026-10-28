@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -179,7 +179,7 @@ public class YamlDeserializerSupport {
         }
 
         final MappingNode mn = asMappingNode(node);
-        final Map<String, Object> answer = new HashMap<>();
+        final Map<String, Object> answer = new LinkedHashMap<>();
 
         for (NodeTuple tuple : mn.getValue()) {
             final String key = asText(tuple.getKeyNode());
@@ -206,7 +206,7 @@ public class YamlDeserializerSupport {
         }
 
         final MappingNode mn = asMappingNode(node);
-        final Map<String, Object> answer = new HashMap<>();
+        final Map<String, Object> answer = new LinkedHashMap<>();
 
         for (NodeTuple tuple : mn.getValue()) {
             final String key = asText(tuple.getKeyNode());

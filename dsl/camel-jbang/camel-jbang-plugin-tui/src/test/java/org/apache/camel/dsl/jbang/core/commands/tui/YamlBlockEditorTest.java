@@ -157,6 +157,57 @@ class YamlBlockEditorTest {
     }
 
     @Test
+    void toggleCommentKeepsACommentInsideTheBlockAComment() {
+        List<String> lines = YamlBlockEditor.toLines("""
+                - to:
+                    # keep the old uri for now
+                    uri: log:info
+                - to: log:end
+                """);
+
+        List<String> commented = YamlBlockEditor.toggleComment(lines,
+                YamlBlockEditor.findCommentBlock(lines, 0, true, "#"), "#");
+        assertThat(commented).startsWith("# - to:", "    # # keep the old uri for now", "    # uri: log:info",
+                "- to: log:end");
+
+        // brought back, the comment is still a comment
+        List<String> back = YamlBlockEditor.toggleComment(commented,
+                YamlBlockEditor.findCommentBlock(commented, 0, true, "#"), "#");
+        assertThat(back).isEqualTo(lines);
+    }
+
+    @Test
+    void toggleCommentWithJavaMarker() {
+        List<String> lines = YamlBlockEditor.toLines("    from(\"timer:tick\")\n    // .to(\"log:x\")\n");
+
+        List<String> commented = YamlBlockEditor.toggleComment(lines, new YamlBlockEditor.BlockRange(0, 0), "//");
+        assertThat(commented.get(0)).isEqualTo("    // from(\"timer:tick\")");
+
+        List<String> uncommented = YamlBlockEditor.toggleComment(lines, new YamlBlockEditor.BlockRange(1, 1), "//");
+        assertThat(uncommented.get(1)).isEqualTo("    .to(\"log:x\")");
+    }
+
+    @Test
+    void findCommentBlockFindsCommentedOutBlockAsItWas() {
+        List<String> lines = YamlBlockEditor.toLines("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: log:info
+                        # - to:
+                        #     uri: log:warn
+                        - to: log:end
+                """);
+        int row = findLineContaining(lines, "# - to:");
+
+        YamlBlockEditor.BlockRange block = YamlBlockEditor.findCommentBlock(lines, row, true, "#");
+
+        assertThat(block.startRow()).isEqualTo(row);
+        assertThat(block.endRow()).isEqualTo(row + 1);
+    }
+
+    @Test
     void nonYamlListModeUsesSingleLineBlocks() {
         List<String> lines = YamlBlockEditor.toLines("alpha\nbeta\ngamma\n");
 

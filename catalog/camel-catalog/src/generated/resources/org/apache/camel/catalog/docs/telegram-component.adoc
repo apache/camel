@@ -123,7 +123,7 @@ The following message bodies are allowed for a producer endpoint (messages of ty
 | `EditMessageMediaMessage` | To edit animation, audio, document, photo, or video messages. (editMessageMedia)
 | `EditMessageReplyMarkupMessage` | To edit only the reply markup of a message. (editMessageReplyMarkup)
 | `EditMessageDelete` | To delete a message, including service messages. (deleteMessage)
-| `SendLocationMessage` | To send a location (setSendLocation)
+| `SendLocationMessage` | To send a location (sendLocation)
 | `EditMessageLiveLocationMessage` | To send changes to a live location (editMessageLiveLocation)
 | `StopMessageLiveLocationMessage` | To stop updating a live location message sent by the bot or via the bot (for inline bots) before live_period expires (stopMessageLiveLocation)
 | `SendVenueMessage` | To send information about a venue (sendVenue)
@@ -136,10 +136,18 @@ The following message bodies are allowed for a producer endpoint (messages of ty
 | `GetStarTransactionsMessage` | To get the list of bot's Telegram Star transactions (getStarTransactions)
 | `RefundStarPaymentMessage` | To refund a successful payment in Telegram Stars (refundStarPayment)
 | `EditUserStarSubscriptionMessage` | To cancel or re-enable extension of a subscription paid in Telegram Stars (editUserStarSubscription)
-| `byte[]` | To send any media type supported. It requires the `CamelTelegramMediaType` header to be set to the appropriate media type
+| `byte[]` | To send any media type supported. It requires the `CamelTelegramMediaType` header to be set to the appropriate media type. With the media type `TEXT`, the bytes are sent as a text message, decoded in the charset of the exchange
+| `InputStream`, `File`, `StreamCache` and other bodies that convert to `byte[]` | With the `CamelTelegramMediaType` header set to a media type other than `TEXT`, the content is read as bytes and sent as that media. Without the header, or with `TEXT`, it is sent as a text message
 | `String` | To send a text message to a chat. It gets converted automatically into a `OutgoingTextMessage`
+| `IncomingMessage` | A received message is sent back as its text. A message without text, such as a photo, is not sent, as for an empty body
 
 |===================================================
+
+Any other body is sent as text, so marshal a Map or another object first, as it is otherwise sent as its `toString()`.
+After the call the message body is the `MessageResult` of the call, with the message sent, or a subclass of it, such as
+`MessageResultString` for `CreateInvoiceLinkMessage`. A message body that is null sends nothing, and stays null.
+
+An answer of Telegram with `"ok": false` fails the exchange with the error code and the description of the answer.
 
 
 === Consumer
@@ -204,10 +212,15 @@ Supported types for incoming messages are
 |===================================================
 | Java Type | Description
 
-| `IncomingMessage` | The full object representation of an incoming message
+| `IncomingMessage` | The full object representation of an incoming message or channel post, with the chat id in the `CamelTelegramChatId` header
 | `String` | The content of the message, for text messages only
+| `IncomingCallbackQuery` | A callback query, from a button of an inline keyboard
+| `IncomingInlineQuery` | An inline query
+| `PreCheckoutQuery`, `ShippingQuery`, `PaidMediaPurchased` | The payment updates, of the package `org.apache.camel.component.telegram.model.payments`
 
 |===================================================
+
+An update of another kind, such as an edited message, gives a message with no body.
 
 
 === Reactive Chat-Bot Example
@@ -497,3 +510,16 @@ You need to ensure that your server is exposed to the internet and to pass the r
 *camel.component.webhook.configuration.webhook-external-url* property.
 
 Refer to the *camel-webhook* component documentation for instructions on how to set it.
+
+Camel registers the webhook with a secret token, which Telegram sends back in the `X-Telegram-Bot-Api-Secret-Token`
+header of every webhook request. A webhook request that does not carry the token is rejected with HTTP 403, and does
+not reach the route. By default, the token is derived from the authorization token, so it stays the same across
+restarts and replicas. If the webhook is registered outside Camel, set the `webhookSecretToken` option, and pass the
+same value as the `secret_token` parameter of the `setWebhook` method of the Telegram Bot API.
+
+The default webhook path is a hash of the endpoint URI, so adding an option to the URI, such as `webhookSecretToken`,
+changes the path. When the webhook is registered outside Camel, set the path with the `webhookPath` option of the
+*camel-webhook* component.
+
+Setting `webhookSecretTokenEnabled=false` registers the webhook without a secret token, and accepts webhook requests
+without verifying them, as earlier versions did.

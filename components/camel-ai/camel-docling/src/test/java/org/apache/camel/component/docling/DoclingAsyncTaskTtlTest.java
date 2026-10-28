@@ -53,7 +53,7 @@ public class DoclingAsyncTaskTtlTest extends CamelTestSupport {
 
         // Simulate adding a task entry directly (since we don't have a real docling-serve)
         String taskId = "test-task-1";
-        AsyncTaskEntry entry = new AsyncTaskEntry(taskId, new java.util.concurrent.CompletableFuture<>());
+        AsyncTaskEntry entry = new AsyncTaskEntry(taskId, new java.util.concurrent.CompletableFuture<>(), "markdown");
         component.getPendingAsyncTasks().put(taskId, entry);
 
         // Verify task is present
@@ -81,7 +81,7 @@ public class DoclingAsyncTaskTtlTest extends CamelTestSupport {
 
         // Add a task entry
         String taskId = "test-task-2";
-        AsyncTaskEntry entry = new AsyncTaskEntry(taskId, new java.util.concurrent.CompletableFuture<>());
+        AsyncTaskEntry entry = new AsyncTaskEntry(taskId, new java.util.concurrent.CompletableFuture<>(), "markdown");
         component.getPendingAsyncTasks().put(taskId, entry);
 
         // Verify task remains present during the wait period (well below TTL of 10s)
@@ -106,7 +106,7 @@ public class DoclingAsyncTaskTtlTest extends CamelTestSupport {
         // Add multiple task entries
         for (int i = 0; i < 5; i++) {
             String taskId = "test-task-" + i;
-            AsyncTaskEntry entry = new AsyncTaskEntry(taskId, new java.util.concurrent.CompletableFuture<>());
+            AsyncTaskEntry entry = new AsyncTaskEntry(taskId, new java.util.concurrent.CompletableFuture<>(), "markdown");
             component.getPendingAsyncTasks().put(taskId, entry);
         }
 

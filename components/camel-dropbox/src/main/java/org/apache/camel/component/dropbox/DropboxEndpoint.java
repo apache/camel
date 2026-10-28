@@ -31,6 +31,9 @@ import org.apache.camel.component.dropbox.integration.producer.DropboxSearchProd
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +46,37 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation",
              category = { Category.CLOUD, Category.FILE, Category.API }, headersClass = DropboxConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "get",
+                                                          carriers = { Carrier.STREAM, Carrier.BYTES, Carrier.MAP }),
+                                           @BodyType.When(option = "operation", value = "search", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.dropbox.core.v2.files.SearchMatchV2>") },
+                                   description = "One message per poll. get: the content of the file in remotePath as a stream"
+                                                 + " cache (a byte array when stream caching is off), or for a folder a Map of"
+                                                 + " the path to the content of each file. search: a List of SearchMatchV2"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Only put reads the body, unless localPath or the CamelDropboxLocalPath header"
+                                                + " names a local file or folder to upload: the content to upload, as text,"
+                                                + " bytes, a stream or a file. A Map or a List is not uploaded, and the result"
+                                                + " is KO without an error: marshal it first"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "put",
+                                                          carriers = { Carrier.VALUE, Carrier.MAP }),
+                                           @BodyType.When(option = "operation", value = "get",
+                                                          carriers = { Carrier.STREAM, Carrier.BYTES, Carrier.MAP }),
+                                           @BodyType.When(option = "operation", value = "del", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "move", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "search", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<com.dropbox.core.v2.files.SearchMatchV2>") },
+                                   description = "put: OK or KO, a DropboxResultCode, or for a local folder of several files a"
+                                                 + " Map of each remote path to its result. get: the content of the file as a"
+                                                 + " stream cache (a byte array when stream caching is off), or a Map of the path"
+                                                 + " to the content of each file of a folder. del: the path deleted. move: the new"
+                                                 + " path. search: a List of SearchMatchV2"))
 public class DropboxEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);

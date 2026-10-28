@@ -11,9 +11,15 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-base64",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "base64",
     "modelJavaType": "org.apache.camel.model.dataformat.Base64DataFormat"
+  },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The bytes to encode: text in the charset of the exchange, bytes, a stream or a file" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "text", "description": "The Base64 text in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text" },
+    "unmarshalOut": { "carriers": [ "stream" ], "description": "The decoded bytes in the stream cache, or a byte array when stream caching is off" }
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },

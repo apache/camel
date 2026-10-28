@@ -213,8 +213,7 @@ from("direct:createCollection")
     .to("ibm-watson-discovery:default?apiKey=RAW(yourApiKey)&projectId=yourProjectId&operation=createCollection")
     .process(exchange -> {
         CollectionDetails collection = exchange.getIn().getBody(CollectionDetails.class);
-        String collectionId = exchange.getIn().getHeader(WatsonDiscoveryConstants.COLLECTION_ID, String.class);
-        System.out.println("Created collection with ID: " + collectionId);
+        System.out.println("Created collection with ID: " + collection.getCollectionId());
     });
 --------------------------------------------------------------------------------
 
@@ -237,7 +236,7 @@ YAML::
             apiKey: RAW(yourApiKey)
             projectId: yourProjectId
             operation: createCollection
-      - log: "Created collection: ${header.CamelIBMWatsonDiscoveryCollectionId}"
+      - log: "Created collection: ${body.collectionId}"
 --------------------------------------------------------------------------------
 ====
 

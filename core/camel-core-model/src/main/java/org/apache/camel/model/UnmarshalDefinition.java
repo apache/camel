@@ -73,6 +73,10 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -83,6 +87,14 @@ import org.apache.camel.spi.Metadata;
           description = "Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object")
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipIn = @BodyType(from = "unmarshalIn",
+                             byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY),
+                             description = "With variableSend the variable is sent, and the body is not read"),
+           eipOut = @BodyType(from = "unmarshalOut",
+                              byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                        carriers = Carrier.UNCHANGED),
+                              description = "What the data format reads. With variableReceive the result goes into the"
+                                            + " variable, and the body stays as it was"))
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> implements DataFormatDefinitionAware {
 
     @XmlElements({
@@ -176,11 +188,18 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     }
 
     protected String description() {
-        if (dataFormatType != null) {
-            return dataFormatType.toString();
-        } else {
+        if (dataFormatType == null) {
             return "";
         }
+        // the name of the data format (such as jackson or csv), as its toString is the object for most data formats
+        String name = dataFormatType.getDataFormatName();
+        if (name == null && dataFormatType.getDataFormat() instanceof DataFormatName dfn) {
+            name = dfn.getDataFormatName();
+        }
+        if (name == null && dataFormatType.getDataFormat() != null) {
+            name = dataFormatType.getDataFormat().getClass().getSimpleName();
+        }
+        return name != null ? name : dataFormatType.toString();
     }
 
     @Override

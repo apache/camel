@@ -14,11 +14,9 @@
 
 *{component-header}*
 
-The AWS2 Rekognition component supports the following operations on
-https://aws.amazon.com/rekognition/[AWS Rekognition]:
-
--
--
+The AWS2 Rekognition component supports analyzing images (faces, labels, text, celebrities and protective equipment),
+managing face collections and users, and running media analysis jobs on
+https://aws.amazon.com/rekognition/[AWS Rekognition]. The operations are listed under Usage.
 
 Prerequisites
 
@@ -103,12 +101,40 @@ Camel-AWS Rekognition component provides the following operation on the producer
 - searchUsersByImage
 - startMediaAnalysisJob
 
+=== The input image
+
+The operations that analyze an image (detectFaces, detectLabels, detectModerationLabels, detectProtectiveEquipment,
+detectText, indexFaces, recognizeCelebrities, searchFacesByImage and searchUsersByImage) read the image from the
+`CamelAwsRekognitionImage` header, which holds an `software.amazon.awssdk.services.rekognition.model.Image` of the AWS SDK.
+The compareFaces operation reads the two images from the `CamelAwsRekognitionSourceImage` and
+`CamelAwsRekognitionTargetImage` headers, which hold an `Image` as well.
+
+An `Image` holds either the bytes of the image or the location of an object in Amazon S3.
+The message body is not used as the image, and neither is a byte array in the image header: build the `Image` from it.
+
+._Java-only: building the Image from the bytes in the message body_
+[source,java]
+----
+from("direct:detectFaces")
+    .process(exchange -> {
+        byte[] bytes = exchange.getMessage().getBody(byte[].class);
+        Image image = Image.builder().bytes(SdkBytes.fromByteArray(bytes)).build();
+        exchange.getMessage().setHeader(Rekognition2Constants.IMAGE, image);
+    })
+    .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=detectFaces");
+----
+
+An image stored in Amazon S3 is given as `Image.builder().s3Object(S3Object.builder().bucket("my-bucket").name("photo.jpg").build()).build()`.
+
+The `CamelAwsRekognitionFacialAttributes` header of detectFaces and the `CamelAwsRekognitionDetectionAttributes` header of
+indexFaces hold the names of the facial attributes to return, such as `DEFAULT` or `ALL`, as a collection of Strings
+(or of `Attribute` values of the AWS SDK), or as a comma separated String.
 
 == Examples
 
 === Producer Examples
 
-- createCollection: this operation will create a collection
+- createCollection: this operation will create a collection with the id of the `CamelAwsRekognitionCollectionId` header
 
 [tabs]
 ====
@@ -117,6 +143,7 @@ Java::
 [source,java]
 ----
 from("direct:createCollection")
+    .setHeader(Rekognition2Constants.COLLECTION_ID, constant("my-collection"))
     .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=createCollection");
 ----
 
@@ -126,6 +153,9 @@ XML::
 ----
 <route>
   <from uri="direct:createCollection"/>
+  <setHeader name="CamelAwsRekognitionCollectionId">
+    <constant>my-collection</constant>
+  </setHeader>
   <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=createCollection"/>
 </route>
 ----
@@ -138,6 +168,11 @@ YAML::
     from:
       uri: direct:createCollection
       steps:
+        - setHeader:
+            name: CamelAwsRekognitionCollectionId
+            expression:
+              constant:
+                expression: my-collection
         - to:
             uri: aws2-rekognition://test
             parameters:

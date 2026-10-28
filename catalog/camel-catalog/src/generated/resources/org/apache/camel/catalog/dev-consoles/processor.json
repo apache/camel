@@ -10,7 +10,7 @@
     "javaType": "org.apache.camel.impl.console.ProcessorDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
   },
   "options": {
     "action": {
@@ -138,6 +138,20 @@
             "uri": {
               "type": "string",
               "description": "The destination URI, for processors that send to a destination (only present when applicable)"
+            },
+            "bodyTypes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)"
+            },
+            "bodyKinds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention (only present when the message history recorded any)"
             },
             "statistics": {
               "type": "object",

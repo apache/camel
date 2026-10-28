@@ -82,7 +82,7 @@ public class IggyConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "0",
               description = "Defines the initial message offset position when autoCommit is disabled. " +
                             "Use 0 to start from the beginning of the stream, or specify a custom offset to resume from a particular point")
-    private Long startingOffset;
+    private Long startingOffset = 0L;
     @UriParam(label = "security", defaultValue = "false",
               description = "Whether to enable TLS for the connection to the Iggy server")
     private boolean tlsEnabled;

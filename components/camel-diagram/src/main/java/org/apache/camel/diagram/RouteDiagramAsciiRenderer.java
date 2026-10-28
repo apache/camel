@@ -37,6 +37,8 @@ import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
 public class RouteDiagramAsciiRenderer {
 
     private static final int Y_SCALE = 20;
+    /** The height of a row of text, in layout units: for {@link RouteErrorFrame#add}. */
+    public static final int ROW_HEIGHT = Y_SCALE;
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
 
@@ -136,7 +138,7 @@ public class RouteDiagramAsciiRenderer {
         counterPositions.clear();
         int maxPixelX = layoutRoutes.stream()
                 .mapToInt(lr -> lr.maxX).max().orElse(nodeWidth) + PADDING;
-        int gridWidth = toCol(maxPixelX) + boxWidth + 4;
+        int gridWidth = Math.max(toCol(maxPixelX) + boxWidth + 4, errorLinesWidth(layoutRoutes));
         int gridHeight = totalHeight / Y_SCALE + 20;
 
         char[][] grid = new char[gridHeight][gridWidth];
@@ -145,6 +147,7 @@ public class RouteDiagramAsciiRenderer {
         }
 
         for (LayoutRoute lr : layoutRoutes) {
+            drawErrorFrame(grid, lr);
             drawRoute(grid, lr, highlightedNodeIds, highlightStyle);
         }
 
@@ -155,7 +158,7 @@ public class RouteDiagramAsciiRenderer {
         counterPositions.clear();
         int maxPixelX = layoutRoutes.stream()
                 .mapToInt(lr -> lr.maxX).max().orElse(nodeWidth) + PADDING;
-        int gridWidth = toCol(maxPixelX) + boxWidth + 4;
+        int gridWidth = Math.max(toCol(maxPixelX) + boxWidth + 4, errorLinesWidth(layoutRoutes));
         int gridHeight = totalHeight / Y_SCALE + 20;
 
         char[][] grid = new char[gridHeight][gridWidth];
@@ -164,10 +167,55 @@ public class RouteDiagramAsciiRenderer {
         }
 
         for (LayoutRoute lr : layoutRoutes) {
+            drawErrorFrame(grid, lr);
             drawRoute(grid, lr);
         }
 
         return gridToString(grid);
+    }
+
+    /** How wide the grid must be for the lines of the error frames. */
+    private int errorLinesWidth(List<LayoutRoute> layoutRoutes) {
+        int width = 0;
+        for (LayoutRoute lr : layoutRoutes) {
+            if (lr.errorFrame != null) {
+                for (String line : lr.errorFrame.lines()) {
+                    width = Math.max(width, toCol(PADDING) + line.length() + 6);
+                }
+            }
+        }
+        return width;
+    }
+
+    /** The frame of the error handling of a route, below its steps, with the lines at its top. */
+    private void drawErrorFrame(char[][] grid, LayoutRoute lr) {
+        RouteErrorFrame frame = lr.errorFrame;
+        if (frame == null) {
+            return;
+        }
+        int top = toRow(frame.topY());
+        int bottom = toRow(frame.bottomY());
+        int left = Math.max(0, toCol(PADDING) - 2);
+        int right = grid[0].length - 2;
+        char h = unicode ? UNI_DASH_H : '-';
+        char v = unicode ? UNI_DASH_V : ':';
+        for (int c = left + 1; c < right; c++) {
+            setChar(grid, top, c, h);
+            setChar(grid, bottom, c, h);
+        }
+        for (int r = top + 1; r < bottom; r++) {
+            setChar(grid, r, left, v);
+            setChar(grid, r, right, v);
+        }
+        setChar(grid, top, left, unicode ? '\u256d' : '+');
+        setChar(grid, top, right, unicode ? '\u256e' : '+');
+        setChar(grid, bottom, left, unicode ? '\u2570' : '+');
+        setChar(grid, bottom, right, unicode ? '\u256f' : '+');
+        drawText(grid, top, left + 2, " " + TopologyErrorFrame.TITLE + " ");
+        int row = top + 1;
+        for (String line : frame.lines()) {
+            drawText(grid, row++, left + 2, line);
+        }
     }
 
     private void drawRoute(

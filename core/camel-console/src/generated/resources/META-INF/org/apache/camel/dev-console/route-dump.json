@@ -10,7 +10,7 @@
     "javaType": "org.apache.camel.impl.console.RouteDumpDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
   },
   "options": {
     "filter": {
@@ -95,6 +95,10 @@
             "source": {
               "type": "string",
               "description": "The source location (only present when known)"
+            },
+            "checksum": {
+              "type": "string",
+              "description": "The checksum of the route as written, the same in every run: the dump is of this version of the route (only present when known, as it needs camel-xml-io)"
             },
             "format": {
               "type": "string",

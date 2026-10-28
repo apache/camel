@@ -18,8 +18,11 @@ package org.apache.camel.component.docling;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -82,10 +85,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.OAuthHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -372,7 +377,7 @@ public class DoclingProducer extends DefaultProducer {
 
         // Generate a unique task ID and store the future with timestamp for later status checks
         String taskId = "task-" + taskIdCounter.incrementAndGet();
-        AsyncTaskEntry taskEntry = new AsyncTaskEntry(taskId, asyncResult);
+        AsyncTaskEntry taskEntry = new AsyncTaskEntry(taskId, asyncResult, outputFormat);
         pendingAsyncTasks.put(taskId, taskEntry);
         LOG.debug("Started async conversion with task ID: {} at {}", taskId, taskEntry.getCreatedAtMs());
 
@@ -431,7 +436,7 @@ public class DoclingProducer extends DefaultProducer {
         // Check the local pending tasks map first (tasks submitted via SUBMIT_ASYNC_CONVERSION)
         AsyncTaskEntry taskEntry = pendingAsyncTasks.get(taskId);
         if (taskEntry != null) {
-            return checkLocalAsyncTask(taskId, taskEntry.getFuture());
+            return checkLocalAsyncTask(taskEntry);
         }
 
         // Fall back to server-side task polling
@@ -469,7 +474,9 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private ConversionStatus checkLocalAsyncTask(String taskId, CompletableFuture<ConvertDocumentResponse> future) {
+    private ConversionStatus checkLocalAsyncTask(AsyncTaskEntry taskEntry) {
+        String taskId = taskEntry.getTaskId();
+        CompletableFuture<ConvertDocumentResponse> future = taskEntry.getFuture();
         if (!future.isDone()) {
             return new ConversionStatus(taskId, ConversionStatus.Status.IN_PROGRESS);
         }
@@ -491,7 +498,7 @@ public class DoclingProducer extends DefaultProducer {
         pendingAsyncTasks.remove(taskId);
         try {
             ConvertDocumentResponse response = future.join();
-            String result = extractConvertedContent(response, configuration.getOutputFormat());
+            String result = extractConvertedContent(response, taskEntry.getOutputFormat());
             return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED, result, null, null);
         } catch (Exception e) {
             return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, e.getMessage(), null);
@@ -1650,45 +1657,7 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private String extractConvertedContent(ConvertDocumentResponse response, String outputFormat) throws IOException {
-        try {
-            if (response instanceof InBodyConvertDocumentResponse inBodyResponse) {
-                DocumentResponse document = inBodyResponse.getDocument();
-
-                if (document == null) {
-                    throw new IOException("No document in response");
-                }
-
-                String format = mapOutputFormat(outputFormat);
-
-                switch (format) {
-                    case "md":
-                        String markdown = document.getMarkdownContent();
-                        return markdown != null ? markdown : "";
-                    case "html":
-                        String html = document.getHtmlContent();
-                        return html != null ? html : "";
-                    case "text":
-                        String text = document.getTextContent();
-                        return text != null ? text : "";
-                    case "json":
-                        // Return the document JSON content
-                        var jsonDoc = document.getJsonContent();
-                        if (jsonDoc != null) {
-                            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonDoc);
-                        }
-                        return "{}";
-                    default:
-                        // Default to markdown
-                        String defaultMarkdown = document.getMarkdownContent();
-                        return defaultMarkdown != null ? defaultMarkdown : "";
-                }
-            } else {
-                throw new IOException("Unsupported response type: cannot extract converted content");
-            }
-        } catch (Exception e) {
-            LOG.warn("Failed to extract content from response: {}", e.getMessage());
-            throw new IOException("Failed to extract content from response", e);
-        }
+        return DoclingContentExtractor.extract(response, outputFormat);
     }
 
     private OutputFormat mapToOutputFormat(String outputFormat) {
@@ -1713,27 +1682,6 @@ public class DoclingProducer extends DefaultProducer {
                 return OutputFormat.HTML_SPLIT_PAGE;
             default:
                 return OutputFormat.MARKDOWN;
-        }
-    }
-
-    private String mapOutputFormat(String outputFormat) {
-        if (outputFormat == null) {
-            return "md";
-        }
-
-        switch (outputFormat.toLowerCase()) {
-            case "markdown":
-            case "md":
-                return "md";
-            case "html":
-                return "html";
-            case "json":
-                return "json";
-            case "text":
-            case "txt":
-                return "text";
-            default:
-                return "md";
         }
     }
 
@@ -1791,9 +1739,68 @@ public class DoclingProducer extends DefaultProducer {
             return tempFile.toString();
         } else if (body instanceof File file) {
             return validateLocalInputPath(file.getAbsolutePath());
+        } else if (body instanceof StreamCache || body instanceof InputStream) {
+            return writeStreamToTempFile(exchange, body);
         }
 
         throw new InvalidPayloadException(exchange, String.class);
+    }
+
+    /**
+     * Writes a stream body (an {@link InputStream} or a {@link StreamCache}) to a temp file, as a byte[] body is, and
+     * fails when it is larger than {@code maxFileSize}. A stream cache is reset afterwards, so it can be read again; a
+     * plain stream is consumed and closed.
+     */
+    private String writeStreamToTempFile(Exchange exchange, Object body) throws IOException {
+        Path secureTempDir = createSecureTempDir();
+        registerTempDirCleanup(exchange, secureTempDir);
+        Path tempFile = createSecureTempFile(secureTempDir);
+        try (OutputStream out = new MaxFileSizeOutputStream(Files.newOutputStream(tempFile), configuration.getMaxFileSize())) {
+            if (body instanceof StreamCache cache) {
+                cache.writeTo(out);
+            } else {
+                ((InputStream) body).transferTo(out);
+            }
+        } finally {
+            if (body instanceof StreamCache cache) {
+                cache.reset();
+            } else {
+                IOHelper.close((InputStream) body);
+            }
+        }
+        return tempFile.toString();
+    }
+
+    /**
+     * Fails a write that takes the written size over the maximum file size.
+     */
+    private static final class MaxFileSizeOutputStream extends FilterOutputStream {
+        private final long maxFileSize;
+        private long size;
+
+        MaxFileSizeOutputStream(OutputStream out, long maxFileSize) {
+            super(out);
+            this.maxFileSize = maxFileSize;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            checkSize(1);
+            out.write(b);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            checkSize(len);
+            out.write(b, off, len);
+        }
+
+        private void checkSize(int len) {
+            size += len;
+            if (size > maxFileSize) {
+                throw new IllegalArgumentException("File size exceeds maximum allowed size: " + maxFileSize);
+            }
+        }
     }
 
     /**

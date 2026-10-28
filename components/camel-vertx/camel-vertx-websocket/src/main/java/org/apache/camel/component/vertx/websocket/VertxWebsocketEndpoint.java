@@ -21,6 +21,9 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Vertx;
@@ -35,6 +38,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.vertx.common.VertxHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -55,6 +61,21 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
              syntax = "vertx-websocket:host:port/path", category = { Category.HTTP, Category.NETWORKING },
              headersClass = VertxWebsocketConstants.class, lenientProperties = true)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES },
+                                   byOption = @BodyType.When(option = "fireWebSocketConnectionEvents", value = "true",
+                                                             carriers = {
+                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.POJO,
+                                                                     Carrier.NULL }),
+                                   description = "The message received: a String for a text frame, a byte array for a binary"
+                                                 + " frame. With fireWebSocketConnectionEvents=true, the OPEN event has the"
+                                                 + " Vert.x ServerWebSocket as body and the CLOSE event no body: the"
+                                                 + " CamelVertxWebsocket.event header tells them apart"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "A String is sent as a text frame and a byte array as a binary frame; any other"
+                                                + " body is converted to a String and sent as a text frame, so a stream with"
+                                                + " binary content must be converted to bytes first, and a Map or a POJO is sent"
+                                                + " as its toString: marshal it first. No body sends nothing"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointServiceLocation, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketEndpoint.class);
@@ -67,7 +88,10 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
 
     private WebSocketClient client;
     private WebSocketClientOptions resolvedClientOptions;
-    private WebSocket webSocket;
+    private volatile WebSocket webSocket;
+    // the consumer that last registered handlers on the endpoint's WebSocket, guarded by clientConsumerConnectLock
+    private VertxWebsocketClientConsumer handlerOwner;
+    private final Lock clientConsumerConnectLock = new ReentrantLock();
 
     public VertxWebsocketEndpoint(String uri, VertxWebsocketComponent component, VertxWebsocketConfiguration configuration) {
         super(uri, component);
@@ -151,6 +175,53 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         return getComponent().getVertx();
     }
 
+    /**
+     * The lock under which the client consumers of this endpoint connect ({@code consumeAsClient=true}). It belongs to
+     * the endpoint and not to the consumer, because a route that is stopped and started again gets a new consumer while
+     * a reconnect attempt of the previous one can still be waiting for its handshake.
+     */
+    Lock getClientConsumerConnectLock() {
+        return clientConsumerConnectLock;
+    }
+
+    /**
+     * Clears the message, close, and exception handlers on the endpoint's WebSocket, but only if it is still open and
+     * {@code consumer} is the current handler owner. The caller must hold {@link #clientConsumerConnectLock}.
+     * <p>
+     * Checking the consumer rather than the socket prevents one consumer from detaching another's handlers when two
+     * routes consume the same {@code consumeAsClient} URI and therefore share this endpoint's WebSocket.
+     */
+    void clearWebSocketHandlers(VertxWebsocketClientConsumer consumer) {
+        if (consumer != null && handlerOwner == consumer && webSocket != null && !webSocket.isClosed()) {
+            webSocket.textMessageHandler(null);
+            webSocket.binaryMessageHandler(null);
+            webSocket.closeHandler(null);
+            webSocket.exceptionHandler(null);
+            handlerOwner = null;
+        }
+    }
+
+    /**
+     * Records {@code consumer} as the current handler owner on the endpoint's WebSocket. The caller must hold
+     * {@link #clientConsumerConnectLock}.
+     */
+    void setHandlerOwner(VertxWebsocketClientConsumer consumer) {
+        this.handlerOwner = consumer;
+    }
+
+    /**
+     * Closes the given WebSocket, and makes the next {@link #getWebSocket()} connect again instead of returning it. A
+     * WebSocket only reports itself as closed once the closing handshake with the server is done. The caller must hold
+     * {@link #clientConsumerConnectLock}.
+     */
+    void discardWebSocket(WebSocket discarded) {
+        if (webSocket == discarded) {
+            webSocket = null;
+            handlerOwner = null;
+        }
+        discarded.close();
+    }
+
     protected WebSocket getWebSocket() throws Exception {
         return getWebSocket((java.util.function.Consumer<WebSocket>) null);
     }
@@ -160,8 +231,22 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
      * {@code future.get()} returns. This guarantees that any message/close/exception handlers supplied by the callback
      * are registered atomically with the connection, so no messages sent by the server immediately after the handshake
      * can be missed.
+     * <p>
+     * If the WebSocket is already open (e.g. a producer connected first, or the consumer route was stopped and
+     * restarted while the connection was healthy), the setup callback is still invoked on the existing socket so that
+     * the caller's handlers are registered.
      */
     protected WebSocket getWebSocket(java.util.function.Consumer<WebSocket> setupCallback) throws Exception {
+        return getWebSocket(setupCallback != null ? (ws, alreadyOpen) -> setupCallback.accept(ws) : null);
+    }
+
+    /**
+     * Like {@link #getWebSocket(java.util.function.Consumer)}, but the setup callback also receives a flag indicating
+     * whether the WebSocket was already open before this call ({@code true}) or was newly connected ({@code false}).
+     * This lets the caller distinguish the two cases without a racy external check, since {@code getWebSocket} itself
+     * knows which branch it took.
+     */
+    WebSocket getWebSocket(BiConsumer<WebSocket, Boolean> setupCallback) throws Exception {
         if (client == null) {
             resolvedClientOptions = configuration.getClientOptions();
             if (resolvedClientOptions == null) {
@@ -182,28 +267,64 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
             client.connect(connectOptions).onComplete(result -> {
                 if (result.succeeded()) {
                     WebSocket ws = result.result();
+                    if (future.isDone()) {
+                        // the caller gave up waiting (see below): nobody would use or close this WebSocket
+                        ws.close();
+                        return;
+                    }
                     LOG.info("Connected to WebSocket on {}", ws.remoteAddress());
                     if (setupCallback != null) {
                         try {
-                            setupCallback.accept(ws);
+                            setupCallback.accept(ws, false);
                         } catch (Exception e) {
+                            ws.close();
                             future.completeExceptionally(e);
                             return;
                         }
                     }
-                    future.complete(ws);
+                    if (!future.complete(ws)) {
+                        ws.close();
+                    }
                 } else {
-                    webSocket = null;
                     future.completeExceptionally(result.cause());
                 }
             });
-            webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
+            try {
+                webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                webSocket = null;
+                abandonConnect(future);
+                throw e;
+            }
+        } else {
+            if (setupCallback != null) {
+                // WebSocket already open — register the caller's handlers on the existing socket (CAMEL-25601).
+                setupCallback.accept(webSocket, true);
+            }
         }
         return webSocket;
     }
 
+    /**
+     * Gives up on a connect the caller stopped waiting for. A connect that completes from now on closes its own
+     * WebSocket. One that completed after the wait timed out but before this call is closed here, as nobody will use
+     * it.
+     */
+    static void abandonConnect(CompletableFuture<WebSocket> future) {
+        if (!future.cancel(false) && !future.isCompletedExceptionally()) {
+            // the future completed normally, so join() returns at once
+            future.join().close();
+        }
+    }
+
     protected WebSocket getWebSocket(Exchange exchange) throws Exception {
-        return getWebSocket().exceptionHandler(event -> exchange.setException(event.getCause()));
+        // The handler stays on the WebSocket after the exchange is done. A lost connection is not set on the exchange: a
+        // closed WebSocket is replaced by a new connection on the next send, and a write in flight fails through its result
+        return getWebSocket().exceptionHandler(exception -> {
+            if (!VertxWebsocketHelper.isConnectionClosed(exception)) {
+                exchange.setException(exception);
+            }
+        });
     }
 
     protected WebSocketConnectOptions getWebSocketConnectOptions(WebSocketClientOptions options) {

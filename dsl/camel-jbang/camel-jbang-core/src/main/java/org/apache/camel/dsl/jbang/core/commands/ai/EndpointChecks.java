@@ -137,11 +137,13 @@ final class EndpointChecks {
             boolean consumerOnly = eipName != null && CONSUMER_EIPS.contains(eipName);
             boolean producerOnly = eipName != null && PRODUCER_EIPS.contains(eipName);
 
-            // look ahead for a parameters: block at the same indent level as uri
+            // the parameters: block is a key of the same mapping as uri:, after it or before it, and other keys of the
+            // step (id:, variableReceive:) may stand in between (CAMEL-25761)
             StringBuilder uriBuilder = new StringBuilder(uri);
             boolean hasParams = uri.contains("?");
             Map<String, Integer> optionLineMap = new LinkedHashMap<>();
-            for (int j = i + 1; j < lines.length; j++) {
+            int paramsBefore = keyBefore(lines, i, lineIndent, "parameters:");
+            for (int j = paramsBefore >= 0 ? paramsBefore : i + 1; j < lines.length; j++) {
                 String next = lines[j];
                 if (next.isBlank()) {
                     continue;
@@ -214,15 +216,32 @@ final class EndpointChecks {
                     }
                     break;
                 }
-                if (nextIndent == lineIndent) {
-                    break;
-                }
             }
 
             checkUri(errors, catalog, uriBuilder.toString(), line, i, optionLineMap, eipName, consumerOnly, producerOnly,
                     false);
         }
         return errors;
+    }
+
+    /**
+     * The line of the key (such as parameters:) of the same mapping as the line at idx that comes before it: the same
+     * indent, up to the line that starts the mapping, or -1.
+     */
+    static int keyBefore(String[] lines, int idx, int indent, String key) {
+        for (int j = idx - 1; j >= 0; j--) {
+            if (lines[j].isBlank()) {
+                continue;
+            }
+            int ind = countLeadingSpaces(lines[j]);
+            if (ind < indent) {
+                return -1;
+            }
+            if (ind == indent && lines[j].trim().startsWith(key)) {
+                return j;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -367,6 +386,17 @@ final class EndpointChecks {
             if (!name.equals("include") && !name.equals("exclude") || value.startsWith("{{")) {
                 continue;
             }
+            String unquoted = withoutQuoteCharacters(value);
+            if (!unquoted.equals(value)) {
+                // \".*\\.json\" written as a plain YAML value: a backslash before a quote is not YAML escaping, so the
+                // quotes and backslashes are part of the regex and no file matches (CAMEL-25374)
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
+                           + name + " has quote characters in its value (" + value + "): in YAML a backslash before a"
+                           + " quote is text, not escaping, and the quotes become part of the regex. Write the line as "
+                           + name + ": '" + unquoted.replace("\\\\", "\\") + "' (single quotes, one backslash before"
+                           + " the dot)");
+                continue;
+            }
             if (DOUBLED_BACKSLASH_ESCAPE.matcher(value).find()) {
                 // '.*\\.json$' in single quotes: YAML keeps both backslashes, and in a regex \\ is one literal
                 // backslash, so the pattern matches a file name with a backslash in it: no file matches and the route
@@ -386,6 +416,35 @@ final class EndpointChecks {
                            + "=" + value);
             }
         }
+    }
+
+    /**
+     * The value without the quote characters (" or ', with or without a backslash before them) at its ends, which a
+     * regex of a file name never has there; the value itself when it has none.
+     */
+    static String withoutQuoteCharacters(String value) {
+        // a backslash-quote first, so \" is taken as one piece
+        String[] quotes = { "\\\"", "\\'", "\"", "'" };
+        String v = value;
+        boolean changed = true;
+        while (changed && !v.isEmpty()) {
+            changed = false;
+            for (String q : quotes) {
+                if (v.startsWith(q)) {
+                    v = v.substring(q.length());
+                    changed = true;
+                    break;
+                }
+            }
+            for (String q : quotes) {
+                if (v.endsWith(q)) {
+                    v = v.substring(0, v.length() - q.length());
+                    changed = true;
+                    break;
+                }
+            }
+        }
+        return v;
     }
 
     /**
@@ -430,6 +489,17 @@ final class EndpointChecks {
      */
     private static final Pattern BARE_NAMED_PARAMETER = Pattern.compile("(?<![\\w:#?$'\"]):([A-Za-z_][\\w.\\[\\]]*)");
 
+    /** :#excluded.country, :#EXCLUDED.country: the row being inserted written as a named parameter. */
+    private static final Pattern EXCLUDED_PARAMETER = Pattern.compile("(?i):#(excluded)\\.(\\w+)");
+
+    /**
+     * :#{body.customer}, the expression form of other frameworks: camel-sql reads :#name and :#${simple}, so the JDBC
+     * driver gets it as written. Three runs of a step in the local-model benchmark wrote it, the answer said only "bad
+     * SQL grammar []", and they fixed it after 69 to 92 failed messages.
+     */
+    private static final Pattern BRACE_PARAMETER = Pattern.compile(":#\\{([^}]*)}");
+    private static final Pattern BODY_FIELD = Pattern.compile("^body\\.(\\w+)$");
+
     static void checkSqlNamedParameters(
             List<String> errors, String fullUri, String rawLine, int uriLineIdx, Map<String, Integer> optionLineMap) {
         int colon = fullUri.indexOf(':');
@@ -464,6 +534,47 @@ final class EndpointChecks {
         }
         if (query == null || query.isBlank()) {
             return;
+        }
+        // ON CONFLICT (id) DO UPDATE SET country = :#excluded.country: EXCLUDED is PostgreSQL's row being inserted, as
+        // a named parameter it is a key looked up in the body and the headers, which is not there (CAMEL-25557)
+        Matcher excluded = EXCLUDED_PARAMETER.matcher(query);
+        List<String> columns = new ArrayList<>();
+        String written = null;
+        while (excluded.find()) {
+            written = written == null ? excluded.group(1) : written;
+            if (!columns.contains(excluded.group(2))) {
+                columns.add(excluded.group(2));
+            }
+        }
+        if (!columns.isEmpty()) {
+            String first = columns.get(0);
+            List<String> others = new ArrayList<>();
+            for (String c : columns.subList(1, columns.size())) {
+                others.add(":#" + written + "." + c);
+            }
+            errors.add(linePrefix(line) + "sql: :#" + written + "." + first + " is a named parameter, a key " + written
+                       + "." + first + " looked up in the body and the headers, which is not there: EXCLUDED is the row"
+                       + " being inserted in ON CONFLICT ... DO UPDATE, write EXCLUDED." + first + " without :#"
+                       + (others.isEmpty() ? "" : " (also " + String.join(", ", others) + ")"));
+        }
+        Matcher brace = BRACE_PARAMETER.matcher(query);
+        List<String> braced = new ArrayList<>();
+        while (brace.find()) {
+            if (!braced.contains(brace.group())) {
+                braced.add(brace.group());
+            }
+        }
+        if (!braced.isEmpty()) {
+            Matcher inner = BRACE_PARAMETER.matcher(braced.get(0));
+            String expression = inner.matches() ? inner.group(1).strip() : "";
+            Matcher field = BODY_FIELD.matcher(expression);
+            String fix = field.matches()
+                    ? ":#${body[" + field.group(1) + "]} (a Simple expression) or :#" + field.group(1)
+                      + " for a header or a key of a Map body"
+                    : ":#${" + expression + "} (a Simple expression) or :#name for a header or a key of a Map body";
+            errors.add(linePrefix(line) + "sql: " + braced.get(0) + " is not a camel-sql named parameter (the JDBC driver"
+                       + " gets it as written and fails with a syntax error): write " + fix
+                       + (braced.size() > 1 ? " (also " + String.join(", ", braced.subList(1, braced.size())) + ")" : ""));
         }
         Matcher m = BARE_NAMED_PARAMETER.matcher(query);
         List<String> bare = new ArrayList<>();
@@ -622,6 +733,29 @@ final class EndpointChecks {
         return false;
     }
 
+    /**
+     * What an endpoint takes, for an option written with the component's name: its syntax and required options, as "no
+     * option is named after the component: write cron:name?schedule=...". Null when the catalog does not know it.
+     */
+    static String namedAfterComponent(CamelCatalog catalog, String scheme) {
+        try {
+            var model = catalog.componentModel(scheme);
+            if (model == null || model.getSyntax() == null) {
+                return null;
+            }
+            List<String> required = new ArrayList<>();
+            for (var option : model.getEndpointOptions()) {
+                if (option.isRequired() && "parameter".equals(option.getKind())) {
+                    required.add(option.getName() + "=...");
+                }
+            }
+            return "no option is named after the component: write " + model.getSyntax()
+                   + (required.isEmpty() ? "" : "?" + String.join("&", required));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     static void collectEndpointErrors(
             List<String> errors, EndpointValidationResult result, String scheme, CamelCatalog catalog,
             int uriLineIdx, Map<String, Integer> optionLineMap) {
@@ -632,13 +766,19 @@ final class EndpointChecks {
                     continue;
                 }
                 StringBuilder sb = new StringBuilder(scheme).append(": Unknown option '").append(name).append("'");
-                if (result.getUnknownSuggestions() != null) {
+                String known = INVENTED_OPTIONS.get(scheme + ":" + name);
+                // cron:cron?cron=0/10 * * * * ?: an option named after the component, for which the closest name
+                // (cronService) is a fix that makes it worse; say what the endpoint takes instead (an entry of
+                // INVENTED_OPTIONS for it says more, and is the one hint)
+                String named = known == null && name.equals(scheme) ? namedAfterComponent(catalog, scheme) : null;
+                if (named != null) {
+                    sb.append(" (").append(named).append(")");
+                } else if (result.getUnknownSuggestions() != null) {
                     String[] suggestions = result.getUnknownSuggestions().get(name);
                     if (suggestions != null && suggestions.length > 0) {
                         sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
                     }
                 }
-                String known = INVENTED_OPTIONS.get(scheme + ":" + name);
                 if (known != null) {
                     sb.append(" (").append(known).append(")");
                 }
@@ -679,7 +819,12 @@ final class EndpointChecks {
                 errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
                            + scheme + ": Option '" + name + "' is not applicable in producer only mode (to: sends to the"
                            + " endpoint, for " + scheme + ": it writes the body; to read from an endpoint in the middle of a"
-                           + " route use the poll EIP, or pollEnrich, see camel_catalog_sample poll)");
+                           + " route use the poll EIP, or pollEnrich, see camel_catalog_sample poll"
+                           + ("file".equals(scheme)
+                                   ? "; to read a data file the route needs, such as a lookup table: setVariable with"
+                                     + " constant: resource:file:<path>"
+                                   : "")
+                           + ")");
             }
         }
     }

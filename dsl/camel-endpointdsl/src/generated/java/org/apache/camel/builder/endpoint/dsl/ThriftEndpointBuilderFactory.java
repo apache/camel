@@ -171,6 +171,42 @@ public interface ThriftEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side,
+         * the Thrift client receives a generic error that does not contain the
+         * exception's message. An exception that the Thrift method declares in
+         * the IDL is still sent as it is.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default ThriftEndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side,
+         * the Thrift client receives a generic error that does not contain the
+         * exception's message. An exception that the Thrift method declares in
+         * the IDL is still sent as it is.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default ThriftEndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * The Thrift server consumer initial thread pool size.
          * 
          * The option is a: <code>int</code> type.

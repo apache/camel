@@ -25,7 +25,9 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +65,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
                 LOG.trace("Delayed task woke up and continues routing for exchangeId: {}", exchange.getExchangeId());
             }
             if (!isRunAllowed()) {
-                exchange.setException(new RejectedExecutionException("Run is not allowed"));
+                exchange.setException(new RouteStoppingException("Run is not allowed"));
             }
 
             // process the exchange now that we woke up
@@ -131,7 +133,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
                 delayedCount.decrementAndGet();
                 if (isCallerRunsWhenRejected()) {
                     if (!isRunAllowed()) {
-                        exchange.setException(new RejectedExecutionException());
+                        exchange.setException(new RouteStoppingException("Run is not allowed"));
                     } else {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(
@@ -161,7 +163,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (!isRunAllowed()) {
-            exchange.setException(new RejectedExecutionException("Run is not allowed"));
+            exchange.setException(new RouteStoppingException("Run is not allowed"));
             callback.done(true);
             return true;
         }
@@ -250,7 +252,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
     }
 
     protected long currentSystemTime() {
-        return System.currentTimeMillis();
+        return TimeSource.currentTimeMillis();
     }
 
     private void sleep(long delay) throws InterruptedException {
@@ -258,7 +260,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
             return;
         }
         LOG.trace("Sleeping for: {} millis", delay);
-        Thread.sleep(delay);
+        TimeSource.sleep(delay);
     }
 
     @Override

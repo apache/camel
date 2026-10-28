@@ -35,6 +35,7 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
@@ -49,6 +50,7 @@ class ThemePopup {
     private final ListState listState = new ListState();
     private Runnable themeRefreshAction;
     private Rect popupRect;
+    private final ScrollbarState scrollbarState = new ScrollbarState();
 
     void setThemeRefreshAction(Runnable action) {
         this.themeRefreshAction = action;
@@ -168,13 +170,15 @@ class ThemePopup {
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                // scrolls to the selection when a short terminal cannot show every theme
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Themes ")
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);
+        TuiHelper.renderListScrollbar(frame, popup, items.size(), listState.offset(), scrollbarState);
     }
 
     void renderFooter(List<Span> spans) {

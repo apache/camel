@@ -17,17 +17,16 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -39,6 +38,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
 import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
@@ -75,15 +75,20 @@ class DoctorPopup {
             return out;
         }
         StringBuilder line = new StringBuilder();
+        int lineWidth = 0;
         for (String word : text.trim().split("\\s+")) {
-            if (line.length() > 0 && line.length() + 1 + word.length() > width) {
+            int wordWidth = CharWidth.of(word);
+            if (line.length() > 0 && lineWidth + 1 + wordWidth > width) {
                 out.add(line.toString());
                 line.setLength(0);
+                lineWidth = 0;
             }
             if (line.length() > 0) {
                 line.append(' ');
+                lineWidth++;
             }
             line.append(word);
+            lineWidth += wordWidth;
         }
         if (line.length() > 0) {
             out.add(line.toString());
@@ -251,27 +256,14 @@ class DoctorPopup {
 
     private void checkContainerRuntime(List<Line> result) {
         for (String cmd : new String[] { "docker", "podman" }) {
-            try {
-                Process p = new ProcessBuilder(cmd, "info")
-                        .redirectErrorStream(true)
-                        .start();
-                p.getInputStream().transferTo(OutputStream.nullOutputStream());
-                boolean done = p.waitFor(5, TimeUnit.SECONDS);
-                if (!done) {
-                    p.destroyForcibly();
-                    continue;
-                }
-                if (p.exitValue() == 0) {
-                    String name = Character.toUpperCase(cmd.charAt(0)) + cmd.substring(1);
-                    result.add(Line.from(
-                            Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),
-                            Span.styled(String.format("%-14s", "Container"), Theme.muted()),
-                            Span.raw(String.format("%-30s", name + " running")),
-                            Span.raw(" " + TuiIcons.OK)));
-                    return;
-                }
-            } catch (Exception e) {
-                // not found, try next
+            if (ExternalCommand.succeeds(5000, cmd, "info")) {
+                String name = Character.toUpperCase(cmd.charAt(0)) + cmd.substring(1);
+                result.add(Line.from(
+                        Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),
+                        Span.styled(String.format("%-14s", "Container"), Theme.muted()),
+                        Span.raw(String.format("%-30s", name + " running")),
+                        Span.raw(" " + TuiIcons.OK)));
+                return;
             }
         }
         result.add(Line.from(
@@ -393,7 +385,8 @@ class DoctorPopup {
                     Span.raw(" " + icon)));
             String models = OllamaDoctorSupport.formatModels(status.models());
             result.add(Line.from(Span.styled(
-                    "                    models: " + TuiHelper.truncate(models, 34),
+                    // as wide as the rows above it, which end with their status
+                    "                    models: " + TuiHelper.truncate(models, 22),
                     Style.EMPTY.dim())));
             if (allSmall) {
                 result.add(Line.from(Span.styled(

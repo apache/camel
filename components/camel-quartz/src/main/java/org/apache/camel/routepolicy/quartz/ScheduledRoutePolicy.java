@@ -18,8 +18,11 @@ package org.apache.camel.routepolicy.quartz;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -58,6 +61,9 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
     @Metadata(description = "Timeout (in millis) when stopping routes.", defaultValue = "10000")
     private int routeStopGracePeriod;
     private TimeUnit timeUnit;
+    // the routes whose consumer the scheduled suspend stopped (it is not Suspendable): only such a consumer is started
+    // again by a scheduled resume or start, not one that the shutdown of the route, or another policy, stopped
+    private final Set<String> consumersStoppedBySuspend = ConcurrentHashMap.newKeySet();
 
     protected abstract Trigger createTrigger(Action action, Route route) throws Exception;
 
@@ -69,8 +75,8 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
             if (routeStatus == ServiceStatus.Stopped) {
                 startRoute(route);
                 // here we just check the states of the Consumer
-            } else if (ServiceHelper.isSuspended(route.getConsumer())) {
-                resumeOrStartConsumer(route.getConsumer());
+            } else if (isSuspendedOrStoppedBySuspend(route)) {
+                resumeOrStartSuspendedConsumer(route);
             }
         } else if (action == Action.STOP) {
             if (routeStatus == ServiceStatus.Started || routeStatus == ServiceStatus.Suspended) {
@@ -81,14 +87,21 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
             }
         } else if (action == Action.SUSPEND) {
             if (routeStatus == ServiceStatus.Started) {
-                suspendOrStopConsumer(route.getConsumer());
+                Consumer consumer = route.getConsumer();
+                // only a consumer that this suspend stopped, not one that was stopped already (by another policy, or
+                // by the shutdown strategy while the route is being stopped)
+                boolean alreadyStopped = ServiceHelper.isStopped(consumer);
+                suspendOrStopConsumer(consumer);
+                if (!alreadyStopped && ServiceHelper.isStopped(consumer)) {
+                    consumersStoppedBySuspend.add(route.getId());
+                }
             } else {
                 LOG.warn("Route is not in a started state and cannot be suspended. The current route state is {}", routeStatus);
             }
         } else if (action == Action.RESUME) {
             if (routeStatus == ServiceStatus.Started) {
-                if (ServiceHelper.isSuspended(route.getConsumer())) {
-                    resumeOrStartConsumer(route.getConsumer());
+                if (isSuspendedOrStoppedBySuspend(route)) {
+                    resumeOrStartSuspendedConsumer(route);
                 } else {
                     LOG.warn("The Consumer {} is not suspended and cannot be resumed.", route.getConsumer());
                 }
@@ -96,6 +109,59 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
                 LOG.warn("Route is not in a started state and cannot be resumed. The current route state is {}", routeStatus);
             }
         }
+    }
+
+    /**
+     * Whether the consumer of a started route was suspended, or stopped by the scheduled suspend as it is not
+     * {@link org.apache.camel.Suspendable} (see {@link #suspendOrStopConsumer(Consumer)}), so a resume or start must
+     * resume or start it again. A consumer that something else stopped, such as the shutdown strategy while the route
+     * is being stopped (the route status stays Started until the in-flight exchanges are done), is left stopped.
+     */
+    private boolean isSuspendedOrStoppedBySuspend(Route route) {
+        Consumer consumer = route.getConsumer();
+        if (ServiceHelper.isSuspended(consumer)) {
+            return true;
+        }
+        if (ServiceHelper.isStopped(consumer)) {
+            return consumersStoppedBySuspend.contains(route.getId());
+        }
+        return false;
+    }
+
+    /**
+     * Resumes or starts the consumer of a started route, unless Camel is stopping: the shutdown suspends or stops the
+     * consumers of the routes before it stops the routes, so a scheduled resume or start that fires meanwhile must not
+     * start the consumer again (as the throttling route policies do, see
+     * {@link #isResumeOrStartConsumerAllowed(Route)}).
+     */
+    private void resumeOrStartSuspendedConsumer(Route route) throws Exception {
+        if (isResumeOrStartConsumerAllowed(route)) {
+            consumersStoppedBySuspend.remove(route.getId());
+            resumeOrStartConsumer(route.getConsumer());
+        } else {
+            LOG.debug("The consumer of route {} is not resumed or started as Camel or the route is stopping", route.getId());
+        }
+    }
+
+    @Override
+    public void onStart(Route route) {
+        super.onStart(route);
+        // the route (and its consumer) started again
+        consumersStoppedBySuspend.remove(route.getId());
+    }
+
+    @Override
+    public void onStop(Route route) {
+        super.onStop(route);
+        consumersStoppedBySuspend.remove(route.getId());
+    }
+
+    @Override
+    public void onResume(Route route) {
+        super.onResume(route);
+        // the route (and its consumer) resumed; a route whose consumer is not Suspendable is stopped and started by the
+        // route controller instead (onStop and onStart), so this only makes sure that no record outlives a resume
+        consumersStoppedBySuspend.remove(route.getId());
     }
 
     @Override

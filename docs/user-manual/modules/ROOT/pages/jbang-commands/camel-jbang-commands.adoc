@@ -21,7 +21,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-dependency.adoc[camel dependency] | Displays all Camel dependencies required to run
 | xref:jbang-commands/camel-jbang-dev.adoc[camel dev] | Run in dev mode with live reload
 | xref:jbang-commands/camel-jbang-dirty.adoc[camel dirty] | Check if there are dirty files from previous Camel runs that did not terminate gracefully
-| xref:jbang-commands/camel-jbang-doc.adoc[camel doc] | Shows documentation for kamelet, component, and other Camel resources
+| xref:jbang-commands/camel-jbang-doc.adoc[camel doc] | Shows documentation for kamelet, component, EIP, and other Camel resources
 | xref:jbang-commands/camel-jbang-doctor.adoc[camel doctor] | Checks the environment and reports potential issues
 | xref:jbang-commands/camel-jbang-eval.adoc[camel eval] | Evaluate Camel expressions and scripts
 | xref:jbang-commands/camel-jbang-explain.adoc[camel explain] | Explain what a Camel route does using AI/LLM
@@ -41,6 +41,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-run.adoc[camel run] | Run as local Camel integration
 | xref:jbang-commands/camel-jbang-sbom.adoc[camel sbom] | Generate a CycloneDX or SPDX SBOM for a specific project
 | xref:jbang-commands/camel-jbang-script.adoc[camel script] | Run Camel integration as shell script for terminal scripting
+| xref:jbang-commands/camel-jbang-semantic.adoc[camel semantic] | List semantic definitions and expert contracts
 | xref:jbang-commands/camel-jbang-shell.adoc[camel shell] | Interactive Camel CLI shell.
 | xref:jbang-commands/camel-jbang-stop.adoc[camel stop] | Shuts down running Camel integrations
 | xref:jbang-commands/camel-jbang-top.adoc[camel top] | Top status of Camel integrations
@@ -49,4 +50,20 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-update.adoc[camel update] | Update Camel project
 | xref:jbang-commands/camel-jbang-version.adoc[camel version] | Manage Camel versions
 | xref:jbang-commands/camel-jbang-wrapper.adoc[camel wrapper] | Install Camel wrapper scripts for version pinning
+|===
+
+== Plugin commands
+
+These commands are provided by plugins. A plugin is installed with `camel plugin add <plugin>`.
+
+[cols="2,1,5",options="header"]
+|===
+| Command | Plugin | Description
+| xref:jbang-commands/camel-jbang-edit.adoc[camel edit] | `edit` | Edit Camel with suggestions and diagnostics
+| xref:jbang-commands/camel-jbang-generate.adoc[camel generate] | `generate` | Generate source code
+| xref:jbang-commands/camel-jbang-kubernetes.adoc[camel kubernetes] | `kubernetes` | Manage Camel applications running on Kubernetes
+| xref:jbang-commands/camel-jbang-mcp.adoc[camel mcp] | `mcp` | MCP server for AI coding assistants
+| xref:jbang-commands/camel-jbang-test.adoc[camel test] | `test` | Manage tests for Camel applications
+| xref:jbang-commands/camel-jbang-tui.adoc[camel tui] | `tui` | Camel TUI
+| xref:jbang-commands/camel-jbang-validate.adoc[camel validate] | `validate` | Validate Camel source code
 |===

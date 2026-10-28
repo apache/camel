@@ -32,7 +32,7 @@ public class MonitorFilterConfiguration implements Cloneable {
     private MonitorFilterType monitorFilterType;
 
     @UriParam(defaultValue = "0", description = "Deadband type for MonitorFilterType DataChangeFilter.")
-    private UInteger dataChangeFilterDeadbandType = UInteger.valueOf(0);
+    private Integer dataChangeFilterDeadbandType = Integer.valueOf(0);
 
     @UriParam(defaultValue = "0.0", description = "Deadband value for MonitorFilterType DataChangeFilter.")
     private Double dataChangeFilterDeadbandValue = 0.0;
@@ -48,11 +48,14 @@ public class MonitorFilterConfiguration implements Cloneable {
         this.monitorFilterType = monitorFilterType;
     }
 
-    public UInteger getDataChangeFilterDeadbandType() {
+    public Integer getDataChangeFilterDeadbandType() {
         return dataChangeFilterDeadbandType;
     }
 
-    public void setDataChangeFilterDeadbandType(UInteger dataChangeFilterDeadbandType) {
+    public void setDataChangeFilterDeadbandType(Integer dataChangeFilterDeadbandType) {
+        if (dataChangeFilterDeadbandType == null) {
+            throw new IllegalArgumentException("dataChangeFilterDeadbandType must not be null");
+        }
         this.dataChangeFilterDeadbandType = dataChangeFilterDeadbandType;
     }
 
@@ -76,12 +79,15 @@ public class MonitorFilterConfiguration implements Cloneable {
         if (Objects.isNull(this.monitorFilterType)) {
             throw new IllegalStateException("No filter type configured.");
         }
+        if (this.dataChangeFilterDeadbandType == null) {
+            throw new IllegalStateException("dataChangeFilterDeadbandType must not be null");
+        }
 
         switch (monitorFilterType) {
             default:
                 return new DataChangeFilter(
                         this.getDataChangeFilterTrigger(),
-                        this.getDataChangeFilterDeadbandType(),
+                        UInteger.valueOf(this.getDataChangeFilterDeadbandType()),
                         this.getDataChangeFilterDeadbandValue());
         }
     }

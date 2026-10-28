@@ -14,17 +14,17 @@ identifies both the component and the specific resource.
 - **BODY** — Average message body size in bytes passing through this endpoint. Helps identify which endpoints handle large payloads
 - **HDR** — Average message headers size in bytes. Large headers may indicate excessive metadata being passed
 - **STUB** — Marked `x` if the endpoint has been replaced by a stub component (useful during testing to avoid connecting to real external systems)
-- **REMOTE** — Marked `x` if the endpoint connects to an external system outside the JVM (e.g., `kafka`, `http`, `ftp`). Local endpoints like `seda`, `direct`, `log` are not remote
+- **SCOPE** — How far the endpoint reaches: `remote`, an external system outside the JVM (e.g., `kafka`, `http`, `ftp`, `file`); `internal`, Camel plumbing that stays inside the integration (`direct`, `seda`, `log`, `timer`, `mock`); or `local`, neither: it can run code or a process, or read a file or a resource, on this host (`exec`, `bean`, `class`, `language`, the template components)
 - **URI** — Full endpoint URI with parameters (e.g., `timer://hello?period=2000`)
 
 ## Example Screen
 
 ```
- COMPONENT  ROUTE          DIR  TOTAL  BODY  HDR  STUB  REMOTE  URI
- timer      timer-to-log   in   21     0     0                  timer://hello?period=2000
- timer      timer-to-seda  in   14     0     0                  timer://pump?period=3000
- seda       seda-consumer  in   14     14    0                  seda://queue
- seda       timer-to-seda  out  14     14    0                  seda://queue
+ COMPONENT  ROUTE          DIR  TOTAL  BODY  HDR  STUB  SCOPE     URI
+ timer      timer-to-log   in   21     0     0           internal  timer://hello?period=2000
+ timer      timer-to-seda  in   14     0     0           internal  timer://pump?period=3000
+ seda       seda-consumer  in   14     14    0           internal  seda://queue
+ seda       timer-to-seda  out  14     14    0           internal  seda://queue
 ```
 
 Notice that `seda://queue` appears twice — once as `in` (the

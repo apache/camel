@@ -60,6 +60,11 @@ class FilesBrowser {
         return visible;
     }
 
+    /** Whether its editor asks the user to confirm discarding the changes (see {@link Confirmations}). */
+    boolean isConfirming() {
+        return visible && sourceViewer.isDiscardPending();
+    }
+
     boolean isSourceViewerTextInputActive() {
         return sourceViewer.isTextInputActive();
     }

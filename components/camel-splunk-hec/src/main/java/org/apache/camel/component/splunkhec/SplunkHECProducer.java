@@ -21,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -76,8 +78,10 @@ public class SplunkHECProducer extends DefaultProducer {
 
             connManager = new PoolingHttpClientConnectionManager(registryBuilder.build());
         } else {
-            SSLConnectionSocketFactory sslsf
-                    = new SSLConnectionSocketFactory(endpoint.provideSSLContext());
+            SSLContext sslContext = endpoint.provideSSLContext();
+            // without sslContextParameters use the default SSL context of the JVM
+            SSLConnectionSocketFactory sslsf = sslContext != null
+                    ? new SSLConnectionSocketFactory(sslContext) : SSLConnectionSocketFactory.getSocketFactory();
             RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
             registryBuilder.register("https", sslsf);
 

@@ -16,44 +16,22 @@
  */
 package org.apache.camel.processor.idempotent.kafka;
 
-import java.time.Duration;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -86,13 +64,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     private static final int DEFAULT_POLL_DURATION_MS = 100;
 
     private CamelContext camelContext;
-    private ExecutorService executorService;
-    private TopicPoller poller;
     private final AtomicLong cacheCounter = new AtomicLong();
     // internal properties
     private Map<String, Object> cache;
-    private Consumer<String, String> consumer;
-    private Producer<String, String> producer;
+    private KafkaChangelog<String> changelog;
 
     private Properties producerConfig;
     private Properties consumerConfig;
@@ -331,123 +306,21 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
         this.cache = LRUCacheFactory.newLRUCache(maxCacheSize);
 
-        if (consumerConfig == null) {
-            consumerConfig = new Properties();
-            StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
-            consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            if (groupId != null) {
-                consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-            }
-        }
-
-        if (producerConfig == null) {
-            producerConfig = new Properties();
-            StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
-            producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        }
-
-        ObjectHelper.notNull(consumerConfig, "consumerConfig");
-        ObjectHelper.notNull(producerConfig, "producerConfig");
-
-        consumerConfig.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.FALSE.toString());
-        consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-
-        consumer = new KafkaConsumer<>(consumerConfig);
-
-        producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        // set up the producer to remove all batching on send, we want all sends
-        // to be fully synchronous
-        producerConfig.putIfAbsent(ProducerConfig.ACKS_CONFIG, "1");
-        producerConfig.putIfAbsent(ProducerConfig.BATCH_SIZE_CONFIG, "0");
-        producer = new KafkaProducer<>(producerConfig);
-
-        poller = new TopicPoller();
-        ServiceHelper.startService(poller);
-        // populate cache on startup to be ready
-        StopWatch watch = new StopWatch();
-        LOG.info("Syncing KafkaIdempotentRepository from topic: {} starting", topic);
-        poller.run();
-        LOG.info("Syncing KafkaIdempotentRepository from topic: {} complete: {}", topic,
-                TimeUtils.printDuration(watch.taken(), true));
-
-        if (!startupOnly) {
-            // continue sync job in background
-            executorService
-                    = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "KafkaIdempotentRepositorySync");
-            LOG.info("Syncing KafkaIdempotentRepository from topic: {} continuously using background thread", topic);
-            executorService.submit(poller);
-        }
+        consumerConfig = KafkaChangelog.consumerConfig(consumerConfig, bootstrapServers, groupId);
+        producerConfig = KafkaChangelog.producerConfig(producerConfig, bootstrapServers);
+        changelog = new KafkaChangelog<>(
+                "KafkaIdempotentRepository", topic, consumerConfig, producerConfig, StringDeserializer.class,
+                StringSerializer.class, pollDurationMs,
+                startupOnly, this::addToCache);
+        changelog.start(camelContext, this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(poller);
-        if (consumer != null) {
-            consumer.wakeup();
+        if (changelog != null) {
+            changelog.stop();
         }
-        if (executorService != null && camelContext != null) {
-            camelContext.getExecutorServiceManager().shutdownNow(executorService);
-            executorService = null;
-        }
-        IOHelper.close(consumer, "consumer", LOG);
-        IOHelper.close(producer, "producer", LOG);
         LOG.debug("Stopped KafkaIdempotentRepository. Cache counter: {}", cacheCounter.get());
-    }
-
-    private void populateCache() {
-        LOG.debug("Getting partitions of topic {}", topic);
-        List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
-        Collection<TopicPartition> partitions = partitionInfos.stream()
-                .map(pi -> new TopicPartition(pi.topic(), pi.partition()))
-                .toList();
-
-        LOG.debug("Assigning consumer to partitions {}", partitions);
-        consumer.assign(partitions);
-
-        LOG.debug("Seeking consumer to beginning of partitions {}", partitions);
-        consumer.seekToBeginning(partitions);
-
-        Map<TopicPartition, Long> endOffsets = consumer.endOffsets(partitions);
-        LOG.debug("Consuming records from partitions {} till end offsets {}", partitions, endOffsets);
-        while (!KafkaConsumerUtil.isReachedOffsets(consumer, endOffsets)) {
-            ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(pollDurationMs));
-            for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-                addToCache(consumerRecord);
-            }
-        }
-    }
-
-    private class TopicPoller extends ServiceSupport implements Runnable {
-
-        private final AtomicBoolean init = new AtomicBoolean();
-
-        @Override
-        public void run() {
-            if (init.compareAndSet(false, true)) {
-                // sync cache on startup
-                LOG.debug("TopicPoller populating cache on startup");
-                populateCache();
-                LOG.debug("TopicPoller populated cache on startup complete");
-                return;
-            }
-
-            LOG.debug("TopicPoller running");
-            while (isRunAllowed()) {
-                try {
-                    ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(pollDurationMs));
-                    for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-                        addToCache(consumerRecord);
-                    }
-                } catch (WakeupException e) {
-                    LOG.debug("TopicPoller woken up during shutdown");
-                } catch (Exception e) {
-                    LOG.warn("TopicPoller error syncing due to: " + e.getMessage() + ". This exception is ignored.", e);
-                }
-            }
-            LOG.debug("TopicPoller stopping");
-        }
     }
 
     private void addToCache(ConsumerRecord<String, String> consumerRecord) {
@@ -490,17 +363,9 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     private void broadcastAction(String key, CacheAction action) {
-        try {
-            LOG.debug("Broadcasting action:{} for key:{}", action, key);
-            ObjectHelper.notNull(producer, "producer");
-
-            producer.send(new ProducerRecord<>(topic, key, action.toString())).get(); // sync send
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeCamelException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeCamelException(e);
-        }
+        LOG.debug("Broadcasting action:{} for key:{}", action, key);
+        ObjectHelper.notNull(changelog, "changelog");
+        changelog.send(key, action.toString());
     }
 
     @Override

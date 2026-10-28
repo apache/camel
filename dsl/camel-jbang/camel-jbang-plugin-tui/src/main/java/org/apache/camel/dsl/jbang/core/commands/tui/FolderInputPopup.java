@@ -306,28 +306,12 @@ class FolderInputPopup {
         if (inputState == null) {
             return;
         }
-        if (ke.isDeleteBackward()) {
-            inputState.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            inputState.deleteForward();
-        } else if (ke.isLeft()) {
-            inputState.moveCursorLeft();
-        } else if (ke.isRight()) {
-            inputState.moveCursorRight();
-        } else if (ke.isHome()) {
-            inputState.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            inputState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            char ch = ke.string().charAt(0);
-            if (ch >= 0x20 && ch != 0x7F) {
-                inputState.insert(ch);
-            }
-        }
+        FormHelper.handleTextInput(ke, inputState);
     }
 
     private void renderInput(Frame frame, Rect area) {
-        int popupW = Math.min(70, area.width() - 4);
+        // wide enough for a folder path, so a remembered folder is not cut at its start
+        int popupW = Math.min(100, area.width() - 4);
         Rect popup = DialogHelper.centered(area, popupW, DialogHelper.INPUT_HEIGHT);
 
         frame.renderWidget(Clear.INSTANCE, popup);

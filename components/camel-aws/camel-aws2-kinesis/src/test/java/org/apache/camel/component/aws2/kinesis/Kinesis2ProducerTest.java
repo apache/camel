@@ -16,20 +16,28 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
+import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
+import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequestEntry;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
@@ -37,7 +45,9 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordsResultEntry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -162,5 +172,37 @@ public class Kinesis2ProducerTest {
         exchange.getIn().setBody(Arrays.asList("record1"));
 
         assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
+    }
+
+    @Test
+    public void pathBodyIsSentAsSingleRecordWithTheFileContent(@TempDir Path dir) throws Exception {
+        when(kinesisClient.putRecord(any(PutRecordRequest.class)))
+                .thenReturn(PutRecordResponse.builder().sequenceNumber("1").shardId("shard-1").build());
+
+        Path file = dir.resolve("data.txt");
+        Files.writeString(file, "Hello Kinesis", StandardCharsets.UTF_8);
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "key");
+        exchange.getIn().setBody(file);
+
+        producer.process(exchange);
+
+        ArgumentCaptor<PutRecordRequest> captor = ArgumentCaptor.forClass(PutRecordRequest.class);
+        verify(kinesisClient).putRecord(captor.capture());
+        verify(kinesisClient, never()).putRecords(any(PutRecordsRequest.class));
+        assertEquals("Hello Kinesis", captor.getValue().data().asUtf8String());
+        assertEquals("shard-1", exchange.getMessage().getHeader(Kinesis2Constants.SHARD_ID));
+    }
+
+    @Test
+    public void bodyThatDoesNotConvertToBytesFailsWithInvalidPayload() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "key");
+        exchange.getIn().setBody(Map.of("a", "b"));
+
+        InvalidPayloadException e = assertThrows(InvalidPayloadException.class, () -> producer.process(exchange));
+        assertTrue(e.getMessage().contains("java.util."), e.getMessage());
+        verify(kinesisClient, never()).putRecord(any(PutRecordRequest.class));
     }
 }

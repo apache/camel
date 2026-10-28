@@ -11,9 +11,16 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stax",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "xtokenize",
     "modelJavaType": "org.apache.camel.model.language.XMLTokenizerExpression"
+  },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "dependsOn": [ "source" ], "description": "XML as text, bytes, a stream or a file, or a DOM" },
+    "expressionOut": { "carriers": [ "iterator" ], "description": "An Iterator of the elements the path matches as XML text, read once; mode t gives their text. With group, each N elements are joined into one text" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

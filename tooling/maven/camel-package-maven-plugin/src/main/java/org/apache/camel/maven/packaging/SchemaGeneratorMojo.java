@@ -52,6 +52,7 @@ import javax.inject.Inject;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
@@ -303,6 +304,13 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             eipModel.getOptions().removeIf(o -> "disabled".equals(o.getName()));
         }
 
+        // the body the EIP needs, the body after it and the body its steps start with (CAMEL-25928)
+        try {
+            BodyTypesHelper.addBodyTypes(eipModel, classElement.getAnnotation(BodyTypes.class), classElement);
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
+
         // write json schema file
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf('.'));
         String json = JsonMapper.createParameterJsonSchema(eipModel);
@@ -403,6 +411,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                             o.setDeprecationNote(metadata.deprecationNote());
                         }
                         applySecurityMetadata(o, metadata);
+                        applyMultiEnumMetadata(o, metadata);
                         o.setJavaType(metadata.javaType());
                         // special if the property is for input (such as AGGREGATION_COMPLETE_CURRENT_GROUP)
                         if (labels.startsWith("consumer,")) {
@@ -596,6 +605,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 required, defaultValue, label, docComment, deprecated, deprecationNote, isEnum, enums,
                 null, false, isDuration, important);
         applySecurityMetadata(ep, metadata);
+        applyMultiEnumMetadata(ep, metadata);
         eipOptions.add(ep);
 
         return false;
@@ -654,6 +664,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 defaultValue, label, docComment, deprecated, deprecationNote, false, null,
                 null, false, isDuration, important);
         applySecurityMetadata(ep, metadata);
+        applyMultiEnumMetadata(ep, metadata);
         eipOptions.add(ep);
     }
 
@@ -744,6 +755,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     docComment, deprecated, deprecationNote, isEnum, enums,
                     oneOfTypes, asPredicate, isDuration, important);
             applySecurityMetadata(ep, metadata);
+            applyMultiEnumMetadata(ep, metadata);
             eipOptions.add(ep);
         }
     }
@@ -793,6 +805,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     deprecated, deprecationNote, false, null, oneOfTypes,
                     false, false, important);
             applySecurityMetadata(ep, metadata);
+            applyMultiEnumMetadata(ep, metadata);
             eipOptions.add(ep);
         }
     }
@@ -1495,6 +1508,15 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setAsPredicate(asPredicate);
         option.setImportant(important);
         return option;
+    }
+
+    /**
+     * Whether the option takes several of its enum values, separated by comma ({@code @Metadata(multiEnum = true)}).
+     */
+    static void applyMultiEnumMetadata(EipOptionModel option, Metadata metadata) {
+        if (metadata != null && metadata.multiEnum() && option.getEnums() != null && !option.getEnums().isEmpty()) {
+            option.setMultiEnum(true);
+        }
     }
 
     /**

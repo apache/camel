@@ -31,7 +31,9 @@ public enum GenAiOperationName {
     /** Text-to-speech operation. */
     SPEECH("speech"),
     /** OpenAI moderation and similar content-policy checks. */
-    MODERATION("moderation");
+    MODERATION("moderation"),
+    /** Typed predicate, choice and rubric assessments (Camel extension). */
+    DECISIONS("decisions");
 
     private final String value;
 

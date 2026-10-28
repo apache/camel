@@ -32,6 +32,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -73,13 +74,17 @@ import org.apache.camel.util.TimeUtils;
 public class DefaultRoute extends ServiceSupport implements Route {
 
     private final CamelContext camelContext;
-    private NamedNode route;
+    private final NamedNode route;
     private final String routeId;
     private final String routeDescription;
     private final String routeNote;
     private final Resource sourceResource;
     private final String sourceLocation;
     private final String sourceLocationShort;
+    private final String routeTemplateId;
+    private final String checksum;
+    private volatile int revision;
+    private final Resource templatedRouteResource;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
     private ManagementInterceptStrategy managementInterceptStrategy;
@@ -132,6 +137,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
         this.sourceResource = resource;
         this.sourceLocation = LoggerHelper.getSourceLocation(route);
         this.sourceLocationShort = LoggerHelper.getLineNumberLoggerName(route);
+        // keep these as the route model is cleared once the route is created
+        NamedRoute namedRoute = route instanceof NamedRoute nr ? nr : null;
+        this.routeTemplateId = namedRoute != null ? namedRoute.getRouteTemplateId() : null;
+        this.templatedRouteResource = namedRoute != null ? namedRoute.getTemplatedRouteResource() : null;
+        this.checksum = namedRoute != null ? namedRoute.getChecksum() : null;
     }
 
     @Override
@@ -219,6 +229,31 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public Resource getSourceResource() {
         return sourceResource;
+    }
+
+    @Override
+    public String getRouteTemplateId() {
+        return routeTemplateId;
+    }
+
+    @Override
+    public String getChecksum() {
+        return checksum;
+    }
+
+    @Override
+    public int getRevision() {
+        return revision;
+    }
+
+    /** Set by the CamelContext when the route is added: see {@link Route#getRevision()}. */
+    void setRevision(int revision) {
+        this.revision = revision;
+    }
+
+    @Override
+    public Resource getTemplatedRouteResource() {
+        return templatedRouteResource;
     }
 
     @Override
@@ -356,13 +391,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public NamedNode getRoute() {
         return route;
-    }
-
-    @Override
-    public void clearRouteModel() {
-        route = null;
-        errorHandlerFactory = null;
-        errorHandlers.clear();
     }
 
     @Override

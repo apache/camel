@@ -16,15 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.buffer.Cell;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
-import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -34,10 +30,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -93,145 +87,7 @@ class CamelMonitorTest {
     // (F6 first, then F3, F2). The first F-key pair must survive: F1 (help) when present, so the
     // user can always reach help, even on a narrow terminal.
 
-    @Test
-    void dropFKeyHintsRemovesF6BeforeF1() {
-        // tab hint + F1/F2/F3/F6, fKeyTotal = 8 spans
-        List<Span> spans = footer("Enter", "open");
-        hint(spans, "F1", "help");
-        hint(spans, "F2", "actions");
-        hint(spans, "F3", "switch");
-        hint(spans, "F6", "shell");
-        int width = width(spans);
-
-        // Available width is one pair short, so exactly one pair (F6) must be dropped.
-        int available = width - pairWidth(spans, "F6");
-        int newWidth = CamelMonitor.dropFKeyHints(spans, 8, width, available);
-
-        assertFalse(containsKey(spans, "F6"), "F6 (shell) must be dropped first");
-        assertTrue(containsKey(spans, "F1"), "F1 (help) must be preserved");
-        assertTrue(containsKey(spans, "F2"), "F2 must remain when only one pair needs dropping");
-        assertTrue(containsKey(spans, "F3"), "F3 must remain when only one pair needs dropping");
-        assertEquals(width(spans), newWidth, "returned width must match the remaining spans");
-    }
-
-    @Test
-    void dropFKeyHintsNeverDropsF1Help() {
-        List<Span> spans = footer("Enter", "open");
-        hint(spans, "F1", "help");
-        hint(spans, "F2", "actions");
-        hint(spans, "F3", "switch");
-        hint(spans, "F6", "shell");
-
-        // A tiny terminal forces every droppable pair to go.
-        int newWidth = CamelMonitor.dropFKeyHints(spans, 8, width(spans), 1);
-
-        assertTrue(containsKey(spans, "F1"), "F1 (help) must never be dropped");
-        assertFalse(containsKey(spans, "F2"), "F2 must be dropped under heavy overflow");
-        assertFalse(containsKey(spans, "F3"), "F3 must be dropped under heavy overflow");
-        assertFalse(containsKey(spans, "F6"), "F6 must be dropped under heavy overflow");
-        assertTrue(containsKey(spans, "Enter"), "the leading tab hint must be preserved");
-        assertEquals(width(spans), newWidth, "returned width must match the remaining spans");
-    }
-
-    @Test
-    void dropFKeyHintsKeepsFirstSecondaryHintWhenNoHelp() {
-        // No F1 (tab without help text): F2/F3/F6 only, fKeyTotal = 6 spans
-        List<Span> spans = footer("Enter", "open");
-        hint(spans, "F2", "actions");
-        hint(spans, "F3", "switch");
-        hint(spans, "F6", "shell");
-
-        int newWidth = CamelMonitor.dropFKeyHints(spans, 6, width(spans), 1);
-
-        assertTrue(containsKey(spans, "F2"), "first secondary hint is preserved as the loop stops at 2");
-        assertFalse(containsKey(spans, "F3"), "F3 must be dropped");
-        assertFalse(containsKey(spans, "F6"), "F6 must be dropped");
-        assertEquals(width(spans), newWidth, "returned width must match the remaining spans");
-    }
-
-    @Test
-    void dropFKeyHintsLeavesFooterUntouchedWhenItFits() {
-        List<Span> spans = footer("Enter", "open");
-        hint(spans, "F1", "help");
-        hint(spans, "F2", "actions");
-        int width = width(spans);
-
-        int newWidth = CamelMonitor.dropFKeyHints(spans, 4, width, 1000);
-
-        assertEquals(width, newWidth, "no spans dropped when the footer already fits");
-        assertTrue(containsKey(spans, "F1"));
-        assertTrue(containsKey(spans, "F2"));
-    }
-
-    private static List<Span> footer(String key, String label) {
-        List<Span> spans = new ArrayList<>();
-        hint(spans, key, label);
-        return spans;
-    }
-
-    private static int width(List<Span> spans) {
-        return spans.stream().mapToInt(Span::width).sum();
-    }
-
-    private static boolean containsKey(List<Span> spans, String key) {
-        return spans.stream().anyMatch(s -> s.content().trim().equals(key));
-    }
-
-    private static int pairWidth(List<Span> spans, String key) {
-        for (int i = 0; i + 1 < spans.size(); i++) {
-            if (spans.get(i).content().trim().equals(key)) {
-                return spans.get(i).width() + spans.get(i + 1).width();
-            }
-        }
-        throw new IllegalArgumentException("no hint pair for key " + key);
-    }
-
-    // Footer key bindings are clickable only when the hint token maps to an unambiguous single key.
-    // footerKeyEvent parses the token; footerRegionAt maps a click x back to the region under it.
-
-    @Test
-    void footerKeyEventParsesFunctionKeys() {
-        assertTrue(CamelMonitor.footerKeyEvent("F1").isKey(KeyCode.F1), "F1 maps to the F1 key");
-        assertTrue(CamelMonitor.footerKeyEvent(" F5 ").isKey(KeyCode.F5), "surrounding spaces are trimmed");
-        assertTrue(CamelMonitor.footerKeyEvent("F12").isKey(KeyCode.F12), "F12 is the highest function key");
-    }
-
-    @Test
-    void footerKeyEventParsesNamedAndSingleCharKeys() {
-        assertTrue(CamelMonitor.footerKeyEvent("Enter").isKey(KeyCode.ENTER), "Enter maps to the Enter key");
-        assertTrue(CamelMonitor.footerKeyEvent("Esc").isKey(KeyCode.ESCAPE), "Esc maps to the Escape key");
-        assertTrue(CamelMonitor.footerKeyEvent("Tab").isKey(KeyCode.TAB), "Tab maps to the Tab key");
-        assertTrue(CamelMonitor.footerKeyEvent("d").isChar('d'), "a single letter maps to that character");
-        assertTrue(CamelMonitor.footerKeyEvent("?").isChar('?'), "'?' (help) maps to that character");
-        assertTrue(CamelMonitor.footerKeyEvent("1").isChar('1'), "a digit maps to that character");
-    }
-
-    @Test
-    void footerKeyEventRejectsAmbiguousAndInvalidTokens() {
-        assertNull(CamelMonitor.footerKeyEvent("Up/Down"), "a two-key hint is not clickable");
-        assertNull(CamelMonitor.footerKeyEvent("PgUp/PgDn"), "a paging hint is not clickable");
-        assertNull(CamelMonitor.footerKeyEvent(TuiIcons.HINT_SCROLL), "arrow glyphs are not a single key");
-        assertNull(CamelMonitor.footerKeyEvent("F13"), "there is no F13 key");
-        assertNull(CamelMonitor.footerKeyEvent(""), "an empty token is not clickable");
-        assertNull(CamelMonitor.footerKeyEvent(null), "a null token is not clickable");
-    }
-
-    @Test
-    void footerRegionAtResolvesClicksToTheOwningRegion() {
-        // Two half-open regions [0, 5) and [10, 18) with a gap between them.
-        int[] startX = { 0, 10 };
-        int[] endX = { 5, 18 };
-        assertEquals(0, CamelMonitor.footerRegionAt(startX, endX, 0), "left edge of the first region");
-        assertEquals(0, CamelMonitor.footerRegionAt(startX, endX, 4), "last cell of the first region");
-        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 5), "column 5 is past the first region (exclusive end)");
-        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 7), "column 7 is in the gap between regions");
-        assertEquals(1, CamelMonitor.footerRegionAt(startX, endX, 10), "left edge of the second region");
-        assertEquals(1, CamelMonitor.footerRegionAt(startX, endX, 17), "last cell of the second region");
-        assertEquals(-1, CamelMonitor.footerRegionAt(startX, endX, 18), "column 18 is past the second region");
-        assertEquals(-1, CamelMonitor.footerRegionAt(null, endX, 3), "no captured geometry yet");
-    }
-
-    // applyThemeBaseColors patches unset terminal cells with the active theme canvas colors while
+    // Theme.applyBaseColors patches unset terminal cells with the active theme canvas colors while
     // preserving widget-specific foreground and background styles.
 
     @Test
@@ -239,7 +95,7 @@ class CamelMonitorTest {
         Rect area = new Rect(0, 0, 4, 2);
         Buffer buffer = Buffer.empty(area);
 
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(0, 0);
         assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "unset cells receive the theme background");
@@ -253,7 +109,7 @@ class CamelMonitorTest {
         Style selection = Theme.selectionBg();
         buffer.setString(1, 0, "X", selection);
 
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(1, 0);
         assertEquals(selection.bg().orElse(null), cell.style().bg().orElse(null), "selection background is preserved");
@@ -267,7 +123,7 @@ class CamelMonitorTest {
         Color explicitFg = Color.rgb(0xFF, 0x00, 0x00);
         buffer.setString(2, 0, "Y", Style.EMPTY.fg(explicitFg));
 
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(2, 0);
         assertEquals(explicitFg, cell.style().fg().orElse(null), "explicit foreground is preserved");
@@ -281,7 +137,7 @@ class CamelMonitorTest {
         Color explicitBg = Color.rgb(0x00, 0x00, 0xFF);
         buffer.setString(3, 0, "Z", Style.EMPTY.bg(explicitBg));
 
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(3, 0);
         assertEquals(explicitBg, cell.style().bg().orElse(null), "explicit background is preserved");
@@ -296,7 +152,7 @@ class CamelMonitorTest {
         Color darkBg = Theme.baseBg();
 
         Theme.setMode("light");
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(0, 0);
         assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "light palette background is applied");

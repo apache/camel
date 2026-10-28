@@ -18,12 +18,14 @@ package org.apache.camel.processor.idempotent.kafka;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.kafka.clients.producer.MockProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +51,7 @@ public class KafkaIdempotentRepositoryTest {
         repository.setTopic("test-topic");
 
         setField(repository, "cache", cache);
-        setField(repository, "producer", mockProducer);
+        setField(repository, "changelog", changelog(mockProducer));
     }
 
     @Test
@@ -79,7 +81,7 @@ public class KafkaIdempotentRepositoryTest {
     void testAddRollsBackCacheOnBroadcastFailure() throws Exception {
         MockProducer<String, String> failingProducer
                 = new MockProducer<>(false, null, new StringSerializer(), new StringSerializer());
-        setField(repository, "producer", failingProducer);
+        setField(repository, "changelog", changelog(failingProducer));
 
         Thread sender = new Thread(() -> {
             try {
@@ -140,6 +142,15 @@ public class KafkaIdempotentRepositoryTest {
         repository.add("key1");
         repository.remove("key1");
         assertTrue(repository.add("key1"));
+    }
+
+    private static KafkaChangelog<String> changelog(MockProducer<String, String> producer) {
+        KafkaChangelog<String> changelog = new KafkaChangelog<>(
+                "KafkaIdempotentRepository", "test-topic", new Properties(), new Properties(), StringDeserializer.class,
+                StringSerializer.class, 100, true, record -> {
+                });
+        changelog.setProducer(producer);
+        return changelog;
     }
 
     private static void setField(Object target, String fieldName, Object value) throws Exception {

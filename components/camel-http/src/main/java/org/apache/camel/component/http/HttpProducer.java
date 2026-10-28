@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,10 +35,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -49,6 +52,7 @@ import org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
@@ -209,11 +213,18 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             continue;
                         }
 
-                        // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
-                        final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
-
-                        HttpUtil.applyHeader(strategy, exchange, it, tc, key,
-                                (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
+                        if (isSentAsOneJoinedHeader(headerValue)) {
+                            // a primitive array (other than byte[] and char[]), an Iterator, a Stream, or an Iterable
+                            // that is not a Collection is sent as one header in the form [a, b], as before
+                            final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
+                            HttpUtil.applyHeader(strategy, exchange, it, tc, key,
+                                    (multiValues, prev) -> applyJoinedHeader(httpRequest, key, multiValues, prev));
+                        } else {
+                            // a collection or an object array is sent as one header per value; any other value
+                            // is converted to one String and sent as a single header
+                            HttpUtil.applyHeaderValue(strategy, exchange, headerValue, tc, key,
+                                    (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
+                        }
                     }
                 }
             }
@@ -338,12 +349,30 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     }
 
     private static void applyHeader(HttpUriRequest httpRequest, String key, List<String> multiValues, String prev) {
-        // add the value(s) as a http request header
+        // add the value(s) as http request header(s), one header line per value
         if (multiValues != null) {
-            // use the default toString of a ArrayList to create in the form [xxx, yyy]
-            // if multi valued, for a single value, then just output the value as is
-            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
-            httpRequest.addHeader(key, s);
+            for (String value : multiValues) {
+                httpRequest.addHeader(key, value);
+            }
+        } else if (prev != null) {
+            httpRequest.addHeader(key, prev);
+        }
+    }
+
+    private static boolean isSentAsOneJoinedHeader(Object value) {
+        if (value instanceof Iterator || value instanceof Stream
+                || (value instanceof Iterable && !(value instanceof Collection))) {
+            return true;
+        }
+        Class<?> type = value.getClass();
+        return type.isArray() && type.getComponentType().isPrimitive()
+                && type != byte[].class && type != char[].class;
+    }
+
+    private static void applyJoinedHeader(HttpUriRequest httpRequest, String key, List<String> multiValues, String prev) {
+        // two or more values are sent as one header in the form [a, b], one value as it is
+        if (multiValues != null) {
+            httpRequest.addHeader(key, multiValues.toString());
         } else if (prev != null) {
             httpRequest.addHeader(key, prev);
         }
@@ -714,6 +743,38 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     }
 
     /**
+     * The body as a stream for the request entity. A Map, a List or an object (a body unmarshalled from JSON, XML or
+     * CSV, or built in the route) cannot become one, and the converter's message only names the conversion: say what
+     * the body is, the step that set it, and the marshal that writes it, in the data format the Content-Type names
+     * (CAMEL-25309, CAMEL-25749). When neither the httpMethod option nor the CamelHttpMethod header set the method, the
+     * body made the call a POST, which is often meant as a GET (a lookup for each line of a split order): say that too
+     * (CAMEL-25745).
+     */
+    private InputStream mandatoryBodyStream(Exchange exchange, Message in) throws InvalidPayloadException {
+        try {
+            return in.getMandatoryBody(InputStream.class);
+        } catch (InvalidPayloadException e) {
+            // what the body is, the step that set it, and the marshal that writes it (CAMEL-25309, CAMEL-25749)
+            String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, ExchangeHelper.getContentType(exchange));
+            if (hint != null) {
+                String message = BodyFacts.describe(exchange) + ", which is not an HTTP request body";
+                if (getEndpoint().getHttpMethod() == null && in.getHeader(HttpConstants.HTTP_METHOD) == null) {
+                    // the body made the call a POST (CAMEL-25745)
+                    message += ". The call is a POST because the message has a body and neither the httpMethod option"
+                               + " nor the CamelHttpMethod header sets the method: for a GET, set httpMethod GET on the"
+                               + " endpoint (a GET sends no body); for a POST, " + hint;
+                } else {
+                    message += ": " + hint;
+                }
+                InvalidPayloadException answer = new InvalidPayloadException(exchange, InputStream.class, in, message);
+                answer.initCause(e.getCause() != null ? e.getCause() : e);
+                throw answer;
+            }
+            throw e;
+        }
+    }
+
+    /**
      * Creates a holder object for the data to send to the remote server.
      *
      * @param  exchange               the exchange with the IN message with data to send
@@ -833,7 +894,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                     // fallback as input stream
                     if (answer == null) {
                         // force the body as an input stream since this is the fallback
-                        InputStream is = in.getMandatoryBody(InputStream.class);
+                        InputStream is = mandatoryBodyStream(exchange, in);
                         if (multipart) {
                             answer = MultipartEntityBuilder.create().addBinaryBody(multipartName, is).build();
                         } else {

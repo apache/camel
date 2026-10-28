@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.openfga;
 
+import java.util.Map;
+
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -56,6 +58,12 @@ public class OpenFgaConfiguration implements Cloneable {
     @UriParam
     private String userFilters;
 
+    @UriParam
+    private String contextualTuples;
+
+    @UriParam
+    private Map<String, Object> conditionContext;
+
     @UriParam(enums = "UNSPECIFIED,MINIMIZE_LATENCY,HIGHER_CONSISTENCY")
     private String consistency;
 
@@ -94,6 +102,15 @@ public class OpenFgaConfiguration implements Cloneable {
 
     @UriParam(label = "advanced", defaultValue = "10")
     private int maxParallelRequests = 10;
+
+    @UriParam
+    private Integer pageSize;
+
+    @UriParam
+    private String continuationToken;
+
+    @UriParam
+    private String startTime;
 
     @UriParam(label = "advanced",
               description = "An existing OpenFgaClient to use. When set, every option describing how to reach the"
@@ -255,6 +272,55 @@ public class OpenFgaConfiguration implements Cloneable {
         this.consistency = consistency;
     }
 
+    public String getContextualTuples() {
+        return contextualTuples;
+    }
+
+    /**
+     * Relationship tuples supplied for the duration of one check and never stored, as semicolon-separated
+     * {@code user,relation,object} triples - for example
+     * <code>user:${exchangeProperty.authenticatedSubject},member,team:eng</code>. Each part is evaluated as a Simple
+     * expression against the exchange, exactly as {@code user} and {@code object} are, and applies to {@code check},
+     * {@code batchCheck}, {@code listObjects}, {@code listRelations} and {@code listUsers}.
+     * <p/>
+     * This is how a route hands OpenFGA a relationship the stored graph does not hold - a group membership that lives
+     * in the token rather than in the store, or a fact about the request such as which network it arrived on.
+     * <p/>
+     * <b>A contextual tuple grants.</b> It is read exactly like a stored tuple, so
+     * <code>user:anne,owner,document:secret</code> makes {@code check(user:anne, owner, document:secret)} answer true
+     * whatever the store contains. That is why this option is endpoint-only and is never taken from the message: a
+     * tuple the caller could choose would let it assert the very relationship being checked. By the same token, an
+     * expression here that reads an inbound header hands the caller that power anyway - keep these literal, or derive
+     * them from something the route established rather than from what it received.
+     * <p/>
+     * A part that resolves to blank denies the exchange rather than being dropped: the route asked for a tuple it did
+     * not get, and continuing without it would answer a different question than the one configured.
+     */
+    public void setContextualTuples(String contextualTuples) {
+        this.contextualTuples = contextualTuples;
+    }
+
+    public Map<String, Object> getConditionContext() {
+        return conditionContext;
+    }
+
+    /**
+     * Context passed to the CEL expressions of any conditioned relation the check touches, as a map resolved from the
+     * registry - <code>conditionContext=#myContext</code>.
+     * <p/>
+     * A map rather than an expression on purpose: OpenFGA types every condition parameter in the authorization model
+     * ({@code int}, {@code bool}, {@code timestamp}, {@code ipaddress}), and a map lets the route author supply values
+     * of the right Java type instead of strings that the server would then reject. A mistyped value is refused with an
+     * HTTP 400, which this component treats as a denial rather than as an unavailable decision point, so the failure
+     * direction is safe either way.
+     * <p/>
+     * Like {@code contextualTuples} this is endpoint-only. A condition can decide a relation, so letting a message
+     * choose the values it is evaluated with would hand the caller the decision.
+     */
+    public void setConditionContext(Map<String, Object> conditionContext) {
+        this.conditionContext = conditionContext;
+    }
+
     /**
      * Pre-shared token sent to OpenFGA in the Authorization header, for a server started with
      * {@code --authn-method preshared}.
@@ -408,6 +474,46 @@ public class OpenFgaConfiguration implements Cloneable {
 
     public void setMaxParallelRequests(int maxParallelRequests) {
         this.maxParallelRequests = maxParallelRequests;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    /**
+     * How many entries a {@code readTuples} or {@code readChanges} page returns. Left unset, OpenFGA's own default
+     * applies. A page is one request: this bounds the answer, not the number of requests a route makes.
+     */
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getContinuationToken() {
+        return continuationToken;
+    }
+
+    /**
+     * The page to read from, for {@code readTuples} and {@code readChanges}. Evaluated as a Simple expression against
+     * the exchange, so a route can feed back the token the previous page returned -
+     * <code>${header.CamelOpenFgaContinuationToken}</code> - and page through without the token being configured
+     * statically.
+     */
+    public void setContinuationToken(String continuationToken) {
+        this.continuationToken = continuationToken;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    /**
+     * The earliest change {@code readChanges} returns, as an ISO-8601 timestamp such as {@code 2026-10-01T00:00:00Z}.
+     * Without it a first read starts at the beginning of the store's change log, which on a busy store is a lot of
+     * history to page through before reaching anything current. Parsed when the endpoint starts, so a malformed value
+     * fails there rather than on the first exchange.
+     */
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     /**

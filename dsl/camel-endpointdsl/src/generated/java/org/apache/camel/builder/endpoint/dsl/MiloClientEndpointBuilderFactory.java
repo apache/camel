@@ -62,8 +62,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: common
@@ -71,15 +70,15 @@ public interface MiloClientEndpointBuilderFactory {
          * @param dataChangeFilterDeadbandType the value to set
          * @return the dsl builder
          */
-        default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandType(org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
+        default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandType(Integer dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: common
@@ -272,7 +271,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -287,7 +287,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -302,11 +303,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder queueSize(Integer queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder queueSize(String queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
          * The sampling interval in milliseconds.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -321,7 +353,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -329,6 +361,21 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointConsumerBuilder samplingInterval(String samplingInterval) {
             doSetProperty("samplingInterval", samplingInterval);
+            return this;
+        }
+        /**
+         * Comma-separated node definitions to monitor with one consumer,
+         * instead of node (see Node ID).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder nodes(String nodes) {
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -610,6 +657,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder reconnectTimeout(long reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+        /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder reconnectTimeout(String reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+        /**
          * The requested publishing interval in milliseconds.
          * 
          * The option is a: <code>java.lang.Double</code> type.
@@ -710,6 +793,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option is a:
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder certificateValidator(org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder certificateValidator(String certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
          * characters (such as {code }, {code /}, {code }, {code &amp;}).
@@ -723,6 +842,67 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder trustAllCertificates(String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * The directory holding the trust list used to validate the certificate
+         * of the OPC UA server, in the layout used by Eclipse Milo: trusted
+         * certificates in trusted/certs, CRLs of trusted certificates in
+         * trusted/crl, certificates of issuing CAs in issuer/certs and their
+         * CRLs in issuer/crl. The directories are created if they do not exist.
+         * Besides the chain of trust, the validity period, the revocation by a
+         * CRL of the trust list and the application URI of the server
+         * certificate are checked. A certificate issued by a CA is refused when
+         * the trust list holds no CRL of that CA; an empty CRL is enough. A
+         * server certificate that does not chain up to a trusted certificate is
+         * written to rejected/certs, from where it can be moved to
+         * trusted/certs once it has been checked.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustListDirectory the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder trustListDirectory(String trustListDirectory) {
+            doSetProperty("trustListDirectory", trustListDirectory);
             return this;
         }
         /**
@@ -899,8 +1079,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: common
@@ -908,15 +1087,15 @@ public interface MiloClientEndpointBuilderFactory {
          * @param dataChangeFilterDeadbandType the value to set
          * @return the dsl builder
          */
-        default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandType(org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
+        default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandType(Integer dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: common
@@ -1109,7 +1288,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1124,7 +1304,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1139,11 +1320,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder queueSize(Integer queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder queueSize(String queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
          * The sampling interval in milliseconds.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -1158,7 +1370,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -1447,6 +1659,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder reconnectTimeout(long reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+        /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder reconnectTimeout(String reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+        /**
          * The requested publishing interval in milliseconds.
          * 
          * The option is a: <code>java.lang.Double</code> type.
@@ -1547,6 +1795,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option is a:
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder certificateValidator(org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder certificateValidator(String certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
          * characters (such as {code }, {code /}, {code }, {code &amp;}).
@@ -1560,6 +1844,67 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder trustAllCertificates(String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * The directory holding the trust list used to validate the certificate
+         * of the OPC UA server, in the layout used by Eclipse Milo: trusted
+         * certificates in trusted/certs, CRLs of trusted certificates in
+         * trusted/crl, certificates of issuing CAs in issuer/certs and their
+         * CRLs in issuer/crl. The directories are created if they do not exist.
+         * Besides the chain of trust, the validity period, the revocation by a
+         * CRL of the trust list and the application URI of the server
+         * certificate are checked. A certificate issued by a CA is refused when
+         * the trust list holds no CRL of that CA; an empty CRL is enough. A
+         * server certificate that does not chain up to a trusted certificate is
+         * written to rejected/certs, from where it can be moved to
+         * trusted/certs once it has been checked.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustListDirectory the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder trustListDirectory(String trustListDirectory) {
+            doSetProperty("trustListDirectory", trustListDirectory);
             return this;
         }
         /**
@@ -1665,8 +2010,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1674,15 +2018,15 @@ public interface MiloClientEndpointBuilderFactory {
          * @param dataChangeFilterDeadbandType the value to set
          * @return the dsl builder
          */
-        default MiloClientEndpointBuilder dataChangeFilterDeadbandType(org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
+        default MiloClientEndpointBuilder dataChangeFilterDeadbandType(Integer dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: common
@@ -1875,7 +2219,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1890,7 +2235,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1905,11 +2251,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder queueSize(Integer queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder queueSize(String queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
          * The sampling interval in milliseconds.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -1924,7 +2301,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -2213,6 +2590,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder reconnectTimeout(long reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+        /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder reconnectTimeout(String reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+        /**
          * The requested publishing interval in milliseconds.
          * 
          * The option is a: <code>java.lang.Double</code> type.
@@ -2313,6 +2726,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option is a:
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder certificateValidator(org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder certificateValidator(String certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
          * characters (such as {code }, {code /}, {code }, {code &amp;}).
@@ -2326,6 +2775,67 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder trustAllCertificates(String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * The directory holding the trust list used to validate the certificate
+         * of the OPC UA server, in the layout used by Eclipse Milo: trusted
+         * certificates in trusted/certs, CRLs of trusted certificates in
+         * trusted/crl, certificates of issuing CAs in issuer/certs and their
+         * CRLs in issuer/crl. The directories are created if they do not exist.
+         * Besides the chain of trust, the validity period, the revocation by a
+         * CRL of the trust list and the application URI of the server
+         * certificate are checked. A certificate issued by a CA is refused when
+         * the trust list holds no CRL of that CA; an empty CRL is enough. A
+         * server certificate that does not chain up to a trusted certificate is
+         * written to rejected/certs, from where it can be moved to
+         * trusted/certs once it has been checked.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustListDirectory the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder trustListDirectory(String trustListDirectory) {
+            doSetProperty("trustListDirectory", trustListDirectory);
             return this;
         }
         /**
@@ -2451,6 +2961,20 @@ public interface MiloClientEndpointBuilderFactory {
          */
         public String miloAwait() {
             return "CamelMiloAwait";
+        }
+        /**
+         * The node ID of the value, as configured in the node or nodes option.
+         * Not to be confused with CamelMiloNodeIds, the list of nodes that the
+         * producer reads.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MiloNodeId}.
+         */
+        public String miloNodeId() {
+            return "CamelMiloNodeId";
         }
     }
     static MiloClientEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -24,7 +24,6 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
@@ -38,9 +37,9 @@ import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 
 /**
- * Refactoring menu for the Source tab YAML editor (opened with F5 or Ctrl+R in view mode). Presents applicable
- * refactoring actions for the current cursor line and drives the name-entry prompt itself, emitting a single
- * {@link Request} for the host viewer to execute.
+ * Refactoring menu of the source editor (opened with Ctrl+R in edit mode, in a YAML, Java or XML route). Presents the
+ * refactoring actions that apply to the cursor line and drives the name-entry prompt itself, emitting a single
+ * {@link Request} for {@link SourceRefactorActions} to execute.
  */
 class RefactorPopup {
 
@@ -172,24 +171,7 @@ class RefactorPopup {
             }
             return true;
         }
-        if (ke.isDeleteBackward()) {
-            inputState.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            inputState.deleteForward();
-        } else if (ke.isLeft()) {
-            inputState.moveCursorLeft();
-        } else if (ke.isRight()) {
-            inputState.moveCursorRight();
-        } else if (ke.isHome()) {
-            inputState.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            inputState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            char ch = ke.string().charAt(0);
-            if (ch >= 0x20 && ch != 0x7F) {
-                inputState.insert(ch);
-            }
-        }
+        FormHelper.handleTextInput(ke, inputState);
         return true;
     }
 

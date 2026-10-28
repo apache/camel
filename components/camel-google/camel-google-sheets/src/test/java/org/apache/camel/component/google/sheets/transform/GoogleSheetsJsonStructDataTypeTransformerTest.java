@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.sheets.transform;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -28,6 +29,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
@@ -154,6 +157,64 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         for (String expected : expectedValueModel) {
             JSONAssert.assertEquals(String.format(expected, spreadsheetId), modelIterator.next(), JSONCompareMode.STRICT);
         }
+    }
+
+    @Test
+    public void testTransformFromValueRangeColumnNamesNotStartingAtColumnA() throws Exception {
+        Exchange inbound = new DefaultExchange(camelContext);
+
+        ValueRange valueRange = new ValueRange();
+        valueRange.setRange("Sheet1!B2:D3");
+        valueRange.setMajorDimension(RangeCoordinate.DIMENSION_ROWS);
+        valueRange.setValues(Arrays.asList(Arrays.asList("Ann", "31", "Oslo"), Arrays.asList("Bob", "42", "Rome")));
+
+        inbound.getMessage().setBody(valueRange);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "name,age,city");
+        transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
+
+        @SuppressWarnings("unchecked")
+        List<String> model = inbound.getMessage().getBody(List.class);
+        Assertions.assertEquals(2, model.size());
+        JSONAssert.assertEquals(String.format(
+                "{\"spreadsheetId\":\"%s\", \"name\":\"Ann\",\"age\":\"31\",\"city\":\"Oslo\"}", spreadsheetId),
+                model.get(0), JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(String.format(
+                "{\"spreadsheetId\":\"%s\", \"name\":\"Bob\",\"age\":\"42\",\"city\":\"Rome\"}", spreadsheetId),
+                model.get(1), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void testTransformFromSplitValuesColumnNamesNotStartingAtColumnA() throws Exception {
+        Exchange inbound = new DefaultExchange(camelContext);
+
+        inbound.getMessage().setBody(Arrays.asList("Ann", "31", "Oslo"));
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "splitResults", true);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "Sheet1!C1:E1");
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "name,age");
+        transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
+
+        // the third column has no custom name and keeps its A1 name
+        JSONAssert.assertEquals(String.format(
+                "{\"spreadsheetId\":\"%s\", \"name\":\"Ann\",\"age\":\"31\",\"E\":\"Oslo\"}", spreadsheetId),
+                inbound.getMessage().getBody(String.class), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void testTransformToValueRangeColumnNamesNotStartingAtColumnA() throws Exception {
+        Exchange inbound = new DefaultExchange(camelContext);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "B1:D1");
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "name,age,city");
+
+        inbound.getMessage().setBody("{\"spreadsheetId\": \"" + spreadsheetId + "\", \"name\": \"Ann\", \"age\": 31,"
+                                     + " \"city\": \"Oslo\"}");
+
+        transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
+
+        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        Assertions.assertEquals(1L, valueRange.getValues().size());
+        Assertions.assertEquals(Arrays.asList("Ann", 31, "Oslo"), valueRange.getValues().get(0));
     }
 
     @Test
@@ -467,5 +528,49 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         Assertions.assertEquals(2L, valueRange.getValues().get(0).size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
         Assertions.assertEquals("b1", valueRange.getValues().get(0).get(1));
+    }
+
+    @Test
+    public void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: any body, as transformerIn says, and the bodies transformerOut says
+        BodyTypes bodyTypes = GoogleSheetsJsonStructDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        Assertions.assertEquals(Carrier.ANY, bodyTypes.transformerIn().value()[0]);
+        Assertions.assertEquals(List.of(Carrier.LIST, Carrier.TEXT, Carrier.POJO),
+                Arrays.asList(bodyTypes.transformerOut().value()));
+        Assertions.assertEquals("", bodyTypes.transformerOut().javaType());
+
+        // a ValueRange, or the JSON of one, becomes a List of JSON Strings
+        ValueRange valueRange = new ValueRange();
+        valueRange.setRange("Sheet1!A1:B2");
+        valueRange.setMajorDimension(RangeCoordinate.DIMENSION_ROWS);
+        valueRange.setValues(Arrays.asList(Arrays.asList("a1", "b1"), Arrays.asList("a2", "b2")));
+        String valueRangeJson = "{\"range\":\"Sheet1!A1:B2\",\"majorDimension\":\"ROWS\","
+                                + "\"values\":[[\"a1\",\"b1\"],[\"a2\",\"b2\"]]}";
+        for (Object body : List.of(valueRange, valueRangeJson, valueRangeJson.getBytes(StandardCharsets.UTF_8))) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            List<?> rows = Assertions.assertInstanceOf(List.class, exchange.getMessage().getBody(), body.getClass().getName());
+            Assertions.assertEquals(2, rows.size());
+            Assertions.assertInstanceOf(String.class, rows.get(0));
+        }
+
+        // with splitResults, one JSON String
+        Exchange split = new DefaultExchange(camelContext);
+        split.getMessage().setBody(Arrays.asList("a1", "b1"));
+        split.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "splitResults", true);
+        split.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B1");
+        transformer.transform(split.getMessage(), DataType.ANY, DataType.ANY);
+        Assertions.assertInstanceOf(String.class, split.getMessage().getBody());
+
+        // other bodies become a ValueRange
+        for (Object body : List.of("{\"A\":\"a1\",\"B\":\"b1\"}", "[{\"A\":\"a1\",\"B\":\"b1\"}]",
+                List.of("{\"A\":\"a1\",\"B\":\"b1\"}"), "{\"A\":\"a1\"}".getBytes(StandardCharsets.UTF_8), 5)) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            exchange.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B1");
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Assertions.assertInstanceOf(ValueRange.class, exchange.getMessage().getBody(), body.getClass().getName());
+        }
     }
 }

@@ -22,7 +22,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.camel.dsl.jbang.core.commands.action.CamelLoadAction;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.HomeHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,18 +35,24 @@ import static org.apache.camel.dsl.jbang.core.common.RuntimeUtil.getPid;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
+@UsesWorkingDirectory
 class LoadTest {
 
     private Path workingDir;
+    private Path previousHome;
 
     @BeforeEach
     public void setup() throws IOException {
         Path base = Paths.get("target");
         workingDir = Files.createTempDirectory(base, "camel-load");
+        // the routes run in this JVM, and their CLI connector reads the actions in the user home
+        previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(HomeHelper.resolveHomeDir());
     }
 
     @AfterEach
     public void end() throws IOException {
+        CommandLineHelper.useHomeDir(previousHome.toString());
         // force removing, since deleteOnExit is not removing.
         PathUtils.deleteDirectory(workingDir);
     }

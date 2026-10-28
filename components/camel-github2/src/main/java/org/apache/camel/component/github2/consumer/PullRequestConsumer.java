@@ -64,10 +64,6 @@ public class PullRequestConsumer extends AbstractGitHub2Consumer {
             }
         }
 
-        if (!newPullRequests.isEmpty()) {
-            lastOpenPullRequest = openPullRequests.get(0).getNumber();
-        }
-
         Queue<Object> exchanges = new ArrayDeque<>();
         while (!newPullRequests.isEmpty()) {
             GHPullRequest newPullRequest = newPullRequests.pop();
@@ -83,5 +79,11 @@ public class PullRequestConsumer extends AbstractGitHub2Consumer {
             exchanges.add(e);
         }
         return processBatch(exchanges);
+    }
+
+    @Override
+    protected void onRouting(Exchange exchange) {
+        // the pull requests are routed from the oldest to the newest
+        lastOpenPullRequest = exchange.getIn().getBody(GHPullRequest.class).getNumber();
     }
 }

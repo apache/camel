@@ -194,7 +194,8 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         String toNode = node.getId();
         String toNodeParentId = node.getParentId();
         String toNodeShortName = node.getShortName();
-        String toNodeLabel = StringHelper.limitLength(node.getLabel(), 50);
+        // a cut label ends with an ellipsis, so a tool showing it does not take it for the whole label
+        String toNodeLabel = StringHelper.limitLength(node.getLabel(), 50, "...");
         String exchangeId = exchange.getExchangeId();
         String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
         String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);

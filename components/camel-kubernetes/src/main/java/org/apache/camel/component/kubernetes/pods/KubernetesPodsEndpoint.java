@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_PODS;
@@ -33,6 +36,27 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_P
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_PODS, title = "Kubernetes Pods",
              syntax = "kubernetes-pods:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "io.fabric8.kubernetes.api.model.Pod",
+                                   description = "The Pod that changed, with the action (ADDED, MODIFIED or DELETED) in the "
+                                                 + "CamelKubernetesEventAction header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the name of the Pod in "
+                                                + "CamelKubernetesPodName and its PodSpec in CamelKubernetesPodSpec"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listPods", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listPodsByLabels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getPod",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "createPod", carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.Pod"),
+                                           @BodyType.When(option = "operation", value = "updatePod", carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.Pod"),
+                                           @BodyType.When(option = "operation", value = "deletePod", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "A List of the Pods for the list operations, the Pod of get, create and update (null "
+                                                 + "when getPod finds none), and a Boolean of whether deletePod deleted it"))
 public class KubernetesPodsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPodsEndpoint(String uri, KubernetesPodsComponent component, KubernetesConfiguration config) {

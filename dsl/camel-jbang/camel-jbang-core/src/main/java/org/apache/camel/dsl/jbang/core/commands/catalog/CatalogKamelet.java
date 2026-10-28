@@ -16,9 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,13 +29,15 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.main.download.DependencyDownloaderClassLoader;
-import org.apache.camel.main.download.MavenDependencyDownloader;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "kamelet",
@@ -47,6 +49,15 @@ import picocli.CommandLine;
                              "  camel catalog kamelet --filter=kafka" })
 public class CatalogKamelet extends CamelCommand {
 
+    private static final List<String> TYPES = List.of("source", "sink", "action");
+
+    private static final RowSort<KameletModel> ORDER = new RowSort<KameletModel>()
+            .text("name", r -> r.name)
+            .text("type", r -> r.type)
+            .text("level", r -> r.supportLevel)
+            .alias("support-level", "level")
+            .text("description", r -> r.description);
+
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by name, type, support-level, or description", defaultValue = "name")
     String sort;
@@ -54,6 +65,10 @@ public class CatalogKamelet extends CamelCommand {
     @CommandLine.Option(names = { "--type", "--filter-type" },
                         description = "Filter by type: source, sink, or action")
     String filterType;
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format")
+    boolean jsonOutput;
 
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter by name or description")
@@ -63,57 +78,49 @@ public class CatalogKamelet extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     String kameletsVersion;
 
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver = new MavenResolverMixin();
+
     public CatalogKamelet(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        List<KameletModel> rows = new ArrayList<>();
+        // the options are wrong whatever the catalog has, so before loading it
+        Comparator<KameletModel> order = order();
+        if (filterType != null && !TYPES.contains(filterType.toLowerCase(Locale.ROOT))) {
+            throw CliException.usage("--type must be one of " + String.join(", ", TYPES) + ", was: " + filterType);
+        }
 
         if (kameletsVersion == null) {
             kameletsVersion = VersionHelper.extractKameletsVersion();
         }
 
-        Map<String, Object> kamelets;
-        var tccLoader = Thread.currentThread().getContextClassLoader();
-        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
-            ClassLoader cl = createClassLoader();
-            downloader.setClassLoader(cl);
-            downloader.start();
-            downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion);
-
-            Thread.currentThread().setContextClassLoader(cl);
-            Class<?> clazz = cl.loadClass("org.apache.camel.kamelets.catalog.KameletsCatalog");
-            Object catalog = clazz.getDeclaredConstructor().newInstance();
-            Method m = clazz.getMethod("getKamelets");
-            kamelets = (Map<String, Object>) ObjectHelper.invokeMethod(m, catalog);
+        List<KameletModel> rows;
+        try {
+            rows = new ArrayList<>(loadKamelets());
         } catch (Exception e) {
             printer().printErr("Cannot download camel-kamelets-catalog due to " + e.getMessage());
             return 1;
-        } finally {
-            Thread.currentThread().setContextClassLoader(tccLoader);
-        }
-
-        for (Object o : kamelets.values()) {
-            KameletModel row = KameletCatalogHelper.createModel(o, false);
-            rows.add(row);
         }
 
         if (filterType != null) {
-            rows = rows.stream().filter(r -> r.type.equalsIgnoreCase(filterType)).collect(Collectors.toList());
+            rows.removeIf(r -> !filterType.equalsIgnoreCase(r.type));
         }
         if (filterName != null) {
-            filterName = filterName.toLowerCase(Locale.ROOT);
-            rows = rows.stream().filter(
-                    r -> r.name.equalsIgnoreCase(filterName) || r.description.toLowerCase(Locale.ROOT).contains(filterName))
-                    .collect(Collectors.toList());
+            String text = filterName.toLowerCase(Locale.ROOT);
+            // a Kamelet may have no description
+            rows.removeIf(r -> !text.equalsIgnoreCase(r.name)
+                    && (r.description == null || !r.description.toLowerCase(Locale.ROOT).contains(text)));
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(order);
 
-        if (!rows.isEmpty()) {
+        if (jsonOutput) {
+            printer().println(Jsoner.serialize(rows.stream().map(CatalogKamelet::toJson).collect(Collectors.toList())));
+        } else if (!rows.isEmpty()) {
             // Size the DESCRIPTION column to fill the terminal from the measured width of the other columns.
             int nameW = CamelTableColumns.measure("NAME", CamelTableColumns.NAME_MAX, rows, r -> r.name);
             int typeW = Math.max(10, CamelTableColumns.measure("TYPE", Integer.MAX_VALUE, rows, r -> r.type));
@@ -127,34 +134,40 @@ public class CatalogKamelet extends CamelCommand {
                     CamelTableColumns.lastText("DESCRIPTION", descWidth).with(this::getDescription))));
         }
 
+        if (rows.isEmpty() && filterName != null) {
+            // not part of the output, which can be JSON
+            printer().printDiagnostic("No results for filter: " + filterName);
+        }
+
         return 0;
     }
 
-    protected int sortRow(KameletModel o1, KameletModel o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
+    /**
+     * The Kamelets of the catalog of the Kamelets version.
+     */
+    protected List<KameletModel> loadKamelets() throws Exception {
+        Map<String, Object> kamelets = KameletCatalogHelper.loadKamelets(kameletsVersion, mavenResolver.repos());
+        List<KameletModel> models = new ArrayList<>();
+        for (Object o : kamelets.values()) {
+            models.add(KameletCatalogHelper.createModel(o, false));
         }
-        switch (s) {
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "type":
-                return o1.type.compareToIgnoreCase(o2.type) * negate;
-            case "level":
-            case "support-level":
-                return o1.supportLevel.compareToIgnoreCase(o2.supportLevel) * negate;
-            case "description":
-                return o1.description.compareToIgnoreCase(o2.description) * negate;
-            default:
-                return 0;
-        }
+        return models;
     }
 
-    private ClassLoader createClassLoader() {
-        ClassLoader parentCL = CatalogKamelet.class.getClassLoader();
-        return new DependencyDownloaderClassLoader(parentCL);
+    private static JsonObject toJson(KameletModel r) {
+        JsonObject jo = new JsonObject();
+        jo.put("name", r.name);
+        jo.put("type", r.type);
+        jo.put("level", r.supportLevel);
+        jo.put("description", r.description);
+        return jo;
+    }
+
+    /**
+     * The order of the Kamelets by the --sort option.
+     */
+    Comparator<KameletModel> order() {
+        return ORDER.comparator(sort);
     }
 
     private String getDescription(KameletModel r) {

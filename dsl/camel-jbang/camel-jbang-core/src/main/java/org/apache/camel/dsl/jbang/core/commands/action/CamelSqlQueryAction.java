@@ -16,12 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -56,118 +55,98 @@ public class CamelSqlQueryAction extends ActionBaseCommand {
                         description = "Query timeout in seconds")
     int queryTimeout = 30;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
     public CamelSqlQueryAction(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.size() != 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
+        CamelProcess process = findOne(name);
+
+        // the query has its own timeout, so wait a little longer for the answer
+        ActionResult result = ActionClient.execute(process, "sql-query", root -> {
+            root.put("sql", query);
+            if (datasource != null) {
+                root.put("datasource", datasource);
+            }
+            root.put("maxRows", maxRows);
+            root.put("queryTimeout", queryTimeout);
+        }, (queryTimeout + 10) * 1000L);
+        JsonObject jo = result.orThrow();
+        if (jsonOutput) {
+            // the columns and rows, or the update count, as the integration answers
+            JsonOutput.print(printer(), jo);
+            return 0;
+        }
+        if (jo.containsKey("updateCount")) {
+            int updateCount = jo.getInteger("updateCount");
+            long elapsed = jo.getLongOrDefault("elapsed", 0);
+            printer().println("Update count: " + updateCount);
+            printer().println("Elapsed: " + elapsed + "ms");
+            return 0;
         }
 
-        long pid = pids.get(0);
-
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "sql-query");
-        root.put("sql", query);
-        if (datasource != null) {
-            root.put("datasource", datasource);
+        JsonArray columns = jo.getCollection("columns");
+        JsonArray rows = jo.getCollection("rows");
+        if (columns == null || rows == null) {
+            printer().println("No result data");
+            return 0;
         }
-        root.put("maxRows", maxRows);
-        root.put("queryTimeout", queryTimeout);
 
-        Path actionFile = getActionFile(Long.toString(pid));
-        Files.writeString(actionFile, root.toJson());
-
-        JsonObject jo = getJsonObject(outputFile, (queryTimeout + 10) * 1000L);
-        try {
-            if (jo == null) {
-                printer().println("Timeout waiting for SQL query response");
-                return 1;
+        // compute column widths
+        String[] colNames = new String[columns.size()];
+        int[] widths = new int[columns.size()];
+        for (int i = 0; i < columns.size(); i++) {
+            JsonObject col = (JsonObject) columns.get(i);
+            colNames[i] = col.getString("name");
+            widths[i] = colNames[i].length();
+        }
+        for (Object rowObj : rows) {
+            JsonObject row = (JsonObject) rowObj;
+            for (int i = 0; i < colNames.length; i++) {
+                Object val = row.get(colNames[i]);
+                int len = val != null ? String.valueOf(val).length() : 4;
+                widths[i] = Math.max(widths[i], len);
             }
+        }
 
-            String status = jo.getString("status");
-            if ("error".equals(status)) {
-                printer().println("Error: " + jo.getString("message"));
-                return 1;
+        // print header
+        StringBuilder header = new StringBuilder();
+        StringBuilder separator = new StringBuilder();
+        for (int i = 0; i < colNames.length; i++) {
+            if (i > 0) {
+                header.append(" | ");
+                separator.append("-+-");
             }
+            header.append(String.format("%-" + widths[i] + "s", colNames[i]));
+            separator.append("-".repeat(widths[i]));
+        }
+        printer().println(header.toString());
+        printer().println(separator.toString());
 
-            if (jo.containsKey("updateCount")) {
-                int updateCount = jo.getInteger("updateCount");
-                long elapsed = jo.getLongOrDefault("elapsed", 0);
-                printer().println("Update count: " + updateCount);
-                printer().println("Elapsed: " + elapsed + "ms");
-                return 0;
-            }
-
-            JsonArray columns = jo.getCollection("columns");
-            JsonArray rows = jo.getCollection("rows");
-            if (columns == null || rows == null) {
-                printer().println("No result data");
-                return 0;
-            }
-
-            // compute column widths
-            String[] colNames = new String[columns.size()];
-            int[] widths = new int[columns.size()];
-            for (int i = 0; i < columns.size(); i++) {
-                JsonObject col = (JsonObject) columns.get(i);
-                colNames[i] = col.getString("name");
-                widths[i] = colNames[i].length();
-            }
-            for (Object rowObj : rows) {
-                JsonObject row = (JsonObject) rowObj;
-                for (int i = 0; i < colNames.length; i++) {
-                    Object val = row.get(colNames[i]);
-                    int len = val != null ? String.valueOf(val).length() : 4;
-                    widths[i] = Math.max(widths[i], len);
-                }
-            }
-
-            // print header
-            StringBuilder header = new StringBuilder();
-            StringBuilder separator = new StringBuilder();
+        // print rows
+        for (Object rowObj : rows) {
+            JsonObject row = (JsonObject) rowObj;
+            StringBuilder line = new StringBuilder();
             for (int i = 0; i < colNames.length; i++) {
                 if (i > 0) {
-                    header.append(" | ");
-                    separator.append("-+-");
+                    line.append(" | ");
                 }
-                header.append(String.format("%-" + widths[i] + "s", colNames[i]));
-                separator.append("-".repeat(widths[i]));
+                Object val = row.get(colNames[i]);
+                String s = val != null ? String.valueOf(val) : "null";
+                line.append(String.format("%-" + widths[i] + "s", s));
             }
-            printer().println(header.toString());
-            printer().println(separator.toString());
-
-            // print rows
-            for (Object rowObj : rows) {
-                JsonObject row = (JsonObject) rowObj;
-                StringBuilder line = new StringBuilder();
-                for (int i = 0; i < colNames.length; i++) {
-                    if (i > 0) {
-                        line.append(" | ");
-                    }
-                    Object val = row.get(colNames[i]);
-                    String s = val != null ? String.valueOf(val) : "null";
-                    line.append(String.format("%-" + widths[i] + "s", s));
-                }
-                printer().println(line.toString());
-            }
-
-            int rowCount = jo.getIntegerOrDefault("rowCount", rows.size());
-            boolean truncated = jo.getBooleanOrDefault("truncated", false);
-            long elapsed = jo.getLongOrDefault("elapsed", 0);
-            printer().println();
-            printer().println(rowCount + " row(s)" + (truncated ? " (truncated)" : "") + " in " + elapsed + "ms");
-        } finally {
-            PathUtils.deleteFile(outputFile);
+            printer().println(line.toString());
         }
+
+        int rowCount = jo.getIntegerOrDefault("rowCount", rows.size());
+        boolean truncated = jo.getBooleanOrDefault("truncated", false);
+        long elapsed = jo.getLongOrDefault("elapsed", 0);
+        printer().println();
+        printer().println(rowCount + " row(s)" + (truncated ? " (truncated)" : "") + " in " + elapsed + "ms");
 
         return 0;
     }

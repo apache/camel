@@ -96,13 +96,49 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         return exchange;
     }
 
+    /**
+     * Releases the exchange back into the pool.
+     * <p/>
+     * An exchange created with auto release is put into the pool when it is done. If it is not done yet (it was given
+     * back without being routed) this method does that and returns whether the pool took it, so false when the pool was
+     * full and the exchange was discarded. If it is already done, its unit of work has handed it to the pool before,
+     * and this method does nothing and returns true; whether the pool took it at that time is not known here.
+     */
     @Override
     public boolean release(Exchange exchange) {
         try {
             // done exchange before returning to pool
             PooledExchange ee = (PooledExchange) exchange;
-            ee.done();
 
+            if (ee.isAutoRelease()) {
+                // an auto-release exchange is offered to the pool once: by its on-done task when the unit of work is
+                // done, or here when the exchange was given back without being routed. Offering it in both places
+                // would put it in the pool twice.
+                if (ee.getClock().getCreated() <= 0) {
+                    // already done (the clock is unset by done), so the on-done task has offered it
+                    return true;
+                }
+                // done() would run the on-done task and offer the exchange, but the result of that offer cannot be
+                // read from here. The caller owns the exchange until it is offered, so take the task off for this
+                // call, offer the exchange here, and put the task back before the offer makes the exchange visible
+                // to other threads.
+                ee.onDone(null);
+                try {
+                    ee.done();
+                } finally {
+                    ee.onDone(onDone);
+                }
+            } else {
+                ee.done();
+            }
+        } catch (Exception e) {
+            return discard(exchange);
+        }
+        return doRelease(exchange);
+    }
+
+    private boolean doRelease(Exchange exchange) {
+        try {
             // only release back in pool if reset was success
             boolean inserted = pool.offer(exchange);
 
@@ -115,12 +151,16 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
             }
             return inserted;
         } catch (Exception e) {
-            if (statisticsEnabled) {
-                statistics.discarded.increment();
-            }
-            LOG.debug("Error resetting exchange: {}. This exchange is discarded.", exchange);
-            return false;
+            return discard(exchange);
         }
+    }
+
+    private boolean discard(Exchange exchange) {
+        if (statisticsEnabled) {
+            statistics.discarded.increment();
+        }
+        LOG.debug("Error resetting exchange: {}. This exchange is discarded.", exchange);
+        return false;
     }
 
     private PooledExchange createPooledExchange(Endpoint fromEndpoint, boolean autoRelease) {
@@ -160,7 +200,8 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
 
         @Override
         public void onDone(Exchange exchange) {
-            release(exchange);
+            // the exchange is done (reset) when this is called
+            doRelease(exchange);
         }
     }
 

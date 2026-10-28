@@ -109,6 +109,38 @@ YAML::
 
 The `#client` refers to a `SesClient` in the Registry.
 
+=== Message body
+
+The producer sends the message body as follows:
+
+[cols="1,3"]
+|===
+| Body | Sent as
+
+| text (a `String`, or any body converted to a `String`)
+| a plain mail (`sendEmail`) with the body as its text, or its HTML when the `CamelAwsSesHtmlEmail` header is `true`,
+and the subject, recipients and other fields of the options or headers.
+
+| `jakarta.mail.Message`
+| a raw mail (`sendRawEmail`) with the MIME content of the message.
+
+| `software.amazon.awssdk.services.ses.model.RawMessage`
+| a raw mail (`sendRawEmail`) with the MIME content of the `RawMessage`.
+
+| `software.amazon.awssdk.services.ses.model.SendRawEmailRequest`
+| the request as it is (`sendRawEmail`); the options and headers are not used.
+|===
+
+For a raw mail (a `jakarta.mail.Message` or `RawMessage` body), the source is the `from` option or the
+`CamelAwsSesFrom` header, and the destinations are the addresses of the `to`, `cc` and `bcc` options or the
+`CamelAwsSesTo`, `CamelAwsSesCc` and `CamelAwsSesBcc` headers. When none of them is set, SES sends the mail to the
+recipients of the To, Cc and Bcc headers of the raw mail. The subject is the one of the raw mail.
+
+A message without a body fails with an `InvalidPayloadException`, and nothing is sent to SES.
+
+The `to`, `cc`, `bcc` and `replyToAddresses` options and their headers are a `String`; give several addresses
+as a comma-separated list, such as `to1@example.com,to2@example.com`.
+
 == Examples
 
 === Producer Examples
@@ -120,8 +152,8 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .setHeader(SesConstants.SUBJECT, constant("This is my subject"))
-    .setHeader(SesConstants.TO, constant(Collections.singletonList("to@example.com")))
+    .setHeader(Ses2Constants.SUBJECT, constant("This is my subject"))
+    .setHeader(Ses2Constants.TO, constant("to@example.com"))
     .setBody(constant("This is my message text."))
     .to("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
 ----

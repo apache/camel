@@ -36,7 +36,7 @@ public class JGroupsEndpointTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jgroups:" + CLUSTER_NAME).to("mock:test");
+                from("jgroups:" + CLUSTER_NAME + "?acceptAllObjects=true").to("mock:test");
             }
         };
     }
@@ -46,7 +46,8 @@ public class JGroupsEndpointTest extends CamelTestSupport {
     @Test
     public void shouldSetClusterName() {
         // When
-        JGroupsEndpoint endpoint = getMandatoryEndpoint("jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
+        JGroupsEndpoint endpoint
+                = getMandatoryEndpoint("jgroups:" + CLUSTER_NAME + "?acceptAllObjects=true", JGroupsEndpoint.class);
 
         // Then
         assertEquals(CLUSTER_NAME, endpoint.getClusterName());
@@ -55,7 +56,8 @@ public class JGroupsEndpointTest extends CamelTestSupport {
     @Test
     public void shouldResolveDefaultChannel() {
         // When
-        JGroupsEndpoint endpoint = getMandatoryEndpoint("jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
+        JGroupsEndpoint endpoint
+                = getMandatoryEndpoint("jgroups:" + CLUSTER_NAME + "?acceptAllObjects=true", JGroupsEndpoint.class);
 
         // Then
         assertNotNull(endpoint.getResolvedChannel());

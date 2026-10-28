@@ -52,3 +52,14 @@ $moon-fg: #E0DEF4;
 #diagram-action  { color: #EB6F92; }
 #diagram-eip     { color: #C4A7E7; }
 #diagram-default { color: #6E6A86; }
+
+/*
+ * Syntax tokens (optional), after Rosé Pine: pine keywords, gold strings, rose functions, foam types, iris constants, muted comments.
+ */
+#syntax-comment  { color: #6E6A86; }
+#syntax-string   { color: #F6C177; }
+#syntax-keyword  { color: #3E8FB0; }
+#syntax-function { color: #EA9A97; }
+#syntax-type     { color: #9CCFD8; }
+#syntax-constant { color: #C4A7E7; }
+#syntax-text     { color: $moon-fg; }

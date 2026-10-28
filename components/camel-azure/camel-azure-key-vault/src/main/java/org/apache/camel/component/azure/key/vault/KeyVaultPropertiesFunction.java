@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.exception.ResourceNotFoundException;
@@ -86,7 +87,8 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
     private static final String CAMEL_VAULT_AZURE_IDENTITY_ENABLED = "CAMEL_VAULT_AZURE_IDENTITY_ENABLED";
     private CamelContext camelContext;
     private SecretClient client;
-    private final Set<String> secrets = new HashSet<>();
+    // this function is shared and invoked concurrently
+    private final Set<String> secrets = ConcurrentHashMap.newKeySet();
 
     public KeyVaultPropertiesFunction() {
         super();
@@ -264,6 +266,6 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
      * Ids of the secrets in use
      */
     public Set<String> getSecrets() {
-        return secrets;
+        return Collections.unmodifiableSet(secrets);
     }
 }

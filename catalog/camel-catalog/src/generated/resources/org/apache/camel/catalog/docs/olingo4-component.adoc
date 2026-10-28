@@ -98,7 +98,7 @@ the OData resource being queried, created or modified.
 |OData entity set |<entity-set> |`org.apache.olingo.client.api.domain.ClientEntitySet`
 
 |OData entity |<entity-set>(<key-predicate>) |`org.apache.olingo.client.api.domain.ClientEntity` for Out body (response)
-`java.util.Map<String, Object>` for In body (request)
+`org.apache.olingo.client.api.domain.ClientEntity`, or the entity as JSON `String`, for In body (request)
 
 |Simple property |<entity-set>(<key-predicate>)/<simple-property> |`org.apache.olingo.client.api.domain.ClientPrimitiveValue`
 

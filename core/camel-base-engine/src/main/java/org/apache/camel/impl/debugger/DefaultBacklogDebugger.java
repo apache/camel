@@ -953,7 +953,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String toNodeParentId = definition.getParentId();
             String toNodeShortName = definition.getShortName();
             // avoid label is too large
-            String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50);
+            String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50, "...");
             String fromRouteId = exchange.getFromRouteId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
@@ -1045,7 +1045,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String toNodeParentId = definition.getParentId();
             String toNodeShortName = definition.getShortName();
             // avoid label is too large
-            String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50);
+            String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50, "...");
             String fromRouteId = exchange.getFromRouteId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();

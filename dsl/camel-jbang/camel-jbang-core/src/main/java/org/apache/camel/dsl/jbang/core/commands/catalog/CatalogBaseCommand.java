@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -47,6 +48,12 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 public abstract class CatalogBaseCommand extends CamelCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.name)
+            .text("level", r -> r.level)
+            .alias("support-level", "level")
+            .text("description", r -> r.description);
 
     @CommandLine.Option(names = { "--camel-version" },
                         description = "To use a different Camel version than the default version")
@@ -108,6 +115,15 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     }
 
     CamelCatalog loadCatalog() throws Exception {
+        return loadCatalog(runtime, camelVersion, quarkusPlatform, mavenResolver);
+    }
+
+    /**
+     * The catalog of the runtime and Camel version: of Spring Boot, of the Quarkus platform, or of Camel.
+     */
+    static CamelCatalog loadCatalog(
+            RuntimeType runtime, String camelVersion, QuarkusPlatformMixin quarkusPlatform, MavenResolverMixin mavenResolver)
+            throws Exception {
         if (RuntimeType.springBoot == runtime) {
             return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         } else if (RuntimeType.quarkus == runtime) {
@@ -154,9 +170,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(
                         Jsoner.serialize(
@@ -190,8 +206,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         CamelTableColumns.since().with(r -> r.since),
                         CamelTableColumns.lastText("DESCRIPTION", descWidth).with(this::shortDescription))));
             }
-        } else if (filterName != null) {
-            // suggest similar names when filter returns no results
+        }
+        if (rows.isEmpty() && filterName != null) {
+            // suggest similar names when filter returns no results (not part of the output, which can be JSON)
             List<String> allNames = collectRows().stream().map(r -> r.name).collect(Collectors.toList());
             List<String> suggestions = new ArrayList<>(suggestNames(filterName));
             for (String similar : SuggestSimilarHelper.didYouMean(allNames, filterName)) {
@@ -200,34 +217,15 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                 }
             }
             if (!suggestions.isEmpty()) {
-                printer().println("No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
+                printer().printDiagnostic(
+                        "No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
             } else {
-                printer().println("No results for filter: " + filterName);
+                printer().printDiagnostic("No results for filter: " + filterName);
             }
-            printer().println("Tip: use 'camel doc " + filterName + "' for detailed documentation.");
+            printer().printTip("use 'camel doc " + filterName + "' for detailed documentation.");
         }
 
         return 0;
-    }
-
-    int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "level":
-            case "support-level":
-                return o1.level.compareToIgnoreCase(o2.level) * negate;
-            case "description":
-                return o1.description.compareToIgnoreCase(o2.description) * negate;
-            default:
-                return 0;
-        }
     }
 
     String shortGav(Row r) {

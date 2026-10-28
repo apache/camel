@@ -66,7 +66,7 @@ public class MailSearchTermTest extends CamelTestSupport {
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(bill);
         JavaMailSender sender = new DefaultJavaMailSender();
         Store store = sender.getSession().getStore("imap");
         store.connect("localhost", Mailbox.getPort(Protocol.imap), bill.getLogin(), bill.getPassword());

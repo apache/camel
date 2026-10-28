@@ -57,6 +57,28 @@ public final class NettyHttpHelper {
     }
 
     /**
+     * Gets the charset parameter of the content type. The parameter name is case-insensitive (RFC 9110, section 5.6.6).
+     *
+     * @param  contentType the content type, may be <tt>null</tt>
+     * @return             the charset name, or <tt>null</tt> if the content type has no charset parameter, or an empty
+     *                     one
+     */
+    public static String getCharsetFromContentType(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        String[] parts = contentType.split(";");
+        for (int i = 1; i < parts.length; i++) {
+            String part = parts[i].trim();
+            if (part.regionMatches(true, 0, "charset=", 0, 8)) {
+                String name = IOHelper.normalizeCharset(part.substring(8));
+                return ObjectHelper.isEmpty(name) ? null : name;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Creates the {@link HttpMethod} to use to call the remote server, often either its GET or POST.
      *
      * @param  message the Camel message

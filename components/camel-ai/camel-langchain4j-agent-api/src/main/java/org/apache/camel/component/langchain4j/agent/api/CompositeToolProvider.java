@@ -48,8 +48,7 @@ public class CompositeToolProvider implements ToolProvider {
 
         for (ToolProvider provider : providers) {
             ToolProviderResult result = provider.provideTools(request);
-            result.tools().forEach(resultBuilder::add);
-            resultBuilder.immediateReturnToolNames(result.immediateReturnToolNames());
+            resultBuilder.addAll(result.aiServiceTools());
         }
 
         return resultBuilder.build();

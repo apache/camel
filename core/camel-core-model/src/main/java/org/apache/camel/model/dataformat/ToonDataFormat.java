@@ -43,12 +43,9 @@ public class ToonDataFormat extends DataFormatDefinition implements ContentTypeH
               enums = "COMMA,TAB,PIPE")
     private String delimiter;
     @XmlAttribute
-    @Metadata(description = "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
-              defaultValue = "false",
-              javaType = "java.lang.Boolean")
-    private String lengthMarker;
-    @XmlAttribute
-    @Metadata(description = "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+    @Metadata(description = "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict"
+                            + " recoveries of the TOON specification, such as accepting an array whose length differs from the"
+                            + " declared length; other malformed TOON still fails.",
               defaultValue = "true", javaType = "java.lang.Boolean")
     private String strict;
     @XmlAttribute
@@ -64,7 +61,6 @@ public class ToonDataFormat extends DataFormatDefinition implements ContentTypeH
         super(source);
         this.indent = source.indent;
         this.delimiter = source.delimiter;
-        this.lengthMarker = source.lengthMarker;
         this.strict = source.strict;
         this.contentTypeHeader = source.contentTypeHeader;
     }
@@ -73,7 +69,6 @@ public class ToonDataFormat extends DataFormatDefinition implements ContentTypeH
         this();
         this.indent = builder.indent;
         this.delimiter = builder.delimiter;
-        this.lengthMarker = builder.lengthMarker;
         this.strict = builder.strict;
         this.contentTypeHeader = builder.contentTypeHeader;
     }
@@ -97,14 +92,6 @@ public class ToonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
-    }
-
-    public String getLengthMarker() {
-        return lengthMarker;
-    }
-
-    public void setLengthMarker(String lengthMarker) {
-        this.lengthMarker = lengthMarker;
     }
 
     public String getStrict() {
@@ -133,7 +120,6 @@ public class ToonDataFormat extends DataFormatDefinition implements ContentTypeH
 
         private String indent;
         private String delimiter;
-        private String lengthMarker;
         private String strict;
         private String contentTypeHeader;
 
@@ -158,24 +144,6 @@ public class ToonDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder delimiter(String delimiter) {
             this.delimiter = delimiter;
-            return this;
-        }
-
-        /**
-         * Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain
-         * lengths.
-         */
-        public Builder lengthMarker(String lengthMarker) {
-            this.lengthMarker = lengthMarker;
-            return this;
-        }
-
-        /**
-         * Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain
-         * lengths.
-         */
-        public Builder lengthMarker(boolean lengthMarker) {
-            this.lengthMarker = Boolean.toString(lengthMarker);
             return this;
         }
 

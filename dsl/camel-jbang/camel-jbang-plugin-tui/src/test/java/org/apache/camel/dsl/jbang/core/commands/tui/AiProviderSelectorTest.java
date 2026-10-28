@@ -16,10 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -228,5 +233,39 @@ class AiProviderSelectorTest {
         assertEquals(npx.toString(), AiProviderSelector.resolveExecutable("fakenpx", path));
         assertEquals(npx.toString(), AiProviderSelector.resolveExecutable(tempDir.resolve("fakenpx").toString(), path));
         assertNull(AiProviderSelector.resolveExecutable("definitely-not-a-real-binary-42", path));
+    }
+
+    @Test
+    void aUrlThatDoesNotAnswerIsTheError() {
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl("http://127.0.0.1:1");
+
+        String error = AiProviderSelector.detectEndpoint(client);
+
+        assertEquals("The LLM at http://127.0.0.1:1 does not answer. A URL that is set is the only one tried: start the LLM"
+                     + " there, or press Ctrl+P to choose another provider.",
+                error);
+        assertFalse(error.startsWith(AiProviderSelector.NO_PROVIDER), "the panel shows the error, not the setup guide");
+    }
+
+    @Test
+    void aUrlThatAnswersIsNoError() throws IOException {
+        // plays Ollama: its models on every path
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/", exchange -> {
+            byte[] body = "{\"models\":[{\"name\":\"qwen3\"}]}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(body);
+            }
+        });
+        server.start();
+        try {
+            LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama)
+                    .withUrl("http://127.0.0.1:" + server.getAddress().getPort());
+
+            assertNull(AiProviderSelector.detectEndpoint(client));
+        } finally {
+            server.stop(0);
+        }
     }
 }

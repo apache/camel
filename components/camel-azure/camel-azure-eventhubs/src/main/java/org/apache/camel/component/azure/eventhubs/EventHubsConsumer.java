@@ -132,16 +132,21 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
         return (EventHubsEndpoint) super.getEndpoint();
     }
 
-    private Exchange createAzureEventHubExchange(final EventContext eventContext) {
+    Exchange createAzureEventHubExchange(final EventContext eventContext) {
         final Exchange exchange = createExchange(true);
         final Message message = exchange.getIn();
 
         // set body as byte[] and let camel typeConverters do the job to convert
         message.setBody(eventContext.getEventData().getBody());
-        // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
-        if (eventContext.getEventData().getPartitionKey() != null) {
-            message.setHeader(EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
+        // set headers, and record the partition of the received event so an azure-eventhubs producer later in the
+        // route does not take these headers as a partition chosen by the route
+        final String partitionId = eventContext.getPartitionContext().getPartitionId();
+        final String partitionKey = eventContext.getEventData().getPartitionKey();
+        message.setHeader(EventHubsConstants.PARTITION_ID, partitionId);
+        exchange.setProperty(EventHubsConstants.RECEIVED_PARTITION_ID, partitionId);
+        if (partitionKey != null) {
+            message.setHeader(EventHubsConstants.PARTITION_KEY, partitionKey);
+            exchange.setProperty(EventHubsConstants.RECEIVED_PARTITION_KEY, partitionKey);
         }
         message.setHeader(EventHubsConstants.OFFSET, eventContext.getEventData().getOffset());
         message.setHeader(EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
@@ -160,7 +165,9 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
         final Message message = exchange.getIn();
 
         // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, errorContext.getPartitionContext().getPartitionId());
+        final String partitionId = errorContext.getPartitionContext().getPartitionId();
+        message.setHeader(EventHubsConstants.PARTITION_ID, partitionId);
+        exchange.setProperty(EventHubsConstants.RECEIVED_PARTITION_ID, partitionId);
 
         // set exception
         exchange.setException(errorContext.getThrowable());
@@ -213,9 +220,10 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
     /**
      * Strategy to commit the offset after message being processed successfully.
      *
-     * @param exchange the exchange
+     * @param exchange     the exchange
+     * @param eventContext the event context of the event, used to update the checkpoint
      */
-    private void processCommit(final Exchange exchange, final EventContext eventContext) {
+    void processCommit(final Exchange exchange, final EventContext eventContext) {
         lock.lock();
         try {
             final String partitionId = eventContext.getPartitionContext().getPartitionId();
@@ -224,8 +232,11 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
             EventHubsCheckpointUpdaterTask checkpointTask = checkpointTasksByPartition.get(partitionId);
             ScheduledFuture<?> scheduledTask = scheduledTasksByPartition.get(partitionId);
 
-            if (checkpointTask == null || checkpointTask.isExpired()) {
-                checkpointTask = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents);
+            // a new window starts when the timer of the current one has run, not when the wall clock passed its time: the
+            // timer can run in the millisecond of its scheduled time, or later, and the event must be counted in the
+            // window whose timer has not taken the count yet
+            if (checkpointTask == null || checkpointTask.isDone()) {
+                checkpointTask = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents, lock);
                 // delegate the checkpoint update to a dedicated Thread
                 long timeout = getConfiguration().getCheckpointBatchTimeout();
                 checkpointTask.setScheduledTime(System.currentTimeMillis() + timeout);
@@ -239,13 +250,20 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
 
             try {
                 var cnt = processedEvents.incrementAndGet();
-                if (cnt == getConfiguration().getCheckpointBatchSize()) {
+                // >= and not ==: a failed timeout checkpoint adds its count back, so the count can pass the batch size
+                if (cnt >= getConfiguration().getCheckpointBatchSize()) {
                     processedEvents.set(0);
                     exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
                     LOG.debug("eventhub consumer batch size of reached for partition {}", partitionId);
+                    // a timer that has already started takes nothing (it waits for the lock)
+                    checkpointTask.cancel();
                     if (scheduledTask != null) {
                         scheduledTask.cancel(false);
                     }
+                    // the next event starts a new timeout window: the cancelled task must not be reused until its
+                    // scheduled time, else the events of the rest of that window are not checkpointed by the timeout
+                    checkpointTasksByPartition.remove(partitionId);
+                    scheduledTasksByPartition.remove(partitionId);
                     eventContext.updateCheckpointAsync()
                             .subscribe(unused -> LOG.debug("Processed one event..."),
                                     error -> LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error),

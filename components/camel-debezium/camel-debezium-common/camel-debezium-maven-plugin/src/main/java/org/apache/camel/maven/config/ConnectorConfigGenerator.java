@@ -247,6 +247,11 @@ public final class ConnectorConfigGenerator {
                     annotation.setLiteralValue("secret", "true");
                 }
 
+                final String security = fieldConfig.getSecurityCategory();
+                if (security != null) {
+                    annotation.setLiteralValue("security", String.format("\"%s\"", security));
+                }
+
                 if (fieldConfig.isRequired()) {
                     field.addAnnotation(Metadata.class)
                             .setLiteralValue("required", "true");

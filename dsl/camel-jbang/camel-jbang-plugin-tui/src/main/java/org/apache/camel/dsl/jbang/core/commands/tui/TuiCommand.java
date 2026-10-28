@@ -41,7 +41,8 @@ public class TuiCommand extends CamelCommand {
     int mcpPort = 8123;
 
     @CommandLine.Option(names = { "--web" },
-                        description = "Enable browser-accessible terminal (WebSocket) server")
+                        description = "Enable browser-accessible terminal (WebSocket) server; without an interactive"
+                                      + " terminal it serves browsers only")
     boolean web;
 
     @CommandLine.Option(names = { "--web-port" },
@@ -55,7 +56,7 @@ public class TuiCommand extends CamelCommand {
     long refreshInterval = 100;
 
     @CommandLine.Option(names = { "--record" },
-                        description = "Replay a .tape file inside the TUI and record to an Asciinema .cast file",
+                        description = "Play a .tape file in the TUI and record it to an Asciinema .cast file",
                         arity = "0..1")
     String record;
 
@@ -79,6 +80,17 @@ public class TuiCommand extends CamelCommand {
                         completionCandidates = ThemeModeCompletionCandidates.class)
     String theme;
 
+    @CommandLine.Option(names = { "--panel-theme" },
+                        description = "Color theme of the shell (F6) and AI (F8) panels, or 'same' for the main theme"
+                                      + " (overrides the Panel Theme setting for this session)",
+                        completionCandidates = ThemeModeCompletionCandidates.class)
+    String panelTheme;
+
+    @CommandLine.Option(names = { "--defaults" },
+                        description = "Start with the default settings, as a new user sees the TUI; changes last for the"
+                                      + " session and are not saved")
+    boolean defaults;
+
     public TuiCommand(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
         this.classLoader = classLoader;
@@ -86,6 +98,10 @@ public class TuiCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (record == null && !web) {
+            // a recording plays a tape headless, and --web without a terminal serves browsers only
+            requireInteractiveTerminal("camel tui");
+        }
         CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
         return new CommandLine(cmd).execute(buildArgs().toArray(String[]::new));
     }
@@ -138,6 +154,13 @@ public class TuiCommand extends CamelCommand {
         if (theme != null) {
             args.add("--theme");
             args.add(theme);
+        }
+        if (panelTheme != null) {
+            args.add("--panel-theme");
+            args.add(panelTheme);
+        }
+        if (defaults) {
+            args.add("--defaults");
         }
         return args;
     }

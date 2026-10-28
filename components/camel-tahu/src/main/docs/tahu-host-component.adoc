@@ -32,3 +32,27 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+== Usage
+
+A Host Application consumer receives the Sparkplug messages of the Edge Nodes and Devices. Each metric of a message is
+a header named `CamelTahuMetric.` followed by the name of the metric, and its value is a Tahu `Metric`.
+The following route logs the temperature of the device in the xref:tahu-edge-component.adoc[Tahu Edge] example:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: tahu-host:BasicHostApp
+      parameters:
+        clientId: HostClient1
+        servers: "Mqtt:tcp://localhost:1883"
+      steps:
+        - filter:
+            expression:
+              simple:
+                expression: "${header[CamelTahuMetric.temperature]} != null"
+            steps:
+              - log:
+                  message: "Temperature: ${header[CamelTahuMetric.temperature].value}"
+----

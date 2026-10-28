@@ -24,13 +24,16 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(49);
+        Set<String> props = new HashSet<>(52);
         props.add("acknowledgementMode");
         props.add("allowNullBody");
         props.add("asyncConsumer");
         props.add("asyncStartListener");
         props.add("asyncStopListener");
         props.add("autoStartup");
+        props.add("batchInterval");
+        props.add("batchSize");
+        props.add("batching");
         props.add("bridgeErrorHandler");
         props.add("clientId");
         props.add("concurrentConsumers");
@@ -90,7 +93,7 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "destinationType", "queue", false, copy);
         uri = buildPathParameter(syntax, uri, "destinationName", null, true, copy);

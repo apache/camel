@@ -58,6 +58,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "batchSize": getOrCreateConfiguration(target).setBatchSize(property(camelContext, int.class, value)); return true;
         case "batchtimeout":
         case "batchTimeout": getOrCreateConfiguration(target).setBatchTimeout(property(camelContext, long.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunkingincluderawtext":
         case "chunkingIncludeRawText": getOrCreateConfiguration(target).setChunkingIncludeRawText(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "chunkingmaxtokens":
@@ -176,6 +178,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "batchSize": return int.class;
         case "batchtimeout":
         case "batchTimeout": return long.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "chunkingincluderawtext":
         case "chunkingIncludeRawText": return java.lang.Boolean.class;
         case "chunkingmaxtokens":
@@ -295,6 +299,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "batchSize": return getOrCreateConfiguration(target).getBatchSize();
         case "batchtimeout":
         case "batchTimeout": return getOrCreateConfiguration(target).getBatchTimeout();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunkingincluderawtext":
         case "chunkingIncludeRawText": return getOrCreateConfiguration(target).getChunkingIncludeRawText();
         case "chunkingmaxtokens":

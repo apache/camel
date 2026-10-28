@@ -52,3 +52,15 @@ $tokyo-fg: #A9B1D6;
 #diagram-action  { color: #BB9AF7; }
 #diagram-eip     { color: #73DACA; }
 #diagram-default { color: #565F89; }
+
+/*
+ * Syntax tokens (optional), after Tokyo Night: purple keywords, green strings, blue functions, cyan types, orange constants.
+ * Lifted to a 3:1 contrast on this background: comment.
+ */
+#syntax-comment  { color: #5D6794; }
+#syntax-string   { color: #9ECE6A; }
+#syntax-keyword  { color: #BB9AF7; }
+#syntax-function { color: #7AA2F7; }
+#syntax-type     { color: #2AC3DE; }
+#syntax-constant { color: #FF9E64; }
+#syntax-text     { color: $tokyo-fg; }

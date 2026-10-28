@@ -47,7 +47,7 @@ public class MailRouteTest extends CamelTestSupport {
 
     @Test
     public void testSendAndReceiveMails() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james, result, copy);
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
@@ -72,7 +72,7 @@ public class MailRouteTest extends CamelTestSupport {
 
     @Test
     public void testMailSubjectWithUnicode() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james, result, copy);
 
         final String body = "Hello Camel Riders!";
         final String subject = "My Camel \u2122";

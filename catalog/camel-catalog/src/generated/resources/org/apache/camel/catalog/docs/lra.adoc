@@ -11,6 +11,8 @@
 
 The LRA module provides bindings of the xref:eips:saga-eip.adoc[Saga EIP] with any https://github.com/eclipse/microprofile-lra[MicroProfile compatible LRA Coordinator].
 
+The configuration of the LRA Saga Service, including how to sign the callbacks that the LRA coordinator sends to the participant, is described in the xref:eips:saga-eip.adoc[Saga EIP] page.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 

@@ -205,6 +205,7 @@ final class CamelMainExtension
             drs.setLog(false);
             drs.setTopology(annotation.dumpRouteDiagramTopology());
             drs.setTopologyExternal(annotation.dumpRouteDiagramTopologyExternal());
+            drs.setErrors(annotation.dumpRouteDiagramErrors());
             drs.dumpRoutes("png");
         }
     }

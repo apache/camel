@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.alibaba.oss;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.aliyun.sdk.service.oss2.OSSClient;
+import com.aliyun.sdk.service.oss2.exceptions.ServiceException;
 import com.aliyun.sdk.service.oss2.models.DeleteObjectRequest;
 import com.aliyun.sdk.service.oss2.models.GetObjectRequest;
 import com.aliyun.sdk.service.oss2.models.GetObjectResult;
@@ -44,6 +49,8 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(OSSConsumer.class);
 
     private final OSSEndpoint endpoint;
+    // objects whose exchanges are being processed, which a later poll must not consume again
+    private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
     private OSSClient ossClient;
     private String continuationToken;
 
@@ -88,17 +95,16 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
 
         forceConsumerAsReady();
 
-        String nextToken = null;
+        // the next poll lists the next page, also when the objects of this page cannot be got: such a page must not
+        // hold the consumer back, and its objects are listed again when the listing starts over
         if (Boolean.TRUE.equals(listing.isTruncated()) && listing.nextContinuationToken() != null) {
-            nextToken = listing.nextContinuationToken();
+            continuationToken = listing.nextContinuationToken();
+        } else {
+            continuationToken = null;
         }
 
         Queue<Exchange> exchanges = createExchanges(bucketName, listing.contents());
-        int processed = processBatch(CastUtils.cast(exchanges));
-        if (processed >= 0) {
-            continuationToken = nextToken;
-        }
-        return processed;
+        return processBatch(CastUtils.cast(exchanges));
     }
 
     @Override
@@ -114,21 +120,32 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
 
             pendingExchanges = total - index - 1;
 
+            final String objectKey = exchange.getIn().getHeader(OSSHeaders.OBJECT_KEY, String.class);
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processComplete(exchange);
+                    try {
+                        processComplete(exchange);
+                    } finally {
+                        inProgress.remove(objectKey);
+                    }
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    processFailure(exchange);
+                    try {
+                        processFailure(exchange);
+                    } finally {
+                        inProgress.remove(objectKey);
+                    }
                 }
             });
 
             AsyncCallback callback = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, callback);
         }
+        // the remaining exchanges are not processed as the consumer is stopping
+        releaseNotProcessed(exchanges);
 
         return total;
     }
@@ -139,14 +156,59 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
             return answer;
         }
 
+        // the listed objects that could not be got, other than those that no longer exist, by key
+        Map<String, Exception> failures = new LinkedHashMap<>();
+        // whether at least one listed object could be got
+        boolean anyGot = false;
         for (ObjectSummary summary : summaries) {
-            if (summary.key() == null || summary.key().endsWith("/")) {
+            String key = summary.key();
+            if (key == null || key.endsWith("/")) {
                 continue;
             }
+            // a failure to get one listed object does not fail the poll as long as another listed object could be
+            // got: the object is skipped, the other listed objects are consumed, and a later poll tries it again
+            try {
+                anyGot |= addExchange(bucketName, key, answer);
+            } catch (Exception e) {
+                failures.put(key, e);
+            }
+        }
 
+        if (!failures.isEmpty()) {
+            if (!anyGot) {
+                // none of the listed objects could be got, so this is not about one object (expired credentials, no
+                // permission to get, no connection): the poll fails, and the backoff of the scheduled consumer applies
+                releaseNotProcessed(answer);
+                Map.Entry<String, Exception> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the listed objects of bucket {} could be got ({} failed, the first is {}): the poll fails",
+                        bucketName, failures.size(), first.getKey());
+                throw first.getValue();
+            }
+            for (Map.Entry<String, Exception> failure : failures.entrySet()) {
+                getExceptionHandler().handleException("Error getting object " + failure.getKey() + " from bucket "
+                                                      + bucketName + ". The object is skipped for this poll.",
+                        failure.getValue());
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Gets a listed object and adds its exchange.
+     *
+     * @return true if the object was got and its exchange added, false if it is skipped (an exchange of a previous poll
+     *         is still processing it, or it no longer exists)
+     */
+    private boolean addExchange(String bucketName, String key, Queue<Exchange> answer) throws Exception {
+        // skip the object if an exchange of a previous poll is still processing it
+        if (!inProgress.add(key)) {
+            LOG.trace("Skipping object {} as it is already in progress", key);
+            return false;
+        }
+        try {
             GetObjectResult result = ossClient.getObject(GetObjectRequest.newBuilder()
                     .bucket(bucketName)
-                    .key(summary.key())
+                    .key(key)
                     .build());
 
             byte[] body;
@@ -156,10 +218,35 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
 
             Exchange exchange = createExchange(true);
             exchange.setPattern(endpoint.getExchangePattern());
-            OSSUtils.mapOssObject(exchange, bucketName, summary.key(), result, body);
+            OSSUtils.mapOssObject(exchange, bucketName, key, result, body);
             answer.add(exchange);
+            return true;
+        } catch (Exception e) {
+            inProgress.remove(key);
+            if (isNotFound(e)) {
+                // deleted (for example by another consumer) after it was listed
+                LOG.debug("Skipping object {} as it no longer exists", key);
+                return false;
+            }
+            throw e;
         }
-        return answer;
+    }
+
+    private static boolean isNotFound(Exception e) {
+        ServiceException se = ObjectHelper.getException(ServiceException.class, e);
+        return se != null && se.statusCode() == 404;
+    }
+
+    private void releaseNotProcessed(Queue<?> exchanges) {
+        for (Object o : exchanges) {
+            Exchange exchange = (Exchange) o;
+            String key = exchange.getIn().getHeader(OSSHeaders.OBJECT_KEY, String.class);
+            if (key != null) {
+                inProgress.remove(key);
+            }
+            releaseExchange(exchange, true);
+        }
+        exchanges.clear();
     }
 
     private void processComplete(Exchange exchange) {

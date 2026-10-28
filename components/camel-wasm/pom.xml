@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-wasm</artifactId>
@@ -33,7 +33,6 @@
     <description>Camel Wasm component</description>
 
     <properties>
-        <camel.surefire.fork.additional-vmargs>-Dwasm.resources.path=${project.basedir}/src/test/resources</camel.surefire.fork.additional-vmargs>
         <supportLevel>Experimental</supportLevel>
     </properties>
 
@@ -49,18 +48,16 @@
             <artifactId>runtime</artifactId>
             <version>${endive-version}</version>
         </dependency>
-
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
+            <groupId>run.endive</groupId>
+            <artifactId>wasi</artifactId>
+            <version>${endive-version}</version>
         </dependency>
+        <!-- used with compile=true only: translates a module to JVM bytecode, once per endpoint -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>run.endive</groupId>
+            <artifactId>compiler</artifactId>
+            <version>${endive-version}</version>
         </dependency>
 
         <!-- testing - misc -->
@@ -72,6 +69,12 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>run.endive</groupId>
+            <artifactId>wabt</artifactId>
+            <version>${endive-version}</version>
             <scope>test</scope>
         </dependency>
 

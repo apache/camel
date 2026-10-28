@@ -23,6 +23,9 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
@@ -39,6 +42,25 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language",
              remote = false, producerOnly = true, category = { Category.CORE, Category.MONITORING })
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "command", value = "language",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "The route actions do not read the body. The language command evaluates the"
+                                                + " body as its expression, as text"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "status",
+                                                          carriers = { Carrier.TEXT, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "action", value = "stats",
+                                                          carriers = { Carrier.TEXT, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "command", value = "language", carriers = Carrier.UNKNOWN),
+                                           @BodyType.When(option = "async", value = "true", carriers = Carrier.UNCHANGED) },
+                                   description = "The status of the route for action=status, such as Started, and its"
+                                                 + " statistics as XML for action=stats; the result of the expression for the"
+                                                 + " language command. The other actions leave the body unchanged, as does"
+                                                 + " async=true or a task that fails, which is only logged"))
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Command can be either route or language", enums = "route,language")

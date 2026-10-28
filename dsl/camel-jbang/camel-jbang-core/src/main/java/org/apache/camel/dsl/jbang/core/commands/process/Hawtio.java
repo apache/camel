@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -54,8 +55,10 @@ public class Hawtio extends CamelCommand {
                         description = "Port number to use for Hawtio web console (port 8888 by default)", defaultValue = "8888")
     int port = 8888;
 
-    @CommandLine.Option(names = { "--openUrl" },
-                        description = "To automatic open Hawtio web console in the web browser", defaultValue = "true")
+    @CommandLine.Option(names = { "--open-url", "--openUrl" }, arity = "0..1", fallbackValue = "true",
+                        description = "To automatic open Hawtio web console in the web browser (without an interactive"
+                                      + " terminal the default is false)",
+                        defaultValue = "true")
     boolean openUrl = true;
 
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
@@ -67,6 +70,10 @@ public class Hawtio extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (openUrl && !isOptionGiven("--open-url") && !EnvironmentHelper.isInteractiveTerminal()) {
+            // a script or an AI agent has no use for a browser window
+            openUrl = false;
+        }
         int exit;
         if (name == null) {
             exit = callHawtio();
@@ -133,17 +140,19 @@ public class Hawtio extends CamelCommand {
                 m = clazz.getMethod("run");
                 ObjectHelper.invokeMethod(m, hawt);
 
+                String url = "http://" + host + ":" + port + "/hawtio";
                 if (openUrl) {
                     // open web browser
-                    String url = "http://" + host + ":" + port + "/hawtio";
                     System.setProperty("hawtio.url", url);
-                    if (openUrl && Desktop.isDesktopSupported()) {
+                    if (Desktop.isDesktopSupported()) {
                         try {
                             Desktop.getDesktop().browse(new URI(url));
                         } catch (Exception e) {
                             printer().printErr("Failed to open browser session, to access Hawtio open url: " + url);
                         }
                     }
+                } else {
+                    printer().println("Hawtio web console is running at: " + url);
                 }
 
                 // keep JVM running

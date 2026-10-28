@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mustache",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "mustache",
     "extendsScheme": "",
     "syntax": "mustache:resourceUri",
@@ -34,6 +34,10 @@
   "headers": {
     "CamelMustacheResourceUri": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A URI for the template resource to use instead of the endpoint.", "constantName": "org.apache.camel.component.mustache.MustacheConstants#MUSTACHE_RESOURCE_URI" },
     "CamelMustacheTemplate": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The template to use instead of the endpoint configured.", "constantName": "org.apache.camel.component.mustache.MustacheConstants#MUSTACHE_TEMPLATE" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "The template gets the body as body, as it is: text, or a Map, a List or a POJO to read from; convert bytes or a stream to a String first. The template is the resource, or the CamelMustacheTemplate or CamelMustacheResourceUri header with allowTemplateFromHeader=true, and never the body" },
+    "producerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The text the template writes, also when it is JSON: unmarshal it to read its fields. Values in double braces are HTML-escaped, in triple braces as they are. The headers are kept" }
   },
   "properties": {
     "resourceUri": { "index": 0, "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },

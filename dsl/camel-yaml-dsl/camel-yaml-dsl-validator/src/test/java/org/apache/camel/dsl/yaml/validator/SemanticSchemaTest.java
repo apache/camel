@@ -24,12 +24,135 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SemanticSchemaTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void questionTypesHaveDistinctClosedShapes(boolean canonical) throws Exception {
+    void numericDecisionPoliciesAcceptRuntimeScalarForms(boolean canonical) throws Exception {
+        var validator = new YamlValidator(canonical);
+        for (String value : new String[] { "0.1", "\"0.1\"", "\"{{limit}}\"", "\"{{limit:0.1}}\"" }) {
+            assertThat(validator.validate(booleanEvaluation(value)))
+                    .as("decision policy %s in canonical mode %s", value, canonical).isEmpty();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void scalarConversionsInDifferentEvaluationsSelectTheirOwnSchema(boolean canonical) throws Exception {
+        var validator = new YamlValidator(canonical);
+        String evaluations = booleanEvaluation("\"{{limit:0.1}}\"") + """
+                      topic:
+                        expert: content
+                        type: choice
+                        instructions: Select the topic
+                        criteria: {billing: 123, support: 456}
+                      urgency:
+                        expert: content
+                        type: score
+                        instructions: Assess urgency
+                        criteria: [1, 2, 3]
+                """;
+        assertThat(validator.validate(evaluations)).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void placeholdersDoNotHideInvalidEvaluationFields(boolean canonical) throws Exception {
+        var validator = new YamlValidator(canonical);
+        String evaluation = booleanEvaluation("\"{{limit:0.1}}\"");
+        for (String invalid : new String[] {
+                evaluation.replace("threshold:", "thresholdd:"),
+                evaluation.replace("threshold: \"{{limit:0.1}}\"", "threshold: not-a-number"),
+                evaluation.replace("threshold: \"{{limit:0.1}}\"", "threshold: {value: 0.1}") }) {
+            assertThat(validator.validate(invalid)).as("invalid evaluation: %s", invalid).isNotEmpty();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void expertContractsOwnOperationNamesAndRequiredParameters(boolean canonical) throws Exception {
+        var validator = new YamlValidator(canonical);
+        String yaml = """
+                - semantic:
+                    state: "${body}"
+                    evaluation:
+                      safety:
+                        expert: content
+                        operation: classify
+                        parameters:
+                          policy:
+                            labels: [privacy, unsafe]
+                            limit: !number "{{limit:2}}"
+                            enabled: true
+                      department:
+                        expert: content
+                        type: choice
+                        instructions: Department?
+                        criteria: {billing: Invoices, support: Questions}
+                      score:
+                        expert: content
+                        operation: rank
+                        criteria: [Low, High]
+                """;
+        assertThat(validator.validate(yaml)).isEmpty();
+        assertThat(validator.validate(yaml.replace("parameters:", "paramters:"))).isNotEmpty();
+        assertThat(validator.validate(yaml.replace("parameters:", "parameters: []\n            ignored:")))
+                .isNotEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void semanticRequiresExactlyOneDeclarationBlock(boolean canonical) throws Exception {
+        var validator = new YamlValidator(canonical);
+        assertThat(validator.validate("- semantic: {expert: content}")).isNotEmpty();
+        assertThat(validator.validate("- semantic: {}")).isNotEmpty();
+        assertThat(validator.validate("- semantic: {audit: {enabled: true}}")).isEmpty();
+        assertThat(validator
+                .validate("- semantic: {audit: {enabled: true}, evaluation: {q: {expert: content, operation: detect}}}"))
+                .isEmpty();
+        assertThat(validator.validate("- semantic: {audit: {unknown: true}}")).isNotEmpty();
+        assertThat(validator.validate("- semantic: {question: {}}")).isNotEmpty();
+        assertThat(validator.validate("- semantic: {question: {}, evaluation: {}}")).isNotEmpty();
+        assertThat(validator.validate(
+                "- semantic: {evaluation: {q: {expert: content, operation: detect, uncertaintyPolicy: expert-policy}}}"))
+                .isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void everyEvaluationRequiresItsOwnExpert(boolean canonical) throws Exception {
+        var validator = new YamlValidator(canonical);
+        for (String declaration : new String[] {
+                "{operation: classify}", "{type: choice, criteria: {billing: Invoices}}",
+                "{type: score, criteria: [Low, High]}" }) {
+            assertThat(validator.validate("- semantic: {evaluation: {q: " + declaration + "}}"))
+                    .as("missing expert: %s", declaration).isNotEmpty();
+            assertThat(validator.validate("- semantic: {expert: content, evaluation: {q: " + declaration + "}}"))
+                    .as("block-level expert: %s", declaration).isNotEmpty();
+            String explicit = "{expert: content, " + declaration.substring(1);
+            assertThat(validator.validate("- semantic: {evaluation: {q: " + explicit + "}}"))
+                    .as("explicit expert: %s", declaration).isEmpty();
+        }
+    }
+
+    private static String booleanEvaluation(String value) {
+        return """
+                - semantic:
+                    evaluation:
+                      actionable:
+                        expert: content
+                        type: boolean
+                        instructions: Is this actionable?
+                        threshold: %s
+                        uncertainty: %s
+                """.formatted(value, value);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void evaluationSyntaxIsClosedAndExpertConstraintsAreValidatedAtRuntime(boolean canonical) throws Exception {
         YamlValidator validator = new YamlValidator(canonical);
         String choice = """
                 - semantic:
-                    question:
+                    evaluation:
                       topic:
+                        expert: content
                         type: choice
                         instructions: Select the topic
                         criteria:
@@ -40,21 +163,21 @@ class SemanticSchemaTest {
         assertThat(validator.validate(choice.replace("type: choice", "type: boolean")))
                 .isEmpty(); // criterion key constraints are checked by the runtime
         for (String invalid : new String[] {
-                choice.replace("type: choice", "type: score"),
-                choice.replace("instructions:", "threshold: 0.5\n        instructions:"),
                 choice.replace("instructions:", "typo:"),
                 choice.replace("instructions:", "uncertainty-policy: fail\n        instructions:") }) {
             assertThat(validator.validate(invalid)).isNotEmpty().allSatisfy(
-                    error -> assertThat(error.getInstanceLocation().toString()).startsWith("/0/semantic/question/topic"));
+                    error -> assertThat(error.getInstanceLocation().toString()).startsWith("/0/semantic/evaluation/topic"));
         }
         assertThat(validator.validate("""
                 - semantic:
-                    question:
+                    evaluation:
                       actionable:
+                        expert: content
                         type: boolean
                         instructions: Is this actionable?
                         uncertaintyPolicy: non-match
                       urgency:
+                        expert: content
                         type: score
                         instructions: Assess urgency
                         criteria: [Routine, Urgent]

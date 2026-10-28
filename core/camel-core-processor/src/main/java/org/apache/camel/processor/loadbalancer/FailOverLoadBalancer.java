@@ -17,7 +17,6 @@
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
@@ -25,6 +24,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.Traceable;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -220,7 +220,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             if (!isRunAllowed()) {
                 LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException());
+                    exchange.setException(new RouteStoppingException("Run is not allowed"));
                 }
                 // we cannot process so invoke callback
                 callback.done(false);

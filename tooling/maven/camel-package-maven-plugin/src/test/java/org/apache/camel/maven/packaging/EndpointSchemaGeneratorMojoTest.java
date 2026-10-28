@@ -20,20 +20,27 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointExtendingBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByField;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByMethod;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingInterfaceConstants;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBodyTypes;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithEnumStyleBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderClassHierarchy;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderInterfaceHierarchy;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithJavadocAsDescription;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeExtendingEndpoint;
+import org.apache.camel.maven.packaging.endpoint.SomeInternalRemoteEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -132,6 +140,15 @@ class EndpointSchemaGeneratorMojoTest {
     }
 
     @Test
+    void testInternalEndpointMustNotBeRemote() {
+        UriEndpoint endpoint = SomeInternalRemoteEndpoint.class.getAnnotation(UriEndpoint.class);
+        MojoExecutionException e = assertThrows(MojoExecutionException.class,
+                () -> mojo.findComponentProperties(endpoint, SomeInternalRemoteEndpoint.class, "some", "some", null, null,
+                        null));
+        assertTrue(e.getMessage().contains("needs remote = false"), e.getMessage());
+    }
+
+    @Test
     void testEndpointWithoutHeadersAreIgnored() {
         mojo.addEndpointHeaders(model, SomeEndpointWithoutHeaders.class.getAnnotation(UriEndpoint.class), "some");
         assertEquals(0, model.getEndpointHeaders().size());
@@ -212,5 +229,92 @@ class EndpointSchemaGeneratorMojoTest {
         assertEquals("header", headerFromParent.getKind());
         assertEquals("KEY_EMPTY_WITH_JAVA_DOC", headerFromParent.getName());
 
+    }
+
+    @Test
+    void testEndpointWithBodyTypes() throws Exception {
+        // CAMEL-24961: the body a step needs and the body it leaves, in the order of the annotation
+        addEndpointOptions("resultHandlerFactory");
+        addEnumOption("output", "string", "bytes");
+        mojo.addBodyTypes(model, SomeEndpointWithBodyTypes.class);
+        assertEquals(List.of(BodyTypeModel.CONSUMER_OUT, BodyTypeModel.PRODUCER_IN, BodyTypeModel.PRODUCER_OUT),
+                List.copyOf(model.getBodyTypes().keySet()));
+
+        BodyTypeModel consumerOut = model.getBodyType(BodyTypeModel.CONSUMER_OUT);
+        assertEquals(List.of("file"), consumerOut.getCarriers());
+        assertEquals("org.apache.camel.component.file.GenericFile", consumerOut.getJavaType());
+        assertEquals("The file as read", consumerOut.getDescription());
+        assertNull(consumerOut.getFormat());
+        assertTrue(consumerOut.getDependsOn().isEmpty());
+
+        assertEquals(List.of("text", "bytes", "stream", "file"),
+                model.getBodyType(BodyTypeModel.PRODUCER_IN).getCarriers());
+
+        BodyTypeModel producerOut = model.getBodyType(BodyTypeModel.PRODUCER_OUT);
+        assertEquals(List.of("text"), producerOut.getCarriers());
+        assertEquals("xml", producerOut.getFormat());
+        assertEquals(List.of("resultHandlerFactory"), producerOut.getDependsOn());
+        assertEquals(1, producerOut.getByOption().size());
+        BodyTypeModel.OptionBodyTypeModel bytes = producerOut.getByOption().get(0);
+        assertEquals("output", bytes.getOption());
+        assertEquals("bytes", bytes.getValue());
+        assertEquals(List.of("bytes"), bytes.getCarriers());
+        assertEquals("byte[]", bytes.getJavaType());
+    }
+
+    @Test
+    void testEndpointWithBodyTypesForEnumValuesInOtherStyles() throws Exception {
+        // the catalog and the enum type converter take convert-to-json and chunkHybrid as CONVERT_TO_JSON and
+        // CHUNK_HYBRID, so the build takes them too
+        addEnumOption("operation", "CONVERT_TO_MARKDOWN", "CONVERT_TO_JSON", "CHUNK_HYBRID");
+        mojo.addBodyTypes(model, SomeEndpointWithEnumStyleBodyTypes.class);
+        List<BodyTypeModel.OptionBodyTypeModel> values = model.getBodyType(BodyTypeModel.PRODUCER_OUT).getByOption();
+        assertEquals(List.of("convert-to-json", "chunkHybrid"),
+                values.stream().map(BodyTypeModel.OptionBodyTypeModel::getValue).toList());
+    }
+
+    @Test
+    void testEndpointDoesNotInheritBodyTypes() throws Exception {
+        // a subclass may change the body, so it declares its own
+        mojo.addBodyTypes(model, SomeEndpointExtendingBodyTypes.class);
+        assertTrue(model.getBodyTypes().isEmpty());
+    }
+
+    @Test
+    void testEndpointWithoutBodyTypes() throws Exception {
+        mojo.addBodyTypes(model, SomeEndpointWithoutHeaders.class);
+        assertTrue(model.getBodyTypes().isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {
+            SomeEndpointWithBadBodyTypes.DataFormatSide.class, SomeEndpointWithBadBodyTypes.ProducerSideOfConsumer.class,
+            SomeEndpointWithBadBodyTypes.UnchangedInput.class, SomeEndpointWithBadBodyTypes.AnyOutput.class,
+            SomeEndpointWithBadBodyTypes.UnknownInput.class,
+            SomeEndpointWithBadBodyTypes.UnknownWithOthers.class, SomeEndpointWithBadBodyTypes.NoCarriers.class,
+            SomeEndpointWithBadBodyTypes.UnknownOption.class, SomeEndpointWithBadBodyTypes.OptionValueWithoutCarriers.class,
+            SomeEndpointWithBadBodyTypes.ValueTheOptionDoesNotHave.class })
+    void testEndpointWithBadBodyTypes(Class<?> clazz) {
+        addEnumOption("output", "string", "bytes");
+        model.setConsumerOnly(clazz.getAnnotation(UriEndpoint.class).consumerOnly());
+        MojoExecutionException e = assertThrows(MojoExecutionException.class, () -> mojo.addBodyTypes(model, clazz));
+        assertTrue(e.getMessage().startsWith(clazz.getName() + ": the @BodyTypes "), e.getMessage());
+        assertTrue(model.getBodyTypes().isEmpty());
+    }
+
+    private void addEndpointOptions(String... names) {
+        for (String name : names) {
+            ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+            option.setName(name);
+            model.addEndpointOption(option);
+        }
+    }
+
+    private void addEnumOption(String name, String... values) {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setName(name);
+        option.setType("enum");
+        option.setEnums(List.of(values));
+        model.addEndpointOption(option);
     }
 }

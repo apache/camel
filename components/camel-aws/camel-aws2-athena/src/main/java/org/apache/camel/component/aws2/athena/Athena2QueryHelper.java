@@ -364,8 +364,8 @@ class Athena2QueryHelper {
         String[] parts = retry.split(",");
         Set<String> finalRetry = new HashSet<>();
         for (String part : parts) {
-            if (ObjectHelper.isNotEmpty(part)) {
-                finalRetry.add(part);
+            if (ObjectHelper.isNotEmpty(part.trim())) {
+                finalRetry.add(part.trim());
             }
         }
 

@@ -21,6 +21,9 @@ import java.io.OutputStream;
 import java.util.StringJoiner;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -36,6 +39,16 @@ import org.apache.commons.csv.QuoteMode;
  * Autogeneration can be disabled. In this case, only the fields defined in csvConfig are written on the output.
  */
 @Dataformat("csv")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                 description = "One row as a Map, or the rows as a List (or an Iterator) of Maps or Lists"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "csv",
+                                  description = "The CSV in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "csv"),
+           unmarshalOut = @BodyType(value = Carrier.LIST, dependsOn = "recordConverterRef",
+                                    byOption = @BodyType.When(option = "lazyLoad", value = "true",
+                                                              carriers = Carrier.ITERATOR),
+                                    description = "A List of the rows, each a List of its values; with useMaps or"
+                                                  + " useOrderedMaps, a Map of the header names and the values"))
 public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     // CSV format options
     private CSVFormat csvFormat = CSVFormat.DEFAULT;

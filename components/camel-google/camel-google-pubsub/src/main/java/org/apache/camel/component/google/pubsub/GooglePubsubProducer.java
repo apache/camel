@@ -25,6 +25,7 @@ import com.google.common.base.Strings;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
@@ -62,10 +63,7 @@ public class GooglePubsubProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         if (logger.isDebugEnabled()) {
-            // TODO Update once baseline is Java 21
-            //            logger.debug("uploader thread/id: {} / {}. api call completed.", Thread.currentThread().threadId(),
-            //                    exchange.getExchangeId());
-            logger.debug("uploader thread/id: {} / {}. api call completed.", Thread.currentThread().getId(),
+            logger.debug("uploader thread/id: {} / {}. api call completed.", Thread.currentThread().threadId(),
                     exchange.getExchangeId());
         }
 
@@ -98,16 +96,7 @@ public class GooglePubsubProducer extends DefaultProducer {
 
         Publisher publisher = endpoint.getComponent().getPublisher(topicName, endpoint);
 
-        Object body = exchange.getIn().getBody();
-        ByteString byteString;
-
-        if (body instanceof String) {
-            byteString = ByteString.copyFromUtf8((String) body);
-        } else if (body instanceof byte[]) {
-            byteString = ByteString.copyFrom((byte[]) body);
-        } else {
-            byteString = ByteString.copyFrom(endpoint.getSerializer().serialize(body));
-        }
+        ByteString byteString = toByteString(exchange, endpoint);
 
         PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
 
@@ -149,5 +138,26 @@ public class GooglePubsubProducer extends DefaultProducer {
 
         ApiFuture<String> messageIdFuture = publisher.publish(message);
         exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, messageIdFuture.get());
+    }
+
+    private static ByteString toByteString(Exchange exchange, GooglePubsubEndpoint endpoint) throws Exception {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            // a serialized null is not a message anybody can use
+            throw new InvalidPayloadException(exchange, byte[].class);
+        }
+        if (body instanceof String text) {
+            return ByteString.copyFromUtf8(text);
+        }
+        if (body instanceof byte[] bytes) {
+            return ByteString.copyFrom(bytes);
+        }
+        // convert before serializing: a stream, a stream cache or a file is sent as its content, and a
+        // java.io.File, although it is Serializable, must not be sent as a serialized File object
+        byte[] bytes = exchange.getContext().getTypeConverter().tryConvertTo(byte[].class, exchange, body);
+        if (bytes != null) {
+            return ByteString.copyFrom(bytes);
+        }
+        return ByteString.copyFrom(endpoint.getSerializer().serialize(body));
     }
 }

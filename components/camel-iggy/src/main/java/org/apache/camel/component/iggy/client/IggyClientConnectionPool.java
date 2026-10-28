@@ -19,8 +19,12 @@ package org.apache.camel.component.iggy.client;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.iggy.client.blocking.IggyBaseClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IggyClientConnectionPool {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IggyClientConnectionPool.class);
 
     private final GenericObjectPool<IggyBaseClient> pool;
 
@@ -39,6 +43,24 @@ public class IggyClientConnectionPool {
 
     public void returnClient(IggyBaseClient client) {
         pool.returnObject(client);
+    }
+
+    /**
+     * Removes a client whose request failed from the pool, and closes it.
+     */
+    public void invalidateClient(IggyBaseClient client) {
+        try {
+            pool.invalidateObject(client);
+        } catch (Exception e) {
+            LOG.debug("Error closing Iggy client: {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Closes the pool and the clients that are not in use.
+     */
+    public void close() {
+        pool.close();
     }
 
     public int getNumActive() {

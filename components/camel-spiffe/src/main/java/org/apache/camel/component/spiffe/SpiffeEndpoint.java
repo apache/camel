@@ -23,6 +23,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,26 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "spiffe", title = "SPIFFE",
              syntax = "spiffe:label", producerOnly = true, category = { Category.SECURITY },
              headersClass = SpiffeConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Only validateJwtSvid reads the body: the token as text, when neither the"
+                                                + " CamelSpiffeToken header nor an Authorization: Bearer header carries it."
+                                                + " The fetch operations ignore the body"),
+           producerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.security.cert.X509Certificate>",
+                                   dependsOn = "allowOperationHeader",
+                                   byOption = {
+                                           @BodyType.When(option = "x509Response", value = "svid", carriers = Carrier.POJO,
+                                                          javaType = "io.spiffe.svid.x509svid.X509Svid"),
+                                           @BodyType.When(option = "x509Response", value = "id",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "fetchJwtSvid",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "validateJwtSvid",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.spiffe.svid.jwtsvid.JwtSvid") },
+                                   description = "fetchX509Svid: the certificate chain without the private key; the X509Svid"
+                                                 + " with its private key with x509Response=svid, or the body kept with"
+                                                 + " x509Response=id. fetchJwtSvid: the token. validateJwtSvid: the validated"
+                                                 + " JwtSvid. The SPIFFE ID is in the CamelSpiffeSpiffeId header"))
 public class SpiffeEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Logical name of the endpoint")

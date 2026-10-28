@@ -15,30 +15,16 @@
 # limitations under the License.
 #
 
+# Temporarily disabled: the job was failing (pilot-plugin 0.4.0 crashing on
+# bom-generator-maven-plugin which has test-scoped deps but no src/test/java)
+# while still showing green due to continue-on-error: true, wasting ~20 min
+# per PR with no actionable output.
+# To be replaced by a step in the main pr-build-main.yml workflow.
+
 name: 'Dependency Analysis'
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - .claude-plugin/**
-      - .idea/**
-      - .github/**
-      - .oss-ai-helper-rules/**
-      - AGENTS.md
-      - README.md
-      - SECURITY.md
-      - Jenkinsfile
-      - Jenkinsfile.*
-      - NOTICE.txt
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
+  workflow_dispatch:
 
 jobs:
   dep-check:
@@ -55,7 +41,7 @@ jobs:
           fetch-depth: 1
 
       - name: Set up JDK 21
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -75,7 +61,7 @@ jobs:
 
       - name: Upload dependency analysis report
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dep-check-report
           path: dep-check-output.txt

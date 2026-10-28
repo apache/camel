@@ -52,14 +52,16 @@ mode in use (`address` vs. `latlng`).
 
 === Body using a Nominatim Server
 
-Camel will deliver the body as a JSONv2 type.
+Camel will deliver the body as a String with the JSON response of Nominatim (the `jsonv2` format):
+an array with one place for an address, and an object for a latitude and longitude.
 
 === Body using a Google Server
 
-Camel will deliver the body as a
-`com.google.code.geocoder.model.GeocodeResponse` type. +
-And if the address is `"current"` then the response is a String type
-with a JSON representation of the current location.
+Camel will deliver the body as an array of
+`com.google.maps.model.GeocodingResult` (empty when there are no results). +
+If the address is `"current"` then the current location is found by geolocation, and
+the body is the array of `GeocodingResult` of that location as well.
+When Google denies the request, the body is left as-is and the `CamelGeoCoderStatus` header has the status.
 
 If the option `headersOnly` is set to `true` then the message body is
 left as-is, and only headers will be added to the

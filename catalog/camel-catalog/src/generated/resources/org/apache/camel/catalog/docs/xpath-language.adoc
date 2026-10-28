@@ -149,8 +149,12 @@ local part. Camel will try to resolve a variable in the following steps:
 ==== Example of using variables, header and body in XPath expression
 You can combine headers, properties, body and variables in an XPath expression as shown in the example below:
 
-._Java-only: uses Document.class type conversion in setVariable/setHeader_
+The variables and the header are converted to a `Document` (`resultType`), so XPath can navigate them:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("timer:java?period=1000&repeatCount=1")
@@ -165,8 +169,85 @@ from("timer:java?period=1000&repeatCount=1")
         .otherwise()
             .log("DIFFERENT")
     .end();
-}
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer:java?period=1000&amp;repeatCount=1"/>
+  <setBody>
+    <simple>&lt;dummy&gt;YES&lt;/dummy&gt;</simple>
+  </setBody>
+  <setVariable name="Foo">
+    <simple resultType="org.w3c.dom.Document">&lt;hello&gt;&lt;id&gt;123&lt;/id&gt;&lt;/hello&gt;</simple>
+  </setVariable>
+  <setVariable name="Bar">
+    <simple resultType="org.w3c.dom.Document">&lt;holla&gt;&lt;id&gt;123&lt;/id&gt;&lt;/holla&gt;</simple>
+  </setVariable>
+  <setHeader name="Baz">
+    <simple resultType="org.w3c.dom.Document">&lt;hallo&gt;&lt;id&gt;123&lt;/id&gt;&lt;/hallo&gt;</simple>
+  </setHeader>
+  <choice>
+    <when>
+      <xpath>($Foo/hello/id = $Bar/holla/id) and /dummy='YES' and $Baz/hallo/id=123</xpath>
+      <log message="EQUAL"/>
+    </when>
+    <otherwise>
+      <log message="DIFFERENT"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:java
+      parameters:
+        period: 1000
+        repeatCount: 1
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "<dummy>YES</dummy>"
+        - setVariable:
+            name: Foo
+            expression:
+              simple:
+                expression: "<hello><id>123</id></hello>"
+                resultType: org.w3c.dom.Document
+        - setVariable:
+            name: Bar
+            expression:
+              simple:
+                expression: "<holla><id>123</id></holla>"
+                resultType: org.w3c.dom.Document
+        - setHeader:
+            name: Baz
+            expression:
+              simple:
+                expression: "<hallo><id>123</id></hallo>"
+                resultType: org.w3c.dom.Document
+        - choice:
+            when:
+              - expression:
+                  xpath:
+                    expression: "($Foo/hello/id = $Bar/holla/id) and /dummy='YES' and $Baz/hallo/id=123"
+                steps:
+                  - log:
+                      message: EQUAL
+            otherwise:
+              steps:
+                - log:
+                    message: DIFFERENT
+----
+====
 
 == Functions
 
@@ -465,12 +546,14 @@ YAML::
 
 == Using namespaces
 
-If you have a standard set of namespaces you wish to work with and wish
-to share them across many XPath expressions, you can use the
-`org.apache.camel.support.builder.Namespaces` when using Java DSL as shown:
+An XPath expression that uses a namespace prefix needs the namespace declared. In Java DSL use
+`org.apache.camel.support.builder.Namespaces`, which is passed to `xpath` as the second parameter. In XML DSL
+declare the prefix on a root element (`routes` or `route`), and in YAML DSL list the namespaces on the expression:
 
-._Java-only: Namespaces builder API_
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
@@ -480,8 +563,41 @@ from("direct:start")
         .to("mock:result");
 ----
 
-Notice how the namespaces are provided to `xpath` with the `ns` variable
-that are passed in as the second parameter.
+XML::
++
+[source,xml]
+----
+<routes xmlns="http://camel.apache.org/schema/xml-io" xmlns:c="http://acme.com/cheese">
+  <route>
+    <from uri="direct:start"/>
+    <filter>
+      <xpath>/c:person[@name='James']</xpath>
+      <to uri="mock:result"/>
+    </filter>
+  </route>
+</routes>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/c:person[@name='James']"
+                namespace:
+                  - key: c
+                    value: http://acme.com/cheese
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
 
 Each namespace is a key=value pair, where the prefix is the key.
 In the XPath expression then the namespace is used by its prefix, e.g.:

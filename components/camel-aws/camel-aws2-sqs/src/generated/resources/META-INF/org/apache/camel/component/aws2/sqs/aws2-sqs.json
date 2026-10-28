@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sqs",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "aws2-sqs",
     "extendsScheme": "",
     "syntax": "aws2-sqs:queueNameOrArn",
@@ -92,6 +92,11 @@
     "CamelAwsSqsSequenceNumber": { "index": 11, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The sequence number for FIFO queues.", "constantName": "org.apache.camel.component.aws2.sqs.Sqs2Constants#SEQUENCE_NUMBER" },
     "CamelAwsSqsFailedMessageCount": { "index": 12, "kind": "header", "displayName": "", "group": "sendBatchMessage", "label": "sendBatchMessage", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of failed messages in a batch send operation.", "constantName": "org.apache.camel.component.aws2.sqs.Sqs2Constants#FAILED_MESSAGE_COUNT" },
     "CamelAwsSqsSuccessfulMessageCount": { "index": 13, "kind": "header", "displayName": "", "group": "sendBatchMessage", "label": "sendBatchMessage", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of successful messages in a batch send operation.", "constantName": "org.apache.camel.component.aws2.sqs.Sqs2Constants#SUCCESSFUL_MESSAGE_COUNT" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The body of the SQS message" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "byOption": [ { "option": "operation", "value": "sendBatchMessage", "carriers": [ "list", "text", "pojo" ] } ], "description": "The body of the message to send, as text: bytes, a stream or a file are read as text, and a Map or a POJO is sent as its toString(): marshal it first. sendBatchMessage takes a List of text, text that batchSeparator splits, or a SendMessageBatchRequest" },
+    "producerOut": { "carriers": [ "unchanged" ], "byOption": [ { "option": "operation", "value": "sendBatchMessage", "carriers": [ "pojo" ], "javaType": "software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse" }, { "option": "operation", "value": "deleteMessage", "carriers": [ "pojo" ], "javaType": "software.amazon.awssdk.services.sqs.model.DeleteMessageResponse" }, { "option": "operation", "value": "listQueues", "carriers": [ "pojo" ], "javaType": "software.amazon.awssdk.services.sqs.model.ListQueuesResponse" }, { "option": "operation", "value": "purgeQueue", "carriers": [ "pojo" ], "javaType": "software.amazon.awssdk.services.sqs.model.PurgeQueueResponse" }, { "option": "operation", "value": "deleteQueue", "carriers": [ "pojo" ], "javaType": "software.amazon.awssdk.services.sqs.model.DeleteQueueResponse" } ], "description": "Unchanged for a send, with the id of the message in a header; the response of the AWS SDK for the other operations" }
   },
   "properties": {
     "queueNameOrArn": { "index": 0, "kind": "path", "displayName": "Queue Name Or Arn", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Queue name or ARN" },

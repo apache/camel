@@ -22,6 +22,7 @@ public class JsonbDataFormatConfigurer extends org.apache.camel.support.componen
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowUnmarshallType", boolean.class);
         map.put("ObjectMapper", jakarta.json.bind.Jsonb.class);
         map.put("PrettyPrint", boolean.class);
         map.put("UnmarshalType", java.lang.Class.class);
@@ -32,6 +33,8 @@ public class JsonbDataFormatConfigurer extends org.apache.camel.support.componen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsonbDataFormat target = (JsonbDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowunmarshalltype":
+        case "allowUnmarshallType": target.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
         case "objectmapper":
         case "objectMapper": target.setObjectMapper(property(camelContext, jakarta.json.bind.Jsonb.class, value)); return true;
         case "prettyprint":
@@ -50,6 +53,8 @@ public class JsonbDataFormatConfigurer extends org.apache.camel.support.componen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowunmarshalltype":
+        case "allowUnmarshallType": return boolean.class;
         case "objectmapper":
         case "objectMapper": return jakarta.json.bind.Jsonb.class;
         case "prettyprint":
@@ -64,6 +69,8 @@ public class JsonbDataFormatConfigurer extends org.apache.camel.support.componen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JsonbDataFormat target = (JsonbDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowunmarshalltype":
+        case "allowUnmarshallType": return target.isAllowUnmarshallType();
         case "objectmapper":
         case "objectMapper": return target.getObjectMapper();
         case "prettyprint":

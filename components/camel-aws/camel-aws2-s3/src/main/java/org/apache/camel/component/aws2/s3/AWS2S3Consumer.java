@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.aws2.s3;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 
@@ -29,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
@@ -87,7 +91,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 return;
             } catch (AwsServiceException ase) {
                 /* 404 means the bucket doesn't exist */
-                if (ase.awsErrorDetails().sdkHttpResponse().statusCode() != 404) {
+                if (ase.statusCode() != 404) {
                     throw ase;
                 }
             }
@@ -124,23 +128,23 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         if (!doneFileCheckPasses(bucketName, doneFileName)) {
             exchanges = new LinkedList<>();
         } else if (fileName != null) {
-            LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
-
-            GetObjectRequest.Builder getRequest = GetObjectRequest.builder().bucket(bucketName).key(fileName);
-            if (getConfiguration().isUseCustomerKey()) {
-                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
-                    getRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
-                }
-                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
-                    getRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
-                }
-                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
-                    getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+            // check if file is already in progress (add false = duplicate file)
+            if (!getEndpoint().getInProgressRepository().add(fileName)) {
+                LOG.trace("Skipping as s3 object is already in progress: {}", fileName);
+                exchanges = new LinkedList<>();
+            } else {
+                ResponseInputStream<GetObjectResponse> s3Object = null;
+                try {
+                    s3Object = getObject(bucketName, fileName);
+                    exchanges = createExchanges(s3Object, fileName);
+                } catch (Exception e) {
+                    // close the stream to release the underlying HTTP connection
+                    IOHelper.close(s3Object);
+                    // remove in progress as we failed
+                    getEndpoint().getInProgressRepository().remove(fileName);
+                    throw e;
                 }
             }
-            ResponseInputStream<GetObjectResponse> s3Object
-                    = getAmazonS3Client().getObject(getRequest.build());
-            exchanges = createExchanges(s3Object, fileName);
         } else {
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
 
@@ -203,6 +207,24 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         return processBatch(CastUtils.cast(exchanges));
     }
 
+    private ResponseInputStream<GetObjectResponse> getObject(String bucketName, String fileName) {
+        LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
+
+        GetObjectRequest.Builder getRequest = GetObjectRequest.builder().bucket(bucketName).key(fileName);
+        if (getConfiguration().isUseCustomerKey()) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                getRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
+            }
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                getRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+            }
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+            }
+        }
+        return getAmazonS3Client().getObject(getRequest.build());
+    }
+
     private boolean doneFileCheckPasses(String bucketName, String doneFileName) {
         if (doneFileName == null) {
             return true;
@@ -237,6 +259,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
         Collection<ResponseInputStream<GetObjectResponse>> s3Objects = new ArrayList<>();
         Queue<Exchange> answer = new LinkedList<>();
+        // the listed objects that could not be got, other than those that no longer exist, by key
+        Map<String, RuntimeException> failures = new LinkedHashMap<>();
+        // whether S3 answered the get of at least one listed object
+        boolean anyGot = false;
         try {
             for (S3Object s3ObjectSummary : s3ObjectSummaries) {
                 String key = s3ObjectSummary.key();
@@ -264,23 +290,37 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                         getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                     }
                 }
-                ResponseInputStream<GetObjectResponse> s3Object
-                        = getAmazonS3Client().getObject(getRequest.build(), ResponseTransformer.toInputStream());
-
-                if (includeS3Object(s3Object)) {
-                    s3Objects.add(s3Object);
-                    Exchange exchange = createExchange(s3Object, key);
-                    answer.add(exchange);
-                } else {
-                    // If includeFolders != true and the object is not included, it is safe to close the object here.
-                    // If includeFolders == true, the exchange will close the object.
-                    IOHelper.close(s3Object);
-                    // remove in progress
-                    getEndpoint().getInProgressRepository().remove(key);
+                // a failure to get one listed object, or to create its exchange, does not fail the poll as long as
+                // another listed object could be got: the object is skipped, the other listed objects are consumed,
+                // and a later poll tries it again
+                ResponseInputStream<GetObjectResponse> s3Object = null;
+                try {
+                    s3Object = getAmazonS3Client().getObject(getRequest.build(), ResponseTransformer.toInputStream());
+                    if (includeS3Object(s3Object)) {
+                        Exchange exchange = createExchange(s3Object, key);
+                        s3Objects.add(s3Object);
+                        answer.add(exchange);
+                        anyGot = true;
+                    } else {
+                        // If includeFolders != true and the object is not included, it is safe to close the object
+                        // here. If includeFolders == true, the exchange will close the object.
+                        IOHelper.close(s3Object);
+                        // remove in progress
+                        getEndpoint().getInProgressRepository().remove(key);
+                        anyGot = true;
+                    }
+                } catch (NoSuchKeyException e) {
+                    // deleted after it was listed (by another consumer, a lifecycle rule, or the exchange of an
+                    // earlier poll that completed meanwhile)
+                    LOG.debug("Skipping as s3 object no longer exists: {}", key);
+                    skipS3Object(s3Object, key);
+                } catch (RuntimeException e) {
+                    skipS3Object(s3Object, key);
+                    failures.put(key, e);
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error getting S3Object due: {}. This exception is ignored.", e.getMessage(), e);
+            LOG.warn("Error getting S3Object due: {}", e.getMessage(), e);
             // ensure all previous gathered s3 objects are closed
             // if there was an exception creating the exchanges in this batch
             s3Objects.forEach(IOHelper::close);
@@ -290,11 +330,42 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 if (key != null) {
                     getEndpoint().getInProgressRepository().remove(key);
                 }
+                // the exchange is never routed, so nothing else releases it to the exchange factory
+                releaseExchange(exchange, true);
             }
             throw e;
         }
 
+        if (!failures.isEmpty()) {
+            if (!anyGot) {
+                // none of the listed objects could be got, so this is not about one object (expired credentials, no
+                // permission to get, throttling, no connection): the poll fails as it does when the listing fails, and
+                // the error handling and the backoff of the scheduled consumer apply
+                Map.Entry<String, RuntimeException> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the listed objects of bucket {} could be got ({} failed, the first is {}): the poll fails",
+                        getConfiguration().getBucketName(), failures.size(), first.getKey());
+                throw first.getValue();
+            }
+            // as processCommit does: the consumer goes on, and a custom exception handler or bridgeErrorHandler sees
+            // the failure
+            for (Map.Entry<String, RuntimeException> failure : failures.entrySet()) {
+                String message = "Error getting S3Object " + failure.getKey() + " from bucket "
+                                 + getConfiguration().getBucketName()
+                                 + ". The object is skipped for this poll.";
+                getExceptionHandler().handleException(message, failure.getValue());
+            }
+        }
+
         return answer;
+    }
+
+    /**
+     * The listed object is not consumed by this poll: closes its stream (if it was got) and removes its key from the
+     * in-progress repository, so that a later poll can consume it.
+     */
+    private void skipS3Object(ResponseInputStream<GetObjectResponse> s3Object, String key) {
+        IOHelper.close(s3Object);
+        getEndpoint().getInProgressRepository().remove(key);
     }
 
     /**
@@ -360,6 +431,21 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             // use default consumer callback
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, cb);
+        }
+        // the remaining exchanges are not processed as the consumer is stopping: a later poll must consume their
+        // objects again, and with includeBody=false their bodies are the object streams, which nothing else closes
+        for (Object notRouted : exchanges) {
+            Exchange exchange = (Exchange) notRouted;
+            String key = exchange.getProperty(AWS2S3Constants.KEY, String.class);
+            if (key != null) {
+                getEndpoint().getInProgressRepository().remove(key);
+            }
+            if (exchange.getIn().getBody() instanceof Closeable body) {
+                IOHelper.close(body);
+            }
+            // nothing else releases an exchange that is never routed to the exchange factory (which resets a pooled
+            // exchange, so this comes last)
+            releaseExchange(exchange, true);
         }
 
         return total;
@@ -455,6 +541,25 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         LOG.trace("Got object [{}]", s3Object);
 
         Exchange exchange = createExchange(true);
+        try {
+            populateExchange(exchange, pattern, s3Object, key);
+        } catch (RuntimeException e) {
+            // the object is not consumed (for example its download failed), so the exchange created for it is not
+            // routed, and nothing else gives it back to the exchange factory
+            if (exchange instanceof PooledExchange pooled) {
+                // created with autoRelease, so done() also gives it back to the pool, once: releaseExchange would
+                // then add it to the pool a second time, and two later objects would share the exchange
+                pooled.done();
+            } else {
+                releaseExchange(exchange, true);
+            }
+            throw e;
+        }
+        return exchange;
+    }
+
+    private void populateExchange(
+            Exchange exchange, ExchangePattern pattern, ResponseInputStream<GetObjectResponse> s3Object, String key) {
         exchange.setPattern(pattern);
         Message message = exchange.getIn();
 
@@ -493,11 +598,12 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
         /*
          * If includeBody == true, it is safe to close the object here because the S3Object
-         * was consumed already. If includeBody != true, the caller is responsible for
+         * was consumed already. The same goes for ignoreBody == true, as the stream is then not
+         * the body, so nothing else can read or close it. Otherwise the caller is responsible for
          * closing the stream once the body has been fully consumed or use the autoCloseBody
          * configuration to automatically schedule the body closing at the end of exchange.
          */
-        if (getConfiguration().isIncludeBody()) {
+        if (getConfiguration().isIncludeBody() || getConfiguration().isIgnoreBody()) {
             IOHelper.close(s3Object);
         } else {
             if (getConfiguration().isAutocloseBody()) {
@@ -509,8 +615,6 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 });
             }
         }
-
-        return exchange;
     }
 
     @Override

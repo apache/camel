@@ -107,6 +107,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "oauth2CachedTokensDefaultExpirySeconds": target.setOauth2CachedTokensDefaultExpirySeconds(property(camelContext, long.class, value)); return true;
         case "oauth2cachedtokensexpirationmarginseconds":
         case "oauth2CachedTokensExpirationMarginSeconds": target.setOauth2CachedTokensExpirationMarginSeconds(property(camelContext, long.class, value)); return true;
+        case "oauth2cachedtokenskey":
+        case "oauth2CachedTokensKey": target.setOauth2CachedTokensKey(property(camelContext, org.apache.camel.component.http.OAuth2CachedTokensKey.class, value)); return true;
+        case "oauth2cachedtokenskeyresolver":
+        case "oauth2CachedTokensKeyResolver": target.setOauth2CachedTokensKeyResolver(property(camelContext, org.apache.camel.component.http.OAuth2CachedTokensKeyResolver.class, value)); return true;
         case "oauth2clientid":
         case "oauth2ClientId": target.setOauth2ClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "oauth2clientsecret":
@@ -248,6 +252,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "oauth2CachedTokensDefaultExpirySeconds": return long.class;
         case "oauth2cachedtokensexpirationmarginseconds":
         case "oauth2CachedTokensExpirationMarginSeconds": return long.class;
+        case "oauth2cachedtokenskey":
+        case "oauth2CachedTokensKey": return org.apache.camel.component.http.OAuth2CachedTokensKey.class;
+        case "oauth2cachedtokenskeyresolver":
+        case "oauth2CachedTokensKeyResolver": return org.apache.camel.component.http.OAuth2CachedTokensKeyResolver.class;
         case "oauth2clientid":
         case "oauth2ClientId": return java.lang.String.class;
         case "oauth2clientsecret":
@@ -390,6 +398,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "oauth2CachedTokensDefaultExpirySeconds": return target.getOauth2CachedTokensDefaultExpirySeconds();
         case "oauth2cachedtokensexpirationmarginseconds":
         case "oauth2CachedTokensExpirationMarginSeconds": return target.getOauth2CachedTokensExpirationMarginSeconds();
+        case "oauth2cachedtokenskey":
+        case "oauth2CachedTokensKey": return target.getOauth2CachedTokensKey();
+        case "oauth2cachedtokenskeyresolver":
+        case "oauth2CachedTokensKeyResolver": return target.getOauth2CachedTokensKeyResolver();
         case "oauth2clientid":
         case "oauth2ClientId": return target.getOauth2ClientId();
         case "oauth2clientsecret":

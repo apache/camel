@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order id="ORD-1001" country="DK">
+  <customer>C-482</customer>
+  <line sku="CAMEL-TSHIRT" qty="2" price="19.95"/>
+  <line sku="CAMEL-MUG" qty="1" price="9.50"/>
+  <status>paid</status>
+</order>

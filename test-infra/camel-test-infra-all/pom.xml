@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>test-infra</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-test-infra-all</artifactId>
@@ -238,6 +238,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-wolf-defender</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-milvus</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -314,6 +319,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-openfga</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-spiffe</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -580,6 +590,12 @@
                                 <fileSet>
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-wolf-defender</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-milvus</artifactId>
                                     </dependency>
                                 </fileSet>
@@ -659,6 +675,12 @@
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-openfga</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-spiffe</artifactId>
                                     </dependency>
                                 </fileSet>
                                 <fileSet>

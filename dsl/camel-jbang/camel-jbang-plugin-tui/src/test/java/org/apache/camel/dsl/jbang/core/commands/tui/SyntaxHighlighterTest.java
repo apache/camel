@@ -45,6 +45,14 @@ class SyntaxHighlighterTest {
     }
 
     @Test
+    void detectsTheLanguageOfAKameletFile() {
+        // onlyExt gives kamelet.yaml: the last extension decides (CAMEL-25411)
+        assertEquals(SyntaxHighlighter.Language.YAML, SyntaxHighlighter.detectLanguage("tag-order-action.kamelet.yaml"));
+        assertEquals(SyntaxHighlighter.Language.YAML, SyntaxHighlighter.detectLanguage("orders.camel.yaml"));
+        assertEquals(SyntaxHighlighter.Language.XML, SyntaxHighlighter.detectLanguage("orders.camel.xml"));
+    }
+
+    @Test
     void colorsKeySeparatorAndValue() {
         Line line = SyntaxHighlighter.highlightLine("camel.main.name=demo", SyntaxHighlighter.Language.PROPERTIES);
 

@@ -44,6 +44,6 @@ public class CamelStatus extends CamelCommand {
         // default to get the integrations
         CamelContextStatus cmd = new CamelContextStatus(getMain());
         cmd.watch = watch;
-        return new CommandLine(cmd).execute();
+        return runDefault(cmd);
     }
 }

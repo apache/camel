@@ -55,8 +55,17 @@ import software.amazon.awssdk.services.polly.model.VoiceId;
 
 public class AmazonPollyClientMock implements PollyClient {
 
+    // the last requests received, and the next token the list operations return
+    SynthesizeSpeechRequest lastSynthesizeSpeechRequest;
+    StartSpeechSynthesisTaskRequest lastStartSpeechSynthesisTaskRequest;
+    DescribeVoicesRequest lastDescribeVoicesRequest;
+    ListLexiconsRequest lastListLexiconsRequest;
+    ListSpeechSynthesisTasksRequest lastListSpeechSynthesisTasksRequest;
+    String nextToken;
+
     @Override
     public ResponseInputStream<SynthesizeSpeechResponse> synthesizeSpeech(SynthesizeSpeechRequest request) {
+        lastSynthesizeSpeechRequest = request;
         SynthesizeSpeechResponse response = SynthesizeSpeechResponse.builder()
                 .contentType("audio/mpeg")
                 .requestCharacters(request.text().length())
@@ -71,6 +80,7 @@ public class AmazonPollyClientMock implements PollyClient {
 
     @Override
     public DescribeVoicesResponse describeVoices(DescribeVoicesRequest request) {
+        lastDescribeVoicesRequest = request;
         Voice voice1 = Voice.builder()
                 .id(VoiceId.JOANNA)
                 .name("Joanna")
@@ -91,17 +101,20 @@ public class AmazonPollyClientMock implements PollyClient {
 
         return DescribeVoicesResponse.builder()
                 .voices(Arrays.asList(voice1, voice2))
+                .nextToken(nextToken)
                 .build();
     }
 
     @Override
     public ListLexiconsResponse listLexicons(ListLexiconsRequest request) {
+        lastListLexiconsRequest = request;
         LexiconDescription lexicon = LexiconDescription.builder()
                 .name("TestLexicon")
                 .build();
 
         return ListLexiconsResponse.builder()
                 .lexicons(Arrays.asList(lexicon))
+                .nextToken(nextToken)
                 .build();
     }
 
@@ -129,6 +142,7 @@ public class AmazonPollyClientMock implements PollyClient {
 
     @Override
     public StartSpeechSynthesisTaskResponse startSpeechSynthesisTask(StartSpeechSynthesisTaskRequest request) {
+        lastStartSpeechSynthesisTaskRequest = request;
         SynthesisTask task = SynthesisTask.builder()
                 .taskId("test-task-id-123")
                 .taskStatus(TaskStatus.IN_PROGRESS)
@@ -159,6 +173,7 @@ public class AmazonPollyClientMock implements PollyClient {
 
     @Override
     public ListSpeechSynthesisTasksResponse listSpeechSynthesisTasks(ListSpeechSynthesisTasksRequest request) {
+        lastListSpeechSynthesisTasksRequest = request;
         SynthesisTask task = SynthesisTask.builder()
                 .taskId("test-task-id-123")
                 .taskStatus(TaskStatus.COMPLETED)
@@ -168,6 +183,7 @@ public class AmazonPollyClientMock implements PollyClient {
 
         return ListSpeechSynthesisTasksResponse.builder()
                 .synthesisTasks(Arrays.asList(task))
+                .nextToken(nextToken)
                 .build();
     }
 

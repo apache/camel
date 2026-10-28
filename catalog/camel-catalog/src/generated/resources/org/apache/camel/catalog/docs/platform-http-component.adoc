@@ -40,6 +40,13 @@ include::partial$component-endpoint-headers.adoc[]
 To use Platform HTTP, a provider (engine) is required to be available on the classpath.
 The purpose is to have drivers for different runtimes such as Quarkus, or Spring Boot.
 
+With `camel run`, the provider is the embedded HTTP server of `camel-platform-http-main`, which starts
+when a route uses platform-http, on port 8080 (`camel.server.port` in `application.properties` or
+`camel run --port` changes it).
+With Camel Main, the embedded HTTP server is disabled by default: enable it in `application.properties`
+with `camel.server.enabled=true` and set `camel.server.port`.
+See xref:others:platform-http-main.adoc[Platform HTTP Main] for the other `camel.server.*` options.
+
 To use it with different runtimes:
 
 [tabs]
@@ -231,6 +238,19 @@ On an exact match (e.g. `GET /reverse-proxy`) the path is stripped to `/`.
 
 `CamelHttpUri`/`CamelHttpUrl` still hold the full original request, only `CamelHttpPath` is rewritten. This option is
 currently implemented in `camel-platform-http-vertx`.
+
+=== Contract-first REST and unmatched requests
+
+When the consumer is used by the xref:rest-openapi-component.adoc[rest-openapi] component
+(rest-dsl contract-first), requests that do not match any operation of the OpenAPI specification are answered
+by the HTTP layer itself (status `404`/`405`).
+
+Set the `unmatchedRequestHandling` endpoint option to `camel` to instead route such requests to Camel, where they
+are answered by the unmatched request handler (see the rest-openapi component documentation). On Camel Main and
+Quarkus, `camel-platform-http-vertx` registers a catch-all route per API base path; on Spring Boot, the
+catch-all is registered on this component and served by the platform-http starter. The catch-all is evaluated
+last, so it never shadows the operations of other APIs served by the same server, even when their base paths
+are nested under this API.
 
 === File Attachments handling
 

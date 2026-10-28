@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.ibmmq.services;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.jms.Connection;
@@ -74,10 +75,14 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                         // AND the listener-port and log-message checks; a plain chained waitingFor() would replace,
                         // not combine, the strategies. WITH_INDIVIDUAL_TIMEOUTS_ONLY keeps each strategy's own timeout
                         // instead of the 30s outer cap the default WaitAllStrategy mode would impose.
+                        // Note: withStartupTimeout() must be called on each strategy individually when using
+                        // WITH_INDIVIDUAL_TIMEOUTS_ONLY mode; calling it on the WaitAllStrategy itself would
+                        // throw an IllegalStateException.
                         .waitingFor(new WaitAllStrategy(WaitAllStrategy.Mode.WITH_INDIVIDUAL_TIMEOUTS_ONLY)
-                                .withStrategy(Wait.forListeningPort())
+                                .withStrategy(Wait.forListeningPort().withStartupTimeout(Duration.ofMinutes(3L)))
                                 .withStrategy(Wait.forLogMessage(
-                                        ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1)));
+                                        ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1)
+                                        .withStartupTimeout(Duration.ofMinutes(3L))));
 
                 ContainerEnvironmentUtil.configurePorts(this,
                         ContainerEnvironmentUtil.isFixedPort(IbmMQLocalContainerInfraService.class),

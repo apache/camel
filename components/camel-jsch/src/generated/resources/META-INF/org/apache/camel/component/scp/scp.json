@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsch",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "scp",
     "extendsScheme": "ftp",
     "syntax": "scp:host:port\/directoryName",
@@ -29,6 +29,10 @@
     "autowiredEnabled": { "index": 2, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "healthCheckConsumerEnabled": { "index": 3, "kind": "property", "displayName": "Health Check Consumer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all consumer based health checks from this component" },
     "healthCheckProducerEnabled": { "index": 4, "kind": "property", "displayName": "Health Check Producer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all producer based health checks from this component. Notice: Camel has by default disabled all producer based health-checks. You can turn on producer checks globally by setting camel.health.producersEnabled=true." }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "byOption": [ { "option": "allowNullBody", "value": "true", "carriers": [ "null", "text", "bytes", "stream", "file" ] } ], "description": "The content of the file: text, bytes, a stream or a file, which is read into memory first to send its size. A Map or a List fails: marshal it first" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged, with the name of the remote file in the CamelFileNameProduced header" }
   },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.scp.ScpConfiguration", "configurationField": "configuration", "description": "Hostname of the FTP server" },

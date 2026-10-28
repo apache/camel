@@ -20,21 +20,19 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.IntConsumer;
 
-import com.networknt.schema.Error;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -95,11 +93,6 @@ class SourceViewer {
     }
 
     @FunctionalInterface
-    interface QuickDocProvider {
-        Map<Integer, List<DocEntry>> provideAll(List<JsonObject> codeData);
-    }
-
-    @FunctionalInterface
     interface EditQuickDocProvider {
         List<DocEntry> provideForLine(List<String> lines, int cursorRow);
     }
@@ -125,20 +118,15 @@ class SourceViewer {
         Set<Integer> scan(List<JsonObject> codeData);
     }
 
-    record JumpLink(String routeId, String filePath, int targetLine) {
-    }
-
     /**
-     * What a line of a running integration's source did: the exchanges of the processors on it, the failed ones and the
-     * mean processing time.
+     * A link on a line to where it leads; callersOf is the endpoint of a route sent to from more than one place, whose
+     * link opens a popup to choose one (CAMEL-25411), else null.
      */
-    record LiveLine(long total, long failed, long meanMillis) {
-    }
+    record JumpLink(String routeId, String filePath, int targetLine, String callersOf) {
 
-    /** The live run data of a file by its path: per 0-based line, what the processors on it did. */
-    @FunctionalInterface
-    interface LiveRunData {
-        Map<Integer, LiveLine> lines(String filePath);
+        JumpLink(String routeId, String filePath, int targetLine) {
+            this(routeId, filePath, targetLine, null);
+        }
     }
 
     private boolean visible;
@@ -168,9 +156,8 @@ class SourceViewer {
     private boolean markdownMode;
     private String rawMarkdownContent;
     private int markdownScroll;
-    private QuickDocProvider quickDocProvider;
-    private boolean quickDocEnabled;
-    private Map<Integer, List<DocEntry>> quickDocEntries = Collections.emptyMap();
+    // the furthest the markdown view scrolls, from the last render (unknown before it)
+    private int markdownMaxScroll = Integer.MAX_VALUE;
     private EditQuickDocProvider editQuickDocProvider;
     private boolean editQuickDocEnabled = true;
     private DeprecatedLineScanner deprecatedLineScanner;
@@ -188,6 +175,69 @@ class SourceViewer {
     private boolean editMode;
     private final TextAreaState editState = new TextAreaState();
     private final YamlSourceContext yaml = new YamlSourceContext(editState);
+    private final SourceCompletion completion = new SourceCompletion(editState, yaml, new SourceCompletion.Editor() {
+        @Override
+        public boolean isEditMode() {
+            return editMode;
+        }
+
+        @Override
+        public boolean isCamelYamlFile() {
+            return SourceViewer.this.isCamelYamlFile();
+        }
+
+        @Override
+        public void recordEditChange() {
+            SourceViewer.this.recordEditChange();
+        }
+
+        @Override
+        public void markDirty() {
+            dirty = true;
+        }
+    });
+    private final SourceLiveColumn liveColumn
+            = new SourceLiveColumn(() -> this.loadedFilePath, () -> this.dirty, () -> this.lines);
+    private final SourceRefactorActions refactor = new SourceRefactorActions(editState, new SourceRefactorActions.Editor() {
+        @Override
+        public Path editableFile() {
+            return editableFile;
+        }
+
+        @Override
+        public boolean isCamelYamlFile() {
+            return SourceViewer.this.isCamelYamlFile();
+        }
+
+        @Override
+        public String routeDsl() {
+            return completion.routeDsl();
+        }
+
+        @Override
+        public void recordEditChange() {
+            SourceViewer.this.recordEditChange();
+        }
+
+        @Override
+        public void markSaved() {
+            dirty = false;
+            originalEditText = editState.text();
+            lineStatuses = null;
+        }
+
+        @Override
+        public void report(String message, boolean error) {
+            notifySave(message, error);
+        }
+
+        @Override
+        public void fileCreated() {
+            if (onFileCreated != null) {
+                onFileCreated.run();
+            }
+        }
+    });
     /** Markdown render mode prior to entering edit; restored on cancel. */
     private boolean markdownModeBeforeEdit;
     private boolean dirty;
@@ -199,36 +249,16 @@ class SourceViewer {
     private BiConsumer<String, Boolean> notificationCallback;
     private Runnable onFileCreated;
     private Consumer<Path> onFileLoaded;
-    private AutocompletePopup.AutocompleteProvider autocompleteProvider;
-    private AutocompletePopup.ValueProvider autocompleteValueProvider;
-    private java.util.function.Predicate<String> listItemNodeChecker;
-    private AutocompletePopup autocompletePopup;
-    private RefactorPopup refactorPopup;
     private boolean validateOnSave = true;
-    private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
-    private PropertiesValidator propertiesValidator;
-    private EndpointValidator endpointValidator;
-    private EndpointValidator simpleValidator;
-    private EndpointValidator routeValidator;
-    private LiveRunData liveRunData;
-    private Map<Integer, LiveLine> liveLines = Collections.emptyMap();
-    private long liveLinesTime;
-    private int liveTotalWidth;
-    private int liveFailedWidth;
-    private int liveMeanWidth;
-    private String liveWidthsFile;
+    // the tree of the route the cursor is in, at the top right (Ctrl+T); the setting gives the default
+    private boolean routeTreeShown;
+    private final RouteTreePanel routeTree = new RouteTreePanel();
+    // the checks of the file by its type: the errors, and the notes that do not block a save
+    private final SourceChecks checks = new SourceChecks();
+    // the lines whose problem is a note, not an error: marked as a warning and counted apart (CAMEL-25411)
+    private Set<Integer> noteLines = Set.of();
     private MonitorContext.AskAi askAi;
-    /** java or xml: Tab completes the endpoint uris of a Java or XML route file; null for neither. */
-    private String uriCompletion;
-    /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
-    private UriCompletion pendingUriCompletion;
-    private BiFunction<SimpleCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> simpleCompletion;
-    private SimpleCompletion pendingSimpleCompletion;
     private CursorQuickDocProvider cursorQuickDocProvider;
-    private BiFunction<XmlCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> xmlCompletion;
-    private XmlCompletion pendingXmlCompletion;
-    private Function<JavaChainContext, List<AutocompletePopup.CompletionItem>> javaCompletion;
-    private JavaCompletion pendingJavaCompletion;
     private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
@@ -238,6 +268,8 @@ class SourceViewer {
      */
     private Map<Integer, String> viewErrors = Collections.emptyMap();
     private boolean editInitialScroll;
+    /** The top line of the view when F4 was pressed, so the editor opens on the same screen; -1 when not known. */
+    private int editStartTop = -1;
     private long lastBackgroundValidationTime;
     private String lastBackgroundValidationContent;
     private static final long BACKGROUND_VALIDATION_INTERVAL_MS = 2000;
@@ -276,16 +308,12 @@ class SourceViewer {
         this.onFileLoaded = callback;
     }
 
-    void setAutocompleteProvider(AutocompletePopup.AutocompleteProvider provider) {
-        this.autocompleteProvider = provider;
+    void setRouteTreeShown(boolean routeTreeShown) {
+        this.routeTreeShown = routeTreeShown;
     }
 
-    void setAutocompleteValueProvider(AutocompletePopup.ValueProvider provider) {
-        this.autocompleteValueProvider = provider;
-    }
-
-    void setListItemNodeChecker(java.util.function.Predicate<String> checker) {
-        this.listItemNodeChecker = checker;
+    boolean isRouteTreeShown() {
+        return routeTreeShown;
     }
 
     void setValidateOnSave(boolean validateOnSave) {
@@ -293,15 +321,32 @@ class SourceViewer {
     }
 
     void setPropertiesValidator(PropertiesValidator propertiesValidator) {
-        this.propertiesValidator = propertiesValidator;
+        checks.setPropertiesValidator(propertiesValidator);
     }
 
     void setEndpointValidator(EndpointValidator endpointValidator) {
-        this.endpointValidator = endpointValidator;
+        checks.setEndpointValidator(endpointValidator);
     }
 
     void setSimpleValidator(EndpointValidator simpleValidator) {
-        this.simpleValidator = simpleValidator;
+        checks.setSimpleValidator(simpleValidator);
+    }
+
+    /**
+     * The Kamelet checks of a YAML file (CAMEL-25411): the shape of a Kamelet file, and the kamelet: endpoints of a
+     * route against the catalog and the project's own Kamelets. Their problems are marked and keep the file from being
+     * saved, as the other problems of a YAML file.
+     */
+    void setKameletValidator(EndpointValidator kameletValidator) {
+        checks.setKameletValidator(kameletValidator);
+    }
+
+    /**
+     * What a YAML, Java or XML route file does that works but is not right (a Kamelet's camel: dependency its template
+     * does not use, a direct: endpoint no route consumes): marked and said when saved, but not blocking the save.
+     */
+    void setNotes(EndpointValidator notes) {
+        checks.setNotes(notes);
     }
 
     /**
@@ -309,130 +354,8 @@ class SourceViewer {
      * editing. An XML file with problems is not saved, as a YAML file; a Java file is saved and the problems are said,
      * as a Java file is the application's code, and what the checks cannot know must never keep it from being saved.
      */
-    /**
-     * The live run data of the running integration, shown at the end of the lines of its source: how many exchanges the
-     * processors on a line handled, how many failed, and their mean time (a heat map of the source while it runs).
-     */
-    void setLiveRunData(LiveRunData liveRunData) {
-        this.liveRunData = liveRunData;
-    }
-
-    /**
-     * The live run data as a column of its own after the line numbers, so the numbers line up whatever the length of
-     * the code: the exchanges right-aligned, then the failures and the mean time when any line has them, blank on the
-     * lines without data. Nothing when the integration does not run.
-     */
-    private void addLiveColumn(List<Span> spans, int lineIndex, Style selBg) {
-        Map<Integer, LiveLine> lines = liveLines();
-        if (lines.isEmpty() || liveTotalWidth == 0) {
-            return;
-        }
-        LiveLine live = lines.get(lineIndex);
-        boolean data = live != null && live.total() > 0;
-        String total = data ? Long.toString(live.total()) : "";
-        String failed = data && live.failed() > 0 ? "✗" + live.failed() : "";
-        String mean = data && live.meanMillis() > 0 ? live.meanMillis() + "ms" : "";
-        Style totalStyle = data ? Theme.label() : Style.EMPTY;
-        Style failedStyle = Theme.error().bold();
-        Style dim = Style.EMPTY.dim();
-        if (selBg != null) {
-            totalStyle = totalStyle.patch(selBg);
-            failedStyle = failedStyle.patch(selBg);
-            dim = dim.patch(selBg);
-        }
-        spans.add(Span.styled(" " + " ".repeat(liveTotalWidth - total.length()) + total, totalStyle));
-        if (liveFailedWidth > 0) {
-            spans.add(Span.styled(" " + failed + " ".repeat(liveFailedWidth - failed.length()), failedStyle));
-        }
-        if (liveMeanWidth > 0) {
-            spans.add(Span.styled(" " + " ".repeat(liveMeanWidth - mean.length()) + mean, dim));
-        }
-        spans.add(Span.styled(" │", dim));
-    }
-
-    /** The live run data of the loaded file, read again at most once a second (the status is polled about as often). */
-    private Map<Integer, LiveLine> liveLines() {
-        if (liveRunData == null || loadedFilePath == null) {
-            return Collections.emptyMap();
-        }
-        long now = System.currentTimeMillis();
-        if (now - liveLinesTime > 1000) {
-            refreshLiveLines(now);
-        }
-        return liveLines;
-    }
-
-    /** Package-private for tests: reads the live run data again now, as the render does once a second. */
-    void refreshLiveLinesForTesting() {
-        refreshLiveLines(System.currentTimeMillis());
-    }
-
-    /** Package-private for tests: the text of the live column of a line. */
-    String liveColumnForTesting(int lineIndex) {
-        List<Span> spans = new ArrayList<>();
-        addLiveColumn(spans, lineIndex, null);
-        StringBuilder sb = new StringBuilder();
-        spans.forEach(sp -> sb.append(sp.content()));
-        return sb.toString();
-    }
-
-    private void refreshLiveLines(long now) {
-        {
-            Map<Integer, LiveLine> lines = liveRunData.lines(loadedFilePath);
-            liveLines = lines != null ? lines : Collections.emptyMap();
-            liveLinesTime = now;
-            // the widths of the column, for all the lines alike; they only grow while the same file is shown (from
-            // a minimum), so the column does not jitter when a number crosses 99 -> 100 and back (a mean time going
-            // up and down, a reset of the statistics); another file, or the integration stopping, starts afresh
-            if (liveLines.isEmpty() || !loadedFilePath.equals(liveWidthsFile)) {
-                liveTotalWidth = 0;
-                liveFailedWidth = 0;
-                liveMeanWidth = 0;
-                liveWidthsFile = liveLines.isEmpty() ? null : loadedFilePath;
-            }
-            for (LiveLine l : liveLines.values()) {
-                if (l.total() > 0) {
-                    liveTotalWidth = Math.max(liveTotalWidth, Math.max(3, Long.toString(l.total()).length()));
-                    if (l.failed() > 0) {
-                        liveFailedWidth = Math.max(liveFailedWidth, Math.max(3, 1 + Long.toString(l.failed()).length()));
-                    }
-                    if (l.meanMillis() > 0) {
-                        liveMeanWidth = Math.max(liveMeanWidth, Math.max(4, Long.toString(l.meanMillis()).length() + 2));
-                    }
-                }
-            }
-        }
-    }
-
     void setRouteValidator(EndpointValidator routeValidator) {
-        this.routeValidator = routeValidator;
-    }
-
-    /**
-     * Tab completion in the endpoint uris of a Java or XML route file (CAMEL-25208): in the string given to from, to,
-     * toD... of Java, or the uri attribute of those elements in XML, the component names, the endpoint options and
-     * their values, from the completion providers the YAML uris use.
-     *
-     * @param dsl java or xml; null for a file that is neither
-     */
-    void setUriCompletion(String dsl) {
-        this.uriCompletion = dsl;
-    }
-
-    private record UriCompletion(int row, int endCol, String prefix, String suffix) {
-    }
-
-    /**
-     * Tab completion in the simple expressions of a YAML, Java or XML route file (CAMEL-25219): the functions after ${,
-     * the header names after ${header., the operators after a function. Given the context at the cursor and the lines
-     * of the file; null for a file without routes.
-     */
-    void setSimpleCompletion(
-            BiFunction<SimpleCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> provider) {
-        this.simpleCompletion = provider;
-    }
-
-    private record SimpleCompletion(int row, int endCol, SimpleCompletionContext context) {
+        checks.setRouteValidator(routeValidator);
     }
 
     /**
@@ -441,30 +364,6 @@ class SourceViewer {
      */
     void setCursorQuickDocProvider(CursorQuickDocProvider provider) {
         this.cursorQuickDocProvider = provider;
-    }
-
-    /**
-     * Tab completion of the XML DSL (CAMEL-25240): the elements that go inside the parent after &lt; or on an empty
-     * line, the attributes in a start tag, their values. Given the context at the cursor and the lines of the file;
-     * null for a file that is no XML route.
-     */
-    void setXmlCompletion(
-            BiFunction<XmlCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> provider) {
-        this.xmlCompletion = provider;
-    }
-
-    private record XmlCompletion(int row, int endCol, XmlCompletionContext context) {
-    }
-
-    /**
-     * Tab completion of the Java DSL route chain (CAMEL-25241): after a dot, the options of the EIP the chain is on and
-     * the EIPs. Null for a file that is no Java route.
-     */
-    void setJavaCompletion(Function<JavaChainContext, List<AutocompletePopup.CompletionItem>> provider) {
-        this.javaCompletion = provider;
-    }
-
-    private record JavaCompletion(int row, int endCol, JavaChainContext context) {
     }
 
     /** Opens the AI panel to fix the problem of the cursor line (Shift+F8); null when there is no AI panel. */
@@ -476,19 +375,12 @@ class SourceViewer {
         exitEditMode();
         visible = false;
         onLineSelected = null;
-        quickDocEnabled = false;
-        quickDocEntries = Collections.emptyMap();
         deprecatedLines = Collections.emptySet();
         editableFile = null;
-        propertiesValidator = null;
-        endpointValidator = null;
-        simpleValidator = null;
-        routeValidator = null;
-        uriCompletion = null;
-        simpleCompletion = null;
+        checks.clear();
+        noteLines = Set.of();
         cursorQuickDocProvider = null;
-        xmlCompletion = null;
-        javaCompletion = null;
+        completion.clearLanguageProviders();
     }
 
     void reset() {
@@ -514,26 +406,16 @@ class SourceViewer {
         markdownMode = false;
         rawMarkdownContent = null;
         markdownScroll = 0;
-        quickDocProvider = null;
-        quickDocEnabled = false;
-        quickDocEntries = Collections.emptyMap();
+        markdownMaxScroll = Integer.MAX_VALUE;
         deprecatedLineScanner = null;
         deprecatedLines = Collections.emptySet();
         jumpLinks = Collections.emptyMap();
         loadedFilePath = null;
-        autocompleteProvider = null;
-        autocompleteValueProvider = null;
-        autocompletePopup = null;
+        completion.reset();
         editableFile = null;
-        propertiesValidator = null;
-        endpointValidator = null;
-        simpleValidator = null;
-        routeValidator = null;
-        uriCompletion = null;
-        simpleCompletion = null;
+        checks.clear();
+        noteLines = Set.of();
         cursorQuickDocProvider = null;
-        xmlCompletion = null;
-        javaCompletion = null;
     }
 
     boolean isMarkdownMode() {
@@ -548,6 +430,11 @@ class SourceViewer {
         return dirty;
     }
 
+    /** Whether the text differs from what was last loaded or saved. */
+    private boolean changedSinceSave() {
+        return originalEditText == null || !originalEditText.equals(editState.text());
+    }
+
     /** Package-private for tests that drive the edit buffer directly. */
     TextAreaState editState() {
         return editState;
@@ -558,12 +445,31 @@ class SourceViewer {
         return yaml;
     }
 
+    /** The Tab completion of the editor: SourceTab gives it the completion providers of the file it opens. */
+    SourceCompletion completion() {
+        return completion;
+    }
+
+    /** The live run data at the end of the lines in the view: SourceTab gives it where to read it from. */
+    SourceLiveColumn liveColumn() {
+        return liveColumn;
+    }
+
     boolean isEditable() {
         return editableFile != null;
     }
 
     boolean isPlainMode() {
         return plainMode;
+    }
+
+    boolean isDiscardPending() {
+        return pendingDiscard;
+    }
+
+    /** Whether a dialog over the editor has the keys (discard, the problems of a save, the diff, refactor). */
+    boolean showsDialog() {
+        return pendingDiscard || editMode && (validationErrors != null || diffOverlay || refactor.isPopupOpen());
     }
 
     /**
@@ -578,6 +484,7 @@ class SourceViewer {
      * Cancel edit mode without saving. Returns {@code true} if edit mode was active.
      */
     boolean cancelEdit() {
+        completion.dropSemanticCompletion();
         if (!editMode) {
             return false;
         }
@@ -589,12 +496,10 @@ class SourceViewer {
             validationErrors = null;
             return true;
         }
-        if (autocompletePopup != null) {
-            autocompletePopup = null;
+        if (completion.closePopup()) {
             return true;
         }
-        if (refactorPopup != null && refactorPopup.isVisible()) {
-            refactorPopup.close();
+        if (refactor.closePopup()) {
             return true;
         }
         if (pendingDiscard) {
@@ -644,6 +549,19 @@ class SourceViewer {
         goToLine(Math.min(line, Math.max(0, getLineCount() - 1)));
     }
 
+    /**
+     * Checks the file shown again, as what its checks read besides the file changed (the endpoints the other route
+     * files consume): the view is loaded again, and the editor checks its text now, as it would after the next change.
+     */
+    void recheck(Path file) {
+        if (!editMode) {
+            reloadIfShowing(file);
+        } else if (validationErrors == null && file != null && editableFile != null
+                && editableFile.toAbsolutePath().normalize().equals(file.toAbsolutePath().normalize())) {
+            inlineErrors = validateContent(editState.text());
+        }
+    }
+
     int getLineCount() {
         if (editMode) {
             return editState.lineCount();
@@ -671,33 +589,6 @@ class SourceViewer {
         return loadedFilePath;
     }
 
-    void toggleQuickDoc() {
-        if (quickDocProvider != null) {
-            quickDocEnabled = !quickDocEnabled;
-            if (quickDocEnabled) {
-                quickDocEntries = quickDocProvider.provideAll(codeData);
-                if (quickDocEntries == null) {
-                    quickDocEntries = Collections.emptyMap();
-                }
-            } else {
-                quickDocEntries = Collections.emptyMap();
-            }
-        }
-    }
-
-    private void refreshQuickDoc() {
-        if (quickDocEnabled && quickDocProvider != null && !codeData.isEmpty()) {
-            quickDocEntries = quickDocProvider.provideAll(codeData);
-            if (quickDocEntries == null) {
-                quickDocEntries = Collections.emptyMap();
-            }
-        }
-    }
-
-    void setQuickDocProvider(QuickDocProvider provider) {
-        this.quickDocProvider = provider;
-    }
-
     void setEditQuickDocProvider(EditQuickDocProvider provider) {
         this.editQuickDocProvider = provider;
     }
@@ -709,6 +600,10 @@ class SourceViewer {
     boolean handleKeyEvent(KeyEvent ke) {
         if (!visible) {
             return false;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('t') && !markdownMode) {
+            routeTreeShown = !routeTreeShown;
+            return true;
         }
         if (editMode) {
             return handleEditKeyEvent(ke);
@@ -740,23 +635,28 @@ class SourceViewer {
             goToNextProblem(viewErrors, selectedLine);
             return true;
         }
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // fix with AI: the problem of the selected line, or what fails on it at runtime
+            askAiToFix();
+            return true;
+        }
         if (isMarkdownFile && ke.isChar(' ')) {
             markdownMode = !markdownMode;
             return true;
         }
         if (markdownMode) {
             if (ke.isUp() || ke.isChar('k')) {
-                markdownScroll = Math.max(0, markdownScroll - 1);
+                scrollMarkdown(-1);
             } else if (ke.isDown() || ke.isChar('j')) {
-                markdownScroll++;
+                scrollMarkdown(1);
             } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                markdownScroll = Math.max(0, markdownScroll - 10);
+                scrollMarkdown(-10);
             } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                markdownScroll += 10;
+                scrollMarkdown(10);
             } else if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
                 markdownScroll = 0;
             } else if (ke.isEnd() || ke.isKey(KeyCode.END)) {
-                markdownScroll = Integer.MAX_VALUE;
+                markdownScroll = markdownMaxScroll;
             }
             return true;
         }
@@ -770,7 +670,6 @@ class SourceViewer {
                 }
             }
             idx = (idx + 1) % formats.length;
-            quickDocEntries = Collections.emptyMap();
             switchFormat(formats[idx]);
             return true;
         }
@@ -843,11 +742,7 @@ class SourceViewer {
     }
 
     private List<String> editLines() {
-        List<String> answer = new ArrayList<>(editState.lineCount());
-        for (int i = 0; i < editState.lineCount(); i++) {
-            answer.add(editState.getLine(i));
-        }
-        return answer;
+        return SourceEditorNavigation.lines(editState);
     }
 
     private void applyBlockEdit(YamlBlockEditor.EditResult result) {
@@ -862,6 +757,43 @@ class SourceViewer {
         // rendering will adjust if the cursor ended up off-screen.
         int maxScroll = Math.max(0, editState.lineCount() - Math.max(1, lastVisibleLines));
         editState.scrollDown(Math.min(prevScroll, maxScroll), lastVisibleLines);
+    }
+
+    /** Scrolls the markdown view by lines, within the document as far as the last render measured it. */
+    private void scrollMarkdown(int delta) {
+        long next = (long) Math.min(markdownScroll, markdownMaxScroll) + delta;
+        markdownScroll = (int) Math.max(0, Math.min(markdownMaxScroll, next));
+    }
+
+    /** Ctrl+/: comments out the block at the cursor, or brings it back when it is commented out. */
+    private void toggleComment(boolean yamlListBlocks) {
+        String marker = lineCommentMarker();
+        if (marker == null) {
+            return;
+        }
+        List<String> lines = editLines();
+        int row = editState.cursorRow();
+        YamlBlockEditor.BlockRange block = YamlBlockEditor.findCommentBlock(lines, row, yamlListBlocks, marker);
+        if (block.isEmpty()) {
+            return;
+        }
+        List<String> toggled = YamlBlockEditor.toggleComment(lines, block, marker);
+        applyBlockEdit(new YamlBlockEditor.EditResult(toggled, row, YamlBlockEditor.leadingSpaces(toggled.get(row))));
+    }
+
+    /** The line comment marker of the file in the editor, or null when it has none the editor can toggle (XML). */
+    private String lineCommentMarker() {
+        if (editableFile == null) {
+            return null;
+        }
+        String name = editableFile.getFileName().toString().toLowerCase(Locale.ROOT);
+        if (name.endsWith(".yaml") || name.endsWith(".yml") || name.endsWith(".properties")) {
+            return "#";
+        }
+        if (name.endsWith(".java") || name.endsWith(".groovy") || name.endsWith(".kt") || name.endsWith(".js")) {
+            return "//";
+        }
+        return null;
     }
 
     private void refreshEditFindMatches() {
@@ -886,8 +818,17 @@ class SourceViewer {
     }
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
+        completion.dropSemanticCompletion();
         if (validationErrors != null) {
-            if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
+            if (ke.isKey(KeyCode.F9) && ke.hasShift()) {
+                // the fix the popup offers: go to its line and apply it, as Shift+F9 does there
+                int row = popupFixRow();
+                if (row >= 0) {
+                    validationErrors = null;
+                    SourceEditorNavigation.positionCursor(editState, row, 0);
+                    applyQuickFix();
+                }
+            } else if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
                 validationErrors = null;
             } else if (ke.isUp()) {
                 validationErrorScroll = Math.max(0, validationErrorScroll - 1);
@@ -910,29 +851,10 @@ class SourceViewer {
             }
             return true;
         }
-        if (refactorPopup != null && refactorPopup.isVisible()) {
-            refactorPopup.handleKeyEvent(ke);
-            RefactorPopup.Request req = refactorPopup.consumeResult();
-            if (req != null) {
-                applyRefactoring(req);
-            }
+        if (refactor.handleKeyEvent(ke)) {
             return true;
         }
-        if (autocompletePopup != null) {
-            boolean wasValueMode = autocompletePopup.isValueMode();
-            boolean wasListItem = autocompletePopup.isListItemInsertion();
-            AutocompletePopup.Result result = autocompletePopup.handleKeyEvent(ke);
-            if (result == AutocompletePopup.Result.CLOSED) {
-                AutocompletePopup.CompletionItem item = autocompletePopup.consumeSelectedItem();
-                autocompletePopup = null;
-                if (item != null) {
-                    insertCompletion(item, wasValueMode, wasListItem);
-                }
-            } else if (result == AutocompletePopup.Result.CURSOR_RIGHT) {
-                editState.moveCursorRight();
-            } else if (result == AutocompletePopup.Result.CURSOR_LEFT) {
-                editState.moveCursorLeft();
-            }
+        if (completion.handleKeyEvent(ke)) {
             return true;
         }
         if (search.handleEditFindKeyEvent(ke)) {
@@ -944,7 +866,8 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('z') && !ke.hasShift()) {
             if (editHistory.undo(editState)) {
-                dirty = true;
+                // undone back to the saved text: not modified any more
+                dirty = changedSinceSave();
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
@@ -952,7 +875,7 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && (ke.isCharIgnoreCase('y') || (ke.isCharIgnoreCase('z') && ke.hasShift()))) {
             if (editHistory.redo(editState)) {
-                dirty = true;
+                dirty = changedSinceSave();
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
@@ -988,8 +911,13 @@ class SourceViewer {
             applyBlockEdit(YamlBlockEditor.deleteLine(editLines(), editState.cursorRow()));
             return true;
         }
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && (isCamelYamlFile() || uriCompletion != null)) {
-            openRefactorPopup();
+        if (ke.hasCtrl() && ke.isChar('/')) {
+            // terminals send Ctrl+/ as 0x1F, which TamboUI reads as Ctrl+/ since 0.5.0
+            toggleComment(yamlListBlocks);
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && (isCamelYamlFile() || completion.routeDsl() != null)) {
+            refactor.openRefactorPopup();
             return true;
         }
         if (ke.isKey(KeyCode.LEFT) && ke.hasCtrl()) {
@@ -1043,8 +971,7 @@ class SourceViewer {
             if (isCamelYamlFile() && pt.endsWith(":")) {
                 // parent key with no value — indent deeper for children
                 String key = extractEipName(pt);
-                if (listItemNodeChecker != null && key != null
-                        && listItemNodeChecker.test(dashToCamelCase(key))) {
+                if (key != null && completion.isListItemNode(dashToCamelCase(key))) {
                     // children are list items (e.g., steps:, root)
                     int childIndent = indent + (pt.startsWith("- ") ? 4 : 2);
                     editState.insert(" ".repeat(childIndent) + "- ");
@@ -1109,13 +1036,14 @@ class SourceViewer {
             yaml.moveCursorToPreviousIndentStop();
             return true;
         }
-        if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null) {
-            openAutocomplete();
+        if (ke.isKey(KeyCode.TAB) && completion.isEnabled()) {
+            completion.openAutocomplete();
             return true;
         }
-        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+        String typed = FormHelper.typedText(ke);
+        if (typed != null) {
             recordEditChange();
-            editState.insert(ke.character());
+            editState.insert(typed);
             return true;
         }
         return true;
@@ -1134,9 +1062,9 @@ class SourceViewer {
         }
         editState.moveCursorToLineStart();
         editInitialScroll = true;
+        editStartTop = markdownMode ? -1 : scrollY;
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
-        quickDocEnabled = false;
         search.closeInputOnly();
         dirty = false;
         validationErrors = null;
@@ -1184,12 +1112,8 @@ class SourceViewer {
             @Override
             public void deleteCurrentLine() {
                 recordEditChange();
-                editState.moveCursorToLineStart();
                 int current = editState.cursorRow();
-                String line = editState.getLine(current);
-                for (int i = 0; i < line.length(); i++) {
-                    editState.deleteForward();
-                }
+                SourceEditorNavigation.clearLine(editState);
                 if (current < editState.lineCount() - 1) {
                     editState.deleteForward();
                 } else if (current > 0) {
@@ -1205,12 +1129,15 @@ class SourceViewer {
     }
 
     private void exitEditMode() {
+        completion.dropSemanticCompletion();
         boolean wasEditing = editMode;
+        int cursorRow = editState.cursorRow();
+        int top = editState.scrollRow();
         editMode = false;
         editState.clear();
         editHistory.clear();
-        autocompletePopup = null;
-        refactorPopup = null;
+        completion.closePopup();
+        refactor.closePopup();
         validationErrors = null;
         inlineErrors = Collections.emptyMap();
         lastBackgroundValidationTime = 0;
@@ -1223,6 +1150,29 @@ class SourceViewer {
             markdownMode = markdownModeBeforeEdit;
         }
         markdownModeBeforeEdit = false;
+        editStartTop = -1;
+        if (wasEditing) {
+            keepEditorPosition(cursorRow, top);
+        }
+    }
+
+    /** The top line the editor opens on: the top line of the view, moved only as far as the cursor must stay seen. */
+    static int editorTopKeepingCursor(int viewTop, int cursorRow, int viewportHeight) {
+        int top = Math.min(Math.max(0, viewTop), cursorRow);
+        return Math.max(top, cursorRow - Math.max(1, viewportHeight) + 1);
+    }
+
+    /**
+     * The view continues where the editor was: the cursor line is selected and the same line is at the top, so leaving
+     * the editor does not move the code on the screen.
+     */
+    private void keepEditorPosition(int cursorRow, int top) {
+        if (lines.isEmpty()) {
+            return;
+        }
+        selectedLine = Math.min(Math.max(0, cursorRow), lines.size() - 1);
+        scrollY = Math.min(Math.max(0, top), selectedLine);
+        pendingScroll = false;
     }
 
     private boolean isPropertiesFile() {
@@ -1242,675 +1192,6 @@ class SourceViewer {
         return name.endsWith(".yaml") || name.endsWith(".yml");
     }
 
-    private void openAutocomplete() {
-        pendingUriCompletion = null;
-        pendingSimpleCompletion = null;
-        pendingXmlCompletion = null;
-        pendingJavaCompletion = null;
-        if (openSimpleAutocomplete()) {
-            return;
-        }
-        if (isCamelYamlFile()) {
-            openYamlAutocomplete();
-        } else if (uriCompletion != null) {
-            if (!openUriAutocomplete()) {
-                if ("xml".equals(uriCompletion)) {
-                    openXmlAutocomplete();
-                } else if ("java".equals(uriCompletion)) {
-                    openJavaAutocomplete();
-                }
-            }
-        } else {
-            openPropertiesAutocomplete();
-        }
-    }
-
-    /**
-     * The completion of the endpoint uri the cursor is in, in a Java or XML route: the component before the colon, an
-     * option after ? or &, its value after =. Read from the line alone, so it works while the file does not parse.
-     */
-    private boolean openUriAutocomplete() {
-        int row = editState.cursorRow();
-        int col = editState.cursorCol();
-        String line = editState.getLine(row);
-        EndpointUriContext c = "xml".equals(uriCompletion)
-                ? EndpointUriContext.inXml(line, col) : EndpointUriContext.inJava(line, col);
-        if (c == null || !c.isEndpoint() || autocompleteProvider == null) {
-            return false;
-        }
-        String before = c.before();
-        int colon = before.indexOf(':');
-        List<AutocompletePopup.CompletionItem> items;
-        String prefix;
-        String suffix;
-        if (colon < 0) {
-            items = autocompleteProvider.provide("yaml-uri:" + c.role());
-            prefix = before;
-            suffix = ":";
-        } else {
-            String scheme = before.substring(0, colon);
-            int q = before.indexOf('?');
-            if (q < 0) {
-                // the path of the uri: what goes there is the component's own
-                return true;
-            }
-            int sep = Math.max(before.lastIndexOf('?'), before.lastIndexOf('&'));
-            String segment = before.substring(sep + 1);
-            int eq = segment.indexOf('=');
-            if (eq >= 0) {
-                if (autocompleteValueProvider == null) {
-                    return true;
-                }
-                items = autocompleteValueProvider.provide("yaml:" + scheme + ":" + segment.substring(0, eq));
-                prefix = segment.substring(eq + 1);
-                suffix = "";
-            } else {
-                List<String> given = new ArrayList<>();
-                for (String pair : (sep > q ? before.substring(q + 1, sep) : "").split("&")) {
-                    if (!pair.isEmpty()) {
-                        given.add(pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair);
-                    }
-                }
-                items = autocompleteProvider.provide("yaml:" + scheme + ":" + c.role() + ":" + String.join(",", given)
-                                                     + "|" + before.substring(0, sep));
-                prefix = segment;
-                suffix = "=";
-            }
-        }
-        if (items != null && !items.isEmpty()) {
-            autocompletePopup = new AutocompletePopup(items, prefix, prefix, true);
-            if (colon < 0) {
-                autocompletePopup.setTitlePrefix("Components");
-            }
-            pendingUriCompletion = new UriCompletion(row, col, prefix, suffix);
-        }
-        return true;
-    }
-
-    /**
-     * The completion of the simple expression the cursor is in, read from the line alone like the uris: true when the
-     * cursor is in one, so no other completion is tried, also when nothing matches there.
-     */
-    private boolean openSimpleAutocomplete() {
-        if (simpleCompletion == null) {
-            return false;
-        }
-        int row = editState.cursorRow();
-        int col = editState.cursorCol();
-        List<String> all = new ArrayList<>(editState.lineCount());
-        for (int i = 0; i < editState.lineCount(); i++) {
-            all.add(editState.getLine(i));
-        }
-        SimpleCompletionContext c = SimpleCompletionContext.at(all, row, col);
-        if (c == null) {
-            return false;
-        }
-        List<AutocompletePopup.CompletionItem> items = simpleCompletion.apply(c, all);
-        if (items != null && !items.isEmpty()) {
-            // not in value mode, which puts a popup with a long description over the line being edited
-            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
-            autocompletePopup.setFullKeys(true);
-            autocompletePopup.setTitlePrefix(switch (c.kind()) {
-                case FUNCTION -> "Simple functions";
-                case HEADER -> "Headers";
-                case PROPERTY -> "Exchange properties";
-                case VARIABLE -> "Variables";
-                case OPERATOR -> "Operators";
-                case DATE_COMMAND -> "Date commands";
-                case DATE_PATTERN -> "Date patterns";
-                case TIME_ZONE -> "Time zones";
-                case BEAN -> "Beans";
-                case PROPERTY_KEY -> "Properties";
-            });
-            pendingSimpleCompletion = new SimpleCompletion(row, col, c);
-        }
-        return true;
-    }
-
-    /**
-     * Replaces the prefix the simple completion was opened on with the chosen item, and what closes it (the } of a
-     * function or name, the space after an operator) unless that is there already. A chosen header. or
-     * exchangeProperty. opens the names right away.
-     */
-    private void insertSimpleCompletion(AutocompletePopup.CompletionItem item) {
-        SimpleCompletion sc = pendingSimpleCompletion;
-        pendingSimpleCompletion = null;
-        if (editState.cursorRow() != sc.row()) {
-            return;
-        }
-        SimpleCompletionContext c = sc.context();
-        int col = editState.cursorCol();
-        for (; col < sc.endCol(); col++) {
-            editState.moveCursorRight();
-        }
-        for (; col > sc.endCol(); col--) {
-            editState.moveCursorLeft();
-        }
-        for (int i = 0; i < c.prefix().length(); i++) {
-            editState.deleteBackward();
-        }
-        // Tab in the middle of a word replaces all of it
-        String line = editState.getLine(sc.row());
-        int from = editState.cursorCol();
-        int end = from;
-        while (end < line.length() && isSimpleWordChar(line.charAt(end), c.kind())) {
-            end++;
-        }
-        for (int i = from; i < end; i++) {
-            editState.deleteForward();
-        }
-        String text = item.insertText();
-        String closing = c.closing();
-        if (c.kind() == SimpleCompletionContext.Kind.FUNCTION && text.endsWith("}")) {
-            text = text.substring(0, text.length() - 1);
-            closing = "}";
-        }
-        boolean hasClosing = !closing.isEmpty() && line.startsWith(closing, end);
-        editState.insert(text + (hasClosing ? "" : closing));
-        boolean stem = c.kind() == SimpleCompletionContext.Kind.FUNCTION
-                && (text.endsWith(".") || text.endsWith("[") || text.endsWith(":") || text.endsWith("("));
-        if (stem || c.kind() == SimpleCompletionContext.Kind.TIME_ZONE) {
-            // header. opens the header names, date: the date commands, bean: the beans, a time zone the patterns;
-            // only the simple completion, nothing else when the function has no values to offer
-            openSimpleAutocomplete();
-        }
-    }
-
-    /** A character of the function, name or operator being completed. */
-    private static boolean isSimpleWordChar(char c, SimpleCompletionContext.Kind kind) {
-        return switch (kind) {
-            case OPERATOR -> !Character.isWhitespace(c) && c != '$' && c != '\'' && c != '"';
-            case FUNCTION, HEADER, PROPERTY, VARIABLE ->
-                Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.' || c == ':';
-            // the argument only: the .method after a bean, the :pattern after a date command stay
-            case PROPERTY_KEY -> Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.';
-            case DATE_PATTERN -> c != '}' && c != ')' && c != '"' && c != '\'';
-            default -> Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '/';
-        };
-    }
-
-    /**
-     * The completion of the XML DSL at the cursor, read from the text above it like the uris: the elements after &lt;
-     * or on an empty line, the attributes in a start tag, the values in an attribute.
-     */
-    private void openXmlAutocomplete() {
-        if (xmlCompletion == null) {
-            return;
-        }
-        int row = editState.cursorRow();
-        int col = editState.cursorCol();
-        List<String> all = new ArrayList<>(editState.lineCount());
-        for (int i = 0; i < editState.lineCount(); i++) {
-            all.add(editState.getLine(i));
-        }
-        XmlCompletionContext c = XmlCompletionContext.at(all, row, col);
-        if (c == null) {
-            return;
-        }
-        List<AutocompletePopup.CompletionItem> items = xmlCompletion.apply(c, all);
-        if (items != null && !items.isEmpty()) {
-            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
-            autocompletePopup.setFullKeys(true);
-            autocompletePopup.setTitlePrefix(switch (c.kind()) {
-                case ELEMENT -> c.parent() != null ? "Inside " + c.parent() : "Elements";
-                case ATTRIBUTE -> c.element() + " attributes";
-                case VALUE -> c.attribute();
-            });
-            pendingXmlCompletion = new XmlCompletion(row, col, c);
-        }
-    }
-
-    /**
-     * Replaces the prefix the XML completion was opened on with the chosen element, attribute or value, and puts the
-     * cursor where the snippet says (in the first required attribute, inside the new element, in the quotes of the new
-     * attribute, whose values open right away).
-     */
-    private void insertXmlCompletion(AutocompletePopup.CompletionItem item) {
-        XmlCompletion xc = pendingXmlCompletion;
-        pendingXmlCompletion = null;
-        if (editState.cursorRow() != xc.row()) {
-            return;
-        }
-        XmlCompletionContext c = xc.context();
-        int col = editState.cursorCol();
-        for (; col < xc.endCol(); col++) {
-            editState.moveCursorRight();
-        }
-        for (; col > xc.endCol(); col--) {
-            editState.moveCursorLeft();
-        }
-        for (int i = 0; i < c.prefix().length(); i++) {
-            editState.deleteBackward();
-        }
-        // Tab in the middle of a name replaces all of it
-        String line = editState.getLine(xc.row());
-        int from = editState.cursorCol();
-        int end = from;
-        boolean value = c.kind() == XmlCompletionContext.Kind.VALUE;
-        while (end < line.length() && (value
-                ? line.charAt(end) != '"' && line.charAt(end) != '\''
-                : Character.isLetterOrDigit(line.charAt(end)) || line.charAt(end) == '-')) {
-            end++;
-        }
-        for (int i = from; i < end; i++) {
-            editState.deleteForward();
-        }
-        String text = item.insertText();
-        int caret = text.indexOf(XmlCompletions.CARET);
-        if (caret >= 0) {
-            text = text.substring(0, caret) + text.substring(caret + 1);
-        }
-        editState.insert(text);
-        for (int i = caret >= 0 ? text.length() - caret : 0; i > 0; i--) {
-            editState.moveCursorLeft();
-        }
-        if (c.kind() == XmlCompletionContext.Kind.ATTRIBUTE) {
-            openAutocomplete();
-        }
-    }
-
-    /** The completion of the Java DSL route chain after a dot, read from the text above the cursor like the uris. */
-    private void openJavaAutocomplete() {
-        if (javaCompletion == null) {
-            return;
-        }
-        int row = editState.cursorRow();
-        int col = editState.cursorCol();
-        List<String> all = new ArrayList<>(editState.lineCount());
-        for (int i = 0; i < editState.lineCount(); i++) {
-            all.add(editState.getLine(i));
-        }
-        JavaChainContext c = JavaChainContext.at(all, row, col);
-        if (c == null) {
-            return;
-        }
-        List<AutocompletePopup.CompletionItem> items = javaCompletion.apply(c);
-        if (items != null && !items.isEmpty()) {
-            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
-            autocompletePopup.setFullKeys(true);
-            autocompletePopup.setTitlePrefix("Java DSL");
-            pendingJavaCompletion = new JavaCompletion(row, col, c);
-        }
-    }
-
-    /**
-     * Replaces the name typed after the dot with the chosen method, with its parentheses (the cursor inside them when
-     * it takes arguments) unless they follow already.
-     */
-    private void insertJavaCompletion(AutocompletePopup.CompletionItem item) {
-        JavaCompletion jc = pendingJavaCompletion;
-        pendingJavaCompletion = null;
-        if (editState.cursorRow() != jc.row()) {
-            return;
-        }
-        int col = editState.cursorCol();
-        for (; col < jc.endCol(); col++) {
-            editState.moveCursorRight();
-        }
-        for (; col > jc.endCol(); col--) {
-            editState.moveCursorLeft();
-        }
-        for (int i = 0; i < jc.context().prefix().length(); i++) {
-            editState.deleteBackward();
-        }
-        String line = editState.getLine(jc.row());
-        int from = editState.cursorCol();
-        int end = from;
-        while (end < line.length() && Character.isJavaIdentifierPart(line.charAt(end))) {
-            end++;
-        }
-        for (int i = from; i < end; i++) {
-            editState.deleteForward();
-        }
-        String text = item.insertText();
-        int caret = text.indexOf(XmlCompletions.CARET);
-        if (caret >= 0) {
-            text = text.substring(0, caret) + text.substring(caret + 1);
-        }
-        if (end < line.length() && line.charAt(end) == '(') {
-            // the arguments are there already: only the name changes
-            text = item.key();
-            caret = -1;
-        }
-        editState.insert(text);
-        for (int i = caret >= 0 ? text.length() - caret : 0; i > 0; i--) {
-            editState.moveCursorLeft();
-        }
-    }
-
-    /** Replaces the prefix the completion was opened on with the chosen item and what follows it (: or =). */
-    private void insertUriCompletion(AutocompletePopup.CompletionItem item) {
-        UriCompletion jc = pendingUriCompletion;
-        pendingUriCompletion = null;
-        if (editState.cursorRow() != jc.row()) {
-            return;
-        }
-        // the arrows move the cursor within the prefix while the popup is open: back to its end
-        int col = editState.cursorCol();
-        for (; col < jc.endCol(); col++) {
-            editState.moveCursorRight();
-        }
-        for (; col > jc.endCol(); col--) {
-            editState.moveCursorLeft();
-        }
-        for (int i = 0; i < jc.prefix().length(); i++) {
-            editState.deleteBackward();
-        }
-        // Tab in the middle of a word replaces all of it: the rest of the name after the cursor goes too
-        String line = editState.getLine(jc.row());
-        int from = editState.cursorCol();
-        int end = from;
-        while (end < line.length() && isUriWordChar(line.charAt(end), jc.suffix())) {
-            end++;
-        }
-        for (int i = from; i < end; i++) {
-            editState.deleteForward();
-        }
-        // the : or = the name is followed by is not doubled when it is there already
-        boolean hasSuffix = !jc.suffix().isEmpty() && line.startsWith(jc.suffix(), end);
-        editState.insert(item.key() + (hasSuffix ? "" : jc.suffix()));
-    }
-
-    /** A character of the name or value being completed: up to the : of a component, the = of an option, the & or ". */
-    private static boolean isUriWordChar(char c, String suffix) {
-        if (suffix.isEmpty()) {
-            return c != '&' && c != '"' && c != '\'' && c != '\\';
-        }
-        return Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.';
-    }
-
-    private void openPropertiesAutocomplete() {
-        String lineText = editState.getLine(editState.cursorRow());
-        int col = editState.cursorCol();
-        String textBeforeCursor = col <= lineText.length() ? lineText.substring(0, col) : lineText;
-
-        int eq = textBeforeCursor.indexOf('=');
-        if (eq >= 0 && autocompleteValueProvider != null) {
-            // cursor is after '=' — try value completion
-            String key = textBeforeCursor.substring(0, eq).trim();
-            String valuePrefix = textBeforeCursor.substring(eq + 1).trim();
-            List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(key);
-            if (values != null && !values.isEmpty()) {
-                autocompletePopup = new AutocompletePopup(values, valuePrefix, valuePrefix, true);
-            }
-            return;
-        }
-
-        // key completion
-        String prefix = textBeforeCursor.trim();
-
-        // load all options for the group (up to last dot) so the full list is available
-        int lastDot = prefix.lastIndexOf('.');
-        String groupPrefix = lastDot >= 0 ? prefix.substring(0, lastDot + 1) : prefix;
-
-        // extract full key text for left/right cursor navigation
-        String fullKey = lineText;
-        int eqFull = fullKey.indexOf('=');
-        if (eqFull >= 0) {
-            fullKey = fullKey.substring(0, eqFull);
-        }
-        fullKey = fullKey.trim();
-
-        List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(groupPrefix);
-        if (items != null && !items.isEmpty()) {
-            autocompletePopup = new AutocompletePopup(items, prefix, fullKey);
-        }
-    }
-
-    private void openYamlAutocomplete() {
-        int row = editState.cursorRow();
-        if (yaml.findScopeLineRow(row) < 0) {
-            return;
-        }
-        String lineText = editState.getLine(row);
-        String trimmed = lineText.trim();
-        if (trimmed.startsWith("- ")) {
-            trimmed = trimmed.substring(2).trim();
-        } else if (trimmed.equals("-")) {
-            trimmed = "";
-        }
-
-        // try component name completion on uri: lines first
-        YamlUriContext uriCtx = yaml.findUriContext(row);
-        if (uriCtx != null && autocompleteProvider != null) {
-            String role = uriCtx.consumer() ? "consumer" : "producer";
-            String context = "yaml-uri:" + role;
-            List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
-            if (items != null && !items.isEmpty()) {
-                autocompletePopup = new AutocompletePopup(items, uriCtx.prefix(), uriCtx.prefix(), true);
-                autocompletePopup.setTitlePrefix("Components");
-            }
-            return;
-        }
-
-        YamlEndpointContext ctx = yaml.findEnclosingComponent(row);
-        if (ctx != null) {
-            int colonIdx = trimmed.indexOf(':');
-            if (colonIdx > 0) {
-                String optionName = trimmed.substring(0, colonIdx).trim();
-                String valueText = trimmed.substring(colonIdx + 1).trim();
-                if (valueText.startsWith("\"") || valueText.startsWith("'")) {
-                    valueText = valueText.substring(1);
-                }
-                if (valueText.endsWith("\"") || valueText.endsWith("'")) {
-                    valueText = valueText.substring(0, valueText.length() - 1);
-                }
-                if (autocompleteValueProvider != null) {
-                    String context = "yaml:" + ctx.component() + ":" + optionName;
-                    List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
-                    if (values != null && !values.isEmpty()) {
-                        autocompletePopup = new AutocompletePopup(values, "", valueText, true);
-                    }
-                }
-            } else {
-                // auto-insert parameters: block if cursor is below uri: without one
-                if (ctx.needsParameters() && lineText.isBlank()) {
-                    // parameters: must be a sibling of uri:, so use the cursor's real column
-                    // (matching uri:'s indent via Enter-key auto-indent) rather than
-                    // deriveInsertionIndent's EIP-scope heuristic, which resolves the scope to
-                    // the uri: line itself here and then adds a level, nesting parameters: one
-                    // level too deep and breaking findEnclosingComponent's uri-sibling lookup
-                    int indent = yaml.effectiveBlankIndent(row);
-                    String indentStr = " ".repeat(indent);
-                    editState.moveCursorToLineStart();
-                    editState.insert(indentStr + "parameters:");
-                    editState.insert('\n');
-                    editState.insert(indentStr + "  ");
-                    dirty = true;
-                    trimmed = "";
-                }
-
-                String filter = trimmed;
-                String role = ctx.consumer() ? "consumer" : "producer";
-                java.util.Set<String> existing = yaml.collectExistingParameters(editState.cursorRow());
-                String context = "yaml:" + ctx.component() + ":" + role;
-                if (!existing.isEmpty()) {
-                    context += ":" + String.join(",", existing);
-                }
-                if (ctx.uri() != null) {
-                    context += "|" + ctx.uri();
-                }
-                List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
-                if (items != null && !items.isEmpty()) {
-                    autocompletePopup = new AutocompletePopup(items, filter, filter);
-                    autocompletePopup.setTitlePrefix(ctx.component() + " options");
-                }
-            }
-            return;
-        }
-
-        // Tree completion uses the full YAML path so named map entries retain their schema context.
-        if (autocompleteProvider != null) {
-            String parentKey = yaml.findParentYamlKey(row);
-            String parentPath = yaml.findParentYamlPath(row);
-            int colonIdx = trimmed.indexOf(':');
-
-            if (colonIdx > 0) {
-                // value completion
-                String optionName = trimmed.substring(0, colonIdx).trim();
-                String valueText = trimmed.substring(colonIdx + 1).trim();
-                if (valueText.startsWith("\"") || valueText.startsWith("'")) {
-                    valueText = valueText.substring(1);
-                }
-                if (valueText.endsWith("\"") || valueText.endsWith("'")) {
-                    valueText = valueText.substring(0, valueText.length() - 1);
-                }
-                if (autocompleteValueProvider != null) {
-                    String context = "yaml-tree-value:" + parentPath + ":" + optionName;
-                    List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
-                    if (values != null && !values.isEmpty()) {
-                        autocompletePopup = new AutocompletePopup(values, "", valueText, true);
-                    }
-                }
-            } else {
-                // key completion
-                String filter = trimmed;
-                java.util.Set<String> existing = yaml.collectExistingSiblingKeys(row);
-                String context = "yaml-tree:" + parentPath;
-                if (!existing.isEmpty()) {
-                    context += ":" + String.join(",", existing);
-                }
-                List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
-                if (items != null && !items.isEmpty()) {
-                    autocompletePopup = new AutocompletePopup(items, filter, filter);
-                    autocompletePopup.setTitlePrefix(parentKey);
-                    if (listItemNodeChecker != null && listItemNodeChecker.test(parentKey)) {
-                        autocompletePopup.setListItemInsertion(true);
-                    }
-                }
-            }
-        }
-    }
-
-    private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, boolean listItem) {
-        recordEditChange();
-        if (pendingUriCompletion != null) {
-            insertUriCompletion(item);
-            return;
-        }
-        if (pendingSimpleCompletion != null) {
-            insertSimpleCompletion(item);
-            return;
-        }
-        if (pendingXmlCompletion != null) {
-            insertXmlCompletion(item);
-            return;
-        }
-        if (pendingJavaCompletion != null) {
-            insertJavaCompletion(item);
-            return;
-        }
-        String currentLine = editState.getLine(editState.cursorRow());
-        if (isCamelYamlFile()) {
-            insertYamlCompletion(item, valueMode, currentLine, listItem);
-        } else {
-            insertPropertiesCompletion(item, valueMode, currentLine);
-        }
-    }
-
-    private void insertPropertiesCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
-        if (valueMode) {
-            int eq = currentLine.indexOf('=');
-            if (eq >= 0) {
-                String keyPart = currentLine.substring(0, eq + 1);
-                editState.moveCursorToLineStart();
-                for (int i = 0; i < currentLine.length(); i++) {
-                    editState.deleteForward();
-                }
-                editState.insert(keyPart + item.key());
-            }
-        } else {
-            editState.moveCursorToLineStart();
-            for (int i = 0; i < currentLine.length(); i++) {
-                editState.deleteForward();
-            }
-            boolean isGroup = item.key().endsWith(".");
-            String insertText = isGroup ? item.key() : item.key() + "=";
-            editState.insert(insertText);
-            if (isGroup && autocompleteProvider != null) {
-                openAutocomplete();
-            }
-        }
-    }
-
-    void insertYamlCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
-        // no explicit cursor column given (e.g. direct test calls) — assume the cursor sits at
-        // the end of the given line, matching this method's original, column-agnostic behavior
-        insertYamlCompletion(item, valueMode, currentLine, false, currentLine.length());
-    }
-
-    private void insertYamlCompletion(
-            AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine, boolean listItem) {
-        insertYamlCompletion(item, valueMode, currentLine, listItem, editState.cursorCol());
-    }
-
-    /** Package-private (rather than private) so tests can exercise an explicit cursor column. */
-    void insertYamlCompletion(
-            AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine, boolean listItem,
-            int cursorCol) {
-        int indent;
-        if (currentLine.isEmpty()) {
-            // truly empty line (no auto-inserted whitespace yet) — derive from the enclosing EIP
-            indent = yaml.deriveInsertionIndent(editState.cursorRow());
-        } else if (currentLine.isBlank()) {
-            // whitespace-only line: the cursor's column is the real, intended nesting depth —
-            // Shift+Tab (see yaml.moveCursorToPreviousIndentStop()) can dedent it within the existing
-            // whitespace without trimming the line, so the line's own length would be stale here
-            indent = Math.min(cursorCol, currentLine.length());
-        } else {
-            indent = countLeadingSpaces(currentLine);
-        }
-        String indentStr = " ".repeat(indent);
-
-        editState.moveCursorToLineStart();
-        for (int i = 0; i < currentLine.length(); i++) {
-            editState.deleteForward();
-        }
-
-        if (valueMode) {
-            String trimmed = currentLine.trim();
-            if (trimmed.startsWith("- ")) {
-                trimmed = trimmed.substring(2).trim();
-            }
-            int colonIdx = trimmed.indexOf(':');
-            String value = item.key();
-            if (value.contains("{{")) {
-                value = "\"" + value + "\"";
-            }
-            if (colonIdx > 0) {
-                String keyPart = trimmed.substring(0, colonIdx);
-                editState.insert(indentStr + keyPart + ": " + value);
-            } else {
-                editState.insert(indentStr + value);
-            }
-            // for component names, add parameters: block if not already present
-            if ("component".equals(item.type())) {
-                int nextRow = editState.cursorRow() + 1;
-                boolean hasParameters = nextRow < editState.lineCount()
-                        && editState.getLine(nextRow).trim().startsWith("parameters:");
-                if (!hasParameters) {
-                    editState.insert('\n');
-                    editState.insert(indentStr + "parameters:");
-                    editState.insert('\n');
-                    editState.insert(indentStr + "  ");
-                }
-            }
-        } else {
-            String prefix = listItem ? "- " : "";
-            editState.insert(indentStr + prefix + item.key() + ":");
-            if ("array".equals(item.type())) {
-                editState.insert('\n');
-                int childIndent = indent + (listItem ? 4 : 2);
-                editState.insert(" ".repeat(childIndent) + "- ");
-            } else if ("object".equals(item.type())) {
-                editState.insert('\n');
-                editState.insert(indentStr + (listItem ? "    " : "  "));
-            } else {
-                editState.insert(' ');
-            }
-        }
-    }
-
     private void saveEdit() {
         if (!editMode || editableFile == null) {
             return;
@@ -1923,13 +1204,18 @@ class SourceViewer {
             }
             Files.writeString(editableFile, content, StandardCharsets.UTF_8);
             dirty = false;
+            originalEditText = content;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
+            int cursorRow = editState.cursorRow();
+            int top = editState.scrollRow();
             notifySaved(editableFile);
             editMode = false;
             editState.clear();
             markdownModeBeforeEdit = false;
+            editStartTop = -1;
             loadFile(path);
+            keepEditorPosition(cursorRow, top);
             if (isMarkdownFile) {
                 markdownMode = restoreMarkdownMode;
             }
@@ -1959,51 +1245,24 @@ class SourceViewer {
     }
 
     private void validateAndNotify(String content) {
-        routeProblems = List.of();
-        if (validateOnSave && isCamelYamlFile()) {
-            List<String> msgs = new ArrayList<>();
-            msgs.addAll(SourceValidationSupport.formatSchemaErrors(validateYaml(content), content));
-            if (endpointValidator != null) {
-                List<String> endpointErrors = endpointValidator.validate(content);
-                if (endpointErrors != null) {
-                    msgs.addAll(endpointErrors);
-                }
-            }
-            if (simpleValidator != null) {
-                List<String> simpleErrors = simpleValidator.validate(content);
-                if (simpleErrors != null) {
-                    msgs.addAll(simpleErrors);
-                }
-            }
-            if (!msgs.isEmpty()) {
-                validationErrors = msgs;
-                validationErrorScroll = 0;
-                inlineErrors = buildInlineErrors(msgs, content);
-                return;
-            }
-        } else if (validateOnSave && isPropertiesFile() && propertiesValidator != null) {
-            List<String> msgs = validateProperties(content);
-            if (!msgs.isEmpty()) {
-                validationErrors = msgs;
-                validationErrorScroll = 0;
-                inlineErrors = buildInlineErrors(msgs, content);
-                return;
-            }
-        } else if (validateOnSave && routeValidator != null) {
-            List<String> msgs = routeValidator.validate(content);
-            msgs = msgs != null ? msgs : List.of();
-            inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
-            if (isXmlFile() && !msgs.isEmpty()) {
-                // XML routes as YAML routes: the problems are shown and the file is not saved
-                validationErrors = msgs;
-                validationErrorScroll = 0;
-            } else {
-                // Java: marked, and said when saved, but not blocking the save
-                routeProblems = msgs;
-            }
-            return;
+        SourceChecks.Found found = validateOnSave ? checks.checkOnSave(kind(), content) : SourceChecks.Found.NONE;
+        inlineErrors = found.byLine(content);
+        noteLines = found.noteLines(content);
+        if (found.blocksSave(kind())) {
+            validationErrors = found.errors();
+            validationErrorScroll = 0;
+            routeProblems = List.of();
+        } else {
+            // a note, or the problems of a Java file: marked, and said when saved, but not blocking the save
+            routeProblems = found.all();
         }
-        inlineErrors = Collections.emptyMap();
+    }
+
+    /** The kind of the file edited, for its checks. */
+    private SourceChecks.Kind kind() {
+        return isCamelYamlFile() ? SourceChecks.Kind.YAML
+                : isPropertiesFile() ? SourceChecks.Kind.PROPERTIES
+                : isXmlFile() ? SourceChecks.Kind.XML : SourceChecks.Kind.OTHER;
     }
 
     /** The notice of a save: the file, and the Camel problems of a Java or XML route file when it has some. */
@@ -2017,6 +1276,18 @@ class SourceViewer {
         }
     }
 
+    /** The first line with a problem that has a fix, for the popup of a save it blocked; -1 for none. */
+    private int popupFixRow() {
+        for (Map.Entry<Integer, String> e : new java.util.TreeMap<>(visibleInlineErrors()).entrySet()) {
+            int row = e.getKey();
+            if (row >= 0 && row < editState.lineCount()
+                    && QuickFixes.fixFor(e.getValue(), editState.getLine(row)) != null) {
+                return row;
+            }
+        }
+        return -1;
+    }
+
     /** The fix of the problem on the line of the cursor, when the problem says it; null otherwise. */
     private QuickFixes.Fix cursorFix() {
         int row = editState.cursorRow();
@@ -2025,14 +1296,24 @@ class SourceViewer {
     }
 
     /**
-     * Asks the AI to fix the problem of the cursor line (Shift+F8): the file is saved as it is in the editor, which the
-     * AI is about to change, edit mode left so the editor shows what the AI sees, and the AI panel opened with the
-     * question in its input, for the user to send with Enter or change first.
+     * Asks the AI to fix the problem of the cursor line (Shift+F8), or when it has none, the line whose processors fail
+     * at runtime: the file is saved as it is in the editor, which the AI is about to change, edit mode left so the
+     * editor shows what the AI sees, and the AI panel opened with the question in its input, for the user to send with
+     * Enter or change first.
      */
     private void askAiToFix() {
+        if (askAi == null || editableFile == null) {
+            return;
+        }
+        if (!editMode) {
+            askAiToFixInView();
+            return;
+        }
         int row = editState.cursorRow();
         String problem = visibleInlineErrors().get(row);
-        if (askAi == null || editableFile == null || problem == null) {
+        // a runtime failure is only known for the saved file (null while dirty), so it needs no save
+        String failure = problem == null ? liveColumn.runtimeFailure(row) : null;
+        if (problem == null && failure == null) {
             return;
         }
         String lineText = editState.getLine(row);
@@ -2049,7 +1330,52 @@ class SourceViewer {
         exitEditMode();
         loadFile(file);
         goToLine(row);
-        askAi.fixProblem(file, row + 1, problem, lineText);
+        if (problem != null) {
+            askAi.fixProblem(file, row + 1, problem, lineText);
+        } else {
+            askAi.fixFailure(file, row + 1, failure, lineText);
+        }
+    }
+
+    /**
+     * Shift+F8 in the view, as in the editor: the problem of the selected line, or else its runtime failure, while the
+     * view shows the file's own source (not the route converted to another DSL).
+     */
+    private void askAiToFixInView() {
+        int row = selectedLine;
+        if (row < 0 || row >= lines.size() || !showsOwnSource()) {
+            return;
+        }
+        // the view renders the lines (line numbers, live data), so the text comes from the file, which the view shows
+        String lineText = RuntimeFailures.lineText(editableFile, row);
+        String problem = viewErrors.get(row);
+        if (problem != null) {
+            askAi.fixProblem(editableFile, row + 1, problem, lineText);
+            return;
+        }
+        String failure = liveColumn.runtimeFailure(row);
+        if (failure != null) {
+            askAi.fixFailure(editableFile, row + 1, failure, lineText);
+        }
+    }
+
+    /** Whether the view shows the file's own source, and not its route converted to another DSL (Space). */
+    private boolean showsOwnSource() {
+        return !markdownMode && (currentFormat == null || currentFormat.equals(originalFormat));
+    }
+
+    /**
+     * Whether the view shows the fix with AI hint (Shift+F8) for the selected line: the Source tab puts it with the
+     * global F-keys.
+     */
+    boolean showsFixWithAiHint() {
+        return visible && !editMode && showsOwnSource() && canAskAiToFix(selectedLine, viewErrors);
+    }
+
+    /** Whether Shift+F8 (fix with AI) has something to ask about on a 0-based line: a problem, or a runtime failure. */
+    private boolean canAskAiToFix(int row, Map<Integer, String> problems) {
+        return askAi != null && editableFile != null && row >= 0
+                && (problems.containsKey(row) || liveColumn.failsAtRuntime(row));
     }
 
     /** Applies the fix of the problem on the line of the cursor (Shift+F9), and checks the content again right away. */
@@ -2065,16 +1391,24 @@ class SourceViewer {
         if (fixed == null) {
             return;
         }
-        recordEditChange();
-        editState.moveCursorToLineStart();
-        for (int i = 0; i < line.length(); i++) {
-            editState.deleteForward();
+        if (fix.removesLine()) {
+            // an unused dependency of a Kamelet: the line goes, as with Ctrl+K, and the dependencies: key above it
+            // when it was the last one
+            int[] range = QuickFixes.linesToRemove(editLines(), row);
+            List<String> kept = new ArrayList<>(editLines());
+            kept.subList(range[0], range[1] + 1).clear();
+            applyBlockEdit(new YamlBlockEditor.EditResult(kept, Math.min(range[0], Math.max(0, kept.size() - 1)), 0));
+            dirty = true;
+            lineStatuses = null;
+            lastBackgroundValidationTime = 0;
+            notifySave("Fixed: " + fix.label(), false);
+            return;
         }
+        recordEditChange();
+        SourceEditorNavigation.clearLine(editState);
         editState.insert(fixed);
         editState.moveCursorToLineStart();
-        for (int i = 0; i < Math.min(col, fixed.length()); i++) {
-            editState.moveCursorRight();
-        }
+        SourceEditorNavigation.moveToColumn(editState, col);
         dirty = true;
         lineStatuses = null;
         // the problem is gone: check again now, not at the next interval
@@ -2107,7 +1441,7 @@ class SourceViewer {
         if (!dirty || validationErrors != null) {
             return;
         }
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - lastBackgroundValidationTime < BACKGROUND_VALIDATION_INTERVAL_MS) {
             return;
         }
@@ -2118,35 +1452,38 @@ class SourceViewer {
         lastBackgroundValidationTime = now;
         lastBackgroundValidationContent = content;
 
-        List<String> msgs = validateContent(content);
-        inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+        inlineErrors = validateContent(content);
     }
 
-    /** The problems the checks of the file type (Camel YAML, properties, Java or XML routes) find in the content. */
-    private List<String> validateContent(String content) {
-        List<String> msgs = new ArrayList<>();
-        if (isCamelYamlFile()) {
-            if (endpointValidator != null) {
-                List<String> endpointErrors = endpointValidator.validate(content);
-                if (endpointErrors != null) {
-                    msgs.addAll(endpointErrors);
-                }
-            }
-            if (simpleValidator != null) {
-                List<String> simpleErrors = simpleValidator.validate(content);
-                if (simpleErrors != null) {
-                    msgs.addAll(simpleErrors);
-                }
-            }
-        } else if (isPropertiesFile() && propertiesValidator != null) {
-            msgs.addAll(validateProperties(content));
-        } else if (routeValidator != null) {
-            List<String> routeErrors = routeValidator.validate(content);
-            if (routeErrors != null) {
-                msgs.addAll(routeErrors);
+    /** The problems the checks of the file type find in the content, by line; the lines of the notes are kept apart. */
+    private Map<Integer, String> validateContent(String content) {
+        SourceChecks.Found found = checks.check(kind(), content);
+        noteLines = found.noteLines(content);
+        return found.byLine(content);
+    }
+
+    /** The title spans counting the problems of the lines: the errors, and apart from them the notes. */
+    private List<Span> problemCounts(Map<Integer, String> problems, Style errorStyle) {
+        List<Span> spans = new ArrayList<>();
+        int notes = 0;
+        for (Integer line : problems.keySet()) {
+            if (noteLines.contains(line)) {
+                notes++;
             }
         }
-        return msgs;
+        int errors = problems.size() - notes;
+        if (errors > 0) {
+            spans.add(Span.styled(" errors: " + errors + " ", errorStyle));
+        }
+        if (notes > 0) {
+            spans.add(Span.styled(" notes: " + notes + " ", Theme.warning()));
+        }
+        return spans;
+    }
+
+    /** Package-private for tests: the lines, from 0, whose problem is a note. */
+    Set<Integer> noteLines() {
+        return noteLines;
     }
 
     /** The problems of the file just loaded, by line; none when the checks fail or do not apply. */
@@ -2155,8 +1492,7 @@ class SourceViewer {
             return Collections.emptyMap();
         }
         try {
-            List<String> msgs = validateContent(content);
-            return msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+            return validateContent(content);
         } catch (RuntimeException e) {
             return Collections.emptyMap();
         }
@@ -2190,21 +1526,6 @@ class SourceViewer {
         return visible != null ? visible : inlineErrors;
     }
 
-    private List<String> validateProperties(String content) {
-        return SourceValidationSupport.validatePropertiesLines(content, propertiesValidator::validate);
-    }
-
-    private List<Error> validateYaml(String content) {
-        try {
-            if (yamlValidator == null) {
-                yamlValidator = new org.apache.camel.dsl.yaml.validator.YamlValidator();
-            }
-            return yamlValidator.validate(content);
-        } catch (Exception e) {
-            return List.of();
-        }
-    }
-
     private void notifySave(String message, boolean error) {
         if (notificationCallback != null) {
             notificationCallback.accept(message, error);
@@ -2231,17 +1552,7 @@ class SourceViewer {
             return false;
         }
         if (editMode) {
-            if (autocompletePopup != null) {
-                boolean wasValueMode = autocompletePopup.isValueMode();
-                boolean wasListItem = autocompletePopup.isListItemInsertion();
-                AutocompletePopup.Result result = autocompletePopup.handleMouseEvent(me);
-                if (result == AutocompletePopup.Result.CLOSED) {
-                    AutocompletePopup.CompletionItem item = autocompletePopup.consumeSelectedItem();
-                    autocompletePopup = null;
-                    if (item != null) {
-                        insertCompletion(item, wasValueMode, wasListItem);
-                    }
-                }
+            if (completion.handleMouseEvent(me)) {
                 return true;
             }
             if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -2257,11 +1568,11 @@ class SourceViewer {
         }
         if (markdownMode) {
             if (me.kind() == MouseEventKind.SCROLL_UP) {
-                markdownScroll = Math.max(0, markdownScroll - 3);
+                scrollMarkdown(-3);
                 return true;
             }
             if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-                markdownScroll += 3;
+                scrollMarkdown(3);
                 return true;
             }
             return true;
@@ -2291,6 +1602,7 @@ class SourceViewer {
     }
 
     void handlePaste(String text) {
+        completion.dropSemanticCompletion();
         if (editMode) {
             if (search.isSearchInputActive()) {
                 search.handlePaste(text);
@@ -2304,11 +1616,7 @@ class SourceViewer {
                 if (current != null && current.isBlank() && !current.isEmpty()) {
                     // strip the blank line's leading whitespace (e.g. from ENTER auto-indent) so the
                     // reindented block's own indent is not stacked on top of it
-                    editState.moveCursorToLineStart();
-                    int n = current.length();
-                    for (int i = 0; i < n; i++) {
-                        editState.deleteForward();
-                    }
+                    SourceEditorNavigation.clearLine(editState);
                 }
                 editState.insert(adjusted);
             }
@@ -2318,6 +1626,24 @@ class SourceViewer {
     }
 
     void render(Frame frame, Rect area) {
+        completion.refreshSemanticCompletion();
+        renderContent(frame, area);
+        if (routeTreeShown && !markdownMode && !diffOverlay) {
+            if (editMode) {
+                List<String> text = Arrays.asList(editState.text().split("\n", -1));
+                String name = editableFile != null ? editableFile.getFileName().toString() : title;
+                routeTree.render(frame, area, text, name, editState.cursorRow());
+            } else {
+                String name = currentRouteId != null ? "route." + currentFormat : title;
+                // the code without the line numbers of the view
+                List<String> code = codeData != null
+                        ? codeData.stream().map(c -> c.getStringOrDefault("code", "")).toList() : List.of();
+                routeTree.render(frame, area, code, name, selectedLine);
+            }
+        }
+    }
+
+    private void renderContent(Frame frame, Rect area) {
         if (editMode) {
             renderEditMode(frame, area);
             return;
@@ -2330,14 +1656,15 @@ class SourceViewer {
                 bb.borderStyle(borderStyle);
             }
             Block block = bb.build();
-            MarkdownView view = MarkdownView.builder()
+            MarkdownView.Builder viewBuilder = MarkdownView.builder()
                     .source(rawMarkdownContent)
-                    .scroll(markdownScroll)
-                    .block(block)
                     .styles(Theme.markdownStyles())
-                    .syntaxTheme(Theme.syntaxTheme())
-                    .build();
-            frame.renderWidget(view, area);
+                    .syntaxTheme(Theme.syntaxTheme());
+            // the scroll stays within the document, so End, then Up or PgUp, move from the end at once
+            Rect inner = block.inner(area);
+            markdownMaxScroll = Math.max(0, viewBuilder.build().computeHeight(inner.width()) - inner.height());
+            markdownScroll = Math.max(0, Math.min(markdownScroll, markdownMaxScroll));
+            frame.renderWidget(viewBuilder.scroll(markdownScroll).block(block).build(), area);
             return;
         }
 
@@ -2418,10 +1745,7 @@ class SourceViewer {
             if (selectedLine < scrollY) {
                 scrollY = selectedLine;
             } else if (wordWrap) {
-                while (scrollY < selectedLine
-                        && countVisualRows(scrollY, selectedLine + 1, contentWidth) > visibleLines) {
-                    scrollY++;
-                }
+                scrollY = Math.max(scrollY, firstLineThatFits(selectedLine, visibleLines, contentWidth));
             } else if (selectedLine >= scrollY + visibleLines) {
                 scrollY = selectedLine - visibleLines + 1;
             }
@@ -2429,15 +1753,7 @@ class SourceViewer {
 
         int maxScroll;
         if (wordWrap) {
-            maxScroll = 0;
-            int visualFromEnd = 0;
-            for (int i = lines.size() - 1; i >= 0; i--) {
-                visualFromEnd += wrapRowCount(lines.get(i), contentWidth);
-                if (visualFromEnd >= visibleLines) {
-                    maxScroll = i;
-                    break;
-                }
-            }
+            maxScroll = firstLineThatFits(lines.size() - 1, visibleLines, contentWidth);
         } else {
             maxScroll = Math.max(0, lines.size() - visibleLines);
         }
@@ -2501,12 +1817,15 @@ class SourceViewer {
             String problem = viewErrors.get(selectedLine);
             if (problem != null) {
                 // the problem of the line goes before its documentation, as the Error panel of the editor shows it
-                int remaining = Math.max(0, viewDocArea.width() - " Error ".length() - 3);
+                boolean note = noteLines.contains(selectedLine);
+                Style problemStyle = note ? Theme.warning() : Theme.error();
+                String kind = note ? " Note " : " Error ";
+                int remaining = Math.max(0, viewDocArea.width() - kind.length() - 3);
                 docLines.add(Line.from(
-                        Span.styled("───", Theme.error()),
-                        Span.styled(" Error ", Theme.error().bold()),
-                        Span.styled("─".repeat(remaining), Theme.error())));
-                docLines.add(Line.from(Span.styled(problem, Theme.error())));
+                        Span.styled("───", problemStyle),
+                        Span.styled(kind, problemStyle.bold()),
+                        Span.styled("─".repeat(remaining), problemStyle)));
+                docLines.add(Line.from(Span.styled(problem, problemStyle)));
                 docLines.add(Line.from(Span.styled("F4 edit   F9 next problem", Style.EMPTY.dim())));
             } else if (titleText != null) {
                 String prefix = "─── ";
@@ -2551,7 +1870,7 @@ class SourceViewer {
         if (!diffOverlay && !visibleErrors.isEmpty()) {
             // a block has one title at the top: the error count goes on the line of the file name, not instead of it
             Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
-            titleSpans.add(Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle));
+            titleSpans.addAll(problemCounts(visibleErrors, errorStyle));
         }
         Title posTitle;
         if (diffOverlay) {
@@ -2626,14 +1945,19 @@ class SourceViewer {
                 .showLineNumbers(!plainMode)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
-        // on first render, position cursor at 2/3 of viewport before TextArea renders
+        // on first render, keep the top line of the view (F4), else position the cursor at 2/3 of the viewport
         if (editInitialScroll) {
             editInitialScroll = false;
             int viewportH = textAreaRect.height();
-            int twoThirds = viewportH * 2 / 3;
-            int targetScroll = Math.max(0, editState.cursorRow() - twoThirds);
-            if (targetScroll > 0) {
-                editState.scrollDown(targetScroll, viewportH);
+            int targetScroll = editStartTop >= 0
+                    ? editorTopKeepingCursor(editStartTop, editState.cursorRow(), viewportH)
+                    : Math.max(0, editState.cursorRow() - viewportH * 2 / 3);
+            editStartTop = -1;
+            int delta = targetScroll - editState.scrollRow();
+            if (delta > 0) {
+                editState.scrollDown(delta, viewportH);
+            } else if (delta < 0) {
+                editState.scrollUp(-delta);
             }
         }
 
@@ -2700,8 +2024,11 @@ class SourceViewer {
             for (int r = 0; r < editorArea.height(); r++) {
                 int lineIdx = editState.scrollRow() + r;
                 if (visibleErrors.containsKey(lineIdx)) {
+                    // a note on dark amber, an error on dark red
                     Style errorBg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
-                            .bg(dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
+                            .bg(noteLines.contains(lineIdx)
+                                    ? dev.tamboui.style.Color.rgb(0x80, 0x60, 0x00)
+                                    : dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
                     int screenY = editorArea.top() + r;
                     for (int x = textAreaRect.left(); x < textAreaRect.left() + gutterWidth; x++) {
                         dev.tamboui.buffer.Cell cell = frame.buffer().get(x, screenY);
@@ -2718,7 +2045,7 @@ class SourceViewer {
             List<Line> docLines = new ArrayList<>();
             String titleText = null;
             if (cursorError != null) {
-                titleText = "Error";
+                titleText = noteLines.contains(editState.cursorRow()) ? "Note" : "Error";
             } else if (editDocEntries != null && !editDocEntries.isEmpty()) {
                 titleText = editDocEntries.get(0).title();
             }
@@ -2726,7 +2053,9 @@ class SourceViewer {
                 String prefix = "─── ";
                 String suffix = " ";
                 int remaining = Math.max(0, docArea.width() - prefix.length() - titleText.length() - suffix.length());
-                Style errorDim = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
+                Style errorDim = noteLines.contains(editState.cursorRow())
+                        ? Theme.warning()
+                        : Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
                 docLines.add(Line.from(
                         Span.styled(prefix, errorDim),
                         Span.styled(titleText, errorDim.bold()),
@@ -2768,21 +2097,15 @@ class SourceViewer {
                     docArea);
         }
 
-        if (autocompletePopup != null) {
-            int cursorRow = editState.cursorRow() - editState.scrollRow();
-            int cursorCol = editState.cursorCol() - editState.scrollCol();
-            autocompletePopup.render(frame, editorArea, cursorRow, cursorCol);
-        }
+        completion.render(frame, editorArea);
 
         if (validationErrors != null) {
             renderValidationPopup(frame, area);
         }
         if (pendingDiscard) {
-            renderDiscardPopup(frame, area);
+            DialogHelper.renderConfirm(frame, area, "Discard Changes?", "Unsaved changes will be lost.", false);
         }
-        if (refactorPopup != null && refactorPopup.isVisible()) {
-            refactorPopup.render(frame, area);
-        }
+        refactor.render(frame, area);
     }
 
     private void applySyntaxHighlightOverlay(Frame frame, Rect editorArea) {
@@ -2855,7 +2178,15 @@ class SourceViewer {
             wrapText(msg, innerW, allLines);
         }
         allLines.add(Line.empty());
-        allLines.add(TuiHelper.hintLine("Esc", "close"));
+        int fixRow = popupFixRow();
+        if (fixRow >= 0) {
+            // the fix the editor knows, offered here too: the panel at the bottom says it only after the popup
+            QuickFixes.Fix fix = QuickFixes.fixFor(visibleInlineErrors().get(fixRow), editState.getLine(fixRow));
+            allLines.add(TuiHelper.hintLine("Shift+F9", "fix line " + (fixRow + 1) + ": " + fix.label(),
+                    "Esc", "close"));
+        } else {
+            allLines.add(TuiHelper.hintLine("Esc", "close"));
+        }
 
         int contentH = allLines.size();
         int popupH = Math.min(contentH + 2, area.height() - 4);
@@ -2888,10 +2219,6 @@ class SourceViewer {
         }
     }
 
-    private void renderDiscardPopup(Frame frame, Rect area) {
-        DialogHelper.renderConfirm(frame, area, "Discard Changes?", "Unsaved changes will be lost.", false);
-    }
-
     private static void wrapText(String text, int width, List<Line> out) {
         if (width <= 0) {
             width = 40;
@@ -2922,8 +2249,7 @@ class SourceViewer {
             return;
         }
         if (editMode) {
-            if (refactorPopup != null && refactorPopup.isVisible()) {
-                refactorPopup.renderFooter(spans);
+            if (refactor.renderFooter(spans)) {
                 return;
             }
             TuiHelper.hint(spans, "Esc", "cancel");
@@ -2937,7 +2263,10 @@ class SourceViewer {
             TuiHelper.hint(spans, "Alt+↑/↓", "move block");
             TuiHelper.hint(spans, "Ctrl+D", "duplicate");
             TuiHelper.hint(spans, "Ctrl+K", "delete line");
-            if (autocompleteProvider != null) {
+            if (lineCommentMarker() != null) {
+                TuiHelper.hint(spans, "Ctrl+/", "comment");
+            }
+            if (completion.isEnabled()) {
                 TuiHelper.hint(spans, "Tab", "complete");
             }
             TuiHelper.hint(spans, "Shift+Tab", "dedent");
@@ -2947,7 +2276,7 @@ class SourceViewer {
             if (cursorFix() != null) {
                 TuiHelper.hint(spans, "Shift+F9", "fix");
             }
-            if (askAi != null && visibleInlineErrors().containsKey(editState.cursorRow())) {
+            if (canAskAiToFix(editState.cursorRow(), visibleInlineErrors())) {
                 TuiHelper.hint(spans, "Shift+F8", "fix with AI");
             }
             if (isCamelYamlFile()) {
@@ -2990,291 +2319,11 @@ class SourceViewer {
         }
     }
 
-    // ---- Refactoring (F5 / Ctrl+R in view mode) ----
-
-    private void openRefactorPopup() {
-        int row = editState.cursorRow();
-        if (row < 0 || row >= editState.lineCount()) {
-            return;
-        }
-        String rawLine = editState.getLine(row);
-        if (!isCamelYamlFile()) {
-            // Java and XML routes (CAMEL-25256)
-            openRouteRefactorPopup(row, rawLine);
-            return;
-        }
-        List<RefactorPopup.Action> actions = new ArrayList<>();
-        // Extract to new file: available on any EIP step block in a YAML route
-        if (isCamelYamlFile()) {
-            List<String> lines = editLines();
-            YamlBlockEditor.BlockRange block = YamlBlockEditor.findBlock(lines, row, true);
-            if (block != null && !block.isEmpty() && isExtractableStep(lines.get(block.startRow()))) {
-                actions.add(RefactorPopup.Action.EXTRACT_TO_FILE);
-            }
-        }
-        String currentUri = extractUriFromLine(rawLine);
-        if (currentUri != null) {
-            actions.add(RefactorPopup.Action.REPLACE_URI);
-        }
-        if (currentUri == null && extractValueFromLine(rawLine) != null) {
-            actions.add(RefactorPopup.Action.EXTRACT_TO_PROPERTY);
-        }
-        if (actions.isEmpty()) {
-            return;
-        }
-        refactorPopup = new RefactorPopup();
-        refactorPopup.open(actions, currentUri);
-    }
-
-    /**
-     * The refactorings of a Java or XML route: replace the endpoint URI of the line, extract the value at the cursor to
-     * a property, and in XML extract the step block of the line to a new route file.
-     */
-    private void openRouteRefactorPopup(int row, String rawLine) {
-        String dsl = uriCompletion;
-        List<RefactorPopup.Action> actions = new ArrayList<>();
-        if ("xml".equals(dsl) && RouteRefactorings.xmlStep(editLines(), row) != null) {
-            actions.add(RefactorPopup.Action.EXTRACT_TO_FILE);
-        }
-        RouteRefactorings.Value uri = RouteRefactorings.uri(dsl, rawLine);
-        if (uri != null) {
-            actions.add(RefactorPopup.Action.REPLACE_URI);
-        }
-        if (RouteRefactorings.isExtractable(RouteRefactorings.valueAt(dsl, rawLine, editState.cursorCol()))) {
-            actions.add(RefactorPopup.Action.EXTRACT_TO_PROPERTY);
-        }
-        if (actions.isEmpty()) {
-            notifySave("Nothing to refactor here: put the cursor on an endpoint URI, a value"
-                       + ("xml".equals(dsl) ? " or the start tag of a step" : ""),
-                    false);
-            return;
-        }
-        refactorPopup = new RefactorPopup();
-        refactorPopup.open(actions, uri != null ? uri.text() : null);
-    }
-
-    private void applyRouteRefactoring(RefactorPopup.Request req, int row, String rawLine) {
-        String dsl = uriCompletion;
-        switch (req.action()) {
-            case REPLACE_URI -> {
-                RouteRefactorings.Value uri = RouteRefactorings.uri(dsl, rawLine);
-                if (uri != null) {
-                    setLine(row, RouteRefactorings.replace(dsl, rawLine, uri, req.value()));
-                    notifySave("Replaced URI with: " + req.value(), false);
-                }
-            }
-            case EXTRACT_TO_PROPERTY -> {
-                RouteRefactorings.Value v = RouteRefactorings.valueAt(dsl, rawLine, editState.cursorCol());
-                if (!RouteRefactorings.isExtractable(v) || req.value() == null || req.value().isBlank()) {
-                    return;
-                }
-                String key = req.value().strip();
-                setLine(row, RouteRefactorings.replace(dsl, rawLine, v, "{{" + key + "}}"));
-                if (editableFile != null) {
-                    Path props = RouteRefactorings.propertiesFile(editableFile);
-                    try {
-                        Files.createDirectories(props.getParent());
-                        Files.writeString(props, key + "=" + RouteRefactorings.propertiesValue(v.text()) + "\n",
-                                StandardCharsets.UTF_8,
-                                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                    } catch (IOException e) {
-                        notifySave("Warning: could not write " + props.getFileName() + ": " + e.getMessage(), true);
-                        return;
-                    }
-                }
-                notifySave("Extracted to property: " + key, false);
-            }
-            case EXTRACT_TO_FILE -> applyXmlExtractToFile(row, req.value());
-        }
-    }
-
-    /** The line replaced in the edited text, the cursor kept on it. */
-    private void setLine(int row, String newLine) {
-        recordEditChange();
-        List<String> lines = editLines();
-        lines.set(row, newLine);
-        editState.setText(YamlBlockEditor.fromLines(lines));
-        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
-    }
-
-    /** The XML step block of the row moved to a new route (from direct:name) in name.camel.xml, a to in its place. */
-    private void applyXmlExtractToFile(int row, String name) {
-        if (editableFile == null) {
-            notifySave("Cannot extract: file is not writable", true);
-            return;
-        }
-        name = sanitizeFileName(name);
-        if (name.isEmpty()) {
-            notifySave("Cannot extract: invalid file name", true);
-            return;
-        }
-        List<String> lines = editLines();
-        RouteRefactorings.Block block = RouteRefactorings.xmlStep(lines, row);
-        if (block == null) {
-            return;
-        }
-        List<String> blockLines = new ArrayList<>(lines.subList(block.start(), block.end() + 1));
-        String newFileName = name + ".camel.xml";
-        Path newFile = editableFile.getParent().resolve(newFileName);
-        String route = RouteRefactorings.xmlRoute(name, blockLines, block.indent());
-        String newContent;
-        boolean existed = Files.exists(newFile);
-        try {
-            if (existed) {
-                newContent = RouteRefactorings.addXmlRoute(Files.readString(newFile, StandardCharsets.UTF_8), route);
-                if (newContent == null) {
-                    notifySave(newFileName + " exists and has no </routes> to add the route to", true);
-                    return;
-                }
-            } else {
-                newContent = RouteRefactorings.xmlRouteFile(name, blockLines, block.indent());
-            }
-        } catch (IOException e) {
-            notifySave("Failed to read " + newFileName + ": " + e.getMessage(), true);
-            return;
-        }
-        recordEditChange();
-        editState.setText(YamlBlockEditor.fromLines(RouteRefactorings.replaceWithTo(lines, block, name)));
-        SourceEditorNavigation.positionCursor(editState, block.start(), block.indent());
-        // saved at once, so the route index of the jump links sees both files (as the YAML extraction does)
-        try {
-            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
-            dirty = false;
-            originalEditText = editState.text();
-            lineStatuses = null;
-            Files.writeString(newFile, newContent, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            notifySave("Failed to write " + newFileName + ": " + e.getMessage(), true);
-            return;
-        }
-        if (!existed && onFileCreated != null) {
-            onFileCreated.run();
-        }
-        notifySave(existed ? "Added route to " + newFileName : "Extracted to " + newFileName, false);
-    }
-
-    private void applyRefactoring(RefactorPopup.Request req) {
-        int row = editState.cursorRow();
-        if (row < 0 || row >= editState.lineCount()) {
-            return;
-        }
-        String rawLine = editState.getLine(row);
-        if (!isCamelYamlFile()) {
-            applyRouteRefactoring(req, row, rawLine);
-            return;
-        }
-        switch (req.action()) {
-            case EXTRACT_TO_FILE -> applyExtractToFile(row, req.value());
-            case REPLACE_URI -> applyReplaceUri(row, rawLine, req.value());
-            case EXTRACT_TO_PROPERTY -> applyExtractToProperty(row, rawLine, req.value());
-        }
-    }
-
-    private void applyExtractToFile(int cursorRow, String name) {
-        if (editableFile == null) {
-            notifySave("Cannot extract: file is not writable", true);
-            return;
-        }
-        name = sanitizeFileName(name);
-        if (name.isEmpty()) {
-            notifySave("Cannot extract: invalid file name", true);
-            return;
-        }
-        List<String> lines = editLines();
-        YamlBlockEditor.BlockRange block = YamlBlockEditor.findBlock(lines, cursorRow, true);
-        if (block == null || block.isEmpty()) {
-            return;
-        }
-        String stepLine = lines.get(block.startRow());
-        if (!isExtractableStep(stepLine)) {
-            return;
-        }
-        int stepIndent = YamlBlockEditor.leadingSpaces(stepLine);
-        List<String> blockLines = new ArrayList<>(lines.subList(block.startRow(), block.endRow() + 1));
-        String newFileContent = buildExtractedRouteYaml(name, blockLines, stepIndent);
-        // Use canonical block-form notation:
-        //   - to:
-        //       uri: direct:<name>
-        String indentStr = " ".repeat(stepIndent);
-        String toLine = indentStr + "- to:";
-        String uriLine = indentStr + "    uri: direct:" + name;
-        recordEditChange();
-        List<String> newLines = new ArrayList<>(lines);
-        newLines.subList(block.startRow(), block.endRow() + 1).clear();
-        newLines.add(block.startRow(), uriLine);
-        newLines.add(block.startRow(), toLine);
-        editState.setText(YamlBlockEditor.fromLines(newLines));
-        SourceEditorNavigation.positionCursor(editState, block.startRow(), stepIndent);
-        // Auto-save the original file so the route index captures the refactoring change on disk.
-        // Without this, the new file's reverse jump link cannot be resolved until a manual save.
-        try {
-            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
-            dirty = false;
-            originalEditText = editState.text();
-            lineStatuses = null;
-        } catch (IOException ignored) {
-            // best effort; extraction still proceeds
-        }
-        String newFileName = name + ".camel.yaml";
-        Path newFile = editableFile.getParent().resolve(newFileName);
-        boolean existed = Files.exists(newFile);
-        try {
-            if (existed) {
-                // Append as an additional route (blank line separator before the new block)
-                Files.writeString(newFile, "\n" + newFileContent, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-            } else {
-                Files.writeString(newFile, newFileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
-            }
-        } catch (IOException e) {
-            notifySave("Failed to write " + newFileName + ": " + e.getMessage(), true);
-            return;
-        }
-        if (!existed && onFileCreated != null) {
-            onFileCreated.run();
-        }
-        notifySave(existed ? "Added route to " + newFileName : "Extracted to " + newFileName, false);
-    }
-
-    private void applyReplaceUri(int row, String rawLine, String newUri) {
-        String newLine = replaceUriOnLine(rawLine, newUri);
-        recordEditChange();
-        List<String> lines = editLines();
-        lines.set(row, newLine);
-        removeParametersBlock(lines, row, rawLine);
-        editState.setText(YamlBlockEditor.fromLines(lines));
-        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
-        notifySave("Replaced URI with: " + newUri, false);
-    }
-
-    private void applyExtractToProperty(int row, String rawLine, String propKey) {
-        String value = extractValueFromLine(rawLine);
-        if (value == null) {
-            return;
-        }
-        String newLine = replaceValueWithPlaceholder(rawLine, propKey);
-        recordEditChange();
-        List<String> lines = editLines();
-        lines.set(row, newLine);
-        editState.setText(YamlBlockEditor.fromLines(lines));
-        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
-        if (editableFile != null) {
-            try {
-                Path propsFile = editableFile.getParent().resolve("application.properties");
-                Files.writeString(propsFile, propKey + "=" + value + "\n", StandardCharsets.UTF_8,
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                notifySave("Warning: could not write application.properties: " + e.getMessage(), true);
-                return;
-            }
-        }
-        notifySave("Extracted to property: " + propKey, false);
-    }
-
     /**
      * Load source for a route, scrolling to the given source line number.
      */
     void loadFile(Path filePath) {
+        completion.dropSemanticCompletion();
         currentRouteId = null;
         currentFormat = null;
         originalFormat = null;
@@ -3314,6 +2363,7 @@ class SourceViewer {
                 rawMarkdownContent = String.join("\n", rawLines);
                 markdownMode = true;
                 markdownScroll = 0;
+                markdownMaxScroll = Integer.MAX_VALUE;
             } else {
                 rawMarkdownContent = null;
                 markdownMode = false;
@@ -3564,9 +2614,10 @@ class SourceViewer {
         }
         if (currentRouteId == null) {
             if (!viewErrors.isEmpty()) {
-                return Title.from(Line.from(
-                        Span.styled(" Source [" + info + "] ", ts),
-                        Span.styled(" errors: " + viewErrors.size() + " ", Theme.error())));
+                List<Span> spans = new ArrayList<>();
+                spans.add(Span.styled(" Source [" + info + "] ", ts));
+                spans.addAll(problemCounts(viewErrors, Theme.error()));
+                return Title.from(Line.from(spans));
             }
             return Title.from(Span.styled(" Source [" + info + "] ", ts));
         }
@@ -3616,7 +2667,6 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             search.reset();
-            refreshQuickDoc();
             return;
         }
 
@@ -3706,7 +2756,6 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             search.reset();
-            refreshQuickDoc();
         });
     }
 
@@ -3767,25 +2816,26 @@ class SourceViewer {
             spans.add(Span.styled(">> ", focused ? Theme.label().bold() : Theme.label().dim()));
             if (!prefix.isEmpty()) {
                 Style numberStyle = viewErrors.containsKey(lineIndex)
-                        ? Theme.error().bold() : focused ? Theme.label().bold() : Theme.label().dim();
+                        ? (noteLines.contains(lineIndex) ? Theme.warning().bold() : Theme.error().bold())
+                        : focused ? Theme.label().bold() : Theme.label().dim();
                 spans.add(Span.styled(prefix, numberStyle.patch(selBg)));
             }
-            addLiveColumn(spans, lineIndex, selBg);
+            liveColumn.addLiveColumn(spans, lineIndex, selBg);
             for (Span s : highlighted.spans()) {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));
             }
         } else {
             if (viewErrors.containsKey(lineIndex)) {
-                spans.add(Span.styled(" ✗ ", Theme.error().bold()));
+                spans.add(noteLines.contains(lineIndex)
+                        ? Span.styled(" ⚠ ", Theme.warning().bold())
+                        : Span.styled(" ✗ ", Theme.error().bold()));
             } else {
-                spans.add(isDeprecated
-                        ? Span.styled(" ⚠ ", Theme.warning())
-                        : Span.raw("   "));
+                spans.add(isDeprecated ? Span.styled(" ⚠ ", Theme.warning()) : liveColumn.gutter(lineIndex));
             }
             if (!prefix.isEmpty()) {
                 spans.add(Span.styled(prefix, Style.EMPTY.dim()));
             }
-            addLiveColumn(spans, lineIndex, null);
+            liveColumn.addLiveColumn(spans, lineIndex, null);
             spans.addAll(highlighted.spans());
         }
 
@@ -3797,6 +2847,7 @@ class SourceViewer {
             }
             spans.add(Span.styled(" ↵ " + jl.routeId(), linkStyle));
         }
+        liveColumn.addBodyTypes(spans, lineIndex, plainMode, isSelected ? selBg : null, viewportWidth - 1 + hSkip);
         Line full = Line.from(spans);
 
         if (hSkip > 0) {
@@ -3860,111 +2911,31 @@ class SourceViewer {
         return lastCommentLine >= 0 ? lastCommentLine + 1 : 0;
     }
 
-    private static Line applyHorizontalSkip(Line line, int hSkip) {
-        List<Span> scrolled = new ArrayList<>();
-        int skipped = 0;
-        for (Span span : line.spans()) {
-            String content = span.content();
-            if (skipped >= hSkip) {
-                scrolled.add(span);
-            } else if (skipped + content.length() > hSkip) {
-                int offset = hSkip - skipped;
-                scrolled.add(Span.styled(content.substring(offset), span.style()));
-                skipped = hSkip;
-            } else {
-                skipped += content.length();
-            }
+    /**
+     * The first line from which the lines down to {@code last} fit the rows when word wrapped, or {@code last} when it
+     * is taller than the rows on its own.
+     */
+    private int firstLineThatFits(int last, int rows, int contentWidth) {
+        if (last < 0 || last >= lines.size()) {
+            return 0;
         }
-        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
+        int first = last;
+        int used = wrapRowCount(last, contentWidth);
+        while (first > 0) {
+            int r = wrapRowCount(first - 1, contentWidth);
+            if (used + r > rows) {
+                break;
+            }
+            used += r;
+            first--;
+        }
+        return first;
     }
 
-    private int computeGutterWidth() {
-        for (String line : lines) {
-            int w = 0;
-            for (int i = 0; i < line.length(); i++) {
-                char c = line.charAt(i);
-                if (c != ' ' && !Character.isDigit(c)) {
-                    break;
-                }
-                w++;
-            }
-            if (w > 0) {
-                return w;
-            }
-        }
-        return 0;
-    }
-
-    private List<Line> renderQuickDocLines(DocEntry entry, int sourceIndent, int gutterWidth, int viewportWidth) {
-        String text = entry.text();
-        String prefix = " ".repeat(gutterWidth + 5 + sourceIndent);
-        String marker = "ℹ ";
-        Style docStyle = Style.EMPTY.dim().italic();
-        int prefixWidth = prefix.length() + marker.length();
-
-        if (!wordWrap || viewportWidth <= 0 || prefixWidth + text.length() <= viewportWidth) {
-            return List.of(Line.from(List.of(
-                    Span.raw(prefix),
-                    Span.styled(marker, docStyle),
-                    Span.styled(text, docStyle))));
-        }
-
-        int textWidth = viewportWidth - prefixWidth;
-        if (textWidth <= 10) {
-            return List.of(Line.from(List.of(
-                    Span.raw(prefix),
-                    Span.styled(marker, docStyle),
-                    Span.styled(text, docStyle))));
-        }
-
-        String contPrefix = " ".repeat(prefixWidth);
-        List<Line> result = new ArrayList<>();
-        int pos = 0;
-        boolean first = true;
-        while (pos < text.length()) {
-            int end = Math.min(pos + textWidth, text.length());
-            if (end < text.length()) {
-                int space = text.lastIndexOf(' ', end);
-                if (space > pos) {
-                    end = space + 1;
-                }
-            }
-            String chunk = text.substring(pos, end).stripTrailing();
-            if (first) {
-                result.add(Line.from(List.of(
-                        Span.raw(prefix),
-                        Span.styled(marker, docStyle),
-                        Span.styled(chunk, docStyle))));
-                first = false;
-            } else {
-                result.add(Line.from(List.of(
-                        Span.raw(contPrefix),
-                        Span.styled(chunk, docStyle))));
-            }
-            pos = end;
-        }
-        return result;
-    }
-
-    private int countVisualRows(int fromLine, int toLine, int contentWidth) {
-        int count = 0;
-        for (int i = fromLine; i < toLine && i < lines.size(); i++) {
-            count += wrapRowCount(lines.get(i), contentWidth);
-            if (quickDocEnabled) {
-                List<DocEntry> docs = quickDocEntries.get(i);
-                if (docs != null) {
-                    count += docs.size();
-                }
-            }
-        }
-        return count;
-    }
-
-    private int wrapRowCount(String line, int contentWidth) {
-        if (!wordWrap || contentWidth <= 0 || line.length() <= contentWidth) {
-            return 1;
-        }
-        return (line.length() + contentWidth - 1) / contentWidth;
+    /** The rows a line takes when word wrapped: as it is drawn, with its marker, line number and live column. */
+    private int wrapRowCount(int lineIndex, int contentWidth) {
+        Line shown = highlightSourceLine(lines.get(lineIndex), lineIndex, 0, lineIndex == selectedLine, contentWidth + 1);
+        return TuiHelper.wrappedRows(shown, contentWidth);
     }
 
     private void scanDeprecatedLines() {

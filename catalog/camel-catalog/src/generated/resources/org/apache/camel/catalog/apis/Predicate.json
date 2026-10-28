@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.Predicate",
     "groupId": "org.apache.camel",
     "artifactId": "camel-api",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "methods": { "matches": { "index": 0, "signatures": [ "boolean matches(Exchange exchange)" ], "javaType": "boolean", "important": true, "description": "true when the exchange passes the test.", "examples": [ "exchange -> exchange.getMessage().getBody(Order.class).getTotal() > 100" ] } }
   }
 }

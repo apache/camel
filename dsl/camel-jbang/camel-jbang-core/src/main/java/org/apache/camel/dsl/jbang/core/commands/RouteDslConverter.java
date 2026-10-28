@@ -351,6 +351,9 @@ public final class RouteDslConverter {
             DefaultCamelContext context, String fileName, String content, Map<String, Supplier<String>> javaSources,
             Resource resource, List<String> notes)
             throws Exception {
+        if (JAVA_SEMANTIC.matcher(content).find()) {
+            return SEMANTIC_REFUSED;
+        }
         CamelCatalog catalog = new DefaultCamelCatalog();
         JavaParseResult r = ProjectRoutes.parseJava(content, javaSources, catalog);
         for (JavaParseResult.Unresolved u : r.unresolved()) {
@@ -430,12 +433,16 @@ public final class RouteDslConverter {
     }
 
     private static final Pattern YAML_SEMANTIC = Pattern.compile("(?m)^-\\s+semantic\\s*:");
+    private static final Pattern JAVA_SEMANTIC = Pattern.compile("\\bsemanticEvaluations\\s*\\(");
+
+    // they live outside the route model the writers export: converting would lose them without a word
+    private static final String SEMANTIC_REFUSED
+            = "semantic declarations cannot be converted with the routes: keep them in a separate declaration resource"
+              + " and convert only the routes";
 
     private static String loadYaml(DefaultCamelContext context, String content, Resource resource) throws Exception {
         if (YAML_SEMANTIC.matcher(content).find()) {
-            // they live outside the route model the writers export: converting would lose them without a word
-            return "semantic declarations cannot be converted with the routes: keep them in a separate declaration"
-                   + " resource and convert only the routes";
+            return SEMANTIC_REFUSED;
         }
         // the beans are taken out and read as definitions: the YAML DSL would create them, running code of the project
         StringBuilder routes = new StringBuilder();

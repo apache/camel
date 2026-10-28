@@ -92,3 +92,35 @@ If you need more precise volume settings, you can create a new object of the typ
 
 If you need more precise server settings, you can create a new object of the type `org.openstack4j.model.storage.block.VolumeSnapshot` and send in the message body.
 
+=== Example
+
+The following route creates a volume of 10 GB and logs its id.
+The endpoint is the address of the identity service (Keystone), and the credentials are property placeholders:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createVolume
+      steps:
+        - setHeader:
+            name: CamelOpenstackName
+            expression:
+              constant:
+                expression: "orders-data"
+        - setHeader:
+            name: CamelOpenstackCinderSize
+            expression:
+              constant:
+                expression: "10"
+        - to:
+            uri: openstack-cinder:http://controller:5000/v3
+            parameters:
+              username: "{{openstack.username}}"
+              password: "{{openstack.password}}"
+              project: "{{openstack.project}}"
+              subsystem: volumes
+              operation: create
+        - log:
+            message: "Created volume ${body.id}"
+----

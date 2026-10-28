@@ -311,7 +311,7 @@ public interface Transcribe2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param trustAllCertificates the value to set
@@ -327,7 +327,7 @@ public interface Transcribe2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param trustAllCertificates the value to set

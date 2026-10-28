@@ -64,17 +64,28 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-== ValueInputOption
+== Usage
 
-Many of the APIs with Google sheets require including the following header,
-with one of the enum values:
+The consumer polls a range of the spreadsheet. With `splitResults`, each row is a message,
+and the `CamelGoogleSheetsValueIndex` header is its position in the range:
 
-|====
-| *Header* | *Enum* | *Description*
-| `CamelGoogleSheets.ValueInputOption` | `RAW` | The values the user has entered will not be parsed and will be stored as-is.
-| `CamelGoogleSheets.ValueInputOption` | `USER_ENTERED` | The values will be parsed as if the user typed them into the UI. Numbers will stay as numbers, but strings may be converted to numbers, dates, etc. following the same rules that are applied when entering text into a cell via the Google Sheets UI.
-|====
-
+[source,yaml]
+----
+- route:
+    from:
+      uri: "google-sheets-stream:{{google.spreadsheetId}}"
+      parameters:
+        range: "Orders!A2:C"
+        majorDimension: ROWS
+        splitResults: true
+        clientId: "{{google.clientId}}"
+        clientSecret: "{{google.clientSecret}}"
+        refreshToken: "{{google.refreshToken}}"
+        applicationName: camel-example
+      steps:
+        - log:
+            message: "Row ${header.CamelGoogleSheetsValueIndex}: ${body}"
+----
 
 == More information
 

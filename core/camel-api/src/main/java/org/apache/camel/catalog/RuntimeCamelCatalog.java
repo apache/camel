@@ -85,6 +85,9 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
      * Creates an endpoint uri in Java style from the information from the properties
      * <p/>
      * This API is needed by {@link SendDynamicAware}.
+     * <p/>
+     * The options are in the order of the properties when the map has one (such as a {@code LinkedHashMap}), otherwise
+     * they are sorted by name.
      *
      * @param  scheme                      the endpoint schema
      * @param  properties                  the properties as key value pairs

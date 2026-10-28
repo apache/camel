@@ -29,6 +29,9 @@ public class NatsConsumerMaxMessagesIT extends NatsITSupport {
     @Test
     public void testMaxConsumer() throws InterruptedException {
         mockResultEndpoint.setExpectedMessageCount(5);
+
+        waitForNatsConsumers(1);
+
         template.sendBody("direct:send", "test");
         template.sendBody("direct:send", "test1");
         template.sendBody("direct:send", "test2");
@@ -50,9 +53,9 @@ public class NatsConsumerMaxMessagesIT extends NatsITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:send").to("nats:test");
+                from("direct:send").to("nats:consumer-maxmessages");
 
-                from("nats:test?maxMessages=5").to(mockResultEndpoint);
+                from("nats:consumer-maxmessages?maxMessages=5").to(mockResultEndpoint);
             }
         };
     }

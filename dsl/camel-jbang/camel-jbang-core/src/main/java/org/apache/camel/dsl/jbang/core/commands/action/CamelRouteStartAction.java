@@ -24,7 +24,8 @@ import picocli.CommandLine;
                      description = "Start Camel routes", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd start-route myRoute" })
+                             "  camel cmd start-route --id=myRoute",
+                             "  camel cmd start-route myApp --id=myRoute" })
 public class CamelRouteStartAction extends CamelRouteAction {
 
     public CamelRouteStartAction(CamelJBangMain main) {

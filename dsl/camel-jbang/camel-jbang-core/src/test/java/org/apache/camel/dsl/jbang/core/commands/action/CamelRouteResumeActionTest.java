@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class CamelRouteResumeActionTest extends ActionCommandTestSupport {
@@ -54,9 +57,10 @@ class CamelRouteResumeActionTest extends ActionCommandTestSupport {
         CamelRouteResumeAction command = new CamelRouteResumeAction(new CamelJBangMain().withPrinter(printer));
         command.name = "doesNotExist";
 
-        int exit = callWithSingleProcess(command);
+        CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
-        assertEquals(0, exit);
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("No running Camel integration matches: doesNotExist", e.getMessage());
         assertNull(readActionFile(TEST_PID), "no action file should be written when no process matches");
     }
 }

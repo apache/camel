@@ -52,3 +52,15 @@ $dark-fg: #C8C8C8;
 #diagram-action  { color: #808080; }
 #diagram-eip     { color: #707070; }
 #diagram-default { color: #606060; }
+
+/*
+ * Syntax tokens (optional): no color, so code is told apart by brightness and style. Keywords in bold white,
+ * strings a step darker than code, comments in italic grey.
+ */
+#syntax-comment  { color: #8A8A8A; text-style: italic; }
+#syntax-string   { color: #A8A8A8; }
+#syntax-keyword  { color: #FFFFFF; text-style: bold; }
+#syntax-function { color: #E0E0E0; }
+#syntax-type     { color: #FFFFFF; }
+#syntax-constant { color: #E0E0E0; }
+#syntax-text     { color: $dark-fg; }

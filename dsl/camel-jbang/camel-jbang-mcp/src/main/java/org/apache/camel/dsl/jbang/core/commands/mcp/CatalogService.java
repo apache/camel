@@ -84,10 +84,16 @@ public class CatalogService {
         boolean hasVersion = camelVersion != null && !camelVersion.isBlank() && !camelVersion.isEmpty()
                 && Character.isDigit(camelVersion.trim().charAt(0));
         if (hasVersion && sameAsDefault(camelVersion)) {
-            // the version in use (4.23.0 for a 4.23.0-SNAPSHOT build): nothing to download
+            // the version in use (4.23.0 for a 4.24.0-SNAPSHOT build): nothing to download
             hasVersion = false;
         }
         boolean hasBom = platformBom != null && !platformBom.isBlank();
+        if (hasBom && runtimeType == RuntimeType.main && !isCamelGav(platformBom)) {
+            // with the main runtime only a Camel artifact (org.apache.camel:camel-bom:<version>) selects a version: a
+            // Spring Boot or Quarkus platform BOM, or a value that is not a GAV ("none", "n/a"), does not apply to main
+            // and is ignored rather than failing the call; the answer reports the catalog version it used
+            hasBom = false;
+        }
 
         // No version-specific parameters and main runtime -> default catalog
         if (!hasVersion && !hasBom && runtimeType == RuntimeType.main) {
@@ -102,13 +108,19 @@ public class CatalogService {
         MavenGav platformBomGav = null;
         if (!hasVersion && !hasBom) {
             if (runtimeType == RuntimeType.quarkus) {
-                platformBomGav
-                        = QuarkusHelper.findQuarkusPlatformBom(
-                                camelVersion,
-                                downloader()::resolveArtifact,
-                                true,
-                                RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL,
-                                false).quarkusCamelBom();
+                QuarkusHelper.QuarkusPlatformBom quarkusBom = QuarkusHelper.findQuarkusPlatformBom(
+                        camelVersion,
+                        downloader()::resolveArtifact,
+                        true,
+                        RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL,
+                        false);
+                if (quarkusBom == null) {
+                    throw new ToolCallException(
+                            "No Quarkus platform found for Camel " + camelVersion
+                                                + " in the Quarkus extension registry",
+                            null);
+                }
+                platformBomGav = quarkusBom.quarkusCamelBom();
                 normalizedVersion = platformBomGav.getVersion();
             }
         }
@@ -132,15 +144,23 @@ public class CatalogService {
         try {
             loaded = doLoadCatalog(runtimeType, camelVersion, platformBomGav);
         } catch (Exception e) {
-            if (runtimeType == RuntimeType.main && hasVersion && !hasBom) {
-                // a version that cannot be downloaded (not released, no network): answer from the default catalog
-                // rather than fail the tool call
+            if (!hasBom && (runtimeType == RuntimeType.main && hasVersion
+                    || runtimeType == RuntimeType.springBoot && !hasVersion)) {
+                // a version/artifact that cannot be downloaded (not released, no network): answer from the default
+                // catalog rather than fail the tool call. For spring-boot without a pinned version, the default
+                // camel-main catalog is close enough for property validation and avoids flaky network failures.
                 return defaultCatalog;
             }
             throw e;
         }
         cache.putIfAbsent(key, loaded);
         return cache.get(key);
+    }
+
+    /** Whether the value is an org.apache.camel groupId:artifactId:version GAV. */
+    static boolean isCamelGav(String gav) {
+        String[] parts = gav.trim().split(":");
+        return parts.length == 3 && "org.apache.camel".equals(parts[0].trim()) && !parts[1].isBlank() && !parts[2].isBlank();
     }
 
     /** Whether the version is the default catalog's, with or without a -SNAPSHOT qualifier. */
@@ -196,7 +216,22 @@ public class CatalogService {
             if (runtimeType == RuntimeType.springBoot) {
                 return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, true);
             } else if (runtimeType == RuntimeType.quarkus) {
-                return CatalogLoader.loadQuarkusCatalog(platformBom, downloader()::resolveArtifact);
+                // Resolve the Quarkus platform BOM that matches the requested Camel version.
+                // platformBom is null here (only camelVersion was given), so we must look it up.
+                QuarkusHelper.QuarkusPlatformBom quarkusBom = QuarkusHelper.findQuarkusPlatformBom(
+                        camelVersion,
+                        downloader()::resolveArtifact,
+                        true,
+                        RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL,
+                        false);
+                if (quarkusBom == null) {
+                    throw new ToolCallException(
+                            "No Quarkus platform found for Camel " + camelVersion
+                                                + " in the Quarkus extension registry",
+                            null);
+                }
+                MavenGav resolvedBom = quarkusBom.quarkusCamelBom();
+                return CatalogLoader.loadQuarkusCatalog(resolvedBom, downloader()::resolveArtifact);
             } else {
                 return CatalogLoader.loadCatalog(repos, camelVersion, true);
             }
@@ -206,6 +241,11 @@ public class CatalogService {
         if (runtimeType == RuntimeType.springBoot) {
             return CatalogLoader.loadSpringBootCatalog(repos, null, true);
         } else if (runtimeType == RuntimeType.quarkus) {
+            // loadCatalog() always resolves the platform BOM for Quarkus before calling doLoadCatalog(),
+            // so platformBom is never null here.
+            if (platformBom == null) {
+                throw new IllegalStateException("No Quarkus platform BOM resolved");
+            }
             return CatalogLoader.loadQuarkusCatalog(platformBom, downloader()::resolveArtifact);
         }
 

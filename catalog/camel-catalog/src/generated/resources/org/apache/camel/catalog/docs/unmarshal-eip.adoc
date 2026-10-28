@@ -24,7 +24,53 @@ into a Java object; or some other representation according to the data format be
 
 == Example
 
-The following example reads XML files from the inbox/xml directory.
+The following example reads JSON files from the inbox/json directory. `unmarshal` turns each file into a Map with
+xref:dataformats:jackson2-dataformat.adoc[Jackson] (a JSON object becomes a Map, a JSON array a List), so the route can
+read its fields, such as `${body[orderId]}`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox/json")
+  .unmarshal().json(JsonLibrary.Jackson)
+  .log("Order ${body[orderId]} for customer ${body[customer]}")
+  .to("bean:validateOrder");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox/json"/>
+  <unmarshal><json library="Jackson"/></unmarshal>
+  <log message="Order ${body[orderId]} for customer ${body[customer]}"/>
+  <to uri="bean:validateOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox/json
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - log:
+            message: "Order ${body[orderId]} for customer ${body[customer]}"
+        - to:
+            uri: bean:validateOrder
+----
+====
+
+The next example reads XML files from the inbox/xml directory.
 Each file is then transformed into Java Objects using xref:dataformats:jaxb-dataformat.adoc[JAXB].
 Then a xref:ROOT:bean-component.adoc[Bean] is invoked that takes in the Java object.
 
@@ -84,7 +130,8 @@ YAML::
 
 Sometimes, there are situations where `null` can be a normal value for the body of a message but `null` by default is not an accepted value to unmarshal.
 To work around that, it is possible to allow `null` as value to a body to unmarshall
-using the option `allowNullBody` as shown in the next code snippets:
+using the option `allowNullBody` as shown in the next code snippets. A `null` body then skips the unmarshalling
+and leaves the message as it is, as `marshal` does; with `variableReceive`, that variable is set to `null`.
 
 [tabs]
 ====

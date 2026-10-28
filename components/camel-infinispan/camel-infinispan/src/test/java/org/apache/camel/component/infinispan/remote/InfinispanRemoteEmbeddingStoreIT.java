@@ -188,7 +188,9 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
 
     private InfinispanRemoteConfiguration createInfinispanRemoteConfiguration() {
         InfinispanRemoteConfiguration configuration = new InfinispanRemoteConfiguration();
-        configuration.setHosts(service.getServiceAddress());
+        // Normalise "localhost" to "127.0.0.1" so the JVM does not resolve it to ::1 (IPv6),
+        // which the server does not bind to in host-network mode on Podman/Linux.
+        configuration.setHosts(InfinispanRemoteTestSupport.resolvedHost(service.host()) + ":" + service.port());
         configuration.setUsername(service.username());
         configuration.setPassword(service.password());
         configuration.setSaslMechanism("SCRAM-SHA-512");

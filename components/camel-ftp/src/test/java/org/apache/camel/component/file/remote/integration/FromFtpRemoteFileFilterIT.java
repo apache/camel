@@ -34,7 +34,11 @@ public class FromFtpRemoteFileFilterIT extends FtpServerTestSupport {
     private final MyFileFilter<Object> filter = new MyFileFilter<>();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/filefilter?password=admin&filter=#myFilter";
+        return "ftp://admin@localhost:{{ftp.server.port}}/filefilter?password=admin&filter=#myFilter&noop=true";
+    }
+
+    private String getFtpProducerUrl() {
+        return "ftp://admin@localhost:{{ftp.server.port}}/filefilter?password=admin";
     }
 
     @Override
@@ -59,10 +63,10 @@ public class FromFtpRemoteFileFilterIT extends FtpServerTestSupport {
         // prepares the FTP Server by creating files on the server that we want
         // to unit
         // test that we can pool
-        sendFile(getFtpUrl(), "Hello World", "hello.txt");
-        sendFile(getFtpUrl(), "Report 1", "report1.txt");
-        sendFile(getFtpUrl(), "Bye World", "bye.txt");
-        sendFile(getFtpUrl(), "Report 2", "report2.txt");
+        sendFile(getFtpProducerUrl(), "Hello World", "hello.txt");
+        sendFile(getFtpProducerUrl(), "Report 1", "report1.txt");
+        sendFile(getFtpProducerUrl(), "Bye World", "bye.txt");
+        sendFile(getFtpProducerUrl(), "Report 2", "report2.txt");
     }
 
     @Override

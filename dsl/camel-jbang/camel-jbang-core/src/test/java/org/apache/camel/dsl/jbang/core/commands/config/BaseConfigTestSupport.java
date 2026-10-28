@@ -21,16 +21,22 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
+import org.apache.camel.dsl.jbang.core.commands.UsesWorkingDirectory;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
+@UsesWorkingDirectory
 public class BaseConfigTestSupport extends CamelCommandBaseTestSupport {
+
+    @BeforeEach
+    void useTestHome() throws IOException {
+        // the global config file of UserConfigHelper.createUserConfig goes in the home of the test, removed after it
+        useTestHomeDir();
+    }
 
     @AfterEach
     void removeConfigFiles() throws IOException {
         Files.deleteIfExists(Paths.get(CommandLineHelper.LOCAL_USER_CONFIG));
-        // remove the global config file written under target by UserConfigHelper.createUserConfig, so it does not
-        // leak into later tests in the same JVM. Target the build directory explicitly to never touch the real home.
-        Files.deleteIfExists(Paths.get("target", CommandLineHelper.USER_CONFIG));
     }
 }

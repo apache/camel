@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "hazelcast-ringbuffer",
     "extendsScheme": "",
     "syntax": "hazelcast-ringbuffer:cacheName",
@@ -31,6 +31,10 @@
   },
   "headers": {
     "CamelHazelcastOperationType": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.hazelcast.HazelcastConstants#OPERATION" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "bytes", "file", "value", "map", "list", "pojo" ], "description": "The item that add appends: an object Hazelcast can serialize, so a stream or no body fails. The other operations do not use the body" },
+    "producerOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "defaultOperation", "value": "add", "carriers": [ "value" ], "javaType": "java.lang.Long" }, { "option": "defaultOperation", "value": "capacity", "carriers": [ "value" ], "javaType": "java.lang.Long" }, { "option": "defaultOperation", "value": "remainingCapacity", "carriers": [ "value" ], "javaType": "java.lang.Long" } ], "description": "By the operation, which the CamelHazelcastOperationType header sets, or else the defaultOperation option (without either the producer fails): the sequence of the added item as a Long for add, a Long for capacity and remainingCapacity, and the item at the head (readOnceHead) or the tail (readOnceTail) of the ringbuffer" }
   },
   "properties": {
     "cacheName": { "index": 0, "kind": "path", "displayName": "Cache Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the cache" },

@@ -33,6 +33,8 @@ import org.apache.camel.spi.Metadata;
 public class LangChain4jWordTokenizerDefinition extends LangChain4jTokenizerDefinition {
 
     public LangChain4jWordTokenizerDefinition() {
+        // the name the XML and YAML DSL do not set, as the builder does (CAMEL-25777)
+        setTokenizerName(toName("WordTokenizer"));
     }
 
     public LangChain4jWordTokenizerDefinition(LangChain4jTokenizerDefinition source) {

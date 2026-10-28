@@ -23,6 +23,7 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.DefaultMessageHistory;
 import org.apache.camel.support.PatternHelper;
@@ -32,6 +33,7 @@ import org.apache.camel.support.service.ServiceSupport;
 public class DefaultMessageHistoryFactory extends ServiceSupport implements MessageHistoryFactory {
 
     private CamelContext camelContext;
+    private BodyTypeRegistry bodyTypeRegistry;
     private boolean copyMessage;
     private String nodePattern;
     private volatile String[] nodePatternParts;
@@ -44,6 +46,14 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        // looked up once, as every node an exchange reaches records its body type
+        if (camelContext != null) {
+            bodyTypeRegistry = camelContext.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        }
     }
 
     @Override
@@ -65,7 +75,7 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
 
         DefaultMessageHistory answer = new DefaultMessageHistory(routeId, node, msg);
         answer.setAcceptDebugger(node.acceptDebugger(exchange));
-        answer.captureBody(exchange);
+        answer.captureBody(exchange, bodyTypeRegistry);
         return answer;
     }
 

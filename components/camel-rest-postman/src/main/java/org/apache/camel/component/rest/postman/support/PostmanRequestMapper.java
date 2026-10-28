@@ -64,6 +64,7 @@ public final class PostmanRequestMapper {
     private final RestPostmanConfiguration configuration;
     private final Map<String, String> endpointVariables;
     private final String resourceOrigin;
+    private final boolean resolveVariablesFromProperties;
 
     /**
      * Auth types already reported, so that a hundred requests sharing a collection level auth block produce one warning
@@ -72,16 +73,21 @@ public final class PostmanRequestMapper {
     private final Set<String> reportedAuthTypes = new LinkedHashSet<>();
 
     /**
-     * @param resourceOrigin the scheme and authority of the collection resource when it was loaded over HTTP, used as a
-     *                       last resort for the target host. Must be {@code null} for cloud sources, whose origin is
-     *                       the Postman API rather than the API being called.
+     * @param resourceOrigin                 the scheme and authority of the collection resource when it was loaded over
+     *                                       HTTP, used as a last resort for the target host. Must be {@code null} for
+     *                                       cloud sources, whose origin is the Postman API rather than the API being
+     *                                       called.
+     * @param resolveVariablesFromProperties whether a placeholder that neither the collection nor the endpoint
+     *                                       variables define is resolved from Camel properties
      */
     public PostmanRequestMapper(CamelContext camelContext, RestPostmanConfiguration configuration,
-                                Map<String, String> endpointVariables, String resourceOrigin) {
+                                Map<String, String> endpointVariables, String resourceOrigin,
+                                boolean resolveVariablesFromProperties) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.endpointVariables = endpointVariables;
         this.resourceOrigin = resourceOrigin;
+        this.resolveVariablesFromProperties = resolveVariablesFromProperties;
     }
 
     public PostmanRequestBinding map(PostmanItem item) {
@@ -90,8 +96,9 @@ public final class PostmanRequestMapper {
 
         Map<String, String> scope = new LinkedHashMap<>(item.getScopeVariables());
         scope.putAll(endpointVariables);
-        PostmanVariableResolver resolver
-                = new PostmanVariableResolver(scope, camelContext, configuration.isFailOnUnresolvedVariable());
+        // without a CamelContext the resolver does not consult Camel properties
+        PostmanVariableResolver resolver = new PostmanVariableResolver(
+                scope, resolveVariablesFromProperties ? camelContext : null, configuration.isFailOnUnresolvedVariable());
 
         String method = RestPostmanHelper.validateMethod(request.getMethod(), description);
         PostmanUrl url = request.getUrl();
@@ -121,8 +128,8 @@ public final class PostmanRequestMapper {
                 basePath,
                 uriTemplate,
                 queryParts.isEmpty() ? null : String.join("&", queryParts),
-                resolveConsumes(request),
-                resolveProduces(request),
+                resolveConsumes(request, resolver, description),
+                resolveProduces(request, resolver, description),
                 staticHeaders,
                 defaultPathValues,
                 resolveCollectionBody(request, resolver, description));
@@ -257,21 +264,21 @@ public final class PostmanRequestMapper {
         }
     }
 
-    private String resolveConsumes(PostmanRequest request) {
+    private String resolveConsumes(PostmanRequest request, PostmanVariableResolver resolver, String description) {
         if (configuration.getConsumes() != null) {
             return configuration.getConsumes();
         }
         // a collection records no response schemas, so there is nothing to infer an Accept header from
-        return request.getHeader("Accept");
+        return resolver.resolve(request.getHeader("Accept"), description);
     }
 
-    private String resolveProduces(PostmanRequest request) {
+    private String resolveProduces(PostmanRequest request, PostmanVariableResolver resolver, String description) {
         if (configuration.getProduces() != null) {
             return configuration.getProduces();
         }
         String declared = request.getHeader("Content-Type");
         if (declared != null) {
-            return declared;
+            return resolver.resolve(declared, description);
         }
         PostmanBody body = request.getBody();
         return body != null ? body.inferContentType() : null;

@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.secretsmanager.vault;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -99,6 +100,12 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
     private static final String SECRETSMANAGER_UPDATE_SECRET_EVENT = "UpdateSecret";
 
+    // the largest page that LookupEvents accepts
+    private static final int LOOKUP_MAX_RESULTS = 50;
+    // the events that change the value of a secret, looked up one by one
+    private static final List<String> UPDATE_EVENT_NAMES
+            = List.of(SECRETSMANAGER_UPDATE_EVENT, SECRETSMANAGER_UPDATE_SECRET_EVENT);
+
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
     private String secrets;
@@ -106,6 +113,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private SqsClient sqsClient;
     private SecretsManagerPropertiesFunction propertiesFunction;
     private volatile Instant lastTime;
+    // the ids of the events seen at exactly lastTime, which the next lookup returns again (its startTime is inclusive)
+    private final Set<String> lastTimeEventIds = new HashSet<>();
     private volatile Instant lastCheckTime;
     private volatile Instant lastReloadTime;
     private final Map<String, Instant> updates = new HashMap<>();
@@ -220,6 +229,10 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             }
             cloudTrailClient = isOverrideEndpoint
                     ? clientBuilder.endpointOverride(URI.create(uriEndpointOverride)).build() : clientBuilder.build();
+            if (lastTime == null) {
+                // look for the updates made from now on, not in the event history of the last 90 days
+                lastTime = Instant.now();
+            }
         } else {
             SqsClientBuilder clientBuilder = SqsClient.builder();
             if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
@@ -263,6 +276,34 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         }
 
         updates.clear();
+        lastTime = null;
+        lastTimeEventIds.clear();
+    }
+
+    /**
+     * Adds every event with the given event name since the given time to the list, reading all pages.
+     *
+     * @param since the start time of the lookup, the same for every page and every event name of one check; null to
+     *              look up without a start time
+     */
+    private void lookupEvents(String eventName, Instant since, List<Event> events) {
+        String nextToken = null;
+        do {
+            LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
+                    .maxResults(LOOKUP_MAX_RESULTS)
+                    .lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_NAME)
+                            .attributeValue(eventName).build());
+            if (since != null) {
+                // inclusive, so an event in the same second as the newest event seen is not skipped
+                eventsRequestBuilder.startTime(since);
+            }
+            if (nextToken != null) {
+                eventsRequestBuilder.nextToken(nextToken);
+            }
+            LookupEventsResponse response = cloudTrailClient.lookupEvents(eventsRequestBuilder.build());
+            events.addAll(response.events());
+            nextToken = response.nextToken();
+        } while (ObjectHelper.isNotEmpty(nextToken));
     }
 
     @Override
@@ -273,44 +314,57 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         if (!useSqsNotification) {
 
             try {
-                LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
-                        .maxResults(100)
-                        .lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE)
-                                .attributeValue(SECRETSMANAGER_AMAZONAWS_COM).build());
-
-                if (lastTime != null) {
-                    eventsRequestBuilder.startTime(lastTime.plusMillis(1000));
-                }
-
-                LookupEventsRequest lookupEventsRequest = eventsRequestBuilder.build();
-
-                LookupEventsResponse response = cloudTrailClient.lookupEvents(lookupEventsRequest);
-                List<Event> events = response.events();
-
-                if (!events.isEmpty()) {
-                    lastTime = events.get(0).eventTime();
+                // read every page of the update events since the last check. LookupEvents takes a single lookup
+                // attribute, so there is one lookup per event name: filtering on the event source instead would also
+                // return every read (GetSecretValue, DescribeSecret), and the pages would grow with the read traffic
+                // read lastTime once: every page of both lookups of this check uses the same start time
+                Instant since = lastTime;
+                List<Event> events = new ArrayList<>();
+                for (String eventName : UPDATE_EVENT_NAMES) {
+                    lookupEvents(eventName, since, events);
                 }
 
                 LOG.debug("Found {} events", events.size());
+                Instant newest = since;
+                Set<String> newestEventIds = new HashSet<>();
                 for (Event event : events) {
-                    if (event.eventSource().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
-                        if (event.eventName().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
-                                || event.eventName().equalsIgnoreCase(SECRETSMANAGER_UPDATE_SECRET_EVENT)) {
-                            List<Resource> a = event.resources();
-                            for (Resource res : a) {
-                                String name = res.resourceName();
-                                if (matchSecret(name)) {
-                                    updates.put(name, event.eventTime());
-                                    if (isReloadEnabled()) {
-                                        LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
-                                        triggerReloading = true;
-                                    }
-                                    break;
-                                }
+                    if (lastTimeEventIds.contains(event.eventId())) {
+                        // already seen by the previous check
+                        continue;
+                    }
+                    Instant eventTime = event.eventTime();
+                    if (newest == null || eventTime.isAfter(newest)) {
+                        newest = eventTime;
+                        newestEventIds.clear();
+                        newestEventIds.add(event.eventId());
+                    } else if (eventTime.equals(newest)) {
+                        newestEventIds.add(event.eventId());
+                    }
+                    // the lookups are filtered by event name (PutSecretValue or UpdateSecret), but event names are not
+                    // unique across AWS services, so the event source is still checked
+                    if (!SECRETSMANAGER_AMAZONAWS_COM.equalsIgnoreCase(event.eventSource())) {
+                        continue;
+                    }
+                    List<Resource> a = event.resources();
+                    for (Resource res : a) {
+                        String name = res.resourceName();
+                        if (matchSecret(name)) {
+                            updates.put(name, event.eventTime());
+                            if (isReloadEnabled()) {
+                                LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
+                                triggerReloading = true;
                             }
+                            break;
                         }
                     }
                 }
+                if (newest != null && newest.equals(since)) {
+                    // no newer event: the events at lastTime seen before are still returned by the next lookup
+                    newestEventIds.addAll(lastTimeEventIds);
+                }
+                lastTime = newest;
+                lastTimeEventIds.clear();
+                lastTimeEventIds.addAll(newestEventIds);
             } catch (Exception e) {
                 LOG.warn(
                         "Error during AWS Secrets Refresh Task due to {}. This exception is ignored. Will try again on next run.",

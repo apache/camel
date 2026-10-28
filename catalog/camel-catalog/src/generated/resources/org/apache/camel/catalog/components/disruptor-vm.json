@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "disruptor-vm",
     "extendsScheme": "",
     "alternativeSchemes": "disruptor,disruptor-vm",
@@ -22,7 +22,8 @@
     "producerOnly": false,
     "lenientProperties": false,
     "browsable": false,
-    "remote": false
+    "remote": false,
+    "internal": true
   },
   "componentProperties": {
     "bufferSize": { "index": 0, "kind": "property", "displayName": "Buffer Size", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1024, "description": "To configure the ring buffer size" },
@@ -34,6 +35,11 @@
     "defaultProducerType": { "index": 6, "kind": "property", "displayName": "Default Producer Type", "group": "producer", "label": "producer", "required": false, "type": "enum", "javaType": "org.apache.camel.component.disruptor.DisruptorProducerType", "enum": [ "Single", "Multi" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "Multi", "description": "To configure the default value for DisruptorProducerType The default value is Multi." },
     "lazyStartProducer": { "index": 7, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
     "autowiredEnabled": { "index": 8, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unchanged" ], "description": "The body the producer sent" },
+    "producerIn": { "carriers": [ "any" ] },
+    "producerOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "waitForTaskToComplete", "value": "Never", "carriers": [ "unchanged" ] } ], "description": "Unchanged for a message that expects no reply (InOnly). A message that expects one (InOut), or waitForTaskToComplete=Always, waits for the body the disruptor route ends with; with more than one consumer route (multipleConsumers) the body stays unchanged" }
   },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of queue" },

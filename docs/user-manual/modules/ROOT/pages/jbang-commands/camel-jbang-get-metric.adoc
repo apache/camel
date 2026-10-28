@@ -21,6 +21,7 @@ camel get metric [options]
 | Option | Description | Default | Type
 | `--all` | Whether to show all metrics (also unused with counter being 0) | false | boolean
 | `--custom` | Only show custom metrics | false | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--filter` | Filter metric by type, name or tags |  | String
 | `--json` | Output in JSON Format |  | boolean
 | `--sort` | Sort by pid, name or age | pid | String

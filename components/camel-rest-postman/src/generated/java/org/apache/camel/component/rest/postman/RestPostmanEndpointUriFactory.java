@@ -24,7 +24,7 @@ public class RestPostmanEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(33);
         props.add("apiContextPath");
         props.add("basePath");
         props.add("bridgeErrorHandler");
@@ -53,6 +53,7 @@ public class RestPostmanEndpointUriFactory extends org.apache.camel.support.comp
         props.add("requestFilter");
         props.add("requestId");
         props.add("requestTimeout");
+        props.add("resolveVariablesFromProperties");
         props.add("runFailFast");
         props.add("sslContextParameters");
         props.add("useGlobalSslContextParameters");
@@ -77,7 +78,7 @@ public class RestPostmanEndpointUriFactory extends org.apache.camel.support.comp
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "collectionSource", "postman-collection.json", false, copy);
         uri = buildPathParameter(syntax, uri, "requestId", null, false, copy);

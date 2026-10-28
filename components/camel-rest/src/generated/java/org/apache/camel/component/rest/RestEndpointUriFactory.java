@@ -60,7 +60,7 @@ public class RestEndpointUriFactory extends org.apache.camel.support.component.E
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "method", null, true, copy);
         uri = buildPathParameter(syntax, uri, "path", null, true, copy);

@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -61,8 +63,9 @@ import org.slf4j.LoggerFactory;
  * client (<tt>camel.cli.websocket.client=jdk</tt> always uses the JDK client).
  * <p/>
  * Threads: actions run one at a time on their own thread (the dispatcher is not thread-safe, and an action can block
- * for a long time); connecting, parsing the incoming frames, snapshots, heartbeats and every write to the socket run on
- * a second thread, so the client never has two sends in flight, and its callbacks never wait.
+ * for a long time); snapshots are collected on a second thread (the status of a large integration can take seconds);
+ * connecting, parsing the incoming frames, heartbeats and every write to the socket run on a third thread (the
+ * scheduler), so the client never has two sends in flight, and its callbacks never wait.
  */
 public class WebSocketCliConnectorTransport extends ServiceSupport implements CliConnectorTransport {
 
@@ -94,17 +97,22 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     private CliWebSocketClient client;
     private ThreadPoolExecutor actions;
     private ScheduledExecutorService scheduler;
-    // fields below are only used from the scheduler thread, except the volatile ones
+    // collects snapshots: the status of a large integration can take seconds, which must not hold up the scheduler
+    // (heartbeats, sends); snapshots are handed to the scheduler to be sent
+    private ScheduledExecutorService collector;
+    // fields below are only used from the scheduler thread, except the volatile ones and the snapshot ones below
     private volatile Connection connection;
     private volatile boolean ready;
     private volatile boolean stopping;
     private boolean listenerAdded;
-    // the snapshot task, only (re)scheduled from the scheduler thread or before it runs anything
+    private int failures;
+    // snapshot fields, only used on the collector thread (or before it runs anything)
     private ScheduledFuture<?> snapshotFuture;
     private long debugInterval;
     private ScheduledFuture<?> debugFuture;
-    private int failures;
     private long ticks;
+    // bumped when the rounds are rescheduled, so a round that was already running does not start a second chain
+    private long rounds;
 
     @Override
     public void configure(
@@ -166,6 +174,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                 new CamelThreadFactory(threadNamePattern, "CliConnectorActions", true));
         scheduler = Executors.newSingleThreadScheduledExecutor(
                 new CamelThreadFactory(threadNamePattern, "CliConnectorWebSocket", true));
+        collector = Executors.newSingleThreadScheduledExecutor(
+                new CamelThreadFactory(threadNamePattern, "CliConnectorSnapshots", true));
 
         stopping = false;
         ready = camelContext.isStarted();
@@ -215,26 +225,60 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     public void updateDelay(int delay) {
         // camel-cli-debug makes it faster so breakpoints show up quickly: only the debug snapshot needs that
         debugInterval = delay;
-        execute(this::scheduleSnapshots);
+        ScheduledExecutorService c = collector;
+        if (c != null) {
+            // on the collector, which also reschedules the snapshot rounds
+            c.execute(this::scheduleSnapshots);
+        }
     }
 
     private void scheduleSnapshots() {
         if (snapshotFuture != null) {
             snapshotFuture.cancel(false);
         }
-        snapshotFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::snapshotTask), snapshotInterval,
-                snapshotInterval, TimeUnit.MILLISECONDS);
+        long round = ++rounds;
+        snapshotFuture = collector.schedule(() -> snapshotRound(round), snapshotInterval, TimeUnit.MILLISECONDS);
         if (debugFuture != null) {
             debugFuture.cancel(false);
             debugFuture = null;
         }
         if (debugInterval > 0) {
-            debugFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::debugTask), debugInterval,
+            debugFuture = collector.scheduleWithFixedDelay(() -> safely(this::debugTask), debugInterval,
                     debugInterval, TimeUnit.MILLISECONDS);
         }
     }
 
+    /**
+     * One round of snapshots, then the next one: once the scheduler has sent the frames of this round (a slow link does
+     * not queue frames without end), at least the snapshot interval later, and at least as long as collecting took (a
+     * slow status does not keep a CPU busy).
+     */
+    private void snapshotRound(long round) {
+        if (round != rounds) {
+            return;
+        }
+        long start = System.nanoTime();
+        safely(this::snapshotTask);
+        long delay = Math.max(snapshotInterval, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+        // queued behind the frames of this round
+        execute(() -> {
+            ScheduledExecutorService c = collector;
+            if (c != null) {
+                try {
+                    c.execute(() -> {
+                        if (round == rounds) {
+                            snapshotFuture = c.schedule(() -> snapshotRound(round), delay, TimeUnit.MILLISECONDS);
+                        }
+                    });
+                } catch (RejectedExecutionException e) {
+                    // stopping
+                }
+            }
+        });
+    }
+
     private void debugTask() {
+        // note: shares the collector with the status, so a slow status delays it (as when both ran on the scheduler)
         Connection c = connection;
         if (c != null && c.helloSent) {
             // only sent when it changed, so the regular snapshot task does not send it again
@@ -251,6 +295,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                     Connection c = connection;
                     if (c != null) {
                         connection = null;
+                        c.pending.forEach(future -> future.cancel(true));
                         c.close(NORMAL_CLOSURE, "stopping");
                     }
                 }).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -263,6 +308,10 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         if (actions != null) {
             actions.shutdownNow();
             actions = null;
+        }
+        if (collector != null) {
+            collector.shutdownNow();
+            collector = null;
         }
         client = null;
     }
@@ -340,6 +389,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             return;
         }
         connection = null;
+        c.pending.forEach(future -> future.cancel(true));
         c.channel.abort();
         // a connection that drops right away counts as a failure, so a tool that keeps closing us is not hammered
         if (System.currentTimeMillis() - c.openedAt < STABLE_CONNECTION) {
@@ -391,15 +441,15 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         frame.put("name", camelContext.getName());
         frame.put("transport", client.getName());
         try {
-            JsonObject status = snapshots.status();
-            frame.put("runtime", status.get("runtime"));
+            frame.put("runtime", snapshots.runtime());
             c.helloSent = true;
             send(c, frame);
-            sendSnapshot(c, "status", status);
         } catch (Exception e) {
             LOG.debug("Error sending hello due to: {}. Will retry.", e.getMessage(), e);
         }
     }
+
+    // ---- snapshots (collector thread) ----
 
     private void snapshotTask() {
         Connection c = connection;
@@ -408,7 +458,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
         if (!c.helloSent) {
             // not started yet, or the hello failed
-            sayHello(c);
+            execute(() -> sayHello(c));
             return;
         }
         snapshot(c, "status", false);
@@ -491,7 +541,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         JsonObject frame = envelope("snapshot");
         frame.put("kind", kind);
         frame.put("data", data);
-        send(c, frame);
+        // only the scheduler sends, one frame at a time
+        execute(() -> send(c, frame));
     }
 
     private void send(Connection c, JsonObject frame) {
@@ -546,43 +597,42 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
     private void runAction(Connection c, String requestId, JsonObject action) {
         try {
-            actions.execute(() -> reply(c, result(requestId, action)));
+            actions.execute(() -> {
+                if (c != connection) {
+                    return;
+                }
+                CompletableFuture<JsonObject> result = result(requestId, action);
+                c.pending.add(result);
+                if (c != connection) {
+                    result.cancel(true);
+                }
+                result.whenComplete((frame, failure) -> {
+                    c.pending.remove(result);
+                    if (failure == null) {
+                        reply(c, frame);
+                    }
+                });
+            });
         } catch (RejectedExecutionException e) {
             reply(c, error(requestId, "Busy: too many pending actions"));
         }
     }
 
-    private JsonObject result(String requestId, JsonObject action) {
-        JsonObject[] output = new JsonObject[1];
-        String[] error = new String[1];
-        try {
-            boolean known = dispatcher.dispatch(action, new CliActionOutput() {
-                @Override
-                public void write(JsonObject result) {
-                    output[0] = result;
-                }
-
-                @Override
-                public void error(String message) {
-                    error[0] = message;
-                }
-            });
-            if (!known) {
-                error[0] = "Unknown action: " + action.getString("action");
+    private CompletableFuture<JsonObject> result(String requestId, JsonObject action) {
+        CompletableFuture<CliActionOutcome> outcome = CliActionOutcome.dispatch(dispatcher, action);
+        CompletableFuture<JsonObject> answer = outcome.thenApply(o -> {
+            JsonObject frame = result(requestId, o.error(), o.result() != null ? o.result() : new JsonObject());
+            if (o.reason() != null) {
+                frame.put("reason", o.reason());
             }
-        } catch (Exception e) {
-            error[0] = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
-        }
-        if (error[0] == null && output[0] != null) {
-            // many actions report failures inside their result, as the file transport has no other way to do it
-            String status = output[0].getString("status");
-            if ("error".equals(status) || "failed".equals(status)) {
-                JsonObject exception = output[0].getMap("exception");
-                error[0] = exception != null && exception.getString("message") != null
-                        ? exception.getString("message") : "Action failed";
+            return frame;
+        });
+        answer.whenComplete((value, failure) -> {
+            if (answer.isCancelled()) {
+                outcome.cancel(true);
             }
-        }
-        return result(requestId, error[0], output[0] != null ? output[0] : new JsonObject());
+        });
+        return answer;
     }
 
     private void stop(Connection c, String requestId) {
@@ -712,10 +762,12 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
         // set on the scheduler thread, before the connection is used
         private CliWebSocketClient.Channel channel;
+        private final Set<CompletableFuture<JsonObject>> pending = ConcurrentHashMap.newKeySet();
         private boolean lost;
         private long openedAt = System.currentTimeMillis();
         private volatile long lastSeen = openedAt;
-        private boolean helloSent;
+        private volatile boolean helloSent;
+        // what was sent on this connection, only used on the collector thread
         private long lastTraceUid;
         private long lastReceiveUid;
         private final Map<String, String> lastSent = new HashMap<>();

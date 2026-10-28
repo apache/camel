@@ -24,7 +24,8 @@ import picocli.CommandLine;
                      description = "Resume Camel routes", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd resume-route myRoute" })
+                             "  camel cmd resume-route --id=myRoute",
+                             "  camel cmd resume-route myApp --id=myRoute" })
 public class CamelRouteResumeAction extends CamelRouteAction {
 
     public CamelRouteResumeAction(CamelJBangMain main) {

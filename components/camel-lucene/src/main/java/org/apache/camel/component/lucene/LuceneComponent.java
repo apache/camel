@@ -43,8 +43,10 @@ public class LuceneComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
-        config.parseURI(new URI(uri), parameters, this);
-        LuceneEndpoint luceneEndpoint = new LuceneEndpoint(uri, this, config);
+        // each endpoint parses its URI into its own copy, as the component configuration is shared
+        LuceneConfiguration endpointConfig = config.copy();
+        endpointConfig.parseURI(new URI(uri), parameters, this);
+        LuceneEndpoint luceneEndpoint = new LuceneEndpoint(uri, this, endpointConfig);
         setProperties(luceneEndpoint, parameters);
         return luceneEndpoint;
     }

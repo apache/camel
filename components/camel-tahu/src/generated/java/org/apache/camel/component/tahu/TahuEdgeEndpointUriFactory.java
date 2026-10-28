@@ -63,7 +63,7 @@ public class TahuEdgeEndpointUriFactory extends org.apache.camel.support.compone
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "groupId", null, true, copy);
         uri = buildPathParameter(syntax, uri, "edgeNode", null, true, copy);

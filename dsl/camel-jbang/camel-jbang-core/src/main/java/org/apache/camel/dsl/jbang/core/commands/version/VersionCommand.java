@@ -31,7 +31,6 @@ public class VersionCommand extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         // defaults to get
-        new CommandLine(new VersionGet(getMain())).execute();
-        return 0;
+        return runDefault(new VersionGet(getMain()));
     }
 }

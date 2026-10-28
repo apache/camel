@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.hashicorp.vault;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -28,6 +29,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.HashicorpVaultConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.vault.authentication.TokenAuthentication;
 import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
@@ -59,18 +62,21 @@ import org.springframework.vault.support.VaultResponse;
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
  * Properties Function are all prefixed with <tt>hashicorp:</tt>. For example asking for
  * <tt>hashicorp:engine:token</tt>, will return the secret value associated to the secret named token on Hashicorp Vault
- * instance on the engine 'engine'.
+ * instance on the engine 'engine'. When no engine is given, such as <tt>hashicorp:token</tt>, the 'secret' engine is
+ * used.
  *
- * Another way of retrieving a secret value is using the following notation <tt>hashicorp:engine:database/username</tt>:
+ * Another way of retrieving a secret value is using the following notation <tt>hashicorp:engine:database#username</tt>:
  * in this case the field username of the secret database will be returned. As a fallback, the user could provide a
  * default value, which will be returned in case the secret doesn't exist, the secret has been marked for deletion or,
  * for example, if a particular field of the secret doesn't exist. For using this feature, the user could use the
- * following notation <tt>hashicorp:engine:database/username:admin</tt>. The admin value will be returned as default
+ * following notation <tt>hashicorp:engine:database#username:admin</tt>. The admin value will be returned as default
  * value, if the conditions above were all met.
  */
 
 @org.apache.camel.spi.annotations.PropertiesFunction("hashicorp")
 public class HashicorpVaultPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultPropertiesFunction.class);
 
     private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN";
     private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST";
@@ -82,11 +88,12 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
             = "CAMEL_HASHICORP_VAULT_CLOUD";
     private static final String CAMEL_HASHICORP_VAULT_NAMESPACE_ENV
             = "CAMEL_HASHICORP_VAULT_NAMESPACE";
+    private static final String DEFAULT_ENGINE = "secret";
     private CamelContext camelContext;
     private VaultTemplate client;
-    private final Set<String> secrets = new HashSet<>();
+    private final Set<String> secrets = ConcurrentHashMap.newKeySet();
+    private final Map<String, Integer> secretVersions = new ConcurrentHashMap<>();
 
-    private String engine;
     private String namespace;
     private boolean cloud;
 
@@ -153,6 +160,8 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
 
     @Override
     public String apply(String remainder) {
+        // the function is shared by all lookups (also concurrent ones), so the parsed parts must be local
+        String engine = DEFAULT_ENGINE;
         String key = remainder;
         String subkey = null;
         String returnValue = null;
@@ -160,8 +169,12 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         String version = null;
         if (remainder.contains("#")) {
             String keyRemainder = StringHelper.before(remainder, "#");
-            engine = StringHelper.before(keyRemainder, ":");
-            key = StringHelper.after(keyRemainder, ":");
+            if (keyRemainder.contains(":")) {
+                engine = StringHelper.before(keyRemainder, ":");
+                key = StringHelper.after(keyRemainder, ":");
+            } else {
+                key = keyRemainder;
+            }
             subkey = StringHelper.after(remainder, "#");
             defaultValue = StringHelper.after(subkey, ":");
             if (ObjectHelper.isNotEmpty(defaultValue)) {
@@ -201,11 +214,14 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                     key = StringHelper.before(key, "@");
                 }
             }
+        } else if (remainder.contains("@")) {
+            version = StringHelper.after(remainder, "@");
+            key = StringHelper.before(remainder, "@");
         }
 
         if (key != null) {
             try {
-                returnValue = getSecretFromSource(key, subkey, defaultValue, version);
+                returnValue = getSecretFromSource(engine, key, subkey, defaultValue, version);
             } catch (Exception e) {
                 throw new RuntimeCamelException(
                         "Error getting secret from vault using key: " + key + " due to: " + e.getMessage(), e);
@@ -215,9 +231,10 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         return returnValue;
     }
 
-    private String getSecretFromSource(String key, String subkey, String defaultValue, String version) {
-        // capture name of secret
-        secrets.add(key);
+    private String getSecretFromSource(String engine, String key, String subkey, String defaultValue, String version) {
+        // capture name of secret in the form the refresh task reads the metadata of
+        String secretName = trackedSecretName(engine, key);
+        secrets.add(secretName);
 
         String returnValue = null;
         try {
@@ -233,15 +250,22 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                 completePath = completePath + "?version=" + version;
             }
             VaultResponse rawSecret = client.read(completePath);
-            if (ObjectHelper.isNotEmpty(rawSecret)) {
-                returnValue = rawSecret.getData().get("data").toString();
+            // the secret may not exist, or the response may have no data: then there is no value (nor field)
+            Map<String, Object> responseData = rawSecret != null ? rawSecret.getData() : null;
+            Object secretData = responseData != null ? responseData.get("data") : null;
+            if (secretData != null) {
+                returnValue = secretData.toString();
+                if (ObjectHelper.isEmpty(version)) {
+                    captureVersion(secretName, responseData);
+                }
             }
             if (ObjectHelper.isNotEmpty(subkey)) {
-                Object field = ((Map) rawSecret.getData().get("data")).get(subkey);
-                if (ObjectHelper.isNotEmpty(field)) {
-                    returnValue = field.toString();
-                } else {
-                    returnValue = null;
+                returnValue = null;
+                if (secretData instanceof Map<?, ?> data) {
+                    Object field = data.get(subkey);
+                    if (ObjectHelper.isNotEmpty(field)) {
+                        returnValue = field.toString();
+                    }
                 }
             }
             if (ObjectHelper.isEmpty(returnValue)) {
@@ -257,6 +281,28 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         return returnValue;
     }
 
+    /**
+     * The name of a secret as the refresh task tracks it: engine:secret, or only the secret for the default secret
+     * engine. A lookup without engine is tracked as a secret of the default secret engine, which is also how the
+     * refresh task reads a name without engine.
+     */
+    private static String trackedSecretName(String secretEngine, String key) {
+        return secretEngine == null || "secret".equals(secretEngine) ? key : secretEngine + ":" + key;
+    }
+
+    private void captureVersion(String secretName, Map<String, Object> responseData) {
+        if (responseData.get("metadata") instanceof Map<?, ?> metadata && metadata.get("version") != null) {
+            try {
+                // keep the oldest version resolved: a value resolved earlier may still be in use, so the refresh
+                // task must compare with that one (at worst one extra reload)
+                secretVersions.merge(secretName, Integer.valueOf(metadata.get("version").toString()), Math::min);
+            } catch (NumberFormatException e) {
+                LOG.debug("Could not parse secret version for {}: {}", secretName, metadata.get("version"), e);
+                // the refresh task then uses the version it reads first
+            }
+        }
+    }
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -268,9 +314,20 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     }
 
     /**
-     * Ids of the secrets in use
+     * Ids of the secrets in use, as engine:secret, or only the secret for the default secret engine
      */
     public Set<String> getSecrets() {
-        return secrets;
+        return Collections.unmodifiableSet(secrets);
+    }
+
+    /**
+     * The oldest version of the secret (named as in {@link #getSecrets()}) that was resolved, or null if not known
+     * (such as when a specific version was requested).
+     *
+     * @param  secretName the name of the secret, as engine:secret, or only the secret for the default secret engine
+     * @return            the oldest version of the secret that was resolved, or null if not known
+     */
+    public Integer getSecretVersion(String secretName) {
+        return secretVersions.get(secretName);
     }
 }

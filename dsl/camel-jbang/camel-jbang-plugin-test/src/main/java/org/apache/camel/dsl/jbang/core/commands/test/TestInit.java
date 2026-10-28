@@ -67,7 +67,7 @@ public class TestInit extends Init {
                 ExportHelper.safeCopy(new ByteArrayInputStream(context.getBytes(StandardCharsets.UTF_8)),
                         citrusApplicationProperties);
             } catch (Exception e) {
-                printer().println("Error: Failed to create '%s' in: %s"
+                printer().printErr("Failed to create '%s' in: %s"
                         .formatted(CitrusSettings.getApplicationPropertiesFile(), citrusApplicationProperties));
             }
         }

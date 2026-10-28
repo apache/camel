@@ -16,8 +16,15 @@
  */
 package org.apache.camel.component.jackson3;
 
+import java.io.OutputStream;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.JsonPayloadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.core.StreamReadConstraints;
@@ -30,6 +37,17 @@ import tools.jackson.databind.json.JsonMapper;
  */
 @Dataformat("jackson")
 @Metadata(excludeProperties = "library,permissions,dateFormatPattern")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.ANY,
+                                 description = "A Map, a List or a POJO to write as JSON. Text, bytes or a stream that is"
+                                               + " JSON already is written as it is"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
+                                  description = "The JSON in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    dependsOn = { "collectionType", "useList", "allowUnmarshallType", "allowJmsType" },
+                                    javaTypeOption = "unmarshalType",
+                                    byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
+                                    description = "A Map (LinkedHashMap) for a JSON object, a List (ArrayList) for an array"))
 public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
@@ -113,4 +131,27 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
         return "application/json";
     }
 
+    /**
+     * Whether a body that already is JSON text is written as it is. A subclass that writes another format than JSON,
+     * such as protobuf, returns false.
+     */
+    protected boolean isWriteJsonAsIs() {
+        return true;
+    }
+
+    /**
+     * A body that is already the JSON text is written as it is (CAMEL-25329), see {@link JsonPayloadHelper}: a file, a
+     * stream, bytes, or a String holding a JSON object or array. Any other String, and every object, is marshalled as
+     * before.
+     */
+    @Override
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        if (isWriteJsonAsIs() && JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream) >= 0) {
+            if (isContentTypeHeader()) {
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
+            }
+            return;
+        }
+        super.marshal(exchange, graph, stream);
+    }
 }

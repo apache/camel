@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -116,6 +118,61 @@ final class SchemaHints {
 
     private static final Predicate<Match> ANY = m -> true;
 
+    /** {sku} when the node is the map YAML reads an unquoted {sku} as (one key, no value); null otherwise. */
+    static String unquotedBraces(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        if (instance == null || !instance.isObject() || instance.size() != 1) {
+            return null;
+        }
+        String key = instance.fieldNames().next();
+        return instance.get(key).isNull() ? "{" + key + "}" : null;
+    }
+
+    /** A value that names a script file by its scheme, as resource: loads it. */
+    private static final Pattern SCRIPT_FILE = Pattern.compile("(file|classpath|https?):.+", Pattern.DOTALL);
+
+    /**
+     * Where the text of a language goes, for the text written under another key (groovy: {script: "..."}). A script
+     * file under resource: (groovy: {resource: "file:x.groovy"}) is loaded with the resource: prefix, which the value
+     * often lacks (CAMEL-25748): the expression "file:x.groovy" would run as code.
+     */
+    static String languageTextHint(String language, String property, String value) {
+        String key = property.toLowerCase(Locale.ROOT);
+        String text = value.strip();
+        boolean scriptFile = !text.startsWith("resource:")
+                && (key.contains("resource") || (key.startsWith("script") && SCRIPT_FILE.matcher(text).matches()));
+        if (scriptFile) {
+            return "a " + language + " script file is loaded in expression: with the resource: prefix, write " + language
+                   + ": {expression: \"resource:" + text.replace("\"", "\\\"") + "\"}";
+        }
+        return "the " + language + " text goes in expression:, write " + language + ": {expression: \""
+               + value.replace("\"", "\\\"") + "\"}";
+    }
+
+    /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
+    private static String valueOf(Match m, String property, String fallback) {
+        JsonNode instance = m.error().getInstanceNode();
+        JsonNode value = instance != null ? instance.get(property) : null;
+        return value != null && value.isValueNode() && !value.isNull() ? value.asText() : fallback;
+    }
+
+    /**
+     * The language of the error's node that is written in its short form (jsonpath: "$[...]") next to the unknown
+     * property, when that property is one of the language's own options (resultType), or null.
+     */
+    private static String shortFormLanguage(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        if (instance == null || !instance.isObject() || instance.has("expression")) {
+            return null;
+        }
+        for (String language : m.validator().languageKeys()) {
+            if (instance.path(language).isTextual() && m.validator().languageOptions(language).contains(m.unknown())) {
+                return language;
+            }
+        }
+        return null;
+    }
+
     /** The EIP names a model writes for the exchange properties, and the ones Camel has. */
     private static final Map<String, String> EXCHANGE_PROPERTY_EIPS = Map.of(
             "setExchangeProperty", "setProperty", "setExchangeProperties", "setProperties",
@@ -169,9 +226,104 @@ final class SchemaHints {
                     m -> "a top-level entry is one key: - route:, - beans:, - rest:...; the lines that belong to it"
                          + " must be indented under it, a second key at the same level as the entry is read as a"
                          + " separate property"),
-            append("maxProperties", ".*/steps/\\d+", ANY,
-                    m -> "a step is one EIP: an option of that EIP is indented under its key, and the next EIP is its"
-                         + " own - item"));
+            append("maxProperties", ".*/steps/\\d+", ANY, SchemaHints::stepWithTwoKeys));
+
+    /**
+     * The keys of a step after its EIP, each with where it goes: an option of the EIP is indented under it, another EIP
+     * is the next - item (CAMEL-25372). Without the keys, the generic sentence.
+     */
+    static String stepWithTwoKeys(Match m) {
+        String generic = "a step is one EIP: an option of that EIP is indented under its key, and the next EIP is its"
+                         + " own - item";
+        var node = m.error().getInstanceNode();
+        if (node == null || !node.isObject() || node.size() < 2) {
+            return generic;
+        }
+        List<String> keys = new ArrayList<>();
+        node.fieldNames().forEachRemaining(keys::add);
+        Set<String> steps = m.validator().stepNames();
+        String eip = keys.stream().filter(steps::contains).findFirst().orElse(null);
+        if (eip == null) {
+            return generic;
+        }
+        Set<String> options = m.validator().optionsOf(eip);
+        // the key the option lines up with once it is under the EIP: "the column of - split:" read as the column of
+        // the dash, and two spaces more than that is where the model had put it already (it wrote the same five times)
+        JsonNode value = node.get(eip);
+        String sibling = value != null && value.isObject() && value.size() > 0 ? value.fieldNames().next() : null;
+        List<String> parts = new ArrayList<>();
+        for (String k : keys) {
+            if (k.equals(eip)) {
+                continue;
+            }
+            if (steps.contains(k)) {
+                parts.add(k + ": is another EIP: start it as its own item, - " + k + ":");
+            } else if (options.contains(k) && sibling != null) {
+                parts.add(k + ": lines up with " + eip + ":, so it is read as a second key of the - item; it is an"
+                          + " option of " + eip + ": indent " + k + ": and the lines under it two spaces more, so " + k
+                          + ": lines up with " + sibling + ":");
+            } else if (options.contains(k)) {
+                parts.add(k + ": lines up with " + eip + ":, so it is read as a second key of the - item; it is an"
+                          + " option of " + eip + ": write the options of " + eip + ": on the lines under it, two"
+                          + " spaces further right than " + eip + ":, with " + k + ": among them");
+            } else {
+                // neither: say what a step is, without guessing where the key belongs
+                return generic;
+            }
+        }
+        return parts.isEmpty() ? generic : String.join("; ", parts);
+    }
+
+    /**
+     * The options of the step's EIP that are written as second keys of the step (at the column of the EIP), when the
+     * step has an EIP; empty otherwise.
+     */
+    static Set<String> misplacedOptions(JsonNode node, YamlValidator validator) {
+        if (node == null || !node.isObject() || node.size() < 2) {
+            return Set.of();
+        }
+        Set<String> steps = validator.stepNames();
+        List<String> keys = new ArrayList<>();
+        node.fieldNames().forEachRemaining(keys::add);
+        String eip = keys.stream().filter(steps::contains).findFirst().orElse(null);
+        if (eip == null) {
+            return Set.of();
+        }
+        Set<String> options = validator.optionsOf(eip);
+        Set<String> answer = new LinkedHashSet<>();
+        for (String k : keys) {
+            if (!k.equals(eip) && !steps.contains(k) && options.contains(k)) {
+                answer.add(k);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * An option of a step's EIP at the column of the EIP fails twice: "at most 1 properties" (the hint above says where
+     * it goes) and "property 'steps' is not defined" in the oneOf branch of the step, whose hint says to move the items
+     * up a level, the opposite. The second one is dropped.
+     */
+    static List<Error> dropMisplacedOptionRepeats(List<Error> errors, YamlValidator validator) {
+        Set<String> repeats = new HashSet<>();
+        for (Error e : errors) {
+            if ("maxProperties".equals(e.getKeyword())) {
+                String at = String.valueOf(e.getInstanceLocation());
+                if (at.matches(".*/steps/\\d+")) {
+                    for (String k : misplacedOptions(e.getInstanceNode(), validator)) {
+                        repeats.add(at + " " + k);
+                    }
+                }
+            }
+        }
+        if (repeats.isEmpty()) {
+            return errors;
+        }
+        List<Error> answer = new ArrayList<>(errors);
+        answer.removeIf(e -> "additionalProperties".equals(e.getKeyword()) && e.getMessage() != null
+                && repeats.contains(e.getInstanceLocation() + " " + between(e.getMessage(), "property '", "'")));
+        return answer;
+    }
 
     // -------------------------------------------------------------------------------------------------------------
     // expression hints
@@ -197,7 +349,35 @@ final class SchemaHints {
                                 "a plain value (%s) found, an expression expected: write %s: {constant: {expression: \"%s\"}} for a fixed value, or %s: {simple: {expression: \"...\"}} for a dynamic one",
                                 value, m.name(), value, m.name());
                     },
+                    "type", "expression"),
+            // split: {expression: "${body}"}, setHeader: {expression: constant 404}: the expression: key of an EIP
+            // holds a language map, not the text
+            replace("type", ".*/expression",
+                    m -> {
+                        JsonNode instance = m.error().getInstanceNode();
+                        return instance != null && instance.isValueNode() && m.message().contains("object expected");
+                    },
+                    m -> expressionKeyHint(m.error().getInstanceNode().asText()),
                     "type", "expression"));
+
+    /** The languages a model writes in front of the text, as in expression: constant 404. */
+    private static final Pattern LANGUAGE_PREFIX = Pattern.compile(
+            "(constant|simple|header|exchangeProperty|variable|jq|jsonpath|xpath|groovy|tokenize|method|ref)\\s+(.+)",
+            Pattern.DOTALL);
+
+    static String expressionKeyHint(String value) {
+        String language = value.contains("${") ? "simple" : "constant";
+        String text = value;
+        Matcher prefix = LANGUAGE_PREFIX.matcher(value.trim());
+        if (prefix.matches()) {
+            language = prefix.group(1);
+            text = prefix.group(2).trim();
+        }
+        return String.format(
+                "a plain value (%s) found, a language expected: expression: holds the language as its key, write"
+                             + " expression: {%s: {expression: \"%s\"}}",
+                value, language, text.replace("\"", "\\\""));
+    }
 
     // -------------------------------------------------------------------------------------------------------------
     // list hints
@@ -213,6 +393,13 @@ final class SchemaHints {
                     m -> "an expression is written with the language as the key and its expression: property, e.g."
                          + " groovy: {expression: \"...\"}, simple: {expression: \"...\"}, constant: {expression: \"...\"};"
                          + " the language: form is language: {language: groovy, expression: \"...\"}"),
+            // path: {sku}: braces without quotes are a YAML map ({sku: null}), not the text {sku}
+            append("type", null, m -> m.message().contains("object found, string expected") && unquotedBraces(m) != null,
+                    m -> {
+                        String braces = unquotedBraces(m);
+                        return braces + " without quotes is a YAML map (braces open a map in YAML), not text: quote it, "
+                               + m.name() + ": \"" + braces + "\"";
+                    }),
             // message: {simple: "..."}: a string property that is already an expression, or a plain option
             append("type", null, m -> m.message().contains("object found, string expected"),
                     m -> m.name() + " is a plain string"
@@ -257,6 +444,31 @@ final class SchemaHints {
                         return "the library name is case sensitive"
                                + (match != null ? ": write library: " + match : ", write it as listed");
                     }),
+            // a comma-separated list of enum values, such as the jsonpath option (CAMEL-25739): name the values, not the
+            // pattern that checks them
+            append("pattern", null, m -> m.message().contains("^\\s*("),
+                    m -> {
+                        String values = between(m.message(), "^\\s*(", ")");
+                        return "write one or more of " + (values == null ? "the listed values" : values.replace("|", ", "))
+                               + ", separated by comma";
+                    }),
+            // - stop as a step: a step is a key with its options as a map, {} when it has none to set
+            replace("type", ".*/steps/\\d+",
+                    m -> m.message().contains("string found, object expected") && m.error().getInstanceNode() != null
+                            && m.error().getInstanceNode().isTextual(),
+                    m -> {
+                        String text = m.error().getInstanceNode().asText().trim();
+                        if (!m.validator().stepNames().contains(text)) {
+                            return "a step is a key followed by its options, such as - log: {message: \"...\"} or"
+                                   + " - stop: {}; " + text + " is not a step";
+                        }
+                        String property = SchemaHints.STRING_STEP_PROPERTY.get(text);
+                        return "a step is a key followed by its options: write - " + text + ": "
+                               + (property != null
+                                       ? "{" + property + ": \"...\"}"
+                                       : "{} (the options of the step, if any, go inside the braces)");
+                    },
+                    "type", "type"),
             append("type", "/?", m -> m.message().contains("array expected"),
                     m -> "a Camel YAML file is a list of entries, each starting with \"- \": - route:, - from:, - beans:,"
                          + " - rest:, - onException:"),
@@ -292,11 +504,11 @@ final class SchemaHints {
                     m -> "steps: is a property of from:, next to uri:; a steps: written at the route level must be"
                          + " indented under from:"),
             // - id: myBean / class: ... : the bean properties are name and type
-            unknownProperty("/\\d+/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
+            unknownProperty(".*/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
                     m -> "a bean is - name: myBean followed by type: \"#class:com.example.MyBean\" (name instead of "
                          + m.unknown() + (m.unknown().equals("class") ? ", type instead of class" : "") + ")"),
             // - myBean: {type: ...} instead of - name: myBean / type: ...
-            unknownProperty("/\\d+/beans/\\d+", ANY,
+            unknownProperty(".*/beans/\\d+", ANY,
                     m -> "a bean item is written as - name: " + m.unknown()
                          + " followed by type: \"#class:com.example.MyBean\" (the name is a property, not the key)"),
             unknownProperty(null,
@@ -312,6 +524,11 @@ final class SchemaHints {
                          + " key: errorHandler: {noErrorHandler: {}}, errorHandler: {deadLetterChannel: {deadLetterUri:"
                          + " \"direct:parked\"}}, errorHandler: {defaultErrorHandler: {redeliveryPolicy: {...}}}"
                          + " (a top-level - errorHandler: item applies to every route)"),
+            // - noErrorHandler: {} as a step of the route: the handler goes on the route, not among its steps (CAMEL-25328)
+            unknownProperty(".*/steps/\\d+", m -> ROUTE_ERROR_HANDLER_KINDS.contains(m.unknown()),
+                    m -> "an error handler is not a step: write it on the route, next to from:, as errorHandler: {"
+                         + m.unknown() + ": " + (m.unknown().equals("noErrorHandler") ? "{}" : "{...}")
+                         + "} (a top-level - errorHandler: item applies to every route)"),
             unknownProperty(".*/errorHandler", m -> m.unknown().equals("type") || m.unknown().equals("errorHandlerType"),
                     m -> "errorHandler: has the kind of handler as its key, not a " + m.unknown() + " property:"
                          + " errorHandler: {noErrorHandler: {}}, {deadLetterChannel: {deadLetterUri: \"...\"}} or"
@@ -422,6 +639,40 @@ final class SchemaHints {
             unknownProperty(".*/jsonpath", m -> m.unknown().equalsIgnoreCase("jsonPath") || m.unknown().equals("path"),
                     m -> "the JSONPath text goes under expression: (jsonpath: {expression: \"$[?(@.sku == 'X')]\","
                          + " resultType: java.util.List})"),
+            // expression: {jsonpath: "$[...]", resultType: java.util.Map}: an option of the language written next to its
+            // short form, where the node has no such property; it goes under the language, with the text as expression:
+            unknownProperty(null, m -> shortFormLanguage(m) != null,
+                    m -> {
+                        String language = shortFormLanguage(m);
+                        return m.unknown() + " is an option of the " + language + " language: write the language as a"
+                               + " map, with the text under expression: and " + m.unknown() + " next to it (" + language
+                               + ": {expression: " + YamlValidator.yamlQuoted(valueOf(m, language, "...")) + ", "
+                               + m.unknown() + ": " + valueOf(m, m.unknown(), "...") + "})";
+                    }),
+            // onException: {maximumRedeliveries: 3}, deadLetterChannel: {retryAttemptedLogLevel: WARN}: an option of
+            // the redelivery policy written next to it, where the closest name (level) is not what was meant
+            unknownProperty(".*/(onException|" + String.join("|", ROUTE_ERROR_HANDLER_KINDS) + ")",
+                    m -> m.validator().redeliveryPolicyProperties().contains(m.unknown()),
+                    m -> m.unknown() + " is an option of the redelivery policy: write it under redeliveryPolicy:, as"
+                         + " redeliveryPolicy: {" + m.unknown() + ": " + valueOf(m, m.unknown(), "...") + "}"),
+            // groovy: {script: "..."}, simple: {text: "..."}: the text of every language goes in expression:
+            unknownProperty(null,
+                    m -> m.validator().languageKeys().contains(m.name()) && !m.name().equals("language")
+                            && m.error().getInstanceNode() != null
+                            && !m.error().getInstanceNode().has("expression")
+                            && m.error().getInstanceNode().path(m.unknown()).isTextual(),
+                    m -> languageTextHint(m.name(), m.unknown(), valueOf(m, m.unknown(), "..."))),
+            // - simple: "${body}" as a step: a language is not a step (and no "did you mean 'sample'?")
+            unknownProperty(".*/steps/\\d+",
+                    m -> m.validator().languageKeys().contains(m.unknown())
+                            && !m.validator().stepNames().contains(m.unknown()),
+                    m -> {
+                        String text = YamlValidator.yamlQuoted(valueOf(m, m.unknown(), "..."));
+                        return "'" + m.unknown() + "' is a language, not a step: an expression is written in a step that"
+                               + " uses it, such as - setBody: {expression: {" + m.unknown() + ": {expression: " + text
+                               + "}}} to set the body, or - filter: {expression: {" + m.unknown() + ": {expression: "
+                               + text + "}}, steps: [...]} to keep the messages it matches";
+                    }),
             unknownProperty(null,
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) != null,
                     m -> "did you mean '"

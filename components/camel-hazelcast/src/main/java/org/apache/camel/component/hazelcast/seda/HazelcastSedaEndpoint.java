@@ -27,6 +27,9 @@ import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
@@ -39,6 +42,21 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SED
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_SEDA, title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName",
              category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                   description = "The body the producer put on the Hazelcast queue, as Hazelcast "
+                                                 + "deserializes it: a body that is not Serializable, such as a "
+                                                 + "stream, arrives as bytes. With transferExchange=true on the "
+                                                 + "producer the headers and exchange properties come along"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
+                   Carrier.POJO },
+                                  description = "A Serializable body goes on the queue as is, and another one "
+                                                + "converted to bytes, so a stream works, but a POJO that does not "
+                                                + "convert to bytes fails, as does no body"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The producer puts the message on the queue and does not wait for "
+                                                 + "the consumer, also for a message that expects a reply (InOut)"))
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue<Object> queue;

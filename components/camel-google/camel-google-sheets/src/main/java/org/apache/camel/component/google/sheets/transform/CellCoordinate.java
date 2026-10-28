@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.google.sheets.transform;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -62,29 +61,15 @@ public class CellCoordinate {
      * @return
      */
     protected static int getColumnIndex(String cellId) {
-        char[] characters = cellId.toCharArray();
-        List<Integer> chars = IntStream.range(0, characters.length)
-                .mapToObj(i -> characters[i])
-                .filter(c -> !Character.isDigit(c))
-                .map(Character::toUpperCase)
-                .map(Character::getNumericValue)
-                .collect(Collectors.toList());
-
-        if (chars.size() > 1) {
-            int index = 0;
-            for (int i = 0; i < chars.size(); i++) {
-                if (i == chars.size() - 1) {
-                    index += chars.get(i) - Character.getNumericValue('A');
-                } else {
-                    index += ((chars.get(i) - Character.getNumericValue('A')) + 1) * 26;
-                }
+        // column letters are a number in bijective base 26: A=1 .. Z=26, AA=27 .. ZZ=702, AAA=703 ...
+        int index = 0;
+        for (char c : cellId.toCharArray()) {
+            char letter = Character.toUpperCase(c);
+            if (letter >= 'A' && letter <= 'Z') {
+                index = index * 26 + (letter - 'A' + 1);
             }
-            return index;
-        } else if (chars.size() == 1) {
-            return chars.get(0) - Character.getNumericValue('A');
-        } else {
-            return 0;
         }
+        return Math.max(index - 1, 0);
     }
 
     /**
@@ -111,27 +96,22 @@ public class CellCoordinate {
 
     /**
      * Evaluates column name in A1 notation based on the column index. Index 0 will be "A" and index 25 will be "Z".
-     * Method also supports name overflow where index 26 will be "AA" and index 51 will be "AZ" and so on.
+     * Method also supports name overflow where index 26 will be "AA", index 51 will be "AZ" and index 702 will be "AAA"
+     * and so on.
      *
      * @param  columnIndex
      * @return
      */
     public static String getColumnName(int columnIndex) {
-        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder columnName = new StringBuilder();
 
-        int index = columnIndex;
-        int overflowIndex = -1;
-        while (index > 25) {
-            overflowIndex++;
-            index -= 26;
+        // column letters are a number in bijective base 26
+        int index = columnIndex + 1;
+        while (index > 0) {
+            index--;
+            columnName.insert(0, (char) ('A' + index % 26));
+            index /= 26;
         }
-
-        if (overflowIndex >= 0) {
-            columnName.append(alphabet.toCharArray()[overflowIndex]);
-        }
-
-        columnName.append(alphabet.toCharArray()[index]);
 
         return columnName.toString();
     }
@@ -149,14 +129,10 @@ public class CellCoordinate {
     public static String getColumnName(int columnIndex, int columnStartIndex, String... columnNames) {
         String columnName = getColumnName(columnIndex);
 
-        int index;
-        if (columnStartIndex > 0) {
-            index = columnIndex % columnStartIndex;
-        } else {
-            index = columnIndex;
-        }
+        // the custom names map to the columns of the range by their position
+        int index = columnIndex - columnStartIndex;
 
-        if (index < columnNames.length) {
+        if (index >= 0 && index < columnNames.length) {
             String name = columnNames[index];
             if (columnName.equals(name)) {
                 return columnName;

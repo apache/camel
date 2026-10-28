@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.Buffer;
@@ -29,12 +31,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.security.DigestInputStream;
+import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -44,7 +48,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -256,11 +262,41 @@ public class FileOperations implements GenericFileOperations<File> {
         // java.io.File
     }
 
+    /**
+     * The jailStartingDirectory check of the producer is lexical (see {@code GenericFileProducer.createFileName}), so a
+     * symbolic link inside the starting directory (a link to a file, or a directory segment of the name) would redirect
+     * the write outside of it. Only paths that are lexically inside the starting directory are checked, so a
+     * tempFileName the route author placed outside of it (such as ../work) keeps working. The producer also calls this
+     * before it creates missing parent directories of the target.
+     */
+    void jailToStartingDirectory(File target) {
+        if (!endpoint.isJailStartingDirectory()) {
+            return;
+        }
+        Path startingDirectory = endpoint.getFile().toPath();
+        if (!target.toPath().toAbsolutePath().normalize().startsWith(startingDirectory.toAbsolutePath().normalize())) {
+            return;
+        }
+        boolean within;
+        try {
+            within = GenericFileHelper.isWithinDirectoryResolvingLinks(target.toPath(), startingDirectory);
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(
+                    "Cannot verify file: " + target + " is within the starting directory: " + endpoint.getFile(), e);
+        }
+        if (!within) {
+            throw new GenericFileOperationFailedException(
+                    "Cannot write file: " + target + " as it resolves outside the starting directory: "
+                                                          + endpoint.getFile());
+        }
+    }
+
     @Override
     public boolean storeFile(String fileName, Exchange exchange, long size) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
 
         File file = new File(fileName);
+        jailToStartingDirectory(file);
 
         // if an existing file already exists what should we do?
         if (file.exists()) {
@@ -313,31 +349,26 @@ public class FileOperations implements GenericFileOperations<File> {
                 }
             }
 
-            // if we use checksum them we need to use an input stream to calculate while writing the file
-            DigestInputStream dis = null;
+            // the checksum is calculated from the bytes written to the file, which are not the bytes of the body
+            // when they are encoded with the charset of the endpoint or followed by the appendChars
+            MessageDigest digest = null;
             if (endpoint.getChecksumFileAlgorithm() != null) {
-                MessageDigest digest = MessageDigest.getInstance(endpoint.getChecksumFileAlgorithm());
-                // prefer FileInputStream over general stream
-                InputStream is = exchange.getMessage().getBody(FileInputStream.class);
-                if (is == null) {
-                    is = exchange.getMessage().getMandatoryBody(InputStream.class);
-                }
-                dis = new DigestInputStream(is, digest);
+                digest = MessageDigest.getInstance(endpoint.getChecksumFileAlgorithm());
             }
             if (charset != null) {
                 // charset configured so we must use a reader so we can write
                 // with encoding
-                handleReaderAsFileSource(exchange, file, charset, dis);
-            } else if (dis == null && exchange.getIn().getBody() instanceof String) {
+                handleReaderAsFileSource(exchange, file, charset, digest);
+            } else if (digest == null && exchange.getIn().getBody() instanceof String) {
                 // If the body is a string, write it directly
                 handleStringAsFileSource(exchange, file);
             } else {
                 // fallback and use stream based
-                handleStreamAsFileSource(exchange, file, dis);
+                handleStreamAsFileSource(exchange, file, digest);
             }
 
-            if (dis != null) {
-                String hash = StringHelper.bytesToHex(dis.getMessageDigest().digest());
+            if (digest != null) {
+                String hash = StringHelper.bytesToHex(digest.digest());
                 exchange.getMessage().setHeader(FileConstants.FILE_CHECKSUM, hash);
             }
 
@@ -347,14 +378,40 @@ public class FileOperations implements GenericFileOperations<File> {
             setPermissions(file);
 
             return true;
-        } catch (InvalidPayloadException | NoSuchAlgorithmException | IOException e) {
+        } catch (InvalidPayloadException e) {
+            // say why: the body cannot be written as it is
+            throw new GenericFileOperationFailedException("Cannot store file: " + file + ": " + e.getMessage(), e);
+        } catch (NoSuchAlgorithmException | IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
+        }
+    }
+
+    /**
+     * The body as a stream to write. A Map, a List or an object (a body unmarshalled from JSON, XML or CSV, or built in
+     * the route) cannot become one, and the converter's message only names the conversion: say what the body is, the
+     * step that set it, and the marshal that writes it, in the data format the file name names (CAMEL-25751,
+     * CAMEL-25749).
+     */
+    static InputStream mandatoryBodyStream(Exchange exchange, Message message, File file) throws InvalidPayloadException {
+        try {
+            return message.getMandatoryBody(InputStream.class);
+        } catch (InvalidPayloadException e) {
+            String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, file.getName());
+            if (hint != null) {
+                InvalidPayloadException answer = new InvalidPayloadException(
+                        exchange, InputStream.class, message,
+                        BodyFacts.describe(exchange) + ", which is not file content: " + hint);
+                answer.initCause(e.getCause() != null ? e.getCause() : e);
+                throw answer;
+            }
+            throw e;
         }
     }
 
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
         File file = new File(name);
+        jailToStartingDirectory(file);
         try {
             Files.writeString(file.toPath(), payload, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.CREATE);
@@ -364,12 +421,17 @@ public class FileOperations implements GenericFileOperations<File> {
         return true;
     }
 
-    private void handleStreamAsFileSource(Exchange exchange, File file, InputStream is)
+    private void handleStreamAsFileSource(Exchange exchange, File file, MessageDigest digest)
             throws InvalidPayloadException, IOException {
-        if (is == null) {
-            is = exchange.getIn().getMandatoryBody(InputStream.class);
+        InputStream is = null;
+        if (digest != null) {
+            // prefer FileInputStream over general stream
+            is = exchange.getMessage().getBody(FileInputStream.class);
         }
-        writeFileByStream(is, file);
+        if (is == null) {
+            is = mandatoryBodyStream(exchange, exchange.getIn(), file);
+        }
+        writeFileByStream(is, file, digest);
     }
 
     private void handleStringAsFileSource(Exchange exchange, File file) throws IOException {
@@ -377,24 +439,18 @@ public class FileOperations implements GenericFileOperations<File> {
         writeFileByString(stringBody, file);
     }
 
-    private void handleReaderAsFileSource(Exchange exchange, File file, String charset, InputStream is)
+    private void handleReaderAsFileSource(Exchange exchange, File file, String charset, MessageDigest digest)
             throws InvalidPayloadException, IOException {
-        Reader in = null;
-        if (is == null) {
-            in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange,
-                    exchange.getIn().getBody());
-        }
+        Reader in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange,
+                exchange.getIn().getBody());
         if (in == null) {
             // okay no direct reader conversion, so use an input stream
             // (which a lot can be converted as)
-            if (is == null) {
-                is = exchange.getIn().getMandatoryBody(InputStream.class);
-            }
-            in = new InputStreamReader(is);
+            in = new InputStreamReader(mandatoryBodyStream(exchange, exchange.getIn(), file));
         }
         // buffer the reader
         in = IOHelper.buffered(in);
-        writeFileByReaderWithCharset(in, file, charset);
+        writeFileByReaderWithCharset(in, file, charset, digest);
     }
 
     private boolean handleFileAsFileSource(Exchange exchange, File file, File source) throws IOException {
@@ -538,7 +594,7 @@ public class FileOperations implements GenericFileOperations<File> {
         }
     }
 
-    private void writeFileByStream(InputStream in, File target) throws IOException {
+    private void writeFileByStream(InputStream in, File target, MessageDigest digest) throws IOException {
         try (SeekableByteChannel out = prepareOutputFileChannel(target)) {
             LOG.debug("Using InputStream to write file: {}", target);
             int size = endpoint.getBufferSize();
@@ -551,12 +607,19 @@ public class FileOperations implements GenericFileOperations<File> {
                 }
                 out.write(byteBuffer);
                 ((Buffer) byteBuffer).clear();
+                if (digest != null) {
+                    digest.update(buffer, 0, bytesRead);
+                }
             }
 
             boolean append = endpoint.getFileExist() == GenericFileExist.Append;
             if (append && endpoint.getAppendChars() != null) {
-                byteBuffer = ByteBuffer.wrap(endpoint.getAppendChars().getBytes());
+                byte[] appendBytes = endpoint.getAppendChars().getBytes();
+                byteBuffer = ByteBuffer.wrap(appendBytes);
                 out.write(byteBuffer);
+                if (digest != null) {
+                    digest.update(appendBytes);
+                }
                 Buffer buf = byteBuffer;
                 buf.clear();
             }
@@ -565,10 +628,17 @@ public class FileOperations implements GenericFileOperations<File> {
         }
     }
 
-    private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
+    private void writeFileByReaderWithCharset(Reader in, File target, String charset, MessageDigest digest)
+            throws IOException {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-        try (Writer out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), StandardOpenOption.WRITE,
-                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+        // an encoder that reports characters the charset cannot encode, as Files.newBufferedWriter does
+        CharsetEncoder encoder = Charset.forName(charset).newEncoder();
+        OutputStream os = Files.newOutputStream(target.toPath(), StandardOpenOption.WRITE,
+                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        if (digest != null) {
+            os = new DigestOutputStream(os, digest);
+        }
+        try (Writer out = IOHelper.buffered(new OutputStreamWriter(os, encoder))) {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);

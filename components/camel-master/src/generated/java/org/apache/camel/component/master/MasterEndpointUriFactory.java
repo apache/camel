@@ -46,7 +46,7 @@ public class MasterEndpointUriFactory extends org.apache.camel.support.component
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "namespace", null, true, copy);
         uri = buildPathParameter(syntax, uri, "delegateUri", null, true, copy);

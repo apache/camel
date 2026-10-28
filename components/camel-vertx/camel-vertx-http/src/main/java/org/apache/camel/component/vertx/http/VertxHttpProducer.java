@@ -20,13 +20,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.Serializable;
-import java.util.Map;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.streams.ReadStream;
 import io.vertx.ext.web.client.HttpRequest;
@@ -41,7 +48,6 @@ import org.apache.camel.component.vertx.common.VertxBufferConverter;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.MimeTypeHelper;
-import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_FORM_URLENCODED;
 import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
@@ -74,7 +80,7 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
 
             Object body = message.getBody();
             if (body == null) {
-                request.send(resultHandler);
+                request.send().onComplete(resultHandler);
             } else {
                 String contentType = MessageHelper.getContentType(message);
                 boolean multipart = getEndpoint().getConfiguration().isMultipartUpload();
@@ -82,25 +88,36 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
 
                 // Handle vertx specific body first
                 if (body instanceof MultiMap mm) {
-                    request.sendForm(mm, resultHandler);
+                    request.sendForm(mm).onComplete(resultHandler);
                     return false;
                 } else if (body instanceof MultipartForm mf) {
-                    request.sendMultipartForm(mf, resultHandler);
+                    request.sendMultipartForm(mf).onComplete(resultHandler);
                     return false;
                 } else if (body instanceof ReadStream rs) {
-                    request.sendStream(rs, resultHandler);
+                    request.sendStream(rs).onComplete(resultHandler);
                     return false;
                 } else if (body instanceof Buffer buf) {
-                    request.sendBuffer(buf, resultHandler);
+                    request.sendBuffer(buf).onComplete(resultHandler);
                     return false;
                 }
 
-                if (body instanceof File || body instanceof WrappedFile<?>) {
+                if (body instanceof Reader) {
+                    // send the text of the reader, as a String body
+                    body = message.getMandatoryBody(String.class);
+                }
+
+                if (body instanceof File || body instanceof Path || body instanceof WrappedFile<?>) {
                     // file based (could potentially also be a FTP file etc)
-                    File file = message.getBody(File.class);
+                    File file = body instanceof Path ? null : message.getBody(File.class);
                     Buffer buf;
                     String fileName;
-                    if (file != null) {
+                    if (body instanceof Path path) {
+                        try (InputStream is = Files.newInputStream(path)) {
+                            buf = VertxBufferConverter.toBuffer(is);
+                        }
+                        Path name = path.getFileName();
+                        fileName = name != null ? name.toString() : multipartName;
+                    } else if (file != null) {
                         try (InputStream is = new FileInputStream(file)) {
                             buf = VertxBufferConverter.toBuffer(is);
                         }
@@ -117,21 +134,18 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                             type = "application/octet-stream"; // default binary
                         }
                         MultipartForm form = MultipartForm.create().binaryFileUpload(multipartName, fileName, buf, type);
-                        request.sendMultipartForm(form, resultHandler);
+                        request.sendMultipartForm(form).onComplete(resultHandler);
                     } else {
-                        request.sendBuffer(buf, resultHandler);
+                        request.sendBuffer(buf).onComplete(resultHandler);
                     }
                 } else if (body instanceof String str) {
                     // Try to extract URL encoded form data from the message body
                     if (CONTENT_TYPE_FORM_URLENCODED.equals(contentType)) {
-                        MultiMap map = MultiMap.caseInsensitiveMultiMap();
-                        Map<String, Object> formParams = URISupport.parseQuery(str);
-                        formParams.forEach((key, o) -> map.add(key, String.valueOf(o)));
-                        request.sendForm(map, resultHandler);
+                        request.sendForm(parseForm(str)).onComplete(resultHandler);
                     } else {
                         // Fallback to send as Buffer
                         Buffer buffer = VertxBufferConverter.toBuffer(str, exchange);
-                        request.sendBuffer(buffer, resultHandler);
+                        request.sendBuffer(buffer).onComplete(resultHandler);
                     }
                 } else {
                     // Handle x-java-serialized-object Content-Type
@@ -144,11 +158,11 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                             Serializable serializable = message.getMandatoryBody(Serializable.class);
                             VertxHttpHelper.writeObjectToStream(baos, serializable);
-                            request.sendBuffer(Buffer.buffer(baos.toByteArray()), resultHandler);
+                            request.sendBuffer(Buffer.buffer(baos.toByteArray())).onComplete(resultHandler);
                         }
                     } else {
                         Buffer buffer = message.getMandatoryBody(Buffer.class);
-                        request.sendBuffer(buffer, resultHandler);
+                        request.sendBuffer(buffer).onComplete(resultHandler);
                     }
                 }
             }
@@ -161,19 +175,60 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
         return false;
     }
 
+    /**
+     * Parses a URL encoded form, with its values decoded (Vert.x encodes them again) and all the values of a repeated
+     * name.
+     */
+    private static MultiMap parseForm(String form) {
+        MultiMap map = MultiMap.caseInsensitiveMultiMap();
+        for (String pair : form.split("&")) {
+            if (pair.isEmpty()) {
+                continue;
+            }
+            int pos = pair.indexOf('=');
+            String name = pos < 0 ? pair : pair.substring(0, pos);
+            String value = pos < 0 ? "" : pair.substring(pos + 1);
+            map.add(URLDecoder.decode(name, StandardCharsets.UTF_8), URLDecoder.decode(value, StandardCharsets.UTF_8));
+        }
+        return map;
+    }
+
     private Handler<AsyncResult<HttpResponse<Buffer>>> createResultHandler(Exchange exchange, AsyncCallback callback) {
+        // the Vert.x of the request: when the CamelContext stops during the call, closing the web client fails the
+        // request, and the stopped component no longer returns its Vert.x when this handler runs
+        Vertx vertx = getEndpoint().getVertx();
         // Process the response on a thread from the Vert.x worker pool since there may be blocking code:
         // - If a custom VertxHttpBinding is in use
         // - If the Camel error handler routes to logic that contains blocking code
-        return response -> getEndpoint().getVertx().executeBlocking((Callable<Void>) () -> {
+        return response -> {
+            // the exchange is completed once: by the task, or when the worker pool refuses the task
+            AtomicBoolean completed = new AtomicBoolean();
             try {
-                vertxHttpBinding.handleResponse(getEndpoint(), exchange, response);
-            } catch (Exception e) {
-                exchange.setException(e);
-            } finally {
-                callback.done(false);
+                vertx.executeBlocking((Callable<Void>) () -> {
+                    try {
+                        vertxHttpBinding.handleResponse(getEndpoint(), exchange, response);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    } finally {
+                        if (completed.compareAndSet(false, true)) {
+                            callback.done(false);
+                        }
+                    }
+                    return null;
+                }).onFailure(e -> completeWithException(exchange, callback, completed, e));
+            } catch (RejectedExecutionException e) {
+                // the worker pool of the Vert.x is already shut down (for example while the Vert.x closes): the task
+                // never runs, Vert.x fails its future and throws the exception
+                completeWithException(exchange, callback, completed, e);
             }
-            return null;
-        });
+        };
+    }
+
+    private static void completeWithException(
+            Exchange exchange, AsyncCallback callback, AtomicBoolean completed, Throwable cause) {
+        if (completed.compareAndSet(false, true)) {
+            exchange.setException(cause);
+            callback.done(false);
+        }
     }
 }

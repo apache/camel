@@ -54,13 +54,15 @@ public class TransitionIssueProducer extends DefaultProducer {
         IssueRestClient issueClient = client.getIssueClient();
         Issue issue = issueClient.getIssue(issueKey).claim();
         TransitionInput transitionInput = new TransitionInput(transitionId);
-        issueClient.transition(issue, transitionInput);
+        // wait for the results, so that the comment is added after the transition, and a request that Jira rejects
+        // fails the exchange
+        issueClient.transition(issue, transitionInput).claim();
         // add a comment in an additional operation as using the TransitionInput doesn't add the comment.
         if (commentStr != null) {
             URI commentsUri = issue.getCommentsUri();
             // there is a bug in addComment, it doesn't use the author parameter to add the comment
             // it uses the authenticated username. https://ecosystem.atlassian.net/browse/JRJC-241
-            issueClient.addComment(commentsUri, Comment.valueOf(commentStr));
+            issueClient.addComment(commentsUri, Comment.valueOf(commentStr)).claim();
         }
     }
 }

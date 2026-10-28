@@ -34,6 +34,9 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.component.platform.http.spi.PlatformHttpSecurityHandler;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -51,6 +54,16 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path",
              category = { Category.HTTP }, consumerOnly = true)
 @Metadata(annotations = { "protocol=http" })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.BYTES, Carrier.NULL, Carrier.MAP, Carrier.FILE },
+                                   byOption = @BodyType.When(option = "useBodyHandler", value = "false",
+                                                             carriers = Carrier.POJO),
+                                   description = "The request body: the stream cache with the Vert.x engine, a byte array"
+                                                 + " with Spring Boot; null for a request without a body, such as a GET; a"
+                                                 + " Map of the fields of a form (populateBodyWithForm); a File for an"
+                                                 + " upload"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM },
+                                     description = "The response body: text, bytes, a stream or no body. A Map or a List"
+                                                   + " fails: marshal it first"))
 public class PlatformHttpEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
 
@@ -171,6 +184,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
                             + "When set, the request is authenticated before the route is processed. "
                             + "This requires an OAuthTokenValidationFactory; camel-oauth provides the default implementation.")
     private String oauthProfile;
+    @UriParam(label = "consumer,advanced", defaultValue = "platform", enums = "platform,camel",
+              description = "Who answers requests that match no registered operation when using rest-dsl contract-first"
+                            + " (such as the rest-openapi component): the HTTP layer (platform) or Camel via the route"
+                            + " (camel). When set to camel, a catch-all is registered so unmatched requests are routed to"
+                            + " Camel. Currently supported by camel-platform-http-vertx (Camel Main, Quarkus) and the"
+                            + " Spring Boot platform-http-starter.")
+    private String unmatchedRequestHandling = "platform";
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -426,5 +446,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setOauthProfile(String oauthProfile) {
         this.oauthProfile = oauthProfile;
+    }
+
+    public String getUnmatchedRequestHandling() {
+        return unmatchedRequestHandling;
+    }
+
+    public void setUnmatchedRequestHandling(String unmatchedRequestHandling) {
+        this.unmatchedRequestHandling = unmatchedRequestHandling;
     }
 }

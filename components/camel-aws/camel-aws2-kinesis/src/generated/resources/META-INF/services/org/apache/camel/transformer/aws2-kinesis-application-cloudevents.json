@@ -8,7 +8,21 @@
     "javaType": "org.apache.camel.component.aws2.kinesis.transform.KinesisCloudEventDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ],
+      "description": "Any body: the CloudEvent headers come from the headers of the aws2-kinesis consumer"
+    },
+    "transformerOut": {
+      "carriers": [
+        "unchanged"
+      ],
+      "description": "Only the CloudEvent headers are set"
+    }
   }
 }
 

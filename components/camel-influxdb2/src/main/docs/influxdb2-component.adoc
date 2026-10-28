@@ -15,7 +15,7 @@
 This component allows you to interact with https://influxdata.com/time-series-platform/influxdb/[InfluxDB] 2.x,
 a time series database.
 The native body type for this component is `Point` (the native InfluxDB class).
-However, it can also accept `Map<String, Object>` as message body, and it will get converted to `Point.class`, please note that the map must contain an element with `camelInfluxDB.MeasurementName` as key.
+However, it can also accept `Map<String, Object>` as message body, and it will get converted to `Point.class`, please note that the map must contain an element with `CamelInfluxDB2MeasurementName` as key.
 
 Additionally, you may register your own Converters to your data type to `Point`, or use the (un)marshalling tools provided by Camel.
 
@@ -85,3 +85,14 @@ YAML::
               bucket: myBucket
 ----
 ====
+
+== Writes are synchronous
+
+The producer writes with the synchronous write API of the InfluxDB client (`WriteApiBlocking`): the exchange
+continues when InfluxDB has answered the write request.
+A write that InfluxDB rejects (for example, a line it cannot parse, an unknown bucket or a token that is not
+authorized), or a request that cannot be sent, fails the exchange with a `CamelInfluxDb2Exception` whose cause is the
+`InfluxException` of the client, so the error handler of the route can redeliver it or move it to a dead letter channel.
+
+Each exchange is one write request. To write many points with one request, send a `Points`, `Measurements` or
+`Records` body, for example, from an xref:eips:aggregate-eip.adoc[Aggregate] EIP.

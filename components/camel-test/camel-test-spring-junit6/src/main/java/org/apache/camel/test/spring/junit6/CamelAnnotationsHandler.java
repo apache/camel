@@ -277,6 +277,7 @@ public final class CamelAnnotationsHandler {
                     drs.setLog(false);
                     drs.setTopology(annotation.topology());
                     drs.setTopologyExternal(annotation.topologyExternal());
+                    drs.setErrors(annotation.errors());
                     drs.dumpRoutes("png");
                 }
             });

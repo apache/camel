@@ -20,11 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -44,8 +46,10 @@ class TuiToolRegistryEvalExpressionTest {
                 ctx, new AtomicReference<>(List.of()), null, null, null, null, null, null, null, null, null, null,
                 null);
         TuiToolRegistry registry = new TuiToolRegistry(facade);
-        assertEquals("Error: expression is required",
-                registry.execute("camel_eval_expression", new JsonObject(Map.of("language", "simple"))));
+        // an error of the tool, which the MCP server answers with isError
+        ToolExecutionException error = assertThrows(ToolExecutionException.class,
+                () -> registry.execute("camel_eval_expression", new JsonObject(Map.of("language", "simple"))));
+        assertEquals("expression is required", error.getMessage());
         // nothing selected: the expression is evaluated in a scratch context instead
         JsonObject result = (JsonObject) Jsoner.deserialize(
                 registry.execute("camel_eval_expression", new JsonObject(

@@ -77,7 +77,7 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
                         request.pause();
                     }
                     // upgrade
-                    request.toWebSocket(toWebSocket -> {
+                    request.toWebSocket().onComplete(toWebSocket -> {
                         if (toWebSocket.succeeded()) {
                             // resume the parsing
                             if (!parseEnded) {
@@ -167,7 +167,7 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
                     }
 
                     // upgrade
-                    request.toWebSocket(toWebSocket -> {
+                    request.toWebSocket().onComplete(toWebSocket -> {
                         if (toWebSocket.succeeded()) {
                             // resume the parsing
                             if (!parseEnded) {

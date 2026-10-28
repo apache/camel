@@ -16,12 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Path;
-import java.util.List;
-
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "gc",
@@ -34,21 +29,16 @@ public class CamelGCAction extends ActionBaseCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     public CamelGCAction(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        for (long pid : pids) {
-            JsonObject root = new JsonObject();
-            root.put("action", "gc");
-            Path f = getActionFile(Long.toString(pid));
-            PathUtils.writeTextSafely(root.toJson(), f);
-        }
-
-        return 0;
+        return sendAction(findProcesses(name), "gc", null);
     }
 
 }

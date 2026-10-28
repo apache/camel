@@ -194,7 +194,7 @@ public class TransactionErrorHandlerGracePeriodShutdownIT {
      * <li>TransactionErrorHandler.prepareShutdown(forced=true) marks exchange rollbackOnly</li>
      * <li>context.stop() returns (timeout expired, in-flight exchange still running)</li>
      * <li>Delay released, exchange completes normally (no exception)</li>
-     * <li>TransactionErrorHandler checks preparingShutdown -> sets rollbackOnly -> throws</li>
+     * <li>TransactionErrorHandler checks forcedShutdown -> sets rollbackOnly -> throws</li>
      * <li>JtaTransactionPolicy.run() catches -> Narayana rolls back the JTA transaction</li>
      * <li>Assert: the INSERT is NOT in the database (rolled back)</li>
      * </ol>
@@ -235,7 +235,7 @@ public class TransactionErrorHandlerGracePeriodShutdownIT {
 
             // Now release the delay. The exchange wakes up and finishes processing.
             // The route has no more steps, so processByErrorHandler() returns normally.
-            // Back in doInTransactionTemplate(), the preparingShutdown check (the fix)
+            // Back in doInTransactionTemplate(), the forcedShutdown check (the fix)
             // sets rollbackOnly, causing the transaction to be rolled back.
             releaseLatch.countDown();
 

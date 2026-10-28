@@ -43,7 +43,7 @@ public @interface PropertyInject {
 
     /**
      * Used for splitting the property value into an array/list of values. For example to use comma to separate the
-     * values.
+     * values. The separator is a plain string, not a regular expression.
      */
     String separator() default "";
 

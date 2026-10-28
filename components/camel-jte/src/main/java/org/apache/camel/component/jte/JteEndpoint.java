@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.jte;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+
 import gg.jte.TemplateEngine;
 import gg.jte.TemplateOutput;
 import gg.jte.output.StringOutput;
@@ -23,6 +28,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -35,6 +43,14 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "4.4.0", scheme = "jte", title = "JTE", syntax = "jte:resourceUri",
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = JteConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The template takes an org.apache.camel.component.jte.Model: the body as it is"
+                                                + " in model.body, and converted to text by model.strBody(). With"
+                                                + " allowTemplateFromHeader=true the CamelJteDataModel header replaces the"
+                                                + " model"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The text the template writes, with leading and trailing whitespace trimmed."
+                                                 + " The headers are kept"))
 public class JteEndpoint extends ResourceEndpoint {
 
     @UriParam
@@ -114,7 +130,9 @@ public class JteEndpoint extends ResourceEndpoint {
                 exchange.getIn().removeHeader(JteConstants.JTE_TEMPLATE);
                 // add template in code resolver so we can find it
                 if (codeResolver != null) {
-                    name = exchange.getExchangeId();
+                    // named after its content: the engine compiles each template name into a class that it keeps,
+                    // so a name per exchange would compile the same template again for every exchange
+                    name = headerTemplateName(content);
                     codeResolver.addTemplateFromHeader(name, content);
                 }
             }
@@ -151,4 +169,17 @@ public class JteEndpoint extends ResourceEndpoint {
         ExchangeHelper.setInOutBodyPatternAware(exchange, s);
     }
 
+    /**
+     * The name of a template given in the {@link JteConstants#JTE_TEMPLATE} header: the same for the same template
+     * content, and different for different contents.
+     */
+    static String headerTemplateName(String content) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            return "header-" + HexFormat.of().formatHex(digest.digest(content.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException e) {
+            // every Java platform supports SHA-256
+            throw new IllegalStateException(e);
+        }
+    }
 }

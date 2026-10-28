@@ -77,8 +77,9 @@ public interface RssEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to sort entries by published date. Only works when
-         * splitEntries = true.
+         * Sets whether to sort entries by updated date (by published date for
+         * an entry without an updated date), so the oldest entry is routed
+         * first. Only works when splitEntries = true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -93,8 +94,9 @@ public interface RssEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to sort entries by published date. Only works when
-         * splitEntries = true.
+         * Sets whether to sort entries by updated date (by published date for
+         * an entry without an updated date), so the oldest entry is routed
+         * first. Only works when splitEntries = true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

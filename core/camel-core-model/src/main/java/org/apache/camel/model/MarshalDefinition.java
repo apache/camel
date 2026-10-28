@@ -73,6 +73,10 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -83,6 +87,14 @@ import org.apache.camel.spi.Metadata;
           description = "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage")
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipIn = @BodyType(from = "marshalIn",
+                             byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY),
+                             description = "With variableSend the variable is sent, and the body is not read"),
+           eipOut = @BodyType(from = "marshalOut",
+                              byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                        carriers = Carrier.UNCHANGED),
+                              description = "What the data format writes. With variableReceive the result goes into the"
+                                            + " variable, and the body stays as it was"))
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> implements DataFormatDefinitionAware {
 
     @XmlElements({
@@ -145,6 +157,12 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
     @XmlAttribute
     @Metadata(description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals"
+                            + " the null, and what that gives depends on the data format (JSON gives the text null)."
+                            + " When true, a null body is not marshalled and the body stays null.")
+    private String allowNullBody;
 
     public MarshalDefinition() {
     }
@@ -153,6 +171,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
         super(source);
         this.variableSend = source.variableSend;
         this.variableReceive = source.variableReceive;
+        this.allowNullBody = source.allowNullBody;
         this.dataFormatType = source.dataFormatType != null ? source.dataFormatType.copyDefinition() : null;
     }
 
@@ -171,7 +190,18 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
     }
 
     protected String description() {
-        return dataFormatType != null ? dataFormatType.toString() : "";
+        if (dataFormatType == null) {
+            return "";
+        }
+        // the name of the data format (such as jackson or csv), as its toString is the object for most data formats
+        String name = dataFormatType.getDataFormatName();
+        if (name == null && dataFormatType.getDataFormat() instanceof DataFormatName dfn) {
+            name = dfn.getDataFormatName();
+        }
+        if (name == null && dataFormatType.getDataFormat() != null) {
+            name = dataFormatType.getDataFormat().getClass().getSimpleName();
+        }
+        return name != null ? name : dataFormatType.toString();
     }
 
     @Override
@@ -210,6 +240,14 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
         this.variableReceive = variableReceive;
     }
 
+    public String getAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public void setAllowNullBody(String allowNullBody) {
+        this.allowNullBody = allowNullBody;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -235,6 +273,19 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
      */
     public MarshalDefinition variableSend(String variableSend) {
         setVariableSend(variableSend);
+        return this;
+    }
+
+    /**
+     * Indicates whether a {@code null} body is skipped instead of marshalled. By default the data format marshals the
+     * {@code null}, and what that gives depends on the data format (JSON gives the text {@code null}).
+     *
+     * @param  allowNullBody {@code true} to skip marshalling a {@code null} body, so the body stays {@code null},
+     *                       {@code false} to let the data format marshal it
+     * @return               the builder
+     */
+    public MarshalDefinition allowNullBody(boolean allowNullBody) {
+        setAllowNullBody(Boolean.toString(allowNullBody));
         return this;
     }
 

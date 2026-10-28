@@ -79,7 +79,7 @@ class RunExportedProjectTest extends CamelCommandBaseTestSupport {
         assertThat(run.buildExportedRunJvmArgs()).isEqualTo(String.join(" ", limits));
         // existing project (camel run pom.xml), per runtime
         assertThat(run.buildExistingQuarkusJvmArgs("my-app")).containsAll(limits);
-        assertThat(run.buildExistingSpringBootJvmArgs()).containsAll(limits);
+        assertThat(run.buildExistingSpringBootJvmArgs("my-app")).containsAll(limits);
         assertThat(run.buildExistingCamelMainSystemProperties("my-app", dir.resolve("log4j2.properties")))
                 .containsAll(limits);
     }

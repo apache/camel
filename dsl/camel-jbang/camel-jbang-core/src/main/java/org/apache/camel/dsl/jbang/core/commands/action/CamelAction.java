@@ -30,7 +30,6 @@ public class CamelAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        new CommandLine(this).execute("--help");
-        return 0;
+        return printHelp();
     }
 }

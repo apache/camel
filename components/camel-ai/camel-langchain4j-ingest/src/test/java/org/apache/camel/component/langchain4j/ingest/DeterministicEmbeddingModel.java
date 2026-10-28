@@ -49,12 +49,7 @@ class DeterministicEmbeddingModel implements EmbeddingModel {
             if (segment.text().contains(POISON)) {
                 throw new IllegalStateException("test-induced embedding failure: " + POISON);
             }
-            Random random = new Random(segment.text().hashCode());
-            float[] vector = new float[dimension];
-            for (int i = 0; i < dimension; i++) {
-                vector[i] = random.nextFloat();
-            }
-            embeddings.add(Embedding.from(vector));
+            embeddings.add(embedding(segment.text()));
         }
         return Response.from(embeddings);
     }
@@ -67,5 +62,15 @@ class DeterministicEmbeddingModel implements EmbeddingModel {
     /** How many batches were embedded. */
     public int embedAllCalls() {
         return embedAllCalls.get();
+    }
+
+    /** The vector for a seed: same seed, same vector. */
+    protected Embedding embedding(String seed) {
+        Random random = new Random(seed.hashCode());
+        float[] vector = new float[dimension];
+        for (int i = 0; i < dimension; i++) {
+            vector[i] = random.nextFloat();
+        }
+        return Embedding.from(vector);
     }
 }

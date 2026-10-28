@@ -21,6 +21,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -33,6 +36,15 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true,
              remote = false, category = { Category.CORE }, headersClass = ExecBinding.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The standard input of the command, when the body converts to a stream: text,"
+                                                + " bytes, a stream or a file. Another body, or no body, runs the command"
+                                                + " without input"),
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.component.exec.ExecResult",
+                                   dependsOn = "binding",
+                                   description = "The ExecResult, with the exit value and the standard error in headers. It"
+                                                 + " converts to the text, bytes or stream of the standard output, of the"
+                                                 + " outFile when set, or of the standard error with useStderrOnEmptyStdout"))
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**

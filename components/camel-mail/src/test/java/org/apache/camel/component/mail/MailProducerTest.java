@@ -40,7 +40,7 @@ public class MailProducerTest extends CamelTestSupport {
 
     @Test
     public void testProducer() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(camel, someone, recipient2);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Message ", "To", someone.getEmail());
@@ -55,7 +55,7 @@ public class MailProducerTest extends CamelTestSupport {
 
     @Test
     public void testProducerBodyIsMimeMessage() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(camel, someone, recipient2);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         Address from = new InternetAddress("fromCamelTest@localhost");

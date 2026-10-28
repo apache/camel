@@ -1006,7 +1006,9 @@ YAML::
 - onException:
     exception:
       - "org.apache.camel.CamelAuthorizationException"
-    handled: true
+    handled:
+      constant:
+        expression: "true"
     steps:
       - setHeader:
           name: "CamelHttpResponseCode"

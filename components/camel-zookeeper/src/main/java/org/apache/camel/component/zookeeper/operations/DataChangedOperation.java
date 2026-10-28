@@ -44,8 +44,8 @@ public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
 
     @Override
     protected void installWatch() {
-        connection.getData(getNode(), this, (int rc, String path, Object ctx, byte[] data, Stat stat) -> {
-        }, null);
+        connection.getData(getNode(), this,
+                (int rc, String path, Object ctx, byte[] data, Stat stat) -> watchRequestCompleted(rc), null);
     }
 
     @Override

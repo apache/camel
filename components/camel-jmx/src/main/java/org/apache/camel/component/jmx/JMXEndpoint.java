@@ -28,6 +28,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -53,6 +56,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true,
              remote = false, category = { Category.MONITORING }, headersClass = JMXConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "xml",
+                                   byOption = @BodyType.When(option = "format", value = "raw", carriers = Carrier.POJO,
+                                                             javaType = "javax.management.Notification"),
+                                   description = "The notification as XML text, such as an AttributeChangeNotification"
+                                                 + " or a MonitorNotification element; with format=raw the Notification"
+                                                 + " object. The handback object is in the jmx.handback header"))
 public class JMXEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     // error messages as constants so they can be asserted on from unit tests

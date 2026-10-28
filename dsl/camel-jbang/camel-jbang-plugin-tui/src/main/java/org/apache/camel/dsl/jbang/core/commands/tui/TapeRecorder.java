@@ -29,6 +29,7 @@ class TapeRecorder {
             "pgup", "pgdn");
 
     private final List<String> lines = new ArrayList<>();
+    // MonotonicClock times: the sleeps between the recorded events
     private long startTime;
     private long lastEventTime;
     private int keyCount;
@@ -47,7 +48,7 @@ class TapeRecorder {
         lines.add("Set CursorBlink false");
         lines.add("Set Theme \"Aardvark Blue\"");
         lines.add("");
-        startTime = System.currentTimeMillis();
+        startTime = MonotonicClock.millis();
         lastEventTime = startTime;
         keyCount = 0;
         active = true;
@@ -58,7 +59,7 @@ class TapeRecorder {
             return;
         }
         preKeyPosition = lines.size();
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         long elapsed = now - lastEventTime;
         if (elapsed > 200) {
             lines.add("Sleep " + formatSleep(elapsed));
@@ -66,7 +67,7 @@ class TapeRecorder {
         String tapeCmd = toTapeCommand(key);
         if (tapeCmd != null) {
             lines.add(tapeCmd);
-        } else if (key.length() == 1) {
+        } else if (key.codePointCount(0, key.length()) == 1) {
             lines.add("Type \"" + escapeTapeString(key) + "\"");
         }
         keyCount++;
@@ -80,7 +81,7 @@ class TapeRecorder {
     void trimTo(int position) {
         if (position >= 0 && position < lines.size()) {
             lines.subList(position, lines.size()).clear();
-            lastEventTime = System.currentTimeMillis();
+            lastEventTime = MonotonicClock.millis();
         }
     }
 
@@ -88,7 +89,7 @@ class TapeRecorder {
         if (!active) {
             return;
         }
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         long elapsed = now - lastEventTime;
         if (elapsed > 200) {
             lines.add("Sleep " + formatSleep(elapsed));
@@ -105,7 +106,7 @@ class TapeRecorder {
             if (tapeCmd != null) {
                 flushCharBatch(charBatch);
                 lines.add(tapeCmd);
-            } else if (key.length() == 1) {
+            } else if (key.codePointCount(0, key.length()) == 1) {
                 charBatch.append(key);
             }
             keyCount++;
@@ -120,7 +121,7 @@ class TapeRecorder {
             return;
         }
         lines.add("Sleep " + formatSleep(ms));
-        lastEventTime = System.currentTimeMillis();
+        lastEventTime = MonotonicClock.millis();
     }
 
     void recordCaption(String text, int durationSeconds) {
@@ -138,14 +139,14 @@ class TapeRecorder {
         if (durationSeconds > 0) {
             lines.add("Sleep " + durationSeconds + "s");
         }
-        lastEventTime = System.currentTimeMillis();
+        lastEventTime = MonotonicClock.millis();
     }
 
     void resetClock() {
         if (!active) {
             return;
         }
-        lastEventTime = System.currentTimeMillis();
+        lastEventTime = MonotonicClock.millis();
     }
 
     String stop() {
@@ -172,7 +173,46 @@ class TapeRecorder {
         }
     }
 
+    /**
+     * The tape command of a key label (see {@link RecordingManager#keyLabel}) or a key given to tui_send_keys: Ctrl+,
+     * Alt+ and Shift+ in that order, then the key's tape name (Up, PageDown, F8, Backspace) or the character. Null for
+     * a single character typed without Ctrl or Alt, which is written as Type, and for a label it does not know.
+     */
     static String toTapeCommand(String key) {
+        if ("⇧Tab".equals(key)) {
+            return "Shift+Tab";
+        }
+        boolean ctrl = false;
+        boolean alt = false;
+        boolean shift = false;
+        String rest = key;
+        int plus;
+        // a lone "+" is a key of its own, not a modifier separator
+        while ((plus = rest.indexOf('+')) > 0 && plus < rest.length() - 1) {
+            String modifier = rest.substring(0, plus).toLowerCase(Locale.ROOT);
+            if ("ctrl".equals(modifier) || "control".equals(modifier)) {
+                ctrl = true;
+            } else if ("alt".equals(modifier) || "meta".equals(modifier)) {
+                alt = true;
+            } else if ("shift".equals(modifier)) {
+                shift = true;
+            } else {
+                return null;
+            }
+            rest = rest.substring(plus + 1);
+        }
+        String name = tapeKeyName(rest);
+        if (name == null) {
+            if (rest.codePointCount(0, rest.length()) != 1 || !(ctrl || alt || shift)) {
+                return null;
+            }
+            name = rest;
+        }
+        return (ctrl ? "Ctrl+" : "") + (alt ? "Alt+" : "") + (shift ? "Shift+" : "") + name;
+    }
+
+    /** The tape name of a key such as Enter, an arrow or F8, or null when it is a character or no key. */
+    private static String tapeKeyName(String key) {
         if (key.length() == 1) {
             return switch (key) {
                 case TuiIcons.ARROW_UP -> "Up";
@@ -184,14 +224,6 @@ class TapeRecorder {
             };
         }
         String lower = key.toLowerCase(Locale.ROOT);
-
-        if (lower.startsWith("ctrl+")) {
-            return "Ctrl+" + key.substring(5);
-        }
-        if (lower.startsWith("shift+")) {
-            return "Shift+" + key.substring(6);
-        }
-
         if (SPECIAL_KEYS.contains(lower)) {
             return switch (lower) {
                 case "esc" -> "Escape";
@@ -200,11 +232,9 @@ class TapeRecorder {
                 default -> capitalize(lower);
             };
         }
-
         if (lower.matches("f\\d{1,2}")) {
             return key.toUpperCase(Locale.ROOT);
         }
-
         return null;
     }
 

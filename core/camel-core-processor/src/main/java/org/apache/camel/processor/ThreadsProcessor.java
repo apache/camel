@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
@@ -78,7 +79,7 @@ public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, R
         public void run() {
             LOG.trace("Continue routing exchange {}", exchange);
             if (shutdown.get()) {
-                exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
+                exchange.setException(new RouteStoppingException("ThreadsProcessor is not running."));
             }
             callback.done(done);
         }
@@ -89,7 +90,7 @@ public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, R
             exchange.setException(new RejectedExecutionException());
             LOG.trace("Rejected routing exchange {}", exchange);
             if (shutdown.get()) {
-                exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
+                exchange.setException(new RouteStoppingException("ThreadsProcessor is not running."));
             }
             callback.done(done);
         }

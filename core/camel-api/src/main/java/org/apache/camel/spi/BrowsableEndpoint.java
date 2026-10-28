@@ -57,16 +57,26 @@ public interface BrowsableEndpoint extends Endpoint {
      * @return       the status
      */
     default BrowseStatus getBrowseStatus(int limit) {
-        List<Exchange> list = getExchanges();
+        // iterate once, so size, first and last come from the same snapshot (the iterator of a copy-on-write list), as
+        // the list can change between size() and get(index), such as a browse limit removing the oldest exchange
+        int size = 0;
+        Exchange first = null;
+        Exchange last = null;
+        for (Exchange exchange : getExchanges()) {
+            if (size++ == 0) {
+                first = exchange;
+            }
+            last = exchange;
+        }
         long ts = 0;
         long ts2 = 0;
-        if (!list.isEmpty()) {
-            Long v1 = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
-            Long v2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+        if (size > 0) {
+            Long v1 = first.getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+            Long v2 = last.getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
             ts = v1 != null ? v1 : 0L;
             ts2 = v2 != null ? v2 : 0L;
         }
-        return new BrowseStatus(list.size(), ts, ts2);
+        return new BrowseStatus(size, ts, ts2);
     }
 
     /**

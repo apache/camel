@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flink",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "flink",
     "extendsScheme": "",
     "syntax": "flink:endpointType",
@@ -35,6 +35,10 @@
     "CamelFlinkDataSetCallback": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.component.flink.DataSetCallback", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The dataset callback", "constantName": "org.apache.camel.component.flink.FlinkConstants#FLINK_DATASET_CALLBACK_HEADER" },
     "CamelFlinkDataStream": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The data stream", "constantName": "org.apache.camel.component.flink.FlinkConstants#FLINK_DATASTREAM_HEADER" },
     "CamelFlinkDataStreamCallback": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.component.flink.DataStreamCallback", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The data stream callback", "constantName": "org.apache.camel.component.flink.FlinkConstants#FLINK_DATASTREAM_CALLBACK_HEADER" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "The body is handed to the DataSet or DataStream callback as its payload, a List as one payload per element; the data to compute on is the DataSet or DataStream of the endpoint or of the CamelFlinkDataSet or CamelFlinkDataStream header" },
+    "producerOut": { "carriers": [ "unknown" ], "description": "What the callback returns, null for a void callback. A DataSet it returns is collected into a List; a DataStream it returns fails unless collect is false, then the DataStream (or DataSet) is the body and the CamelFlinkDataStream (or CamelFlinkDataSet) header" }
   },
   "properties": {
     "endpointType": { "index": 0, "kind": "path", "displayName": "Endpoint Type", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.flink.EndpointType", "enum": [ "dataset", "datastream" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Type of the endpoint (dataset, datastream)." },

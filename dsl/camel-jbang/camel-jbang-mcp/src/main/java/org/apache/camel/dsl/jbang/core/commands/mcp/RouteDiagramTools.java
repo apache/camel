@@ -28,6 +28,7 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteDiagramAction;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 
 /**
@@ -42,7 +43,9 @@ public class RouteDiagramTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Generate a diagram of Camel routes from a route source file (YAML, XML, Java, ...). "
-                        + "The source file is parsed without running it. "
+                        + "Java routes are read by the Java DSL parser, without compiling them; a step it cannot "
+                        + "work out (a lambda, a processor) is shown as a placeholder, and the parts it could not read "
+                        + "are listed in the message. "
                         + "For image themes (dark, light, transparent) the PNG is written to disk and the absolute path "
                         + "is returned. For text themes (ascii, unicode) the diagram is returned directly as text so "
                         + "it can be read and understood by the caller. "
@@ -50,19 +53,25 @@ public class RouteDiagramTools {
     public RouteDiagramResult camel_render_route_diagram(
             @ToolArg(description = "Absolute or relative path to the Camel route source file (YAML, XML, Java, ...)") String sourceFile,
             @ToolArg(description = "Optional output file path. For image themes a PNG is written; for text themes a .txt "
-                                   + "file is written. If not specified, a temporary file is created.") String outputFile,
+                                   + "file is written. If not specified, a temporary file is created.",
+                     required = false) String outputFile,
             @ToolArg(description = "Color theme: 'dark' (default), 'light', 'transparent', 'ascii' (plain ASCII art), "
                                    + "'unicode' (box-drawing characters), or a custom spec like "
                                    + "'bg=#1e1e1e:from=#2e7d32:to=#1565c0'. "
-                                   + "Use 'ascii' or 'unicode' to get a text diagram that can be read directly.") String theme,
+                                   + "Use 'ascii' or 'unicode' to get a text diagram that can be read directly.",
+                     required = false) String theme,
             @ToolArg(description = "Optional filter to limit the diagram to routes whose route id or source filename "
-                                   + "matches the given pattern (supports wildcards)") String filter,
-            @ToolArg(description = "Image width in pixels; 0 (or unset) = auto (only used for image themes)") Integer width,
-            @ToolArg(description = "Font size in logical pixels for node text (default 12)") Integer fontSize,
-            @ToolArg(description = "Node box width in logical pixels (default 180)") Integer boxWidth,
+                                   + "matches the given pattern (supports wildcards)",
+                     required = false) String filter,
+            @ToolArg(description = "Image width in pixels; 0 (or unset) = auto (only used for image themes)",
+                     required = false) Integer width,
+            @ToolArg(description = "Font size in logical pixels for node text (default 12)", required = false) Integer fontSize,
+            @ToolArg(description = "Node box width in logical pixels (default 180)", required = false) Integer boxWidth,
             @ToolArg(description = "What text to display in diagram nodes: 'code' (default), 'description' (prefer "
-                                   + "description over code if available), or 'both' (show description and code)") String nodeLabel,
-            @ToolArg(description = "Whether to ignore route loading and compilation errors (use with care)") Boolean ignoreLoadingError) {
+                                   + "description over code if available), or 'both' (show description and code)",
+                     required = false) String nodeLabel,
+            @ToolArg(description = "Whether to ignore route loading and compilation errors (use with care)",
+                     required = false) Boolean ignoreLoadingError) {
 
         if (sourceFile == null || sourceFile.isBlank()) {
             throw new ToolCallException("'sourceFile' parameter is required", null);
@@ -114,19 +123,32 @@ public class RouteDiagramTools {
             if (textMode) {
                 String asciiContent = success ? Files.readString(out.toPath()) : null;
                 String message = success
-                        ? "ASCII diagram generated (" + size + " bytes)"
+                        ? withNotes("ASCII diagram generated (" + size + " bytes)", capturingPrinter)
                         : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
                 return new RouteDiagramResult(success, resolvedOutput, size, message, asciiContent);
             }
 
             String message = success
-                    ? "Diagram saved to: " + resolvedOutput
+                    ? withNotes("Diagram saved to: " + resolvedOutput, capturingPrinter)
                     : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
             return new RouteDiagramResult(success, resolvedOutput, size, message, null);
+        } catch (CliException e) {
+            // an expected failure, such as a source file without routes, or a filter that matches no route
+            return new RouteDiagramResult(
+                    false, resolvedOutput, 0L,
+                    "Failed to render diagram (exit code " + e.getExitCode() + "): " + e.getMessage(), null);
         } catch (Throwable e) {
             throw new ToolCallException(
                     "Failed to render route diagram (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
+    }
+
+    /**
+     * The message, followed by what the command printed, such as the parts of a Java route the parser could not read.
+     */
+    private static String withNotes(String message, CapturingPrinter printer) {
+        String notes = printer.getOutput();
+        return notes.isEmpty() ? message : message + "\n" + notes;
     }
 
     /**

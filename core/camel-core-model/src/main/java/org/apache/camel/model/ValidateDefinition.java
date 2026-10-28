@@ -26,6 +26,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PredicateExceptionFactory;
 
@@ -39,6 +42,8 @@ import org.apache.camel.spi.PredicateExceptionFactory;
 @AsPredicate
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Fails the exchange when the predicate does not match: the body stays as it was"))
 public class ValidateDefinition extends ExpressionNode {
 
     @XmlTransient

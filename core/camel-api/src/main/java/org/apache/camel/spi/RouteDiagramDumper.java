@@ -54,6 +54,21 @@ public interface RouteDiagramDumper {
     void dumpRoutesToFile(String filter, Theme theme, File file) throws IOException;
 
     /**
+     * Dumps the routes as PNG files in the given file
+     *
+     * @param filter to filter routes
+     * @param theme  the coloring theme
+     * @param errors whether to draw the error handling of each route (its onException clauses) in a frame below its
+     *               steps; otherwise only the steps of the route are drawn
+     * @param file   the name of the file to store
+     *
+     * @since        4.24
+     */
+    default void dumpRoutesToFile(String filter, Theme theme, boolean errors, File file) throws IOException {
+        dumpRoutesToFile(filter, theme, file);
+    }
+
+    /**
      * Dumps the routes as PNG files in the given folder
      *
      * @param filter to filter routes
@@ -61,6 +76,21 @@ public interface RouteDiagramDumper {
      * @param folder the folder to store the files
      */
     void dumpRoutesToFolder(String filter, Theme theme, File folder) throws IOException;
+
+    /**
+     * Dumps the routes as PNG files in the given folder
+     *
+     * @param filter to filter routes
+     * @param theme  the coloring theme
+     * @param errors whether to draw the error handling of each route (its onException clauses) in a frame below its
+     *               steps; otherwise only the steps of the route are drawn
+     * @param folder the folder to store the files
+     *
+     * @since        4.24
+     */
+    default void dumpRoutesToFolder(String filter, Theme theme, boolean errors, File folder) throws IOException {
+        dumpRoutesToFolder(filter, theme, folder);
+    }
 
     /**
      * Dumps the routes as a PNG image
@@ -85,6 +115,27 @@ public interface RouteDiagramDumper {
     BufferedImage dumpRoutesAsImage(
             String filter, Theme theme, boolean metrics,
             NodeLabelMode nodeLabel, int nodeWidth, int fontSize);
+
+    /**
+     * Dumps the routes as a PNG image
+     *
+     * @param filter    to filter routes
+     * @param theme     the coloring theme
+     * @param metrics   whether to include live metric counters
+     * @param nodeLabel what information to display in the nodes
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param fontSize  the font size
+     * @param errors    whether to draw the error handling of each route (its onException clauses, where its failures go
+     *                  and where it is reached on error from) in a frame below its steps; otherwise only the steps of
+     *                  the route are drawn
+     *
+     * @since           4.24
+     */
+    default BufferedImage dumpRoutesAsImage(
+            String filter, Theme theme, boolean metrics,
+            NodeLabelMode nodeLabel, int nodeWidth, int fontSize, boolean errors) {
+        return dumpRoutesAsImage(filter, theme, metrics, nodeLabel, nodeWidth, fontSize);
+    }
 
     /**
      * Converts the image to base64
@@ -124,6 +175,24 @@ public interface RouteDiagramDumper {
     }
 
     /**
+     * Dumps the routes as ASCII art or Unicode box-drawing text
+     *
+     * @param filter    to filter routes
+     * @param nodeLabel what information to display in the nodes
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param unicode   whether to use Unicode box-drawing characters
+     * @param errors    whether to draw the error handling of each route (its onException clauses, where its failures go
+     *                  and where it is reached on error from) in a frame below its steps; otherwise only the steps of
+     *                  the route are drawn
+     *
+     * @since           4.24
+     */
+    default String dumpRoutesAsAsciiArt(
+            String filter, NodeLabelMode nodeLabel, int nodeWidth, boolean unicode, boolean errors) {
+        return dumpRoutesAsAsciiArt(filter, nodeLabel, nodeWidth, unicode);
+    }
+
+    /**
      * Dumps the route topology as a PNG file in the given folder
      *
      * @param theme    the coloring theme
@@ -134,6 +203,21 @@ public interface RouteDiagramDumper {
      */
     default void dumpTopologyToFolder(Theme theme, boolean external, File folder) throws IOException {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Dumps the route topology as a PNG file in the given folder
+     *
+     * @param theme    the coloring theme
+     * @param external whether to include external systems (kafka, http, etc.)
+     * @param errors   whether to draw the routes reached only on error (such as the target of a dead letter channel) in
+     *                 a frame below the other routes
+     * @param folder   the folder to store the file
+     *
+     * @since          4.24
+     */
+    default void dumpTopologyToFolder(Theme theme, boolean external, boolean errors, File folder) throws IOException {
+        dumpTopologyToFolder(theme, external, folder);
     }
 
     /**
@@ -159,6 +243,21 @@ public interface RouteDiagramDumper {
      */
     default String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode, boolean external) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Dumps the route topology as ASCII art or Unicode box-drawing text
+     *
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param unicode   whether to use Unicode box-drawing characters
+     * @param external  whether to include external systems (kafka, http, etc.)
+     * @param errors    whether to draw the routes reached only on error (such as the target of a dead letter channel)
+     *                  in a frame below the other routes, with where their failures come from
+     *
+     * @since           4.24
+     */
+    default String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode, boolean external, boolean errors) {
+        return dumpTopologyAsAsciiArt(nodeWidth, unicode, external);
     }
 
     /**
@@ -188,6 +287,24 @@ public interface RouteDiagramDumper {
      */
     default BufferedImage dumpTopologyAsImage(Theme theme, boolean metrics, int nodeWidth, int fontSize, boolean external) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Dumps the route topology as a PNG image
+     *
+     * @param theme     the coloring theme
+     * @param metrics   whether to include live metric counters
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param fontSize  the font size
+     * @param external  whether to include external systems (kafka, http, etc.)
+     * @param errors    whether to draw the routes reached only on error (such as the target of a dead letter channel)
+     *                  in a frame below the other routes, with where their failures come from
+     *
+     * @since           4.24
+     */
+    default BufferedImage dumpTopologyAsImage(
+            Theme theme, boolean metrics, int nodeWidth, int fontSize, boolean external, boolean errors) {
+        return dumpTopologyAsImage(theme, metrics, nodeWidth, fontSize, external);
     }
 
 }

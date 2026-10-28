@@ -120,10 +120,11 @@ public final class StringHelper {
      *
      * @param  s         the string
      * @param  maxLength the maximum length of the returned string
-     * @param  prefix    prefix to append if the string was limited
-     * @return           s if the length of s is less than maxLength or the first maxLength characters of s
+     * @param  suffix    suffix to append if the string was limited, such as an ellipsis
+     * @return           s if the length of s is less than maxLength or the first maxLength characters of s followed by
+     *                   the suffix
      */
-    public static String limitLength(String s, int maxLength, String prefix) {
+    public static String limitLength(String s, int maxLength, String suffix) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
         }
@@ -131,8 +132,8 @@ public final class StringHelper {
             return s;
         }
         s = s.substring(0, maxLength);
-        if (prefix != null) {
-            s = s + prefix;
+        if (suffix != null) {
+            s = s + suffix;
         }
         return s;
     }

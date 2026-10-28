@@ -23,6 +23,7 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration target = (org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.setAction(property(camelContext, org.apache.camel.component.weaviate.WeaviateVectorDbAction.class, value)); return true;
         case "apikey":
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "client": target.setClient(property(camelContext, io.weaviate.client6.v1.api.WeaviateClient.class, value)); return true;
@@ -39,6 +40,7 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.weaviate.WeaviateVectorDbAction.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "client": return io.weaviate.client6.v1.api.WeaviateClient.class;
@@ -56,6 +58,7 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration target = (org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return target.getAction();
         case "apikey":
         case "apiKey": return target.getApiKey();
         case "client": return target.getClient();

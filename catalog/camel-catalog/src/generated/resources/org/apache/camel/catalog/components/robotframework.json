@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-robotframework",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "robotframework",
     "extendsScheme": "",
     "syntax": "robotframework:resourceUri",
@@ -80,6 +80,11 @@
     "CamelRobotVariables": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "List<String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The robot variables.", "constantName": "org.apache.camel.component.robotframework.RobotFrameworkCamelConstants#CAMEL_ROBOT_VARIABLES" },
     "CamelRobotReturnCode": { "index": 1, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The return code.", "constantName": "org.apache.camel.component.robotframework.RobotFrameworkCamelConstants#CAMEL_ROBOT_RETURN_CODE" },
     "CamelRobotResourceUri": { "index": 2, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The new resource URI.", "constantName": "org.apache.camel.component.robotframework.RobotFrameworkCamelConstants#CAMEL_ROBOT_RESOURCE_URI" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "null" ], "description": "No body: each poll runs the test, and the outcome is in the CamelRobotReturnCode header (0 when all tests pass)" },
+    "producerIn": { "carriers": [ "any" ], "description": "The test gets the body converted to a String as the body variable, and the headers and exchange properties as headers.name and properties.name; a null body or header value fails the exchange" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "The body is left as it is. The CamelRobotReturnCode header has the return code of the run (0 when all tests pass, non-zero otherwise), and CamelRobotVariables the variables passed to it; a failed test does not fail the exchange" }
   },
   "properties": {
     "resourceUri": { "index": 0, "kind": "path", "displayName": "Resource Uri", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },

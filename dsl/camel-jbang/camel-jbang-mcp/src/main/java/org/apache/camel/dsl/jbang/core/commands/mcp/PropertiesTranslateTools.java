@@ -35,8 +35,9 @@ import io.quarkiverse.mcp.server.ToolCallException;
  *
  * Most Camel properties are runtime-agnostic ({@code camel.main.*}, {@code camel.component.*}, etc.) and are returned
  * unchanged. The properties that actually differ between runtimes are the embedded HTTP server and management endpoints
- * ({@code camel.server.*} / {@code camel.management.*} are jbang-only) and the legacy {@code camel.springboot.*}
- * configuration that was harmonized to {@code camel.main.*} in Camel 4.5 and removed in 4.13.
+ * ({@code camel.server.*} / {@code camel.management.*} are camel-main's, with camel-platform-http-main) and the legacy
+ * {@code camel.springboot.*} configuration that was harmonized to {@code camel.main.*} in Camel 4.5 and removed in
+ * 4.13, except the options that exist on Spring Boot only.
  */
 @McpSecured
 @ApplicationScoped
@@ -152,6 +153,21 @@ public class PropertiesTranslateTools {
     }
 
     /**
+     * The options of camel-spring-boot that camel-main does not have, by their name after {@code camel.springboot.}
+     * (lower case, without dashes), with their key on Spring Boot today. In 4.13 the deprecated
+     * {@code camel.springboot.*} options were removed and these moved to {@code camel.main.*}, except
+     * lenient-configuration-binding, which keeps its {@code camel.springboot.} name; main-run-controller is deprecated
+     * in favour of run-controller since 4.14.
+     */
+    private static final Map<String, String> SPRING_BOOT_ONLY_OPTIONS = Map.of(
+            "lenientconfigurationbinding", "camel.springboot.lenient-configuration-binding",
+            "mainruncontroller", "camel.main.run-controller",
+            "runcontroller", "camel.main.run-controller",
+            "includenonsingletons", "camel.main.include-non-singletons",
+            "warnonearlyshutdown", "camel.main.warn-on-early-shutdown",
+            "typeconversion", "camel.main.type-conversion");
+
+    /**
      * Camel property prefixes that are runtime-agnostic and must NOT be rewritten when changing runtime.
      */
     private static final Set<String> CAMEL_AGNOSTIC_PREFIXES = Set.of(
@@ -195,13 +211,17 @@ public class PropertiesTranslateTools {
                         +
                         "actually differ are the embedded HTTP server and management endpoint configuration "
                         +
-                        "(camel.server.* / camel.management.* are jbang-only; camel-spring-boot uses server.* / "
+                        "(camel.server.* / camel.management.* on camel-main; camel-spring-boot uses server.* / "
                         +
                         "management.* via Spring Boot; camel-quarkus uses quarkus.http.* / quarkus.management.*). "
                         +
                         "Legacy camel.springboot.* keys are rewritten to camel.main.* (deprecated in 4.5, removed in "
                         +
-                        "4.13). Properties without a known translation are passed through with status=unknown so the "
+                        "4.13), except the Spring Boot only options (camel.springboot.lenient-configuration-binding "
+                        +
+                        "keeps its name), which have no equivalent on the other runtimes. "
+                        +
+                        "Properties without a known translation are passed through with status=unknown so the "
                         +
                         "caller can review them — the tool never guesses.")
     public PropertiesTranslateResult camel_properties_translate(
@@ -269,7 +289,23 @@ public class PropertiesTranslateTools {
         String value = line.substring(eq + 1);
         String key = rawKey.trim();
 
-        // 1. Legacy cleanup: camel.springboot.* is deprecated and removed since 4.13.
+        // 1. Spring Boot only options: no equivalent on camel-main or Quarkus
+        String springBootOnly = springBootOnlyOption(key);
+        if (springBootOnly != null && (key.startsWith("camel.springboot.") || from == Runtime.SPRING_BOOT)) {
+            if (to != Runtime.SPRING_BOOT) {
+                return new TranslatedLine(
+                        lineNumber, line, line, "unknown",
+                        "Spring Boot only option (" + springBootOnly + "): no equivalent in " + to.label());
+            }
+            if (springBootOnly.equals(key) || !key.startsWith("camel.springboot.")) {
+                return new TranslatedLine(lineNumber, line, line, "unchanged", null);
+            }
+            return new TranslatedLine(
+                    lineNumber, line, springBootOnly + "=" + value, "translated",
+                    "Legacy camel.springboot.* option is " + springBootOnly + " since Camel 4.13");
+        }
+
+        // 2. Legacy cleanup: camel.springboot.* is deprecated and removed since 4.13.
         // Rewrite to camel.main.* regardless of source/target runtime.
         if (key.startsWith("camel.springboot.")) {
             String newKey = "camel.main." + key.substring("camel.springboot.".length());
@@ -279,7 +315,7 @@ public class PropertiesTranslateTools {
                     "Legacy camel.springboot.* prefix rewritten to camel.main.* (deprecated since Camel 4.5, removed in 4.13)");
         }
 
-        // 2. Known per-runtime physical keys -> look up the canonical, then re-emit for the target.
+        // 3. Known per-runtime physical keys -> look up the canonical, then re-emit for the target.
         String canonical = KEY_TO_CANONICAL.get(from).get(key);
         if (canonical != null) {
             if (from == to) {
@@ -296,18 +332,34 @@ public class PropertiesTranslateTools {
             return new TranslatedLine(lineNumber, line, translatedLine, "translated", null);
         }
 
-        // 3. Camel-agnostic prefixes are identical across runtimes.
+        // 4. Camel-agnostic prefixes are identical across runtimes.
         for (String prefix : CAMEL_AGNOSTIC_PREFIXES) {
             if (key.startsWith(prefix)) {
                 return new TranslatedLine(lineNumber, line, line, "unchanged", null);
             }
         }
 
-        // 4. Anything else (server.*, quarkus.datasource.*, spring.jpa.*, logging.*, etc.) is out of scope —
+        // 5. Anything else (server.*, quarkus.datasource.*, spring.jpa.*, logging.*, etc.) is out of scope —
         // we never guess. Pass through unchanged with a note.
         return new TranslatedLine(
                 lineNumber, line, line, "unknown",
                 "No translation rule for this key; passed through unchanged");
+    }
+
+    /**
+     * The Spring Boot key of a Spring Boot only option written as {@code camel.springboot.<name>} or
+     * {@code camel.main.<name>} (any relaxed-binding spelling), else null.
+     */
+    private static String springBootOnlyOption(String key) {
+        String name;
+        if (key.startsWith("camel.springboot.")) {
+            name = key.substring("camel.springboot.".length());
+        } else if (key.startsWith("camel.main.")) {
+            name = key.substring("camel.main.".length());
+        } else {
+            return null;
+        }
+        return SPRING_BOOT_ONLY_OPTIONS.get(name.replace("-", "").replace("_", "").toLowerCase(Locale.ENGLISH));
     }
 
     // Result record classes for Jackson serialization

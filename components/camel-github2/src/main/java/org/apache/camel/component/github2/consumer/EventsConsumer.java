@@ -61,8 +61,6 @@ public class EventsConsumer extends AbstractGitHub2Consumer {
         Queue<Object> exchanges = new ArrayDeque<>();
         if (!newEvents.isEmpty()) {
             newEvents.sort((e1, e2) -> Long.compare(e1.getId(), e2.getId()));
-            GHEventInfo latestEvent = newEvents.get(newEvents.size() - 1);
-            lastEventId = latestEvent.getId();
 
             for (GHEventInfo event : newEvents) {
                 Exchange e = createExchange(true);
@@ -73,6 +71,13 @@ public class EventsConsumer extends AbstractGitHub2Consumer {
             }
         }
         return processBatch(exchanges);
+    }
+
+    @Override
+    protected void onRouting(Exchange exchange) {
+        // the events are routed in the order of their ids
+        GHEventInfo event = exchange.getMessage().getHeader(GitHub2Constants.GITHUB_EVENT_PAYLOAD, GHEventInfo.class);
+        lastEventId = event.getId();
     }
 
     /**

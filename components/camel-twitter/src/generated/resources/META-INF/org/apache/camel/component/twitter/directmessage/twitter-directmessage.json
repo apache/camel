@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "twitter-directmessage",
     "extendsScheme": "",
     "syntax": "twitter-directmessage:user",
@@ -31,7 +31,7 @@
     "healthCheckConsumerEnabled": { "index": 3, "kind": "property", "displayName": "Health Check Consumer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all consumer based health checks from this component" },
     "healthCheckProducerEnabled": { "index": 4, "kind": "property", "displayName": "Health Check Producer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all producer based health checks from this component. Notice: Camel has by default disabled all producer based health-checks. You can turn on producer checks globally by setting camel.health.producersEnabled=true." },
     "httpProxyHost": { "index": 5, "kind": "property", "displayName": "Http Proxy Host", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The http proxy host which can be used for the camel-twitter." },
-    "httpProxyPassword": { "index": 6, "kind": "property", "displayName": "Http Proxy Password", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The http proxy password which can be used for the camel-twitter." },
+    "httpProxyPassword": { "index": 6, "kind": "property", "displayName": "Http Proxy Password", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "The http proxy password which can be used for the camel-twitter." },
     "httpProxyPort": { "index": 7, "kind": "property", "displayName": "Http Proxy Port", "group": "proxy", "label": "proxy", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "description": "The http proxy port which can be used for the camel-twitter." },
     "httpProxyUser": { "index": 8, "kind": "property", "displayName": "Http Proxy User", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The http proxy user which can be used for the camel-twitter." },
     "accessToken": { "index": 9, "kind": "property", "displayName": "Access Token", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "The access token" },
@@ -42,6 +42,11 @@
   "headers": {
     "CamelTwitterUser": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The user", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_USER" },
     "CamelTwitterEventType": { "index": 1, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of event. The supported values are the values of the enum org.apache.camel.component.twitter.consumer.TwitterEventType", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_EVENT_TYPE" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "twitter4j.v1.DirectMessage", "description": "One direct message of the account per exchange, with its text in getText(). It converts to text as the date, the sender id and the text" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The text of the direct message: bytes, a stream or a file are read as text, and a Map or a POJO is sent as its toString(). The CamelTwitterUser header overrides the user to send to" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged" }
   },
   "properties": {
     "user": { "index": 0, "kind": "path", "displayName": "User", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The user name to send a direct message. This will be ignored for consumer." },

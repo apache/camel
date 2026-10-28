@@ -89,19 +89,21 @@ BouncyCastle constants (`ml_dsa_87`) is accepted as an alias of the canonical na
 |===
 | Algorithm | Parameter sets
 
-| `MLDSA` | `ML-DSA-44`, `ML-DSA-65` (default), `ML-DSA-87`
-| `MLKEM` | `ML-KEM-512` (default), `ML-KEM-768`, `ML-KEM-1024`
+| `MLDSA` | `ML-DSA-44` (lifecycle manager default), `ML-DSA-65` (component default), `ML-DSA-87`
+| `MLKEM` | `ML-KEM-512` (component default), `ML-KEM-768` (lifecycle manager default), `ML-KEM-1024`
 | `SLHDSA` | `SLH-DSA-SHA2-128S`, `SLH-DSA-SHAKE-256F`, ... (see `SLHDSAParameterSpec`)
 | `FALCON` | `FALCON-512`, `FALCON-1024`
-| `DILITHIUM` | `ML-DSA-44`, `ML-DSA-65`, `ML-DSA-87` (default)
+| `DILITHIUM` | `ML-DSA-44` (lifecycle manager default), `ML-DSA-65`, `ML-DSA-87` (component default)
 | `SPHINCSPLUS` | The `SLHDSA` parameter sets, for example `SLH-DSA-SHA2-128S` (default)
-| `KYBER` | `ML-KEM-512`, `ML-KEM-768`, `ML-KEM-1024` (default); `kyber512`, `kyber768` and `kyber1024` are accepted as aliases
+| `MAYO` | `mayo1`, `mayo2`, `mayo3`, `mayo5` (default); the canonical dashed form (`MAYO-1`) is accepted too
+| `SNOVA` | `SNOVA_24_5_5_SHAKE_SSK` (default), `SNOVA_24_5_4_ESK`, ... (see `SnovaParameterSpec`). The SNOVA names keep their underscores and are not accepted in dashed form
+| `KYBER` | `ML-KEM-512`, `ML-KEM-768` (lifecycle manager default), `ML-KEM-1024` (component default); `kyber512`, `kyber768` and `kyber1024` are accepted as aliases
 | `NTRU` | `ntruhps2048509`, ... (see `NTRUParameterSpec`)
 | `NTRULPRime` | `ntrulpr653`, ... (see `NTRULPRimeParameterSpec`)
 | `SNTRUPrime` | `sntrup761`, ... (see `SNTRUPrimeParameterSpec`)
 | `BIKE` | `bike128`, `bike192`, `bike256`
 | `HQC` | `hqc128`, `hqc192`, `hqc256`
-| `CMCE` | `mceliece460896`, `mceliece8192128f` (default), ... (see `org.bouncycastle.jcajce.spec.CMCEParameterSpec`)
+| `CMCE` | `mceliece460896` (lifecycle manager default), `mceliece8192128f` (component default), ... (see `org.bouncycastle.jcajce.spec.CMCEParameterSpec`)
 | `FRODO` | `frodokem976aes` (default), `frodokem1344shake`, ... (see `org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec`)
 | `SABER` | `lightsaberkem128r3`, ... (see `SABERParameterSpec`)
 |===
@@ -109,9 +111,9 @@ BouncyCastle constants (`ml_dsa_87`) is accepted as an alias of the canonical na
 The `parameterSpec` option is also honoured by the `generateKeyPair` lifecycle operation, which then generates the key
 at the configured security level.
 
-NOTE: `parameterSpec` is not supported for the stateful hash-based signature algorithms (XMSS, XMSSMT, LMS, HSS), for
-MAYO and SNOVA, nor for the hybrid operations: those either have no name-addressable BouncyCastle parameter set, or pair
-a fixed classical key set with a matching PQC key set. For those, register a `KeyPair` bean in the registry instead.
+NOTE: `parameterSpec` is not supported for the stateful hash-based signature algorithms (XMSS, XMSSMT, LMS, HSS) nor
+for the hybrid operations: those either have no name-addressable BouncyCastle parameter set, or pair a fixed classical
+key set with a matching PQC key set. For those, register a `KeyPair` bean in the registry instead.
 
 == Supported Operations
 
@@ -193,7 +195,7 @@ This will be true for standardized algorithms and for experimental ones.
 
 TIP: To combine a classical signature (ECDSA, Ed25519, RSA) with a PQC signature for defense-in-depth during the post-quantum transition, use the hybrid signature operations described in xref:others:pqc-hybrid.adoc[Hybrid Cryptography].
 
-NOTE: The sign and verify operations stream the message body. A `byte[]` or `InputStream` body is fed to the signature in chunks without being materialised as a String, so large payloads (files, large messages) can be signed and verified without loading them fully into memory. When the body is a re-readable `StreamCache` (for example with stream caching enabled) it is reset after reading so downstream processors still see the payload. Any other body type falls back to its String representation, which is always encoded as **UTF-8** so that signing and verifying agree regardless of the JVM default charset.
+NOTE: The sign and verify operations stream the message body. A `byte[]` or `InputStream` body is fed to the signature in chunks without being materialised as a String, so large payloads (files, large messages) can be signed and verified without loading them fully into memory. A `java.io.File` or `java.nio.file.Path` body, and a file from a file consumer (a `GenericFile` body), is read the same way from the file, so the signature covers the bytes of the file. When the body is a re-readable `StreamCache` (for example with stream caching enabled) it is reset after reading so downstream processors still see the payload. A `String` (or any `CharSequence`) body is encoded as **UTF-8** so that signing and verifying agree regardless of the JVM default charset. Any other body that has a binary type converter (for example a `java.nio.ByteBuffer`, a `java.io.ByteArrayOutputStream`, a Netty `ByteBuf` or a Vert.x `Buffer`) is signed over those bytes. A body with no binary representation (for example a `Map` or a POJO) is rejected with an `InvalidPayloadException`; convert it to a `String`, `byte[]` or other binary type earlier in the route. The hybridSign and hybridVerify operations handle the body types the same way, but read the whole body into memory.
 
 == Examples
 
@@ -334,7 +336,7 @@ All other signature algorithms follow the exact same route pattern shown above f
 |`SLHDSA`
 |SLH-DSA
 |BC
-|SLH-DSA-SHA2-128s
+|SLH-DSA-SHA2-128S
 |`PQCDefaultSLHDSAMaterial`
 
 |LMS
@@ -360,9 +362,9 @@ All other signature algorithms follow the exact same route pattern shown above f
 
 |HSS
 |`HSS`
-|HSS
+|LMS
 |BC
-|LMS-SHA256-N32-H5
+|LMS-SHA256-N32-H5 / SHA256-N32-W2 (OTS), 2 levels
 |`PQCDefaultHSSMaterial`
 
 |Dilithium
@@ -383,7 +385,7 @@ All other signature algorithms follow the exact same route pattern shown above f
 |`SPHINCSPLUS`
 |SLH-DSA
 |BC
-|SLH-DSA-SHA2-128s
+|SLH-DSA-SHA2-128S
 |`PQCDefaultSPHINCSPLUSMaterial`
 |===
 
@@ -424,6 +426,8 @@ Experimental and non-standardized
 The component expects to find a KeyGenerator and a KeyPair in to the Camel Registry.
 
 In case the KeyPair and the KeyGenerator Objects are not in the registry, it will provide two instances of the Objects with default implementation.
+
+NOTE: A KEM `KeyGenerator`, like the classical `KeyAgreement` of the hybrid KEM operations, keeps state from its `init` call until the call that returns the result, and is not thread-safe. When the producer creates the instance itself, it uses a new one for every exchange. A configured instance (a registry bean, which is autowired into every `pqc` endpoint, or the default material) is shared, so each operation holds its lock from `init` to the result and concurrent exchanges that use it run one at a time. Registering a `KeyGenerator` bean is optional: without one the producer creates its own from `keyEncapsulationAlgorithm`.
 
 This will be true for standardized algorithms and for experimental ones.
 

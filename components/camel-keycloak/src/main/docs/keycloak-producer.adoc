@@ -784,7 +784,7 @@ YAML::
         - to:
             uri: keycloak:admin
             parameters:
-              operation: setUserPassword
+              operation: resetUserPassword
         - setHeader:
             name: CamelKeycloakRoleName
             constant: "admin"
@@ -794,14 +794,15 @@ YAML::
               operation: assignRoleToUser
         - transform:
             constant: "User environment setup completed successfully"
+----
 
-# Component configuration
-camel:
-  component:
-    keycloak:
-      server-url: "http://localhost:8080"
-      realm: "master"
-      username: "admin"
-      password: "admin"
+The component configuration, in `application.properties`:
+
+[source,properties]
+----
+camel.component.keycloak.server-url = http://localhost:8080
+camel.component.keycloak.realm = master
+camel.component.keycloak.username = admin
+camel.component.keycloak.password = admin
 ----
 ====

@@ -55,7 +55,12 @@ class ProcessTab extends AbstractTab {
 
     @Override
     public String description() {
-        return "OS process information (PID, CPU, memory, file descriptors)";
+        return "The OS process: PID, user, Camel and Java versions, directory, uptime and command line";
+    }
+
+    @Override
+    public String getHelpText() {
+        return DocHelper.loadHelpText("process");
     }
 
     @Override
@@ -163,8 +168,7 @@ class ProcessTab extends AbstractTab {
         if (wrap) {
             contentHeight = 0;
             for (Line l : lines) {
-                int w = l.width();
-                contentHeight += Math.max(1, (w + visibleWidth - 1) / visibleWidth);
+                contentHeight += TuiHelper.wrappedRows(l, visibleWidth);
             }
             contentHeight += visibleHeight;
         } else {

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.support.processor;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -27,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
@@ -58,6 +62,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
 
     private static final String STATE_KEY_DO_MARSHAL = "doMarshal";
     private static final String STATE_KEY_ACCEPT = "accept";
+    private static final String STATE_KEY_REQUEST_CONTENT_TYPE = "requestContentType";
     private static final String STATE_JSON = "json";
     private static final String STATE_XML = "xml";
 
@@ -196,6 +201,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         boolean isJson = false;
 
         String contentType = ExchangeHelper.getContentType(exchange);
+        // the answer is bound with the Content-Type of the binding when the route leaves this one (CAMEL-25769)
+        state.put(STATE_KEY_REQUEST_CONTENT_TYPE, contentType);
         if (contentType != null) {
             isXml = contentType.toLowerCase(Locale.ENGLISH).contains("xml");
             isJson = contentType.toLowerCase(Locale.ENGLISH).contains("json");
@@ -415,6 +422,9 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
             return;
         }
 
+        // the Content-Type of the request describes its body, not the answer (a GET has no body)
+        dropRequestContentType(exchange, state, isXml, isJson);
+
         // ensure there is a content type header (even if binding is off)
         ensureHeaderContentType(produces, isXml, isJson, exchange);
 
@@ -512,6 +522,32 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         if (target instanceof DataTypeAware dataTypeAware) {
             dataTypeAware.setDataType(type);
         }
+    }
+
+    /**
+     * Removes the Content-Type of the request when the route did not set another, the binding does not write that type,
+     * and the answer is an object (a Map, a List, a POJO): the binding then sets the Content-Type of its mode and
+     * marshals the answer, as for a request without a Content-Type. Before, a GET sent with Content-Type text/plain got
+     * a 500, as the object could not be written as text/plain (CAMEL-25769). A request type the binding writes (json
+     * for a json binding) is kept as before, and so is a body that is already text, bytes or a stream, which the route
+     * may answer as such.
+     */
+    private static void dropRequestContentType(
+            Exchange exchange, Map<String, Object> state, boolean isXml, boolean isJson) {
+        Object requestContentType = state.get(STATE_KEY_REQUEST_CONTENT_TYPE);
+        if (requestContentType == null || !requestContentType.equals(ExchangeHelper.getContentType(exchange))) {
+            return;
+        }
+        String type = requestContentType.toString().toLowerCase(Locale.ENGLISH);
+        if (isJson && type.contains("json") || isXml && type.contains("xml")) {
+            return;
+        }
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof CharSequence || body instanceof byte[] || body instanceof InputStream
+                || body instanceof Reader || body instanceof StreamCache || body instanceof ByteBuffer) {
+            return;
+        }
+        exchange.getMessage().removeHeader(Exchange.CONTENT_TYPE);
     }
 
     private void ensureHeaderContentType(String contentType, boolean isXml, boolean isJson, Exchange exchange) {

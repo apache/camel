@@ -19,6 +19,9 @@ package org.apache.camel.language.property;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -27,6 +30,8 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * A language for exchange property expressions.
  */
 @org.apache.camel.spi.annotations.Language("exchangeProperty")
+@BodyTypes(expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     description = "The value of the exchange property as it is, null when there is none"))
 public class ExchangePropertyLanguage implements Language, IsSingleton {
 
     public static Expression exchangeProperty(String propertyName) {

@@ -72,7 +72,7 @@ class SettingsPopupRenderTest {
                 new TabRegistry.TabEntry("🩺", "Health", "health", "7", 6, -1)));
         popup.open();
 
-        Rect area = new Rect(0, 0, 80, 28);
+        Rect area = new Rect(0, 0, 80, 30);
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
         popup.render(frame, area);
@@ -83,6 +83,7 @@ class SettingsPopupRenderTest {
         assertTrue(rendered.contains("Starting Tab"), "the Starting Tab row should be shown");
         assertTrue(rendered.contains("Log Pin"), "the Log Pin row should be shown");
         assertTrue(rendered.contains("Rate per"), "the Rate per row should be shown");
+        assertTrue(rendered.contains("Panel Theme"), "the Panel Theme row should be shown");
         assertTrue(rendered.contains("Default Folder"), "the Default Folder row should be shown");
         assertTrue(rendered.contains("AI Provider"), "the AI Provider row should be shown");
         assertTrue(rendered.contains("AI Model"), "the AI Model row should be shown");
@@ -99,6 +100,51 @@ class SettingsPopupRenderTest {
     }
 
     @Test
+    void lineOfIsTheLineEachRowIsDrawnOn(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(List.of(new TabRegistry.TabEntry("🐪", "Overview", "overview", "1", 0, -1)));
+        popup.open();
+        Rect area = new Rect(0, 0, 80, 40);
+        Buffer buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+        String[] lines = TuiTestHelper.bufferToString(buffer).split("\n");
+
+        // the popup starts two rows down, and its rows below its top border
+        int first = 3;
+        assertTrue(lines[first + SettingsPopup.lineOf(SettingsPopup.ROW_THEME)].contains("Theme:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(SettingsPopup.ROW_PANEL_THEME)].contains("Panel Theme:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(SettingsPopup.ROW_ROUTE_TREE)].contains("Route Tree:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(SettingsPopup.ROW_FOLDER)].contains("Default Folder:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(SettingsPopup.ROW_SHELL_HISTORY)].contains("Shell History:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(SettingsPopup.ROW_AI_PROVIDER)].contains("AI Provider:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(SettingsPopup.ROW_COUNT - 1)].contains("ACP Command:"));
+    }
+
+    @Test
+    void scrollingUpShowsTheDefaultFolderRow(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(List.of(new TabRegistry.TabEntry("🐪", "Overview", "overview", "1", 0, -1)));
+        popup.open();
+        Rect area = new Rect(0, 0, 80, 16);
+        for (int i = 0; i < SettingsPopup.ROW_AI_ACP_COMMAND; i++) {
+            popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        }
+        popup.render(Frame.forTesting(Buffer.empty(area)), area);
+        // from ACP Command back up to Default Folder, the row the view scrolls up to
+        for (int i = 0; i < SettingsPopup.ROW_AI_ACP_COMMAND - SettingsPopup.ROW_FOLDER; i++) {
+            popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.UP, KeyModifiers.NONE));
+            popup.render(Frame.forTesting(Buffer.empty(area)), area);
+        }
+        Buffer buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+
+        assertTrue(TuiTestHelper.bufferToString(buffer).contains("Default Folder:"),
+                TuiTestHelper.bufferToString(buffer));
+    }
+
+    @Test
     void scrollsTheSelectedRowIntoViewOnAShortTerminal(@TempDir Path tempDir) {
         useHome(tempDir);
         SettingsPopup popup = new SettingsPopup();
@@ -112,7 +158,7 @@ class SettingsPopupRenderTest {
         String rendered = TuiTestHelper.bufferToString(buffer);
         assertTrue(rendered.contains("Theme:"), rendered);
         assertFalse(rendered.contains("ACP Command"), "the last rows do not fit in 25 lines");
-        for (int i = 0; i < 19; i++) {
+        for (int i = 0; i < SettingsPopup.ROW_AI_ACP_COMMAND; i++) {
             popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         }
         buffer = Buffer.empty(area);
@@ -120,6 +166,7 @@ class SettingsPopupRenderTest {
         rendered = TuiTestHelper.bufferToString(buffer);
         assertTrue(rendered.contains("ACP Command"), rendered);
         assertTrue(rendered.contains("AI History"), rendered);
-        assertFalse(rendered.contains("Theme:"), "the first rows scrolled out");
+        // not "Theme:", which the Panel Theme row still shows
+        assertFalse(rendered.contains("Starting Tab:"), "the first rows scrolled out");
     }
 }

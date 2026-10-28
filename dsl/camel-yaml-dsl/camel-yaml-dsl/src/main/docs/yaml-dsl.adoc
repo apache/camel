@@ -565,7 +565,7 @@ or `newBuilder()` method, and `factoryMethod` for a static method that takes the
 When a property is not one the builder or the bean accepts, the error names the properties they accept, and
 a class that has neither a public no-arg constructor nor a builder is reported with the ways it can be created:
 its constructors (for `constructors`), its static factory methods (for `factoryMethod`), or a builder class of its own.
-`camel validate` (and the `camel_validate_source` tool of the Camel MCP server) report the same for the classes
+`camel validate` (and the `camel_validate_source` tool of the Camel CLI MCP server) report the same for the classes
 they can load, before the integration runs.
 
 === Creating beans using script language
@@ -950,6 +950,9 @@ YAML DSL compact notation detected in: myroute.yaml.
 It is recommended to use canonical/normalized YAML DSL notation which is more tooling and AI friendly.
 Use Camel CLI to normalize: camel validate normalize <file>
 ----
+
+The Kamelets of the Kamelet catalog (the `camel-kamelets` jar) are not warned about: they are not files of the
+application to normalize. Any other file, in the application's own jar or a custom Kamelet included, is.
 
 To disable this warning, set the following property in `application.properties`:
 

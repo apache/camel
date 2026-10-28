@@ -45,6 +45,8 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filters": target.getConfiguration().setFilters(property(camelContext, java.util.List.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": target.getConfiguration().setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "lazysessioncreation":
         case "lazySessionCreation": target.getConfiguration().setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -101,6 +103,8 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filters": return java.util.List.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "lazysessioncreation":
         case "lazySessionCreation": return boolean.class;
         case "lazystartproducer":
@@ -158,6 +162,8 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "filters": return target.getConfiguration().getFilters();
+        case "hostnameverification":
+        case "hostnameVerification": return target.getConfiguration().isHostnameVerification();
         case "lazysessioncreation":
         case "lazySessionCreation": return target.getConfiguration().isLazySessionCreation();
         case "lazystartproducer":

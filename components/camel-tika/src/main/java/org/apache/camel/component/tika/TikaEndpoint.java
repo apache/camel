@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -30,6 +33,17 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "tika", title = "Tika", syntax = "tika:operation", producerOnly = true,
              remote = false, category = { Category.DOCUMENT, Category.TRANSFORMATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The document: text, bytes, a stream or a file. A Map, a List, a POJO or no"
+                                                + " body fails, and parse fails on an empty document"),
+           producerOut = @BodyType(value = Carrier.BYTES, javaType = "java.io.ByteArrayOutputStream",
+                                   byOption = @BodyType.When(option = "operation", value = "detect", carriers = Carrier.TEXT,
+                                                             javaType = "java.lang.String"),
+                                   description = "parse gives the content as bytes, in a ByteArrayOutputStream: XHTML, or HTML"
+                                                 + " or plain text with tikaParseOutputFormat, in tikaParseOutputEncoding, and"
+                                                 + " the metadata of the document in headers; camel-tika parses HTML and text,"
+                                                 + " other types need their Tika parser module. detect gives the media type as"
+                                                 + " text, such as text/html"))
 public class TikaEndpoint extends DefaultEndpoint {
 
     @UriParam

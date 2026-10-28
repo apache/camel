@@ -33,6 +33,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -131,7 +132,7 @@ public class CouchbaseProducerTest {
         when(collection.upsert(anyString(), any(), any())).thenReturn(response);
         when(msg.getHeader(HEADER_TTL, String.class)).thenReturn(Integer.toString(expiry));
 
-        when(endpoint.getId()).thenReturn("123");
+        when(msg.getHeader(HEADER_ID, String.class)).thenReturn("123");
         when(endpoint.getOperation()).thenReturn("CCB_PUT");
         when(exchange.getMessage()).thenReturn(msg);
         ArgumentCaptor<UpsertOptions> options = ArgumentCaptor.forClass(UpsertOptions.class);

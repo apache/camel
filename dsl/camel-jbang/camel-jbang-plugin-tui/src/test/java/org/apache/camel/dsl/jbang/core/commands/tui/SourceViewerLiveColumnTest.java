@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.dsl.jbang.core.commands.tui.SourceViewer.LiveLine;
+import org.apache.camel.dsl.jbang.core.commands.tui.SourceLiveColumn.LiveLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -47,46 +47,46 @@ class SourceViewerLiveColumnTest {
         Files.writeString(file, "from\nfilter\nto\n");
         viewer = new SourceViewer();
         viewer.loadFile(file);
-        viewer.setLiveRunData(path -> data);
+        viewer.liveColumn().setLiveRunData(path -> data);
     }
 
     @Test
     void noDataNoColumn() {
-        viewer.refreshLiveLinesForTesting();
-        assertThat(viewer.liveColumnForTesting(0)).isEmpty();
+        viewer.liveColumn().refreshLiveLinesForTesting();
+        assertThat(viewer.liveColumn().liveColumnForTesting(0)).isEmpty();
     }
 
     @Test
     void theColumnIsAlignedOnEveryLine() {
         data.put(0, new LiveLine(120, 3, 0));
         data.put(2, new LiveLine(7, 0, 0));
-        viewer.refreshLiveLinesForTesting();
+        viewer.liveColumn().refreshLiveLinesForTesting();
 
-        assertThat(viewer.liveColumnForTesting(0)).isEqualTo(" 120 ✗3  │");
-        assertThat(viewer.liveColumnForTesting(1)).isEqualTo("         │");
-        assertThat(viewer.liveColumnForTesting(2)).isEqualTo("   7     │");
+        assertThat(viewer.liveColumn().liveColumnForTesting(0)).isEqualTo(" 120 ✗3  │");
+        assertThat(viewer.liveColumn().liveColumnForTesting(1)).isEqualTo("         │");
+        assertThat(viewer.liveColumn().liveColumnForTesting(2)).isEqualTo("   7     │");
     }
 
     @Test
     void theWidthDoesNotShrinkWhenACountDoes() {
         data.put(0, new LiveLine(99999, 0, 0));
-        viewer.refreshLiveLinesForTesting();
-        String wide = viewer.liveColumnForTesting(0);
+        viewer.liveColumn().refreshLiveLinesForTesting();
+        String wide = viewer.liveColumn().liveColumnForTesting(0);
 
         // the integration restarted, so the counts start over
         data.put(0, new LiveLine(5, 0, 0));
-        viewer.refreshLiveLinesForTesting();
+        viewer.liveColumn().refreshLiveLinesForTesting();
 
-        assertThat(viewer.liveColumnForTesting(0)).hasSameSizeAs(wide).isEqualTo("     5 │");
+        assertThat(viewer.liveColumn().liveColumnForTesting(0)).hasSameSizeAs(wide).isEqualTo("     5 │");
     }
 
     @Test
     void theMeanTimeHasItsOwnColumn() {
         data.put(0, new LiveLine(10, 0, 25));
         data.put(1, new LiveLine(10, 0, 0));
-        viewer.refreshLiveLinesForTesting();
+        viewer.liveColumn().refreshLiveLinesForTesting();
 
-        assertThat(viewer.liveColumnForTesting(0)).isEqualTo("  10 25ms │");
-        assertThat(viewer.liveColumnForTesting(1)).isEqualTo("  10      │");
+        assertThat(viewer.liveColumn().liveColumnForTesting(0)).isEqualTo("  10 25ms │");
+        assertThat(viewer.liveColumn().liveColumnForTesting(1)).isEqualTo("  10      │");
     }
 }

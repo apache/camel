@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
  */
 public class JGroupsSharedChannelTest extends CamelTestSupport {
 
-    private static final String JGROUPS_SHARED_CHANNEL = "jgroups:sharedChannel";
+    private static final String JGROUPS_SHARED_CHANNEL = "jgroups:sharedChannel?acceptAllObjects=true";
     private static final String DIRECT_PRODUCER = "direct:producer";
     private static final String MOCK_CONSUMER = "mock:consumer";
     private static final String PRODUCER_ROUTE = "producerRoute";

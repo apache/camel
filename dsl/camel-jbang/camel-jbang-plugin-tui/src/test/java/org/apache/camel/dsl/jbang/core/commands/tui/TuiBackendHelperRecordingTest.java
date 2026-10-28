@@ -16,13 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import dev.tamboui.buffer.DiffResult;
 import dev.tamboui.internal.record.AnsiTerminalCapture;
-import dev.tamboui.layout.Position;
 import dev.tamboui.layout.Size;
 import dev.tamboui.terminal.Backend;
 import dev.tamboui.tui.TuiRunner;
@@ -36,12 +33,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Verifies that {@code camel tui --record} actually engages TamboUI's recording backend.
  * <p>
- * camel-tui must supply an explicit {@link dev.tamboui.backend.jline3.JLineBackend} (auto-discovery would otherwise
- * pick the Aesh backend that is on the classpath for {@code --web}). Before TamboUI 0.5.0 only backends created by
- * TamboUI's own factory were wrapped for recording, so camel-tui wrapped its explicit backend itself; since 0.5.0
- * {@code TuiRunner.create} does that for explicit backends too. When the wrapping goes missing, {@code --record}
- * replays no tape and writes no {@code .cast} file, yet still exits cleanly, so only a test like this one catches the
- * regression.
+ * camel-tui supplies an explicit {@link dev.tamboui.backend.jline3.JLineBackend} rather than leaving the choice to
+ * TamboUI's auto-discovery. Before TamboUI 0.5.0 only backends created by TamboUI's own factory were wrapped for
+ * recording, so camel-tui wrapped its explicit backend itself; since 0.5.0 {@code TuiRunner.create} does that for
+ * explicit backends too. When the wrapping goes missing, {@code --record} replays no tape and writes no {@code .cast}
+ * file, yet still exits cleanly, so only a test like this one catches the regression.
  */
 // RecordingConfig.load() also reads fps and duration, so every key camel-tui sets has to be managed here: a value
 // leaking out of this class would silently reconfigure recording in an unrelated test. junit-pioneer clears each key
@@ -90,86 +86,6 @@ class TuiBackendHelperRecordingTest {
             Backend result = runner.backend();
             assertThat(result).isNotInstanceOf(NoopBackend.class);
             assertThat(result.size()).isEqualTo(new Size(120, 30));
-        }
-    }
-
-    /**
-     * Minimal {@link Backend} stand-in. Only {@link #size()} needs a meaningful value, so that the test fails if the
-     * recording dimensions are taken from the delegate instead of the config.
-     */
-    private static final class NoopBackend implements Backend {
-
-        @Override
-        public void draw(DiffResult diff) throws IOException {
-        }
-
-        @Override
-        public void flush() throws IOException {
-        }
-
-        @Override
-        public void clear() throws IOException {
-        }
-
-        @Override
-        public Size size() throws IOException {
-            return new Size(80, 24);
-        }
-
-        @Override
-        public void showCursor() throws IOException {
-        }
-
-        @Override
-        public void hideCursor() throws IOException {
-        }
-
-        @Override
-        public Position getCursorPosition() throws IOException {
-            return new Position(0, 0);
-        }
-
-        @Override
-        public void setCursorPosition(Position position) throws IOException {
-        }
-
-        @Override
-        public void enterAlternateScreen() throws IOException {
-        }
-
-        @Override
-        public void leaveAlternateScreen() throws IOException {
-        }
-
-        @Override
-        public void enableRawMode() throws IOException {
-        }
-
-        @Override
-        public void disableRawMode() throws IOException {
-        }
-
-        @Override
-        public void onResize(Runnable handler) {
-        }
-
-        @Override
-        public int read(int timeoutMs) throws IOException {
-            return -2;
-        }
-
-        @Override
-        public int peek(int timeoutMs) throws IOException {
-            return -2;
-        }
-
-        @Override
-        public void writeRaw(byte[] data) throws IOException {
-            // TuiRunner.create enables bracketed paste through this method
-        }
-
-        @Override
-        public void close() throws IOException {
         }
     }
 }

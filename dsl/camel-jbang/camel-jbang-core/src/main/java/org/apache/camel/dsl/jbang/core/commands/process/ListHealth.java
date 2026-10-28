@@ -20,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,8 +31,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.util.StringHelper;
@@ -47,8 +50,14 @@ import picocli.CommandLine.Command;
          footer = {
                  "%nExamples:",
                  "  camel get health",
+                 "  camel get health myApp --down",
                  "  camel get health --watch" })
 public class ListHealth extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
+
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    String name = "*";
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
                         description = "Sort by pid, name or age", defaultValue = "pid")
@@ -86,127 +95,142 @@ public class ListHealth extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         final List<Row> rows = new ArrayList<>();
 
+        // the options are wrong for every integration, so before reading them
+        Comparator<Row> order = ORDER.comparator(sort);
+        if (level != null && !"default".equals(level) && !"full".equals(level)) {
+            throw CliException.usage("--level must be full or default, was: " + level);
+        }
+
         // include stack-traces
         if (trace && depth <= 1) {
             depth = Integer.MAX_VALUE;
         }
 
-        List<Long> pids = findPids("*");
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        JsonObject hc = (JsonObject) root.get("healthChecks");
-                        if (hc == null) {
-                            return;
-                        }
-                        JsonArray array = (JsonArray) hc.get("checks");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
-                            Row row = new Row();
-                            row.pid = Long.toString(ph.pid());
-                            row.uptime = extractSince(ph);
-                            row.ago = TimeUtils.printSince(row.uptime);
-                            row.name = context.getString("name");
-                            if ("CamelJBang".equals(row.name)) {
-                                row.name = ProcessHelper.extractName(root, ph);
-                            }
-                            row.id = o.getString("id");
-                            row.group = o.getString("group");
-                            row.state = o.getString("state");
-                            row.readiness = o.getBoolean("readiness");
-                            row.liveness = o.getBoolean("liveness");
-                            row.message = o.getString("message");
-                            row.stackTrace = o.getCollection("stackTrace");
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            JsonObject hc = (JsonObject) root.get("healthChecks");
+            if (hc == null) {
+                return;
+            }
+            JsonArray array = (JsonArray) hc.get("checks");
+            for (int i = 0; i < array.size(); i++) {
+                JsonObject o = (JsonObject) array.get(i);
+                Row row = new Row();
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.ago = TimeUtils.printSince(row.uptime);
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.id = o.getString("id");
+                row.group = o.getString("group");
+                row.state = o.getString("state");
+                row.readiness = o.getBoolean("readiness");
+                row.liveness = o.getBoolean("liveness");
+                row.message = o.getString("message");
+                row.stackTrace = o.getCollection("stackTrace");
 
-                            JsonObject d = (JsonObject) o.get("details");
-                            if (d != null) {
-                                row.total = d.getString("invocation.count");
-                                row.success = d.getString("success.count");
-                                row.failure = d.getString("failure.count");
-                                String kind = d.getString("check.kind");
-                                if ("READINESS".equals(kind)) {
-                                    row.liveness = false;
-                                } else if ("LIVENESS".equals(kind)) {
-                                    row.readiness = false;
-                                }
-                                // calc how long time since the check was invoked
-                                String time = d.getString("invocation.time");
-                                if (time != null) {
-                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                    row.sinceLast = TimeUtils.printAge(delta);
-                                }
-                                time = d.getString("success.start.time");
-                                if (time != null) {
-                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                    row.sinceStartSuccess = TimeUtils.printAge(delta);
-                                }
-                                time = d.getString("failure.start.time");
-                                if (time != null) {
-                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                    row.sinceStartFailure = TimeUtils.printAge(delta);
-                                }
-                                for (Map.Entry<String, Object> entry : d.entrySet()) {
-                                    String k = entry.getKey();
-                                    // gather custom details
-                                    if (!HealthCheckHelper.isReservedKey(k)) {
-                                        if (row.customMeta == null) {
-                                            row.customMeta = new TreeMap<>();
-                                        }
-                                        row.customMeta.put(k, entry.getValue());
-                                    }
-                                }
+                JsonObject d = (JsonObject) o.get("details");
+                if (d != null) {
+                    row.total = d.getString("invocation.count");
+                    row.success = d.getString("success.count");
+                    row.failure = d.getString("failure.count");
+                    String kind = d.getString("check.kind");
+                    if ("READINESS".equals(kind)) {
+                        row.liveness = false;
+                    } else if ("LIVENESS".equals(kind)) {
+                        row.readiness = false;
+                    }
+                    // calc how long time since the check was invoked
+                    String time = d.getString("invocation.time");
+                    if (time != null) {
+                        ZonedDateTime zdt = ZonedDateTime.parse(time);
+                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                        row.sinceLast = TimeUtils.printAge(delta);
+                    }
+                    time = d.getString("success.start.time");
+                    if (time != null) {
+                        ZonedDateTime zdt = ZonedDateTime.parse(time);
+                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                        row.sinceStartSuccess = TimeUtils.printAge(delta);
+                    }
+                    time = d.getString("failure.start.time");
+                    if (time != null) {
+                        ZonedDateTime zdt = ZonedDateTime.parse(time);
+                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                        row.sinceStartFailure = TimeUtils.printAge(delta);
+                    }
+                    for (Map.Entry<String, Object> entry : d.entrySet()) {
+                        String k = entry.getKey();
+                        // gather custom details
+                        if (!HealthCheckHelper.isReservedKey(k)) {
+                            if (row.customMeta == null) {
+                                row.customMeta = new TreeMap<>();
                             }
-
-                            boolean add = true;
-                            if (live && !row.liveness) {
-                                add = false;
-                            }
-                            if (ready && !row.readiness) {
-                                add = false;
-                            }
-                            if (down && !row.state.equals("DOWN")) {
-                                add = false;
-                            }
-                            if (level == null || "default".equals(level)) {
-                                if (row.state.equals("UP") && "camel".equals(row.group)
-                                        && (row.id.startsWith("route:") || row.id.startsWith("consumer:"))) {
-                                    // skip camel/route: camel/consumer: checks when they are UP
-                                    // as they are less relevant and is verbose
-                                    add = false;
-                                }
-                            }
-                            if (add) {
-                                rows.add(row);
-                            }
+                            row.customMeta.put(k, entry.getValue());
                         }
                     }
-                });
+                }
+
+                boolean add = true;
+                if (live && !row.liveness) {
+                    add = false;
+                }
+                if (ready && !row.readiness) {
+                    add = false;
+                }
+                if (down && !row.state.equals("DOWN")) {
+                    add = false;
+                }
+                if (level == null || "default".equals(level)) {
+                    if (row.state.equals("UP") && "camel".equals(row.group)
+                            && (row.id.startsWith("route:") || row.id.startsWith("consumer:"))) {
+                        // skip camel/route: camel/consumer: checks when they are UP
+                        // as they are less relevant and is verbose
+                        add = false;
+                    }
+                }
+                if (add) {
+                    rows.add(row);
+                }
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(order);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("age", r.ago);
+                    jo.put("uptime", r.uptime);
                     jo.put("id", getId(r));
-                    jo.put("rl", getLR(r));
+                    jo.put("readiness", r.readiness);
+                    jo.put("liveness", r.liveness);
                     jo.put("status", r.state);
-                    jo.put("rate", getRate(r));
-                    jo.put("since", getSince(r));
+                    jo.put("total", JsonValues.number(r.total));
+                    jo.put("success", JsonValues.number(r.success));
+                    jo.put("failure", JsonValues.number(r.failure));
+                    jo.put("sinceLast", JsonValues.text(r.sinceLast));
+                    jo.put("sinceStartSuccess", JsonValues.text(r.sinceStartSuccess));
+                    jo.put("sinceStartFailure", JsonValues.text(r.sinceStartFailure));
                     jo.put("message", r.message);
+                    if (trace) {
+                        // in the document, not as text after it
+                        if (r.customMeta != null) {
+                            jo.put("metadata", r.customMeta);
+                        }
+                        if (r.stackTrace != null && !r.stackTrace.isEmpty()) {
+                            jo.put("stackTrace", r.stackTrace.subList(0, Math.min(depth, r.stackTrace.size())));
+                        }
+                    }
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
@@ -240,7 +264,7 @@ public class ListHealth extends ProcessWatchCommand {
                                 .with(r -> r.message))));
             }
         }
-        if (trace) {
+        if (trace && !jsonOutput) {
             var traces
                     = rows.stream().filter(r -> r.stackTrace != null && !r.stackTrace.isEmpty()).collect(Collectors.toList());
             if (!traces.isEmpty()) {
@@ -271,25 +295,6 @@ public class ListHealth extends ProcessWatchCommand {
         }
 
         return 0;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
     }
 
     protected String getId(Row r) {

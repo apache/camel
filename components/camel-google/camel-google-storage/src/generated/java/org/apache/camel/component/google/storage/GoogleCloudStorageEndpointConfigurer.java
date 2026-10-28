@@ -46,6 +46,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filter": target.getConfiguration().setFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "impersonatedserviceaccount":
+        case "impersonatedServiceAccount": target.getConfiguration().setImpersonatedServiceAccount(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -87,6 +89,10 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "useworkloadidentityfederation":
+        case "useWorkloadIdentityFederation": target.getConfiguration().setUseWorkloadIdentityFederation(property(camelContext, boolean.class, value)); return true;
+        case "workloadidentityconfig":
+        case "workloadIdentityConfig": target.getConfiguration().setWorkloadIdentityConfig(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -122,6 +128,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filter": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "impersonatedserviceaccount":
+        case "impersonatedServiceAccount": return java.lang.String.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -163,6 +171,10 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "useworkloadidentityfederation":
+        case "useWorkloadIdentityFederation": return boolean.class;
+        case "workloadidentityconfig":
+        case "workloadIdentityConfig": return java.lang.String.class;
         default: return null;
         }
     }
@@ -194,6 +206,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangePattern": return target.getExchangePattern();
         case "filter": return target.getConfiguration().getFilter();
         case "greedy": return target.isGreedy();
+        case "impersonatedserviceaccount":
+        case "impersonatedServiceAccount": return target.getConfiguration().getImpersonatedServiceAccount();
         case "includebody":
         case "includeBody": return target.getConfiguration().isIncludeBody();
         case "includefolders":
@@ -235,6 +249,10 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "useworkloadidentityfederation":
+        case "useWorkloadIdentityFederation": return target.getConfiguration().isUseWorkloadIdentityFederation();
+        case "workloadidentityconfig":
+        case "workloadIdentityConfig": return target.getConfiguration().getWorkloadIdentityConfig();
         default: return null;
         }
     }

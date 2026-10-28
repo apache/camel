@@ -23,7 +23,6 @@ import software.amazon.awssdk.services.mq.MqClient;
 import software.amazon.awssdk.services.mq.MqServiceClientConfiguration;
 import software.amazon.awssdk.services.mq.model.BrokerState;
 import software.amazon.awssdk.services.mq.model.BrokerSummary;
-import software.amazon.awssdk.services.mq.model.ConfigurationId;
 import software.amazon.awssdk.services.mq.model.CreateBrokerRequest;
 import software.amazon.awssdk.services.mq.model.CreateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.DeleteBrokerRequest;
@@ -59,7 +58,7 @@ public class AmazonMQClientMock implements MqClient {
     @Override
     public DescribeBrokerResponse describeBroker(DescribeBrokerRequest describeBrokerRequest) {
         DescribeBrokerResponse.Builder builder = DescribeBrokerResponse.builder();
-        builder.brokerId("1").brokerName("Test").brokerState(BrokerState.RUNNING.toString());
+        builder.brokerId("1").brokerArn("test").brokerName("Test").brokerState(BrokerState.RUNNING.toString());
         return builder.build();
     }
 
@@ -86,10 +85,7 @@ public class AmazonMQClientMock implements MqClient {
     @Override
     public UpdateBrokerResponse updateBroker(UpdateBrokerRequest updateBrokerRequest) {
         UpdateBrokerResponse.Builder builder = UpdateBrokerResponse.builder();
-        ConfigurationId.Builder cId = ConfigurationId.builder();
-        cId.id("1");
-        cId.revision(12);
-        builder.brokerId("1").configuration(cId.build());
+        builder.brokerId("1").configuration(updateBrokerRequest.configuration());
         return builder.build();
     }
 

@@ -60,6 +60,7 @@ public class AddIssueLinkProducer extends DefaultProducer {
         }
 
         LinkIssuesInput linkIssuesInput = new LinkIssuesInput(parentIssueKey, childIssueKey, linkType, comment);
-        issueClient.linkIssue(linkIssuesInput);
+        // wait for the result, so that a request that Jira rejects fails the exchange
+        issueClient.linkIssue(linkIssuesInput).claim();
     }
 }

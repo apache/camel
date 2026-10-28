@@ -47,7 +47,7 @@ public class EventbridgePutEventsIT extends Aws2EventbridgeBase {
                         "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test");
                 exchange.getIn().setHeader(EventbridgeConstants.EVENT_SOURCE, "com.pippo");
                 exchange.getIn().setHeader(EventbridgeConstants.EVENT_DETAIL_TYPE, "peppe");
-                exchange.getIn().setBody("Test Event");
+                exchange.getIn().setBody("{\"message\":\"Test Event\"}");
             }
         });
         MockEndpoint.assertIsSatisfied(context);

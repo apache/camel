@@ -22,6 +22,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.UriEndpoint;
@@ -32,6 +35,14 @@ import org.apache.camel.spi.UriParam;
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true,
              category = { Category.DOCUMENT }, lenientProperties = true, headersClass = AtomConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.apptasticsoftware.rssreader.Item",
+                                   byOption = @BodyType.When(option = "splitEntries", value = "false",
+                                                             carriers = Carrier.LIST, javaType = "java.util.List"),
+                                   description = "One entry of the feed, a com.apptasticsoftware.rssreader.Item with its"
+                                                 + " title, link, author, dates and content; with splitEntries=false the"
+                                                 + " List of all the entries, empty for a feed without entries. The"
+                                                 + " CamelAtomFeed header carries the List of the entries unless"
+                                                 + " feedHeader=false"))
 public class AtomEndpoint extends FeedEndpoint implements EndpointServiceLocation {
 
     @UriParam(label = "consumer,filter", defaultValue = "true", description = "Option to use the Idempotent "

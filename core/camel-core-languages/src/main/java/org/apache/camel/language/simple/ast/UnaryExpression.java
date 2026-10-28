@@ -24,7 +24,9 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.language.simple.SimplePredicateExpression;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.UnaryOperatorType;
@@ -94,6 +96,10 @@ public class UnaryExpression extends BaseSimpleNode {
     }
 
     private Expression createNotExpression(CamelContext camelContext, final Expression exp) {
+        // Preserve the value-based rule for existing functions: ${body} is true and a missing header is false
+        // (CAMEL-24984). Only functions opting in explicitly use their predicate contract under negation.
+        final Predicate predicate = exp instanceof SimplePredicateExpression p
+                ? p : exchange -> ObjectHelper.evaluateValuePredicate(exp.evaluate(exchange, Object.class));
         return new Expression() {
             @Override
             public void init(CamelContext context) {
@@ -102,10 +108,7 @@ public class UnaryExpression extends BaseSimpleNode {
 
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Object value = exp.evaluate(exchange, Object.class);
-                // the same rule the language uses for a predicate on its own, where ${body} is true and a missing
-                // header is false, so !${body} and !${header.foo} answer the opposite of those (CAMEL-24984)
-                boolean matches = ObjectHelper.evaluateValuePredicate(value);
+                boolean matches = predicate.matches(exchange);
                 return camelContext.getTypeConverter().convertTo(type, exchange, !matches);
             }
 

@@ -24,6 +24,8 @@ class EndpointInfo {
     long hits;
     boolean stub;
     boolean remote;
+    /** remote, internal or local, as EndpointScope tells them apart */
+    String scope;
     long minBodySize = -1;
     long maxBodySize = -1;
     long meanBodySize = -1;

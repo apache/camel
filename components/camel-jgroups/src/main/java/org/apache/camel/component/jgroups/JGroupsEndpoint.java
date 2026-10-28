@@ -17,7 +17,8 @@
 package org.apache.camel.component.jgroups;
 
 import java.io.ObjectInputFilter;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -25,6 +26,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +38,10 @@ import org.apache.camel.support.DeserializationFilterHelper;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
+import org.jgroups.protocols.ASYM_ENCRYPT;
+import org.jgroups.protocols.AUTH;
+import org.jgroups.protocols.SYM_ENCRYPT;
+import org.jgroups.stack.ProtocolStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +50,28 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName",
              category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = "enableViewMessages",
+                                   description = "The object the sender put in the message, Java-deserialized: what a jgroups"
+                                                 + " producer sent, such as a String, a byte array, a Map or a Serializable"
+                                                 + " POJO, if the deserialization filter accepts its class. With"
+                                                 + " enableViewMessages an org.jgroups.View also arrives on each change of the"
+                                                 + " members of the cluster"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
+                   Carrier.FILE, Carrier.POJO },
+                                  description = "The body as is, Java-serialized into the message, so it must be"
+                                                + " Serializable: a stream or another object that is not fails with a"
+                                                + " NotSerializableException. A null body is not sent. The CamelJGroupsDest header"
+                                                + " sends it to one member instead of the cluster"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
-    private AtomicInteger connectCount = new AtomicInteger();
+    // the producers and consumers connected to the channel this endpoint created, guarded by connectLock
+    private int connectCount;
+    // connects and disconnects the channel this endpoint created together with its count, so that a producer that
+    // stops and a consumer that starts at the same time leave the channel connected for the consumer
+    private final Lock connectLock = new ReentrantLock();
 
     private JChannel channel;
     private JChannel resolvedChannel;
@@ -67,6 +93,16 @@ public class JGroupsEndpoint extends DefaultEndpoint {
                             + " configured, a conservative default filter denying java.net.** and otherwise allowing"
                             + " java.**, javax.** and org.apache.camel.** is applied. Use * to accept any type.")
     private String deserializationFilter;
+
+    @UriParam(label = "consumer,security", defaultValue = "false", security = "insecure:serialization",
+              description = "Whether to start the consumer and accept any object deserialized from the cluster even"
+                            + " when no pre-read deserialization control is configured. When false (the default) the"
+                            + " consumer fails to start on an unauthenticated default channel unless a JVM-wide"
+                            + " -Djdk.serialFilter, the JGroups jgroups.deserialization.filter system property, or an"
+                            + " authenticated/encrypted channel is configured. Set to true to accept any serialized type"
+                            + " and bypass the start-up guard; this also disables the post-read class check, so it is an"
+                            + " insecure setting.")
+    private boolean acceptAllObjects;
 
     private volatile ObjectInputFilter resolvedDeserializationFilter;
 
@@ -97,7 +133,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_SRC, message.getSrc());
         exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, message.getDest());
         Object body = message.getObject();
-        if (body != null) {
+        if (body != null && !acceptAllObjects) {
             checkDeserializedType(body.getClass());
         }
         exchange.getIn().setBody(body);
@@ -141,11 +177,17 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        if (resolvedChannel != null) {
+        // a channel this endpoint did not create (such as the channel of the component) is used by other endpoints,
+        // and is closed by the component
+        if (resolvedChannel != null && isOwnChannel()) {
             LOG.trace("Closing JGroups Channel {}", getEndpointUri());
             resolvedChannel.close();
         }
         super.doStop();
+    }
+
+    private boolean isOwnChannel() {
+        return channel == null;
     }
 
     private ObjectInputFilter resolveDeserializationFilter() {
@@ -153,7 +195,56 @@ public class JGroupsEndpoint extends DefaultEndpoint {
                 deserializationFilter, DeserializationFilterHelper.DEFAULT_CLASS_DESERIALIZATION_FILTER);
     }
 
-    private JChannel resolveChannel() throws Exception {
+    /**
+     * Verifies, at consumer start, that inbound cluster messages will not be Java-deserialized without a pre-read
+     * protection in place. JGroups materializes the message body with {@code ObjectInputStream.readObject()} inside its
+     * own receive path, before Camel can inspect the result, so the post-read {@link #deserializationFilter} check is
+     * defense-in-depth only. A pre-read control is considered present when any of the following holds: a JVM-wide
+     * serialization filter ({@code -Djdk.serialFilter}) is configured, the JGroups
+     * {@code jgroups.deserialization.filter} system property is set, or the channel protocol stack includes
+     * authentication/encryption. Set {@link #acceptAllObjects} to {@code true} to start anyway and accept any type,
+     * restoring the previous behaviour.
+     *
+     * @throws JGroupsException if none of the above is configured on the (unauthenticated) default channel
+     */
+    void verifyConsumerDeserializationGuard() {
+        if (acceptAllObjects) {
+            return;
+        }
+        // Only a pre-read control counts here. The deserializationFilter option is a post-read class check (it runs
+        // after Message.getObject() has already deserialized the payload) and so does not satisfy this guard.
+        if (ObjectInputFilter.Config.getSerialFilter() != null) {
+            return;
+        }
+        String jgroupsFilter = System.getProperty("jgroups.deserialization.filter");
+        if (jgroupsFilter != null && !jgroupsFilter.isBlank()) {
+            return;
+        }
+        if (isSecuredChannel(resolvedChannel)) {
+            return;
+        }
+        throw new JGroupsException(
+                "Refusing to start the JGroups consumer for cluster '" + clusterName
+                                   + "': inbound cluster messages are Java-deserialized and no pre-read protection is"
+                                   + " in place. Configure one of -Djdk.serialFilter, the"
+                                   + " 'jgroups.deserialization.filter' system property, or a channel secured with"
+                                   + " AUTH/encryption (via channelProperties); or set 'acceptAllObjects=true' to accept"
+                                   + " any type and keep the previous behaviour. See the camel-jgroups component"
+                                   + " documentation (Security).");
+    }
+
+    static boolean isSecuredChannel(JChannel channel) {
+        if (channel == null) {
+            return false;
+        }
+        ProtocolStack stack = channel.getProtocolStack();
+        return stack != null && stack.findProtocol(AUTH.class, SYM_ENCRYPT.class, ASYM_ENCRYPT.class) != null;
+    }
+
+    /**
+     * The channel of the endpoint: the channel option, or a channel it creates. Package-private for tests.
+     */
+    JChannel resolveChannel() throws Exception {
         if (channel != null) {
             return channel;
         }
@@ -164,21 +255,43 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Connect shared channel, called by producer and consumer.
+     * Connects the channel of this endpoint, called by producer and consumer. A channel this endpoint did not create
+     * (such as the channel of the component) is counted by the component, as other endpoints can use it; a channel this
+     * endpoint created is counted by the endpoint.
      */
     public void connect() throws Exception {
-        connectCount.incrementAndGet();
         LOG.trace("Connecting JGroups Channel {}", getEndpointUri());
-        resolvedChannel.connect(clusterName);
+        if (!isOwnChannel()) {
+            ((JGroupsComponent) getComponent()).connectSharedChannel(resolvedChannel, clusterName);
+            return;
+        }
+        connectLock.lock();
+        try {
+            resolvedChannel.connect(clusterName);
+            // counted after a successful connect, as a producer or consumer whose connect failed does not disconnect
+            connectCount++;
+        } finally {
+            connectLock.unlock();
+        }
     }
 
     /**
-     * Disconnect shared channel, called by producer and consumer.
+     * Disconnects the channel of this endpoint when its last producer or consumer disconnects, called by producer and
+     * consumer.
      */
     public void disconnect() {
-        if (connectCount.decrementAndGet() == 0) {
-            LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
-            resolvedChannel.disconnect();
+        if (!isOwnChannel()) {
+            ((JGroupsComponent) getComponent()).disconnectSharedChannel(resolvedChannel);
+            return;
+        }
+        connectLock.lock();
+        try {
+            if (--connectCount == 0) {
+                LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
+                resolvedChannel.disconnect();
+            }
+        } finally {
+            connectLock.unlock();
         }
     }
 
@@ -247,6 +360,22 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      */
     public void setDeserializationFilter(String deserializationFilter) {
         this.deserializationFilter = deserializationFilter;
+    }
+
+    public boolean isAcceptAllObjects() {
+        return acceptAllObjects;
+    }
+
+    /**
+     * Whether to start the consumer and accept any object deserialized from the cluster even when no pre-read
+     * deserialization control is configured. When {@code false} (the default) the consumer fails to start on an
+     * unauthenticated default channel unless a JVM-wide {@code -Djdk.serialFilter}, the JGroups
+     * {@code jgroups.deserialization.filter} system property, or an authenticated/encrypted channel is configured. Set
+     * to {@code true} to accept any serialized type and bypass the start-up guard; this also disables the post-read
+     * class check, so it is an insecure setting.
+     */
+    public void setAcceptAllObjects(boolean acceptAllObjects) {
+        this.acceptAllObjects = acceptAllObjects;
     }
 
 }

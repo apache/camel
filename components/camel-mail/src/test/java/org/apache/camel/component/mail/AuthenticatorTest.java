@@ -45,7 +45,7 @@ public class AuthenticatorTest extends CamelTestSupport {
      */
     @Test
     public void testSendAndReceiveMails() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james3, james4);
         // first expect correct result because smtp authenticator does not return wrong password
         callAndCheck("mock:result");
         // second expect exception  because smtp authenticator does return wrong password

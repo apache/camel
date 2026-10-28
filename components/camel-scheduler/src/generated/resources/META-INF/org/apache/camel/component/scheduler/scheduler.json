@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-scheduler",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "scheduler",
     "extendsScheme": "",
     "syntax": "scheduler:name",
@@ -33,6 +33,9 @@
   },
   "headers": {
     "CamelMessageTimestamp": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timestamp of the message", "constantName": "org.apache.camel.component.scheduler.SchedulerConstants#MESSAGE_TIMESTAMP" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "null" ], "description": "No body: the message only starts the route" }
   },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the scheduler" },

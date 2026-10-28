@@ -86,6 +86,28 @@ There are two new options `retainFirst`, and
 endpoints keep in memory.
 ====
 
+In a route, a mock endpoint is the target of a `to` step.
+With the `log` option, the mock logs each message it receives:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:orders
+      steps:
+        - setHeader:
+            name: status
+            expression:
+              constant:
+                expression: received
+        - to:
+            uri: mock:orders
+            parameters:
+              log: true
+----
+
+A test then sets the expectations on `mock:orders` and asserts them, as the examples below show in Java.
+
 == Examples
 
 === Simple Example
@@ -481,6 +503,23 @@ first five and last five Exchanges the mock receives.
   mock.expectedMessageCount(2000);
 
   mock.assertIsSatisfied();
+----
+
+The limits and the expected count can also be options of the endpoint in the route.
+The test then only asserts the mock:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:data
+      steps:
+        - to:
+            uri: mock:data
+            parameters:
+              retainFirst: 5
+              retainLast: 5
+              expectedCount: 2000
 ----
 
 Using this has some limitations. The `getExchanges()` and

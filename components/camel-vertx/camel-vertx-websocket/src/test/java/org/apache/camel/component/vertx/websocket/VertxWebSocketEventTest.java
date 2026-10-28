@@ -60,7 +60,7 @@ public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
 
         // Trigger close event
         CountDownLatch latch = new CountDownLatch(1);
-        webSocket.close(event -> latch.countDown());
+        webSocket.close().onComplete(event -> latch.countDown());
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         mockEndpoint.assertIsSatisfied();

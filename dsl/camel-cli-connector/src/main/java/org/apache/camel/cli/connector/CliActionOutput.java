@@ -39,4 +39,15 @@ public interface CliActionOutput {
     default void error(String message) {
         // noop
     }
+
+    /**
+     * A problem the action reports without failing because what it was asked to work on does not exist, such as a route
+     * id that matches no route. Transports that can reply to the tool pass it on as an error with the reason
+     * <tt>not-found</tt>, so the tool can tell it apart from other failures.
+     *
+     * @since 4.24
+     */
+    default void notFound(String message) {
+        error(message);
+    }
 }

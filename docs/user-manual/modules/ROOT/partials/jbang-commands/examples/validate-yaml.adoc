@@ -1,0 +1,36 @@
+== Examples
+
+By default, routes are validated against the classic schema, which accepts both the shorthand and the explicit forms.
+Use `--canonical` to validate against the canonical schema, which rejects shorthands and implicit expressions.
+See xref:components:others:yaml-dsl.adoc[YAML DSL] for the differences between the classic and canonical schemas.
+
+Validate YAML routes against the classic schema:
+
+[source,bash]
+----
+camel validate yaml myroute.yaml
+----
+
+Validate against the canonical schema (rejects shorthands):
+
+[source,bash]
+----
+camel validate yaml --canonical myroute.yaml
+----
+
+Validate multiple files:
+
+[source,bash]
+----
+camel validate yaml routes/*.yaml
+----
+
+When all files are valid:
+
+[source,bash]
+----
+$ camel validate yaml cheese.yaml orders.yaml
+Validation success (files:2)
+----
+
+Use `camel validate normalize` to convert a file to the canonical form before validating it with `--canonical`.

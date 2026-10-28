@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -89,6 +92,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     private String outputFileName;
     private boolean topology = true;
     private boolean topologyExternal = true;
+    private boolean errors;
 
     @Override
     public CamelContext getCamelContext() {
@@ -174,6 +178,16 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     }
 
     @Override
+    public boolean isErrors() {
+        return errors;
+    }
+
+    @Override
+    public void setErrors(boolean errors) {
+        this.errors = errors;
+    }
+
+    @Override
     public void dumpRoutes(String format) {
         if ("yaml".equalsIgnoreCase(format)) {
             doDumpRoutesAsYaml(camelContext);
@@ -206,18 +220,18 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 if (log) {
                     LOG.info("Dumping route diagrams as PNG to file: {}", name);
                 }
-                dumper.dumpRoutesToFile(filter, RouteDiagramDumper.Theme.LIGHT, new File(name));
+                dumper.dumpRoutesToFile(filter, RouteDiagramDumper.Theme.LIGHT, errors, new File(name));
             } else {
                 if (log) {
                     LOG.info("Dumping route diagrams as PNG files to folder: {}", folder);
                 }
-                dumper.dumpRoutesToFolder(filter, RouteDiagramDumper.Theme.LIGHT, new File(folder));
+                dumper.dumpRoutesToFolder(filter, RouteDiagramDumper.Theme.LIGHT, errors, new File(folder));
             }
             if (topology) {
                 if (log) {
                     LOG.info("Dumping route topology diagram as PNG to folder: {}", folder != null ? folder : ".");
                 }
-                dumper.dumpTopologyToFolder(RouteDiagramDumper.Theme.LIGHT, topologyExternal,
+                dumper.dumpTopologyToFolder(RouteDiagramDumper.Theme.LIGHT, topologyExternal, errors,
                         new File(folder != null ? folder : "."));
             }
         } catch (IOException e) {
@@ -318,6 +332,13 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             jo.put("toRouteId", edge.toRouteId());
             jo.put("endpoint", edge.endpoint());
             jo.put("connectionType", edge.connectionType());
+            jo.put("kind", edge.kind());
+            if (edge.via() != null) {
+                jo.put("via", edge.via());
+            }
+            if (edge.handling() != null) {
+                jo.put("handling", edge.handling());
+            }
             edgesArr.add(jo);
         }
         root.put("edges", edgesArr);
@@ -509,14 +530,24 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         if (include.contains("*") || include.contains("all") || include.contains("routes")) {
             int size = model.getRouteDefinitions().size();
             if (size > 0) {
-                Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
+                List<RouteDefinition> eligible = new ArrayList<>();
                 for (RouteDefinition route : model.getRouteDefinitions()) {
                     if ((route.isRest() != null && route.isRest()) || (route.isTemplate() != null && route.isTemplate())) {
                         // skip routes that are rest/templates
                         continue;
                     }
+                    eligible.add(route);
+                }
+                // the routes of several resources dumped into the same file are dumped together, so the top-level
+                // elements of the resources (such as onException) come before the first route
+                boolean merge = outputFileName != null && countResources(eligible) > 1;
+                if (merge) {
+                    warnIfOnExceptionScopeWidens(model, eligible);
+                }
+                Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
+                for (RouteDefinition route : eligible) {
                     Resource res = route.getResource();
-                    if (res == null) {
+                    if (res == null || merge) {
                         res = dummy;
                     }
                     RoutesDefinition routes = groups.computeIfAbsent(res, resource -> new RoutesDefinition());
@@ -539,6 +570,49 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
+    }
+
+    private static int countResources(List<RouteDefinition> routes) {
+        Set<Resource> resources = new HashSet<>();
+        for (RouteDefinition route : routes) {
+            resources.add(route.getResource());
+        }
+        return resources.size();
+    }
+
+    /**
+     * A top-level onException applies only to the routes of its own resource, but once the routes of several resources
+     * are dumped into the same file, it applies to all the routes of the file when the file is loaded.
+     */
+    private void warnIfOnExceptionScopeWidens(Model model, List<RouteDefinition> routes) {
+        Set<String> locations = new LinkedHashSet<>();
+        for (RouteDefinition route : routes) {
+            for (ProcessorDefinition<?> output : route.getOutputs()) {
+                if (output instanceof OnExceptionDefinition oe && !oe.isRouteScoped()
+                        && !isInRouteConfiguration(model, oe)) {
+                    Resource res = route.getResource();
+                    locations.add(res != null && res.getLocation() != null ? res.getLocation() : "routes without a source");
+                }
+            }
+        }
+        if (!locations.isEmpty()) {
+            LOG.warn("The routes of several resources are dumped together into {}: the top-level onException of {}"
+                     + " applies to all the routes of the dump when it is loaded",
+                    outputFileName, String.join(", ", locations));
+        }
+    }
+
+    private static boolean isInRouteConfiguration(Model model, OnExceptionDefinition oe) {
+        for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+            if (config.getOnExceptions() != null) {
+                for (OnExceptionDefinition o : config.getOnExceptions()) {
+                    if (o == oe) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     protected void doDumpRoutesAsJava(CamelContext camelContext) {
@@ -708,6 +782,11 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 String loc = LoggerHelper.getSourceLocation(def);
                 if (loc != null) {
                     jo.put("source", loc);
+                }
+                // the checksum of the route as written: a tool that read the routes from their source compares it with
+                // the running routes to tell which changed
+                if (def.getChecksum() != null) {
+                    jo.put("checksum", def.getChecksum());
                 }
                 List<JsonObject> code = dumpAsJSon(lines);
                 jo.put("code", code);

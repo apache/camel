@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
@@ -36,6 +39,18 @@ import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
  * See also {@link PGPKeyAccessDataFormat}.
  */
 @Dataformat("pgp")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The data to encrypt: text in the charset of the exchange, bytes, a stream or a"
+                                               + " file"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The PGP message in the stream cache, or a byte array when stream caching is"
+                                                + " off: binary, or ASCII armored text when armored is true"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                   description = "A PGP message, binary or ASCII armored: the armor is detected, whatever"
+                                                 + " armored is set to"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM,
+                                    description = "The decrypted data in the stream cache, or a byte array when stream caching"
+                                                  + " is off"))
 public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKeyAccessor, PGPSecretKeyAccessor {
 
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";

@@ -52,7 +52,7 @@ public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.comp
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "problemName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

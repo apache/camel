@@ -67,18 +67,31 @@ public class SqlTraceDevConsoleQueryHeaderTest extends ContextTestSupport {
         Assertions.assertEquals(ENDPOINT_QUERY, tracedQuery(true, true));
     }
 
+    @Test
+    public void testAPlusInTheStatementIsKept() throws Exception {
+        // the endpoint uri has %20 for a space, so a + is a + of the statement: it was shown as a space, and an agent
+        // reading the trace "fixed" an ON CONFLICT clause that was right
+        String statement = "update customers set orders = customers.orders + 1 where id = 'C-482'";
+        Assertions.assertEquals(statement, tracedQuery(statement, false, false));
+    }
+
     private String tracedQuery(boolean allowQueryFromHeader) throws Exception {
         return tracedQuery(allowQueryFromHeader, false);
     }
 
     private String tracedQuery(boolean allowQueryFromHeader, boolean useMessageBodyForSql) throws Exception {
+        return tracedQuery(ENDPOINT_QUERY, allowQueryFromHeader, useMessageBodyForSql);
+    }
+
+    private String tracedQuery(String endpointQuery, boolean allowQueryFromHeader, boolean useMessageBodyForSql)
+            throws Exception {
         context.addComponent("sql", new FakeSqlComponent(allowQueryFromHeader, useMessageBodyForSql));
 
         DevConsole con = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("sql-trace");
         Assertions.assertNotNull(con);
         ServiceHelper.startService(con);
 
-        template.sendBodyAndHeader("sql:" + ENDPOINT_QUERY, "body", "CamelSqlQuery", HEADER_QUERY);
+        template.sendBodyAndHeader("sql:" + endpointQuery, "body", "CamelSqlQuery", HEADER_QUERY);
 
         JsonObject out = (JsonObject) con.call(DevConsole.MediaType.JSON);
         JsonArray statements = (JsonArray) out.get("statements");

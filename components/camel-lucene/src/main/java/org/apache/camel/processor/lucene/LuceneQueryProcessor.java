@@ -30,7 +30,6 @@ public class LuceneQueryProcessor implements Processor {
     private File indexDirectory;
     private Analyzer analyzer;
     private IndexSearcher indexSearcher;
-    private LuceneSearcher searcher;
     private String searchPhrase;
     private int maxNumberOfHits;
     private int totalHitsThreshold;
@@ -51,9 +50,14 @@ public class LuceneQueryProcessor implements Processor {
         boolean isReturnLuceneDocs = returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true");
 
         if (phrase != null) {
-            searcher = new LuceneSearcher();
+            // a searcher (and index reader) per query, closed when the hits are built
+            LuceneSearcher searcher = new LuceneSearcher();
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, isReturnLuceneDocs);
+            try {
+                hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, isReturnLuceneDocs);
+            } finally {
+                searcher.close();
+            }
         } else {
             throw new IllegalArgumentException("SearchPhrase for LuceneQueryProcessor not set. Set the Header value: QUERY");
         }

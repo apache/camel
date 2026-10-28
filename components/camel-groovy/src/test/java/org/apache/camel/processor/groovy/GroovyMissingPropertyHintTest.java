@@ -16,20 +16,29 @@
  */
 package org.apache.camel.processor.groovy;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import groovy.lang.MissingPropertyException;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A groovy script that uses a bean name as a variable, or an unknown variable, gets a MissingPropertyException whose
- * message says where the beans are and what the script variables are (CAMEL-24698).
+ * message says where the beans are and what the script variables are (CAMEL-24698). A field read on a body that is
+ * still the payload text says to unmarshal it first, and JSON text in a header is named (CAMEL-25330).
  */
 public class GroovyMissingPropertyHintTest extends CamelTestSupport {
 
@@ -52,6 +61,125 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
     }
 
     @Test
+    public void fieldReadOnAStreamSaysToUnmarshal() {
+        // CAMEL-25749: body.sku on the body itself, the text of a request as a cached stream
+        ByteArrayInputStreamCache body = new ByteArrayInputStreamCache(
+                new ByteArrayInputStream("{\"sku\": \"A1\"}".getBytes(StandardCharsets.UTF_8)));
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:read", body, Exchange.CONTENT_TYPE, "application/json"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("the body is a cached stream (ByteArrayInputStreamCache)"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("unmarshal it first (unmarshal: json, for the Content-Type application/json)"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnJsonBytesSaysToUnmarshal() {
+        byte[] json = "[{\"sku\": \"A1\"}]".getBytes();
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:field", json, "sku", "A1"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("the body is bytes (a byte[]), not parsed data"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("unmarshal: json"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnJsonStringSaysToUnmarshal() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:field", "[{\"sku\": \"A1\"}]", "sku", "A1"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("the body is text (a String), not parsed data"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnXmlTextSaysJacksonXml() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:field", "<order><sku>A1</sku></order>", "sku", "A1"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("unmarshal: jacksonXml"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnCsvFileSaysCsv() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeaders("direct:field", "sku,qty\nA1,2".getBytes(),
+                        java.util.Map.of("sku", "A1", Exchange.FILE_NAME, "orders.csv")));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("unmarshal: csv"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnJsonContentTypeSaysJson() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeaders("direct:field", "sku=A1",
+                        java.util.Map.of("sku", "A1", Exchange.CONTENT_TYPE, "application/json; charset=UTF-8")));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("unmarshal: json"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnUnknownTextNamesTheChoices() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:field", "sku=A1", "sku", "A1"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(
+                cause.getMessage().contains(
+                        "the data format of the payload (such as unmarshal: json, unmarshal: jacksonXml or unmarshal: csv)"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnJsonTextInAHeaderNamesTheHeader() {
+        // the benchmark wrote headers.skuList.find { ... } with the stock list kept as text in a header
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeaders("direct:header", java.util.List.of("x"),
+                        java.util.Map.of("sku", "A1", "skuList", "[{\"sku\": \"A1\"}]")));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("header 'skuList' is still JSON text, not parsed data"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("new groovy.json.JsonSlurper().parseText(headers.skuList)"),
+                cause.getMessage());
+        // the parsed data goes into a variable, not back into a header
+        assertTrue(cause.getMessage().contains("or keep the parsed data in a variable (setVariable with simple ${body}"
+                                               + " after unmarshal: json) and read variables.skuList"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnTextElsewhereSaysItIsText() {
+        // a list of plain text values: an element is text, not data with fields, and the body needs no unmarshal
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:field", java.util.List.of("A1", "B2"), "sku", "A1"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("the value read here is text (a String) in the body, not an object with"
+                                               + " fields: the body is a List"),
+                cause.getMessage());
+        assertTrue(cause.getMessage().contains("which is data already, so no unmarshal is needed"), cause.getMessage());
+        assertFalse(cause.getMessage().contains("unmarshal it first"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnATextFieldOfParsedDataSaysTheBodyIsParsed() {
+        // what the benchmark wrote (r22): customer holds the customer number, and customer.customerNo reads it
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:customer", new LinkedHashMap<>(Map.of("customer", "C-482"))));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("No such property: customerNo for class: java.lang.String"),
+                cause.getMessage());
+        assertTrue(cause.getMessage().contains("the value read here is text (a String) in the body, not an object with"
+                                               + " fields: the body is a Map (LinkedHashMap), which is data already"),
+                cause.getMessage());
+        assertTrue(cause.getMessage().contains("(its keys are: customer)"), cause.getMessage());
+        assertFalse(cause.getMessage().contains("unmarshal it first"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnParsedBodyWorks() {
+        Object out = template.requestBodyAndHeader("direct:field", java.util.List.of(java.util.Map.of("sku", "A1")),
+                "sku", "A1");
+        assertEquals(java.util.Map.of("sku", "A1"), out);
+    }
+
+    @Test
     public void messageIsAScriptVariableAsTheHintSays() {
         String out = template.requestBodyAndHeader("direct:message", "World", "name", "Hello", String.class);
         assertEquals("Hello World", out);
@@ -64,6 +192,10 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
             public void configure() {
                 from("direct:bean").transform().groovy("formatter.append(body)");
                 from("direct:unknown").transform().groovy("nosuch.toUpperCase()");
+                from("direct:field").transform().groovy("body.find { it.sku == headers.sku }");
+                from("direct:read").transform().groovy("body.sku");
+                from("direct:customer").transform().groovy("body.customer.customerNo");
+                from("direct:header").transform().groovy("headers.skuList.find { it.sku == headers.sku }");
                 from("direct:message").transform().groovy("message.getHeader('name') + ' ' + message.body");
             }
         };

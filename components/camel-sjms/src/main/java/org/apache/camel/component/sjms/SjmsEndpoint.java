@@ -34,6 +34,8 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.sjms.consumer.BatchEndpointMessageListener;
+import org.apache.camel.component.sjms.consumer.BatchMessageListenerContainer;
 import org.apache.camel.component.sjms.consumer.EndpointMessageListener;
 import org.apache.camel.component.sjms.consumer.SimpleMessageListenerContainer;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
@@ -48,6 +50,9 @@ import org.apache.camel.component.sjms.jms.JmsMessageType;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -57,6 +62,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.
@@ -65,8 +72,55 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName",
              category = { Category.MESSAGING }, headersClass = SjmsConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.MAP, Carrier.POJO, Carrier.NULL },
+                                   byOption = {
+                                           @BodyType.When(option = "mapJmsMessage", value = "false", carriers = Carrier.POJO,
+                                                          javaType = "jakarta.jms.Message"),
+                                           @BodyType.When(option = "objectMessageEnabled", value = "true",
+                                                          carriers = {
+                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.MAP, Carrier.VALUE,
+                                                                  Carrier.LIST, Carrier.POJO, Carrier.NULL }) },
+                                   description = "By the JMS message received: a String for a TextMessage, a byte array for a"
+                                                 + " BytesMessage, a Map for a MapMessage, the jakarta.jms.StreamMessage itself"
+                                                 + " for a StreamMessage, and null for a plain Message. An ObjectMessage fails"
+                                                 + " unless objectMessageEnabled"),
+           consumerReply = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP,
+                   Carrier.NULL },
+                                     dependsOn = "jmsMessageType",
+                                     byOption = @BodyType.When(option = "objectMessageEnabled", value = "true",
+                                                               carriers = {
+                                                                       Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                       Carrier.FILE, Carrier.MAP, Carrier.VALUE, Carrier.LIST,
+                                                                       Carrier.POJO, Carrier.NULL }),
+                                     description = "The reply, sent as the producer sends a message. A reply that cannot be"
+                                                   + " sent, such as a number or a List without objectMessageEnabled, is"
+                                                   + " dropped and the caller times out"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP,
+                   Carrier.NULL },
+                                  dependsOn = { "jmsMessageType", "allowNullBody" },
+                                  byOption = @BodyType.When(option = "objectMessageEnabled", value = "true",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE, Carrier.MAP, Carrier.VALUE, Carrier.LIST,
+                                                                    Carrier.POJO, Carrier.NULL }),
+                                  description = "Text is sent as a TextMessage; bytes, a stream or a file as a BytesMessage;"
+                                                + " a Map of simple values as a MapMessage; null as an empty Message. A number,"
+                                                + " a List or another Serializable object fails unless objectMessageEnabled;"
+                                                + " a body that is not Serializable is sent as an empty Message"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "exchangePattern", value = "InOnly",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "disableReplyTo", value = "true",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "Unchanged for a message that expects no reply (InOnly). A message that"
+                                                 + " expects one (InOut) gets the body of the reply, as the consumer gives it"))
 public class SjmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SjmsEndpoint.class);
 
     private boolean topic;
     private JmsBinding binding;
@@ -140,7 +194,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "true", label = "consumer",
               description = "Specifies whether to use persistent delivery by default for replies.")
     private boolean replyToDeliveryPersistent = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
+    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message payload: ${exception.message}",
               description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
                             + " then set this text as the message body instead so the message can be processed"
                             + " (the cause of the poison are already stored as exception on the Exchange)."
@@ -285,6 +339,19 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
+    @UriParam(label = "consumer,batch", defaultValue = "false",
+              description = "Enable batch consuming. The route receives one Exchange per batch, whose body"
+                            + " is a List<Exchange> of the individual JMS messages, instead of one Exchange per message.")
+    private boolean batching;
+    @UriParam(defaultValue = "100", label = "consumer,batch",
+              description = "Maximum number of messages per batch.")
+    private int batchSize = 100;
+    @UriParam(defaultValue = "1000", label = "consumer,batch", javaType = "java.time.Duration",
+              description = "Time in millis, measured from the first message received into a new batch, after which "
+                            + "the batch is dispatched even if batchSize has not been reached, comparable to the Aggregator "
+                            + "EIP's completionInterval. Default is 1000 ms, that is 1 second. Set to 0 to disable the "
+                            + "interval, so a batch is only dispatched when batchSize is reached (not recommended).")
+    private long batchInterval = 1000;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
 
@@ -350,12 +417,34 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        if (isBatching()) {
+            return createBatchConsumer(processor);
+        } else {
+            return createSimpleConsumer(processor);
+        }
+    }
+
+    protected Consumer createSimpleConsumer(Processor processor) throws Exception {
         MessageListenerContainer container = createMessageListenerContainer(this);
         SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
 
         EndpointMessageListener listener = new EndpointMessageListener(consumer, this, processor);
         configureMessageListener(listener);
         container.setMessageListener(listener);
+
+        configureConsumer(consumer);
+        return consumer;
+    }
+
+    protected Consumer createBatchConsumer(Processor processor) throws Exception {
+        validateBatchingOptions();
+
+        BatchMessageListenerContainer container = createBatchMessageListenerContainer(this);
+        SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
+
+        BatchEndpointMessageListener listener = new BatchEndpointMessageListener(consumer, this, processor);
+        configureBatchMessageListener(listener);
+        container.setBatchListener(listener);
 
         configureConsumer(consumer);
         return consumer;
@@ -380,6 +469,13 @@ public class SjmsEndpoint extends DefaultEndpoint
             listener.setReplyToDestination(getReplyTo());
         }
         listener.setAsync(isAsyncConsumer());
+    }
+
+    public void configureBatchMessageListener(BatchEndpointMessageListener listener) {
+        if (!"false".equals(eagerPoisonBody)) {
+            listener.setEagerPoisonBody(eagerPoisonBody);
+        }
+        listener.setEagerLoadingOfProperties(eagerLoadingOfProperties);
     }
 
     @Override
@@ -447,6 +543,37 @@ public class SjmsEndpoint extends DefaultEndpoint
         SimpleMessageListenerContainer answer = new SimpleMessageListenerContainer(endpoint);
         answer.setConcurrentConsumers(concurrentConsumers);
         return answer;
+    }
+
+    public BatchMessageListenerContainer createBatchMessageListenerContainer(
+            SjmsEndpoint endpoint) {
+        BatchMessageListenerContainer answer = new BatchMessageListenerContainer(endpoint);
+        answer.setConcurrentConsumers(concurrentConsumers);
+        return answer;
+    }
+
+    private void validateBatchingOptions() {
+        if (getExchangePattern().isOutCapable()) {
+            throw new IllegalArgumentException("SjmsConsumer does not support exchangePattern=InOut in batching mode");
+        }
+
+        if (getBatchInterval() < 0) {
+            throw new IllegalArgumentException("batchInterval must be 0 or greater.");
+        }
+
+        if (getBatchSize() <= 0) {
+            throw new IllegalArgumentException("batchSize must be greater than 0");
+        }
+
+        if (isBatching() && !isTransacted()
+                && acknowledgementMode == SessionAcknowledgementType.AUTO_ACKNOWLEDGE) {
+            LOG.warn("Endpoint {} uses batching=true with acknowledgementMode=AUTO_ACKNOWLEDGE. "
+                     + "Messages are acknowledged on receipt, before the batch is processed, "
+                     + "so a failure or shutdown loses all buffered messages (at-most-once delivery). "
+                     + "Use acknowledgementMode=CLIENT_ACKNOWLEDGE or SESSION_TRANSACTED "
+                     + "(transacted=true) for at-least-once delivery.",
+                    getEndpointUri());
+        }
     }
 
     /**
@@ -892,5 +1019,29 @@ public class SjmsEndpoint extends DefaultEndpoint
             throw new IllegalArgumentException("BlobMessage is not supported by this implementation");
         }
         this.jmsMessageType = jmsMessageType;
+    }
+
+    public void setBatching(boolean batching) {
+        this.batching = batching;
+    }
+
+    public boolean isBatching() {
+        return this.batching;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchInterval(long batchInterval) {
+        this.batchInterval = batchInterval;
+    }
+
+    public long getBatchInterval() {
+        return this.batchInterval;
     }
 }

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.component.solr.converter.SolrRequestConverter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -27,6 +28,7 @@ import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.common.params.CommonParams;
 
 /**
  *
@@ -73,13 +75,24 @@ public enum SolrOperation {
     PING(Map.of()) {
         @Override
         SolrRequest<?> getSolrRequest(SolrProducer.ActionContext ctx) throws InvalidPayloadException {
+            // a ping needs no body
+            if (ctx.exchange().getMessage().getBody() == null) {
+                return new SolrPing();
+            }
             return ctx.exchange().getMessage().getMandatoryBody(SolrPing.class);
         }
     },
     SEARCH(Map.of(SolrConstants.OPERATION_QUERY, "")) {
         @Override
         SolrRequest<?> getSolrRequest(SolrProducer.ActionContext ctx) throws InvalidPayloadException {
-            return ctx.exchange().getMessage().getMandatoryBody(QueryRequest.class);
+            Message message = ctx.exchange().getMessage();
+            // with no body, the query comes from the CamelSolrQueryString header or the q solr parameter
+            if (message.getBody() == null
+                    && (ObjectHelper.isNotEmpty(message.getHeader(SolrConstants.PARAM_QUERY_STRING, String.class))
+                            || ctx.solrParams().get(CommonParams.Q) != null)) {
+                return SolrRequestConverter.createQueryRequest(null, ctx.exchange());
+            }
+            return message.getMandatoryBody(QueryRequest.class);
         }
     };
 
@@ -92,6 +105,12 @@ public enum SolrOperation {
     abstract SolrRequest<?> getSolrRequest(SolrProducer.ActionContext ctx) throws InvalidPayloadException;
 
     private static SolrRequest<?> getSolrRequestForUpdates(SolrProducer.ActionContext ctx) throws InvalidPayloadException {
+        if (ctx.exchange().getMessage().getBody() == null) {
+            UpdateRequest updateRequest = SolrRequestConverter.createUpdateRequestWithoutBody(ctx);
+            if (updateRequest != null) {
+                return updateRequest;
+            }
+        }
         if (SolrRequestConverter.isUseContentStreamUpdateRequest(ctx)) {
             return ctx.exchange().getMessage().getMandatoryBody(ContentStreamUpdateRequest.class);
         }

@@ -138,17 +138,9 @@ public class SmppSplitter {
 
         int segmentLength = getSegmentLength();
 
-        // determine how many messages
-        int segmentNum = message.length / segmentLength;
-        int messageLength = message.length;
-        if (segmentNum > MAX_SEG_COUNT) {
-            // this is too long, can't fit, so chop
-            segmentNum = MAX_SEG_COUNT;
-            messageLength = segmentNum * segmentLength;
-        }
-        if ((messageLength % segmentLength) > 0) {
-            segmentNum++;
-        }
+        // determine how many messages (a message that is too long is chopped)
+        int segmentNum = getSegmentCount(message.length, segmentLength);
+        int messageLength = Math.min(message.length, segmentNum * segmentLength);
 
         byte[][] segments = new byte[segmentNum][];
 
@@ -182,6 +174,18 @@ public class SmppSplitter {
         }
 
         return segments;
+    }
+
+    /**
+     * The number of segments for a message of the given length: one more for a partial last segment, and at most
+     * {@link #MAX_SEG_COUNT}, as the UDH holds the total in one octet.
+     */
+    protected static int getSegmentCount(int messageLength, int segmentLength) {
+        int segmentNum = messageLength / segmentLength;
+        if (messageLength % segmentLength > 0) {
+            segmentNum++;
+        }
+        return Math.min(segmentNum, MAX_SEG_COUNT);
     }
 
     protected boolean isSplitRequired() {

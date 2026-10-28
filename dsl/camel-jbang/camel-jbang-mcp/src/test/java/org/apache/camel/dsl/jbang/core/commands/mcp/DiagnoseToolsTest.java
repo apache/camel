@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Optional;
 
+import io.quarkiverse.mcp.server.McpConnection;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -41,14 +43,14 @@ class DiagnoseToolsTest {
 
     @Test
     void nullErrorThrows() {
-        assertThatThrownBy(() -> tools.camel_error_diagnose(null, null, null, null))
+        assertThatThrownBy(() -> tools.camel_error_diagnose(null, null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("required");
     }
 
     @Test
     void blankErrorThrows() {
-        assertThatThrownBy(() -> tools.camel_error_diagnose("   ", null, null, null))
+        assertThatThrownBy(() -> tools.camel_error_diagnose(null, "   ", null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("required");
     }
@@ -59,7 +61,7 @@ class DiagnoseToolsTest {
     void identifiesNoSuchEndpointException() {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: kafak:myTopic";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result)).isNotEmpty();
         assertThat(firstException(result)).isEqualTo("NoSuchEndpointException");
@@ -71,7 +73,7 @@ class DiagnoseToolsTest {
                        + "Failed to resolve endpoint: kafka:myTopic?unknownOption=value due to: "
                        + "There are 1 parameters that couldn't be set on the endpoint.";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result)).isNotEmpty();
         assertThat(firstException(result)).isEqualTo("ResolveEndpointFailedException");
@@ -82,7 +84,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.FailedToCreateRouteException: "
                        + "Failed to create route route1: Route(route1)[From[direct:start] -> [To[log:out]]]";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result)).isNotEmpty();
         assertThat(firstException(result)).isEqualTo("FailedToCreateRouteException");
@@ -93,7 +95,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.FailedToCreateRouteException: Failed to create route\n"
                        + "Caused by: org.apache.camel.ResolveEndpointFailedException: Failed to resolve endpoint";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result).size()).isGreaterThanOrEqualTo(2);
     }
@@ -104,7 +106,7 @@ class DiagnoseToolsTest {
                        + "No type converter available to convert from type: java.lang.String "
                        + "to the required type: java.io.InputStream";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result)).isNotEmpty();
         assertThat(firstException(result)).isEqualTo("NoTypeConversionAvailableException");
@@ -115,7 +117,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.ExchangeTimedOutException: "
                        + "The OUT message was not received within: 30000 millis";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result)).isNotEmpty();
         assertThat(firstException(result)).isEqualTo("ExchangeTimedOutException");
@@ -126,7 +128,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.component.direct.DirectConsumerNotAvailableException: "
                        + "No consumers available on endpoint: direct://myEndpoint";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result)).isNotEmpty();
         assertThat(firstException(result)).isEqualTo("DirectConsumerNotAvailableException");
@@ -137,7 +139,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.PropertyBindingException: "
                        + "Error binding property (brokerz=localhost:9092) with name: brokerz on bean";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result)).isNotEmpty();
         assertThat(firstException(result)).isEqualTo("PropertyBindingException");
@@ -148,7 +150,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.NoSuchBeanException: "
                        + "No bean could be found in the registry for: myProcessor";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(exceptions(result)).isNotEmpty();
         assertThat(firstException(result)).isEqualTo("NoSuchBeanException");
@@ -161,7 +163,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.ResolveEndpointFailedException: "
                        + "Failed to resolve endpoint: kafka:myTopic?brokers=localhost:9092";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(components(result)).isNotEmpty();
         assertThat(components(result).stream().map(c -> c.getString("name")).toList()).contains("kafka");
@@ -171,7 +173,7 @@ class DiagnoseToolsTest {
     void identifiesDirectComponent() {
         String error = "No consumers available on endpoint: direct://start";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(components(result).stream().map(c -> c.getString("name")).toList()).contains("direct");
     }
@@ -182,7 +184,7 @@ class DiagnoseToolsTest {
     void resultContainsCommonCauses() {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: xyz:test";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(List.copyOf(exceptions(result).get(0).getCollection("commonCauses"))).isNotEmpty();
     }
@@ -191,7 +193,7 @@ class DiagnoseToolsTest {
     void resultContainsSuggestedFixes() {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: xyz:test";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         assertThat(List.copyOf(exceptions(result).get(0).getCollection("suggestedFixes"))).isNotEmpty();
     }
@@ -200,7 +202,7 @@ class DiagnoseToolsTest {
     void resultContainsDocumentationLinks() {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: xyz:test";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         List<String> links = List.copyOf(exceptions(result).get(0).getCollection("documentationLinks"));
         assertThat(links).isNotEmpty();
@@ -211,7 +213,7 @@ class DiagnoseToolsTest {
     void resultContainsSummary() {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         JsonObject summary = result.getMap("summary");
         assertThat(summary).isNotNull();
@@ -223,7 +225,7 @@ class DiagnoseToolsTest {
     void componentDocumentationUrlPresent() {
         String error = "Failed to resolve endpoint: kafka:myTopic";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         if (!components(result).isEmpty()) {
             assertThat(components(result).get(0).getString("documentationUrl")).contains("camel.apache.org");
@@ -236,7 +238,7 @@ class DiagnoseToolsTest {
     void unrecognizedErrorReturnsDiagnosedFalse() {
         String error = "Some random error that is not a Camel exception";
 
-        JsonObject result = tools.camel_error_diagnose(error, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, error, null, null, null);
 
         JsonObject summary = result.getMap("summary");
         assertThat(summary.getBoolean("diagnosed")).isFalse();
@@ -259,12 +261,44 @@ class DiagnoseToolsTest {
                         \tat org.apache.camel.component.direct.DirectComponent.createEndpoint(DirectComponent.java:62)
                         """;
 
-        JsonObject result = tools.camel_error_diagnose(stackTrace, null, null, null);
+        JsonObject result = tools.camel_error_diagnose(null, stackTrace, null, null, null);
 
         // Should identify all three exceptions in the chain
         assertThat(exceptions(result).size()).isGreaterThanOrEqualTo(3);
 
         assertThat(components(result).stream().map(c -> c.getString("name")).toList()).contains("kafka");
+    }
+
+    // ---- Repeated calls ----
+
+    @Test
+    void thirdIdenticalCallIsRepeated() {
+        // CAMEL-25640 regression: recordSuccessfulAnswer must be called after a successful diagnose
+        // so the third identical call gets the repeat note instead of the full answer.
+        DiagnoseTools toolsWithRepeat = new DiagnoseTools();
+        CatalogService catalogService = new CatalogService();
+        catalogService.catalogRepos = Optional.empty();
+        toolsWithRepeat.catalogService = catalogService;
+        RepeatedCallSessions sessions = new RepeatedCallSessions();
+        toolsWithRepeat.repeatedCalls = sessions;
+
+        McpConnection conn = connection("test-session");
+        String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: xyz:test";
+
+        // first two calls are answered in full
+        JsonObject first = toolsWithRepeat.camel_error_diagnose(conn, error, null, null, null);
+        assertThat(first.get("repeated")).isNull();
+        JsonObject second = toolsWithRepeat.camel_error_diagnose(conn, error, null, null, null);
+        assertThat(second.get("repeated")).isNull();
+        // third identical call must be the repeat note
+        JsonObject third = toolsWithRepeat.camel_error_diagnose(conn, error, null, null, null);
+        assertThat(third.get("repeated")).isEqualTo(Boolean.TRUE);
+        assertThat(third.getString("tool")).isEqualTo("camel_error_diagnose");
+    }
+
+    private static McpConnection connection(String id) {
+        return (McpConnection) Proxy.newProxyInstance(McpConnection.class.getClassLoader(),
+                new Class<?>[] { McpConnection.class }, (proxy, method, args) -> "id".equals(method.getName()) ? id : null);
     }
 
     private static List<JsonObject> exceptions(JsonObject result) {

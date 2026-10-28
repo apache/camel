@@ -25,6 +25,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -38,6 +41,71 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database",
              category = { Category.DATABASE }, producerOnly = true, headersClass = ArangoDbConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.POJO, Carrier.LIST },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "FIND_DOCUMENT_BY_KEY",
+                                                         carriers = Carrier.TEXT),
+                                          @BodyType.When(option = "operation", value = "DELETE_DOCUMENT",
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "AQL_QUERY", carriers = Carrier.TEXT),
+                                          @BodyType.When(option = "operation", value = "SAVE_VERTEX",
+                                                         carriers = { Carrier.MAP, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "UPDATE_VERTEX",
+                                                         carriers = { Carrier.MAP, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "FIND_VERTEX_BY_KEY",
+                                                         carriers = Carrier.TEXT),
+                                          @BodyType.When(option = "operation", value = "DELETE_VERTEX",
+                                                         carriers = Carrier.TEXT),
+                                          @BodyType.When(option = "operation", value = "SAVE_EDGE",
+                                                         carriers = { Carrier.MAP, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "UPDATE_EDGE",
+                                                         carriers = { Carrier.MAP, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "FIND_EDGE_BY_KEY",
+                                                         carriers = Carrier.TEXT),
+                                          @BodyType.When(option = "operation", value = "DELETE_EDGE",
+                                                         carriers = Carrier.TEXT) },
+                                  description = "By the operation: the document to save or update as a Map or a POJO (a"
+                                                + " List of them with the CamelArangoDbMultiInsert or CamelArangoDbMultiUpdate"
+                                                + " header), the key as text to find or delete (a List of keys with"
+                                                + " CamelArangoDbMultiDelete), and the AQL query as text unless the"
+                                                + " CamelArangoDbAqlQuery header has it. JSON text, bytes or a stream is not a"
+                                                + " document: unmarshal it to a Map first. The key of an update is the"
+                                                + " CamelArangoDbKey header"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "SAVE_DOCUMENT",
+                                                          carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "FIND_DOCUMENT_BY_KEY",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "UPDATE_DOCUMENT",
+                                                          carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "DELETE_DOCUMENT",
+                                                          carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "AQL_QUERY", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "SAVE_VERTEX", carriers = Carrier.POJO,
+                                                          javaType = "com.arangodb.entity.VertexEntity"),
+                                           @BodyType.When(option = "operation", value = "FIND_VERTEX_BY_KEY",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "UPDATE_VERTEX",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.arangodb.entity.VertexUpdateEntity"),
+                                           @BodyType.When(option = "operation", value = "DELETE_VERTEX",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "SAVE_EDGE", carriers = Carrier.POJO,
+                                                          javaType = "com.arangodb.entity.EdgeEntity"),
+                                           @BodyType.When(option = "operation", value = "FIND_EDGE_BY_KEY",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "UPDATE_EDGE", carriers = Carrier.POJO,
+                                                          javaType = "com.arangodb.entity.EdgeUpdateEntity"),
+                                           @BodyType.When(option = "operation", value = "DELETE_EDGE", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "By the operation, which must be set: the result entity of the ArangoDB"
+                                                 + " driver (DocumentCreateEntity, DocumentUpdateEntity,"
+                                                 + " DocumentDeleteEntity, or a MultiDocumentEntity for the multi headers)"
+                                                 + " for the document writes; the document found as a BaseDocument (or"
+                                                 + " BaseEdgeDocument), or of the class in the CamelArangoDbResultClassType"
+                                                 + " header, or null when there is none; a List of the AQL results, empty for"
+                                                 + " a query that returns nothing; and true for a delete of a vertex or edge"))
 public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "database name")

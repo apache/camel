@@ -33,6 +33,12 @@ class SourceConvertTest {
 
     /** The action chosen after moving down the menu the given number of times. */
     private static FileActionsPopup.Action choose(String file, boolean routeFile, int downs) {
+        FileActionsPopup.Request r = answer(file, routeFile, downs, 'y');
+        return r != null ? r.action() : null;
+    }
+
+    /** The request after choosing a menu entry and answering its confirm step, if it has one, with the given key. */
+    private static FileActionsPopup.Request answer(String file, boolean routeFile, int downs, char key) {
         FileActionsPopup popup = new FileActionsPopup();
         popup.open(file, true, routeFile);
         for (int i = 0; i < downs; i++) {
@@ -40,7 +46,20 @@ class SourceConvertTest {
         }
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
         FileActionsPopup.Request r = popup.consumeResult();
-        return r != null ? r.action() : null;
+        if (r == null && popup.isVisible()) {
+            popup.handleKeyEvent(KeyEvent.ofChar(key, KeyModifiers.NONE));
+            r = popup.consumeResult();
+        }
+        return r;
+    }
+
+    @Test
+    void aConversionAsksWhetherToReplaceTheOriginal() {
+        // y replaces the original, so the routes are not defined twice; k keeps both
+        assertThat(answer("orders.camel.yaml", true, 6, 'y'))
+                .isEqualTo(new FileActionsPopup.Request(FileActionsPopup.Action.CONVERT_XML, FileActionsPopup.REPLACE));
+        assertThat(answer("orders.camel.yaml", true, 6, 'k'))
+                .isEqualTo(new FileActionsPopup.Request(FileActionsPopup.Action.CONVERT_XML, FileActionsPopup.KEEP));
     }
 
     @Test

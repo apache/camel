@@ -19,9 +19,11 @@ package org.apache.camel.component.statestore;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.KeyValueRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.MemoryKeyValueRepository;
@@ -40,6 +42,12 @@ public class StateStoreComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(StateStoreComponent.class);
 
     private final ConcurrentHashMap<String, KeyValueRepository> backends = new ConcurrentHashMap<>();
+    private final AtomicBoolean backendFactoryChecked = new AtomicBoolean();
+
+    @Metadata(label = "advanced", autowired = true,
+              description = "Factory that creates a dedicated backend for each store name. When set, it takes precedence over"
+                            + " registry auto-discovery for endpoints without an explicit backend.")
+    private StateStoreBackendFactory backendFactory;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -68,9 +76,24 @@ public class StateStoreComponent extends DefaultComponent {
             return explicitBackend;
         }
         return backends.computeIfAbsent(storeName, k -> {
+            if (backendFactory == null && backendFactoryChecked.compareAndSet(false, true)) {
+                // checked lazily as autowiring happens after the component is initialized
+                int count = getCamelContext().getRegistry().findByType(StateStoreBackendFactory.class).size();
+                if (count > 1) {
+                    LOG.warn("Found {} StateStoreBackendFactory instances in the registry. None is autowired;"
+                             + " set the backendFactory option to choose one.",
+                            count);
+                }
+            }
+            KeyValueRepository backend = backendFactory != null ? backendFactory.createBackend(storeName) : null;
+            if (backend != null) {
+                LOG.debug("Created KeyValueRepository '{}' for store '{}' using backend factory",
+                        backend.getClass().getSimpleName(), storeName);
+                ServiceHelper.startService(backend);
+                return backend;
+            }
             // Auto-discover a KeyValueRepository from the registry
             Set<KeyValueRepository> found = getCamelContext().getRegistry().findByType(KeyValueRepository.class);
-            KeyValueRepository backend;
             if (found.size() == 1) {
                 backend = found.iterator().next();
                 LOG.debug("Auto-discovered KeyValueRepository '{}' for store '{}'",
@@ -91,6 +114,14 @@ public class StateStoreComponent extends DefaultComponent {
             ServiceHelper.startService(backend);
             return backend;
         });
+    }
+
+    public StateStoreBackendFactory getBackendFactory() {
+        return backendFactory;
+    }
+
+    public void setBackendFactory(StateStoreBackendFactory backendFactory) {
+        this.backendFactory = backendFactory;
     }
 
     @Override

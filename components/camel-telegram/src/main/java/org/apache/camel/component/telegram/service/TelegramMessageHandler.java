@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.telegram.service;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +31,6 @@ import org.apache.camel.component.telegram.model.MessageResult;
 
 abstract class TelegramMessageHandler<T extends TelegramMessage> {
     protected final ObjectMapper mapper;
-    protected final TelegramBodyPublisher bodyPublisher;
 
     private final TelegramApiClient apiClient;
     private final String contentType;
@@ -43,14 +44,14 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
         this.uri = uri;
         this.contentType = contentType;
         this.resultClass = resultClass;
-
-        bodyPublisher = new TelegramBodyPublisher(apiClient.bufferSize());
     }
 
     public void sendMessage(Exchange exchange, AsyncCallback callback, T message) {
         HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(uri));
 
-        addBody(message);
+        // the body of this request only: the producer may send from several threads at once
+        TelegramBodyPublisher bodyPublisher = new TelegramBodyPublisher(apiClient.bufferSize());
+        addBody(bodyPublisher, message);
 
         if (bodyPublisher.getBodyParts().size() > 1) {
             builder.setHeader("Content-type", "multipart/form-data; boundary=\"" + bodyPublisher.getBoundary() + "\"");
@@ -63,25 +64,32 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
         builder.setHeader("Accept", "application/json");
 
         builder.POST(bodyPublisher.newPublisher());
-        try {
-            final TelegramAsyncHandler telegramAsyncHandler
-                    = new TelegramAsyncHandler(uri, resultClass, mapper, exchange, callback);
+        final TelegramAsyncHandler telegramAsyncHandler = new TelegramAsyncHandler(uri, resultClass, mapper, exchange);
+        final CompletableFuture<HttpResponse<InputStream>> sent
+                = apiClient.client().sendAsync(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
+        final CompletableFuture<Object> response = sent.thenApply(telegramAsyncHandler::handleCompressedResponse);
 
-            apiClient.client().sendAsync(builder.build(), HttpResponse.BodyHandlers.ofInputStream())
-                    .thenApply(telegramAsyncHandler::handleCompressedResponse).get();
+        try {
+            // the calling thread waits for the answer, so a caller sends one message after the other
+            response.get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            // nobody waits for the answer any more: keep the stage from writing to the completed exchange later,
+            // and abort the request. The futures of the JDK client pass the cancel of a dependent stage on to the
+            // request; the future of a custom client may not, so the one that sendAsync returned is cancelled too
+            response.cancel(true);
+            sent.cancel(true);
+            exchange.setException(new RuntimeException(e));
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            // an error status, a body that could not be read, or a request that failed without an answer
+            exchange.setException(new RuntimeException(e));
         }
+
+        // the only place that completes the exchange. The producer returns false from process(), hence done(false)
+        callback.done(false);
     }
 
-    protected abstract void addBody(T message);
-
-    protected <T> void buildTextPart(String name, T value) {
-        buildTextPart(bodyPublisher, name, value);
-    }
+    protected abstract void addBody(TelegramBodyPublisher bodyPublisher, T message);
 
     static <T> void buildTextPart(TelegramBodyPublisher bodyPublisher, String name, T value) {
         if (value != null) {
@@ -90,10 +98,6 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
 
             bodyPublisher.addBodyPart(bodyPart);
         }
-    }
-
-    protected void buildMediaPart(String name, String fileNameWithExtension, byte[] value) {
-        buildMediaPart(bodyPublisher, name, fileNameWithExtension, value);
     }
 
     void buildMediaPart(TelegramBodyPublisher bodyPublisher, String name, String fileNameWithExtension, byte[] value) {

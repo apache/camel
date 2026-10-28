@@ -18,6 +18,8 @@ package org.apache.camel.component.browse;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 
 import org.apache.camel.Category;
@@ -26,6 +28,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -42,7 +47,14 @@ import org.apache.camel.support.DefaultProducer;
  * available to be browsed.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name",
-             remote = false, category = { Category.CORE, Category.MONITORING })
+             remote = false, internal = true, category = { Category.CORE, Category.MONITORING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body the producer sent: the route runs on the same exchange, in the"
+                                                 + " thread of the producer"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, unless a route consumes from the same browse endpoint: it runs on"
+                                                 + " the same exchange, so the body is the one that route ends with"))
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint")
@@ -55,6 +67,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
               description = "To use a predicate to filter whether to include the message for browsing. Return true to include, false to exclude.")
     private Predicate<Exchange> filter;
 
+    private final Lock limitLock = new ReentrantLock();
     private List<Exchange> exchanges;
     private volatile Processor onExchangeProcessor;
 
@@ -140,14 +153,22 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
      */
     protected void onExchange(Exchange exchange) throws Exception {
         if (browseLimit > 0) {
-            // make room if end of capacity
-            int max = exchanges.size();
-            if (max >= browseLimit) {
-                int space = Math.abs(max - (browseLimit - 1));
-                exchanges = exchanges.subList(space, max);
+            // add first and then remove the oldest from the list itself: a sub list is only a view that keeps them
+            // all in memory, and a reader never sees fewer than the limit once it was reached. Under a lock, as
+            // concurrent producers would otherwise remove too many or overtake the limit
+            limitLock.lock();
+            try {
+                exchanges.add(exchange);
+                int excess = exchanges.size() - browseLimit;
+                if (excess > 0) {
+                    exchanges.subList(0, excess).clear();
+                }
+            } finally {
+                limitLock.unlock();
             }
+        } else {
+            exchanges.add(exchange);
         }
-        exchanges.add(exchange);
 
         // now fire the consumer
         if (onExchangeProcessor != null) {

@@ -40,6 +40,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private ExceptionHandler exceptionHandler;
     private final GenericFile<T> file;
     private final String absoluteFileName;
+    private GenericFileKeptDoneFiles keptDoneFiles;
 
     public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
                                    GenericFileProcessStrategy processStrategy, GenericFile<T> file,
@@ -63,6 +64,14 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     @Override
     public void onFailure(Exchange exchange) {
         onCompletion(exchange);
+    }
+
+    /**
+     * The done files kept for the files the poll left, when the endpoint uses a done file with a fixed name;
+     * <tt>null</tt> otherwise.
+     */
+    void setKeptDoneFiles(GenericFileKeptDoneFiles keptDoneFiles) {
+        this.keptDoneFiles = keptDoneFiles;
     }
 
     public ExceptionHandler getExceptionHandler() {
@@ -185,6 +194,12 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             // done file must be in same path as the original input file
             String doneFileName = endpoint.createDoneFileName(absoluteFileName);
             StringHelper.notEmpty(doneFileName, "doneFileName", endpoint);
+            // a done file with a fixed name is kept while the poll left files for the next one (beyond
+            // maxMessagesPerPoll, or not started)
+            if (complete && keptDoneFiles != null && keptDoneFiles.isKept(doneFileName)) {
+                LOG.trace("Done file: {} is kept for the files left by this poll", doneFileName);
+                complete = false;
+            }
             // we should delete the dynamic done file
             if (endpoint.getDoneFileName().contains("{file:name") || complete) {
                 try {

@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.FileUtil;
@@ -81,13 +82,13 @@ public class DependencyUpdate extends DependencyList {
 
         if (clean && scanRoutes) {
             printer().printErr("Options --clean and --scan-routes are mutually exclusive");
-            return -1;
+            return CliExitCode.USAGE;
         }
 
         for (Path file : targetFiles) {
             if (!Files.exists(file)) {
                 printer().printErr("Source file does not exist: " + file);
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
             String name = file.getFileName().toString();
             String ext = FileUtil.onlyExt(name, true);
@@ -113,7 +114,7 @@ public class DependencyUpdate extends DependencyList {
 
         if (updateTargets.isEmpty()) {
             printer().printErr("No target files (pom.xml or Java source files) specified");
-            return -1;
+            return CliExitCode.USAGE;
         }
 
         // validate that all update targets are of the same type (all Maven or all JBang)
@@ -121,7 +122,7 @@ public class DependencyUpdate extends DependencyList {
         boolean hasJava = updateTargets.stream().anyMatch(f -> !"pom.xml".equals(f.getFileName().toString()));
         if (hasMaven && hasJava) {
             printer().printErr("Cannot mix pom.xml and Java source files as update targets");
-            return -1;
+            return CliExitCode.USAGE;
         }
 
         Path firstTarget = updateTargets.get(0);

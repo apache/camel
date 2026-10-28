@@ -34,7 +34,7 @@ PR comment: /component-test kafka http
 ### `pr-build-main.yml` — Build and test
 
 - **Trigger**: `pull_request` (main branch), `workflow_dispatch`
-- **Matrix**: JDK 17, 21, 25 (25 is experimental)
+- **Matrix**: JDK 21, 25 (25 is experimental)
 - **Steps**:
   1. Full build via `regen.sh` (`mvn install -DskipTests -Pregen`)
   2. Check for uncommitted generated files
@@ -138,7 +138,7 @@ Notes:
 - **The section names its JDK** (`flake-label` on the action, `--label` on the
   script, also recorded in `flakes.json`). The PR-comment artifact is uploaded
   with `overwrite: true` across the JDK matrix on the grounds that the content is
-  identical between entries. Flake data is the one part that is not: if JDK 17
+  identical between entries. Flake data is the one part that is not: if JDK 21
   flakes and JDK 25 does not, whichever finishes last decides what the comment
   shows. The label means the reader can tell which entry a shown flake came from,
   and the per-JDK artifacts remain the complete record.
@@ -260,7 +260,7 @@ source-artifact-id:it-module-path:command
 
 ## Multi-JDK Artifact Behavior
 
-All non-experimental JDK matrix entries (17, 21) upload the CI comment artifact with `overwrite: true`. This ensures a comment is posted even if one JDK build fails. Since the comment content is identical across JDKs (same modules are tested regardless of JDK version), last writer wins.
+All non-experimental JDK matrix entries (21) upload the CI comment artifact with `overwrite: true`. This ensures a comment is posted even if one JDK build fails. Since the comment content is identical across JDKs (same modules are tested regardless of JDK version), last writer wins.
 
 ## Comment Markers
 

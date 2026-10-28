@@ -29,6 +29,7 @@ import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.Worklog;
 import com.atlassian.jira.rest.client.api.domain.input.WorklogInput;
+import io.atlassian.util.concurrent.Promise;
 import io.atlassian.util.concurrent.Promises;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -127,11 +128,11 @@ public class AddWorkLogProducerTest extends CamelTestSupport {
         String comment = "A new test comment " + new Date();
 
         when(issueRestClient.addWorklog(any(URI.class), any(WorklogInput.class)))
-                .then((Answer<Void>) inv -> {
+                .then((Answer<Promise<Void>>) inv -> {
                     Collection<Worklog> workLogs = new ArrayList<>();
                     workLogs.add(newWorkLog(backendIssue.getId(), minutesSpent, comment));
                     backendIssue = createIssueWithWorkLogs(backendIssue.getId(), workLogs);
-                    return null;
+                    return Promises.promise(null);
                 });
 
         template.sendBodyAndHeaders(comment, headers);

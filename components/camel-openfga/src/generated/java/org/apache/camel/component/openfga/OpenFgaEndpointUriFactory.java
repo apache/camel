@@ -24,7 +24,7 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(25);
+        Set<String> props = new HashSet<>(30);
         props.add("apiAudience");
         props.add("apiToken");
         props.add("apiTokenIssuer");
@@ -32,8 +32,11 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
         props.add("authorizationModelId");
         props.add("clientId");
         props.add("clientSecret");
+        props.add("conditionContext");
         props.add("connectTimeout");
         props.add("consistency");
+        props.add("contextualTuples");
+        props.add("continuationToken");
         props.add("failOpen");
         props.add("lazyStartProducer");
         props.add("maxParallelRequests");
@@ -41,11 +44,13 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
         props.add("object");
         props.add("openFgaClient");
         props.add("operation");
+        props.add("pageSize");
         props.add("readTimeout");
         props.add("relation");
         props.add("relations");
         props.add("scopes");
         props.add("sslContextParameters");
+        props.add("startTime");
         props.add("storeId");
         props.add("type");
         props.add("user");
@@ -69,7 +74,7 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "operation", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

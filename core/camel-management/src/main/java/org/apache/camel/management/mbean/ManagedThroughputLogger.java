@@ -17,21 +17,50 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedThroughputLoggerMBean;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.processor.ThroughputLogger;
+import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed ThroughputLogger")
 public class ManagedThroughputLogger extends ManagedProcessor implements ManagedThroughputLoggerMBean {
+    private final Endpoint endpoint;
+    private String destination;
 
     public ManagedThroughputLogger(CamelContext context, ThroughputLogger logger, ProcessorDefinition<?> definition) {
+        this(context, logger, definition, null);
+    }
+
+    public ManagedThroughputLogger(CamelContext context, ThroughputLogger logger, ProcessorDefinition<?> definition,
+                                   Endpoint endpoint) {
         super(context, logger, definition);
+        this.endpoint = endpoint;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        if (endpoint != null) {
+            boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+            if (sanitize) {
+                destination = URISupport.sanitizeUri(endpoint.getEndpointUri());
+            } else {
+                destination = endpoint.getEndpointUri();
+            }
+        }
     }
 
     @Override
     public ThroughputLogger getProcessor() {
         return (ThroughputLogger) super.getProcessor();
+    }
+
+    @Override
+    public String getDestination() {
+        return destination;
     }
 
     @Override

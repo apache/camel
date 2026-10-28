@@ -42,7 +42,9 @@ public final class MojoHelper {
                         dir.resolve("camel-ai-resource"), dir.resolve("camel-ai-tool"),
                         dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
                         dir.resolve("camel-huggingface"),
-                        dir.resolve("camel-semantic"), dir.resolve("camel-typesafe-ai"),
+                        dir.resolve("camel-semantic"), dir.resolve("camel-semantic-openai"),
+                        dir.resolve("camel-semantic-typesafe-ai"), dir.resolve("camel-semantic-wolf-defender"),
+                        dir.resolve("camel-typesafe-ai"),
                         dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
                         dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-embeddingstore"),
                         dir.resolve("camel-langchain4j-ingest"),
@@ -84,7 +86,8 @@ public final class MojoHelper {
                         dir.resolve("camel-azure-storage-datalake"), dir.resolve("camel-azure-cosmosdb"),
                         dir.resolve("camel-azure-storage-queue"), dir.resolve("camel-azure-servicebus"),
                         dir.resolve("camel-azure-key-vault"), dir.resolve("camel-azure-files"),
-                        dir.resolve("camel-azure-schema-registry"), dir.resolve("camel-azure-functions"));
+                        dir.resolve("camel-azure-schema-registry"), dir.resolve("camel-azure-functions"),
+                        dir.resolve("camel-azure-eventgrid"));
             case "camel-google":
                 return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
                         dir.resolve("camel-google-drive"), dir.resolve("camel-google-firestore"),
@@ -115,7 +118,9 @@ public final class MojoHelper {
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-image"),
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-vector-store"));
             case "camel-test":
-                return Arrays.asList(dir.resolve("camel-test-junit5"),
+                return Arrays.asList(dir.resolve("camel-test-citrus"),
+                        dir.resolve("camel-test-dst"),
+                        dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-junit6"),
                         dir.resolve("camel-test-spring-junit5"),
                         dir.resolve("camel-test-spring-junit6"),
@@ -143,7 +148,8 @@ public final class MojoHelper {
                         dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"),
                         dir.resolve("camel-aws-bedrock"),
                         dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"),
-                        dir.resolve("camel-aws2-s3-vectors"), dir.resolve("camel-aws-security-hub"));
+                        dir.resolve("camel-aws2-s3-vectors"), dir.resolve("camel-aws-security-hub"),
+                        dir.resolve("camel-aws-parameter-store"));
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),

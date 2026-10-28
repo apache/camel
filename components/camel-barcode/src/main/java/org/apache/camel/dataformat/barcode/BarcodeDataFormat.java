@@ -16,11 +16,14 @@
  */
 package org.apache.camel.dataformat.barcode;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -38,6 +41,9 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.datamatrix.encoder.SymbolShapeHint;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -54,6 +60,18 @@ import org.slf4j.LoggerFactory;
  * https://github.com/zxing/zxing
  */
 @Dataformat("barcode")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text",
+                                 description = "The text to encode: bytes, a stream or a file are read in the charset of the"
+                                               + " exchange. It must suit the barcodeFormat, such as digits only for EAN-13"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The image of the barcode, a PNG unless imageType is JPG or GIF, in the stream"
+                                                + " cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "An image ImageIO reads, such as PNG, JPEG or GIF, of any barcode format ZXing"
+                                                 + " reads, whatever barcodeFormat is"),
+           unmarshalOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "text",
+                                    description = "The text of the barcode, with the format found in the BarcodeFormat header"
+                                                  + " and the ZXing result metadata, such as ORIENTATION, as headers"))
 public class BarcodeDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormat.class);
@@ -77,6 +95,26 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * The decoding hint map, used for reading a barcode.
      */
     private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
+
+    /**
+     * The read-only live views of the hint maps returned by the getters, created once so that every call returns the
+     * same instance.
+     */
+    private final Map<EncodeHintType, Object> writerHintMapView = Collections.unmodifiableMap(writerHintMap);
+    private final Map<DecodeHintType, Object> readerHintMapView = Collections.unmodifiableMap(readerHintMap);
+
+    /**
+     * The hints added by the user, which are applied on top of the optimized hints.
+     */
+    private final Map<EncodeHintType, Object> userWriterHintMap = new EnumMap<>(EncodeHintType.class);
+    private final Map<DecodeHintType, Object> userReaderHintMap = new EnumMap<>(DecodeHintType.class);
+
+    /**
+     * The hints removed by the user, which are removed from the optimized hints (also a default hint removed before the
+     * data format is started).
+     */
+    private final Set<EncodeHintType> removedWriterHints = EnumSet.noneOf(EncodeHintType.class);
+    private final Set<DecodeHintType> removedReaderHints = EnumSet.noneOf(DecodeHintType.class);
 
     /**
      * Create instance with default parameters.
@@ -171,6 +209,12 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
 
         // reader hints
         this.readerHintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+
+        // the hints removed and added by the user
+        this.writerHintMap.keySet().removeAll(this.removedWriterHints);
+        this.readerHintMap.keySet().removeAll(this.removedReaderHints);
+        this.writerHintMap.putAll(this.userWriterHintMap);
+        this.readerHintMap.putAll(this.userReaderHintMap);
     }
 
     /**
@@ -188,13 +232,21 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         // set values
         final String type = this.params.getType().toString();
 
+        // ZXing writes the text in ISO-8859-1 unless a character set is given, so use UTF-8 for a text that
+        // ISO-8859-1 cannot represent (ZXing then writes an ECI that tells the reader the character set)
+        Map<EncodeHintType, Object> hints = writerHintMap;
+        if (!hints.containsKey(EncodeHintType.CHARACTER_SET) && !StandardCharsets.ISO_8859_1.newEncoder().canEncode(payload)) {
+            hints = new EnumMap<>(writerHintMap);
+            hints.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
+        }
+
         // create code image
         final BitMatrix matrix = writer.encode(
                 payload,
                 this.params.getFormat(),
                 this.params.getWidth(),
                 this.params.getHeight(),
-                writerHintMap);
+                hints);
 
         // write image back to stream
         MatrixToImageWriter.writeToStream(matrix, type, stream);
@@ -205,10 +257,10 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     private String readImage(final Exchange exchange, final InputStream stream) throws Exception {
         final MultiFormatReader reader = new MultiFormatReader();
-        final BufferedInputStream in = exchange.getContext()
-                .getTypeConverter()
-                .mandatoryConvertTo(BufferedInputStream.class, stream);
-        final BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(in))));
+        // ImageIO reads any input stream (there is no type converter to a BufferedInputStream from a byte array
+        // or a stream cache)
+        final BinaryBitmap bitmap
+                = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(stream))));
         final Result result = reader.decode(bitmap, readerHintMap);
 
         // write the found barcode format into the header
@@ -228,6 +280,8 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final EncodeHintType hintType, final Object value) {
         this.writerHintMap.put(hintType, value);
+        this.userWriterHintMap.put(hintType, value);
+        this.removedWriterHints.remove(hintType);
         LOG.info("Added '{}' with value '{}' to writer hint map.", hintType, value);
     }
 
@@ -236,27 +290,39 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final DecodeHintType hintType, final Object value) {
         this.readerHintMap.put(hintType, value);
+        this.userReaderHintMap.put(hintType, value);
+        this.removedReaderHints.remove(hintType);
     }
 
     /**
-     * Removes a hint from writer (encode) hint map.
+     * Removes a hint from writer (encode) hint map. A hint removed before the data format is started, such as a default
+     * hint, is removed when it starts.
      */
     public final void removeFromHintMap(final EncodeHintType hintType) {
+        this.userWriterHintMap.remove(hintType);
+        this.removedWriterHints.add(hintType);
         if (this.writerHintMap.containsKey(hintType)) {
             this.writerHintMap.remove(hintType);
             LOG.info("Removed '{}' from writer hint map.", hintType);
+        } else if (!isStarted()) {
+            LOG.info("Removing '{}' from writer hint map when the data format starts.", hintType);
         } else {
             LOG.warn("Could not find encode hint type '{}' in writer hint map.", hintType);
         }
     }
 
     /**
-     * Removes a hint from reader (decode) hint map.
+     * Removes a hint from reader (decode) hint map. A hint removed before the data format is started, such as a default
+     * hint, is removed when it starts.
      */
     public final void removeFromHintMap(final DecodeHintType hintType) {
+        this.userReaderHintMap.remove(hintType);
+        this.removedReaderHints.add(hintType);
         if (this.readerHintMap.containsKey(hintType)) {
             this.readerHintMap.remove(hintType);
             LOG.info("Removed '{}' from reader hint map.", hintType);
+        } else if (!isStarted()) {
+            LOG.info("Removing '{}' from reader hint map when the data format starts.", hintType);
         } else {
             LOG.warn("Could not find decode hint type '{}' in reader hint map.", hintType);
         }
@@ -270,17 +336,23 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * The writer (encode) hint map.
+     * The writer (encode) hint map, as a read-only live view: it shows the later changes made with
+     * {@link #addToHintMap(EncodeHintType, Object)} and {@link #removeFromHintMap(EncodeHintType)}, and the hints
+     * computed again when the data format starts or restarts. Use these methods to change it, as only the changes made
+     * with them are applied again when the hints are computed again.
      */
     public final Map<EncodeHintType, Object> getWriterHintMap() {
-        return writerHintMap;
+        return writerHintMapView;
     }
 
     /**
-     * The reader (decode) hint map.
+     * The reader (decode) hint map, as a read-only live view: it shows the later changes made with
+     * {@link #addToHintMap(DecodeHintType, Object)} and {@link #removeFromHintMap(DecodeHintType)}, and the hints
+     * computed again when the data format starts or restarts. Use these methods to change it, as only the changes made
+     * with them are applied again when the hints are computed again.
      */
     public final Map<DecodeHintType, Object> getReaderHintMap() {
-        return readerHintMap;
+        return readerHintMapView;
     }
 
     public BarcodeFormat getBarcodeFormat() {

@@ -37,7 +37,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testSendHtmlMail() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         TestSupport.sendBody(template, "direct:a", "<html><body><h1>Hello</h1>World</body></html>");
 
@@ -51,7 +51,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testSendHtmlMailIso88591() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         TestSupport.sendBody(template, "direct:c", "<html><body><h1>Hello</h1>World</body></html>");
 
@@ -65,7 +65,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testNullBody() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         template.sendBodyAndHeader("direct:b", null, MailConstants.MAIL_CONTENT_TYPE, "text/plain; charset=iso-8859-1");
 
@@ -77,7 +77,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testSendPlainMailContentTypeInHeader() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         template.sendBodyAndHeader("direct:b", "Hello World", MailConstants.MAIL_CONTENT_TYPE,
                 "text/plain; charset=iso-8859-1");
@@ -90,7 +90,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testSendPlainMailContentTypeInHeader2() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         template.sendBodyAndHeader("direct:b", "Hello World", Exchange.CONTENT_TYPE, "text/plain; charset=iso-8859-1");
 
@@ -102,7 +102,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testSendPlainMailContentTypeTinyTypeInHeader() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         // Camel will fixup the Content-Type if you do not have a space after the semi colon
         template.sendBodyAndHeader("direct:b", "Hello World", MailConstants.MAIL_CONTENT_TYPE, "text/plain;charset=iso-8859-1");

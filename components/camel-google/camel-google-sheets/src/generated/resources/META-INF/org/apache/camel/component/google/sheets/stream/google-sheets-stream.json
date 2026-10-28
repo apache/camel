@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "google-sheets-stream",
     "extendsScheme": "",
     "syntax": "google-sheets-stream:spreadsheetId",
@@ -53,6 +53,9 @@
     "CamelGoogleSheetsRange": { "index": 3, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The range the values cover, in A1 notation.", "constantName": "org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants#RANGE" },
     "CamelGoogleSheetsRangeIndex": { "index": 4, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The index of the range", "constantName": "org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants#RANGE_INDEX" },
     "CamelGoogleSheetsValueIndex": { "index": 5, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The index of the value", "constantName": "org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants#VALUE_INDEX" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "byOption": [ { "option": "splitResults", "value": "true", "carriers": [ "list", "pojo" ] } ], "description": "One message per poll with the Spreadsheet, or, when range is set, one message per range with its ValueRange. splitResults with range gives one message per row (or column, by majorDimension) with the List of its values. The Spreadsheet and the ValueRange are GenericJson, which is also a Map of the JSON fields" }
   },
   "properties": {
     "spreadsheetId": { "index": 0, "kind": "path", "displayName": "Spreadsheet Id", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration", "configurationField": "configuration", "description": "Specifies the spreadsheet identifier that is used to identify the target to obtain." },

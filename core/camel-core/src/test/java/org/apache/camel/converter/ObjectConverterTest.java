@@ -154,6 +154,23 @@ public class ObjectConverterTest {
     }
 
     @Test
+    public void testToBigDecimal() {
+        assertEquals(new BigDecimal("1000.01"), ObjectConverter.toBigDecimal("1000.01"));
+        assertEquals(new BigDecimal("4"), ObjectConverter.toBigDecimal("4"));
+        assertEquals(BigDecimal.valueOf(4), ObjectConverter.toBigDecimal(Integer.valueOf("4")));
+        assertEquals(BigDecimal.valueOf(4), ObjectConverter.toBigDecimal(Long.valueOf("4")));
+        assertEquals(new BigDecimal("14350442579497085228"),
+                ObjectConverter.toBigDecimal(new BigInteger("14350442579497085228")));
+        // the decimal text of the value, not the exact binary value of the double or float
+        assertEquals(new BigDecimal("0.1"), ObjectConverter.toBigDecimal(0.1d));
+        assertEquals(new BigDecimal("0.1"), ObjectConverter.toBigDecimal(0.1f));
+        assertNull(ObjectConverter.toBigDecimal(new Date()));
+        assertNull(ObjectConverter.toBigDecimal(Double.NaN));
+        assertNull(ObjectConverter.toBigDecimal(Float.NaN));
+        assertThrows(NumberFormatException.class, () -> ObjectConverter.toBigDecimal("abc"));
+    }
+
+    @Test
     public void testToString() {
         assertEquals("ABC", ObjectConverter.toString(new StringBuffer("ABC")));
         assertEquals("ABC", ObjectConverter.toString(new StringBuilder("ABC")));

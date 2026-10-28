@@ -39,6 +39,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -63,6 +66,37 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol://hostname:port",
              category = { Category.DATABASE }, headersClass = CouchbaseConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.couchbase.client.java.kv.GetResult",
+                                   byOption = {
+                                           @BodyType.When(option = "fullDocument", value = "false", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "useView", value = "true",
+                                                          carriers = {
+                                                                  Carrier.POJO, Carrier.TEXT, Carrier.VALUE, Carrier.MAP,
+                                                                  Carrier.LIST }) },
+                                   description = "One message per document the query finds, read by its id (the"
+                                                 + " CamelCouchbaseId header) as the GetResult of the Couchbase SDK:"
+                                                 + " contentAsObject() gives the JSON document. With fullDocument=false the row"
+                                                 + " of the SQL++ query as JSON text, or with useView=true the value the view"
+                                                 + " emits. A row of a reduce view has no id: its value is the body, also with"
+                                                 + " fullDocument=true"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  dependsOn = "operation",
+                                  description = "The document that CCB_PUT, the default, stores: text or bytes that hold a"
+                                                + " JSON object or array as that JSON document, other text as a JSON string,"
+                                                + " other bytes as a binary document, and a stream is read as bytes. A Map, a"
+                                                + " List or a POJO becomes JSON. No body fails. CCB_GET and CCB_DEL do not use"
+                                                + " the body: the id is the CamelCouchbaseId header, else the key option"),
+           producerOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Boolean", dependsOn = "operation",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "CCB_GET", carriers = Carrier.POJO,
+                                                          javaType = "com.couchbase.client.java.kv.GetResult"),
+                                           @BodyType.When(option = "operation", value = "CCB_DEL", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String") },
+                                   description = "true for CCB_PUT, the default; the GetResult of the Couchbase SDK for"
+                                                 + " CCB_GET, and the MutationResult as text for CCB_DEL. The CamelCouchbaseId"
+                                                 + " header stays on the message"))
 public class CouchbaseEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriPath
@@ -110,7 +144,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     private int replicateTo;
 
     // Producer parameters
-    @UriParam(label = "producer", defaultValue = COUCHBASE_PUT)
+    @UriParam(label = "producer", defaultValue = COUCHBASE_PUT, enums = "CCB_PUT,CCB_GET,CCB_DEL")
     private String operation = COUCHBASE_PUT;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean autoStartIdForInserts;
@@ -149,7 +183,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     private String rangeStartKey;
     @UriParam(label = "consumer")
     private String rangeEndKey = "";
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean fullDocument = true;
     @UriParam(label = "consumer", defaultValue = "5000")
     private int consumerRetryPause = DEFAULT_PAUSE_BETWEEN_RETRIES;
@@ -300,7 +334,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     }
 
     /**
-     * The key to use
+     * The id of the document the producer puts, gets or deletes, when the message has no CamelCouchbaseId header
      */
     public void setKey(String key) {
         this.key = key;
@@ -379,7 +413,8 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     }
 
     /**
-     * The operation to do
+     * The operation to do: CCB_PUT stores the message body as the document (upsert), CCB_GET reads the document and
+     * CCB_DEL removes it
      */
     public void setOperation(String operation) {
         this.operation = operation;
@@ -446,10 +481,11 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
 
     /**
      * A SQL++ (N1QL) query statement for consuming documents. When set, the consumer uses SQL++ queries instead of
-     * MapReduce views. The query should select META().id AS __id to identify documents. Example: SELECT META().id AS
-     * __id, * FROM `myCollection` WHERE type = 'order' LIMIT 100. If not set and useView is false, a SQL++ query is
-     * auto-generated from the bucket, scope, collection, limit, skip, descending, rangeStartKey, and rangeEndKey
-     * options.
+     * MapReduce views. The query should select META().id AS __id to identify documents. The query runs on the scope
+     * (the default scope when the scope option is not set), so a single name in FROM is a collection of that scope; use
+     * `bucket`.`scope`.`collection` for another one. Example: SELECT META().id AS __id, * FROM `_default` WHERE type =
+     * 'order' LIMIT 100. If not set and useView is false, a SQL++ query is auto-generated from the bucket, scope,
+     * collection, limit, skip, descending, rangeStartKey, and rangeEndKey options.
      */
     public void setStatement(String statement) {
         this.statement = statement;
@@ -472,14 +508,16 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
      * Builds a SQL++ query from the endpoint options.
      */
     String buildSqlQuery() {
-        StringBuilder sb = new StringBuilder("SELECT META().id AS __id, * FROM `");
-        // Use the collection if set, otherwise use the bucket name (default collection)
+        StringBuilder sb = new StringBuilder("SELECT META().id AS __id, * FROM ");
+        // The query runs on the scope, where a single name is a collection of that scope. Without the collection
+        // option the consumer reads the default collection of the bucket, so the query names that one in full: the
+        // bucket name alone would be read as a collection of the scope, which does not exist. The alias keeps
+        // the bucket name as the key of the document in the row, as FROM `bucket` gave
         if (collection != null && !collection.isEmpty()) {
-            sb.append(collection);
+            sb.append('`').append(collection).append('`');
         } else {
-            sb.append(bucket);
+            sb.append('`').append(bucket).append("`.`_default`.`_default` AS `").append(bucket).append('`');
         }
-        sb.append('`');
 
         // WHERE clause from range keys
         String startKey = rangeStartKey;

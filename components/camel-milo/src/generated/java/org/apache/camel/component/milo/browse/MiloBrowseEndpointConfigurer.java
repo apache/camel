@@ -29,6 +29,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationName": target.getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
         case "applicationUri": target.getConfiguration().setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "certificatevalidator":
+        case "certificateValidator": target.getConfiguration().setCertificateValidator(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class, value)); return true;
         case "channellifetime":
         case "channelLifetime": target.getConfiguration().setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
         case "clientid":
@@ -70,6 +72,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "producturi":
         case "productUri": target.getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnecttimeout":
+        case "reconnectTimeout": target.getConfiguration().setReconnectTimeout(property(camelContext, long.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
@@ -79,6 +83,10 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": target.getConfiguration().setSessionName(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.getConfiguration().setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "trustlistdirectory":
+        case "trustListDirectory": target.getConfiguration().setTrustListDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -93,6 +101,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationName": return java.lang.String.class;
         case "applicationuri":
         case "applicationUri": return java.lang.String.class;
+        case "certificatevalidator":
+        case "certificateValidator": return org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class;
         case "channellifetime":
         case "channelLifetime": return java.lang.Long.class;
         case "clientid":
@@ -134,6 +144,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "password": return java.lang.String.class;
         case "producturi":
         case "productUri": return java.lang.String.class;
+        case "reconnecttimeout":
+        case "reconnectTimeout": return long.class;
         case "recursive": return boolean.class;
         case "requesttimeout":
         case "requestTimeout": return java.lang.Long.class;
@@ -143,6 +155,10 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return java.lang.Long.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "trustlistdirectory":
+        case "trustListDirectory": return java.lang.String.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -158,6 +174,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationName": return target.getConfiguration().getApplicationName();
         case "applicationuri":
         case "applicationUri": return target.getConfiguration().getApplicationUri();
+        case "certificatevalidator":
+        case "certificateValidator": return target.getConfiguration().getCertificateValidator();
         case "channellifetime":
         case "channelLifetime": return target.getConfiguration().getChannelLifetime();
         case "clientid":
@@ -199,6 +217,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "password": return target.getConfiguration().getPassword();
         case "producturi":
         case "productUri": return target.getConfiguration().getProductUri();
+        case "reconnecttimeout":
+        case "reconnectTimeout": return target.getConfiguration().getReconnectTimeout();
         case "recursive": return target.isRecursive();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
@@ -208,6 +228,10 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": return target.getConfiguration().getSessionName();
         case "sessiontimeout":
         case "sessionTimeout": return target.getConfiguration().getSessionTimeout();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "trustlistdirectory":
+        case "trustListDirectory": return target.getConfiguration().getTrustListDirectory();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

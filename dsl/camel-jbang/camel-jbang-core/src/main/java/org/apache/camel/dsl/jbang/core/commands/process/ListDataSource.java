@@ -28,6 +28,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -42,6 +43,8 @@ import picocli.CommandLine.Command;
                  "  camel get datasource",
                  "  camel get datasource --watch" })
 public class ListDataSource extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -58,47 +61,41 @@ public class ListDataSource extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject ds = (JsonObject) root.get("dataSources");
-                        if (context != null && ds != null) {
-                            JsonArray array = (JsonArray) ds.get("dataSources");
-                            if (array != null) {
-                                for (int i = 0; i < array.size(); i++) {
-                                    JsonObject o = (JsonObject) array.get(i);
-                                    Row row = new Row();
-                                    row.name = context.getString("name");
-                                    if ("CamelJBang".equals(row.name)) {
-                                        row.name = ProcessHelper.extractName(root, ph);
-                                    }
-                                    row.pid = Long.toString(ph.pid());
-                                    row.uptime = extractSince(ph);
-                                    row.age = TimeUtils.printSince(row.uptime);
-                                    row.dsName = o.getString("name");
-                                    row.type = o.getString("type");
-                                    row.poolType = o.getString("poolType");
-                                    row.poolName = o.getString("poolName");
-                                    row.active = o.getIntegerOrDefault("active", 0);
-                                    row.idle = o.getIntegerOrDefault("idle", 0);
-                                    row.total = o.getIntegerOrDefault("total", 0);
-                                    row.maxPoolSize = o.getIntegerOrDefault("maxPoolSize", 0);
-                                    row.waiting = o.getIntegerOrDefault("waiting", 0);
-                                    rows.add(row);
-                                }
-                            }
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            JsonObject ds = (JsonObject) root.get("dataSources");
+            if (context != null && ds != null) {
+                JsonArray array = (JsonArray) ds.get("dataSources");
+                if (array != null) {
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject o = (JsonObject) array.get(i);
+                        Row row = new Row();
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = ProcessHelper.extractName(root, ph);
                         }
+                        row.pid = Long.toString(ph.pid());
+                        row.uptime = extractSince(ph);
+                        row.age = TimeUtils.printSince(row.uptime);
+                        row.dsName = o.getString("name");
+                        row.type = o.getString("type");
+                        row.poolType = o.getString("poolType");
+                        row.poolName = o.getString("poolName");
+                        row.active = o.getIntegerOrDefault("active", 0);
+                        row.idle = o.getIntegerOrDefault("idle", 0);
+                        row.total = o.getIntegerOrDefault("total", 0);
+                        row.maxPoolSize = o.getIntegerOrDefault("maxPoolSize", 0);
+                        row.waiting = o.getIntegerOrDefault("waiting", 0);
+                        rows.add(row);
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 
@@ -109,9 +106,10 @@ public class ListDataSource extends ProcessWatchCommand {
         if (jsonOutput) {
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
+                jo.put("uptime", r.uptime);
                 jo.put("dsName", r.dsName);
                 jo.put("poolType", r.poolType);
                 if (r.poolName != null) {
@@ -151,25 +149,6 @@ public class ListDataSource extends ProcessWatchCommand {
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(typeW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.type))));
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
     }
 
     static class Row {

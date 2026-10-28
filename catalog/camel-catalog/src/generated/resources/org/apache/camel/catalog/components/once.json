@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-once",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "once",
     "extendsScheme": "",
     "syntax": "once:name",
@@ -28,6 +28,9 @@
     "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "delay": { "index": 2, "kind": "property", "displayName": "Delay", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1000, "description": "The number of milliseconds to wait before triggering. Use 0 or negative to fire as soon as possible. The default value is 1000." },
     "languages": { "index": 3, "kind": "property", "displayName": "Languages", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether Camel languages are supported such as simple,groovy." }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "null" ], "dependsOn": [ "body" ], "description": "No body without the body option. The body option gives its text, the text of a file:, classpath: or http: resource, a Boolean for true or false, a number for a whole number, or with language:NAME: the result of the expression" }
   },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The logical name" },

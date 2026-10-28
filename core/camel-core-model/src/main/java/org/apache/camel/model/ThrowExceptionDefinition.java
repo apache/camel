@@ -22,16 +22,21 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Throws an exception
  */
-@Metadata(label = "error,errorhandling",
+@Metadata(label = "eip,error,errorhandling",
           description = "Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one")
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Fails the exchange with the exception: the body stays as it was"))
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {
 
     @XmlTransient
@@ -79,6 +84,9 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
             return exception.getClass().getCanonicalName();
         } else if (ref != null) {
             return "ref:" + ref;
+        } else if (exceptionType != null) {
+            // as the DSLs declare it: the type, and the message when there is one
+            return message != null ? exceptionType + ": " + message : exceptionType;
         } else {
             return "";
         }

@@ -65,24 +65,28 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         String answer;
         if (allowNamedParameters && hasNamedParameters(query)) {
             if (exchange != null) {
-                // replace all :?in:word with a number of placeholders for how many values are expected in the IN values
+                // replace each :?in:word with a number of placeholders for how many values are expected in the IN values,
+                // in one pass, so a name that is the start of a later name (:?in:id and :?in:ids), or an expression with
+                // characters that are special in a regular expression, is replaced where it is and only there
                 Matcher matcher = REPLACE_IN_PATTERN.matcher(query);
+                StringBuilder sb = new StringBuilder();
                 while (matcher.find()) {
                     String found = matcher.group(1);
                     Object parameter = SqlHelper.lookupParameter(found, exchange, null);
+                    String replace = matcher.group();
                     if (parameter != null) {
                         Iterator<?> it = createInParameterIterator(parameter);
                         StringJoiner replaceBuilder = new StringJoiner(",");
                         while (it.hasNext()) {
                             it.next();
-                            replaceBuilder.add("\\?");
+                            replaceBuilder.add("?");
                         }
-                        String replace = replaceBuilder.toString();
-                        String foundEscaped = found.replace("$", "\\$").replace("{", "\\{").replace("}", "\\}");
-                        Matcher paramMatcher = Pattern.compile("\\:\\?in\\:" + foundEscaped, Pattern.MULTILINE).matcher(query);
-                        query = paramMatcher.replaceAll(replace);
+                        replace = replaceBuilder.toString();
                     }
+                    matcher.appendReplacement(sb, Matcher.quoteReplacement(replace));
                 }
+                matcher.appendTail(sb);
+                query = sb.toString();
             }
             // replace all :?word and :?${foo} with just ?
             answer = replaceParams(query);

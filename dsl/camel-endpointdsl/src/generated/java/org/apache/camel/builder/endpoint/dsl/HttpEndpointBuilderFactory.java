@@ -695,8 +695,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication methods allowed to use as a comma separated list of
-         * values Basic, Bearer, or NTLM. (NTLM is deprecated).
+         * The authentication method to use: Basic, Bearer or NTLM. (NTLM is
+         * deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -889,6 +889,48 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder oauth2CachedTokensExpirationMarginSeconds(String oauth2CachedTokensExpirationMarginSeconds) {
             doSetProperty("oauth2CachedTokensExpirationMarginSeconds", oauth2CachedTokensExpirationMarginSeconds);
+            return this;
+        }
+        /**
+         * How cached OAuth2 tokens are shared between requests when
+         * oauth2CacheTokens is enabled. FULL_URI uses one token per request URI
+         * including the query, HOST_AND_PATH one per path, and HOST_ONLY one
+         * per scheme, host and port. The token request does not depend on the
+         * request URI, so HOST_AND_PATH and HOST_ONLY request fewer tokens.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.http.OAuth2CachedTokensKey</code>
+         * type.
+         * 
+         * Default: HOST_ONLY
+         * Group: security
+         * 
+         * @param oauth2CachedTokensKey the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensKey(org.apache.camel.component.http.OAuth2CachedTokensKey oauth2CachedTokensKey) {
+            doSetProperty("oauth2CachedTokensKey", oauth2CachedTokensKey);
+            return this;
+        }
+        /**
+         * How cached OAuth2 tokens are shared between requests when
+         * oauth2CacheTokens is enabled. FULL_URI uses one token per request URI
+         * including the query, HOST_AND_PATH one per path, and HOST_ONLY one
+         * per scheme, host and port. The token request does not depend on the
+         * request URI, so HOST_AND_PATH and HOST_ONLY request fewer tokens.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.http.OAuth2CachedTokensKey</code>
+         * type.
+         * 
+         * Default: HOST_ONLY
+         * Group: security
+         * 
+         * @param oauth2CachedTokensKey the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensKey(String oauth2CachedTokensKey) {
+            doSetProperty("oauth2CachedTokensKey", oauth2CachedTokensKey);
             return this;
         }
         /**
@@ -1907,6 +1949,40 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(String useSystemProperties) {
             doSetProperty("useSystemProperties", useSystemProperties);
+            return this;
+        }
+        /**
+         * To use a custom strategy to compute the key of cached OAuth2 tokens
+         * when oauth2CacheTokens is enabled. When set, oauth2CachedTokensKey is
+         * not used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.http.OAuth2CachedTokensKeyResolver</code> type.
+         * 
+         * Group: security (advanced)
+         * 
+         * @param oauth2CachedTokensKeyResolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder oauth2CachedTokensKeyResolver(org.apache.camel.component.http.OAuth2CachedTokensKeyResolver oauth2CachedTokensKeyResolver) {
+            doSetProperty("oauth2CachedTokensKeyResolver", oauth2CachedTokensKeyResolver);
+            return this;
+        }
+        /**
+         * To use a custom strategy to compute the key of cached OAuth2 tokens
+         * when oauth2CacheTokens is enabled. When set, oauth2CachedTokensKey is
+         * not used.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.http.OAuth2CachedTokensKeyResolver</code> type.
+         * 
+         * Group: security (advanced)
+         * 
+         * @param oauth2CachedTokensKeyResolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder oauth2CachedTokensKeyResolver(String oauth2CachedTokensKeyResolver) {
+            doSetProperty("oauth2CachedTokensKeyResolver", oauth2CachedTokensKeyResolver);
             return this;
         }
     }

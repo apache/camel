@@ -26,6 +26,10 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerSkipDotFilesIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
+        return "ftp://admin@localhost:{{ftp.server.port}}/dotfiles?password=admin&noop=true";
+    }
+
+    private String getFtpProducerUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/dotfiles?password=admin";
     }
 
@@ -46,10 +50,10 @@ public class FtpConsumerSkipDotFilesIT extends FtpServerTestSupport {
         // prepares the FTP Server by creating files on the server that we want
         // to unit
         // test that we can pool and store as a local file
-        sendFile(getFtpUrl(), "Hello World", ".skipme");
-        sendFile(getFtpUrl(), "Reports", "report1.txt");
-        sendFile(getFtpUrl(), "Bye World", ".camel");
-        sendFile(getFtpUrl(), "Reports", "report2.txt");
+        sendFile(getFtpProducerUrl(), "Hello World", ".skipme");
+        sendFile(getFtpProducerUrl(), "Reports", "report1.txt");
+        sendFile(getFtpProducerUrl(), "Bye World", ".camel");
+        sendFile(getFtpProducerUrl(), "Reports", "report2.txt");
     }
 
     @Override

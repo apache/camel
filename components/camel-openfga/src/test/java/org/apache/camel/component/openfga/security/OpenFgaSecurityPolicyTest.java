@@ -17,6 +17,7 @@
 package org.apache.camel.component.openfga.security;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
@@ -29,10 +30,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.openfga.OpenFgaConstants;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class OpenFgaSecurityPolicyTest extends CamelTestSupport {
@@ -75,6 +78,13 @@ class OpenFgaSecurityPolicyTest extends CamelTestSupport {
                 from("direct:guardedFailOpen")
                         .policy(policy(true))
                         .to("mock:failOpen");
+
+                OpenFgaSecurityPolicy withContext = policy(false);
+                withContext.setContextualTuples("user:${exchangeProperty.subject},member,team:eng");
+                withContext.setConditionContext(Map.of("hour", 14, "onCorpNetwork", true));
+                from("direct:guardedWithContext")
+                        .policy(withContext)
+                        .to("mock:withContext");
             }
         };
     }
@@ -154,6 +164,31 @@ class OpenFgaSecurityPolicyTest extends CamelTestSupport {
         assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class);
         assertThat(out.getException()).hasMessageContaining("missing-user");
         failOpen.assertIsSatisfied();
+    }
+
+    @Test
+    void theGuardCanCarryContextualTuplesAndAConditionContext() throws Exception {
+        givenVerdict(Boolean.TRUE);
+
+        MockEndpoint allowed = getMockEndpoint("mock:withContext");
+        allowed.expectedMessageCount(1);
+
+        Exchange out = send("direct:guardedWithContext", "anne");
+
+        assertThat(out.getException()).isNull();
+        allowed.assertIsSatisfied();
+
+        // the policy is the main way to guard a whole route, so a check it makes has to be able to carry the same
+        // request-scoped facts an endpoint check can - otherwise the two disagree about what the model is told
+        ArgumentCaptor<ClientCheckRequest> captor = ArgumentCaptor.forClass(ClientCheckRequest.class);
+        verify(client).check(captor.capture(), any());
+        assertThat(captor.getValue().getContextualTuples()).singleElement()
+                .satisfies(tuple -> {
+                    assertThat(tuple.getUser()).isEqualTo("user:anne");
+                    assertThat(tuple.getRelation()).isEqualTo("member");
+                    assertThat(tuple.getObject()).isEqualTo("team:eng");
+                });
+        assertThat(captor.getValue().getContext()).isEqualTo(Map.of("hour", 14, "onCorpNetwork", true));
     }
 
     @Test

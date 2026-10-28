@@ -28,10 +28,12 @@ import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
 
 /**
  * Resolves the BouncyCastle {@link AlgorithmParameterSpec} for a PQC algorithm from the parameter-set name configured
@@ -41,8 +43,8 @@ import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
  * is accepted as an alias of the canonical dashed name ({@code ML-DSA-87}).
  * <p/>
  * The parameter set determines the NIST security level of the generated key material. The stateful hash-based signature
- * algorithms (XMSS, XMSSMT, LMS, HSS) and MAYO/SNOVA have no name-addressable BouncyCastle parameter spec and are
- * therefore not supported here - for those, register a KeyPair/Signature/KeyGenerator bean in the registry instead.
+ * algorithms (XMSS, XMSSMT, LMS, HSS) have no name-addressable BouncyCastle parameter spec and are therefore not
+ * supported here - for those, register a KeyPair/Signature/KeyGenerator bean in the registry instead.
  */
 public final class PQCParameterSpecResolver {
 
@@ -51,7 +53,7 @@ public final class PQCParameterSpecResolver {
      */
     private static final Set<String> SUPPORTED_ALGORITHMS = Set.of(
             // Signature algorithms
-            "MLDSA", "SLHDSA", "FALCON", "DILITHIUM", "SPHINCSPLUS",
+            "MLDSA", "SLHDSA", "FALCON", "DILITHIUM", "SPHINCSPLUS", "MAYO", "SNOVA",
             // Key encapsulation algorithms
             "MLKEM", "KYBER", "NTRU", "NTRULPRime", "SNTRUPrime", "BIKE", "HQC", "CMCE", "FRODO", "SABER");
 
@@ -81,28 +83,39 @@ public final class PQCParameterSpecResolver {
             throw new IllegalArgumentException(
                     "The parameterSpec option is not supported for algorithm " + algorithm
                                                + ". Supported algorithms are: " + SUPPORTED_ALGORITHMS
-                                               + ". For the stateful signature algorithms (XMSS, XMSSMT, LMS, HSS) and"
-                                               + " for MAYO/SNOVA, register a KeyPair bean in the registry instead.");
+                                               + ". For the stateful signature algorithms (XMSS, XMSSMT, LMS, HSS),"
+                                               + " register a KeyPair bean in the registry instead.");
         }
 
-        // BouncyCastle resolves parameter-set names case-insensitively but never uses underscores in them, so accept
-        // the underscore form (ml_dsa_87), which matches the BouncyCastle constant names, as an alias.
-        String name = parameterSpec.replace('_', '-');
+        // The name is tried as written first. Most BouncyCastle specs spell their parameter sets with dashes and
+        // resolve the underscore form only through the alias below, but the SNOVA names keep their underscores
+        // (SNOVA_24_5_5_SHAKE_SSK) and do not resolve in dashed form at all, so rewriting first would make every
+        // SNOVA parameter set unreachable.
+        AlgorithmParameterSpec resolved = tryResolve(algorithm, parameterSpec);
 
-        AlgorithmParameterSpec resolved;
-        try {
-            resolved = doResolve(algorithm, name);
-        } catch (IllegalArgumentException e) {
-            // The ML-DSA/ML-KEM/SLH-DSA/CMCE/FrodoKEM specs throw for an unknown name
-            throw new IllegalArgumentException(
-                    "Unknown parameterSpec '" + parameterSpec + "' for algorithm " + algorithm, e);
+        if (resolved == null && parameterSpec.indexOf('_') >= 0) {
+            // Accept the underscore form of a dashed name (ml_dsa_87 for ML-DSA-87), which matches how the
+            // BouncyCastle constants are written
+            resolved = tryResolve(algorithm, parameterSpec.replace('_', '-'));
         }
+
         if (resolved == null) {
-            // The older BouncyCastle specs return null instead of throwing for an unknown name
             throw new IllegalArgumentException(
                     "Unknown parameterSpec '" + parameterSpec + "' for algorithm " + algorithm);
         }
         return resolved;
+    }
+
+    /**
+     * Resolves one spelling of a parameter-set name, answering {@code null} when it is not known. Some BouncyCastle
+     * specs throw for an unknown name and others return {@code null}, so both are normalised here.
+     */
+    private static AlgorithmParameterSpec tryResolve(String algorithm, String parameterSpec) {
+        try {
+            return doResolve(algorithm, parameterSpec);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     private static AlgorithmParameterSpec doResolve(String algorithm, String parameterSpec) {
@@ -120,6 +133,10 @@ public final class PQCParameterSpecResolver {
                 return MLDSAParameterSpec.fromName(parameterSpec);
             case "SPHINCSPLUS":
                 return SLHDSAParameterSpec.fromName(parameterSpec);
+            case "MAYO":
+                return MayoParameterSpec.fromName(parameterSpec);
+            case "SNOVA":
+                return SnovaParameterSpec.fromName(parameterSpec);
             // Key encapsulation algorithms
             case "MLKEM":
             case "KYBER":

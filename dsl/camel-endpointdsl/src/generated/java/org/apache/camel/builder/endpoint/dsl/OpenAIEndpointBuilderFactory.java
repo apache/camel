@@ -1443,7 +1443,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * The model to use for chat completion.
+         * The model to use for the selected operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1960,6 +1960,136 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointConsumerBuilder toolExecutionErrorStrategy(String toolExecutionErrorStrategy) {
             doSetProperty("toolExecutionErrorStrategy", toolExecutionErrorStrategy);
+            return this;
+        }
+        /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible tools stay in the request.
+         * Search is a visibility policy, not authorization. Enabling it does
+         * not skip MCP tools/list; it only reduces the definitions sent to the
+         * model. When false, every eligible tool is sent as before and the
+         * searchable flag has no effect.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolSearch(boolean toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible tools stay in the request.
+         * Search is a visibility policy, not authorization. Enabling it does
+         * not skip MCP tools/list; it only reduces the definitions sent to the
+         * model. When false, every eligible tool is sent as before and the
+         * searchable flag has no effect.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolSearch(String toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * Embedding model used when toolSearchStrategy=VECTOR, for example
+         * text-embedding-3-small. Required for vector search. It is not read
+         * from the embeddings operation model option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param toolSearchEmbeddingModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolSearchEmbeddingModel(String toolSearchEmbeddingModel) {
+            doSetProperty("toolSearchEmbeddingModel", toolSearchEmbeddingModel);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together against this limit.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolSearchMaxResults(int toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together against this limit.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolSearchMaxResults(String toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: KEYWORD
+         * Group: common
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolSearchStrategy(org.apache.camel.component.ai.tool.AiToolSearchStrategy toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: KEYWORD
+         * Group: common
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolSearchStrategy(String toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
             return this;
         }
         /**
@@ -3875,7 +4005,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * The model to use for chat completion.
+         * The model to use for the selected operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4392,6 +4522,136 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointProducerBuilder toolExecutionErrorStrategy(String toolExecutionErrorStrategy) {
             doSetProperty("toolExecutionErrorStrategy", toolExecutionErrorStrategy);
+            return this;
+        }
+        /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible tools stay in the request.
+         * Search is a visibility policy, not authorization. Enabling it does
+         * not skip MCP tools/list; it only reduces the definitions sent to the
+         * model. When false, every eligible tool is sent as before and the
+         * searchable flag has no effect.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolSearch(boolean toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible tools stay in the request.
+         * Search is a visibility policy, not authorization. Enabling it does
+         * not skip MCP tools/list; it only reduces the definitions sent to the
+         * model. When false, every eligible tool is sent as before and the
+         * searchable flag has no effect.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolSearch(String toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * Embedding model used when toolSearchStrategy=VECTOR, for example
+         * text-embedding-3-small. Required for vector search. It is not read
+         * from the embeddings operation model option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param toolSearchEmbeddingModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolSearchEmbeddingModel(String toolSearchEmbeddingModel) {
+            doSetProperty("toolSearchEmbeddingModel", toolSearchEmbeddingModel);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together against this limit.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolSearchMaxResults(int toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together against this limit.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolSearchMaxResults(String toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: KEYWORD
+         * Group: common
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolSearchStrategy(org.apache.camel.component.ai.tool.AiToolSearchStrategy toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: KEYWORD
+         * Group: common
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolSearchStrategy(String toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
             return this;
         }
         /**
@@ -6156,7 +6416,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * The model to use for chat completion.
+         * The model to use for the selected operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6676,6 +6936,136 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible tools stay in the request.
+         * Search is a visibility policy, not authorization. Enabling it does
+         * not skip MCP tools/list; it only reduces the definitions sent to the
+         * model. When false, every eligible tool is sent as before and the
+         * searchable flag has no effect.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolSearch(boolean toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * When true, route tools marked searchable and remote MCP tools are
+         * omitted from the initial model request and exposed through one
+         * synthetic search tool. Directly visible tools stay in the request.
+         * Search is a visibility policy, not authorization. Enabling it does
+         * not skip MCP tools/list; it only reduces the definitions sent to the
+         * model. When false, every eligible tool is sent as before and the
+         * searchable flag has no effect.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param toolSearch the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolSearch(String toolSearch) {
+            doSetProperty("toolSearch", toolSearch);
+            return this;
+        }
+        /**
+         * Embedding model used when toolSearchStrategy=VECTOR, for example
+         * text-embedding-3-small. Required for vector search. It is not read
+         * from the embeddings operation model option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param toolSearchEmbeddingModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolSearchEmbeddingModel(String toolSearchEmbeddingModel) {
+            doSetProperty("toolSearchEmbeddingModel", toolSearchEmbeddingModel);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together against this limit.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolSearchMaxResults(int toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * Maximum number of tools returned by one tool search. Route and MCP
+         * tools are ranked together against this limit.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param toolSearchMaxResults the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolSearchMaxResults(String toolSearchMaxResults) {
+            doSetProperty("toolSearchMaxResults", toolSearchMaxResults);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: KEYWORD
+         * Group: common
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolSearchStrategy(org.apache.camel.component.ai.tool.AiToolSearchStrategy toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+        /**
+         * How tool search ranks route and MCP tools. 'KEYWORD' matches the tool
+         * name and description. 'VECTOR' uses cosine similarity and requires
+         * toolSearchEmbeddingModel. Vector search does not fall back to keyword
+         * search.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ai.tool.AiToolSearchStrategy</code>
+         * type.
+         * 
+         * Default: KEYWORD
+         * Group: common
+         * 
+         * @param toolSearchStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolSearchStrategy(String toolSearchStrategy) {
+            doSetProperty("toolSearchStrategy", toolSearchStrategy);
+            return this;
+        }
+        /**
          * Top P for response generation (0.0 to 1.0).
          * 
          * The option is a: <code>java.lang.Double</code> type.
@@ -7014,14 +7404,14 @@ public interface OpenAIEndpointBuilderFactory {
          * Syntax: <code>openai:operation</code>
          * 
          * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
-         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
-         * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
-         * consumer)
-         * There are 17 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, batch,
+         * The operation to perform: 'chat-completion', 'decisions',
+         * 'responses', 'responses-retrieve', 'responses-cancel', 'batch',
+         * 'batch-retrieve', 'batch-cancel', 'batch-results', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', 'image-edit', or
+         * 'webhook' (a consumer)
+         * There are 18 enums and the value can be one of: chat-completion,
+         * decisions, responses, responses-retrieve, responses-cancel, batch,
          * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
          * moderation, image-generation, image-edit, webhook
@@ -7045,14 +7435,14 @@ public interface OpenAIEndpointBuilderFactory {
          * Syntax: <code>openai:operation</code>
          * 
          * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
-         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
-         * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
-         * consumer)
-         * There are 17 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, batch,
+         * The operation to perform: 'chat-completion', 'decisions',
+         * 'responses', 'responses-retrieve', 'responses-cancel', 'batch',
+         * 'batch-retrieve', 'batch-cancel', 'batch-results', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', 'image-edit', or
+         * 'webhook' (a consumer)
+         * There are 18 enums and the value can be one of: chat-completion,
+         * decisions, responses, responses-retrieve, responses-cancel, batch,
          * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
          * moderation, image-generation, image-edit, webhook
@@ -7078,14 +7468,14 @@ public interface OpenAIEndpointBuilderFactory {
          * Syntax: <code>llm:operation</code>
          * 
          * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
-         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
-         * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
-         * consumer)
-         * There are 17 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, batch,
+         * The operation to perform: 'chat-completion', 'decisions',
+         * 'responses', 'responses-retrieve', 'responses-cancel', 'batch',
+         * 'batch-retrieve', 'batch-cancel', 'batch-results', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', 'image-edit', or
+         * 'webhook' (a consumer)
+         * There are 18 enums and the value can be one of: chat-completion,
+         * decisions, responses, responses-retrieve, responses-cancel, batch,
          * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
          * moderation, image-generation, image-edit, webhook
@@ -7272,6 +7662,19 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIConversationId() {
             return "CamelOpenAIConversationId";
+        }
+        /**
+         * Stable identifier used to retain OpenAI tool-search discoveries
+         * across exchanges, independently of Responses API conversation state.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code OpenAIToolSearchSessionId}.
+         */
+        public String openAIToolSearchSessionId() {
+            return "CamelOpenAIToolSearchSessionId";
         }
         /**
          * Whether to stream the response back incrementally.

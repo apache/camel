@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,8 +27,12 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -45,6 +48,10 @@ import picocli.CommandLine;
                              "  camel cmd browse --endpoint=seda:foo",
                              "  camel cmd browse --endpoint=seda:foo --limit=10" })
 public class CamelBrowseAction extends ActionBaseCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("uri", r -> r.uri)
+            .numeric("size", r -> r.queueSize);
 
     public static class UriSizeCompletionCandidates implements Iterable<String> {
 
@@ -97,11 +104,11 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "Sort by uri, or size", defaultValue = "uri")
     String sort;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in browsed messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in browsed messages")
     boolean showBody = true;
 
@@ -113,12 +120,19 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "Maximum size of the message body to include in the dump")
     int bodyMaxChars;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--pretty" },
                         description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
+
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;
 
@@ -128,90 +142,77 @@ public class CamelBrowseAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
-        this.pid = pids.get(0);
-
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "browse");
-        root.put("filter", endpoint == null ? "*" : endpoint);
-        root.put("limit", limit);
-        root.put("tail", tail);
-        root.put("freshSize", freshSize);
-        root.put("dump", dump);
-        root.put("includeBody", showBody);
-        if (bodyMaxChars > 0) {
-            root.put("bodyMaxChars", bodyMaxChars);
-        }
-
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            PathUtils.writeTextSafely(root.toJson(), f);
-        } catch (Exception e) {
-            // ignore
-        }
+        JsonObject jo = executeAction(process, "browse", root -> {
+            root.put("filter", endpoint == null ? "*" : endpoint);
+            root.put("limit", limit);
+            root.put("tail", tail);
+            root.put("freshSize", freshSize);
+            root.put("dump", dump);
+            root.put("includeBody", showBody);
+            if (bodyMaxChars > 0) {
+                root.put("bodyMaxChars", bodyMaxChars);
+            }
+        });
 
         List<Row> rows = new ArrayList<>();
-        JsonObject jo = getJsonObject((Path) outputFile);
-        if (jo != null) {
-            root = loadStatus(this.pid);
-            if (root != null) {
-                Row row = new Row();
-                row.pid = Long.toString(this.pid);
-                JsonObject context = (JsonObject) root.get("context");
-                if (context == null) {
-                    return 0;
-                }
-                ProcessHandle ph = ProcessHandle.of(this.pid).orElse(null);
-                row.name = context.getString("name");
-                if ("CamelJBang".equals(row.name)) {
-                    row.name = ProcessHelper.extractName(root, ph);
-                }
-                row.uptime = extractSince(ph);
-                row.ago = TimeUtils.printSince(row.uptime);
-                JsonArray arr = jo.getCollection("browse");
-                for (int i = 0; arr != null && i < arr.size(); i++) {
-                    JsonObject o = (JsonObject) arr.get(i);
-                    row.uri = o.getString("endpointUri");
-                    if (mask) {
-                        row.uri = URISupport.sanitizeUri(row.uri);
-                    }
-                    row.queueSize = o.getInteger("queueSize");
-                    row.limit = o.getIntegerOrDefault("limit", 0);
-                    row.position = o.getIntegerOrDefault("position", 0);
-                    row.firstTimestamp = o.getLongOrDefault("firstTimestamp", 0);
-                    row.lastTimestamp = o.getLongOrDefault("lastTimestamp", 0);
-                    if (dump) {
-                        row.messages = o.getCollection("messages");
-                    }
-                    rows.add(row);
-                    row = row.copy();
-                }
+        Row row = new Row();
+        row.pid = Long.toString(this.pid);
+        ProcessHandle ph = ProcessHandle.of(this.pid).orElse(null);
+        row.name = process.name();
+        row.uptime = extractSince(ph);
+        row.ago = TimeUtils.printSince(row.uptime);
+        JsonArray arr = jo.getCollection("browse");
+        for (int i = 0; arr != null && i < arr.size(); i++) {
+            JsonObject o = (JsonObject) arr.get(i);
+            row.uri = o.getString("endpointUri");
+            if (mask) {
+                row.uri = URISupport.sanitizeUri(row.uri);
             }
+            row.queueSize = o.getInteger("queueSize");
+            row.limit = o.getIntegerOrDefault("limit", 0);
+            row.position = o.getIntegerOrDefault("position", 0);
+            row.firstTimestamp = o.getLongOrDefault("firstTimestamp", 0);
+            row.lastTimestamp = o.getLongOrDefault("lastTimestamp", 0);
+            if (dump) {
+                row.messages = o.getCollection("messages");
+            }
+            rows.add(row);
+            row = row.copy();
+        }
+
+        if (endpoint != null && rows.isEmpty()) {
+            // the endpoint asked for is not one the integration can browse
+            throw CliException.notFound("No browsable endpoint matches: " + endpoint);
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (dump) {
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows.stream().map(r -> {
+                JsonObject jo2 = new JsonObject();
+                jo2.put("pid", r.pid);
+                jo2.put("name", r.name);
+                jo2.put("age", r.ago);
+                jo2.put("endpointUri", r.uri);
+                jo2.put("queueSize", r.queueSize);
+                jo2.put("limit", r.limit);
+                jo2.put("position", r.position);
+                jo2.put("firstTimestamp", r.firstTimestamp);
+                jo2.put("lastTimestamp", r.lastTimestamp);
+                if (r.messages != null) {
+                    jo2.put("messages", r.messages);
+                }
+                return jo2;
+            }).toList());
+        } else if (dump) {
             dumpMessages(rows, onlyBody);
         } else {
             tableStatus(rows);
         }
-
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -282,23 +283,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         .with(r -> r.uri))));
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "uri":
-                return o1.uri.compareToIgnoreCase(o2.uri) * negate;
-            case "size":
-                return Long.compare(o1.queueSize, o2.queueSize) * negate;
-            default:
-                return 0;
-        }
-    }
-
     protected String getMessageAgo(Row r) {
         StringJoiner sj = new StringJoiner("/");
         if (r.firstTimestamp > 0) {
@@ -321,17 +305,10 @@ public class CamelBrowseAction extends ActionBaseCommand {
     }
 
     protected String getEndpointUri(Row r) {
-        String u = r.uri;
-        if (shortUri) {
-            int pos = u.indexOf('?');
-            if (pos > 0) {
-                u = u.substring(0, pos);
-            }
-        }
-        return u;
+        return ListingFormat.uri(r.uri, shortUri);
     }
 
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         String ago;
@@ -343,14 +320,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
         long firstTimestamp;
         long lastTimestamp;
         List<JsonObject> messages;
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }

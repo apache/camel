@@ -52,6 +52,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     private final String transactionKey;
     private final LoggingLevel rollbackLoggingLevel;
     private final Set<Exchange> inflightTransactedExchanges = ConcurrentHashMap.newKeySet();
+    private volatile boolean forcedShutdown;
 
     /**
      * Creates the transaction error handler.
@@ -212,7 +213,8 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 processByErrorHandler(exchange);
 
                 // if forced shutdown is in progress, mark the exchange for rollback
-                if (preparingShutdown) {
+                // (a graceful shutdown lets the in-flight exchange complete and commit)
+                if (forcedShutdown) {
                     LOG.debug("Forced shutdown in progress, marking exchange for rollback: {}",
                             exchange.getExchangeId());
                     exchange.setRollbackOnly(true);
@@ -339,12 +341,27 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // reset flag when starting
+        forcedShutdown = false;
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        super.doResume();
+        // reset flag when resuming
+        forcedShutdown = false;
+    }
+
+    @Override
     public void prepareShutdown(boolean suspendOnly, boolean forced) {
         if (suspendOnly) {
             return;
         }
         super.prepareShutdown(suspendOnly, forced);
         if (forced) {
+            forcedShutdown = true;
             // mark all in-flight transacted exchanges for rollback so the transaction
             // is rolled back before the connection pool is destroyed during shutdown
             for (Exchange exchange : inflightTransactedExchanges) {

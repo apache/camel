@@ -52,7 +52,7 @@ public class JavaKnownImportsDownloader implements CompilePreProcessor {
         List<String> imports = determineImports(code);
         for (String imp : imports) {
             // attempt known dependency resolver first
-            MavenGav gav = knownDependenciesResolver.mavenGavForClass(imp);
+            MavenGav gav = knownDependenciesResolver.mavenGavForImport(imp);
             if (gav != null) {
                 downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
             } else {

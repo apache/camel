@@ -39,7 +39,7 @@ public abstract class AbstractTrustManagersParametersFactoryBean extends Abstrac
     @XmlAttribute
     @Metadata(label = "advanced", description = "The optional algorithm name for the TrustManagerFactory used to"
                                                 + " create the TrustManagers represented by this objects configuration."
-                                                + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                                                + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     protected String algorithm;
 
     @XmlAttribute

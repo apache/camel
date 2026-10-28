@@ -390,6 +390,28 @@ public class DiagnoseData {
                 List.of(
                         CAMEL_MANUAL_DOC + "security.html")));
 
+        // the sql component runs its statements with Spring JDBC: "bad SQL grammar []" alone was diagnosed as no known
+        // exception, and the database's own message was only in the stack trace (the local-model benchmark)
+        exceptions.put("BadSqlGrammarException", new ExceptionInfo(
+                "The database refused the SQL statement (Spring JDBC, which the sql component uses). The database's own"
+                                                                   + " message is in the cause: the Caused by line"
+                                                                   + " of the stack trace (camel_get_log) names the"
+                                                                   + " error and its position in the statement.",
+                List.of(
+                        "A parameter in a form the sql component does not read, such as :#{body.customer}: it reads"
+                        + " :#name (a key of the body when the body is a Map, or a header) and :#${...} (a simple"
+                        + " expression), and sends anything else to the database as written",
+                        "An insert-or-update in the dialect of another database (ON DUPLICATE KEY UPDATE is MySQL,"
+                                                                                              + " ON CONFLICT ... DO UPDATE is PostgreSQL)",
+                        "A table or column that does not exist, or a typo in a keyword",
+                        "A parameter where SQL allows none, such as a table or column name"),
+                List.of(
+                        "Read the Caused by line in camel_get_log: it has the database's message and the position",
+                        "Write parameters as :#${body[customer]} or :#customer",
+                        "camel_runtime_sql_trace shows the statements as the application sent them"),
+                List.of(
+                        CAMEL_COMPONENT_DOC + "sql-component.html")));
+
         KNOWN_EXCEPTIONS = Collections.unmodifiableMap(exceptions);
     }
 

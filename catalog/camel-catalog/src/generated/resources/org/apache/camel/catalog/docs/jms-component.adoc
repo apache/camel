@@ -35,11 +35,11 @@ for this component:
 ====
 *Using ActiveMQ*
 
-If you are using http://activemq.apache.org/[Apache ActiveMQ], you
+If you are using http://activemq.apache.org/[Apache ActiveMQ] Classic, you
 should prefer the ActiveMQ component as it has been
 optimized for ActiveMQ. All the options and
 samples on this page are also valid for the ActiveMQ
-component.
+component. For ActiveMQ Artemis, use this component, as shown in _Connecting to a broker_ below.
 ====
 
 [NOTE]
@@ -59,6 +59,78 @@ this page for important notes about request/reply, as Camel offers a
 number of options to configure for performance, and clustered
 environments.
 ====
+
+== Connecting to a broker
+
+The JMS component needs a `ConnectionFactory` from the client library of the broker. Create it as a bean, and set it
+on the component with the `connectionFactory` option. Put a connection pool around it: without a pool, the component
+opens a new connection for every message it sends.
+
+For example, for ActiveMQ Artemis (such as the broker that `camel infra run artemis` starts), with the
+https://github.com/messaginghub/pooled-jms[pooled-jms] connection pool:
+
+[tabs]
+====
+Application properties::
++
+[source,properties]
+----
+camel.beans.artemisCF = #class:org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory
+camel.beans.artemisCF.brokerURL = tcp://localhost:61616
+camel.beans.artemisCF.user = artemis
+camel.beans.artemisCF.password = artemis
+camel.beans.pooledCF = #class:org.messaginghub.pooled.jms.JmsPoolConnectionFactory
+camel.beans.pooledCF.connectionFactory = #bean:artemisCF
+camel.beans.pooledCF.maxConnections = 8
+camel.component.jms.connection-factory = #bean:pooledCF
+----
+
+Java::
++
+[source,java]
+----
+ActiveMQConnectionFactory artemis = new ActiveMQConnectionFactory("tcp://localhost:61616", "artemis", "artemis");
+JmsPoolConnectionFactory pool = new JmsPoolConnectionFactory();
+pool.setConnectionFactory(artemis);
+pool.setMaxConnections(8);
+context.getComponent("jms", JmsComponent.class).setConnectionFactory(pool);
+----
+
+Spring XML::
++
+[source,xml]
+----
+<bean id="artemisCF" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+  <property name="brokerURL" value="tcp://localhost:61616"/>
+  <property name="user" value="artemis"/>
+  <property name="password" value="artemis"/>
+</bean>
+
+<bean id="pooledCF" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" destroy-method="stop">
+  <property name="connectionFactory" ref="artemisCF"/>
+  <property name="maxConnections" value="8"/>
+</bean>
+
+<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+  <property name="connectionFactory" ref="pooledCF"/>
+</bean>
+----
+====
+
+The application properties work with routes in any DSL (YAML, XML or Java) on Camel Main and Camel JBang. Then the
+routes use the broker as usual, for example `jms:queue:orders`.
+
+When the registry has exactly one `ConnectionFactory`, the component uses it without the `connectionFactory` option
+(`allowAutoWiredConnectionFactory`, which is on by default). The example has two, the one of the client and the pool,
+so it sets the pool on the component.
+
+`camel run` downloads the client libraries of these classes. In a Maven project, add
+`org.apache.artemis:artemis-jakarta-client` and `org.messaginghub:pooled-jms`.
+
+Other brokers work the same way, with the `ConnectionFactory` of their client library, for example
+`com.ibm.mq.jakarta.jms.MQConnectionFactory` for IBM MQ (with `hostName`, `port`, `channel`, `queueManager`, and
+`transportType` set to `1` for a client connection). For ActiveMQ Classic, the xref:activemq-component.adoc[ActiveMQ]
+component sets up the connection factory from a `brokerURL`.
 
 == URI format
 
@@ -250,6 +322,94 @@ YAML::
             uri: bean:myBusinessLogic
 ----
 ====
+
+=== Sending a request and waiting for the reply
+
+To send a request and wait for its reply, the caller sends with the `InOut` exchange pattern, and the service is a
+route that consumes the queue: the body at the end of its route is the reply. You do not need to set `replyTo` or a
+`JMSReplyTo` header: Camel uses a temporary reply queue by default and sets `JMSReplyTo` itself. Set `replyTo` for a
+fixed (shared or exclusive) reply queue, see <<Request-reply over JMS>>. With `variableReceive`, the reply goes into a
+variable, and the body is kept:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:order?repeatCount=1")
+  .setBody(constant("{\"orderId\": \"ORD-1001\", \"sku\": \"CAMEL-MUG\"}"))
+  .setExchangePattern(ExchangePattern.InOut)
+  .toV("jms:queue:stock", null, "stockReply")
+  .log("Order ${body} got the reply ${variable.stockReply}");
+
+from("jms:queue:stock")
+  .log("Stock service got ${body}")
+  .setBody(constant("{\"reserved\": true}"));
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer:order?repeatCount=1"/>
+  <setBody>
+    <constant>{"orderId": "ORD-1001", "sku": "CAMEL-MUG"}</constant>
+  </setBody>
+  <to uri="jms:queue:stock" pattern="InOut" variableReceive="stockReply"/>
+  <log message="Order ${body} got the reply ${variable.stockReply}"/>
+</route>
+<route>
+  <from uri="jms:queue:stock"/>
+  <log message="Stock service got ${body}"/>
+  <setBody>
+    <constant>{"reserved": true}</constant>
+  </setBody>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:order
+      parameters:
+        repeatCount: 1
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: '{"orderId": "ORD-1001", "sku": "CAMEL-MUG"}'
+        - to:
+            uri: jms:queue:stock
+            pattern: InOut
+            variableReceive: stockReply
+        - log:
+            message: "Order ${body} got the reply ${variable.stockReply}"
+- route:
+    from:
+      uri: jms:queue:stock
+      steps:
+        - log:
+            message: "Stock service got ${body}"
+        - setBody:
+            expression:
+              constant:
+                expression: '{"reserved": true}'
+----
+====
+
+NOTE: In Java, `setExchangePattern(ExchangePattern.InOut)` keeps the exchange `InOut` for the rest of the route, while
+`pattern` on the XML and YAML `to` applies to that send only. Here it makes no difference, as only a `log` follows; with
+another `to("jms:...")` later in the route, set the pattern back with `setExchangePattern(ExchangePattern.InOnly)`, or
+use `to(ExchangePattern.InOut, "jms:...")`, which applies to that send only.
+
+The reply queue can also be shared or exclusive: see <<Request-reply over JMS>> below.
+
+=== Routing JMS messages
 
 You can use any of the EIP patterns so the route can be
 context based. For example, here's how to filter an order topic for the
@@ -887,24 +1047,33 @@ another JMS endpoint).
 
 === Configuring different JMS providers
 
-You can configure your JMS provider in Spring XML as
-follows:
+You can configure as many JMS component instances as you wish, each with its own connection factory, and give each a
+unique name. For example, a component named `artemis`, with the `pooledCF` connection factory from _Connecting to a
+broker_ above:
 
-You can configure as many JMS component instances as you wish
-and give them *a unique name using the* `id` **attribute**. The
-preceding example configures an `activemq` component. You could do the
-same to configure MQSeries, TibCo, BEA, Sonic and so on.
+[tabs]
+====
+Application properties::
++
+[source,properties]
+----
+camel.beans.artemis = #class:org.apache.camel.component.jms.JmsComponent
+camel.beans.artemis.connectionFactory = #bean:pooledCF
+----
 
-Once you have a named JMS component, you can then refer to endpoints
-within that component using URIs. For example, for the component name,
-`activemq`, you can then refer to destinations using the URI format,
-`activemq:[queue:|topic:]destinationName`. You can use the same approach
-for all other JMS providers.
+Spring XML::
++
+[source,xml]
+----
+<bean id="artemis" class="org.apache.camel.component.jms.JmsComponent">
+  <property name="connectionFactory" ref="pooledCF"/>
+</bean>
+----
+====
 
-This works by the SpringCamelContext lazily fetching components from the
-spring context for the scheme name you use for
-Endpoint URIs and having the
-Component resolve the endpoint URIs.
+Once you have a named JMS component, you can refer to destinations of that component with its name as the scheme, for
+example `artemis:[queue:|topic:]destinationName`. Camel looks up the component by that name in the registry. You can
+do the same for other JMS providers, such as IBM MQ or TIBCO EMS.
 
 ==== Using JNDI to find the ConnectionFactory
 
@@ -1026,7 +1195,9 @@ YAML::
 
 Camel supports Request Reply over JMS. In
 essence the MEP of the Exchange should be `InOut` when you send a
-message to a JMS queue.
+message to a JMS queue. The example in <<Sending a request and waiting for the reply>> shows the caller and the service.
+Camel sets the `JMSReplyTo` header and waits for the reply. You do not need to set `replyTo` or a `JMSReplyTo` header:
+Camel uses a temporary reply queue by default. Set `replyTo` for a fixed (shared or exclusive) reply queue, see below.
 
 Camel offers a number of options to configure request/reply over JMS
 that influence performance and clustered environments. The table below

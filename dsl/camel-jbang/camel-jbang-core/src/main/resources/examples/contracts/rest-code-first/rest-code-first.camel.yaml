@@ -1,0 +1,107 @@
+# The shop's order API, code first: the REST DSL declares each operation, binds the JSON of a new order to a Java
+# record, and builds the API description from the operations, served at /openapi.
+- restConfiguration:
+    bindingMode: json
+    apiContextPath: openapi
+
+- rest:
+    path: /orders
+    get:
+      - id: listOrders
+        description: All orders
+        to:
+          uri: direct:list-orders
+      - id: getOrder
+        path: "/{id}"
+        description: One order, by its id
+        to:
+          uri: direct:get-order
+    post:
+      - id: createOrder
+        description: Creates an order
+        type: camel.example.Order
+        to:
+          uri: direct:create-order
+
+# The answers are Java objects (a List, a Map, a record): the json binding writes them as JSON
+- route:
+    id: list-orders
+    from:
+      uri: direct
+      parameters:
+        name: list-orders
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "resource:file:orders.json"
+        - unmarshal:
+            json:
+              library: Jackson
+
+- route:
+    id: get-order
+    from:
+      uri: direct
+      parameters:
+        name: get-order
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "resource:file:orders.json"
+        - unmarshal:
+            json:
+              library: Jackson
+        - setBody:
+            expression:
+              groovy:
+                expression: "body.find { it.orderId == headers.id }"
+        - filter:
+            expression:
+              simple:
+                expression: "${body} == null"
+            steps:
+              - setHeader:
+                  name: CamelHttpResponseCode
+                  expression:
+                    constant:
+                      expression: "404"
+              # an error answer is not bound to JSON (skipBindingOnErrorCode), so it is written as JSON text
+              - setBody:
+                  expression:
+                    simple:
+                      expression: '{"error": "unknown order ${header.id}"}'
+
+# The binding has turned the request into a camel.example.Order record
+- route:
+    id: create-order
+    from:
+      uri: direct
+      parameters:
+        name: create-order
+      steps:
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body.lines} == null || ${body.lines.isEmpty()} == true"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "400"
+                  - setBody:
+                      expression:
+                        constant:
+                          expression: '{"error": "an order needs at least one line"}'
+            otherwise:
+              steps:
+                - log:
+                    message: "Order ${body.orderId} created with ${body.lines.size()} line(s)"
+                - setHeader:
+                    name: CamelHttpResponseCode
+                    expression:
+                      constant:
+                        expression: "201"

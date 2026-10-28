@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +54,7 @@ import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@UsesWorkingDirectory
 class ExportTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
@@ -103,6 +105,33 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
         // Reproducible build
         Assertions.assertNotNull(model.getProperties().getProperty("project.build.outputTimestamp"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportResourceDirs(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportResourceDirs {}", rt);
+        // --resource-dir only accepts relative paths
+        Path resources = Files.createTempDirectory("camel-export-resource-dirs");
+        try {
+            Path schemas = resources.resolve("schemas");
+            Files.createDirectories(schemas.resolve("common"));
+            Files.writeString(schemas.resolve("api.yaml"), "openapi: 3.0.3");
+            Files.writeString(schemas.resolve("common/types.json"), "{}");
+            String relative = Path.of("").toAbsolutePath().relativize(schemas).toString();
+
+            Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
+                    "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--resource-dir=" + relative);
+            int exit = command.doCall();
+
+            assertThat(exit).isZero();
+            // the last path component is the target directory, the structure below it is preserved
+            Path exported = workingDir.toPath().resolve("src/main/resources/schemas");
+            assertThat(exported.resolve("api.yaml")).hasContent("openapi: 3.0.3");
+            assertThat(exported.resolve("common/types.json")).hasContent("{}");
+        } finally {
+            FileUtil.removeDir(resources.toFile());
+        }
     }
 
     @ParameterizedTest
@@ -577,6 +606,42 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
     }
 
+    private static Stream<Arguments> runtimeAndJavaVersionProvider() {
+        return runtimeProvider()
+                .flatMap(rt -> Stream.of("21", "25").map(java -> Arguments.of(rt.get()[0], java)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeAndJavaVersionProvider")
+    public void shouldUseJavaVersionInDockerFiles(RuntimeType rt, String javaVersion) throws Exception {
+        LOG.info("shouldUseJavaVersionInDockerFiles {} {}", rt, javaVersion);
+        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--java-version=" + javaVersion);
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        String other = "21".equals(javaVersion) ? "25" : "21";
+        List<Path> jvmDockerFiles;
+        try (Stream<Path> files = Files.list(workingDir.toPath().resolve("src/main/docker"))) {
+            jvmDockerFiles = files.filter(f -> readString(f).contains("ubi9/openjdk-")).toList();
+        }
+        assertThat(jvmDockerFiles).isNotEmpty();
+        for (Path dockerfile : jvmDockerFiles) {
+            assertThat(readString(dockerfile))
+                    .as(dockerfile.getFileName().toString())
+                    .contains("ubi9/openjdk-" + javaVersion)
+                    .doesNotContain("ubi9/openjdk-" + other);
+        }
+    }
+
+    private static String readString(Path file) {
+        try {
+            return Files.readString(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // Each runtime may have a different logic
     public void assertApplicationPropertiesContent(RuntimeType rt, File appProps) throws Exception {
         try (FileInputStream fis = new FileInputStream(appProps)) {
@@ -704,6 +769,68 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportMasterDelegate(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportMasterDelegate {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/master-route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        // the delegate component of the master endpoint must be exported as well (CAMEL-25186)
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-master", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-timer", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-master-starter",
+                            null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-timer-starter",
+                            null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-master", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportZooKeeperMasterDelegate(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportZooKeeperMasterDelegate {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/zookeeper-master-route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        // the delegate component of the zookeeper-master endpoint must be exported as well (CAMEL-26116)
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-zookeeper-master", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-timer", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot",
+                            "camel-zookeeper-master-starter", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-timer-starter",
+                            null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus",
+                            "camel-quarkus-zookeeper-master", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldExportCircuitBreaker(RuntimeType rt) throws Exception {
         LOG.info("shouldExportCircuitBraeker {}", rt);
         Export command = createCommand(rt, new String[] { "src/test/resources/MyCB.java" },
@@ -809,6 +936,37 @@ class ExportTest {
             }
         }
         Assertions.assertEquals(1, nrCamelProps, "Duplicated property camel.main.foo in application.properties");
+    }
+
+    @Test
+    public void shouldDashOnlyQuarkusOptionNames() throws Exception {
+        LOG.info("shouldDashOnlyQuarkusOptionNames");
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--property", "quarkus.http.rootPath=/api",
+                "--property", "quarkus.swagger-ui.urls.Camel=../openapi.json",
+                "--property", "quarkus.log.category.\"com.example.MyRoute\".level=DEBUG",
+                "--property", "quarkus.datasource.Orders.db-kind=postgresql",
+                "--property", "quarkus.datasource.\"myOrders\".db-kind=mysql",
+                "--property", "quarkus.datasource.order_history.db-kind=h2",
+                "--property", "quarkus.hawtio.authenticationEnabled=false",
+                "--property", "camel.main.streamCachingEnabled=false");
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        Properties props = loadExportedProperties("application.properties");
+        // camel keys are dashed as a whole
+        assertThat(props.getProperty("camel.main.stream-caching-enabled")).isEqualTo("false");
+        // hawtio takes its options in camel case
+        assertThat(props.getProperty("quarkus.hawtio.authenticationEnabled")).isEqualTo("false");
+        // option names in camel case are dashed
+        assertThat(props.getProperty("quarkus.http.root-path")).isEqualTo("/api");
+        // names chosen by the user are kept as they are
+        assertThat(props.getProperty("quarkus.swagger-ui.urls.Camel")).isEqualTo("../openapi.json");
+        assertThat(props.getProperty("quarkus.log.category.\"com.example.MyRoute\".level")).isEqualTo("DEBUG");
+        assertThat(props.getProperty("quarkus.datasource.Orders.db-kind")).isEqualTo("postgresql");
+        assertThat(props.getProperty("quarkus.datasource.\"myOrders\".db-kind")).isEqualTo("mysql");
+        assertThat(props.getProperty("quarkus.datasource.order_history.db-kind")).isEqualTo("h2");
     }
 
     @ParameterizedTest

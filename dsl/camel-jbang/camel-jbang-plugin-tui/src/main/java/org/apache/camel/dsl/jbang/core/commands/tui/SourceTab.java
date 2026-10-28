@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -56,9 +57,9 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.RouteDslConverter;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletChecks;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -75,6 +76,7 @@ class SourceTab extends AbstractTab {
     private final ScrollbarState listScrollState = new ScrollbarState();
     private List<FilesBrowser.FileEntry> entries = Collections.emptyList();
     private final SourceViewer sourceViewer = new SourceViewer();
+    private final SourceRunState.Tracker runState = new SourceRunState.Tracker();
     private boolean focusOnViewer;
 
     private int leftPanelWidth = -1;
@@ -83,6 +85,11 @@ class SourceTab extends AbstractTab {
     private Rect rightArea;
 
     private final SourceEditAssist assist = new SourceEditAssist(ctx);
+    private final ConsumedEndpoints consumedEndpoints = new ConsumedEndpoints(ctx.backgroundExecutor, r -> {
+        if (ctx.runner != null) {
+            ctx.runner.runOnRenderThread(r);
+        }
+    });
 
     SourceEditAssist editAssist() {
         return assist;
@@ -124,6 +131,11 @@ class SourceTab extends AbstractTab {
         return sourceViewer.isEditMode();
     }
 
+    /** Whether a dialog over the editor has the keys (discard, the problems of a save, the diff, refactor). */
+    boolean showsViewerDialog() {
+        return sourceViewer.showsDialog();
+    }
+
     /** Steps whose uri: lines are destinations; for switch those of its cases and fallback. */
     private static final Set<String> LINKABLE_KEYWORDS = Set.of(
             "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel", "switch");
@@ -145,16 +157,27 @@ class SourceTab extends AbstractTab {
 
     SourceTab(MonitorContext ctx) {
         super(ctx);
+        // while a tape drives the monitor nothing asks: a file is deleted or converted at once
+        fileActionsPopup.setUnattended(() -> ctx.tapeDriven.getAsBoolean());
         sourceViewer.setNotificationCallback((msg, error) -> {
             if (ctx.notificationCallback != null) {
                 ctx.notificationCallback.accept(msg, error);
             }
         });
         sourceViewer.setOnFileCreated(this::refreshFiles);
-        // the live run data of the selected integration at the end of the lines of its source
-        sourceViewer.setLiveRunData(path -> {
+        // the live run data of the selected integration at the end of the lines of its source, and the body types of
+        // its steps; dimmed and left out while it runs another version of the file (CAMEL-25897)
+        sourceViewer.liveColumn().setLiveRunData(path -> {
             IntegrationInfo info = ctx.findSelectedIntegration();
             return info != null ? LiveRunLines.of(info.routes, path) : Map.of();
+        });
+        sourceViewer.liveColumn().setStale(runState::stale);
+        // the exception of the last failure on a line, for fix with AI (Shift+F8) on a line that fails at runtime
+        sourceViewer.liveColumn().setLineFailures((path, line) -> {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            return info != null
+                    ? RuntimeFailures.lastFailure(info.routes, RuntimeFailures.load(info.pid, ctx::getErrorFile), path, line)
+                    : null;
         });
         sourceViewer.setOnFileLoaded(p -> {
             if (hasJumpLinks(p)) {
@@ -169,14 +192,25 @@ class SourceTab extends AbstractTab {
         return sourceViewer.isEditMode();
     }
 
-    boolean isSourceViewerTextInputActive() {
+    @Override
+    public boolean isTextInputActive() {
         // also treat the file-actions menu and the go-to popups as active input so global single-key shortcuts
         // (q, ?, digits switching tabs, ...) do not fire while the menu, a prompt or a filter is open
         return sourceViewer.isTextInputActive() || fileActionsPopup.isVisible() || isGotoPopupVisible();
     }
 
-    void handlePaste(String text) {
+    @Override
+    public boolean isConfirming() {
+        return sourceViewer.isDiscardPending() || fileActionsPopup.isConfirming();
+    }
+
+    @Override
+    public boolean handlePaste(String text) {
+        if (!isTextInputActive()) {
+            return false;
+        }
         sourceViewer.handlePaste(text);
+        return true;
     }
 
     // ---- MonitorTab ----
@@ -190,10 +224,18 @@ class SourceTab extends AbstractTab {
             lastSeenPid = ctx.selectedPid;
             refreshFiles();
         }
+        // the run state of the file shown, now rather than at the next refresh, which shows the previous one till then
+        ctx.backgroundExecutor.execute(() -> runState.refresh(ctx.findSelectedIntegration()));
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        runState.refresh(ctx.findSelectedIntegration());
     }
 
     @Override
     public void onIntegrationChanged() {
+        runState.reset();
         lastSeenPid = ctx.selectedPid;
         rootDir = null;
         assist.setRootDir(null);
@@ -244,6 +286,12 @@ class SourceTab extends AbstractTab {
 
         if (ke.hasCtrl() && ke.isCharIgnoreCase('g')) {
             gotoSourceNodePopup.open(buildSourceNodeIndex(), sourceViewer.getLineCount());
+            return true;
+        }
+
+        // the route tree beside the source, wherever the focus is, as Ctrl+G
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('t') && sourceViewer.isVisible()) {
+            sourceViewer.setRouteTreeShown(!sourceViewer.isRouteTreeShown());
             return true;
         }
 
@@ -298,7 +346,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
-        if (leftArea != null && TuiHelper.contains(leftArea, me.x(), me.y())) {
+        if (leftArea != null && leftArea.contains(me.x(), me.y())) {
             focusOnViewer = false;
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 listState.selectPrevious();
@@ -320,7 +368,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
-        if (rightArea != null && TuiHelper.contains(rightArea, me.x(), me.y())) {
+        if (rightArea != null && rightArea.contains(me.x(), me.y())) {
             if (sourceViewer.isVisible()) {
                 focusOnViewer = true;
                 return sourceViewer.handleMouseEvent(me);
@@ -329,12 +377,6 @@ class SourceTab extends AbstractTab {
         }
 
         return false;
-    }
-
-    @Override
-    public boolean isOverlayActive() {
-        return fileActionsPopup.isVisible() || isGotoPopupVisible()
-                || (focusOnViewer && sourceViewer.isTextInputActive());
     }
 
     /** Whether the go to route or go to line popup is open: it takes typed text, digits too. */
@@ -443,17 +485,16 @@ class SourceTab extends AbstractTab {
         }
         if (focusOnViewer && sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
-            if (!sourceViewer.isEditMode()) {
+            // also after a jump, which moves the focus to the viewer; not while a term is typed into find or
+            // highlight, as the footer is then that field with its keys
+            if (!sourceViewer.isEditMode() && !sourceViewer.isTextInputActive()) {
                 TuiHelper.hint(spans, "Tab", "files");
-                // also after a jump, which moves the focus to the viewer; not while g is typed into search
-                if (!sourceViewer.isTextInputActive()) {
-                    if (!routeIndex.isEmpty()) {
-                        TuiHelper.hint(spans, "g", "go to route");
-                    }
-                    TuiHelper.hint(spans, "Ctrl+G", "go to");
-                    if (endpointOnSelectedLine() != null) {
-                        TuiHelper.hint(spans, "u", "usages");
-                    }
+                if (!routeIndex.isEmpty()) {
+                    TuiHelper.hint(spans, "g", "go to route");
+                }
+                TuiHelper.hint(spans, "Ctrl+G", "go to");
+                if (endpointOnSelectedLine() != null) {
+                    TuiHelper.hint(spans, "u", "usages");
                 }
             }
         } else {
@@ -479,6 +520,9 @@ class SourceTab extends AbstractTab {
         // when the file list is focused (not the viewer) and no dialog is open.
         if (!fileActionsPopup.isVisible() && !(focusOnViewer && sourceViewer.isVisible())) {
             TuiHelper.hint(spans, "F12", "file actions");
+        }
+        if (focusOnViewer && sourceViewer.showsFixWithAiHint()) {
+            TuiHelper.hint(spans, "Shift+F8", "fix with AI");
         }
     }
 
@@ -537,6 +581,10 @@ class SourceTab extends AbstractTab {
         json.put("totalFiles", entries.size());
         json.put("focusOnViewer", focusOnViewer);
         json.put("viewerOpen", sourceViewer.isVisible());
+        // whether the integration runs the file open in the editor as it is saved, so an agent can tell its edit runs
+        // (computed now: tui_get_table may read this tab while another one is on screen, which it does not refresh)
+        runState.refresh(ctx.findSelectedIntegration());
+        runState.addTo(json);
         return json;
     }
 
@@ -799,9 +847,9 @@ class SourceTab extends AbstractTab {
                     TuiHelper.copyToClipboard(entry.path());
                     notify("Copied path to clipboard", false);
                 }
-                case CONVERT_YAML -> convert(entry, "yaml");
-                case CONVERT_XML -> convert(entry, "xml");
-                case CONVERT_JAVA -> convert(entry, "java");
+                case CONVERT_YAML -> convert(entry, "yaml", FileActionsPopup.REPLACE.equals(req.name()));
+                case CONVERT_XML -> convert(entry, "xml", FileActionsPopup.REPLACE.equals(req.name()));
+                case CONVERT_JAVA -> convert(entry, "java", FileActionsPopup.REPLACE.equals(req.name()));
             }
         } catch (Exception e) {
             notify(e.getMessage() != null ? e.getMessage() : e.toString(), true);
@@ -818,7 +866,7 @@ class SourceTab extends AbstractTab {
      * Converts the route file to another DSL without running it (CAMEL-25254), into a new file next to it which opens;
      * what does not carry over is said at the top of the new file. An existing file is not overwritten.
      */
-    private void convert(FilesBrowser.FileEntry entry, String format) throws IOException {
+    private void convert(FilesBrowser.FileEntry entry, String format, boolean replace) throws IOException {
         if (entry == null) {
             return;
         }
@@ -833,10 +881,21 @@ class SourceTab extends AbstractTab {
             return;
         }
         Files.writeString(target, RouteDslConverter.withNotes(r.content(), r.notes(), format), StandardCharsets.UTF_8);
+        if (replace) {
+            // the converted file takes the place of the original, so the routes are not defined twice (CAMEL-25426)
+            SourceFileOps.delete(Path.of(entry.path()));
+        }
         if (loadDirectory(currentDir, r.fileName())) {
             openSelectedEntry();
         }
-        notify("Converted to " + r.fileName() + (r.notes().isEmpty() ? "" : ", see the notes at its top"), false);
+        String notes = r.notes().isEmpty() ? "" : ", see the notes at its top";
+        if (replace) {
+            notify("Replaced " + entry.name() + " with " + r.fileName() + notes, false);
+        } else {
+            // both stay, so the folder has the same routes twice: the next run fails with duplicate route ids
+            notify("Converted to " + r.fileName() + notes + ". " + entry.name()
+                   + " defines the same routes: delete or rename one of them before the next run", true);
+        }
     }
 
     private void openSelectedEntry() {
@@ -864,20 +923,30 @@ class SourceTab extends AbstractTab {
         }
     }
 
+    /** The direct: and seda: endpoints the file sends to and no route of the project consumes, as notes. */
+    private List<String> consumerNotes(Path filePath, String content) {
+        return consumedEndpoints.notes(filePath, rootDir, content, assist.validationCatalog(), assist.javaSources(),
+                () -> sourceViewer.recheck(filePath));
+    }
+
     /**
      * Points the viewer's quick-doc, autocomplete, validation and deprecation hooks at the providers matching the file
      * type (Camel YAML, other Camel source, properties, or none).
      */
     private void configureEditAssist(Path filePath) {
+        consumedEndpoints.expire();
         // the Camel checks of a Java or XML DSL route file (CAMEL-25208); YAML has its own
         boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
                 && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
+        // a direct: or seda: endpoint no route consumes is a note (CAMEL-24955); a YAML file sets its notes below
+        sourceViewer.setNotes(routeFile ? content -> consumerNotes(filePath, content) : null);
         sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
-        sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
+        SourceCompletion completion = sourceViewer.completion();
+        completion.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
         // simple expressions in every route file: YAML, Java and XML (CAMEL-25219)
-        sourceViewer.setSimpleCompletion(routeFile || isCamelSourceFile(filePath)
+        completion.setSimpleCompletion(routeFile || isCamelSourceFile(filePath)
                 ? (c, lines) -> assist.provideSimpleCompletions(c, lines, this::beanItems) : null);
         boolean xmlRoute = routeFile && name.toLowerCase().endsWith(".xml");
         sourceViewer.setCursorQuickDocProvider(!routeFile && !isCamelSourceFile(filePath) ? null
@@ -888,49 +957,54 @@ class SourceTab extends AbstractTab {
                 }
                 : assist::provideSimpleQuickDoc);
         // the route chain of a Java route (CAMEL-25241)
-        sourceViewer.setJavaCompletion(routeFile && name.endsWith(".java") ? assist::provideJavaCompletions : null);
+        completion.setJavaCompletion(routeFile && name.endsWith(".java") ? assist::provideJavaCompletions : null);
         // the elements, attributes and values of an XML route (CAMEL-25240)
-        sourceViewer.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
+        completion.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
+        completion.setSemanticCompletion(SourceEditAssist.isYamlFile(filePath) ? assist::provideSemanticCompletions : null);
         if (isCamelSourceFile(filePath)) {
-            sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
             if (SourceEditAssist.isYamlFile(filePath)) {
-                sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-                sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+                // the options of a kamelet: endpoint start with the properties of its Kamelet (CAMEL-25411)
+                completion.setAutocompleteProvider(
+                        c -> assist.provideYamlKeyCompletions(c, filePath.toAbsolutePath().getParent()));
+                completion.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEndpointValidator(assist::validateYamlEndpoints);
-                sourceViewer.setSimpleValidator(assist::validateYamlSimple);
-                sourceViewer.setListItemNodeChecker(assist::isListChildrenNode);
+                // in a Kamelet's template, a property written as ${header.tag} is said to be the placeholder {{tag}}
+                sourceViewer.setSimpleValidator(content -> KameletChecks.withTemplateHints(
+                        name.toLowerCase(Locale.ROOT), content, assist.validateYamlSimple(content)));
+                // the shape of a Kamelet file and the kamelet: endpoints of a route (CAMEL-25411)
+                sourceViewer.setKameletValidator(content -> SourceEditAssist.validateKamelets(filePath, content));
+                // the notes: a Kamelet's unused dependency, a direct: or seda: endpoint no route consumes (CAMEL-24955)
+                sourceViewer.setNotes(content -> SourceEditAssist.isKameletFile(filePath)
+                        ? SourceEditAssist.kameletNotes(filePath, content) : consumerNotes(filePath, content));
+                completion.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {
                 // XML: the quick doc of the routes read into the model, Tab in the uri attributes (CAMEL-25208)
-                sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
-                sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-                sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+                completion.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+                completion.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEditQuickDocProvider(
                         withProjectDocs((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row)));
             }
         } else if (routeFile) {
             // Java: the quick doc of the routes read into the model by the Java DSL parser (CAMEL-25208)
-            sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
             sourceViewer.setDeprecatedLineScanner(null);
             // Tab in the endpoint uri of from, to, toD...: component names, options and values, as YAML uris have
-            sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-            sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+            completion.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+            completion.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
             sourceViewer.setEditQuickDocProvider(
                     withProjectDocs((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row)));
         } else if (SourceEditAssist.isPropertiesFile(filePath)) {
-            sourceViewer.setQuickDocProvider(assist::providePropertiesQuickDocs);
             sourceViewer.setDeprecatedLineScanner(assist::scanDeprecatedProperties);
-            sourceViewer.setAutocompleteProvider(assist::providePropertyCompletions);
-            sourceViewer.setAutocompleteValueProvider(assist::providePropertyValueCompletions);
+            completion.setAutocompleteProvider(assist::providePropertyCompletions);
+            completion.setAutocompleteValueProvider(assist::providePropertyValueCompletions);
             sourceViewer.setPropertiesValidator(assist::validatePropertyLine);
             sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditPropertyQuickDoc));
         } else {
-            sourceViewer.setQuickDocProvider(null);
             sourceViewer.setDeprecatedLineScanner(null);
-            sourceViewer.setAutocompleteProvider(null);
+            completion.setAutocompleteProvider(null);
             sourceViewer.setEditQuickDocProvider(null);
-            sourceViewer.setAutocompleteValueProvider(null);
+            completion.setAutocompleteValueProvider(null);
         }
     }
 
@@ -1017,19 +1091,7 @@ class SourceTab extends AbstractTab {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, area, listState);
-
-        int visibleRows = area.height() - 2;
-        if (entries.size() > visibleRows) {
-            Rect scrollRect = new Rect(
-                    area.x() + area.width() - 1,
-                    area.y() + 1,
-                    1,
-                    visibleRows);
-            listScrollState.contentLength(entries.size());
-            listScrollState.viewportContentLength(visibleRows);
-            listScrollState.position(listState.offset());
-            frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, listScrollState);
-        }
+        TuiHelper.renderListScrollbar(frame, area, entries.size(), listState.offset(), listScrollState);
     }
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -1083,56 +1145,14 @@ class SourceTab extends AbstractTab {
                 area);
     }
 
-    /**
-     * What the Source pane shows before a file is opened: the routes of the project and where they are, so a Maven
-     * project (whose routes are folders deep) shows what it holds and how to open one.
-     */
-    static List<Line> emptySourceLines(List<RouteEntry> routes, Path root) {
-        List<Line> lines = new ArrayList<>();
-        lines.add(Line.from(Span.raw("")));
-        if (routes.isEmpty()) {
-            lines.add(Line.from(Span.styled("   Select a file and press Enter to view source", Style.EMPTY.dim())));
-            return lines;
-        }
-        lines.add(Line.from(Span.styled("   " + routes.size() + (routes.size() == 1 ? " route" : " routes")
-                                        + " in this project",
-                Theme.label())));
-        lines.add(Line.from(Span.raw("")));
-        int idWidth = 4;
-        for (RouteEntry re : routes) {
-            idWidth = Math.max(idWidth, label(re).length());
-        }
-        idWidth = Math.min(idWidth, 30);
-        for (RouteEntry re : routes) {
-            String where = re.filePath();
-            if (root != null && where != null) {
-                try {
-                    where = root.relativize(Path.of(where)).toString();
-                } catch (IllegalArgumentException e) {
-                    // not under the project: keep the full path
-                }
-            }
-            lines.add(Line.from(
-                    Span.styled("   " + String.format("%-" + idWidth + "s", TuiHelper.truncate(label(re), idWidth)),
-                            Theme.info()),
-                    Span.styled("  " + where + ":" + re.fromLine(), Style.EMPTY.dim())));
-        }
-        lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(
-                Span.styled("   ", Style.EMPTY),
-                Span.styled(" g ", Theme.hintKey()),
-                Span.styled(" opens a route, or select a file and press Enter", Style.EMPTY.dim())));
-        return lines;
-    }
-
-    private static String label(RouteEntry re) {
-        if (re.routeId() != null && !re.routeId().isBlank()) {
-            return re.routeId();
-        }
-        return re.fromUri() != null ? re.fromUri() : "";
-    }
+    // the Route Tree setting last given to the editor: it is given again only when it changes, so Ctrl+T holds
+    private Boolean routeTreeDefault;
 
     private void renderSourcePanel(Frame frame, Rect area) {
+        if (routeTreeDefault == null || routeTreeDefault != ctx.routeTree) {
+            routeTreeDefault = ctx.routeTree;
+            sourceViewer.setRouteTreeShown(ctx.routeTree);
+        }
         Style sourceTitleStyle = focusOnViewer ? Theme.title() : Style.EMPTY.fg(Theme.accent());
         Style sourceBorderStyle = ctx.paneBorder(focusOnViewer);
         if (sourceViewer.isVisible()) {
@@ -1140,8 +1160,15 @@ class SourceTab extends AbstractTab {
             sourceViewer.setBorderStyle(sourceBorderStyle);
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
+            // whether the integration runs the file shown as it is saved, in the view and in the editor (CAMEL-25771)
+            if (runState.shown(sourceViewer.getCurrentFilePath(), sourceViewer.isDirty())) {
+                // another file, or a save: its run state now, rather than at the next refresh
+                ctx.backgroundExecutor.execute(() -> runState.refresh(ctx.findSelectedIntegration()));
+            }
+            runState.render(frame, area);
         } else {
-            List<Line> lines = emptySourceLines(routeIndex, rootDir);
+            runState.shown(null, false);
+            List<Line> lines = SourceEmptyLines.of(routeIndex, rootDir);
 
             frame.renderWidget(
                     Paragraph.builder()
@@ -1371,6 +1398,8 @@ class SourceTab extends AbstractTab {
         }
 
         String filePath = file.toString();
+        // the template of a Kamelet is the route of kamelet:<its name>, named after it (CAMEL-25411)
+        String kamelet = SourceEditAssist.isKameletFile(file) ? kameletName(lines) : null;
         String currentRouteId = null;
         int routeIdIndent = -1;
         int pendingFromLine = -1;
@@ -1408,7 +1437,8 @@ class SourceTab extends AbstractTab {
                 linkableBlockIndent = -1;
                 String inlineUri = extractInlineUri(trimmed, "from");
                 if (inlineUri != null) {
-                    emitRouteEntry(fromEntries, currentRouteId, inlineUri, filePath, i);
+                    emitRouteEntry(fromEntries, kameletRouteId(kamelet, currentRouteId), kameletFromUri(kamelet, inlineUri),
+                            filePath, i);
                 } else {
                     pendingFromLine = i;
                 }
@@ -1419,7 +1449,8 @@ class SourceTab extends AbstractTab {
             if (pendingFromLine >= 0 && trimmed.startsWith("uri:")) {
                 String uri = extractYamlValue(trimmed, "uri");
                 if (uri != null) {
-                    emitRouteEntry(fromEntries, currentRouteId, uri, filePath, pendingFromLine);
+                    emitRouteEntry(fromEntries, kameletRouteId(kamelet, currentRouteId), kameletFromUri(kamelet, uri),
+                            filePath, pendingFromLine);
                 }
                 pendingFromLine = -1;
                 continue;
@@ -1472,6 +1503,33 @@ class SourceTab extends AbstractTab {
         }
     }
 
+    /** The metadata.name of a Kamelet file, or null. */
+    static String kameletName(List<String> lines) {
+        boolean metadata = false;
+        for (String line : lines) {
+            if (line.isBlank() || line.trim().startsWith("#")) {
+                continue;
+            }
+            if (lineIndent(line) == 0) {
+                metadata = line.trim().equals("metadata:");
+            } else if (metadata && line.trim().startsWith("name:")) {
+                String name = extractYamlValue(line.trim(), "name");
+                return name != null && !name.isEmpty() ? name : null;
+            }
+        }
+        return null;
+    }
+
+    private static String kameletRouteId(String kamelet, String routeId) {
+        return kamelet != null && (routeId == null || routeId.isEmpty()) ? kamelet : routeId;
+    }
+
+    /** An action or a sink is entered from kamelet:source: the routes reach it as kamelet:<its name>. */
+    private static String kameletFromUri(String kamelet, String uri) {
+        return kamelet != null && (uri.equals("kamelet:source") || uri.startsWith("kamelet:source?"))
+                ? "kamelet:" + kamelet : uri;
+    }
+
     private void emitRouteEntry(List<RouteEntry> index, String routeId, String fromUri, String filePath, int fromLine) {
         String baseUri = stripQueryParams(fromUri);
         if (baseUri == null || baseUri.isEmpty()) {
@@ -1520,7 +1578,7 @@ class SourceTab extends AbstractTab {
 
     /** The beans and classes the project declares, read again when a file of the project changed. */
     ProjectBeans projectBeans() {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - projectBeansChecked < 2000) {
             // the quick doc asks on every frame: look at the files at most every 2 seconds
             return projectBeans;
@@ -1539,8 +1597,8 @@ class SourceTab extends AbstractTab {
     }
 
     /**
-     * The quick doc of a line with what the project knows about it put first: the values of its property placeholders
-     * and where the bean it refers to is declared.
+     * The quick doc of a line with what the project knows about it put first: the body types its steps have been
+     * reached with, the values of its property placeholders and where the bean it refers to is declared.
      */
     private SourceViewer.EditQuickDocProvider withProjectDocs(SourceViewer.EditQuickDocProvider provider) {
         return (lines, row) -> {
@@ -1548,7 +1606,13 @@ class SourceTab extends AbstractTab {
             if (row < 0 || row >= lines.size()) {
                 return base;
             }
-            List<SourceViewer.DocEntry> extra = new ArrayList<>(assist.placeholderDocs(lines.get(row)));
+            List<SourceViewer.DocEntry> extra = new ArrayList<>();
+            // the body types the steps of the line have been reached with, while it runs as shown (CAMEL-25897)
+            SourceViewer.DocEntry bodyTypes = sourceViewer.liveColumn().bodyTypesDoc(row);
+            if (bodyTypes != null) {
+                extra.add(bodyTypes);
+            }
+            extra.addAll(assist.placeholderDocs(lines.get(row)));
             ProjectBeans.Location bean = projectBeans().refOn(lines.get(row));
             if (bean != null) {
                 extra.add(new SourceViewer.DocEntry(ProjectBeans.describe(bean), false, "Bean"));
@@ -1668,23 +1732,23 @@ class SourceTab extends AbstractTab {
         return result;
     }
 
-    /** Reverse links: a from line to a route that sends to it (jumps to the caller's to line). */
+    /**
+     * Reverse links: a from line to the route that sends to it (jumps to the caller's to line), or when several do, to
+     * a popup to choose one of them: a Kamelet or a direct: route used by more than one route.
+     */
     private void addReverseLinks(String currentFilePath, Map<Integer, SourceViewer.JumpLink> result) {
         for (RouteEntry re : routeIndex) {
             if (!currentFilePath.equals(re.filePath())) {
                 continue;
             }
-            for (ToEntry te : toIndex) {
-                if (te.routeId().equals(re.routeId())) {
-                    continue;
-                }
-                if (re.fromUri().equals(te.toUri())) {
-                    // add jump link on the from: line pointing to the caller
-                    String callerRouteId = te.routeId().isEmpty() ? "route" : te.routeId();
-                    result.putIfAbsent(re.fromLine(),
-                            new SourceViewer.JumpLink(callerRouteId, te.filePath(), te.toLine()));
-                    break;
-                }
+            List<ToEntry> callers = callers(re);
+            if (callers.size() == 1) {
+                ToEntry te = callers.get(0);
+                String callerRouteId = te.routeId().isEmpty() ? "route" : te.routeId();
+                result.putIfAbsent(re.fromLine(), new SourceViewer.JumpLink(callerRouteId, te.filePath(), te.toLine()));
+            } else if (callers.size() > 1) {
+                result.putIfAbsent(re.fromLine(),
+                        new SourceViewer.JumpLink(callers.size() + " callers", null, -1, re.fromUri()));
             }
         }
     }
@@ -1724,7 +1788,27 @@ class SourceTab extends AbstractTab {
             }
             return;
         }
-        gotoRoutePopup.openItems(usagesOf(uri), "Usages of " + uri);
+        // the line the popup is opened on is not one of the places to go to
+        List<GotoRoutePopup.RouteItem> items = withoutLine(usagesOf(uri),
+                sourceViewer.getCurrentFilePath(), sourceViewer.getSelectedLine());
+        if (items.isEmpty()) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept(uri + " is used only here", false);
+            }
+            return;
+        }
+        gotoRoutePopup.openItems(items, "Usages of " + uri);
+    }
+
+    /** The places without the one at the line of the file. */
+    static List<GotoRoutePopup.RouteItem> withoutLine(List<GotoRoutePopup.RouteItem> items, String file, int line) {
+        List<GotoRoutePopup.RouteItem> answer = new ArrayList<>();
+        for (GotoRoutePopup.RouteItem item : items) {
+            if (!(item.filePath().equals(file) && item.fromLine() == line)) {
+                answer.add(item);
+            }
+        }
+        return answer;
     }
 
     /** The routes that consume from the endpoint and the steps that send to it. */
@@ -1778,7 +1862,38 @@ class SourceTab extends AbstractTab {
     }
 
     private void handleJumpLink(SourceViewer.JumpLink link) {
+        if (link.callersOf() != null) {
+            // sent to from more than one place: choose which
+            gotoRoutePopup.openItems(callersOf(link.callersOf()), "Callers of " + link.callersOf());
+            return;
+        }
         openFileAt(link.filePath(), link.targetLine());
+    }
+
+    /** The steps of other routes that send to the endpoint a route consumes from. */
+    List<GotoRoutePopup.RouteItem> callersOf(String uri) {
+        List<GotoRoutePopup.RouteItem> items = new ArrayList<>();
+        for (RouteEntry re : routeIndex) {
+            if (uri.equals(re.fromUri())) {
+                for (ToEntry te : callers(re)) {
+                    String routeId = te.routeId().isEmpty() ? "route" : te.routeId();
+                    items.add(new GotoRoutePopup.RouteItem(routeId, "to " + uri, te.filePath(), te.toLine()));
+                }
+                break;
+            }
+        }
+        return items;
+    }
+
+    /** The steps of the other routes that send to the route. */
+    private List<ToEntry> callers(RouteEntry re) {
+        List<ToEntry> answer = new ArrayList<>();
+        for (ToEntry te : toIndex) {
+            if (!te.routeId().equals(re.routeId()) && re.fromUri().equals(te.toUri())) {
+                answer.add(te);
+            }
+        }
+        return answer;
     }
 
     /** A uri: line, also as the first key of a list item: - uri: direct:billing in the cases of a switch. */

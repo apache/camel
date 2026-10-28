@@ -67,6 +67,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "Total number of exchanges") long exchangesTotal,
             @Metadata(description = "Number of failed exchanges") long exchangesFailed,
             @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Total number of exchanges that came from a remote endpoint") long remoteExchangesTotal,
+            @Metadata(description = "Number of failed exchanges that came from a remote endpoint") long remoteExchangesFailed,
+            @Metadata(description = "Number of inflight exchanges that came from a remote endpoint") long remoteExchangesInflight,
             @Metadata(description = "Mean processing time in milliseconds") long meanProcessingTime,
             @Metadata(description = "Max processing time in milliseconds") long maxProcessingTime,
             @Metadata(description = "Min processing time in milliseconds") long minProcessingTime,
@@ -89,12 +92,18 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "The route note (only present when configured)") String note,
             @Metadata(description = "Whether the route was created by a Kamelet") boolean createdByKamelet,
             @Metadata(description = "Whether the route was created by a route template") boolean createdByRouteTemplate,
+            @Metadata(description = "The id of the route template (or Kamelet) the route was created from (only present when known)") String routeTemplateId,
             @Metadata(description = "The route's endpoint URI") String from,
             @Metadata(description = "Whether the endpoint is remote") boolean remote,
             @Metadata(description = "The source location (only present when known)") String source,
+            @Metadata(description = "The source that declares the templated route the route was created from (only present when known)") String templatedRouteSource,
+            @Metadata(description = "The checksum of the route as written, the same in every run: compare it with an earlier run to tell whether the route changed (only present when known, as it needs camel-xml-io)") String checksum,
+            @Metadata(description = "The revision of the route in this run: 1 when it is added, one more each time it is added again with another checksum, such as by a reload (only present when the checksum is known)") Integer revision,
             @Metadata(description = "The route state") String state,
             @Metadata(description = "Whether the route supports suspension") boolean supportsSuspension,
             @Metadata(description = "Route uptime, human readable text") String uptime,
+            @Metadata(description = "The number of steps that have been reached with more than one body type, across the messages: a part of the route that is dynamic (only present when there are any, as the message history records the body types, such as in the dev profile)") Integer variedBodyTypes,
+            @Metadata(description = "The number of steps that have been reached with bodies of more than one kind (null, payload, data or collection): these need attention, as a step that writes or sends fails for the data, and a step that reads fields fails for the payload. The route-structure console says which steps (only present when there are any)") Integer mixedBodyKinds,
             @Metadata(description = "The last lifecycle error (only present when one has occurred)") LastError lastError,
             @Metadata(description = "Runtime statistics") Statistics statistics,
             @Metadata(description = "The route's processors (only present when requested)") List<ProcessorDevConsole.ProcessorEntry> processors) {
@@ -158,10 +167,19 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mrb.isCreatedByRouteTemplate()) {
                 sb.append(String.format("%n    Created By Route Template: %s", true));
             }
+            if (mrb.getRouteTemplateId() != null) {
+                sb.append(String.format("%n    Route Template Id: %s", mrb.getRouteTemplateId()));
+            }
             sb.append(String.format("%n    From: %s", mrb.getEndpointUri()));
             sb.append(String.format("%n    Remote: %s", mrb.isRemoteEndpoint()));
             if (mrb.getSourceLocation() != null) {
                 sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
+            }
+            if (mrb.getTemplatedRouteSource() != null) {
+                sb.append(String.format("%n    Templated Route Source: %s", mrb.getTemplatedRouteSource()));
+            }
+            if (mrb.getChecksum() != null) {
+                sb.append(String.format("%n    Checksum: %s (revision %d)", mrb.getChecksum(), mrb.getRevision()));
             }
             sb.append(String.format("%n    State: %s", mrb.getState()));
             Route r = getCamelContext().getRoute(mrb.getRouteId());
@@ -302,11 +320,17 @@ public class RouteDevConsole extends AbstractDevConsole {
             List<ProcessorDevConsole.ProcessorEntry> procList = processors ? includeProcessorsJson(mrb) : null;
 
             Route r = getCamelContext().getRoute(mrb.getRouteId());
+            // the steps reached with more than one body type, and with more than one kind (CAMEL-25750)
+            int varied = mrb.getVariedBodyTypes();
+            int mixed = mrb.getMixedBodyKinds();
             list.add(new RouteEntry(
                     mrb.getRouteId(), mrb.getRouteGroup(), mrb.getNodePrefixId(), mrb.getDescription(), mrb.getNote(),
-                    mrb.isCreatedByKamelet(), mrb.isCreatedByRouteTemplate(), mrb.getEndpointUri(),
-                    mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getState(),
-                    r != null && r.supportsSuspension(), mrb.getUptime(), lastError, stats, procList));
+                    mrb.isCreatedByKamelet(), mrb.isCreatedByRouteTemplate(), mrb.getRouteTemplateId(), mrb.getEndpointUri(),
+                    mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getTemplatedRouteSource(), mrb.getChecksum(),
+                    mrb.getRevision() > 0 ? mrb.getRevision() : null, mrb.getState(),
+                    r != null && r.supportsSuspension(), mrb.getUptime(), varied > 0 ? varied : null, mixed > 0 ? mixed : null,
+                    lastError,
+                    stats, procList));
             return null;
         };
         doCall(options, task);
@@ -536,6 +560,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 coverage, hasLoad ? load1 : null, hasLoad ? load5 : null, hasLoad ? load15 : null,
                 thp.isEmpty() ? null : thp,
                 mrb.getIdleSince(), mrb.getExchangesTotal(), mrb.getExchangesFailed(), mrb.getExchangesInflight(),
+                mrb.getRemoteExchangesTotal(), mrb.getRemoteExchangesFailed(), mrb.getRemoteExchangesInflight(),
                 mrb.getMeanProcessingTime(), mrb.getMaxProcessingTime(), mrb.getMinProcessingTime(),
                 p50, p95, p99, lastProcessingTime, deltaProcessingTime,
                 lastCreated, lastCompleted, lastFailureHandled, lastFailed);

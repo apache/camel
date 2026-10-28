@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -57,6 +58,7 @@ import software.amazon.awssdk.services.s3.model.CompletedPart;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
@@ -71,9 +73,22 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3StreamUploadProducer.class);
     private static final String TIMEOUT_CHECKER_EXECUTOR_NAME = "S3_Streaming_Upload_Timeout_Checker";
+    // the number of timestamp windows whose completed uploads are counted
+    private static final int MAX_COUNTED_WINDOWS = 10000;
     private AtomicInteger part = new AtomicInteger();
     private UploadState uploadAggregate = null;
     private final Map<Long, UploadState> timestampBasedUploads = new ConcurrentHashMap<>();
+    // The uploads completed for each timestamp window, guarded by the lock. A window is uploaded again when it gets
+    // more messages after its upload was completed (batchMessageNumber, batchSize or streamingUploadTimeout); the new
+    // object gets a name of its own, as an object with the name of the first one would replace it. The count of a
+    // window starts from the objects of the window already in the bucket (uploaded before a restart). Windows come in
+    // time order, so only the windows seen last are kept, and a long-running producer does not keep every window.
+    private final Map<Long, Integer> completedUploadsByWindow = new LinkedHashMap<>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Long, Integer> eldest) {
+            return size() > MAX_COUNTED_WINDOWS;
+        }
+    };
     private final Lock lock = new ReentrantLock();
     private transient String s3ProducerToString;
     private ScheduledExecutorService timeoutCheckerExecutorService;
@@ -109,10 +124,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             }
 
             // Complete any pending timestamp-based uploads
-            for (UploadState state : timestampBasedUploads.values()) {
+            for (Map.Entry<Long, UploadState> entry : timestampBasedUploads.entrySet()) {
+                UploadState state = entry.getValue();
                 if (ObjectHelper.isNotEmpty(state) && state.buffer.size() > 0) {
                     uploadPart(state);
                     completeUpload(state);
+                    completedUploadsByWindow.merge(entry.getKey(), 1, Integer::sum);
                 }
             }
             timestampBasedUploads.clear();
@@ -155,6 +172,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                             try {
                                 uploadPart(state);
                                 completeUpload(state);
+                                completedUploadsByWindow.merge(entry.getKey(), 1, Integer::sum);
                             } catch (Exception e) {
                                 LOG.warn("Error during timeout-triggered upload flush for {}", state.dynamicKeyName, e);
                             }
@@ -373,7 +391,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     final String keyName = getConfiguration().getKeyName();
                     final String fileName = AWS2S3Utils.determineFileName(keyName);
                     final String extension = AWS2S3Utils.determineFileExtension(keyName);
-                    newState.dynamicKeyName = generateTimestampBasedFileName(fileName, extension, timestampWindow);
+                    newState.dynamicKeyName = generateTimestampBasedFileName(fileName, extension, timestampWindow,
+                            completedUploads(timestampWindow, fileName, extension));
 
                     // Initialize multipart upload
                     CreateMultipartUploadRequest.Builder createMultipartUploadRequest
@@ -423,6 +442,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         uploadPart(state);
                     CompleteMultipartUploadResponse uploadResult = completeUpload(state);
                     timestampBasedUploads.remove(timestampWindow);
+                    completedUploadsByWindow.merge(timestampWindow, 1, Integer::sum);
                     if (getConfiguration().isMultiPartUpload()) {
                         maxRead = Math.toIntExact(getConfiguration().getPartSize());
                     }
@@ -517,33 +537,20 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 }
                 break;
             case random:
-                if (part > 0) {
-                    if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + "-" + id.toString() + ext;
-                    } else {
-                        dynamicKeyName = fileName + "-" + id.toString();
-                    }
+                // every upload, the first one of the producer too: a producer that is started again, or another
+                // producer with the same keyName, would otherwise replace the first object with its own
+                if (ObjectHelper.isNotEmpty(ext)) {
+                    dynamicKeyName = fileName + "-" + id.toString() + ext;
                 } else {
-                    if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + ext;
-                    } else {
-                        dynamicKeyName = fileName;
-                    }
+                    dynamicKeyName = fileName + "-" + id.toString();
                 }
                 break;
             case timestamp:
-                if (part > 0) {
-                    if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + "-" + timestamp + ext;
-                    } else {
-                        dynamicKeyName = fileName + "-" + timestamp;
-                    }
+                // every upload, as for random
+                if (ObjectHelper.isNotEmpty(ext)) {
+                    dynamicKeyName = fileName + "-" + timestamp + ext;
                 } else {
-                    if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + ext;
-                    } else {
-                        dynamicKeyName = fileName;
-                    }
+                    dynamicKeyName = fileName + "-" + timestamp;
                 }
                 break;
             default:
@@ -557,7 +564,79 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         return (timestamp / windowSize) * windowSize;
     }
 
-    private String generateTimestampBasedFileName(String baseFileName, String extension, long timestampWindow) {
+    /**
+     * The number of the completed uploads of a timestamp window. The first time this producer sees the window, it is
+     * the number of the objects of the window in the bucket, so an upload after a restart does not replace them.
+     */
+    private int completedUploads(long timestampWindow, String fileName, String extension) {
+        Integer completed = completedUploadsByWindow.get(timestampWindow);
+        if (completed == null) {
+            completed = uploadsInBucket(generateTimestampBasedFileName(fileName, null, timestampWindow, 0), extension);
+            completedUploadsByWindow.put(timestampWindow, completed);
+        }
+        return completed;
+    }
+
+    /**
+     * The number of the uploads of a timestamp window stored in the bucket: an object named like the first upload of
+     * the window counts 1, an object of the later upload number N counts N + 1, and the highest wins. When the bucket
+     * cannot be listed (for example without the s3:ListBucket permission), the count starts from 0.
+     */
+    private int uploadsInBucket(String windowKey, String extension) {
+        String ext = extension != null ? extension : "";
+        int uploads = 0;
+        try {
+            String continuationToken = null;
+            do {
+                ListObjectsV2Request.Builder request
+                        = ListObjectsV2Request.builder().bucket(getConfiguration().getBucketName()).prefix(windowKey);
+                if (continuationToken != null) {
+                    request.continuationToken(continuationToken);
+                }
+                ListObjectsV2Response response = getEndpoint().getS3Client().listObjectsV2(request.build());
+                for (S3Object object : response.contents()) {
+                    uploads = Math.max(uploads, uploadNumber(object.key(), windowKey, ext));
+                }
+                continuationToken = Boolean.TRUE.equals(response.isTruncated()) ? response.nextContinuationToken() : null;
+            } while (continuationToken != null);
+        } catch (Exception e) {
+            LOG.warn("Cannot list the objects of {} in bucket {}, so its uploads are numbered from the first one and may"
+                     + " replace objects uploaded before this producer started: {}",
+                    windowKey + ext, getConfiguration().getBucketName(), e.getMessage());
+            LOG.debug("Listing the objects of {} failed", windowKey + ext, e);
+            return 0;
+        }
+        return uploads;
+    }
+
+    /**
+     * 1 for the object of the first upload of the window, N + 1 for the object of the later upload number N, 0 for an
+     * object that is not an upload of the window.
+     */
+    private static int uploadNumber(String key, String windowKey, String extension) {
+        if (key == null || key.length() < windowKey.length() + extension.length() || !key.startsWith(windowKey)
+                || !key.endsWith(extension)) {
+            return 0;
+        }
+        String suffix = key.substring(windowKey.length(), key.length() - extension.length());
+        if (suffix.isEmpty()) {
+            return 1;
+        }
+        // at most 9 digits, so the number fits an int
+        if (suffix.length() > 1 && suffix.length() <= 10 && suffix.charAt(0) == '-'
+                && suffix.substring(1).chars().allMatch(c -> c >= '0' && c <= '9')) {
+            return Integer.parseInt(suffix.substring(1)) + 1;
+        }
+        return 0;
+    }
+
+    /**
+     * The name of an upload of a timestamp window: the first upload of the window has the name of the window, a later
+     * one (the window got more messages after its upload was completed) gets the number of the uploads before it as a
+     * suffix, so it does not replace them.
+     */
+    private String generateTimestampBasedFileName(
+            String baseFileName, String extension, long timestampWindow, int completedUploads) {
         Date windowStart = new Date(timestampWindow);
         Date windowEnd = new Date(timestampWindow + getConfiguration().getTimestampWindowSizeMillis());
 
@@ -577,6 +656,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         SimpleDateFormat timeFormat = new SimpleDateFormat(timePattern);
         timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         String timeRange = timeFormat.format(windowStart) + "-" + timeFormat.format(windowEnd);
+        if (completedUploads > 0) {
+            timeRange = timeRange + "-" + completedUploads;
+        }
 
         if (extension != null && !extension.isEmpty()) {
             return baseFileName + "_" + sdf.format(windowStart) + "_" + timeRange + extension;

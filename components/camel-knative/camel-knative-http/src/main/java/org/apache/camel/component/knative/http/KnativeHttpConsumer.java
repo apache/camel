@@ -48,6 +48,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,7 +193,9 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         if (route != null) {
+            // a removed route cannot be added to the router again, so a start creates a new one
             route.remove();
+            route = null;
         }
 
         super.doStop();
@@ -261,7 +264,11 @@ public class KnativeHttpConsumer extends DefaultConsumer {
                                 if (body != null) {
                                     request.response().end(body);
                                 } else {
-                                    request.response().setStatusCode(204);
+                                    // 204 tells the caller that the event has been delivered: a failed exchange
+                                    // without reply keeps its error status, so that the event is sent again
+                                    if (!exchange.isFailed()) {
+                                        request.response().setStatusCode(204);
+                                    }
                                     request.response().end();
                                 }
                             } catch (Exception e) {
@@ -327,16 +334,20 @@ public class KnativeHttpConsumer extends DefaultConsumer {
             for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
                 final String key = entry.getKey();
                 final Object value = entry.getValue();
-
-                for (Object it : org.apache.camel.support.ObjectHelper.createIterable(value, null)) {
-                    String headerValue = tc.convertTo(String.class, it);
-                    if (headerValue == null) {
-                        continue;
-                    }
-                    if (!headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
-                        response.putHeader(key, headerValue);
-                    }
+                if (value instanceof String str && str.isBlank()) {
+                    // a blank value is not sent
+                    continue;
                 }
+                // a collection or an object array is sent as one header per value; any other value is a single header
+                HttpUtil.applyHeaderValue(headerFilterStrategy, message.getExchange(), value, tc, key,
+                        (multiValues, prev) -> {
+                            if (multiValues != null) {
+                                // putHeader replaces the header, so all the values must be given at once
+                                response.putHeader(key, multiValues);
+                            } else if (prev != null) {
+                                response.putHeader(key, prev);
+                            }
+                        });
             }
 
             KnativeHttpSupport.remapCloudEventHeaders(configuration.getCloudEvent(), message);

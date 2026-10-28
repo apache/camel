@@ -34,7 +34,7 @@ public class JGroupsComponentTest extends CamelTestSupport {
 
     static final String MESSAGE = "MESSAGE";
 
-    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s", CLUSTER_NAME);
+    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s?acceptAllObjects=true", CLUSTER_NAME);
 
     // Fixtures
 
@@ -53,7 +53,7 @@ public class JGroupsComponentTest extends CamelTestSupport {
                 defaultComponent.setChannel(defaultComponentChannel);
                 context().addComponent("my-default-jgroups", defaultComponent);
 
-                from("my-default-jgroups:" + CLUSTER_NAME).to("mock:default");
+                from("my-default-jgroups:" + CLUSTER_NAME + "?acceptAllObjects=true").to("mock:default");
                 from(CONFIGURED_ENDPOINT_URI).to("mock:configured");
             }
         };
@@ -94,7 +94,8 @@ public class JGroupsComponentTest extends CamelTestSupport {
     @Test
     public void shouldCreateChannel() {
         // When
-        JGroupsEndpoint endpoint = getMandatoryEndpoint("my-default-jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
+        JGroupsEndpoint endpoint
+                = getMandatoryEndpoint("my-default-jgroups:" + CLUSTER_NAME + "?acceptAllObjects=true", JGroupsEndpoint.class);
         JGroupsComponent component = (JGroupsComponent) endpoint.getComponent();
 
         // Then

@@ -108,6 +108,21 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
+     * Logs that Camel failed to start, for a main that runs on its own: the failure leaves {@link #run()} to the
+     * caller, and without this only the JVM prints it, on stderr, so the log of the application did not say why it
+     * stopped. As Spring Boot does, the JVM then does not print the failure a second time when it leaves main; only
+     * when it was logged, so an application without logging still sees it.
+     *
+     * @param e the failure
+     */
+    protected void logStartupFailure(Exception e) {
+        LOG.error("Error starting Camel: {}", e, e);
+        if (LOG.isErrorEnabled()) {
+            LoggedStartupFailure.skipWhenUncaught(e);
+        }
+    }
+
+    /**
      * Callback to run custom logic before CamelContext is being started.
      * <p/>
      * It is recommended to use {@link org.apache.camel.main.MainListener} instead.

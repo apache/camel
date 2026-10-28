@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kms",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "aws2-kms",
     "extendsScheme": "",
     "syntax": "aws2-kms:label",
@@ -56,6 +56,10 @@
     "CamelAwsKMSKeyArn": { "index": 7, "kind": "header", "displayName": "", "group": "createKey describeKey", "label": "createKey describeKey", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon Resource Name (ARN) of the key.", "constantName": "org.apache.camel.component.aws2.kms.KMS2Constants#KEY_ARN" },
     "CamelAwsKMSKeyState": { "index": 8, "kind": "header", "displayName": "", "group": "createKey describeKey", "label": "createKey describeKey", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The state of the key.", "constantName": "org.apache.camel.component.aws2.kms.KMS2Constants#KEY_STATE" },
     "CamelAwsKMSDeletionDate": { "index": 9, "kind": "header", "displayName": "", "group": "scheduleKeyDeletion", "label": "scheduleKeyDeletion", "required": false, "javaType": "java.time.Instant", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The date and time after which AWS KMS deletes the key.", "constantName": "org.apache.camel.component.aws2.kms.KMS2Constants#DELETION_DATE" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "pojoRequest", "value": "true", "carriers": [ "pojo" ] } ], "description": "Not used: the key id and the other inputs come from headers, such as CamelAwsKMSKeyId. With pojoRequest=true the request of the AWS SDK for the operation, such as a ListKeysRequest: another body fails" },
+    "producerOut": { "carriers": [ "pojo" ], "description": "The response of the AWS SDK for the operation, such as the CreateKeyResponse of createKey, which puts the id, the ARN and the state of the key in headers too" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.kms.KMS2Configuration", "configurationField": "configuration", "description": "Logical name" },

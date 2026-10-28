@@ -26,12 +26,15 @@ import java.util.List;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -52,11 +55,12 @@ class CamelRouteDiagramActionMultiFileTest {
         StringPrinter printer = new StringPrinter();
         CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
 
-        List<RouteInfo> routes = command.doCallSource(List.of(existing.toString(), "does-not-exist.yaml"));
+        // the missing file ends the command (exit code 3) before Camel is booted
+        CliException e = assertThrows(CliException.class,
+                () -> command.doCallSource(List.of(existing.toString(), "does-not-exist.yaml")));
 
-        assertNull(routes, "should report an error and not attempt to boot Camel when a file is missing");
-        assertTrue(printer.getOutput().contains("File does not exist: does-not-exist.yaml"),
-                "should report the missing file, was: " + printer.getOutput());
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("File does not exist: does-not-exist.yaml", e.getMessage(), "should report the missing file");
     }
 
     @Test
@@ -81,6 +85,28 @@ class CamelRouteDiagramActionMultiFileTest {
         assertTrue(routes.stream().anyMatch(r -> "route2".equals(r.routeId)));
         assertTrue(routes.stream().noneMatch(r -> "bogus".equals(r.routeId)),
                 "route-topology.json must be excluded from the merge even though it has a routes array");
+    }
+
+    @Test
+    void testReadRoutesFromFolderTakesTheErrorPathsFromTheTopologyWithErrors(@TempDir Path tempDir) throws Exception {
+        Files.writeString(tempDir.resolve("route1.json"), """
+                {"routes":[{"routeId":"checkout","code":[{"type":"from","code":"file:orders","level":0}]}]}
+                """);
+        Files.writeString(tempDir.resolve("route-topology.json"), """
+                {"nodes":[],"edges":[
+                  {"fromRouteId":"checkout","toRouteId":"parked","endpoint":"direct:parked","kind":"error",
+                   "via":"errorHandler","handling":"handled"},
+                  {"fromRouteId":"checkout","toRouteId":"payment","endpoint":"direct:charge","kind":"call"}]}
+                """);
+
+        // CAMEL-25466: with --errors the frame of each route says where its failures go
+        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain());
+        command.errors = true;
+        command.readRoutesFromFolder(tempDir, Instant.now().minusSeconds(60));
+
+        assertEquals(1, command.errorPaths.size(), "the error path only, not the call: " + command.errorPaths);
+        assertEquals("parked", command.errorPaths.get(0).toRouteId());
+        assertEquals("dead letter, handled", command.errorPaths.get(0).label());
     }
 
     @Test

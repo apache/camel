@@ -24,10 +24,13 @@ public class WhatsAppEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(13);
         props.add("apiVersion");
         props.add("authorizationToken");
         props.add("baseUri");
+        props.add("bridgeErrorHandler");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("httpClient");
         props.add("lazyStartProducer");
         props.add("phoneNumberId");
@@ -55,7 +58,7 @@ public class WhatsAppEndpointUriFactory extends org.apache.camel.support.compone
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "phoneNumberId", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

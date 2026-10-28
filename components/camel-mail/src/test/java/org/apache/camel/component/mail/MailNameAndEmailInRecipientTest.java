@@ -32,7 +32,7 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
 
     @Test
     public void testSendWithNameAndEmailInRecipient() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(davsclaus, jstrachan);
 
         // START SNIPPET: e1
         Map<String, Object> headers = new HashMap<>();

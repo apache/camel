@@ -108,6 +108,11 @@ camel-jbang reads Java routes with the parser only; the pattern matching on stri
 running Camel, in a CamelContext that is never started (CAMEL-25202); it compiles the routes only when one cannot be
 read completely, or with `--compile`.
 
+`camel cmd route-diagram`, `route-topology` and `route-structure` (and the `camel_render_route_diagram` MCP tool) read
+Java source files the same way, and dump the route structure and topology JSON from that CamelContext (CAMEL-25565). A
+route read only partly is still shown: a lambda or a processor is the placeholder step, and the parts the parser could
+not read are listed. They compile the routes only with `--compile`.
+
 == Security
 
 The parser reads sources nobody vetted: a cloned example opened in the TUI, documentation, a project an AI agent

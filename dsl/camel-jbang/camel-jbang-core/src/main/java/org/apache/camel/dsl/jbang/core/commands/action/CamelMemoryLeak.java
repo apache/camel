@@ -16,8 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +27,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -96,16 +98,9 @@ public class CamelMemoryLeak extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
-
-        long pid = pids.get(0);
+        // a --min-size that is not a size is a usage error, before the integration is asked anything
+        parseSize(minSize);
+        long pid = findOne(name).pid();
 
         if (start && "dual".equalsIgnoreCase(mode)) {
             return doDualRecording(pid);
@@ -122,13 +117,17 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             command = "status";
         }
 
-        JsonObject jo = sendAction(pid, command, start ? duration : 0);
-        if (jo == null) {
-            printer().println("Response from running Camel with PID " + pid + " not received within timeout");
-            return 1;
+        ActionResult result = jfrAction(pid, command, start ? duration : 0);
+        if (result.reply() == null) {
+            printer().printErr("Response from running Camel with PID " + pid + " not received within timeout");
+            return CliExitCode.TIMEOUT;
+        } else if (!result.isOk()) {
+            // the integration failed the action, such as when it cannot record (an error, or an exception)
+            printer().printErr(result.error());
+            return result.exitCode();
         }
 
-        return handleResponse(pid, jo);
+        return handleResponse(pid, result.reply());
     }
 
     private int doDualRecording(long pid) throws Exception {
@@ -137,61 +136,76 @@ public class CamelMemoryLeak extends ActionBaseCommand {
 
         // run 1
         printer().printf("Recording 1 of 2 (%ds)...%n", dur1);
-        JsonObject startResp = sendAction(pid, "start", dur1);
-        if (startResp == null || !"recording".equals(startResp.getString("status"))) {
-            printer().println("Error: Failed to start recording 1");
-            return 1;
+        int exit = step(pid, jfrAction(pid, "start", dur1), "recording", "Failed to start recording 1");
+        if (exit != 0) {
+            return exit;
         }
 
         waitForRecordingComplete(pid, dur1);
 
-        JsonObject stopResp = sendAction(pid, "stop", 0);
-        if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
-            printer().println("Error: Recording 1 did not complete");
-            return 1;
+        exit = step(pid, jfrAction(pid, "stop", 0), "completed", "Recording 1 did not complete");
+        if (exit != 0) {
+            return exit;
         }
 
         // run 2
         printer().printf("Recording 2 of 2 (%ds)...%n", dur2);
-        startResp = sendAction(pid, "start", dur2);
-        if (startResp == null || !"recording".equals(startResp.getString("status"))) {
-            printer().println("Error: Failed to start recording 2");
-            return 1;
+        exit = step(pid, jfrAction(pid, "start", dur2), "recording", "Failed to start recording 2");
+        if (exit != 0) {
+            return exit;
         }
 
         waitForRecordingComplete(pid, dur2);
 
-        stopResp = sendAction(pid, "stop", 0);
-        if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
-            printer().println("Error: Recording 2 did not complete");
-            return 1;
+        exit = step(pid, jfrAction(pid, "stop", 0), "completed", "Recording 2 did not complete");
+        if (exit != 0) {
+            return exit;
         }
 
         // compare
-        JsonObject cmpResp = sendAction(pid, "compare", 0);
-        if (cmpResp == null) {
-            printer().println("Error: Failed to get comparison data");
-            return 1;
+        ActionResult compared = jfrAction(pid, "compare", 0);
+        exit = step(pid, compared, null, "Failed to get comparison data");
+        if (exit != 0) {
+            return exit;
         }
 
-        return handleResponse(pid, cmpResp);
+        return handleResponse(pid, compared.reply());
+    }
+
+    /**
+     * How a step of the dual recording went: 0 when the integration answered with the expected status (any status when
+     * <tt>null</tt>), else the exit code, and the error is printed.
+     */
+    private int step(long pid, ActionResult result, String expectedStatus, String message) {
+        if (result.reply() == null) {
+            printer().printErr(message + ": no response from running Camel with PID " + pid + " within timeout");
+            return CliExitCode.TIMEOUT;
+        } else if (!result.isOk()) {
+            printer().printErr(message + ": " + result.error());
+            return result.exitCode();
+        } else if (expectedStatus != null && !expectedStatus.equals(result.reply().getString("status"))) {
+            printer().printErr(message);
+            return CliExitCode.FAILURE;
+        }
+        return 0;
     }
 
     private void waitForRecordingComplete(long pid, int dur) throws Exception {
         long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
         while (System.currentTimeMillis() < deadline) {
             Thread.sleep(3000);
-            JsonObject status = sendAction(pid, "status", 0);
+            JsonObject status = jfrAction(pid, "status", 0).reply();
             if (status != null && !"recording".equals(status.getString("status"))) {
                 break;
             }
         }
     }
 
-    private JsonObject sendAction(long pid, String command, int dur) {
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
+    /**
+     * Sends a command of the JFR memory leak action, and returns the answer (without a reply when there is none in
+     * time).
+     */
+    private ActionResult jfrAction(long pid, String command, int dur) throws IOException {
         JsonObject root = new JsonObject();
         root.put("action", "jfr-memory-leak");
         root.put("command", command);
@@ -206,25 +220,21 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             root.put("minSize", String.valueOf(minBytes));
         }
 
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-
         int timeout = "start".equals(command) ? 15000 : 30000;
-        JsonObject jo = getJsonObject(outputFile, timeout);
-        PathUtils.deleteFile(outputFile);
-        return jo;
+        return ActionClient.execute(pid, root, timeout);
     }
 
     private int handleResponse(long pid, JsonObject jo) {
         String responseStatus = jo.getString("status");
 
-        if ("error".equals(responseStatus)) {
-            printer().println("Error: " + jo.getString("error"));
-            return 1;
+        if ("recording".equals(responseStatus) && jo.containsKey("elapsedMs")) {
+            // the status of the recording
+            printer().println("JFR recording in progress for PID: " + pid);
+            printer().println("Elapsed: " + formatDuration(jo.getLongOrDefault("elapsedMs", 0)));
+            if (jo.containsKey("remainingMs")) {
+                printer().println("Remaining: " + formatDuration(jo.getLongOrDefault("remainingMs", 0)));
+            }
+            return 0;
         }
 
         if ("recording".equals(responseStatus)) {
@@ -242,6 +252,13 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             if (jo.containsKey("note")) {
                 printer().println(jo.getString("note"));
             }
+            return 0;
+        }
+
+        if ("completed".equals(responseStatus) && jo.containsKey("hasCachedResults")) {
+            // the status after the recording
+            printer().println("JFR recording completed. Use --query to view results.");
+            printer().println("Cached samples: " + jo.getIntegerOrDefault("sampleCount", 0));
             return 0;
         }
 
@@ -275,7 +292,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
                 printTable(rows);
             } else {
                 printer().println("No old object samples captured.");
-                printer().println("Tip: Try a longer recording duration or ensure GC occurs during recording.");
+                printer().printTip("Try a longer recording duration or ensure GC occurs during recording.");
             }
             return 0;
         }
@@ -286,8 +303,9 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             long baseDur = baselineInfo != null ? baselineInfo.getLongOrDefault("recordingDurationMs", 0) : 0;
             long curDur = currentInfo != null ? currentInfo.getLongOrDefault("recordingDurationMs", 0) : 0;
             double durRatio = jo.getDoubleOrDefault("durationRatio", 1.0);
-            printer().printf("PID: %s\tRun 1: %s\tRun 2: %s\tDuration ratio: %.1fx%n",
-                    pid, formatDuration(baseDur), formatDuration(curDur), durRatio);
+            // the same decimal point in every locale
+            printer().println(String.format(Locale.US, "PID: %s\tRun 1: %s\tRun 2: %s\tDuration ratio: %.1fx",
+                    pid, formatDuration(baseDur), formatDuration(curDur), durRatio));
 
             JsonArray comps = (JsonArray) jo.get("comparisons");
             if (comps != null && !comps.isEmpty()) {
@@ -322,20 +340,10 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             return 0;
         }
 
-        // status response with cached results info
-        if (jo.containsKey("hasCachedResults") && jo.getBooleanOrDefault("hasCachedResults", false)) {
-            printer().println("JFR recording completed. Use --query to view results.");
-            printer().println("Cached samples: " + jo.getIntegerOrDefault("sampleCount", 0));
-        } else if (jo.containsKey("elapsedMs")) {
-            long elapsed = jo.getLongOrDefault("elapsedMs", 0);
-            printer().println("JFR recording in progress for PID: " + pid);
-            printer().println("Elapsed: " + formatDuration(elapsed));
-            if (jo.containsKey("remainingMs")) {
-                printer().println("Remaining: " + formatDuration(jo.getLongOrDefault("remainingMs", 0)));
-            }
-        }
-
-        return 0;
+        // an integration without the jfr-memory-leak dev console answers without a status
+        printer().printErr("Running Camel with PID " + pid
+                           + " cannot record memory leaks, as it has no jfr-memory-leak dev console (camel-console)");
+        return CliExitCode.FAILURE;
     }
 
     private void printTable(List<Row> rows) {
@@ -441,26 +449,30 @@ public class CamelMemoryLeak extends ActionBaseCommand {
         }
     }
 
+    /**
+     * The number of bytes of a size such as 1024, 10B, 10KB, 1.5MB or 2G.
+     *
+     * @throws CliException (exit code 2) when the value is not a size
+     */
     static long parseSize(String value) {
-        if (value == null || value.isEmpty() || "0".equals(value)) {
+        if (value == null || value.isBlank()) {
             return 0;
         }
         String v = value.trim().toUpperCase(Locale.US);
         long multiplier = 1;
         if (v.endsWith("GB") || v.endsWith("G")) {
             multiplier = 1024L * 1024 * 1024;
-            v = v.replaceAll("[GMK]B?$", "");
         } else if (v.endsWith("MB") || v.endsWith("M")) {
             multiplier = 1024L * 1024;
-            v = v.replaceAll("[GMK]B?$", "");
         } else if (v.endsWith("KB") || v.endsWith("K")) {
             multiplier = 1024;
-            v = v.replaceAll("[GMK]B?$", "");
         }
+        // without the unit, which can also be B for bytes
+        v = v.replaceAll("[GMK]?B?$", "");
         try {
             return (long) (Double.parseDouble(v) * multiplier);
         } catch (NumberFormatException e) {
-            return 0;
+            throw CliException.usage("--min-size must be a size such as 1024, 10KB or 1MB, was: " + value);
         }
     }
 

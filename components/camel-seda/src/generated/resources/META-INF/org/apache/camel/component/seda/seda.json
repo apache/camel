@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-seda",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "seda",
     "extendsScheme": "",
     "syntax": "seda:name",
@@ -21,7 +21,8 @@
     "producerOnly": false,
     "lenientProperties": false,
     "browsable": true,
-    "remote": false
+    "remote": false,
+    "internal": true
   },
   "componentProperties": {
     "bridgeErrorHandler": { "index": 0, "kind": "property", "displayName": "Bridge Error Handler", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component and make this possible for future releases. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored." },
@@ -34,6 +35,11 @@
     "autowiredEnabled": { "index": 7, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "defaultQueueFactory": { "index": 8, "kind": "property", "displayName": "Default Queue Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the default queue factory." },
     "queueSize": { "index": 9, "kind": "property", "displayName": "Queue Size", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1000, "description": "Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold)." }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unchanged" ], "description": "The body the producer sent" },
+    "producerIn": { "carriers": [ "any" ] },
+    "producerOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "waitForTaskToComplete", "value": "Never", "carriers": [ "unchanged" ] } ], "description": "Unchanged for a message that expects no reply (InOnly). A message that expects one (InOut), or waitForTaskToComplete=Always, waits for the body the seda route ends with" }
   },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of queue" },

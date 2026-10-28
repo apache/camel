@@ -6,16 +6,26 @@ they are sent to. A typical integration has multiple routes working together.
 
 ## Route Table Columns
 
-- **ROUTE** — Unique route identifier (e.g., `timer-to-log`, `seda-consumer`)
+- **ROUTE** — Unique route identifier (e.g., `timer-to-log`, `seda-consumer`). A route added again changed in this run, such as by a reload of its file, has its revision after the id, dimmed: `orders (rev 3)` runs the third version of its route since the integration started
 - **FROM** — The endpoint that triggers this route (e.g., `timer`, `kafka`, `file`). This is the source of messages
 - **STATUS** — Route state: `Started` (running), `Stopped` (not running), or `Suspended` (paused, can be resumed)
 - **MSG/S** or **MSG/M** — Current message throughput (per second or per minute) for this route. Configure in Settings (F2)
 - **TOTAL** — Total exchanges processed by this route since startup
 - **FAIL** — Exchanges that ended with an unhandled error in this route
+- **BODY TYPES** — Shown when steps of a route have been reached with more than one body type, across the messages (with the message history on, such as `camel run --dev`): how many steps varied, and how many of them with bodies of more than one kind, which need attention (`⚠ 1 mixed · 2 varied`). The processors of the selected route then have a BODY TYPES column too, with the types each step has been reached with
 - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed
 - **MEAN** — Average exchange processing time in milliseconds. A rising MEAN may indicate a downstream service getting slower
 - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
 - **SINCE-LAST** — Time since the last exchange activity on this route, shown as up to three values separated by `/`: started/completed/failed (e.g., `1s/3s/1m14s`). Values are omitted when there is no activity of that type
+
+## Processors
+
+Below the routes are the steps of the selected route, with the same numbers:
+
+- **TYPE** — The kind of step (`to`, `setBody`, `choice`), indented under the step it is inside, such as the steps of a branch of a choice
+- **LINE** — The line of the route source the step is on (when the runtime records the source locations)
+- **PROCESSOR** — What the step does, as the route diagram shows it: where it sends to (`log:outbox`), its expression (`simple{${body}}`) or its data format (`jackson`). An id the route gives a step (`id: audit`) is shown first; the ids Camel generates (`to1`, `setBody2`) are left out, as they only repeat the type
+- **BODY TYPES** — The body types the step has been reached with, across the messages (with the message history on)
 
 ## Percentile Latency (P50/P95/P99)
 
@@ -70,6 +80,15 @@ In the topology view, use arrow keys to select route boxes:
 When a route is selected, an **Info panel** appears on the left
 showing key metrics: state, uptime, throughput, exchange counts,
 and processing times.
+
+The Info panel also has the **checksum** of the route: a short hash of
+the route as written, the same in every run. `camel cmd route-structure`
+gives the checksum of the routes of a source file, so it tells whether a
+file has the route that runs. A route added again changed in this run,
+such as by a reload, has its **revision** too: `Revision: 3 · 2 changes`.
+An integration of a Camel version before 4.24, or without camel-xml-io, has
+neither: `camel run` always has camel-xml-io, while a Spring Boot or Quarkus
+application may not.
 
 Press `Enter` on a selected route to **drill down** into its
 internal EIP structure (the route diagram). Press `Esc` to
@@ -133,6 +152,12 @@ in the diagram.
 - `↑↓←→` — navigate between route boxes
 - `Enter` — drill down into selected route
 - `c` — show route source code
+- `+` / `-` — zoom in or out: detailed, compact (the default: boxes of
+  one line, the count in the border, the layers closer together) and
+  bare (a mark, the name and the count of each route on one row)
+- `z` — fit: the most detail in which the whole topology fits the screen
+- `p` — show or hide the mini panels over the diagram: the map of the
+  topology (top right of a route) and the tree of the route (bottom right)
 - `Esc` — close diagram (back to route table)
 - `m` — toggle metrics on/off
 - `e` — toggle external systems on/off
@@ -143,10 +168,27 @@ in the diagram.
 - `Enter` — jump to linked route (when `↵` indicator shown)
 - `d` — toggle detail panel (EIP/component catalog docs)
 - `g` — go to node (fuzzy search popup)
+- `+` / `-` — zoom in or out: detailed (boxes with up to three lines),
+  compact (the default: boxes with one line, the steps closer together) and bare (a
+  mark and the text of each step on one row, no boxes) and overview
+  (a cell per step, to see the shape of a large route, only the
+  selected step with its text); the view bar
+  shows the level and where it is (`compact 3/4`), the title how many
+  steps the route has and how many are folded (`38 steps · 12 folded`);
+  the selected step stays where it is on the screen
+- `z` — fit: the most detail in which the whole route fits the screen
+- `Space` — fold the block of the selected step (a choice, a branch,
+  a split, a doTry...) into its first step, which says how many steps
+  are folded; `Space` on a folded step unfolds it, as does a click on
+  its `▸ 12 steps folded`; the folds are kept for the next start
+- `f` — fold all the blocks of the route, the blocks in other blocks too
+  (`Space` on one then shows its steps with the blocks in it folded)
+- `F` — expand all the blocks of the route
 - `c` — show source code at selected node
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
 - `m` — toggle metrics
+- `y` — toggle the body types each step has been reached with, beside the arrows
 - `n` — toggle description labels
 - `PgUp/PgDn` — scroll detail panel (when detail is on)
 

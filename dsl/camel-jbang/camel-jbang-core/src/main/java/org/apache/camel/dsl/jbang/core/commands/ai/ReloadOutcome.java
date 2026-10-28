@@ -16,9 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -32,6 +39,18 @@ public final class ReloadOutcome {
     static final String FAILED = "Error reloading routes from file";
     static final String PROPERTIES = "Reloading properties";
     static final String REPORT = "did not load";
+
+    /**
+     * How often the log is read while waiting: a reload or a line the routes logged is seen at most this long after it
+     * was logged, and the write answers that much sooner (CAMEL-25661). Only the tail of the log is read.
+     */
+    static final long POLL_MILLIS = 100;
+
+    /**
+     * How long a properties reload is watched for the reload of the routes after it: the routes are reloaded after the
+     * properties they use, and a route that fails with the new values is the outcome the agent must hear.
+     */
+    static final long ROUTES_AFTER_PROPERTIES_MILLIS = 500;
 
     private ReloadOutcome() {
     }
@@ -115,23 +134,207 @@ public final class ReloadOutcome {
 
     /** Polls the integration's log for the reload of a just written file, up to the timeout. */
     public static JsonObject await(long pid, String name, String sinceKey, long timeoutMillis) {
+        return await(() -> records(pid, name), sinceKey, timeoutMillis);
+    }
+
+    /**
+     * Polls the records for the reload of a just written file, up to the timeout. A properties reload is watched
+     * {@link #ROUTES_AFTER_PROPERTIES_MILLIS} longer for the routes reload after it, whose outcome is then the answer.
+     */
+    static JsonObject await(Supplier<List<JsonObject>> records, String sinceKey, long timeoutMillis) {
         StopWatch watch = new StopWatch();
+        JsonObject properties = null;
+        long propertiesAt = 0;
         while (watch.taken() < timeoutMillis) {
-            JsonObject outcome = classify(records(pid, name), sinceKey);
-            if (outcome != null) {
+            JsonObject outcome = classify(records.get(), sinceKey);
+            if (outcome != null && !"properties".equals(outcome.getString("status"))) {
                 return outcome;
             }
+            if (outcome != null && properties == null) {
+                properties = outcome;
+                propertiesAt = watch.taken();
+            } else if (properties != null && watch.taken() - propertiesAt >= ROUTES_AFTER_PROPERTIES_MILLIS) {
+                return properties;
+            }
             try {
-                Thread.sleep(500);
+                Thread.sleep(POLL_MILLIS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
         }
+        if (properties != null) {
+            return properties;
+        }
         JsonObject out = new JsonObject();
         out.put("status", "unknown");
         out.put("message", "no reload seen in the log within " + timeoutMillis / 1000 + "s: the integration may not run"
                            + " in dev mode, or the file is not one it watches; camel_get_log shows what it did");
+        return out;
+    }
+
+    /**
+     * A record a route logged: the log EIP's logger is the route's source location (xslt.camel.yaml:12), or its route
+     * id when source locations are off, which has no dots, unlike the class names of Camel's own loggers.
+     */
+    private static final Pattern ROUTE_LOGGER = Pattern.compile("(^|\\.)(yaml|yml|xml|java|groovy):\\d+$");
+    private static final int OUTPUT_LINES = 5;
+    private static final int OUTPUT_ERRORS = 3;
+    private static final int OUTPUT_CHARS = 400;
+    /** A WARN or ERROR line may be longer: the hint of a failure comes late in the exception message. */
+    private static final int OUTPUT_ERROR_CHARS = 800;
+
+    // the text of the error handler around the exception, which says nothing the agent can act on
+    private static final Pattern FAILED_DELIVERY = Pattern.compile(
+            "^Failed delivery for \\(MessageId: \\S+ on ExchangeId: \\S+\\)(?: at (.+?))?\\."
+                                                                   + " Exhausted after delivery attempt: \\d+ caught: ");
+    private static final Pattern EXCEPTION_PACKAGE
+            = Pattern.compile("\\b(?:[a-z][a-z0-9_]*\\.)+([A-Z][\\w$]*(?:Exception|Error))\\b");
+    private static final Pattern ON_THE_EXCHANGE = Pattern.compile(" on the exchange: Exchange\\[[^\\]]*]");
+    // "Error processing exchange. Exchange[1028039098EFE4D-0000000000000009]. Caused by: [...]"
+    private static final Pattern EXCHANGE_ID = Pattern.compile("Exchange\\[[0-9A-Fa-f]+-[0-9A-Fa-f]+]\\. ");
+    private static final String ON_BEAN = " on bean: ";
+    private static final int MAX_BEAN = 80;
+
+    /**
+     * What the routes logged after the newest reload, waiting up to the timeout for the first of it: the records of the
+     * routes' log steps, and any WARN or ERROR, newest last. A record of a log step is cut to 400 characters; a WARN or
+     * ERROR of Camel is compacted (no exchange dump, ids or exception packages) and cut to 800 characters, as the hint
+     * of a failure comes late in the message. The first five, the first three ERROR after them, and a line that says
+     * how many are left out. A write answered with the result of the change shows the agent at once what its route now
+     * does (CAMEL-25513): an agent left to call camel_get_log reads it before the reload ran, or not at all.
+     */
+    public static JsonArray awaitOutput(long pid, String name, long timeoutMillis) {
+        StopWatch watch = new StopWatch();
+        JsonArray out = output(records(pid, name));
+        while (out.isEmpty() && watch.taken() < timeoutMillis) {
+            try {
+                Thread.sleep(POLL_MILLIS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            out = output(records(pid, name));
+        }
+        return out;
+    }
+
+    /**
+     * A WARN or ERROR line, as short as it can be without losing what the agent acts on: the message ids and the
+     * attempt count of the error handler, the dump of the exchange, the packages of the exception classes and the long
+     * dump of a bean go. The hint of a failure, which Camel adds at the end of the exception message (such as
+     * "unmarshal it first"), was cut off: the line of a failed exchange starts with some 250 characters of such text.
+     */
+    static String compact(String message) {
+        String m = message;
+        Matcher fd = FAILED_DELIVERY.matcher(m);
+        if (fd.find()) {
+            m = "Failed" + (fd.group(1) != null ? " at " + fd.group(1) : "") + ": " + m.substring(fd.end());
+        }
+        m = ON_THE_EXCHANGE.matcher(m).replaceAll("");
+        m = EXCHANGE_ID.matcher(m).replaceAll("");
+        m = EXCEPTION_PACKAGE.matcher(m).replaceAll("$1");
+        // "not found on bean: [{orderId=ORD-1001, ...}, ...] of type: java.util.ArrayList": the start of the dump
+        StringBuilder sb = new StringBuilder();
+        int from = 0;
+        int at;
+        while ((at = m.indexOf(ON_BEAN, from)) >= 0) {
+            int start = at + ON_BEAN.length();
+            int end = m.indexOf(" of type: ", start);
+            if (end < 0) {
+                break;
+            }
+            sb.append(m, from, start);
+            sb.append(end - start > MAX_BEAN ? m.substring(start, start + MAX_BEAN) + "..." : m.substring(start, end));
+            from = end;
+        }
+        sb.append(m.substring(from));
+        return sb.toString();
+    }
+
+    private static final String CAUSED_BY = "Caused by: ";
+    private static final int MAX_CAUSE = 300;
+
+    /**
+     * The line with the root cause of its stack trace when the line does not say it already: the last "Caused by" and
+     * the lines that continue its message (PostgreSQL gives the position of the error on the next line). A sql: route
+     * failed with "BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar []", and the database's message
+     * ("ERROR: syntax error at or near ":"") was only in the stack trace (the local-model benchmark).
+     */
+    static String withRootCause(String line, String detail) {
+        int at = detail != null ? detail.lastIndexOf(CAUSED_BY) : -1;
+        if (at < 0) {
+            return line;
+        }
+        String[] lines = detail.substring(at + CAUSED_BY.length()).split("\n");
+        StringBuilder cause = new StringBuilder(lines[0].strip());
+        for (int i = 1; i < lines.length && i < 3; i++) {
+            String next = lines[i].strip();
+            if (next.isEmpty() || next.startsWith("at ") || next.startsWith("... ")) {
+                break;
+            }
+            cause.append(' ').append(next);
+        }
+        String text = compact(cause.toString());
+        // the message of the cause, without its class: the line may have it already (a "due to" of Camel)
+        int colon = text.indexOf(": ");
+        String message = colon > 0 ? text.substring(colon + 2) : text;
+        if (message.isBlank() || line.contains(message)) {
+            return line;
+        }
+        if (text.length() > MAX_CAUSE) {
+            text = text.substring(0, MAX_CAUSE) + "...";
+        }
+        return line + " (caused by " + text + ")";
+    }
+
+    static JsonArray output(List<JsonObject> newestFirst) {
+        List<String> lines = new ArrayList<>();
+        for (JsonObject r : newestFirst) {
+            if (isReload(r)) {
+                break; // the newest reload: what came before it is not the result of this write
+            }
+            String level = r.getStringOrDefault("level", "");
+            String logger = r.getStringOrDefault("logger", "");
+            boolean routeLog = ROUTE_LOGGER.matcher(logger).find()
+                    || !logger.isEmpty() && Character.isLowerCase(logger.charAt(0));
+            if (!routeLog && !"WARN".equalsIgnoreCase(level) && !"ERROR".equalsIgnoreCase(level)) {
+                continue;
+            }
+            String m = r.getStringOrDefault("message", "");
+            String detail = r.getStringOrDefault("detail", "");
+            if (routeLog && !detail.isEmpty()) {
+                // a multi-line body (an XML or JSON document) is part of what the route logged
+                m = m + "\n" + detail;
+            }
+            int max = OUTPUT_CHARS;
+            if (!routeLog) {
+                m = compact(m);
+                if ("ERROR".equalsIgnoreCase(level)) {
+                    m = withRootCause(m, detail);
+                }
+                max = OUTPUT_ERROR_CHARS;
+            }
+            lines.add((routeLog ? "" : level.toUpperCase(Locale.ROOT) + " ")
+                      + (m.length() > max ? m.substring(0, max) + "..." : m));
+        }
+        // newest first in the log: the first lines the routes logged after the reload are at the end
+        Collections.reverse(lines);
+        JsonArray out = new JsonArray();
+        int first = Math.min(OUTPUT_LINES, lines.size());
+        out.addAll(lines.subList(0, first));
+        // an ERROR after the first lines is kept as well: the route went on, and its failure is the news
+        int errors = 0;
+        for (String line : lines.subList(first, lines.size())) {
+            if (line.startsWith("ERROR ") && errors < OUTPUT_ERRORS) {
+                out.add(line);
+                errors++;
+            }
+        }
+        int left = lines.size() - out.size();
+        if (left > 0) {
+            out.add("... " + left + " more line" + (left == 1 ? "" : "s") + ": camel_get_log shows them");
+        }
         return out;
     }
 

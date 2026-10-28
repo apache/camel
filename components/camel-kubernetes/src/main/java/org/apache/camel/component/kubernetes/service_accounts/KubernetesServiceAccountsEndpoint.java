@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SERVICE_ACCOUNTS;
@@ -33,6 +36,37 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_S
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SERVICE_ACCOUNTS, title = "Kubernetes Service Account",
              syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true,
              category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operation (the operation option, or else the"
+                                                + " CamelKubernetesOperation header) takes its input from headers: the"
+                                                + " namespace in CamelKubernetesNamespaceName, the name in"
+                                                + " CamelKubernetesServiceAccountName, the labels in"
+                                                + " CamelKubernetesServiceAccountsLabels and the ServiceAccount to create or"
+                                                + " update in CamelKubernetesServiceAccount"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listServiceAccounts",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.ServiceAccount>"),
+                                           @BodyType.When(option = "operation", value = "listServiceAccountsByLabels",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.ServiceAccount>"),
+                                           @BodyType.When(option = "operation", value = "getServiceAccount",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "io.fabric8.kubernetes.api.model.ServiceAccount"),
+                                           @BodyType.When(option = "operation", value = "createServiceAccount",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.ServiceAccount"),
+                                           @BodyType.When(option = "operation", value = "updateServiceAccount",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.ServiceAccount"),
+                                           @BodyType.When(option = "operation", value = "deleteServiceAccount",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "A List of ServiceAccount for listServiceAccounts and"
+                                                 + " listServiceAccountsByLabels; the ServiceAccount for getServiceAccount"
+                                                 + " (null when not found), createServiceAccount and updateServiceAccount; a"
+                                                 + " Boolean for deleteServiceAccount, false when not found"))
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component,

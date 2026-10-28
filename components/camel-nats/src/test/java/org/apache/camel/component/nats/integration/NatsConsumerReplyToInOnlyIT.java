@@ -35,6 +35,8 @@ public class NatsConsumerReplyToInOnlyIT extends NatsITSupport {
         // reply endpoint should NOT receive any message when exchange pattern is InOnly
         mockReplyEndpoint.expectedMessageCount(0);
 
+        waitForNatsConsumers(2);
+
         template.sendBody("direct:send", "World");
 
         mockResultEndpoint.setAssertPeriod(5000);

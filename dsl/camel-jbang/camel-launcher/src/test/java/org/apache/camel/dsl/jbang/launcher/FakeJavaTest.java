@@ -51,7 +51,7 @@ class FakeJavaTest {
 
     @Test
     void fakeJavaPreservesInputAndNormalStderr() throws Exception {
-        Path java = FakeJava.writeFakeJava(tempDir, "java", "openjdk version \"17.0.2\"", 0, "STDIO");
+        Path java = FakeJava.writeFakeJava(tempDir, "java", "openjdk version \"21.0.3\"", 0, "STDIO");
 
         FakeJava.Result result = FakeJava.runWithInput(java, Map.of(), "route input\n", "version");
 

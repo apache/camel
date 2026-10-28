@@ -93,9 +93,20 @@ public abstract class AbstractGitHub2Consumer extends ScheduledBatchPollingConsu
             exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
             exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
             this.pendingExchanges = total - index - 1;
+            onRouting(exchange);
             getProcessor().process(exchange);
         }
 
         return answer;
+    }
+
+    /**
+     * Called for each exchange of a poll right before it is handed to the route, in the order of the batch. A consumer
+     * moves its position (the last id, the names or hashes it has seen) here and not when it builds the exchanges of a
+     * poll: the batch can end early, when the route is being suspended or stopped or when {@code maxMessagesPerPoll} is
+     * reached, and what was not handed to the route has to be found again by the next poll.
+     */
+    protected void onRouting(Exchange exchange) {
+        // noop
     }
 }

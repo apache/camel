@@ -21,6 +21,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -33,6 +35,8 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 public class DefaultRequestValidator implements RequestValidator {
+
+    private static final Pattern PATH_PARAMETER = Pattern.compile("\\{([^}/]+)}");
 
     private RestOpenApiOperation operation;
     private Map<String, Object> endpointParameters = Collections.emptyMap();
@@ -119,6 +123,23 @@ public class DefaultRequestValidator implements RequestValidator {
                     }
                 });
 
+        // Validate path parameters: every placeholder of the path is required (OpenAPI), and one without a value would
+        // be sent as the literal {name}. Taken from the path template, so a parameter declared on the path item counts
+        // too (CAMEL-25321)
+        for (String name : pathParameters(o.getUriTemplate())) {
+            Object value = message.getHeader(name);
+            if (ObjectHelper.isEmpty(value)) {
+                value = exchange.getVariable(name);
+            }
+            if (ObjectHelper.isEmpty(value)) {
+                value = endpointParameters.get(name);
+            }
+            if (ObjectHelper.isEmpty(value)) {
+                validationErrors.add("Path parameter '" + name + "' is required but none found: set the header " + name
+                                     + ", or an exchange variable of that name, before the call.");
+            }
+        }
+
         // Validate operation required headers
         o.getHeaders()
                 .stream()
@@ -136,4 +157,15 @@ public class DefaultRequestValidator implements RequestValidator {
         return Collections.unmodifiableSet(validationErrors);
     }
 
+    /** The names of the placeholders of a path template: {@code /stock/{sku}/reserve} gives {@code sku}. */
+    static Set<String> pathParameters(String uriTemplate) {
+        Set<String> names = new LinkedHashSet<>();
+        if (uriTemplate != null) {
+            Matcher m = PATH_PARAMETER.matcher(uriTemplate);
+            while (m.find()) {
+                names.add(m.group(1));
+            }
+        }
+        return names;
+    }
 }

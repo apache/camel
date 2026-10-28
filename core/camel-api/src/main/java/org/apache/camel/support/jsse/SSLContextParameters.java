@@ -101,7 +101,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * The optional protocol for the secure sockets created by the {@link SSLContext} represented by this instance's
      * configuration.
      *
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     private @Nullable String secureSocketProtocol;
 
@@ -212,7 +212,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * Sets the optional protocol for the secure sockets created by the {@link SSLContext} represented by this
      * instance's configuration. Defaults to TLS.
      *
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      *
      * @param secureSocketProtocol the name of the protocol or {@code null} to use the default (TLS)
      */

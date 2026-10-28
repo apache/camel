@@ -112,6 +112,22 @@ class PropertiesTranslateToolsTest {
     }
 
     @Test
+    void springBootOnlyOptionsKeepTheirSpringBootKey() {
+        PropertiesTranslateTools.PropertiesTranslateResult springBoot = tools.camel_properties_translate(
+                "camel.springboot.lenient-configuration-binding=true\ncamel.springboot.main-run-controller=true",
+                "spring-boot", "spring-boot");
+        assertThat(springBoot.properties().get(0).status()).isEqualTo("unchanged");
+        assertThat(springBoot.properties().get(1).translated()).isEqualTo("camel.main.run-controller=true");
+
+        PropertiesTranslateTools.PropertiesTranslateResult main = tools.camel_properties_translate(
+                "camel.springboot.lenient-configuration-binding=true\ncamel.main.include-non-singletons=true",
+                "spring-boot", "main");
+        assertThat(main.summary().unknown()).isEqualTo(2);
+        assertThat(main.properties().get(0).note()).contains("Spring Boot only");
+        assertThat(main.properties().get(1).translated()).isEqualTo("camel.main.include-non-singletons=true");
+    }
+
+    @Test
     void legacySpringbootPrefixIsRewrittenEvenWhenTargetIsQuarkus() {
         PropertiesTranslateTools.PropertiesTranslateResult result = tools.camel_properties_translate(
                 "camel.springboot.name=Foo", "spring-boot", "quarkus");

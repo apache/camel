@@ -63,4 +63,29 @@ producers, strip these internal headers at the trust boundary -- for example wit
 override the API call. See xref:manual::security-model.adoc[the Camel security model] for details.
 ====
 
+== Usage
 
+The endpoint is the API name and the method name, such as `events/quickAdd`.
+The parameters of the method are endpoint options or headers with the `CamelGoogleCalendar.` prefix,
+and `inBody` names the parameter that comes from the message body.
+The following route adds an event to the primary calendar from a text in the message body,
+such as `Lunch with the team tomorrow at noon`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:addEvent
+      steps:
+        - to:
+            uri: google-calendar:events/quickAdd
+            parameters:
+              calendarId: primary
+              inBody: text
+              clientId: "{{google.clientId}}"
+              clientSecret: "{{google.clientSecret}}"
+              refreshToken: "{{google.refreshToken}}"
+              applicationName: camel-example
+        - log:
+            message: "Created event ${body.htmlLink}"
+----

@@ -22,6 +22,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * A String body is written in the charset that the Content-Type declares, otherwise as UTF-8.
@@ -38,6 +40,8 @@ public class UndertowStringBodyCharsetTest extends BaseUndertowTest {
 
     private static final String TEXT = "Grüße aus Köln";
     private static final String LATIN1 = "text/plain; charset=ISO-8859-1";
+    // parameter names are case-insensitive (RFC 9110)
+    private static final String LATIN1_UPPER_CASE = "text/plain; Charset=ISO-8859-1";
 
     @Test
     public void testResponseUsesCharsetOfContentType() throws Exception {
@@ -85,6 +89,52 @@ public class UndertowStringBodyCharsetTest extends BaseUndertowTest {
         assertArrayEquals(TEXT.getBytes(ISO_8859_1), mock.getExchanges().get(0).getIn().getBody(byte[].class));
     }
 
+    @Test
+    public void testResponseUsesCharsetParameterInAnyCase() throws Exception {
+        HttpResponse<byte[]> response = send(HttpRequest.newBuilder(uri("latin1UpperCase")).GET().build());
+
+        assertEquals(LATIN1_UPPER_CASE, response.headers().firstValue("Content-Type").orElse(null));
+        assertArrayEquals(TEXT.getBytes(ISO_8859_1), response.body());
+    }
+
+    @Test
+    public void testRequestUsesCharsetParameterInAnyCase() throws Exception {
+        HttpResponse<byte[]> response = send(HttpRequest.newBuilder(uri("decode"))
+                .header("Content-Type", LATIN1_UPPER_CASE)
+                .POST(HttpRequest.BodyPublishers.ofByteArray(TEXT.getBytes(ISO_8859_1))).build());
+
+        assertArrayEquals(TEXT.getBytes(UTF_8), response.body());
+    }
+
+    @Test
+    public void testProducerUsesCharsetParameterInAnyCase() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:received");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("undertow:http://localhost:{{port}}/received", TEXT, Exchange.CONTENT_TYPE,
+                LATIN1_UPPER_CASE);
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertArrayEquals(TEXT.getBytes(ISO_8859_1), mock.getExchanges().get(0).getIn().getBody(byte[].class));
+    }
+
+    @Test
+    public void testRequestWithoutCharsetDoesNotSetCharset() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:received");
+        mock.expectedMessageCount(1);
+
+        HttpResponse<byte[]> response = send(HttpRequest.newBuilder(uri("received"))
+                .header("Content-Type", "text/plain")
+                .POST(HttpRequest.BodyPublishers.ofByteArray(TEXT.getBytes(UTF_8))).build());
+
+        // only a charset that the request declares is set, otherwise Camel uses its default
+        assertEquals(200, response.statusCode());
+        MockEndpoint.assertIsSatisfied(context);
+        Exchange received = mock.getExchanges().get(0);
+        assertNull(received.getProperty(ExchangePropertyKey.CHARSET_NAME));
+        assertNull(received.getIn().getHeader(UndertowConstants.HTTP_CHARACTER_ENCODING));
+    }
+
     private URI uri(String path) {
         return URI.create("http://localhost:" + getPort() + "/" + path);
     }
@@ -101,6 +151,15 @@ public class UndertowStringBodyCharsetTest extends BaseUndertowTest {
                 from("undertow:http://localhost:{{port}}/latin1")
                         .setHeader(Exchange.CONTENT_TYPE, constant(LATIN1))
                         .setBody(constant(TEXT));
+
+                from("undertow:http://localhost:{{port}}/latin1UpperCase")
+                        .setHeader(Exchange.CONTENT_TYPE, constant(LATIN1_UPPER_CASE))
+                        .setBody(constant(TEXT));
+
+                // decodes the request in its charset and answers in UTF-8
+                from("undertow:http://localhost:{{port}}/decode")
+                        .convertBodyTo(String.class)
+                        .setHeader(Exchange.CONTENT_TYPE, constant("text/plain; charset=UTF-8"));
 
                 from("undertow:http://localhost:{{port}}/echo")
                         .convertBodyTo(String.class);

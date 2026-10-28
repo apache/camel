@@ -90,7 +90,7 @@ public class TransitionIssueProducerTest extends CamelTestSupport {
             Status status = new Status(doneStatusUri, 1L, "Done", "Done", null, null);
             Resolution resolution = new Resolution(doneResolutionUri, 31L, "Resolution", "Resolution");
             issue = transitionIssueDone(issue, status, resolution);
-            return null;
+            return Promises.promise(null);
         });
     }
 

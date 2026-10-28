@@ -27,11 +27,13 @@ final class AsyncTaskEntry {
 
     private final String taskId;
     private final CompletableFuture<ConvertDocumentResponse> future;
+    private final String outputFormat;
     private final long createdAtMs;
 
-    AsyncTaskEntry(String taskId, CompletableFuture<ConvertDocumentResponse> future) {
+    AsyncTaskEntry(String taskId, CompletableFuture<ConvertDocumentResponse> future, String outputFormat) {
         this.taskId = taskId;
         this.future = future;
+        this.outputFormat = outputFormat;
         this.createdAtMs = System.currentTimeMillis();
     }
 
@@ -41,6 +43,15 @@ final class AsyncTaskEntry {
 
     public CompletableFuture<ConvertDocumentResponse> getFuture() {
         return future;
+    }
+
+    /**
+     * The output format the task was submitted with (resolved from the {@code CamelDoclingOutputFormat} header or the
+     * producer endpoint's {@code outputFormat} at submit time). The content must be extracted with this format — not
+     * the consuming endpoint's — because docling-serve only returns the format that was requested.
+     */
+    public String getOutputFormat() {
+        return outputFormat;
     }
 
     public long getCreatedAtMs() {

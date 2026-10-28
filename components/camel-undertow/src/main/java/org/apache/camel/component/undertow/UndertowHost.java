@@ -47,6 +47,25 @@ public interface UndertowHost {
     HttpHandler registerHandler(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
 
     /**
+     * Register a handler on behalf of the given endpoint, as
+     * {@link #registerHandler(UndertowConsumer, HttpHandlerRegistrationInfo, HttpHandler)} does. The endpoint is the
+     * endpoint of the consumer, or a producer endpoint that registers a handler, such as a WebSocket producer, when
+     * {@code consumer} is {@code null}.
+     *
+     * @param  endpoint         the endpoint that registers the handler
+     * @param  consumer         the consumer that registers the handler, or {@code null} for a producer
+     * @param  registrationInfo the {@link HttpHandlerRegistrationInfo} related to {@code handler}
+     * @param  handler          the {@link HttpHandler} to register
+     * @return                  the given {@code handler} or a different {@link HttpHandler} that has been registered
+     *                          with the given {@link HttpHandlerRegistrationInfo} earlier.
+     */
+    default HttpHandler registerHandler(
+            UndertowEndpoint endpoint, UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo,
+            HttpHandler handler) {
+        return registerHandler(consumer, registrationInfo, handler);
+    }
+
+    /**
      * Unregister a handler with the given {@link HttpHandlerRegistrationInfo}. Note that if
      * {@link #registerHandler(UndertowConsumer, HttpHandlerRegistrationInfo, HttpHandler)} was successfully invoked
      * multiple times for an equivalent {@link HttpHandlerRegistrationInfo} then

@@ -38,7 +38,7 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
         compensate.expectedMessageCount(1);
 
-        TestSupport.sendBody(template, "direct:saga-compensate", "hello");
+        TestSupport.sendBody(template, "direct:failures-saga-compensate", "hello");
 
         await().atMost(60, TimeUnit.SECONDS)
                 .until(() -> compensate.getReceivedCounter() >= 1);
@@ -55,7 +55,7 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedBodiesReceived("hello");
 
-        TestSupport.sendBody(template, "direct:saga-complete", "hello");
+        TestSupport.sendBody(template, "direct:failures-saga-complete", "hello");
 
         // The Narayana LRA coordinator retries failed completion callbacks via
         // its periodic recovery manager (default: every 120s). Rather than wait
@@ -81,19 +81,19 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
             @Override
             public void configure() {
 
-                from("direct:saga-compensate")
+                from("direct:failures-saga-compensate")
                         .saga()
-                        .compensation("direct:compensate")
+                        .compensation("direct:failures-compensate")
                         .process(x -> {
                             throw new RuntimeCamelException("fail");
                         });
 
-                from("direct:saga-complete")
+                from("direct:failures-saga-complete")
                         .saga()
-                        .completion("direct:complete")
+                        .completion("direct:failures-complete")
                         .to("mock:end");
 
-                from("direct:compensate")
+                from("direct:failures-compensate")
                         .process(x -> {
                             int current = maxFailures.decrementAndGet();
                             if (current >= 0) {
@@ -102,7 +102,7 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
                         })
                         .to("mock:compensate");
 
-                from("direct:complete")
+                from("direct:failures-complete")
                         .process(x -> {
                             int current = maxFailures.decrementAndGet();
                             if (current >= 0) {

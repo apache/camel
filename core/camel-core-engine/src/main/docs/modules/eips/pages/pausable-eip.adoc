@@ -33,11 +33,49 @@ from("kafka:topic")
     .process(exchange -> LOG.info("Received: {}", exchange.getMessage().getBody()))
     .to("direct:destination");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="kafka:topic"/>
+    <pausable consumerListener="kafkaConsumerListener" untilCheck="canContinue"/>
+    <log message="Received: ${body}"/>
+    <to uri="direct:destination"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:topic
+      steps:
+        - pausable:
+            consumerListener: kafkaConsumerListener
+            untilCheck: canContinue
+        - log:
+            message: "Received: ${body}"
+        - to:
+            uri: direct:destination
+- beans:
+    - name: kafkaConsumerListener
+      type: org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener
+    - name: canContinue
+      type: com.foo.CanContinuePredicate
+----
 ====
 
 You can also integrate the Pausable EIP with the xref:circuitBreaker-eip.adoc[Circuit Breaker EIP]
 to pause consumption based on downstream system availability:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:topic")
@@ -47,6 +85,40 @@ from("kafka:topic")
         .to("direct:downstream")
     .end();
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="kafka:topic"/>
+    <pausable consumerListener="kafkaConsumerListener" untilCheck="canContinue"/>
+    <circuitBreaker>
+        <resilience4jConfiguration circuitBreaker="pausableCircuit"/>
+        <to uri="direct:downstream"/>
+    </circuitBreaker>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:topic
+      steps:
+        - pausable:
+            consumerListener: kafkaConsumerListener
+            untilCheck: canContinue
+        - circuitBreaker:
+            resilience4jConfiguration:
+              circuitBreaker: pausableCircuit
+            steps:
+              - to:
+                  uri: direct:downstream
+----
+====
 
 == See Also
 

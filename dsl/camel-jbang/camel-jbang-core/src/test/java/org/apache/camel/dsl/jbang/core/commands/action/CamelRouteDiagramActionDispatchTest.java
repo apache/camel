@@ -20,13 +20,15 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mockStatic;
 
 /**
@@ -46,11 +48,10 @@ class CamelRouteDiagramActionDispatchTest extends ActionCommandTestSupport {
         // "doesNotExist" matches no running process, so it is tried as a source file next
         command.files = List.of("doesNotExist");
 
-        int exit = callWatchWithSingleProcess(command);
+        CliException e = assertThrows(CliException.class, () -> callWatchWithSingleProcess(command));
 
-        assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("File does not exist: doesNotExist"),
-                "should report the missing source file, was: " + printer.getOutput());
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("File does not exist: doesNotExist", e.getMessage(), "should report the missing source file");
     }
 
     @Test
@@ -63,13 +64,12 @@ class CamelRouteDiagramActionDispatchTest extends ActionCommandTestSupport {
         CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
         command.files = List.of("route1", "route2");
 
-        int exit = command.doWatchCall();
+        CliException e = assertThrows(CliException.class, command::doWatchCall);
 
-        assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("File does not exist: route1"),
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("File does not exist: route1", e.getMessage(),
                 "with 2+ file args, dispatch must go straight to source-file handling and skip the "
-                                                                                + "running-integration lookup entirely, was: "
-                                                                                + printer.getOutput());
+                                                                    + "running-integration lookup entirely");
     }
 
     private static int callWatchWithSingleProcess(CamelRouteDiagramAction command) throws Exception {

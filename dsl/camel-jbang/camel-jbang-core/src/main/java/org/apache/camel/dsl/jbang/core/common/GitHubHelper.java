@@ -22,6 +22,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Locale;
 import java.util.StringJoiner;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -119,6 +120,16 @@ public final class GitHubHelper {
         resolveGithubAsRawFiles(url, wildcard, routes, kamelets, properties, all);
     }
 
+    /**
+     * Whether a file with the extension (from FileUtil.onlyExt(name, false), such as camel.yaml) has routes.
+     */
+    static boolean isRouteExtension(String ext) {
+        return ext != null && switch (ext.toLowerCase(Locale.ROOT)) {
+            case "java", "xml", "camel.xml", "yaml", "camel.yaml" -> true;
+            default -> false;
+        };
+    }
+
     private static void addSingleFileUrl(
             String url, StringJoiner routes, StringJoiner kamelets, StringJoiner properties,
             StringJoiner all) {
@@ -131,8 +142,7 @@ public final class GitHubHelper {
         } else if (properties != null && "properties".equalsIgnoreCase(ext)) {
             properties.add(ghUrl);
         } else if (routes != null) {
-            if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
-                    || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
+            if (isRouteExtension(ext)) {
                 routes.add(ghUrl);
             }
         }
@@ -164,8 +174,7 @@ public final class GitHubHelper {
                         String u = asGithubSingleUrl(htmlUrl);
                         properties.add(u);
                     } else if (routes != null) {
-                        if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
-                                || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
+                        if (isRouteExtension(ext)) {
                             String htmlUrl = c.get("html_url").asText();
                             String u = asGithubSingleUrl(htmlUrl);
                             routes.add(u);

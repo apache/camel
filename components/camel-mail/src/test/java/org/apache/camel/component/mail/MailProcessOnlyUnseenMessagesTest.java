@@ -62,7 +62,7 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
         JavaMailSender sender = new DefaultJavaMailSender();
         Store store = sender.getSession().getStore("imap");
         store.connect("localhost", Mailbox.getPort(Protocol.imap), claus.getLogin(), claus.getPassword());

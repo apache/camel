@@ -34,10 +34,11 @@ import org.slf4j.LoggerFactory;
  * <li>folder level {@code variable}, outermost folder first</li>
  * <li>the request's own {@code url.variable}</li>
  * <li>the endpoint's {@code variables} option</li>
- * <li>Camel property placeholders</li>
+ * <li>Camel property placeholders, when a {@link CamelContext} is given</li>
  * </ol>
- * The first four are merged into the map handed to the constructor; property placeholders are consulted last, when a
- * name is otherwise unknown, so that an operator can override anything the collection ships with.
+ * The first four are merged into the map handed to the constructor; property placeholders are consulted last, only for
+ * a name none of them defines. The endpoint passes no {@link CamelContext} unless its collection is trusted to read
+ * Camel properties, which by default also cover JVM system properties and OS environment variables.
  */
 public final class PostmanVariableResolver {
 
@@ -55,6 +56,12 @@ public final class PostmanVariableResolver {
     private final CamelContext camelContext;
     private final boolean failOnUnresolved;
 
+    /**
+     * @param variables        the merged variable scopes
+     * @param camelContext     the context whose properties resolve a name the variables do not define, or {@code null}
+     *                         to not consult Camel properties at all
+     * @param failOnUnresolved whether a placeholder left unresolved is an error
+     */
     public PostmanVariableResolver(Map<String, String> variables, CamelContext camelContext, boolean failOnUnresolved) {
         this.variables = new LinkedHashMap<>(variables);
         this.camelContext = camelContext;
@@ -137,11 +144,8 @@ public final class PostmanVariableResolver {
      * Whether a placeholder name read out of a collection may be handed to Camel's property resolver.
      * <p>
      * Camel's placeholder <em>functions</em> are all written {@code prefix:argument} - {@code env:}, {@code sys:},
-     * {@code bean:} and the vault functions among them. A collection is route-author configuration, but a cloud-hosted
-     * one is editable by anyone with access to the Postman workspace, so letting its content name those functions would
-     * turn "read the collection" into "read this environment variable and put it in an outgoing request". Plain names
-     * are resolved as before, so an operator can still override any variable through properties; only the function
-     * syntax is refused.
+     * {@code bean:} and the vault functions among them. They are refused for every collection, including one trusted to
+     * read Camel properties, which resolves plain names only, through the normal property lookup.
      */
     private static boolean isSafeToResolveAsProperty(String name) {
         if (name.indexOf(':') < 0) {

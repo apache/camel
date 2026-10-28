@@ -70,6 +70,30 @@ public class RestJettyAcceptTest extends BaseJettyTest {
     }
 
     @Test
+    public void testJettyProducerAcceptMediaRangeValid() {
+        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader("Accept", "application/*").withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
+                .request(String.class);
+
+        assertEquals("{ \"status\": \"ok\" }", out);
+    }
+
+    @Test
+    public void testJettyProducerAcceptMediaRangeInvalid() {
+        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader("Accept", "text/*")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody("{ \"name\": \"Donald Duck\" }")
+                .to("http://localhost:" + getPort() + "/users/123/update");
+
+        Exception ex = assertThrows(CamelExecutionException.class, () -> requestTemplate.request(String.class));
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(406, cause.getStatusCode());
+    }
+
+    @Test
     public void testGetContentTypeHeaderOk() throws Exception {
         // use JDK client as camel-http will drop "Content-Type" header for GET
         HttpRequest request = HttpRequest.newBuilder().header("Content-Type", "application/json")

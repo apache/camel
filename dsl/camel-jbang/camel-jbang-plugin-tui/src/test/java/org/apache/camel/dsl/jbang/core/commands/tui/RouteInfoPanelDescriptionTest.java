@@ -161,13 +161,13 @@ class RouteInfoPanelDescriptionTest {
     @Test
     void routeDiagramTitleKeepsTheLabel() {
         Line base = DiagramDetailSupport.buildBreadcrumbTitle(new ArrayDeque<>(), "order-intake");
-        String title = DiagramDetailSupport.withRouteContext(base, info, "order-intake", project, true).spans().stream()
+        String title = DiagramDetailSupport.withRouteContext(base, info, "order-intake", project, true, false).spans().stream()
                 .map(Span::content).collect(Collectors.joining());
         assertTrue(title.startsWith(" Route [order-intake] "), title);
         assertTrue(title.contains(IntegrationSummaryHints.MARK + "Receives an order over HTTP"), "the AI label: " + title);
 
         info.routes.get(0).description = "Order entry";
-        title = DiagramDetailSupport.withRouteContext(base, info, "order-intake", project, true).spans().stream()
+        title = DiagramDetailSupport.withRouteContext(base, info, "order-intake", project, true, false).spans().stream()
                 .map(Span::content).collect(Collectors.joining());
         assertTrue(title.contains("\u00b7 Order entry") && !title.contains(IntegrationSummaryHints.MARK), title);
     }

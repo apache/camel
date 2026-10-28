@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,6 +59,36 @@ public class PubNubConfigurationTest extends CamelTestSupport {
         assertEquals("PUBLISH", endpoint.getConfiguration().getOperation());
         assertEquals("authKey", endpoint.getConfiguration().getAuthKey());
         assertFalse(endpoint.getConfiguration().isSecure());
+    }
+
+    @Test
+    public void startEndpointWithoutOptionalKeys() {
+        // the endpoint creates its own client, without publish, secret and auth keys
+        PubNubEndpoint endpoint = context.getEndpoint("pubnub:xxx?subscribeKey=mysubkey&uuid=myuuid", PubNubEndpoint.class);
+
+        assertNotNull(endpoint.getPubnub());
+        assertEquals("mysubkey", endpoint.getPubnub().getConfiguration().getSubscribeKey());
+        assertEquals("myuuid", endpoint.getPubnub().getConfiguration().getUserId().getValue());
+    }
+
+    @Test
+    public void startEndpointWithPublishKey() {
+        PubNubEndpoint endpoint = context.getEndpoint("pubnub:xxx?subscribeKey=mysubkey&publishKey=mypubkey&uuid=myuuid",
+                PubNubEndpoint.class);
+
+        assertNotNull(endpoint.getPubnub());
+        assertEquals("mypubkey", endpoint.getPubnub().getConfiguration().getPublishKey());
+    }
+
+    @Test
+    public void startEndpointWithAllKeys() {
+        PubNubEndpoint endpoint = context.getEndpoint(
+                "pubnub:xxx?subscribeKey=mysubkey&publishKey=mypubkey&secretKey=secrets&authKey=authKey&uuid=myuuid",
+                PubNubEndpoint.class);
+
+        assertNotNull(endpoint.getPubnub());
+        assertEquals("mypubkey", endpoint.getPubnub().getConfiguration().getPublishKey());
+        assertEquals("secrets", endpoint.getPubnub().getConfiguration().getSecretKey());
     }
 
 }

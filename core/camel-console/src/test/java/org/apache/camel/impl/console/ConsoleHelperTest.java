@@ -18,6 +18,10 @@ package org.apache.camel.impl.console;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -116,5 +120,38 @@ public class ConsoleHelperTest {
         Reader nullReader = null;
         JsonArray result = ConsoleHelper.loadSourceAsJson(nullReader, 1);
         Assertions.assertNull(result);
+    }
+
+    @Test
+    public void testResizeRingKeepsNewestEntries() {
+        // 5 slots, written 7 times: next slot is 2, oldest to newest is 3..7
+        String[] ring = { "6", "7", "3", "4", "5" };
+
+        String[] larger = ConsoleHelper.resize(ring, 2, 8);
+        Assertions.assertArrayEquals(new String[] { null, null, null, "3", "4", "5", "6", "7" }, larger);
+
+        String[] smaller = ConsoleHelper.resize(ring, 2, 3);
+        Assertions.assertArrayEquals(new String[] { "5", "6", "7" }, smaller);
+    }
+
+    @Test
+    public void testNextSlotAfterResize() {
+        AtomicInteger pos = new AtomicInteger(7);
+        // a position from a larger ring buffer stays within the smaller one
+        Assertions.assertEquals(1, ConsoleHelper.nextSlot(pos, 3));
+        Assertions.assertEquals(2, ConsoleHelper.nextSlot(pos, 3));
+        Assertions.assertEquals(0, ConsoleHelper.nextSlot(pos, 3));
+    }
+
+    @Test
+    public void testResizeQueueKeepsNewestElements() {
+        Queue<Integer> queue = new LinkedBlockingQueue<>(5);
+        for (int i = 1; i <= 7; i++) {
+            ConsoleHelper.offerLast(queue, i);
+        }
+        Assertions.assertEquals(List.of(3, 4, 5, 6, 7), List.copyOf(queue));
+
+        Assertions.assertEquals(List.of(5, 6, 7), List.copyOf(ConsoleHelper.resize(queue, 3)));
+        Assertions.assertEquals(List.of(3, 4, 5, 6, 7), List.copyOf(ConsoleHelper.resize(queue, 10)));
     }
 }

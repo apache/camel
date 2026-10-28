@@ -35,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A path parameter with no value leaves its {name} in the uri and the service answers 404 for it, so the producer says
- * which parameter it was. The request is still sent, as it was before (CAMEL-24986).
+ * which parameter it was. The request is still sent, as it was before (CAMEL-24986). The warning is repeated once a
+ * minute, and names an exchange property of the same name (CAMEL-25373).
  */
 public class RestProducerUnresolvedPathWarnTest {
 
@@ -125,5 +126,34 @@ public class RestProducerUnresolvedPathWarnTest {
 
         assertEquals("http://localhost/warnnone/1", exchange.getIn().getHeader(Exchange.REST_HTTP_URI));
         assertTrue(warningsFor("warnnone").isEmpty(), warnings.toString());
+    }
+
+    /** CAMEL-25373: the value kept as an exchange property is named, as that is the usual mistake. */
+    @Test
+    public void testSaysWhenTheValueIsAnExchangeProperty() throws Exception {
+        RestProducer producer = createProducer("rest:get:warnprop/{sku}");
+        Exchange exchange = producer.createExchange();
+        exchange.setProperty("sku", "CAMEL-MUG");
+
+        producer.process(exchange);
+
+        List<String> mine = warningsFor("warnprop");
+        assertEquals(1, mine.size(), warnings.toString());
+        assertTrue(mine.get(0).contains("There is an exchange property sku"), mine.get(0));
+        assertTrue(mine.get(0).contains("use setHeader"), mine.get(0));
+    }
+
+    /** CAMEL-25373: the warning comes back once the interval has passed, so a storm of failures does not bury it. */
+    @Test
+    public void testSaysItAgainAfterTheInterval() throws Exception {
+        RestProducer producer = createProducer("rest:get:warnagain/{id}");
+        producer.warnIntervalMillis = 0;
+
+        for (int i = 0; i < 3; i++) {
+            Exchange exchange = producer.createExchange();
+            producer.process(exchange);
+        }
+
+        assertEquals(3, warningsFor("warnagain").size(), warnings.toString());
     }
 }

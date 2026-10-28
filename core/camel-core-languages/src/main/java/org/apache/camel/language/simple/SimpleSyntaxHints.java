@@ -44,7 +44,7 @@ public final class SimpleSyntaxHints {
             "substringBetween", "contains", "pad", "concat", "val", "length", "size", "empty", "newEmpty", "iif",
             "hash", "convertTo", "throwException", "assert", "load", "uuid", "env", "sys", "sysenv", "ref", "bean",
             "properties", "propertiesExist", "type", "messageAs", "messageHistory", "logExchange", "pretty",
-            "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "function", "list", "map",
+            "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "semantic", "function", "list", "map",
             "range", "split", "sort", "distinct", "reverse", "shuffle", "forEach", "filter", "listAdd", "listRemove",
             "mapAdd", "mapRemove", "setHeader", "setVariable", "uppercase", "lowercase", "trim", "capitalize",
             "normalizeWhitespace", "quote", "unquote", "safeQuote", "escape", "isEmpty", "isAlpha", "isAlphaNumeric",
@@ -57,7 +57,7 @@ public final class SimpleSyntaxHints {
      * Functions that delegate to another language, all of them written {@code ${name(exp)}}. Unlike {@code bean:} or
      * {@code date:} they take no colon form, which is the mistake CAMEL-24845 is about.
      */
-    static final Set<String> QUERY_FUNCTIONS = Set.of("jq", "jsonpath", "xpath", "simpleJsonpath");
+    static final Set<String> QUERY_FUNCTIONS = Set.of("jq", "jsonpath", "xpath", "simpleJsonpath", "semantic");
 
     /** Names from older Camel versions or other languages that a model still writes. */
     static final Map<String, String> ALIASES = Map.ofEntries(
@@ -194,8 +194,9 @@ public final class SimpleSyntaxHints {
      * {@code body != null && body.size() > 0} becomes {@code ${body} != null && ${body.size()} > 0}.
      * <p/>
      * Each comparison is wrapped, not only the first, so that a compound condition reads the way it looks (CAMEL-24920,
-     * CAMEL-24921). An operator counts only when whitespace surrounds it outside quotes, which is what keeps
-     * {@code ${header.Content-Length}} and {@code ${date:now:yyyy-MM-dd}} a plain function.
+     * CAMEL-24921). An operator counts only when whitespace surrounds it outside quotes, brackets and parentheses,
+     * which is what keeps {@code ${header.Content-Length}} and {@code ${date:now:yyyy-MM-dd}} a plain function, and an
+     * operator in an index or an argument, as in {@code ${iif(header.a > 0, 'x', 'y')}}, where it is.
      */
     public static String wrapFunctions(String text) {
         StringBuilder answer = new StringBuilder();
@@ -218,13 +219,18 @@ public final class SimpleSyntaxHints {
     private static int logicalOperator(String text, int from) {
         boolean single = false;
         boolean dubble = false;
+        int depth = 0;
         for (int i = from; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '\'' && !dubble) {
                 single = !single;
             } else if (c == '"' && !single) {
                 dubble = !dubble;
-            } else if (!single && !dubble && c == ' ') {
+            } else if (!single && !dubble && (c == '(' || c == '[')) {
+                depth++;
+            } else if (!single && !dubble && (c == ')' || c == ']')) {
+                depth--;
+            } else if (!single && !dubble && depth == 0 && c == ' ') {
                 for (String op : new String[] { "&& ", "|| " }) {
                     if (text.startsWith(op, i + 1)) {
                         return i + 1;
@@ -278,17 +284,26 @@ public final class SimpleSyntaxHints {
         return left + op + right;
     }
 
-    /** The index of the text outside single and double quotes, or -1. */
+    /**
+     * The index of the text outside single and double quotes, brackets and parentheses, or -1: an operator inside them
+     * belongs to an index or an argument, as in {@code body.?[qty < 1].size() > 0}, which was split at the {@code <}
+     * and reported as {@code ${body.?[qty} < 1].size() > 0}, text that was never written.
+     */
     private static int indexOutsideQuotes(String text, String find) {
         boolean single = false;
         boolean dubble = false;
+        int depth = 0;
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '\'' && !dubble) {
                 single = !single;
             } else if (c == '"' && !single) {
                 dubble = !dubble;
-            } else if (!single && !dubble && text.startsWith(find, i)) {
+            } else if (!single && !dubble && (c == '(' || c == '[')) {
+                depth++;
+            } else if (!single && !dubble && (c == ')' || c == ']')) {
+                depth--;
+            } else if (!single && !dubble && depth == 0 && text.startsWith(find, i)) {
                 return i;
             }
         }
@@ -373,7 +388,7 @@ public final class SimpleSyntaxHints {
             return bare + " is a language, not a simple function: another language cannot be nested inside ${...}; write"
                    + " the expression with its own key, for example " + bare + ": \"...\"";
         }
-        // ${jsonpath:$.status}: written the way bean: and date: are, but these four take parentheses (CAMEL-24845)
+        // ${jsonpath:$.status}: written the way bean: and date: are, but these functions take parentheses (CAMEL-24845)
         int colon = function.indexOf(':');
         if (colon > 0 && QUERY_FUNCTIONS.contains(function.substring(0, colon))) {
             return parentheses(function.substring(0, colon), function.substring(colon + 1));
@@ -421,6 +436,9 @@ public final class SimpleSyntaxHints {
 
     /** The did-you-mean for a function whose argument was written after a colon instead of in parentheses. */
     private static String parentheses(String name, String argument) {
+        if ("semantic".equals(name)) {
+            argument = "'" + ("exp".equals(argument) ? "evaluationName" : argument) + "'";
+        }
         return "the argument goes in parentheses: did you mean ${" + name + "(" + argument + ")}?";
     }
 

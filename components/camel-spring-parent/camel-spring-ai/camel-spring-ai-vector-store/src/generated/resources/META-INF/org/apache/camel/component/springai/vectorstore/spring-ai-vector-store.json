@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ai-vector-store",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "spring-ai-vector-store",
     "extendsScheme": "",
     "syntax": "spring-ai-vector-store:storeId",
@@ -42,6 +42,10 @@
     "CamelSpringAiVectorStoreSimilarDocuments": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.List<org.springframework.ai.document.Document>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "List of similar documents found", "constantName": "org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreHeaders#SIMILAR_DOCUMENTS" },
     "CamelSpringAiVectorStoreDocumentsAdded": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Number of documents added", "constantName": "org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreHeaders#DOCUMENTS_ADDED" },
     "CamelSpringAiVectorStoreDocumentsDeleted": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Number of documents deleted", "constantName": "org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreHeaders#DOCUMENTS_DELETED" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "operation", "value": "DELETE", "carriers": [ "text", "list" ] }, { "option": "operation", "value": "SIMILARITY_SEARCH", "carriers": [ "text" ] } ], "description": "ADD takes a Document, a List of Document or of texts, or text (another body is added as its text). After spring-ai-embeddings it adds the texts in the CamelSpringAiEmbeddingInputText(s) headers instead of the body. DELETE takes the id or a List of ids, unless the CamelSpringAiVectorStoreDocumentIds header has them, and SIMILARITY_SEARCH the query text. No body fails. The CamelSpringAiVectorStoreOperation header overrides operation" },
+    "producerOut": { "carriers": [ "unchanged" ], "byOption": [ { "option": "operation", "value": "SIMILARITY_SEARCH", "carriers": [ "list" ] } ], "description": "SIMILARITY_SEARCH gives the List of Document found. ADD and DELETE keep the body, with the ids and the count in headers" }
   },
   "properties": {
     "storeId": { "index": 0, "kind": "path", "displayName": "Store Id", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The id" },

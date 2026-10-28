@@ -24,7 +24,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(77);
+        Set<String> props = new HashSet<>(78);
         props.add("allowDefaultCodec");
         props.add("allowSerializedHeaders");
         props.add("autoAppendDelimiter");
@@ -56,6 +56,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         props.add("keyStoreResource");
         props.add("lazyChannelCreation");
         props.add("lazyStartProducer");
+        props.add("muteException");
         props.add("nativeTransport");
         props.add("needClientAuth");
         props.add("nettyServerBootstrapFactory");
@@ -122,7 +123,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "protocol", null, true, copy);
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);

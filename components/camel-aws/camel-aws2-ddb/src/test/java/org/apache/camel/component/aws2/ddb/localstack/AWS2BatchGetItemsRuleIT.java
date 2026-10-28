@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.ddb.localstack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
@@ -85,6 +86,7 @@ public class AWS2BatchGetItemsRuleIT extends Aws2DDBBase {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void batchGetItems() {
         putItem(retrieveValue, "1");
         putItem(notRetrieveValue, "0");
@@ -104,8 +106,14 @@ public class AWS2BatchGetItemsRuleIT extends Aws2DDBBase {
 
         });
 
-        assertNull(exchange.getIn().getExchange().getException());
-        assertNotNull(exchange.getIn().getHeader(Ddb2Constants.BATCH_RESPONSE));
+        assertNull(exchange.getException());
+        Map<String, List<Map<String, AttributeValue>>> response
+                = exchange.getIn().getHeader(Ddb2Constants.BATCH_RESPONSE, Map.class);
+        assertNotNull(response);
+        List<Map<String, AttributeValue>> items = response.get(tableName);
+        assertEquals(1, items.size());
+        assertEquals(retrieveValue, items.get(0).get(attributeName).s());
+        assertEquals("1", items.get(0).get(secondaryAttributeName).s());
         assertNotNull(exchange.getIn().getHeader(Ddb2Constants.UNPROCESSED_KEYS));
     }
 
@@ -114,13 +122,11 @@ public class AWS2BatchGetItemsRuleIT extends Aws2DDBBase {
         attributeMap.put(attributeName, AttributeValue.builder().s(value1).build());
         attributeMap.put(secondaryAttributeName, AttributeValue.builder().s(value2).build());
 
-        template.send("direct:start", e -> {
-            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchGetItems);
-            e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, "true");
-            e.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD");
+        Exchange exchange = template.send("direct:start", e -> {
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.PutItem);
             e.getIn().setHeader(Ddb2Constants.ITEM, attributeMap);
-            e.getIn().setHeader(Ddb2Constants.ATTRIBUTE_NAMES, attributeMap.keySet());
         });
+        assertNull(exchange.getException());
     }
 
     @Override

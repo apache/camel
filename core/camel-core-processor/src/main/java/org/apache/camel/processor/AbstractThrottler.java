@@ -16,13 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -70,7 +70,7 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
             String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
                          + exchange;
             LOG.debug(msg);
-            exchange.setException(new RejectedExecutionException(msg, e));
+            exchange.setException(new RouteStoppingException(msg, e));
         } else {
             exchange.setException(e);
         }

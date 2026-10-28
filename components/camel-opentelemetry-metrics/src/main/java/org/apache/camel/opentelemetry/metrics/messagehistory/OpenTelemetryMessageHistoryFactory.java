@@ -29,6 +29,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
@@ -38,6 +39,7 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
         implements NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
+    private BodyTypeRegistry bodyTypeRegistry;
     private Meter meter;
     private boolean copyMessage;
     private String nodePattern;
@@ -135,7 +137,7 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
         if (route != null) {
             OpenTelemetryMessageHistory answer
                     = new OpenTelemetryMessageHistory(timer, getTimeUnit(), route, namedNode, getNamingStrategy(), msg);
-            answer.captureBody(exchange);
+            answer.captureBody(exchange, bodyTypeRegistry);
             return answer;
         } else {
             return null;
@@ -145,6 +147,8 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+        // looked up once, as every node an exchange reaches records its body type
+        bodyTypeRegistry = getCamelContext().getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
         if (meter == null) {
             this.meter = CamelContextHelper.findSingleByType(getCamelContext(), Meter.class);
         }

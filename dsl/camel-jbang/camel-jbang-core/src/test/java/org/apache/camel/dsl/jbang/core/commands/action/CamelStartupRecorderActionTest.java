@@ -16,19 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Path;
 import java.util.Collections;
-import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
@@ -37,7 +40,7 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
     @Override
     public void setup() throws Exception {
         super.setup();
-        CommandLineHelper.useHomeDir("target");
+        useTestHomeDir();
     }
 
     @Test
@@ -133,19 +136,32 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
-    void testEmptyOutputWhenNoPidFound() throws Exception {
-        // No pids returned — command should return error code 1
+    void testNotFoundWhenNoIntegrationMatches() {
+        // no integration runs in the home directory of the test
+        CamelStartupRecorderAction command = new CamelStartupRecorderAction(new CamelJBangMain().withPrinter(printer));
+
+        CliException e = assertThrows(CliException.class, command::doWatchCall);
+
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode(), "Should exit with 3 when no integration matches");
+    }
+
+    @Test
+    void testJson() throws Exception {
+        JsonObject mockOutput = buildStartupOutput(
+                step(1, 0, 0, "myRoute", "Route", "Configure route", 100));
+
         TestableStartupRecorder command = new TestableStartupRecorder(
-                new CamelJBangMain().withPrinter(printer), null) {
-            @Override
-            List<Long> findPids(String name) {
-                return List.of();
-            }
-        };
+                new CamelJBangMain().withPrinter(printer), mockOutput);
+        command.jsonOutput = true;
 
         int exit = command.doWatchCall();
 
-        assertEquals(1, exit, "Should return error when no pids found");
+        assertEquals(0, exit);
+        JsonArray steps = Jsoner.deserialize(printer.getOutput(), (JsonArray) null);
+        assertEquals(1, steps.size(), printer.getOutput());
+        JsonObject step = steps.getMap(0);
+        assertEquals("Configure route", step.getString("description"));
+        assertEquals(100, step.getLong("duration"));
     }
 
     private static JsonObject buildStartupOutput(JsonObject... steps) {
@@ -183,12 +199,12 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
         }
 
         @Override
-        List<Long> findPids(String name) {
-            return List.of(12345L);
+        protected CamelProcess findOne(String name) {
+            return new CamelProcess(12345L, "test", new JsonObject());
         }
 
         @Override
-        protected JsonObject waitForOutputFile(Path outputFile) {
+        protected JsonObject executeAction(CamelProcess process, String action, Consumer<JsonObject> options) {
             return mockOutput;
         }
     }

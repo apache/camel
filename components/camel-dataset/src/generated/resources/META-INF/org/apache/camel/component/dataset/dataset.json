@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataset",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "dataset",
     "extendsScheme": "",
     "syntax": "dataset:name",
@@ -32,6 +32,11 @@
   },
   "headers": {
     "CamelDataSetIndex": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The dataset index", "constantName": "org.apache.camel.component.dataset.DataSetConstants#DATASET_INDEX" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unknown" ], "description": "The body the DataSet bean creates for each message: the defaultBody of a SimpleDataSet (the text <hello>world!<\/hello> unless set), the bodies of a ListDataSet in turn, or the text of a FileDataSet" },
+    "producerIn": { "carriers": [ "any" ], "description": "Each message is compared with the body the DataSet creates for its index. A mismatch fails the assertions of the endpoint, not the message" },
+    "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.dataset.DataSet", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of DataSet to lookup in the registry" },

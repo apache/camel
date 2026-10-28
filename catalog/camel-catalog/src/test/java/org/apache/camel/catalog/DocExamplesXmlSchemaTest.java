@@ -118,7 +118,8 @@ class DocExamplesXmlSchemaTest {
             "split-eip", "<namespace key=",
             "xtokenize-language", "<namespace key=",
             "endpoint", "paramA=1&paramB=2",
-            "semantic-language", "<semantic>");
+            "semantic-language", "<semantic>",
+            "switch-eip", "<semantic>");
 
     private static CamelCatalog catalog;
     private static Schema springSchema;

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quartz",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "quartz",
     "extendsScheme": "",
     "syntax": "quartz:groupName\/triggerName",
@@ -36,6 +36,9 @@
     "schedulerFactory": { "index": 9, "kind": "property", "displayName": "Scheduler Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.quartz.SchedulerFactory", "deprecated": false, "autowired": false, "secret": false, "description": "To use the custom SchedulerFactory which is used to create the Scheduler." },
     "autoStartScheduler": { "index": 10, "kind": "property", "displayName": "Auto Start Scheduler", "group": "scheduler", "label": "scheduler", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the scheduler should be auto started. This option is default true" },
     "interruptJobsOnShutdown": { "index": 11, "kind": "property", "displayName": "Interrupt Jobs On Shutdown", "group": "scheduler", "label": "scheduler", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to interrupt jobs on shutdown, which forces the scheduler to shut down quicker and attempt to interrupt any running jobs. If this is enabled, then any running jobs can fail due to being interrupted. When a job is interrupted then Camel will mark the exchange to stop to continue routing and set java.util.concurrent.RejectedExecutionException as caused exception. Therefore, use this with care, as its often better to allow Camel jobs to complete and shutdown gracefully." }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "null" ], "description": "No body: the message only starts the route" }
   },
   "properties": {
     "groupName": { "index": 0, "kind": "path", "displayName": "Group Name", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "Camel", "description": "The quartz group name to use. The combination of group name and trigger name should be unique." },

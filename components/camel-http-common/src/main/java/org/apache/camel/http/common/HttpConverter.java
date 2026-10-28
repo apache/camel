@@ -19,6 +19,8 @@ package org.apache.camel.http.common;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
+import java.util.zip.GZIPInputStream;
 
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -84,16 +86,23 @@ public final class HttpConverter {
             return null;
         }
         InputStream is = request.getInputStream();
-        if (is != null && is.available() <= 0) {
-            // there is no data, so we cannot uncompress etc.
+        if (is == null) {
+            return null;
+        }
+        boolean skip = exchange != null && exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class);
+        if (skip || !GZIPHelper.isGzip(request.getHeader(Exchange.CONTENT_ENCODING))) {
             return is;
         }
-        if (exchange == null || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
-            String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING);
-            return GZIPHelper.uncompressGzip(contentEncoding, is);
-        } else {
+        // an empty body cannot be uncompressed. Whether the body is empty is only known after reading:
+        // available() is 0 as long as no data has arrived, such as when the client waits for 100 Continue
+        // or sends the body later than the headers
+        PushbackInputStream pushback = new PushbackInputStream(is, 1);
+        int first = pushback.read();
+        if (first == -1) {
             return is;
         }
+        pushback.unread(first);
+        return new GZIPInputStream(pushback);
     }
 
 }

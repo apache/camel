@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +48,10 @@ public class InfraRestart extends InfraBaseCommand {
 
     @CommandLine.Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
     boolean background;
+
+    @CommandLine.Option(names = { "--prop", "--property" },
+                        description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
+    List<String> serviceProperties = new ArrayList<>();
 
     @CommandLine.Option(names = { "--kill" },
                         description = "To force killing the process (SIGKILL) when stopping")
@@ -93,6 +98,8 @@ public class InfraRestart extends InfraBaseCommand {
         infraRun.port = port;
         infraRun.setLogToStdout(logToStdout);
         infraRun.background = background;
+        // a restart starts a new service, so it takes its properties the way it takes its port
+        infraRun.serviceProperties = serviceProperties;
         return infraRun.doCall();
     }
 

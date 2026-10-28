@@ -31,6 +31,10 @@ explorer on the left and a source viewer on the right.
 - The problems of a Camel file are marked as soon as it opens: a red ✗ on
   their lines and the count in the title; the panel at the bottom says the
   problem of the selected line, and **F9** goes to the next one
+- A note, something that works but is not right, is a yellow ⚠ instead, counted
+  apart as `notes`, and does not keep the file from being saved: a `direct:` or
+  `seda:` endpoint no route of the project consumes, a dependency a Kamelet does
+  not use
 - **u** — usages: the routes that consume from the endpoint of the line and the
   steps that send to it (direct:, seda:...), across the project; **Enter** goes there
 - **/** — search in source
@@ -47,12 +51,44 @@ processors on each line do: the exchanges they handled (`79`), how many failed
 its width, so the code does not move as the numbers grow. The source reads as
 a heat map of the route: where messages go, where they fail.
 
+With the message history on (such as `camel run --dev`), the body types each
+step has been reached with go at the end of its line, dimmed and lined up
+(`ByteArrayInputStreamCache`, `String | byte[]`). A step reached with bodies of
+more than one kind (null, payload, data or collection) needs attention, as its
+body depends on the path a message takes: it has a `⚠` in the gutter and its
+types in the warning color (`⚠ byte[] | LinkedHashMap (payload and data)`). The quick
+documentation of the line lists them all.
+
+The live run data and the body types are of the version of the file the
+integration runs: while it is not running as saved (see below), the numbers
+are dimmed and the body types are left out, as the lines may be others.
+
+## Running as Saved
+The bottom border of the source says whether the integration runs the routes
+of the file as it is saved:
+- `● running as saved` — the integration loaded the file after it was saved
+- `○ reloading...` — saved a moment ago, and the integration reloads on save (`--dev`)
+- `○ not running yet` — saved after the integration loaded it: restart an
+  integration that runs without `--dev`, or see the log of one that did not
+  reload the file
+- `⚠ the reload failed` — the integration runs what it ran before the reload,
+  until a reload succeeds
+- `○ the routes of this file are stopped` — stopped (or suspended) by hand: the
+  live run data and the body types still show when the integration loaded the
+  file as saved, which is not known for a route stopped after a reload
+
+It compares when the file was saved with when the integration loaded the
+routes it has from it, and shows nothing for a file it has no route from.
+Edits not saved yet are not part of it: the title marks them with `*`.
+
 ## Edit Mode (Shortcuts)
 - **Ctrl+Z** — undo
 - **Ctrl+Y / Ctrl+Shift+Z** — redo
 - **Alt+Up / Alt+Down** — move YAML list block up/down
 - **Ctrl+D** — duplicate current block
 - **Ctrl+K** — delete current line
+- **Ctrl+/** — comment out the current block, or bring it back (`#` in YAML and
+  properties, `//` in Java)
 - **Ctrl+Left / Ctrl+Right** — word navigation
 - **Home** — smart home (content indent, then column 0)
 - Quick documentation panel is shown at the bottom (shows doc for current line;
@@ -174,6 +210,14 @@ a YAML or XML file); **Enter** goes to its declaration.
   node in the source editor. Type a **line number** (e.g. `47`) and press
   **Enter** to jump directly to that line.
 
+## Route Tree
+- **Ctrl+T** — show or hide the route tree at the top right of the source:
+  the route the cursor is in, from its `from` through each step, with the
+  branches indented and the step under the cursor marked with ▶. It follows
+  the cursor as you move and edit, for YAML, XML and Java routes, also when
+  the route does not run. The **Route Tree** setting (F2 → Settings) says
+  whether it is shown at first. It needs an editor of 90 columns or more.
+
 ## General
 - **Tab** — toggle focus between file list and source viewer
 - The focused panel title is highlighted; the unfocused panel dims
@@ -183,17 +227,20 @@ a YAML or XML file); **Enter** goes to its declaration.
 
 With `/write live` in the AI panel (`F8`), a change the AI makes is replayed
 here instead of shown as a diff: the AI panel hides, the file opens in edit
-mode and the change is typed hunk by hunk so you can follow it in context.
+mode and the change is typed hunk by hunk so you can follow it in context
+(a large change is typed faster, a few seconds at most).
 
 - **Enter** — continue with the next change
 - **any other key** — finish the current change at once
 - **F4** — edit yourself; the remaining changes wait
 - **F9** — continue the AI changes after editing yourself (a change whose
   surrounding lines you edited is skipped and reported to the AI)
-- **F8** — ask the AI about the current change: the AI panel opens with the
-  question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
+- **F8** — ask the AI about the current change: a compact AI panel opens with
+  the question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
   same turn, and closing the panel (`F8` or `Esc`) returns to the pause; if
   the AI revises the change it continues in the editor from where it is
 - **Esc** — stop; what was typed stays in the editor
 - then **Ctrl+S** / **F5** saves (this is the confirmation, dev mode reloads),
   **F7** shows the diff, **Esc** discards; the AI panel comes back afterwards
+- after five minutes without saving or discarding, the AI stops waiting; the
+  edit stays here and the AI is told what you did with it next time you ask

@@ -8,7 +8,26 @@
     "javaType": "org.apache.camel.component.aws2.ddb.transform.Ddb2JsonDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "text",
+        "bytes",
+        "stream",
+        "file",
+        "pojo"
+      ],
+      "format": "json",
+      "description": "A JSON object, or a Jackson JsonNode; the body is not read when the item or key header is set already"
+    },
+    "transformerOut": {
+      "carriers": [
+        "unchanged"
+      ],
+      "description": "Sets the item, key, update values and operation headers of the aws2-ddb producer"
+    }
   }
 }
 

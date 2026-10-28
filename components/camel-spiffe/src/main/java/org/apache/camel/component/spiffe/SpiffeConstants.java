@@ -48,6 +48,13 @@ public final class SpiffeConstants {
               javaType = "java.util.Date")
     public static final String EXPIRY = HEADER_PREFIX + "Expiry";
 
+    /**
+     * Exchange property carrying the verified peer SPIFFE ID, set by {@link SpiffeSecurityPolicy} once a caller has
+     * been authorized. It is an exchange property rather than a message header so it cannot be supplied by an inbound
+     * message, and so a downstream policy can forward it - for example the OPA policy's {@code includeProperties}.
+     */
+    public static final String PEER_SPIFFE_ID = HEADER_PREFIX + "PeerId";
+
     private SpiffeConstants() {
     }
 }

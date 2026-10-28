@@ -33,6 +33,8 @@ import static org.apache.camel.diagram.RouteDiagramHelper.wrapText;
 public class TopologyAsciiRenderer {
 
     private static final int Y_SCALE = 20;
+    /** The height of a row of text, in layout units: for {@link TopologyErrorFrame#layout}. */
+    public static final int ROW_HEIGHT = Y_SCALE;
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
     private static final int MAX_WRAP_LINES = RouteDiagramHelper.MAX_WRAP_LINES;
@@ -100,7 +102,20 @@ public class TopologyAsciiRenderer {
         return applyAnsiColors(plain);
     }
 
+    /**
+     * Renders the diagram with its error handling in a frame below the routes, laid out by
+     * {@link TopologyErrorFrame#layout}.
+     */
+    public String renderDiagram(TopologyLayoutResult result, TopologyErrorFrame frame) {
+        return applyAnsiColors(renderDiagramPlain(result, frame));
+    }
+
     public String renderDiagramPlain(TopologyLayoutResult result) {
+        return renderDiagramPlain(result, null);
+    }
+
+    /** Renders the diagram without colors, with its error handling in a frame below the routes when given. */
+    public String renderDiagramPlain(TopologyLayoutResult result, TopologyErrorFrame frame) {
         counterPositions.clear();
         nodeBoxes.clear();
 
@@ -108,10 +123,26 @@ public class TopologyAsciiRenderer {
         int gridHeight = toRow(result.totalHeight) + 10;
         gridWidth = Math.max(gridWidth, 40);
         gridHeight = Math.max(gridHeight, 10);
+        if (frame != null && frame.routeIds().isEmpty()) {
+            frame = null;
+        }
+        if (frame != null) {
+            // the frame takes in the lines under its routes
+            for (TopologyLayoutNode node : result.nodes) {
+                if (frame.routeIds().contains(node.routeId)) {
+                    for (String line : frame.lines(node.routeId, lineStyle())) {
+                        gridWidth = Math.max(gridWidth, toCol(node.x) + line.length() + 4);
+                    }
+                }
+            }
+        }
 
         char[][] grid = new char[gridHeight][gridWidth];
         for (char[] row : grid) {
             Arrays.fill(row, ' ');
+        }
+        if (frame != null) {
+            drawErrorFrame(grid, result, frame);
         }
 
         // Draw edges first (behind nodes)
@@ -132,8 +163,49 @@ public class TopologyAsciiRenderer {
         for (TopologyLayoutNode node : result.nodes) {
             drawNode(grid, node);
         }
+        if (frame != null) {
+            drawErrorLines(grid, result, frame);
+        }
 
         return gridToString(grid);
+    }
+
+    private TopologyErrorFrame.LineStyle lineStyle() {
+        return unicode ? TopologyErrorFrame.LineStyle.UNICODE : TopologyErrorFrame.LineStyle.ASCII;
+    }
+
+    /** The frame of the error handling: from its top to the bottom of the diagram, as wide as the diagram. */
+    private void drawErrorFrame(char[][] grid, TopologyLayoutResult result, TopologyErrorFrame frame) {
+        int top = toRow(frame.topY());
+        int bottom = toRow(result.totalHeight) - 1;
+        int right = grid[0].length - 2;
+        char h = unicode ? UNI_DASH_H : '-';
+        char v = unicode ? UNI_DASH_V : ':';
+        for (int c = 1; c < right; c++) {
+            setChar(grid, top, c, h);
+            setChar(grid, bottom, c, h);
+        }
+        for (int r = top + 1; r < bottom; r++) {
+            setChar(grid, r, 0, v);
+            setChar(grid, r, right, v);
+        }
+        setChar(grid, top, 0, unicode ? '\u256d' : '+');
+        setChar(grid, top, right, unicode ? '\u256e' : '+');
+        setChar(grid, bottom, 0, unicode ? '\u2570' : '+');
+        setChar(grid, bottom, right, unicode ? '\u256f' : '+');
+        drawText(grid, top, 2, " " + TopologyErrorFrame.TITLE + " ");
+    }
+
+    /** Under each route of the frame: where its failures come from and how they are handled. */
+    private void drawErrorLines(char[][] grid, TopologyLayoutResult result, TopologyErrorFrame frame) {
+        for (TopologyLayoutNode node : result.nodes) {
+            if (frame.routeIds().contains(node.routeId)) {
+                int row = toRow(node.y) + boxHeight(node);
+                for (String line : frame.lines(node.routeId, lineStyle())) {
+                    drawText(grid, row++, toCol(node.x), line);
+                }
+            }
+        }
     }
 
     private static boolean isExternalNode(TopologyLayoutNode node) {

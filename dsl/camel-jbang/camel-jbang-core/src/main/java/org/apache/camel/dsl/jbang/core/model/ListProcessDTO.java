@@ -114,11 +114,12 @@ public class ListProcessDTO {
         JsonObject jo = new JsonObject();
         jo.put("pid", pid);
         jo.put("name", name);
-        jo.put("ready", ready);
+        // whether the health check of the integration is ready (the table shows 1/1 or 0/1)
+        jo.put("ready", "1/1".equals(ready));
         jo.put("status", status);
         jo.put("age", age);
         jo.put("total", total);
-        jo.put("fail", fail);
+        jo.put("failed", fail);
         jo.put("inflight", inflight);
         return jo;
     }

@@ -44,6 +44,7 @@ public class Nano extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        requireInteractiveTerminal("camel nano");
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         try (Terminal terminal = TerminalBuilder.builder().build()) {
             Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass()).getParent();

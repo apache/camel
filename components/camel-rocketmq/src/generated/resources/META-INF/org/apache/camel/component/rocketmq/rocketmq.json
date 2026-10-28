@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rocketmq",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "rocketmq",
     "extendsScheme": "",
     "syntax": "rocketmq:topicName",
@@ -66,6 +66,11 @@
     "CamelRockerMQBodyCrc": { "index": 17, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Body CRC", "constantName": "org.apache.camel.component.rocketmq.RocketMQConstants#BODY_CRC" },
     "CamelRockerMQReconsumeTimes": { "index": 18, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Reconsume times", "constantName": "org.apache.camel.component.rocketmq.RocketMQConstants#RECONSUME_TIMES" },
     "CamelRockerMQPreparedTransactionOffset": { "index": 19, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Prepard transaction offset", "constantName": "org.apache.camel.component.rocketmq.RocketMQConstants#PREPARED_TRANSACTION_OFFSET" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "The body of the RocketMQ message. The consumer does not reply: the body the route ends with is not sent back" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "What converts to a byte array: text, bytes, a stream or a file, sent as the body of the message. A Map, a POJO, a number or no body fails, and the broker rejects an empty body: marshal it first" },
+    "producerOut": { "carriers": [ "unchanged" ], "dependsOn": [ "replyToTopic" ], "description": "The body is left as it was. With the InOut pattern and a replyToTopic, the producer waits for the reply and the body is the reply as a byte array" }
   },
   "properties": {
     "topicName": { "index": 0, "kind": "path", "displayName": "Topic Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Topic name of this endpoint." },

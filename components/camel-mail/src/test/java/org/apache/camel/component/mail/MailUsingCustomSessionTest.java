@@ -43,7 +43,7 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
 
     @Override
     public void doPostSetup() {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james);
     }
 
     @Test

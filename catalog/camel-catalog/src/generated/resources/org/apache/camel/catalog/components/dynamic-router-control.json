@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dynamic-router",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "dynamic-router-control",
     "extendsScheme": "",
     "syntax": "dynamic-router-control:controlAction",
@@ -36,6 +36,10 @@
     "CamelDynamicRouterPredicate": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The predicate to evaluate exchanges for this subscription", "constantName": "org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants#CONTROL_PREDICATE" },
     "CamelDynamicRouterPredicateBean": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the bean in the registry that identifies the subscription predicate.", "constantName": "org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants#CONTROL_PREDICATE_BEAN" },
     "CamelDynamicRouterExpressionLanguage": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The language for the predicate when supplied as a string.", "constantName": "org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants#CONTROL_EXPRESSION_LANGUAGE" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "A DynamicRouterControlMessage, or the subscription in the options or the headers. For subscribe and update without a predicate or a predicateBean, the body must be the Predicate" },
+    "producerOut": { "carriers": [ "unknown" ], "byOption": [ { "option": "controlAction", "value": "subscribe", "carriers": [ "text" ], "javaType": "java.lang.String" }, { "option": "controlAction", "value": "update", "carriers": [ "text" ], "javaType": "java.lang.String" }, { "option": "controlAction", "value": "unsubscribe", "carriers": [ "value" ], "javaType": "java.lang.Boolean" }, { "option": "controlAction", "value": "list", "carriers": [ "text" ], "javaType": "java.lang.String" }, { "option": "controlAction", "value": "statistics", "carriers": [ "text" ], "javaType": "java.lang.String" } ], "description": "By the action: the id of the subscription for subscribe and update, true when unsubscribe removed it, and the subscriptions or their statistics as text for list and statistics. The CamelDynamicRouterControlAction header overrides the action" }
   },
   "properties": {
     "controlAction": { "index": 0, "kind": "path", "displayName": "Control Action", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "subscribe", "unsubscribe", "update", "list", "statistics" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Control action" },

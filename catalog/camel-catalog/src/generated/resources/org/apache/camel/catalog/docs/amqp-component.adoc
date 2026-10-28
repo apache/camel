@@ -51,7 +51,10 @@ former is almost identical to the latter:
 
 *Using AMQP component*
 
-._Java-only: Java DSL snippet (incomplete route)_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Consuming from AMQP queue
@@ -62,6 +65,31 @@ from("amqp:queue:incoming").
 from(...).
   to("amqp:topic:notify");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: amqp:queue:incoming
+      steps:
+        - log:
+            message: "Received ${body}"
+- route:
+    from:
+      uri: timer:notify
+      parameters:
+        period: 5000
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: Hello from Camel
+        - to:
+            uri: amqp:topic:notify
+----
+====
 
 == Configuring AMQP component
 
@@ -75,6 +103,13 @@ AMQPComponents may be created using the provided factory methods, for example:
 AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672");
 
 AMQPComponent authorizedAmqp = AMQPComponent.amqpComponent("amqp://localhost:5672", "user", "password");
+----
+
+Without Java code, for example with YAML routes, set the connection factory of the component in `application.properties`:
+
+[source,properties]
+----
+camel.component.amqp.connection-factory = #class:org.apache.qpid.jms.JmsConnectionFactory("amqp://localhost:5672")
 ----
 
 Alternatively, the AMQP Component can be initialized by providing one or more of the available options for

@@ -406,6 +406,89 @@ class BeansTest extends YamlTestSupport {
         assertThat(msg.contains("did you mean")).isFalse();
     }
 
+    // CAMEL-24704: beans keyed by the bean name, as most other formats write them, fail with the list form to write
+    // instead of "Node type map is invalid, expected array" / "Unsupported field: myProcessor"
+
+    @Test
+    void beansAsMapSaysBeansIsAList() {
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                        myProcessor:
+                          type: %s
+                """.formatted(MyBean.class.getName())));
+
+        assertThat(messages(e)).contains("beans is a list: each bean starts with \"- \": - name: myProcessor");
+    }
+
+    @Test
+    void beansListWithoutDashSaysBeansIsAList() {
+        // the "- " was forgotten: the bean reads as a map whose first key is name, so the hint uses its value
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                        name: myProcessor
+                        type: %s
+                """.formatted(MyBean.class.getName())));
+
+        assertThat(messages(e)).contains("beans is a list: each bean starts with \"- \": - name: myProcessor");
+    }
+
+    @Test
+    void beanItemKeyedByNameSaysNameIsAProperty() {
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                      - name: first
+                        type: %s
+                      - myProcessor:
+                          type: %s
+                """.formatted(MyBean.class.getName(), MyBean.class.getName())));
+
+        assertThat(messages(e))
+                .contains("a bean item is written as - name: myProcessor")
+                .contains("(the name is a property, not the key)");
+    }
+
+    @Test
+    void beanItemWithOnlyPropertiesIsNotReadAsKeyedByName() {
+        // properties: is a map property of the bean, not its name: the error is the missing name
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                      - properties:
+                          field1: f1
+                """));
+
+        assertThat(messages(e)).contains("The bean name must be set").doesNotContain("a bean item is written as");
+    }
+
+    @Test
+    void routeTemplateBeansAsMapSaysBeansIsAList() {
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - routeTemplate:
+                        id: myTemplate
+                        beans:
+                          myProcessor:
+                            type: %s
+                        from:
+                          uri: "direct:{{directName}}"
+                          steps:
+                            - to: "mock:result"
+                """.formatted(MyBean.class.getName())));
+
+        assertThat(messages(e)).contains("beans is a list: each bean starts with \"- \": - name: myProcessor");
+    }
+
+    @Test
+    void templatedRouteBeanItemKeyedByNameSaysNameIsAProperty() {
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - templatedRoute:
+                        routeTemplateRef: myTemplate
+                        beans:
+                          - myProcessor:
+                              type: %s
+                """.formatted(MyBean.class.getName())));
+
+        assertThat(messages(e)).contains("a bean item is written as - name: myProcessor");
+    }
+
     private static String messages(Throwable e) {
         StringBuilder sb = new StringBuilder();
         for (Throwable t = e; t != null; t = t.getCause()) {

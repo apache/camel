@@ -32,12 +32,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.TypedLanguageSupport;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
@@ -50,10 +55,11 @@ import org.graalvm.polyglot.Value;
  * Camel expression language for Python 3 via <a href="https://www.graalvm.org/python/">GraalPy</a>.
  *
  * <p>
- * Default scripts see only data bindings: {@code body}, {@code headers}, {@code properties}, and {@code exchangeId}.
- * {@code exchange}, {@code message}, and {@code context} are intentionally absent so they resolve as Python
- * {@code NameError} rather than opaque objects with no usable API. Binding them by default would also become a
- * privilege escalation if host access were later widened.
+ * Default scripts see only data bindings: {@code body}, {@code header}/{@code headers},
+ * {@code exchangeProperty}/{@code exchangeProperties}, {@code variable}/{@code variables} and {@code exchangeId}. The
+ * host objects ({@code exchange}, {@code camelContext}, {@code message}, {@code request} and {@code exception}) are
+ * intentionally absent so they resolve as Python {@code NameError} rather than opaque objects with no usable API.
+ * Binding them by default would also become a privilege escalation if host access were later widened.
  * </p>
  *
  * <p>
@@ -68,12 +74,30 @@ import org.graalvm.polyglot.Value;
  * </pre>
  */
 @Language("python3")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "The body as it is, in the variable body: a Map, a List or an array can be"
+                                                  + " indexed, and other Java objects have no methods unless the language is"
+                                                  + " created with createWithHostAccess()"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     javaTypeOption = "resultType",
+                                     description = "What the script returns: a dict as a Map, a list or a tuple as a List, a set"
+                                                   + " as a Set, bytes as bytes, and None as null. A function fails"))
 public class Python3Language extends TypedLanguageSupport implements ScriptingLanguage, Service {
+
+    static final String FUNCTION_RESULT
+            = "The script returned a function, which cannot be used after the script ends: return a value instead";
+
+    /**
+     * The built-in Python types of functions and methods: a def or lambda, a bound method, a built-in function or bound
+     * built-in method, and the method wrappers of built-in types.
+     */
+    private static final Set<String> PYTHON_FUNCTION_TYPES
+            = Set.of("function", "method", "builtin_function_or_method", "method-wrapper", "method_descriptor");
 
     private final HostAccess hostAccess;
     /**
-     * When true, also bind {@code exchange}, {@code message}, and {@code context}. Only {@link #createWithHostAccess()}
-     * sets this; default mode keeps those names undefined.
+     * When true, also bind the host objects {@code exchange}, {@code camelContext}, {@code message}, {@code request}
+     * and {@code exception}. Only {@link #createWithHostAccess()} sets this; default mode keeps those names undefined.
      */
     private final boolean bindCamelHostObjects;
     private final Map<String, Source> sourceCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
@@ -95,8 +119,8 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
 
     /**
      * Creates a separate language instance for trusted scripts. Uses {@link HostAccess#ALL} so Python may call public
-     * methods and fields on bound host objects, and additionally exposes {@code exchange}, {@code message}, and
-     * {@code context}.
+     * methods and fields on bound host objects, and additionally exposes {@code exchange}, {@code camelContext},
+     * {@code message}, {@code request} and {@code exception}.
      * <p>
      * This is an explicit opt-in: {@code HostAccess.ALL} is not a sandbox. It does not enable {@code allowAllAccess},
      * Java class lookup, host IO, or process creation. Use only when you trust the scripts.
@@ -166,16 +190,26 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
     Object evaluateExpression(String script, Exchange exchange) {
         try (Context cx = Python3Helper.newContext(engine(), hostAccess)) {
             Value b = cx.getBindings("python");
-            // Default: data only. Do not bind exchange/message/context — they are undefined (NameError)
-            // unless createWithHostAccess() opted into trusted host-object bindings.
+            Message message = exchange.getMessage();
+            Map<String, Object> headers = message.getHeaders();
+            Map<String, Object> properties = exchange.getAllProperties();
+            Map<String, Object> variables = exchange.getVariables();
+            // Default: data only, with the data names ExchangeHelper.populateVariableMap gives Groovy. The host objects
+            // are undefined (NameError) unless createWithHostAccess() opted into trusted host-object bindings.
             b.putMember("exchangeId", exchange.getExchangeId());
-            b.putMember("headers", exchange.getMessage().getHeaders());
-            b.putMember("properties", exchange.getAllProperties());
-            b.putMember("body", exchange.getMessage().getBody());
+            b.putMember("body", message.getBody());
+            b.putMember("header", headers);
+            b.putMember("headers", headers);
+            b.putMember("exchangeProperty", properties);
+            b.putMember("exchangeProperties", properties);
+            b.putMember("variable", variables);
+            b.putMember("variables", variables);
             if (bindCamelHostObjects) {
                 b.putMember("exchange", exchange);
-                b.putMember("message", exchange.getMessage());
-                b.putMember("context", exchange.getContext());
+                b.putMember("camelContext", exchange.getContext());
+                b.putMember("message", message);
+                b.putMember("request", message);
+                b.putMember("exception", LanguageHelper.exception(exchange));
             }
             Value value = cx.eval(source(script));
             return convert(value, Object.class, exchange.getContext(), exchange);
@@ -242,6 +276,10 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
      */
     @SuppressWarnings("unchecked")
     static <T> T convert(Value value, Class<T> resultType, CamelContext camelContext, Exchange exchange) {
+        if (isPythonFunction(value)) {
+            // the function is tied to the per-evaluation Context, which is closed as soon as the script ends
+            throw new ExpressionEvaluationException(null, FUNCTION_RESULT, exchange, null);
+        }
         Object obj = materialize(value, new HashMap<>());
         if (resultType == null || resultType == Object.class) {
             return (T) obj;
@@ -264,8 +302,9 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
     /**
      * Copies guest values into ordinary Java types so the result remains usable after {@link Context#close()}.
      * <p>
-     * Python lists and tuples become {@link List}, dicts become {@link Map}, and sets become {@link Set}. Nested values
-     * are copied recursively. Other guest objects (including custom types) are left as {@link Value#as(Class)
+     * Python lists and tuples become {@link List}, dicts become {@link Map}, sets become {@link Set}, and bytes,
+     * bytearray and memoryview (any value with buffer elements) become {@code byte[]}. Nested values are copied
+     * recursively. Other guest objects (including custom types) are left as {@link Value#as(Class)
      * value.as(Object.class)}.
      * <p>
      * GraalPy returns the {@code __main__} module (not {@link Value#isNull()}) for {@code None}, {@code pass}, and
@@ -302,6 +341,11 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
         }
         if (isMainModule(value)) {
             return null;
+        }
+        if (value.hasBufferElements()) {
+            byte[] bytes = new byte[Math.toIntExact(value.getBufferSize())];
+            value.readBuffer(0, bytes, 0, bytes.length);
+            return bytes;
         }
         if (isPythonSet(value)) {
             Set<Object> set = new LinkedHashSet<>();
@@ -351,6 +395,30 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
 
     private static boolean isPythonTuple(Value value) {
         return isPythonType(value, "tuple");
+    }
+
+    /**
+     * Whether the value is a Python function or method. {@link Value#canExecute()} alone also matches a Java host
+     * object, a class and an instance of a class with {@code __call__}, which are data; so the type must also be one of
+     * the built-in function types (a class of the script, even one named {@code function}, has another module).
+     */
+    private static boolean isPythonFunction(Value value) {
+        if (value == null || !value.canExecute() || value.isHostObject() || value.isMetaObject()) {
+            return false;
+        }
+        Value meta = value.getMetaObject();
+        if (meta == null || !meta.isMetaObject()) {
+            return false;
+        }
+        try {
+            if (!PYTHON_FUNCTION_TYPES.contains(meta.getMetaSimpleName())) {
+                return false;
+            }
+            Value module = meta.getMember("__module__");
+            return module != null && module.isString() && "builtins".equals(module.asString());
+        } catch (UnsupportedOperationException e) {
+            return false;
+        }
     }
 
     private static boolean isPythonType(Value value, String simpleName) {

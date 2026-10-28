@@ -17,7 +17,7 @@
 package org.apache.camel.component.influxdb2;
 
 import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.WriteApi;
+import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import org.apache.camel.Exchange;
@@ -39,13 +39,17 @@ public class InfluxDb2Producer extends DefaultProducer {
 
     InfluxDBClient connection;
 
-    WriteApi writeApi;
+    /**
+     * The synchronous write API of the client: a write returns when InfluxDB has answered and throws when the answer is
+     * an error or the request could not be sent, so the outcome of the write is the outcome of the exchange.
+     */
+    WriteApiBlocking writeApi;
 
     public InfluxDb2Producer(InfluxDb2Endpoint endpoint) {
         super(endpoint);
         this.connection = endpoint.getInfluxDBClient();
         this.endpoint = endpoint;
-        this.writeApi = connection.makeWriteApi();
+        this.writeApi = connection.getWriteApiBlocking();
     }
 
     /**

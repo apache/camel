@@ -2,62 +2,315 @@
 :doctitle: Semantic Evaluation
 :shortname: semantic
 :artifactid: camel-semantic
-:description: Evaluate named questions about message content to produce boolean decisions, categories and scores through provider adapters
+:description: Invoke named evaluations of message content to produce boolean decisions, categories, scores and label sets through provider adapters
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
 
 *Since Camel {since}*
 
-The Semantic language evaluates named questions through a provider-independent adapter.
-Boolean questions produce decisions, choice questions produce category strings, and score
-questions produce numbers on an ordered rubric. Calls are synchronous and may block while
+The Semantic language invokes named evaluations through provider-independent experts.
+Each expert owns its operations, accepted inputs, evaluation parameters and result meaning.
+Boolean evaluations produce decisions, choice evaluations produce category strings, score
+evaluations produce numbers, and classification evaluations produce sets of labels. Calls are synchronous and may block while
 inference runs. Provider errors propagate through normal Camel error handling.
 
 == Dependencies and providers
 
 Add `org.apache.camel:camel-semantic` and a provider, such as
-xref:ROOT:typesafe-ai-component.adoc[TypeSafe AI] (`camel-typesafe-ai`), using the same Camel version.
+xref:others:semantic-typesafe-ai.adoc[TypeSafe AI] (`camel-semantic-typesafe-ai`), using the same Camel version.
 The provider owns credentials, model selection, request timeout,
 concurrency limits and transport resources. TypeSafe AI uses
 `camel.component.typesafe-ai.*` settings even when a route contains no TypeSafe AI endpoint.
 
-One advertised adapter is selected automatically. No provider, or multiple distinct
-providers, is an error. Select an existing bean with
-`camel.language.semantic.adapter=myAdapter`, or a class using its fully qualified name.
-Use plain names without `#bean:` or `#class:` prefixes. Registry lookup takes precedence over
-class resolution. Class selection uses Camel's class resolver and injector.
-Created adapters are registered as `camelSemanticAdapter` and managed by the context.
-A collision at that name is an error. Referenced beans retain their existing lifecycle owner.
+An *expert* is a configured semantic evaluator, implemented by `SemanticAdapter`. It is not
+an autonomous agent. Every evaluation must declare `expert`, naming a registry bean.
+There is no language default, block-level expert inheritance, or automatic provider selection.
+Use plain registry names without `#bean:` or `#class:` prefixes. Property placeholders such as
+`expert: "{{selected.expert}}"` are supported. A missing, blank or unknown expert is a
+configuration error; Camel never loads a class as a fallback. Register the expert bean and
+configure its lifecycle through the usual Camel bean facilities.
 
-Camel Main and Camel JBang bind `camel.language.semantic.adapter` and
-`camel.language.semantic.default-state` to the language. Embedded applications can resolve
-`SemanticLanguage` from the context and call `setAdapter` and `setDefaultState` before route setup.
+Camel Main and Camel JBang bind `camel.language.semantic.default-state` to the language.
+Embedded applications can resolve `SemanticLanguage` from the context and call `setDefaultState`
+before route setup.
 The catalog describes the generic `language` expression model; it does not provide a dedicated
 semantic Spring Boot configuration class. Configure the language bean explicitly in Spring Boot
 until generic-language starter configuration is available.
 
-== Named questions
+== Expert-owned evaluations
+
+An expert is a registry bean implementing `SemanticAdapter`, annotated with `@SemanticExpert`.
+The class annotation defines its operations. Each operation declares its accepted input shapes,
+parameters, result type and meaning, and any optional probabilities or confidence. A configured
+instance cannot redefine this contract. Endpoint addresses, credentials and model deployment
+settings remain bean configuration, separate from evaluation parameters.
+
+Register the beans with Camel Main or Camel JBang, for example:
+
+[source,properties]
+----
+camel.beans.security=#class:com.example.SecurityExpert
+camel.beans.decisions=#class:org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter
+----
+
+`SecurityExpert` below is an illustrative application-provided expert exposing `injection` and
+`classify`; these names and its taxonomy are defined by that expert. The instruction-driven
+`decisions` bean uses the TypeSafe AI component configuration.
+
+[source,yaml]
+----
+- semantic:
+    state: "${body}"
+    evaluation:
+      injection:
+        expert: security
+        operation: injection
+      categories:
+        expert: security
+        operation: classify
+      department:
+        expert: decisions
+        type: choice
+        parameters:
+          instructions: Which department should handle this message?
+          criteria:
+            billing: Payments, invoices and refunds
+            technical: Errors, outages and technical questions
+            sales: Product and purchasing questions
+----
+
+The block can supply a default `state` selector; individual evaluations can override it.
+Each evaluation must declare its own `expert`.
+Evaluation names belong to the application, while operation names belong to the expert.
+`type: choice` is shorthand for the expert operation named `choice`; it does not let the route
+change an operation's result type. Specify exactly one of `operation` and `type`.
+Declaring an evaluation does not execute it.
+
+`parameters` can contain strings, booleans, numbers, nested maps and lists. Camel copies them
+into immutable declarations. Java, YAML and XML builders resolve property placeholders in string
+parameter values, including nested list and map values; map keys stay literal. Resolved strings
+remain strings. For numeric parameters, including values inside nested maps or lists, use an
+explicit numeric value after placeholder resolution. YAML accepts `!number "{{limit:0.8}}"`,
+XML accepts `<number>{{limit:0.8}}</number>`, and Java accepts
+`Double.valueOf(getContext().resolvePropertyPlaceholders("{{limit:0.8}}"))` as a parameter value.
+These forms work for any parameter name and expert. The `threshold` and `uncertainty` shorthand
+options also accept numeric placeholders. Direct `SemanticEvaluation` construction takes
+already resolved parameter values and requires no Camel context. Omitted parameters stay absent: their behaviour belongs to the
+expert, and Camel does not insert threshold or confidence defaults. Parameter contracts use
+`String`, `Boolean`, `Number`, `Map` and `List` data shapes. Use `Number` with `integer = true`
+for whole-number parameters; do not use JVM numeric wrapper classes such as `Integer` in a
+contract. A provider consumes numeric values through `Number` across all DSLs.
+
+For example, a nested expert policy can externalise its cutoff without converting string labels:
+
+[source,yaml]
+----
+- semantic:
+    evaluation:
+      contentPolicy:
+        expert: moderation
+        operation: categories
+        parameters:
+          policy:
+            cutoff: !number "{{content.cutoff:0.8}}"
+            label: "{{content.label:privacy}}"
+----
+
+String parameters, including prompts, use Camel property placeholder escaping for literal braces.
+For example, YAML `+instructions: 'Explain \{{example\}}'+` gives the expert `+Explain {{example}}+`.
+In Java, use `+.parameter("instructions", "Explain \\{{example\\}}")+` for the same literal text.
+
+Camel validates recognised parameter names, required values, types and declared constraints.
+The expert checks operation-specific combinations and compatibility with its bean configuration.
+Startup validates all declarations, including unused evaluations, without inference. Route
+resource replacements also validate before publication, retaining previous declarations on failure.
+The low-level `SemanticEvaluations.replace(String, Map)` API also validates new and changed
+unused declarations before publishing them on a started context.
+
+=== Calling an evaluation
+
+Use the Simple function `${semantic('evaluationName')}` or a semantic-language expression
+`ref:evaluationName`. Both return the operation's typed value, preserve the body, and publish the
+detailed `SemanticResult` in the `CamelSemanticResult` exchange property. Every occurrence invokes
+the expert; there is no implicit result caching. Retain a value in a Camel variable when it must
+be reused without another call.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:incoming
+      steps:
+        - choice:
+            when:
+              - simple: "${semantic('injection')}"
+                steps:
+                  - to: direct:security-review
+            otherwise:
+              steps:
+                - switch:
+                    selector:
+                      simple: "${semantic('department')}"
+                    case:
+                      - value: billing
+                        uri: direct:billing
+                      - value: technical
+                        uri: direct:technical
+                      - value: sales
+                        uri: direct:sales
+                    otherwise:
+                      uri: direct:manual-review
+----
+
+Switch consumes scalar results. Classification returns a `Set<String>`, including an empty set
+when no labels apply. Use collections in predicates, for example
+`${semantic('categories')} contains 'privacy'`; labels are not numeric scores.
+The category and the meaning of a Boolean verdict must come from the selected expert's contract.
+A negative detection does not establish general safety or grant authorization.
+
+=== Text and image input
+
+Experts declare supported modalities in their operation contract. `IMAGE` allows explicit image
+parts; it does not imply that every expert accepts images. The
+xref:others:semantic-openai.adoc[OpenAI Decisions expert] accepts text and images, TypeSafe AI
+accepts text and its structured state, and Wolf Defender accepts text. Unsupported input fails
+before inference, including before any expert in a mixed batch runs.
+
+For `$\{body}`, an image `Content-Type` such as `image/png` identifies a `byte[]`, `InputStream`,
+`StreamCache` or base64 `String` body as an image. Streams are replaced by replayable Camel
+stream caches and reset after reading; their bytes remain available downstream. A self-describing
+`data:image/...;base64,...` string is also image input. Other strings remain text.
+Content-Type handling applies only to the exact `$\{body}` selector after placeholder resolution.
+Other expressions, including `$\{bodyAs(byte[])}`, use the generic selected-state path: raw binary
+values are rejected. Select `$\{body}` for image bytes, or select an explicit media envelope or
+self-describing image data URL. An image header does not reclassify separately selected headers or variables.
+With `$\{body}`, `audio/*` and `video/*` content types are rejected, including for a `String` body;
+no expert currently supports these modalities. Select an explicitly textual field when evaluating
+text that accompanies such a body.
+
+An explicit JSON-compatible envelope supports ordered mixed input:
+
+[source,json]
+----
+{"$semanticInput":[
+  {"type":"text","text":"Inspect this package"},
+  {"type":"image","data":"data:image/png;base64,..."}
+]}
+----
+
+Replace the abbreviated image data with actual base64. `SemanticInput.ofParts`, `text` and
+`image` provide Java helpers. The reserved `$semanticInput` key distinguishes media from an
+ordinary application map. Format-specific validation belongs to the expert. Camel does not
+fetch URLs, read image paths from route messages, or invoke transcription/OCR services.
+
+Audit records expose a bounded `inputType` extension independently of payload capture:
+`text`, `image`, `text-and-images`, `structured`, `unsupported` or `unknown` when classification exceeds its bound. This classification remains
+available when input capture is disabled. The extension is separate from monitoring events.
+Image capture remains opt-in and subject to the existing redactor and size budget. When an
+image exceeds the budget, a bounded descriptor may retain its MIME type and
+`dataOmitted=snapshot_limit` instead of the image bytes. Such input cannot be replayed.
+
+=== Structured input and specialised experts
+
+A specialised moderation expert can accept a map containing a user prompt, an assistant response,
+and supporting documents. Camel evaluates the state selector and passes that same object unchanged.
+It does not flatten a conversation into text, create prompts, or impose a universal conversation
+schema. The expert validates the content and must not modify the original state.
+
+For an application-provided `moderation` expert with operations `response_safety` and `categories`:
+
+[source,yaml]
+----
+- semantic:
+    state: "${body}"
+    evaluation:
+      responseSafety:
+        expert: moderation
+        operation: response_safety
+      safetyCategories:
+        expert: moderation
+        operation: categories
+        parameters:
+          policy:
+            labels: [privacy, unsafe]
+            threshold: 0.8
+----
+
+Here `policy` is an illustrative nested expert parameter. The expert owns both its interpretation
+and any threshold filtering. The body might be a map with `prompt`, `response` and `documents` keys.
+A missing required response fails before inference; malformed provider output and operational
+failures follow normal Camel error handling, rather than becoming benign decisions.
+
+=== Equivalent Java and XML declarations
+
+Java uses the same declaration model and validation path:
+
+[source,java]
+----
+import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
+
+semanticEvaluations(this).state("${body}")
+    .evaluation("responseSafety").expert("moderation").operation("response_safety").end()
+    .evaluation("safetyCategories").expert("moderation").operation("categories")
+        .parameter("policy", Map.of("labels", List.of("privacy", "unsafe"), "threshold", 0.8))
+    .register();
+----
+
+XML uses explicit typed values. A parameter and a map entry each contain exactly one value:
+`string`, `number`, `boolean`, `null`, `list` or `map`. Null is supported inside nested maps and
+lists when permitted by the expert. Top-level parameters must have their declared type; omit a
+parameter to request the expert's omission behaviour.
+
+[source,xml]
+----
+<semantic xmlns="http://camel.apache.org/schema/semantic" state="${body}">
+  <evaluation expert="moderation" name="responseSafety" operation="response_safety"/>
+  <evaluation expert="moderation" name="safetyCategories" operation="categories">
+    <parameters>
+      <parameter name="policy">
+        <map>
+          <entry key="labels"><list><string>privacy</string><string>unsafe</string></list></entry>
+          <entry key="threshold"><number>0.8</number></entry>
+        </map>
+      </parameter>
+    </parameters>
+  </evaluation>
+</semantic>
+----
+
+== Instruction-driven shorthand
+
+The shorthand fields and Java convenience methods below target instruction-driven operations
+named `boolean`, `choice` and `score`. Their fields become expert parameters and are validated by
+the selected expert. TypeSafe AI implements these operations and requires nonblank instructions.
+All operations use the same `evaluation` declaration syntax; specialised operations supply their
+expert-owned `parameters` as shown above.
+
+== Named evaluations
 
 The xref:others:yaml-dsl.adoc[YAML DSL] supports declarations alongside routes, including declarations after their use:
 
 [source,yaml]
 ----
 - semantic:
-    question:
+    evaluation:
       department:
+        expert: decisions
         type: choice
         instructions: Which department should handle this message?
         criteria:
           billing: Invoices, payments and refunds
           technical: Bugs, outages and technical problems
       actionable:
+        expert: decisions
         type: boolean
         instructions: Does this message contain an actionable request?
         threshold: 0.8
         uncertainty: 0.1
         uncertaintyPolicy: fail
       urgency:
+        expert: decisions
         type: score
         instructions: Assess urgency
         criteria:
@@ -80,23 +333,48 @@ The xref:others:yaml-dsl.adoc[YAML DSL] supports declarations alongside routes, 
                   simple:
                     expression: "${exchangeProperty.department} == 'billing'"
                 steps:
-                  - to: direct:billing
+                  - to:
+                      uri: direct:billing
               - expression:
                   simple:
                     expression: "${exchangeProperty.department} == 'technical'"
                 steps:
-                  - to: direct:technical
+                  - to:
+                      uri: direct:technical
             otherwise:
               steps:
-                - to: direct:review
+                - to:
+                    uri: direct:review
 ----
 
 Names are context-wide. Duplicate declarations across resources and unknown references fail.
-Reloading a resource replaces its complete set of questions, including removing declarations
+Reloading a resource replaces its complete set of evaluations, including removing declarations
 no longer present. Development-mode route reload also removes definitions from deleted or renamed files
 before parsing replacements. This replacement does not make the surrounding route reload transactional.
 Existing expressions resolve the current definition on their next evaluation.
-Loading declarations does not perform inference.
+Reload validates the candidate declaration snapshot for initialized expressions before publishing
+it, including expert capabilities, boolean predicate types, Simple state selectors, and compatible
+batch selectors across resources. Failed validation leaves the previous declarations available.
+Startup validates unused declarations as well. Resource reload validates new and changed declarations
+before publishing them, including unused evaluations. Removed declarations remain removable; an
+expression that still references a removed name fails when evaluated.
+Validation registrations are weakly held: the registry does not keep expressions or their providers
+alive. Constraints can remain until an unused expression is garbage-collected; stopping a route
+does not necessarily release an expression that is still referenced elsewhere.
+Loading declarations does not perform inference or start provider resources for validation.
+
+The expert registry bean is resolved when the
+expression is compiled. Rebinding that name does not update already compiled expressions.
+After replacing the bean, recreate the consuming routes or expressions, or reload their
+evaluation declarations so the expressions compile against the replacement bean.
+
+=== YAML reload and expert bean preparation
+
+YAML declarations are registered after all resources in the load operation have prepared their
+beans and before routes are constructed. This applies both at startup and on reload, so an expert
+bean and its evaluations can be introduced together, including in separate resources of the same
+load operation. XML declaration loading follows the same preparation order; Java helpers validate
+when `register()` is called.
 
 === Java declarations
 
@@ -104,12 +382,12 @@ Use the fluent helper from `camel-semantic` inside an ordinary `RouteBuilder`:
 
 [source,java]
 ----
-import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
 
 @Override
 public void configure() {
-    semanticQuestions(this)
-        .question("department")
+    semanticEvaluations(this)
+        .evaluation("department").expert("decisions")
             .type("choice")
             .state("${header.myState}")
             .instructions("Which department should handle this message?")
@@ -124,21 +402,24 @@ public void configure() {
 }
 ----
 
-Call `.end().question("anotherName")` to add another question to the group, then `.register()`
+Call `.end().evaluation("anotherName")` to add another evaluation to the group, then `.register()`
 once to validate and install the entire group atomically. Register before creating expressions
 that refer to these names. When adding builders to a running context, add the builder declaring
-shared questions before builders whose routes reference them.
+shared evaluations before builders whose routes reference them.
 
 Use `.type("boolean")` with optional `.threshold(0.8)`, `.uncertainty(0.1)` and
-`.uncertaintyPolicy("non-match")` for boolean questions. Use `.type("score")` and successive
+`.uncertaintyPolicy("non-match")` for boolean evaluations. Use `.type("score")` and successive
 `.level("description")` calls for ordered score levels. Applications can also register immutable
-`SemanticQuestion` definitions using `SemanticQuestions.get(context).replace(source, questions)`.
+`SemanticEvaluation` definitions using `SemanticEvaluations.get(context).replace(source, evaluations)`.
+On a running context, replacement definitions are validated before publication. If validation fails,
+the previous definitions remain available. The public `get(name)` and `get(names)` methods always
+read published definitions, including calls made from an expert's validation callback.
 
-Each Java resource owns one group. Register all of its questions together; registering again
+Each Java resource owns one group. Register all of its evaluations together; registering again
 replaces that resource's previous group. Reloading a Java resource without the helper removes
 its declarations. Embedded builders without a resource receive distinct generated source keys.
 The helper reserves `"java:" + resource.getLocation()` as the resource source key; passing that
-key and an empty map to `replace` removes the resource's questions.
+key and an empty map to `replace` removes the resource's evaluations.
 
 === XML declarations
 
@@ -158,12 +439,12 @@ Both layouts are supported. To keep declarations alongside routes, use `tickets.
 ----
 <routes>
   <semantic>
-    <question name="department" type="choice" state="${header.myState}">
+    <evaluation expert="decisions" name="department" type="choice" state="${header.myState}">
       <instructions>Which department should handle this message?</instructions>
       <criterion key="billing" value="Invoices, payments, and refunds"/>
       <criterion key="technical" value="Bugs, outages, and technical problems"/>
       <criterion key="other" value="Everything else"/>
-    </question>
+    </evaluation>
   </semantic>
   <route id="classify-ticket">
     <from uri="direct:tickets"/>
@@ -175,25 +456,25 @@ Both layouts are supported. To keep declarations alongside routes, use `tickets.
 </routes>
 ----
 
-To share declarations across route files, use a standalone `questions.xml`:
+To share declarations across route files, use a standalone `evaluations.xml`:
 
 [source,xml]
 ----
 <semantic>
-  <question name="department" type="choice" state="${header.myState}">
+  <evaluation expert="decisions" name="department" type="choice" state="${header.myState}">
     <instructions>Which department should handle this message?</instructions>
     <criterion key="billing" value="Invoices, payments, and refunds"/>
     <criterion key="technical" value="Bugs, outages, and technical problems"/>
     <criterion key="other" value="Everything else"/>
-  </question>
+  </evaluation>
 </semantic>
 ----
 
 Load this together with ordinary `*.xml`, Java or YAML route resources that use `ref:department`.
 For example, with Camel Main, set
-`camel.main.routes-include-pattern=classpath:questions.xml,classpath:routes.xml`.
+`camel.main.routes-include-pattern=classpath:evaluations.xml,classpath:routes.xml`.
 Declarations are registered before consuming routes are configured. Reload replaces the source's
-questions; removing the `semantic` block, using an empty block, or deleting the resource removes
+evaluations; removing the `semantic` block, using an empty block, or deleting the resource removes
 obsolete definitions. XML source keys are the resource locations.
 
 The combined format supports a `routes` root with one optional `semantic` block and ordinary
@@ -201,15 +482,15 @@ The combined format supports a `routes` root with one optional `semantic` block 
 supported, as are documents consistently using `http://camel.apache.org/schema/semantic`,
 `http://camel.apache.org/schema/xml-io`, or `http://camel.apache.org/schema/spring`.
 A `semantic` block can also declare `xmlns="http://camel.apache.org/schema/semantic"` inside a
-standard `routes` document; its question elements inherit that namespace. The extension detects
+standard `routes` document; its evaluation elements inherit that namespace. The extension detects
 the declaration block or semantic root namespace automatically.
 
 These extensions do not validate against Camel's standard core XSDs. Automatic discovery applies
 to Camel's route resource loader; it does not extend Spring's XML application-context parser
 or direct JAXB unmarshalling.
 
-For boolean questions, `threshold`, `uncertainty` and `uncertaintyPolicy` are optional question
-attributes. For score questions, replace the named `criterion` elements with ordered `level`
+For boolean evaluations, `threshold`, `uncertainty` and `uncertaintyPolicy` are optional evaluation
+attributes. For score evaluations, replace the named `criterion` elements with ordered `level`
 elements, such as `<level>Routine</level><level>Urgent</level><level>Critical</level>`.
 
 The numeric `threshold` and `uncertainty` options accept property placeholders in all three
@@ -218,12 +499,12 @@ DSLs. For example, Java accepts `.threshold("{{semantic.threshold:0.5}}")`, and 
 are registered.
 
 Java and XML declarations use the same context-wide registry, validation, defaults and adapters
-as YAML. They do not require `camel-yaml-dsl`. Their questions can also be selected together
+as YAML. They do not require `camel-yaml-dsl`. Their evaluations can also be selected together
 using `refs:name1,name2`, as described below.
 
 === Exporting routes
 
-Question declarations live outside Camel's core route model. Generic model exports and runtime
+Evaluation declarations live outside Camel's core route model. Generic model exports and runtime
 route dumps such as `camel.main.dumpRoutes=yaml` contain only routes; keep declarations separately
 and load them before reloading an exported route.
 
@@ -234,7 +515,7 @@ using the generic converter.
 
 === Selected state
 
-A question's optional `state` Simple expression overrides
+A evaluation's optional `state` Simple expression overrides
 `camel.language.semantic.default-state`, whose default is `$\{body}`. Selectors are compiled
 before evaluation; selected strings, maps and lists are passed as data and are never evaluated recursively.
 A missing selected header fails instead of falling back to the body. A selector must be nonblank
@@ -253,13 +534,17 @@ in semantic evaluation, and Java applications using `camel-semantic` do not pull
 
 == Results and policy
 
-Only boolean questions can be predicates. A category string is never implicitly a boolean.
-A probability-based boolean uses an inclusive threshold (default `0.5`). A nonzero
+Only boolean evaluations can be predicates. A category string is never implicitly a boolean.
+A direct `semantic` predicate rejects other result types at initialization. Simple's bare or negated
+`${semantic('name')}` predicate rejects them before inference when it is matched; comparisons and
+membership tests can consume their typed values.
+Decision policy is expert-owned. Camel never derives a Boolean from probability or applies a
+second threshold to the expert's returned value. The TypeSafe AI adapter uses an inclusive
+Boolean probability threshold (default `0.5`). A nonzero
 `uncertainty` defines an inclusive band around that threshold. `fail` (the default) raises
-an error within the band; `non-match` returns false. An already-boolean provider supports the
-default policy without inventing a probability. Additional policy requirements must be
-supported by the provider. Choice results must name a declared criterion. Scores range from
-zero to the last rubric index and may be fractional.
+an error within the band; `non-match` returns false. Its Choice results must name a supplied
+criterion, and its scores range from zero to the last rubric index and may be fractional.
+Other experts declare their own policy parameters, labels and score ranges in their contracts.
 
 Probabilities, provider confidence and selected values are separate. Missing optional fields
 remain absent. Results can retain provider/model identity and usage metadata. These fields
@@ -267,10 +552,10 @@ do not imply equivalent quality or calibration when switching providers. Timeout
 answers and unsupported capabilities are errors, distinct from valid negative decisions or
 unmatched Choice results.
 
-== Batching named questions
+== Batching named evaluations
 
-Use `refs:name1,name2` to evaluate independent questions against the same selected state.
-The expression returns a map of normalized decisions keyed by question name. For example,
+Use `refs:name1,name2` to evaluate independent evaluations against the same selected state.
+The expression returns a map of normalized decisions keyed by evaluation name. For example,
 using the declarations above:
 
 [source,java]
@@ -310,20 +595,22 @@ For example, replace the route above with:
                   simple:
                     expression: "${exchangeProperty.decision[department]} == 'billing'"
                 steps:
-                  - to: direct:billing
+                  - to:
+                      uri: direct:billing
             otherwise:
               steps:
-                - to: direct:review
+                - to:
+                    uri: direct:review
 ----
 
 A result might contain `actionable -> true`, `department -> "billing"` and `urgency -> 1.2`.
-Reading the stored map does not invoke the provider again. Each question retains its own
-threshold and uncertainty policy. There is no implicit AND/OR: batch expressions, including
-a batch containing one boolean question, cannot be used as predicates.
+Reading the stored map does not invoke the provider again. Each evaluation retains its own
+expert-owned threshold and uncertainty policy. There is no implicit AND/OR: batch expressions, including
+a batch containing one boolean evaluation, cannot be used as predicates.
 
 `CamelSemanticResults` holds an immutable map of the detailed `SemanticResult` objects,
 keyed by the same names. These retain available probabilities, confidence and provider
-metadata. `CamelSemanticResult` remains the single-question diagnostic property for
+metadata. `CamelSemanticResult` remains the single-evaluation diagnostic property for
 `ref:name`. Both diagnostic properties are cleared before every semantic evaluation;
 a batch publishes its decisions and diagnostics only after every answer passes validation.
 Missing, extra or invalid answers, operational failures and an uncertainty policy of `fail`
@@ -337,18 +624,23 @@ duplicate and unknown references are rejected. There is no quoting or escaping i
 syntax: names containing commas or leading/trailing whitespace require a single `ref:name`
 evaluation. Existing single references are unchanged.
 
-All selected questions must use the same effective Simple state selector, after applying
+All selected evaluations must use the same effective Simple state selector, after applying
 `camel.language.semantic.default-state` and resolving property placeholders. Selectors
 must match exactly; different expressions that happen to return equal values are not
 interchangeable. The selector is evaluated once per batch. Missing or unsupported state
-fails before inference. One snapshot of the question definitions is used throughout each
+fails before inference. One snapshot of the evaluation definitions is used throughout each
 batch, including validation and decision policies; the next evaluation sees replacements
-from resource reload. Questions that need a previous answer require separate evaluations.
+from resource reload. Evaluations that need a previous answer require separate evaluations.
 
-`SemanticAdapter.evaluateBatch(Map<String, SemanticQuestion>, Object)` has a default
-implementation that invokes the existing single-question method sequentially, preserving
-compatibility with existing adapters. TypeSafe AI overrides it to send all questions in
-one HTTP request using the component's existing timeout and concurrency limits. No results
+`SemanticAdapter.evaluateBatch(Map<String, SemanticEvaluation>, Object)` has a default
+implementation that invokes the existing single-evaluation method sequentially, preserving
+experts that do not implement a provider-specific batch optimisation. Evaluations are grouped by the resolved expert instance,
+and each group is passed to that instance's batch method. Two instances of the same class remain
+separate groups. Each group must return exactly its assigned names. Camel validates the complete
+combined result before publishing decisions or diagnostics, preserving the original reference order.
+
+TypeSafe AI sends its group in one HTTP request using the component's existing timeout and
+concurrency limits. A batch spanning experts can make multiple inference requests. No results
 are cached or combined across exchanges.
 
 == EIP integration
@@ -359,15 +651,15 @@ Use `language("semantic", "ref:name")` wherever an expression or boolean predica
 |===
 |EIP / integration point |Usage
 |Choice |Store a category with Set Property, then compare that property in ordinary when predicates.
-|Filter |Use a boolean question as the filter predicate.
-|Validate |Use a boolean question; false follows normal validation failure handling.
+|Filter |Use a boolean evaluation as the filter predicate.
+|Validate |Use a boolean evaluation; false follows normal validation failure handling.
 |Set Header / Set Property |Store a category or score for explicit reuse in later steps.
 |Aggregate correlation |Use a category as a correlation expression, retaining tenant or case identifiers where needed.
-|Aggregate completion |Evaluate a boolean question against the accumulated body, with a size or timeout limit. `eagerCheckCompletion` instead sees the incoming exchange.
+|Aggregate completion |Evaluate a boolean evaluation against the accumulated body, with a size or timeout limit. `eagerCheckCompletion` instead sees the incoming exchange.
 |Recipient List |Map a category to a configured list of recipient URIs.
 |Routing Slip |Map a category to a predefined processing sequence.
 |Enrich |Map a category to a configured resource URI and use an ordinary aggregation strategy.
-|Loop |Reevaluate a boolean question on updated state, with an explicit iteration or time budget.
+|Loop |Reevaluate a boolean evaluation on updated state, with an explicit iteration or time budget.
 |Sort |Score each item once, store the scores, then sort using a deterministic comparator.
 |On Exception / retryWhile |Evaluate whether another attempt is worthwhile, with an explicit retry budget checked before inference.
 |Contextual action validation |Use Validate after ordinary permission checks and before executing the action.
@@ -402,7 +694,7 @@ Storing the category before xref:eips:choice-eip.adoc[Choice] performs one seman
 reaches that Set Header or Set Property step. The branches compare the stored result without
 calling the provider again. Place that step inside a loop when the decision must be refreshed
 on each iteration. Nested decisions can use separate properties to retain their own results.
-Boolean questions can also be used directly as ordinary when predicates. These patterns use
+Boolean evaluations can also be used directly as ordinary when predicates. These patterns use
 the existing EIP model and work with the Java, XML and YAML DSLs.
 
 === Aggregation and destinations
@@ -459,7 +751,7 @@ and in an implementation-dependent order.
 
 === Bounded semantic retry
 
-A boolean question can supply the xref:manual::exception-advanced.adoc[retryWhile predicate]
+A boolean evaluation can supply the xref:manual::exception-advanced.adoc[retryWhile predicate]
 for an exception clause. Ask whether another attempt is worthwhile using the current failure
 and selected request context. Restrict this to operations that are safe to retry.
 
@@ -467,10 +759,10 @@ IMPORTANT: `retryWhile` replaces the `maximumRedeliveries` decision. Check the r
 inside the predicate, before calling the provider. A provider that always returns true must
 not cause unlimited retries or evaluations.
 
-Declare a boolean question named `retryable` with `state: $\{exchangeProperty.retryState}`.
+Declare a boolean evaluation named `retryable` with `state: $\{exchangeProperty.retryState}`.
 In this example, the request body is a string. `onExceptionOccurred` prepares the state before
 the retry predicate runs; `onRedelivery` runs later and is too late for this purpose.
-Include only the failure details needed by the question, excluding credentials and sensitive data.
+Include only the failure details needed by the evaluation, excluding credentials and sensitive data.
 
 [source,java]
 ----
@@ -507,17 +799,18 @@ negative decision in the escalation route, check `getSuppressed()` of the
 
 === Contextual action validation
 
-Use a semantic question for an additional check such as "Does this proposed action serve
+Use a semantic evaluation for an additional check such as "Does this proposed action serve
 the approved task?" after normal identity, permission and tenant checks have succeeded.
 The semantic decision must not grant permissions that those checks denied.
 
-For example, declare this question alongside routes:
+For example, declare this evaluation alongside routes:
 
 [source,yaml]
 ----
 - semantic:
-    question:
+    evaluation:
       withinScope:
+        expert: decisions
         type: boolean
         instructions: Does the proposed action serve the approved task?
         state: ${body}
@@ -542,7 +835,7 @@ from("direct:action")
     .to("direct:performAction");
 ----
 
-A negative decision raises normal validation failure. With this question's `fail` policy,
+A negative decision raises normal validation failure. With this evaluation's `fail` policy,
 an uncertain decision raises an evaluation error. Timeouts and malformed responses also
 fail, and none of these outcomes should execute the protected action. Failure handling may
 reject the request or send it for human review; do not use `continued(true)` to resume at
@@ -551,29 +844,88 @@ the action. The example's threshold is a decision policy, not an accuracy guaran
 This pattern uses Validate and existing authorization services. It does not add a semantic
 `AuthorizationPolicy` implementation or replace a component's internal guardrail interfaces.
 
+== Static operation contracts
+
+Read `SemanticCapabilities.from(MyExpert.class)` to inspect a contract without constructing an
+expert, loading a model or contacting a service. The runtime uses the same cached class contract.
+The returned operation
+and parameter maps, supported labels and input shapes are immutable.
+
+For example, an expert can declare a fixed detection operation:
+
+[source,java]
+----
+@SemanticExpert(name = "detector", description = "Text injection detector",
+    provider = "example", artifactId = "example-expert",
+    operations = @SemanticOperation(name = "injection", description = "Detect injection",
+        inputTypes = SemanticExpert.InputType.TEXT,
+        inputRequirements = "Text to assess",
+        resultType = SemanticExpert.ResultType.BOOLEAN,
+        resultMeaning = "True means injection was detected",
+        probability = true, probabilityMeaning = "Probability of injection",
+        parameters = @SemanticParameter(name = "threshold", description = "Detection threshold",
+            type = Number.class, minimum = 0, maximum = 1,
+            omission = "Use the service's configured threshold")))
+public class SecurityExpert implements SemanticAdapter {
+    // validate, validateInput and evaluate implement this declared contract.
+}
+----
+
+Each operation declares a result type and its meaning. Score operations document their scale and
+can declare numeric bounds. Choice and classification operations can declare a fixed label set;
+an instruction-driven expert validates its application-supplied vocabulary itself. Optional
+probability, per-label probability and confidence fields must declare their meaning. Camel does
+not manufacture confidence from a verdict, nor require optional information on every response.
+It rejects information the contract did not declare, malformed numeric values, wrong result types
+and results outside declared common constraints.
+
+A score operation can link its result scale to a parameter with
+`@SemanticOperation(scoreLevelsParameter = "rubric", ...)`. The named parameter must be declared
+as `List.class` with `itemType = String.class`, and the operation must return `SCORE`.
+For a supplied nonempty list of N descriptions, the effective range is `0` through `N-1`.
+Index i describes score i; scores may be fractional between levels. When per-level probabilities
+are returned, their keys are the decimal index strings (`"0"`, `"1"`, and so on).
+For example, `["Routine", "Needs attention", "Critical"]` defines `0…2`, and `1.6` lies between
+"Needs attention" and "Critical". Static `minimum` and `maximum` still describe supported bounds.
+
+The TypeSafe AI adapter publishes `scoreLevelsParameter = "criteria"` for its score operation.
+Other experts may name the parameter differently. `SemanticCapabilities.Operation.getScoreLevelsParameter()`
+and the semantic metadata console expose the same relationship without inference. An empty value
+(the default) declares no relationship, so tooling must not infer one from parameter names.
+If the parameter is omitted and the expert supplies its own default levels, tooling cannot derive
+the effective range from the declaration. Experts continue to validate configured score bounds
+and probability keys themselves.
+
+An expert applies explicitly requested policy exactly once, either in its service or its adapter.
+It preserves service defaults when parameters are absent. If requested policy needs unavailable
+confidence or probability, the expert rejects the declaration when known statically, or fails that
+evaluation when the absence is response-dependent. It must not silently ignore the request.
+Uncertain outcomes use an operation's documented values or an error; Camel has no universal
+uncertainty sentinel. Classification filtering, including per-label thresholds, also belongs to
+the expert. TypeSafe AI's `uncertaintyPolicy` supports `fail` or `non-match`; other experts need not
+support that vocabulary.
+
+Generated expert descriptors, expert-specific offline validation and Catalog API extensions are
+separate work. This contract does not add a new Camel Catalog model.
+
 == Implementing an adapter
 
-Implement `org.apache.camel.semantic.SemanticAdapter`. Advertise the implementation in
-`META-INF/services/org/apache/camel/semantic-adapter` using Camel's `FactoryFinder` format:
+Implement `org.apache.camel.semantic.SemanticAdapter`, annotate the class with `@SemanticExpert`,
+and register an instance as a named bean. Each evaluation references that bean using `expert`.
+Provider discovery descriptors are not used.
 
-[source,properties]
-----
-class=com.example.MySemanticAdapter
-----
-
-Camel components can generate this descriptor with `@JdkService("semantic-adapter")`.
-Discovery checks the declarations for ambiguity before resolving the implementation through
-`FactoryFinder`. Repeated declarations of the same class are accepted; different classes require
-explicit selection. Only the selected adapter is constructed, through Camel's `Injector`.
-Explicit bean or class selection also works when packaging does not expose discovery resources.
-
-`validate` rejects unsupported questions and decision policies before traffic. `evaluate`
+The language checks the static operation contract and then calls `validate` for operation-specific
+parameter combinations and bean configuration before traffic. `validateInput` checks detailed
+message requirements before evaluation. `validateState` checks shared input once per expert group;
+use it for expensive checks such as image encoding. Its default implementation does nothing. All input checks in a batch run before any expert is invoked.
+`evaluate` returns a typed `SemanticResult` after applying the expert's policy. A probability-only
+Boolean result is invalid: the expert must supply its Boolean verdict. Providers should also validate when their SPI is called directly. `evaluate`
 must be thread-safe, bound time and resource consumption, honor interruption and propagate
 operational failures without disclosing input or credentials. Implement `CamelContextAware`
 for context injection and Camel `Service` interfaces when the adapter owns resources.
-Created service adapters are stopped and shut down by Camel; registry references are not
-started or stopped again by the language. Provider-specific component services remain under
-normal Camel lifecycle management.
+Configure the expert bean lifecycle through Camel bean initialization and destruction methods,
+or manage it explicitly in embedded applications. The language does not start or stop registry
+beans. Provider-specific component services remain under normal Camel lifecycle management.
 
 For TypeSafe AI, boolean, choice and score map to Noul, Choice and Score respectively. The
 adapter reuses the component endpoint's managed HTTP client, including timeout, concurrency
@@ -583,3 +935,584 @@ they do not establish a model's classification quality.
 // language options: START
 include::partial$language-options.adoc[]
 // language options: END
+
+
+== Developer consoles
+
+Use `camel semantic` to inspect definitions and `camel semantic eval` to evaluate them from the
+xref:manual::camel-jbang-managing.adoc#_semantic_definitions_and_evaluation[Camel CLI].
+
+`semantic-metadata` exposes definitions and expert contracts without performing inference.
+With `overview=true`, it lists registered experts and published evaluations, including any
+contract-resolution errors alongside their expert or evaluation. Operation inspection requires
+an explicit expert reference.
+
+`semantic-evaluate` evaluates a named definition against a sample exchange or calls an expert
+operation directly. It uses the configured provider and its normal validation, without sending
+the sample through an application route.
+
+Enabling the HTTP developer console also exposes `semantic-evaluate`. Unlike metadata inspection,
+calling it invokes the configured provider and can incur charges. Restrict access to trusted operators,
+as described in the xref:manual::security-model.adoc[security model].
+
+Evaluation calls have a default and maximum timeout of 50,000 milliseconds. The console's `timeout`
+option can select a shorter positive timeout. At most two evaluations run concurrently; further calls
+receive a busy response. A timeout or interrupted caller requests cancellation by interrupting the
+worker. Providers may continue remote or native inference after interruption, so configure their own
+timeouts too. The CLI connector runs evaluations independently of its action and snapshot threads;
+responses remain associated with the originating request.
+
+
+== Auditing semantic evaluations
+
+The semantic DSL can enable an audit trail independently of telemetry and independently
+of whether a TUI is connected. Declare audit configuration in one semantic resource.
+The default is disabled. A configured expert's explicit `enabled` value overrides the
+master default in either direction; omitted values inherit it. Names refer to registry
+bean instances, so two instances of the same expert can have different audit settings.
+
+For existing expert beans named `security` and `decisions`:
+
+[source,yaml]
+----
+- semantic:
+    audit:
+      enabled: true
+      experts:
+        security:
+          enabled: true
+        decisions:
+          enabled: false
+      sinks: [memory, log]
+      reader: memory
+      capacity: 1000
+      queueCapacity: 1000
+    evaluation:
+      screenPrompt:
+        expert: security
+        operation: injection
+        state: "${body}"
+      chooseDepartment:
+        expert: decisions
+        operation: choice
+        state: "${body}"
+        parameters:
+          instructions: Choose the department for this request
+          criteria:
+            sales: Sales inquiries
+            support: Technical support
+----
+
+This records `security` evaluations and omits `decisions` evaluations. Both experts
+still execute. Changing the master to `false` continues recording `security` because
+its explicit `true` overrides the default. Removing that override restores inheritance.
+Application properties may supply DSL placeholders, for example `enabled: "{{audit.enabled:false}}"`.
+There is no second, property-based audit configuration hierarchy.
+Audit settings are fixed when the audit service starts with the context, not when it is first registered.
+Editing or removing the audit block in an existing resource is rejected if it would change those settings.
+Deleting its file removes that file's evaluation declarations and logs one warning while retaining the
+active audit configuration. Unrelated reloads continue, and a renamed resource may redeclare the same
+configuration. Stop the context, update its declarations, and start it to apply different settings.
+Backends are resolved again on startup. A changed memory capacity creates an empty store and invalidates
+old cursors; unchanged capacity retains its history across an in-place restart. Retained history is not erased by a query.
+Unknown backend references fail startup. Expert overrides can name beans registered
+later and do not instantiate experts; misspelled references never match an invocation.
+
+OpenTelemetry remains separately configured. For example, use the existing Camel Main
+`camel.opentelemetry2.enabled=false` setting with the audit block above to run auditing
+without the OpenTelemetry tracer.
+
+The Java declaration helper accepts the same immutable configuration:
+
+[source,java]
+----
+semanticEvaluations(this)
+    .audit(new SemanticAuditConfiguration(true, Map.of("security", true, "decisions", false),
+        List.of("memory", "log"), "memory", 1000, 1000))
+    .evaluation("screenPrompt").expert("security").operation("injection").end()
+    .register();
+----
+
+XML declarations use an `audit` child of `semantic`:
+
+[source,xml]
+----
+<semantic xmlns="http://camel.apache.org/schema/semantic">
+  <audit enabled="true" reader="memory" capacity="1000" queueCapacity="1000">
+    <expert name="security" enabled="true"/>
+    <expert name="decisions" enabled="false"/>
+    <sink ref="memory"/>
+    <sink ref="log"/>
+  </audit>
+  <evaluation name="screenPrompt" expert="security" operation="injection"/>
+</semantic>
+----
+
+=== Automatic evaluation capture
+
+Audit records describe the expert's returned result and how its evaluation ran. Enabling
+audit capture requires no processor, decision bean or application metadata. A route remains
+responsible for its normal routing behavior; a Boolean result does not imply allow or block.
+Previously stored version-1 decision records remain readable and exportable as legacy data.
+
+=== Backends and delivery
+
+`SemanticAuditSink` accepts immutable `SemanticAuditRecord` objects. Register custom
+sinks as Camel beans and list their bean names in `sinks`. `SemanticAuditReader` is a
+separate capability with bounded `query` and `get` operations; write-only sinks need not
+implement it. Choose the reader bean explicitly with `reader`. The built-in `memory` reader requires
+`memory` in `sinks`, otherwise configuration fails rather than displaying an unfed history.
+Readers can override `getAll(List<String>)` to retrieve records by ID in backend-specific batches.
+The SPI imposes no evidence-specific 100-ID cap. Console callers enforce request and response budgets;
+backends return all available requested IDs and propagate lookup failures. The default implementation
+delegates to `get`, and the memory implementation scans its bounded history once. The legacy record
+format still limits each stored evidence list to 100 references.
+The reserved backend
+names are `memory` and `log`:
+
+* `memory` is a bounded recent-history sink and reader. `capacity` defaults to 1000
+  (range 1 to 100000); old records are evicted and counted. Its history is not persistent.
+* `log` writes JSON to the `org.apache.camel.semantic.audit` logger using the application's
+  normal logging configuration. Logging does not provide a query reader.
+
+The supported backend APIs are `SemanticAuditSink`, `SemanticAuditReader`, `SemanticAuditRecord`,
+`SemanticAuditQuery` and `SemanticAuditPage`. Record maps use a validated, bounded version-1 serialization
+schema; typed timestamp, duration and evidence accessors avoid backend casts. `query.matches(record)`
+provides exact case-sensitive AND filtering with an inclusive timestamp boundary. Record field order
+is preserved for structured logging. Classes in `org.apache.camel.semantic.internal` are runtime plumbing,
+not a supported integration API. Evaluation capture is automatic; observers use `SemanticObserver`.
+
+The context starts and stops its configured backends. A single worker dispatches each
+accepted record to the sinks in configuration order. `queueCapacity` defaults to 1000
+(range 1 to 100000). A full queue drops the new record and increments `dropped`;
+backend append failures increment that sink's error counter and do not change inference
+or route decisions. An append failure does not prevent trying the remaining sinks.
+A slow sink delays this dispatcher, so sink implementations must bound I/O and honor
+interruption. Shutdown allows five seconds to drain, then cancels queued work and counts
+it as dropped. Delivery can be partial and process failure can lose queued records.
+
+Returning from `append` means acceptance according to that backend's documented contract;
+it does not universally mean durable commit. The dispatcher does not retry failed writes.
+Backend-specific retries must retain the event ID. This mode does not guarantee a durable
+record before a protected side effect. Persistent implementations can reconstruct the
+versioned immutable snapshot with `SemanticAuditRecord.fromMap`.
+
+=== Records and observations
+
+Version 1 records contain UTC occurrence timestamps, unique event and invocation IDs,
+plus `startedAt` for evaluations. An evaluation's `timestamp` denotes completion; the start observer
+sees the start occurrence in `timestamp`, and `startedAt` stays unchanged in the completed record.
+Duration uses the monotonic clock. Records also contain
+category, configured expert reference, operation, definition and execution origin, and
+available Camel context/exchange/route identifiers. Evaluation records add execution
+status, duration, a stable reason code, typed result, probability/confidence when present,
+and the static result meanings captured at invocation time. `provider` identifies the static expert
+contract. Optional `model` and `revision` are copied only from those exact result metadata keys, only
+when they are nonblank strings of at most 256 code points without control characters. They are omitted
+rather than truncated if invalid; provider metadata cannot override the contract's provider identity.
+No other result metadata is captured. Adapters should supply the actual producing model and revision
+when known; absent identity stays absent. Batch members have individual
+invocation IDs and a shared batch ID. A failed group and groups never executed are distinct.
+Input validation completes before inference: a member whose input passed but whose sibling failed validation
+is `not_executed`. When a provider returns a complete batch, each returned answer is validated and audited
+independently, even if a sibling answer is invalid. The route still receives a batch failure and no partial
+result/diagnostic map. A valid answer is evidence of evaluation, not a successful batch or route action.
+Console cancellation requests are separate records linked to eventual provider completion:
+request timeout does not prove that native or remote inference stopped. A timeout
+before an expert is resolved emits no request record because its audit eligibility
+is not yet known. Declaration failures without an identifiable expert also omit an
+evaluation record; failures with a known reference follow that expert's override.
+
+Evaluation provenance captures the entry `routeId` and the `executingRouteId` at invocation time.
+The executing route may differ after a `direct:` handoff. An unavailable executing route is left absent;
+the entry route is not substituted. Removing or editing a route later does not change stored provenance.
+
+The CLI and TUI use Camel's `breadcrumbId` to associate evaluations within the selected source.
+Enable `camel.main.use-breadcrumb=true` in Camel Main, or `context.setUseBreadcrumb(true)`
+in Java, to let Camel generate missing breadcrumbs when a route exchange starts.
+Audit copies the existing `Exchange.BREADCRUMB_ID` value; it does not generate an ID or
+fall back to an application correlation or exchange ID. Split exchanges retain the original
+breadcrumb. Records without a breadcrumb, including direct expert calls, show no value.
+Only nonblank string IDs of at most 256 code points without control characters are captured;
+invalid values are omitted without conversion or truncation. Use `breadcrumbId` in an audit
+query, or `--breadcrumb-id` in the CLI, to retrieve records with the same breadcrumb.
+
+Input is omitted by default. Other headers, variables, arbitrary provider metadata and exception
+messages are never copied automatically. Declared interpretation is captured separately, as described below.
+Result and metadata strings are limited to
+256 code points, and their collections to 100 entries. An oversized result is represented by
+`resultOmitted: snapshot_limit` without changing the evaluation outcome.
+
+==== Storing evaluation input
+
+Enable input capture explicitly for each expert whose submitted state should be retained:
+
+[source,yaml]
+----
+- semantic:
+    audit:
+      enabled: true
+      experts:
+        security:
+          enabled: true
+          input:
+            enabled: true
+            maxChars: 4096
+            # redactor: auditInputRedactor
+        decisions:
+          enabled: false
+      sinks: [memory]
+      reader: memory
+----
+
+`input.enabled` defaults to `false` and does not enable auditing itself. It captures the
+selected state passed to the expert (`state`, including a selected header), before provider
+validation or execution. It does not take a copy of the entire exchange. Named, batch, direct
+and console evaluations use the same settings. Input is stored only on its evaluation record.
+
+`maxChars` defaults to 4096 and accepts 1 through 100000. It bounds the total Unicode code
+points in strings, map keys and scalar representations. Snapshots accept text, JSON-compatible
+maps/lists and scalar values, with at most eight nested levels and 1000 nodes (including map
+keys). They are immutable; later changes to the submitted state cannot change history.
+Oversized, cyclic or unsupported input is omitted with
+`inputOmitted: snapshot_limit_or_unsupported_type`. Input is never truncated, and streams or
+arbitrary objects are not converted to text. `inputOmitted: unavailable` means the selected
+state was not obtained, for example because the state expression failed.
+
+The limit applies per record, not to total memory. With the memory backend, retained input
+can reach `capacity × maxChars` code points, with up to `queueCapacity × maxChars` more in
+the pending delivery queue. Use the largest enabled expert's `maxChars` when limits differ.
+For example, `capacity: 1000` and `maxChars: 100000` allow 100 million retained code points,
+before pending records, in-flight captures and object overhead. There is no aggregate byte
+budget; size both capacities and the per-expert limit for the available heap. Code points
+are not bytes, and maps/lists also allocate objects.
+
+An optional `redactor` names a registry bean implementing `SemanticAuditInputRedactor`.
+It receives a bounded, immutable copy on the evaluation thread and returns a sanitized value.
+The size, depth and node limits are checked *before* the redactor runs. Oversized input is
+omitted without calling the redactor, even if it could reduce the input to a few fields.
+For example, the full state must fit the limits before the redactor below can retain only
+`question`. The return value is bounded again; a null return omits input (`inputOmitted: redacted`).
+Successful redaction adds `inputRedacted: true`. Exceptions or invalid redactor output omit
+input (`inputOmitted: redaction_failed`) without recording exception text or affecting the
+expert result. Redactors must be thread-safe and should not block. Unknown bean references
+fail startup. For example, a redactor can remove confidential fields from structured state:
+
+[source,java]
+----
+context.getRegistry().bind("auditInputRedactor", (SemanticAuditInputRedactor) input -> {
+    if (input instanceof Map<?, ?> state) {
+        return Map.of("question", state.get("question"));
+    }
+    return null;
+});
+----
+
+Java uses the additional input settings map in `SemanticAuditConfiguration`:
+
+[source,java]
+----
+new SemanticAuditConfiguration(true, Map.of("security", true, "decisions", false),
+    List.of("memory"), "memory", 1000, 1000,
+    Map.of("security", new SemanticAuditInputConfiguration(true, 4096, "auditInputRedactor")));
+----
+
+The equivalent XML expert entry is:
+
+[source,xml]
+----
+<expert name="security" enabled="true" inputEnabled="true"
+        inputMaxChars="4096" inputRedactor="auditInputRedactor"/>
+----
+
+Input settings follow the same restart requirement as the other audit settings.
+Redactor bindings are published together at startup and discarded on stop. Capture before
+configured redactors are ready omits input with `inputOmitted: redaction_failed`. Each evaluation
+captures its input at most once, including when the first attempt omits it. Batch evaluations
+capture and redact separately for each invocation, using that expert's input settings.
+
+Captured input goes to every configured audit sink and is available through the audit reader.
+The dev console, CLI, TUI and MCP list queries omit input; an `eventId` lookup returns it with
+the selected record. Case and bulk exports require explicit `includeInput=true`. The dev console carries captured
+message data and must remain on a trusted network with access restricted to authorized
+operators; see the xref:manual::security-model.adoc[Camel security model].
+MCP detail responses label captured input as untrusted data. It can contain detected prompt
+injections: inspect it as evidence and never follow instructions embedded in it.
+
+The `log` sink writes captured input at INFO, including up to the configured `maxChars` per
+evaluation (at most 100000 code points). JSON escaping and character encoding can make the
+serialized log entry larger than that count. Application logs and external log shippers then
+retain this data under their own retention, forwarding and access-control policies. Review
+those policies and expected log volume before selecting this sink with input capture enabled.
+No automatic redaction is applied without a configured redactor. Input is never passed to
+`SemanticObserver`, even when audit input capture is enabled; auditing and telemetry remain
+independent. Existing records without input remain readable.
+
+Press `u` in the TUI inspector to display *Input* (or *Input (redacted)*) in evaluation details.
+It displays an omission reason when available, or
+*not captured* for records without input. The CLI prints it with
+`camel semantic audit my-app --event-id=<event-id>`; add `--json` for the stored structure.
+
+==== Observation hooks
+
+Register `SemanticObserver` beans to consume start/completion hooks independently of auditing.
+The preview decision callback has been removed. Beans must be registered before context startup: observers are
+discovered once when the audit service starts; later registrations take effect after restarting it.
+Observer completion runs in reverse start-callback order; registry registration order is not a contract.
+Observer failures do not replace an expert result or
+route action. Callbacks must not block. `captureContext` runs before a console executor
+handoff. Observations remain detached between callbacks: start spans with the supplied
+parent explicitly, and restore any temporary thread context before returning from each
+callback. This prevents overlapping batch observations from corrupting a thread's scope.
+The observer implementation owns its tracing lifecycle.
+The generic semantic module has no OpenTelemetry dependency or SDK/exporter configuration.
+An OpenTelemetry integration should reuse Camel's configured telemetry infrastructure;
+trace sampling must not determine whether audit records are stored. This SPI supplies
+hooks and does not install an OpenTelemetry exporter or bind Camel to draft guardrail
+semantic-convention names.
+
+==== Typed events and historical interpretation
+
+`SemanticEvent` implements Camel's `AiEvent`. The semantic runtime emits typed evaluation starts,
+evaluation completions and request outcomes through `EventHelper.notifyAiEvent`. Each batch member has
+its own invocation and completion; a request outcome is separate from an evaluation result.
+When an evaluation has an Exchange, the notification is a `SemanticExchangeEvent` implementing
+`AiEvent.ExchangeAiEvent`. Synchronous listeners can access that live Exchange, including its body and headers,
+for correlation. Direct expert calls and request outcomes remain detached; no synthetic Exchange is created.
+The event's `getData()` and JSON representation remain frozen and do not include the Exchange. Retaining or
+asynchronous consumers must copy that data instead of holding the event or its live Exchange. Audit queues,
+sinks and monitoring snapshots never retain the Exchange.
+Events continue when audit retention is disabled, if an interested notifier is registered.
+Notifiers based on `EventNotifierSupport` or `SimpleEventNotifierSupport` that do not consume AI events
+should call `setIgnoreAiEvents(true)`; `ignoreExchangeEvents` does not suppress AI events.
+Custom implementations of `EventNotifier` must report the same choice from `isIgnoreAiEvents()`.
+Eligibility follows `EventHelper`: disabled and AI-ignoring notifiers do not trigger event creation.
+Other registered notifiers may need the real event to evaluate `isEnabled(event)`, so filtering there
+can avoid delivery but not the cost of constructing that event. Camel does not probe them with a sentinel.
+The existing `SemanticObserver` tracing hooks remain independent of event delivery and audit sampling.
+
+Interpretation is captured once from the resolved expert contract and effective parameters before the
+provider runs. It is immutable and includes complete declared meanings, Boolean labels, Choice alternatives,
+Score level descriptions and explicit probability/no-match contracts. It contains no arbitrary parameters,
+instructions, input bodies or live references to definitions. Runtime declarations use `choiceLabelsParameter`,
+`booleanLabelsParameter`, `scoreLevelsParameter`, `noMatchDeclared`, `noMatchLabel` and `completeProbabilities`
+on `@SemanticOperation`. Camel never infers no-match semantics from a label such as `other`.
+
+The event carries the complete interpretation, without the audit record's text limit. `EventHelper`
+dispatches synchronously and retains no history. Listener callbacks must remain short; each listener that
+retains events owns its payload, queue and retention budgets. The event's `toString()` contains identifiers
+only, so routine notifier-failure logs do not dump captured interpretation.
+
+The built-in audit recorder creates its bounded projection before enqueueing. Interpretation in stored
+records is limited to 2048 code points in total, 32 alternatives/levels and 256 code points per label,
+with the existing depth/node limits. If it does not fit, the entire stored interpretation is omitted with
+`interpretationOmitted: audit_snapshot_limit`. The event delivered to other listeners is unchanged.
+Raw input remains a separate opt-in audit snapshot and is never included in frozen event data.
+Exchange-aware listeners can access live input through `getExchange()` independently of audit capture settings.
+
+Readers and sinks advertise supported extensions through `getSupportedExtensions()`. Existing implementations
+default to none and receive their original version-1 shape; memory and logging stores support interpretation,
+findings, identity and executing-route fields. Missing capability data is visible in health output. Older
+records display *interpretation not recorded*; tools never reconstruct history from a current definition.
+
+Experts may return bounded `SemanticFinding` entries with a code, meaning and source. Severity is optional;
+when supplied it includes its value and the expert's scale. Camel displays *severity not reported* otherwise.
+For example, an expert could supply `format-anomaly` on its own `low/medium/high` scale, while another supplies
+`review-priority` on a numeric scale. Neither code nor severity causes an automatic route action.
+
+A provider-independent business assessment can return classification labels and supplementary findings,
+without route-authored policy metadata:
+
+[source,java]
+----
+return new SemanticResult(Set.of("missing-reference"), null, Map.of(), null,
+    Map.of("taskId", "invoice-review", "taskVersion", "v2"),
+    List.of(new SemanticFinding("reference-absent", "The supplied invoice has no purchase reference",
+        "invoice-expert", null, null)));
+----
+
+The route chooses how to handle that assessment. A fixed classifier declares its label domain in the
+operation contract; an instruction-driven expert declares which criteria parameter supplies label meanings.
+Arbitrary instructions remain outside audit interpretation capture.
+
+=== Browsing history
+
+Use `camel semantic audit my-app` for retained evaluations and request outcomes, `--json` for raw data,
+or `--event-id=EVENT_ID` for explicit record detail. Previously persisted version-1 decision records remain
+retrievable by ID and exportable as legacy data; current tables and filters describe evaluations only.
+
+[source,shell]
+----
+camel semantic audit my-app --expert="team expert" --executing-route-id=assess --limit=50
+camel semantic audit my-app --case-event-id=EVENT_ID --max-records=200 --json
+camel semantic audit my-app --event-ids=EVENT_1,EVENT_2 --max-records=200 --json
+----
+
+The `semantic-audit` console, CLI and MCP share the selected reader. Page filters are `category`
+(`evaluation` or `request`), `expert`, `definition`, `operation`, entry `routeId`, `executingRouteId`,
+`exchangeId` and `breadcrumbId`. `since` is inclusive and `until` is exclusive, both ISO-8601 timestamps
+with a UTC offset, applied to recorded event/completion time: `[since, until)`. Either bound may be omitted;
+when both are supplied, `since` must precede `until`. Page size remains 1..200. Backend capability checks reject unsupported filters instead
+of silently returning unfiltered data. Cursors belong to their backend and query. Errors, expired cursors,
+loss and missing IDs are reported separately. A read failure never becomes an empty successful export.
+
+Typed result filters use the captured `semantics.resultType` and `result.value`, never display text or
+current definitions. Supply `resultType` as `BOOLEAN`, `CHOICE`, `SCORE` or `CLASSIFICATION`:
+
+* `resultValue` matches `true`/`false` for Boolean, an exact case-sensitive Choice label, or numeric Score equality.
+* `resultLabel` requires Classification and matches membership of its captured label set.
+* `scoreMin` and `scoreMax` require Score and are inclusive finite numeric bounds. Either may be omitted.
+
+All predicates are ANDed before pagination. Missing or omitted values do not match value predicates;
+`resultType` alone can match recorded semantics without a value. No-match is an expert-defined label:
+Camel does not infer it from a failure, an empty result or a low probability. For example:
+
+[source,shell]
+----
+camel semantic audit my-app --definition=routeRequest --operation=choice \
+  --since=2026-10-14T12:00:00Z --until=2026-10-14T12:15:00Z \
+  --result-type=CHOICE --result-value=none_of_these --json
+camel semantic audit my-app --result-type=SCORE --score-min=1.5 --score-max=2 --json
+camel semantic audit my-app --result-type=CLASSIFICATION --result-label="needs review" --json
+----
+
+Reuse both bounds and every predicate with a returned cursor. Custom readers opt in through
+`getSupportedFilters()`, including `until` for the upper time bound and each implemented result predicate.
+The original four-argument `SemanticAuditQuery` constructor remains open-ended; the five-argument overload
+adds `until`. `query.matches(record)` implements these predicates for readers that scan retained records.
+An audit query returns matching *retained* records; disabled capture, drops or eviction can make that
+population smaller than the monitoring population.
+
+Cases use the anchor's breadcrumb, falling back to exchange, invocation or event identity when absent.
+Batch and request relationships are included where the reader supports those filters. These are source-local
+associations, not proven causality. Case completeness remains *unknown*, even if retrieval was not limited.
+`maxRecords` bounds case/export output to 1..1000 records (default 200); responses are limited to 4 MiB and
+case lookup checks a five-second deadline between backend calls. This does not interrupt a blocked custom
+reader. Bulk lookup chunks IDs in groups of 100 for compatibility with older readers.
+Lists and exports exclude input unless explicitly requested with `--include-input` / `includeInput=true`.
+
+The xref:manual::camel-jbang-tui.adoc[Camel TUI] Audit view shows Result separately from Execution.
+Its shared formatter preserves fractional Score values and adjacent captured labels, distinguishes empty
+Classification results from missing results and failures, and separates probability from confidence.
+Reported probability diagnostics show a top-two gap, ties, selected answer versus highest alternative, and
+explicit no-match semantics. Score modes use only declared zero-based level mappings. These are derived from
+the existing response and are not calibrated certainty, accuracy measurements or model reasoning.
+
+TUI filters accept quoted values, for example `expert="team expert" executingRouteId="assess order"`.
+`page.status`, `page.result` and `page.definition` are clearly marked refinements of the loaded page only.
+`t` offers rolling recent-time presets on the live page and clears a fixed `until`; explicit ISO bounds stay fixed. Older pages keep
+the original time bound. `Space` pauses refresh, `r` refreshes the current page and selected detail, `n` loads an
+older page, and `g` goes to latest. Selection stays pinned by event ID during refresh and new arrivals are reported.
+Live polling refreshes summaries only, so captured input is not downloaded each second. Inspector notices do
+not stop polling. A missing executing route is shown as *n/a* for direct/sample calls and *not recorded* when
+an older record or route evaluation does not identify the executing route.
+Dates and the display zone are visible; full exchange and breadcrumb IDs remain in the inspector.
+`Enter` loads an explicit source-local case; `[` / `]` selects an associated record.
+
+Press `p` to copy permitted captured input into a new playground draft. Existing draft contents are replaced
+only by this explicit action. The draft does not run automatically. Original execution parameters were not
+captured; current defaults, contracts, model revisions and route context can differ. The draft explains this
+and labels input as untrusted data. Review parameters and use the normal explicit Run action.
+
+`tui_get_audit` reads pages, cases and exports without changing the visible TUI state. `tui_get_table` omits
+captured input from Audit summaries and the selected-record snapshot, even while the human inspector displays it.
+Explicit detail/export responses label captured input as untrusted data. The OpenTelemetry indicator describes
+the context tracer, not whether a semantic observer or exporter has been installed.
+
+=== Producer-owned monitoring
+
+Monitoring is independent of audit retention. A `SemanticMetricSource` supplies local, cached
+`SemanticMonitoringSnapshot` values; a producer may also emit `SemanticMonitoringEvent` with current measurements.
+These snapshots are immutable reads of current state, not persisted monitoring reports. Producers define
+measurement identity, bounded dimensions, units, population and revision boundaries. Camel exposes current
+values and collection health. External monitoring systems own time-series retention, historical queries,
+baselines, comparisons, anomaly detection, alerting and dashboards. Camel does not scan audit history to
+calculate metrics, invoke extra inference, correlate example audit IDs or assign route actions.
+
+`SemanticResultMetrics` is an optional event consumer for final typed results. Its constructor requires a
+producer source, meaning, dimensions, result type, explicit population predicate, bounded label capacity
+(2..64) and, for numeric histograms, ordered finite bucket bounds. Register it before context startup:
+
+[source,java]
+----
+context.getRegistry().bind("departmentMetrics", new SemanticResultMetrics(
+    "routing-expert", "Final department assessments for revision v3",
+    Map.of("revision", "v3", "definition", "department"), ResultType.CHOICE,
+    event -> "department".equals(event.getData().get("definition"))
+        && "v3".equals(event.getData().get("revision")),
+    16));
+----
+
+The helper counts completed assessments once. Choice counts the selected answer; Boolean counts the final
+normalized answer; Classification counts label memberships and empty sets; Score retains numeric aggregates
+and supplied bucket boundaries. Reported probabilities have separate histograms. Failures, non-executed and
+unavailable results are excluded from answer denominators and reported separately. Label-capacity loss is
+explicit. Provider attempt counts are *not provided*: one semantic completion is not necessarily one provider
+request. For executions that supply a non-negative `durationNanos`, it also publishes `durationCount`,
+`meanDurationNanos`, `minimumDurationNanos` and `maximumDurationNanos`. Successful and failed executions
+contribute to these timings; non-executed calls and missing durations do not. No duration aggregates are
+published before the first timed execution. These measure the semantic evaluation, not individual provider
+requests or distributed tracing spans. The helper resets its epoch on restart; producers must separate incompatible revisions/populations.
+
+To offer both expert and definition aggregation in Monitoring, register separate collectors for the
+populations you want to inspect. Set `dimensions.aggregation` to `expert` or `definition`; for definition
+aggregates also supply `dimensions.definition`. For example, this definition collector selects only
+`screenPrompt` completions, while an expert collector can select all `security` / `injection` completions:
+
+[source,java]
+----
+context.getRegistry().bind("screenPromptMetrics", new SemanticResultMetrics(
+    "screenPromptMetrics", "Injection assessments for screenPrompt",
+    Map.of("aggregation", "definition", "definition", "screenPrompt",
+           "expert", "security", "operation", "injection"), ResultType.BOOLEAN,
+    event -> "screenPrompt".equals(event.getData().get("definition"))
+        && "security".equals(event.getData().get("expert"))
+        && "injection".equals(event.getData().get("operation")),
+    2));
+----
+
+The TUI's *Group* control selects these supplied aggregates. It never combines the expert and definition
+counters or reconstructs definition totals from audit history. Direct expert calls have no definition and
+are excluded from definition collectors. Different operations, revisions and meaning remain separate
+producer-owned populations. Without an explicit aggregation dimension, a `definition` dimension identifies
+a definition aggregate, otherwise an `expert` dimension identifies an expert aggregate; *All sources* also
+shows snapshots without either. Custom sources can publish both aggregations using the same dimensions.
+
+The context monitoring service samples registered sources once per second and accepts supplied measurement
+events into a bounded current-value cache (100 series). New values replace the previous values for the same
+series. A source supplies its complete current set; retired series disappear on its next successful sample.
+Sampling failures retain the last values and report `sample_failed`, the last success and the last failure.
+The cache is cleared on restart. There is no monitoring-store SPI, retained time history or recovery.
+Audit storage and retention remain separate.
+
+Snapshot payloads are bounded to 32768 code points and 1000 nodes, with at most 16 dimensions. They have no
+raw-input, comparison, detector-state or audit-example fields; producers must supply measurements only.
+At most 32 sources are registered; omitted registrations are counted in health output. Each source supplies
+at most 64 snapshots per sample. `snapshots()` and notifier callbacks must be short and local; remote storage
+and querying belong to the external monitoring integration.
+
+Use bounded labels such as expert, definition, operation and declared result category for exported metrics.
+Per-execution correlation, exchange, breadcrumb and invocation IDs belong in audit/log/trace records, not
+metric labels. Standard tracing exemplars may provide sampled metric-to-trace references when the exporter
+supports them; Camel does not maintain example-event lists. To investigate an interval, query the audit
+reader with `since`, `until`, definition/operation and typed-result filters. Only retained captured records
+are available, which may be fewer than the monitored evaluations.
+
+[source,shell]
+----
+camel semantic monitoring my-app --json
+camel semantic monitoring my-app --source=departmentMetrics
+----
+
+The Semantic *Monitoring* sibling, `tui_get_monitoring`, `semantic-monitoring` console and CLI read this same
+current-value cache. The TUI offers expert/definition grouping, filters and an inspector for counts, durations,
+distributions, meaning, observation times and collection health. It has no historical-period, reference or
+comparison controls. Pausing affects the display only. A shared Micrometer exporter for Camel Main,
+Spring Boot and Quarkus is tracked separately by CAMEL-25648; it is not implemented by this local viewer.
+
+When JMX is enabled, the context registers one read-only aggregate facade and one per registered metric
+source under `type=semantic`, with logical names `all` and `Source(<registry-name>)`.
+The object-name pattern is `<domain>:context="<management-name>",type=semantic,name="<name>"`.
+Each exposes only a JSON `Snapshot` attribute backed by the same cache.
+There are no per-event MBeans, inference/backend reads, reset, reference-update or detector controls in JMX.
+Facades are removed at context shutdown. Monitoring also works with JMX disabled and without a connected TUI.

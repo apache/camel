@@ -16,6 +16,8 @@
  */
 package org.apache.camel.cli.connector;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -40,4 +42,17 @@ public interface CliActionDispatcher {
      * @throws Exception if the action failed
      */
     boolean dispatch(JsonObject action, CliActionOutput output) throws Exception;
+
+    /**
+     * Dispatches an action and completes when all output has been delivered. Invocation must still be serialized;
+     * implementations may offload independent work. Cancelling the returned future requests interruption of that work.
+     */
+    default CompletableFuture<Boolean> dispatchAsync(JsonObject action, CliActionOutput output) {
+        try {
+            return CompletableFuture.completedFuture(dispatch(action, output));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
 }

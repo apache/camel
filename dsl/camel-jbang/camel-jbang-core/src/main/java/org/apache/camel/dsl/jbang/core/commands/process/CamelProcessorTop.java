@@ -16,7 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.util.Comparator;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import picocli.CommandLine.Command;
 
 @Command(name = "processor", description = "Top performing processors",
@@ -32,24 +35,9 @@ public class CamelProcessorTop extends CamelProcessorStatus {
     }
 
     @Override
-    protected int sortRow(Row o1, Row o2) {
-        // use super to group by first
-        int answer = super.sortRow(o1, o2);
-        if (answer == 0) {
-            int negate = 1;
-            if (sort.startsWith("-")) {
-                negate = -1;
-            }
-            // sort for highest mean value as we want the slowest in the top
-            long m1 = o1.mean != null ? Long.parseLong(o1.mean) : 0;
-            long m2 = o2.mean != null ? Long.parseLong(o2.mean) : 0;
-            if (m1 < m2) {
-                answer = negate;
-            } else if (m1 > m2) {
-                answer = -1 * negate;
-            }
-        }
-        return answer;
+    protected Comparator<Row> order() {
+        // then the slowest first, as the top shows the slowest
+        return super.order().thenComparing(ListingFormat.<Row> slowestFirst(sort, r -> r.mean));
     }
 
 }

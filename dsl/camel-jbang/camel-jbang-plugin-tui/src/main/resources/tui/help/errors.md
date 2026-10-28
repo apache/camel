@@ -110,6 +110,7 @@ Press `Esc` to navigate back one route in drill-down mode.
 
 - `Up/Down` — select error (list) / navigate path steps (diagram)
 - `Enter` — view error details
+- `Shift+F8` — fix with AI: ask the AI about the selected error, on the source line it happened at
 - `d` — toggle error diagram (open and close)
 - `Esc` — back to list / back one route in diagram drill-down
 - `i` — cycle info panel size (narrow / wide / full) in diagram
@@ -120,3 +121,5 @@ Press `Esc` to navigate back one route in drill-down mode.
 - `w` — toggle word wrap
 - `s` — cycle sort column
 - `S` — reverse sort order
+- `PgUp/PgDn` — scroll the detail panel
+- `Home/End` — jump to the top/end of the detail panel

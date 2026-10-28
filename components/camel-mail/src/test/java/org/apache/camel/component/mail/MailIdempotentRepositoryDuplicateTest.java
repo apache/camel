@@ -72,7 +72,7 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(jones);
         JavaMailSender sender = new DefaultJavaMailSender();
         Store store = sender.getSession().getStore("imap");
         store.connect("localhost", Mailbox.getPort(Protocol.imap), jones.getLogin(), jones.getPassword());

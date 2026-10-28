@@ -128,19 +128,24 @@ public static final String HEADER_FIELD_PREFIX = "CamelSolrField.";
 === Protocol and standard headers
 
 Headers that are part of an external wire protocol or standard (HTTP headers,
-JMS properties, Swift API headers, etc.) are *exempt* from the `Camel` prefix
-rule. They use the standard's own name because the framework passes them
-through to the underlying transport.
+JMS properties, etc.) are *exempt* from the `Camel` prefix rule. They use the
+standard's own name because the framework passes them through to the underlying
+transport.
 
 Examples:
 
-* Swift: `X-Container-Meta-`, `X-Versions-Location`
 * HTTP: `Content-Type`, `Accept`
 * JMS: standard JMS property names
 
+The exemption applies only when the header name the route sets is the name that
+goes on the wire. When the component hands the value to a client library that
+builds the wire name itself - as `camel-openstack` does for the Swift container
+options, where openstack4j maps `accessRead`, `accessWrite`, `versionsLocation`
+and `metadata` onto the `X-...` names - the Exchange header name never reaches
+the protocol, so it follows the `Camel` convention like any other header.
+
 When a component has both Camel-convention headers and protocol pass-through
-headers, document the distinction clearly (see `camel-openstack` Swift
-constants for an example).
+headers, document the distinction clearly.
 
 === Exchange properties
 

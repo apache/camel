@@ -18,6 +18,8 @@ package org.apache.camel.component.consul.endpoint;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,8 +36,27 @@ import org.kiwiproject.consul.option.QueryOptions;
 
 public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValueClient> {
 
+    private ScheduledExecutorService scheduledExecutorService;
+
     public ConsulKeyValueConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
         super(endpoint, configuration, processor, Consul::keyValueClient);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // to watch the key again after a failed query
+        this.scheduledExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "ConsulKeyValueConsumer");
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (this.scheduledExecutorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutorService);
+            this.scheduledExecutorService = null;
+        }
+        super.doStop();
     }
 
     @Override
@@ -68,6 +89,12 @@ public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValu
         @Override
         public void onFailure(Throwable throwable) {
             onError(throwable);
+            // only an answer starts the next query: query again, or the key is not watched anymore. Wait at
+            // least one second, so that a Consul agent that is down is not queried in a loop
+            ScheduledExecutorService executor = scheduledExecutorService;
+            if (isRunAllowed() && executor != null) {
+                executor.schedule(this, Math.max(1, configuration.getBlockSeconds()), TimeUnit.SECONDS);
+            }
         }
 
         protected void onValue(Value value) {

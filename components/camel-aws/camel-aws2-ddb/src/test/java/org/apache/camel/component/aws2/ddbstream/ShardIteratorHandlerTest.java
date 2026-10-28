@@ -94,10 +94,15 @@ class ShardIteratorHandlerTest extends CamelTestSupport {
         endpoint.doStart();
 
         assertEquals(Collections.singletonMap(SHARD_0.shardId(), SHARD_ITERATOR_0), underTest.getShardIterators());
+        // a closed shard is left for its children once it was read to its end, not before
+        assertEquals(Collections.singletonMap(SHARD_0.shardId(), SHARD_ITERATOR_0), underTest.getShardIterators());
+        underTest.updateShardIterator(SHARD_0.shardId(), null);
         Map<String, String> expectedShardIterators1 = new HashMap<>();
         expectedShardIterators1.put(SHARD_1.shardId(), SHARD_ITERATOR_1);
         expectedShardIterators1.put(SHARD_2.shardId(), SHARD_ITERATOR_2);
         assertEquals(expectedShardIterators1, underTest.getShardIterators());
+        underTest.updateShardIterator(SHARD_1.shardId(), null);
+        underTest.updateShardIterator(SHARD_2.shardId(), null);
         Map<String, String> expectedShardIterators2 = new HashMap<>();
         expectedShardIterators2.put(SHARD_3.shardId(), SHARD_ITERATOR_3);
         expectedShardIterators2.put(SHARD_4.shardId(), SHARD_ITERATOR_4);

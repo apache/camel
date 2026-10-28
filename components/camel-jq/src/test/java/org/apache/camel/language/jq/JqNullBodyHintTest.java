@@ -50,7 +50,7 @@ public class JqNullBodyHintTest extends JqTestSupport {
 
         assertTrue(message.contains("No body available of type: com.fasterxml.jackson.databind.JsonNode"),
                 "should keep the original message, but was: " + message);
-        assertTrue(message.contains("the jq expression got no message body to evaluate, the body is null"),
+        assertTrue(message.contains("the jq expression got no message body to evaluate: the body is null"),
                 "should say the body is null, but was: " + message);
         assertTrue(message.contains("constant: resource:file:"),
                 "should show the form for a known file, but was: " + message);

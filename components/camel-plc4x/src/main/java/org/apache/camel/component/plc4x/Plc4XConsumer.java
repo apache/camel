@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.plc4x;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -31,31 +26,20 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
-import org.apache.plc4x.java.scraper.config.JobConfigurationImpl;
-import org.apache.plc4x.java.scraper.config.ScraperConfiguration;
-import org.apache.plc4x.java.scraper.config.triggeredscraper.ScraperConfigurationTriggeredImpl;
-import org.apache.plc4x.java.scraper.exception.ScraperException;
-import org.apache.plc4x.java.scraper.triggeredscraper.TriggeredScraperImpl;
-import org.apache.plc4x.java.scraper.triggeredscraper.triggerhandler.collector.TriggerCollector;
-import org.apache.plc4x.java.scraper.triggeredscraper.triggerhandler.collector.TriggerCollectorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Plc4XConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XConsumer.class);
 
-    private final Map<String, String> tags;
-    private final String trigger;
     private final Plc4XEndpoint plc4XEndpoint;
 
-    private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService executorService;
     private ScheduledFuture<?> future;
 
     public Plc4XConsumer(Plc4XEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.plc4XEndpoint = endpoint;
-        this.tags = endpoint.getTags();
-        this.trigger = endpoint.getTrigger();
     }
 
     @Override
@@ -81,20 +65,13 @@ public class Plc4XConsumer extends DefaultConsumer {
             }
             doStop();
         }
-        if (trigger == null) {
-            startUnTriggered();
-        } else {
-            startTriggered();
-        }
+        startUnTriggered();
     }
 
     private void startUnTriggered() {
         PlcReadRequest request;
         try {
             plc4XEndpoint.reconnectIfNeeded();
-            if (plc4XEndpoint.connection == null) {
-                throw new PlcConnectionException("Cannot establish connection");
-            }
             request = plc4XEndpoint.buildPlcReadRequest();
         } catch (Exception e) {
             if (LOGGER.isTraceEnabled()) {
@@ -105,14 +82,12 @@ public class Plc4XConsumer extends DefaultConsumer {
             return;
         }
 
+        executorService = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "Plc4XConsumer");
         future = executorService.schedule(() -> request.execute().thenAccept(response -> {
             try {
                 Exchange exchange = plc4XEndpoint.createExchange();
-                Map<String, Object> rsp = new HashMap<>();
-                for (String field : response.getTagNames()) {
-                    rsp.put(field, response.getObject(field));
-                }
-                exchange.getIn().setBody(rsp);
+                exchange.getIn().setBody(Plc4XEndpoint.tagValues(response));
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 getExceptionHandler().handleException(e);
@@ -120,44 +95,16 @@ public class Plc4XConsumer extends DefaultConsumer {
         }), 500, TimeUnit.MILLISECONDS);
     }
 
-    private void startTriggered() throws ScraperException {
-        ScraperConfiguration configuration = getScraperConfig(tags);
-        TriggerCollector collector = new TriggerCollectorImpl(plc4XEndpoint.getPlcDriverManager());
-
-        TriggeredScraperImpl scraper = new TriggeredScraperImpl(configuration, (job, alias, response) -> {
-            try {
-                plc4XEndpoint.reconnectIfNeeded();
-
-                Exchange exchange = plc4XEndpoint.createExchange();
-                exchange.getIn().setBody(response);
-                getProcessor().process(exchange);
-            } catch (PlcConnectionException e) {
-                if (LOGGER.isTraceEnabled()) {
-                    LOGGER.warn("Unable to reconnect, skipping request", e);
-                } else {
-                    LOGGER.warn("Unable to reconnect, skipping request");
-                }
-            } catch (Exception e) {
-                getExceptionHandler().handleException(e);
-            }
-        }, collector);
-        scraper.start();
-        collector.start();
-    }
-
-    private ScraperConfigurationTriggeredImpl getScraperConfig(Map<String, String> tagList) {
-        String config = "(TRIGGER_VAR," + plc4XEndpoint.getPeriod() + ",(" + plc4XEndpoint.getTrigger() + ")==(true))";
-        List<JobConfigurationImpl> job = Collections.singletonList(
-                new JobConfigurationImpl("PLC4X-Camel", config, 0, Collections.singletonList(Constants.PLC_NAME), tagList));
-        Map<String, String> source = Collections.singletonMap(Constants.PLC_NAME, plc4XEndpoint.getUri());
-        return new ScraperConfigurationTriggeredImpl(source, job);
-    }
-
     @Override
     protected void doStop() throws Exception {
         // First stop the polling process
         if (future != null) {
             future.cancel(true);
+            future = null;
+        }
+        if (executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            executorService = null;
         }
         super.doStop();
     }

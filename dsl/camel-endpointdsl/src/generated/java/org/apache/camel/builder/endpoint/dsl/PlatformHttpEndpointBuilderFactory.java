@@ -758,6 +758,26 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Who answers requests that match no registered operation when using
+         * rest-dsl contract-first (such as the rest-openapi component): the
+         * HTTP layer (platform) or Camel via the route (camel). When set to
+         * camel, a catch-all is registered so unmatched requests are routed to
+         * Camel. Currently supported by camel-platform-http-vertx (Camel Main,
+         * Quarkus) and the Spring Boot platform-http-starter.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: platform
+         * Group: consumer (advanced)
+         * 
+         * @param unmatchedRequestHandling the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder unmatchedRequestHandling(String unmatchedRequestHandling) {
+            doSetProperty("unmatchedRequestHandling", unmatchedRequestHandling);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter headers to and from
          * Camel message.
          * 

@@ -21,6 +21,8 @@ import java.util.Set;
 import javax.management.ObjectName;
 
 import org.apache.camel.ManagementMBeansLevel;
+import org.apache.camel.component.seda.SedaComponent;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -38,5 +40,14 @@ public class ManagedMBeansLevelContextOnlyTest extends ManagedMBeansLevelTestSup
         assertEquals(1, contexts.size());
         assertEquals(0, routes.size());
         assertEquals(0, processors.size());
+    }
+
+    @Test
+    void testNoComponentMBeans() throws Exception {
+        // also a component added after CamelContext has been started
+        context.addComponent("mySeda", new SedaComponent());
+
+        Set<ObjectName> components = getMBeanServer().queryNames(new ObjectName("*:type=components,*"), null);
+        assertEquals(0, components.size(), "There should be no component MBeans: " + components);
     }
 }

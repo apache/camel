@@ -1054,7 +1054,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             cb.addStatement("break");
 
             annotations.add(
-                    YamlProperties.annotation(fieldName, "enum:" + getEnums(field))
+                    YamlProperties.annotation(fieldName, (isMultiEnum(field) ? "multienum:" : "enum:") + getEnums(field))
                             .withRequired(isRequired(field))
                             .withDeprecated(isDeprecated(field))
                             .withDescription(descriptor.description(fieldName))

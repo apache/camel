@@ -22,3 +22,24 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The component needs an Ignite node: xref:ignite-summary.adoc[Ignite] describes the ways to give it one.
+
+The producer sends the body to the `orders` topic, and the consumer receives the messages of that topic:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:publish
+      steps:
+        - to:
+            uri: ignite-messaging:orders
+- route:
+    from:
+      uri: ignite-messaging:orders
+      steps:
+        - log:
+            message: "Received: ${body}"
+----

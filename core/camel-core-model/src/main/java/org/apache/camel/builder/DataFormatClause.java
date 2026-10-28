@@ -1581,7 +1581,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Allows {@code null} as value of a body to unmarshall.
+     * Allows {@code null} as value of a body: unmarshal and marshal skip a {@code null} body, so it stays {@code null}.
      *
      * @return the builder
      */
@@ -1590,10 +1590,10 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Indicates whether {@code null} is allowed as value of a body to unmarshall.
+     * Indicates whether {@code null} is allowed as value of a body: unmarshal and marshal skip a {@code null} body, so
+     * it stays {@code null}.
      *
-     * @param  allowNullBody {@code true} if {@code null} is allowed as value of a body to unmarshall, {@code false}
-     *                       otherwise
+     * @param  allowNullBody {@code true} if {@code null} is allowed as value of a body, {@code false} otherwise
      * @return               the builder
      */
     public DataFormatClause<T> allowNullBody(boolean allowNullBody) {
@@ -1638,6 +1638,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
                 return processorType;
             case Marshal:
                 MarshalDefinition marshal = new MarshalDefinition(dataFormatType);
+                if (allowNullBody) {
+                    marshal.allowNullBody(true);
+                }
                 marshal.setVariableReceive(variableReceive);
                 marshal.setVariableSend(variableSend);
                 processorType.addOutput(marshal);

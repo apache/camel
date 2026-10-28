@@ -24,11 +24,12 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(37);
+        Set<String> props = new HashSet<>(43);
         props.add("allowedSecurityPolicies");
         props.add("applicationName");
         props.add("applicationUri");
         props.add("bridgeErrorHandler");
+        props.add("certificateValidator");
         props.add("channelLifetime");
         props.add("clientId");
         props.add("dataChangeFilterDeadbandType");
@@ -51,16 +52,21 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
         props.add("method");
         props.add("monitorFilterType");
         props.add("node");
+        props.add("nodes");
         props.add("omitNullValues");
         props.add("overrideHost");
         props.add("overridePort");
         props.add("password");
         props.add("productUri");
+        props.add("queueSize");
+        props.add("reconnectTimeout");
         props.add("requestTimeout");
         props.add("requestedPublishingInterval");
         props.add("samplingInterval");
         props.add("sessionName");
         props.add("sessionTimeout");
+        props.add("trustAllCertificates");
+        props.add("trustListDirectory");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
@@ -82,7 +88,7 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "endpointUri", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

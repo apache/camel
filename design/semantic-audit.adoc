@@ -1,0 +1,140 @@
+= Semantic audit and monitoring
+
+CAMEL-25499 supplies the audit foundation. CAMEL-25618 builds the result, case and monitoring surfaces on
+the shared AiEvent contract introduced by CAMEL-25408. CAMEL-25357 does not need a second recorder.
+CAMEL-23369 can consume the events or the existing tracing observer hooks without an OpenTelemetry
+dependency in camel-semantic.
+
+== Assessment and provenance
+
+Experts return typed assessments. Camel preserves the returned Boolean, choice, fractional score or
+classification, along with execution state and supplied findings. The framework does not interpret
+Boolean polarity, impose severity scales or infer a route action. New route-action capture, metadata,
+filters and evidence workflows are removed. The preview SemanticAudit and SemanticAuditDecision APIs
+are removed outright; the upgrade guide describes migration to automatic evaluation capture.
+Persisted v1 decision records remain readable and exportable as legacy data.
+
+Capture entry route and executing route separately, before invoking the provider. The existing routeId
+field and query keep their entry-route meaning. No active route means no executing-route identity.
+Copy both exchangeId and an existing valid Camel breadcrumbId without fabricating either. A breadcrumb
+associates records; it does not prove causation or completeness.
+
+== Shared events and retention
+
+[source,mermaid]
+----
+flowchart LR
+    R[Semantic runtime captures and freezes an assessment] --> E[Typed SemanticEvent with complete declared interpretation]
+    E --> A[Audit recorder applies its own capture budget]
+    I[Separately opted-in input snapshot] --> A
+    A --> Q[Bounded queue and capability-aware audit sinks]
+    E --> H[EventHelper.notifyAiEvent]
+    H --> N[Registered EventNotifier listeners]
+    N -->|SemanticEvent completions| P[Metric producers]
+    P -->|Current local measurements| C[Bounded cache of latest measurements]
+    N -->|SemanticMonitoringEvent measurements| C
+    P --> M[Typed monitoring AiEvent]
+    M --> H
+    C --> V[Read-only JMX / TUI / CLI / MCP]
+    N --> X[Optional Micrometer exporter - CAMEL-25648]
+    X --> B[External monitoring backend owns history and comparisons]
+----
+
+
+The semantic runtime constructs an immutable occurrence snapshot once and passes a typed SemanticEvent
+directly to the audit recorder and to EventHelper.notifyAiEvent. Starts, completed assessments and request
+outcomes have distinct kinds. A cancellation observation does not replace eventual provider completion.
+Each completed batch member has its own occurrence. Generic consumers select the kinds they understand.
+Route-bound occurrences use SemanticExchangeEvent and AiEvent.ExchangeAiEvent for live correlation. Detached
+calls do not fabricate an Exchange. Synchronous listeners can access the live body and headers, while getData
+and JSON contain only frozen occurrence data. Consumers that enqueue or retain data must not retain the live
+event or Exchange; the built-in recorder and monitoring projections retain only frozen data.
+
+The event carries the complete declared interpretation, including its original labels and meanings.
+It is visible to all subscribed listeners. Event production does not truncate interpretation to an
+audit-retention budget. Consumers that retain data own their payload, queue and storage budgets. EventHelper delivers synchronously and does not keep history.
+Callbacks should perform short, bounded work; asynchronous consumers must define queue loss behavior.
+Event toString methods contain identifiers and kind only because listener failures may log them.
+
+The audit recorder is one such consumer. Before enqueueing, it projects the event into the bounded
+SemanticAuditRecord format. Interpretation capture is all-or-nothing: 2048 code points in total,
+32 alternatives/levels, 256 code points per label, and the existing bounded JSON depth/node rules.
+Oversized interpretation is explicitly marked interpretationOmitted=audit_snapshot_limit. It remains
+complete on the event delivered to other listeners. Queue closures retain the bounded record only.
+Raw input is separately opt-in and attached privately to the audit copy after applying its capture and
+redaction policy. Raw input is absent from the frozen event payload; an Exchange-aware listener can access
+live input through getExchange regardless of audit capture settings.
+
+Each sink declares supported extension groups through SemanticAuditCapabilities. Unknown groups are
+removed for that destination, so older backends do not receive unrecognized v1 fields. Missing extension
+support does not reject startup. Health responses expose destination and reader capabilities. Older
+records without interpretation remain not recorded; current definitions never reconstruct historical meaning.
+
+The audit queue and memory store default to 1000 entries each. Queue overflow drops the new record and
+counts it; memory overflow evicts the oldest. External stores and logging infrastructure own their
+retention and durability. Audit delivery is best effort and independent of management-listener filters.
+SemanticObserver remains available for captureContext and detached tracing completion; its established
+bounded projection and callback ordering remain compatible.
+
+== Media input
+
+The private audit copy classifies input independently of content capture using the optional
+`inputType` extension. Values are text, image, text-and-images, structured, unsupported or unknown
+when bounded classification cannot finish. Older destinations receive their existing projection.
+Neither image bytes nor this classification are added to the frozen monitoring/event payload.
+
+Ordered media input uses the provider-independent `$semanticInput` envelope. Per-expert input
+capture remains opt-in, bounded and redacted. An image too large for the configured snapshot
+may be replaced by a bounded descriptor (`type=image`, optional mediaType, dataOmitted=snapshot_limit).
+The redactor still processes that detached snapshot. A descriptor cannot recreate missing data.
+
+Audit displays label input type even when payload capture is disabled. TUI image decoding occurs
+off the render thread and uses only retained bytes, with bounded thumbnails and an explicit
+unavailable state. Normal CLI human/JSON display omits base64; explicit file exports can retain
+requested captured input. No historical URL is fetched and browsing never invokes an expert.
+
+== Read-only access
+
+The reader SPI has no evidence-specific limit on getAll. Explicit console callers limit requests to
+1000 IDs and responses to 4 MiB, and use batches of at most 100 IDs for existing readers. Missing IDs
+are separate from lookup failures. Query pages still permit at most 200 records; legacy stored evidence
+lists still permit at most 100 references. Case retrieval has a five-second cooperative deadline between
+backend operations. Backends must bound individual I/O calls and honor interruption.
+
+Cases are scoped to the selected source and reader. Use a recorded breadcrumb, then exchange, invocation
+or event identity, and retain supplied batch/request relationships. Audit pages support inclusive `since`, exclusive `until`, exact definition/operation identity and
+explicitly typed result predicates (Boolean/Choice equality, Score equality/ranges, Classification membership).
+All filters apply before pagination and participate in cursor identity; queries only cover retained captured
+records, not necessarily the whole monitored population. Additional reader filters are optional;
+unsupported relationships and limited retrieval are visible. Retained history never proves completeness.
+Case/bulk summaries exclude input. Explicit input-bearing export includes the untrusted-data warning.
+Browsing, diagnostics and creating a playground draft must never invoke an expert.
+
+== Producer-owned metrics and monitoring
+
+SemanticResultMetrics offers bounded typed-result counters for an explicitly selected population. The
+owner supplies dimensions, labels' meaning and numeric buckets. Choices count the returned selection;
+probability entries are not additional answers. Booleans use the final returned value without a second
+threshold. Scores keep fractions. Classification counts membership and empty sets. Execution failures,
+unavailable results and cardinality loss remain separate. No provider-attempt count is fabricated.
+
+SemanticMetricSource supplies immutable current measurements with bounded identity, dimensions, units,
+observation times and population metadata. SemanticMonitoringEvent is an optional metrics publication path,
+distinct from assessment events so collectors do not count their own output. The runtime caches only the
+latest value per series, up to 100 series from at most 32 registered sources, and samples once per second.
+JMX, CLI, TUI and MCP read that cache without inference, audit scans or remote I/O. Restart clears the cache;
+source failures retain the last measurement and expose collection health. Missing values remain unknown.
+
+External monitoring systems own durable time-series storage, historical queries, baselines, comparisons,
+detector state, alerts, dashboards and cross-signal correlation. Camel has no monitoring-store SPI, recovery
+queue, sampled history, comparison/signal report model or example audit-event ID list. The TUI displays
+current counts, distributions and evaluation duration with expert/definition grouping and collection health.
+There are no historical-period or baseline controls. Register a bounded number of read-only management
+facades per source, never one MBean per event or answer. JMX-disabled deployments retain the console.
+
+CAMEL-25648 adds a shared Micrometer instrumentation/export bridge for Camel Main, Spring Boot and Quarkus.
+It reuses the runtime registry; Prometheus or another registry backend owns monitoring history and queries.
+Correlation, exchange, breadcrumb and invocation IDs are not metric labels. They remain audit/log/trace
+context; standard tracing exemplars may supply sampled metric-to-trace references where supported. Audit
+investigation uses a matching time window, definition/operation and typed-result predicate, without requiring
+metric-attached event IDs. Audit capture and retention can make its population incomplete.

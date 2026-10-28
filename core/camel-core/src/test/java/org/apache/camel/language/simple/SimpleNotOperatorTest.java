@@ -19,10 +19,18 @@ package org.apache.camel.language.simple;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.language.simple.ast.BaseSimpleNode;
+import org.apache.camel.language.simple.ast.UnaryExpression;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleTokenType;
+import org.apache.camel.language.simple.types.TokenType;
+import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +54,45 @@ public class SimpleNotOperatorTest extends ExchangeTestSupport {
         Expression e = context.resolveLanguage("simple").createExpression(text);
         e.init(context);
         return e.evaluate(exchange, Object.class);
+    }
+
+    @Test
+    public void testExistingPredicateExpressionStillNegatesItsValue() {
+        assertFalse(negate(new DifferentPredicate()));
+    }
+
+    @Test
+    public void testPredicateExpressionCanOptIntoPredicateNegation() {
+        assertTrue(negate(new OptedInPredicate()));
+    }
+
+    private boolean negate(Expression expression) {
+        SimpleToken token = new SimpleToken(new SimpleTokenType(TokenType.unaryOperator, "!"), 0);
+        UnaryExpression node = new UnaryExpression(token);
+        node.acceptRight(new BaseSimpleNode(token) {
+            @Override
+            public Expression createExpression(CamelContext camelContext, String text) {
+                return expression;
+            }
+        });
+        Expression negated = node.createExpression(context, "!${fixture}");
+        negated.init(context);
+        return negated.evaluate(exchange, Boolean.class);
+    }
+
+    private static class DifferentPredicate extends ExpressionAdapter {
+        @Override
+        public Object evaluate(Exchange exchange) {
+            return "nonempty";
+        }
+
+        @Override
+        public boolean matches(Exchange exchange) {
+            return false;
+        }
+    }
+
+    private static class OptedInPredicate extends DifferentPredicate implements SimplePredicateExpression {
     }
 
     @Test

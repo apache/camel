@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "openstack-keystone",
     "extendsScheme": "",
     "syntax": "openstack-keystone:host",
@@ -38,6 +38,10 @@
     "CamelOpenstackOperation": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform.", "constantName": "org.apache.camel.component.openstack.common.OpenstackConstants#OPERATION" },
     "CamelOpenstackId": { "index": 8, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ID.", "constantName": "org.apache.camel.component.openstack.common.OpenstackConstants#ID" },
     "CamelOpenstackName": { "index": 9, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name.", "constantName": "org.apache.camel.component.openstack.common.OpenstackConstants#NAME" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "Read by create and update only: a Region, Domain, Project, User or Group of openstack4j, or else the fields from headers such as CamelOpenstackName. The other operations take the ids from headers" },
+    "producerOut": { "carriers": [ "pojo", "list", "value", "null", "unchanged" ], "byOption": [ { "option": "operation", "value": "create", "carriers": [ "pojo" ] }, { "option": "operation", "value": "get", "carriers": [ "pojo", "null" ] }, { "option": "operation", "value": "getAll", "carriers": [ "list" ] }, { "option": "operation", "value": "update", "carriers": [ "pojo" ] }, { "option": "operation", "value": "delete", "carriers": [ "unchanged" ] }, { "option": "operation", "value": "addUserToGroup", "carriers": [ "unchanged" ] }, { "option": "operation", "value": "checkUserGroup", "carriers": [ "value" ], "javaType": "java.lang.Boolean" }, { "option": "operation", "value": "removeUserFromGroup", "carriers": [ "unchanged" ] } ], "description": "The Region, Domain, Project, User or Group of openstack4j created, read or updated (null when get finds none), a List of them for getAll, true or false for checkUserGroup; delete, addUserToGroup and removeUserFromGroup keep the body" }
   },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "OpenStack host url" },

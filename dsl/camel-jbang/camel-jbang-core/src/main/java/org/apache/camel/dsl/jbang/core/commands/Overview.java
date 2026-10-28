@@ -27,6 +27,9 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteDescriptions;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -120,29 +123,36 @@ public class Overview extends CamelCommand {
     }
 
     @Override
+    public boolean isJsonOutput() {
+        return "json".equals(format);
+    }
+
+    @Override
     public Integer doCall() throws Exception {
+        if (!"markdown".equals(format) && !"json".equals(format)) {
+            throw CliException.usage("--format must be markdown or json, was: " + format);
+        }
         Path dir = Path.of(directory != null ? directory : ".").toAbsolutePath().normalize();
+        if (!Files.exists(dir)) {
+            throw CliException.notFound("Directory does not exist: " + dir);
+        }
         if (!Files.isDirectory(dir)) {
-            printer().printErr("Not a directory: " + dir);
-            return 1;
+            throw CliException.usage("Not a directory: " + dir);
         }
         ProjectOverview.Overview overview = ProjectOverview.analyze(dir, new DefaultCamelCatalog());
         if (overview.routes().isEmpty()) {
-            printer().printErr("No routes found in " + dir);
-            return 1;
+            throw CliException.failure("No routes found in " + dir);
         }
         IntegrationSummary.Summary summary = IntegrationSummary.read(dir);
 
         if (ai) {
-            Integer result = explain(overview, summary);
-            if (result != 0) {
-                return result;
-            }
+            explain(overview, summary);
             summary = IntegrationSummary.read(dir);
         } else if (save) {
             IntegrationSummary.write(overview, summary != null ? summary.ai() : null,
                     summary != null ? summary.fingerprint() : null, summary != null ? summary.model() : null);
-            printer().println("Saved " + IntegrationSummary.FILE_NAME);
+            // not part of the output, which can be JSON
+            printer().printDiagnostic("Saved " + IntegrationSummary.FILE_NAME);
         }
 
         if (applyDescriptions) {
@@ -159,7 +169,7 @@ public class Overview extends CamelCommand {
         return 0;
     }
 
-    private Integer explain(ProjectOverview.Overview overview, IntegrationSummary.Summary previous) throws Exception {
+    private void explain(ProjectOverview.Overview overview, IntegrationSummary.Summary previous) throws Exception {
         LlmClient client = LlmClient.create()
                 .withUrl(url)
                 .withApiType(apiType)
@@ -170,58 +180,78 @@ public class Overview extends CamelCommand {
                 .withStream(false)
                 .withPrinter(printer());
         if (!client.detectEndpoint()) {
-            printer().printErr("LLM service is not running or not reachable.");
-            printer().printErr("Start one with: camel infra run ollama, or pass --url, --api-type and --api-key");
-            return 1;
+            throw CliException.failure("LLM service is not running or not reachable. Start one with: camel infra run"
+                                       + " ollama, or pass --url, --api-type and --api-key");
         }
         String system = IntegrationSummary.systemPrompt();
         String user = IntegrationSummary.userPrompt(overview, null);
+        // the prompts and the progress go to the diagnostics channel, as the output can be JSON
         if (showPrompt) {
-            printer().println("--- SYSTEM PROMPT ---");
-            printer().println(system);
-            printer().println("--- USER PROMPT ---");
-            printer().println(user);
-            printer().println("--- END PROMPTS ---");
-            printer().println();
+            printer().printDiagnostic("--- SYSTEM PROMPT ---");
+            printer().printDiagnostic(system);
+            printer().printDiagnostic("--- USER PROMPT ---");
+            printer().printDiagnostic(user);
+            printer().printDiagnostic("--- END PROMPTS ---");
+            printer().printDiagnostic("");
         }
-        printer().println("Explaining " + overview.flows().size() + " routes with " + client.model() + " ("
-                          + client.apiType() + ")...");
+        printer().printDiagnostic("Explaining " + overview.flows().size() + " routes with " + client.model() + " ("
+                                  + client.apiType() + ")...");
         String answer = client.generate(system, user);
         if (answer == null || answer.isBlank()) {
-            printer().printErr("Failed to get an answer from the LLM");
-            return 1;
+            throw CliException.failure("Failed to get an answer from the LLM");
         }
         IntegrationSummary.AiContent fresh = IntegrationSummary.parseAnswer(answer, overview);
         if (fresh.isEmpty()) {
-            printer().printErr("The LLM answer did not follow the expected format; nothing was saved:");
-            printer().printErr(answer);
-            return 1;
+            printer().printDiagnostic(answer);
+            throw CliException.failure("The LLM answer (above) did not follow the expected format; nothing was saved");
         }
         IntegrationSummary.AiContent merged
                 = IntegrationSummary.merge(overview, previous != null ? previous.ai() : null, fresh);
         Path file = IntegrationSummary.write(overview, merged, overview.fingerprint(), client.model());
-        printer().println(Files.readString(file, StandardCharsets.UTF_8));
-        printer().println("Saved " + IntegrationSummary.FILE_NAME + ": " + fresh.capabilities().size()
-                          + " capabilities, " + fresh.descriptions().size() + " route descriptions, "
-                          + fresh.notes().size() + " notes (AI-assisted, review"
-                          + " before relying on them)");
-        return 0;
+        if (!isJsonOutput()) {
+            printer().println(Files.readString(file, StandardCharsets.UTF_8));
+        }
+        printer().printDiagnostic("Saved " + IntegrationSummary.FILE_NAME + ": " + fresh.capabilities().size()
+                                  + " capabilities, " + fresh.descriptions().size() + " route descriptions, "
+                                  + fresh.notes().size() + " notes (AI-assisted, review"
+                                  + " before relying on them)");
     }
 
     private Integer applyDescriptions(ProjectOverview.Overview overview, IntegrationSummary.Summary summary)
             throws Exception {
         if (summary == null || summary.descriptions().isEmpty() && summary.notes().isEmpty()) {
-            printer().printErr("No AI-assisted route descriptions in " + IntegrationSummary.FILE_NAME
-                               + "; run camel overview --ai first");
-            return 1;
+            throw CliException.failure("No AI-assisted route descriptions in " + IntegrationSummary.FILE_NAME
+                                       + "; run camel overview --ai first");
         }
         RouteDescriptions.Plan plan = RouteDescriptions.plan(overview, summary.descriptions(), summary.notes());
+        JsonArray updated = new JsonArray();
         for (RouteDescriptions.Change change : plan.changes()) {
             Files.writeString(overview.directory().resolve(change.file()), change.newContent(), StandardCharsets.UTF_8);
-            printer().println("Updated " + change.file() + ": " + String.join(", ", change.routes()));
+            if (isJsonOutput()) {
+                JsonObject jo = new JsonObject();
+                jo.put("file", change.file());
+                jo.put("routes", change.routes());
+                updated.add(jo);
+            } else {
+                printer().println("Updated " + change.file() + ": " + String.join(", ", change.routes()));
+            }
         }
+        JsonArray skippedRoutes = new JsonArray();
         for (RouteDescriptions.Skipped skipped : plan.skipped()) {
-            printer().println("Skipped " + skipped.route() + ": " + skipped.reason());
+            if (isJsonOutput()) {
+                JsonObject jo = new JsonObject();
+                jo.put("route", skipped.route());
+                jo.put("reason", skipped.reason());
+                skippedRoutes.add(jo);
+            } else {
+                printer().println("Skipped " + skipped.route() + ": " + skipped.reason());
+            }
+        }
+        if (isJsonOutput()) {
+            JsonObject jo = new JsonObject();
+            jo.put("updated", updated);
+            jo.put("skipped", skippedRoutes);
+            printer().println(jo.toJson());
         }
         if (!plan.changes().isEmpty()) {
             // the descriptions are part of the routes now; the summary no longer marks them as AI-assisted
@@ -231,7 +261,7 @@ public class Overview extends CamelCommand {
                             null, List.of(),
                             Map.of()));
             IntegrationSummary.write(after, rest, after.fingerprint(), summary.model());
-            printer().println("Review the changes (git diff) before committing them");
+            printer().printTip("review the changes (git diff) before committing them");
         }
         return 0;
     }

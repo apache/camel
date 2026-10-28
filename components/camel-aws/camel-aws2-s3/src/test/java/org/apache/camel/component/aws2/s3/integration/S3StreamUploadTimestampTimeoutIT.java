@@ -27,6 +27,7 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
@@ -41,15 +42,30 @@ public class S3StreamUploadTimestampTimeoutIT extends Aws2S3Base {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    @BeforeEach
+    void removeTheObjectsOfAnEarlierRun() {
+        // a surefire rerun uses the same bucket: start from an empty bucket, so only the objects of this run are counted
+        Exchange ex = template.request("direct:listObjects",
+                exchange -> exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects));
+        List<S3Object> objects = ex.getMessage().getBody(List.class);
+        for (S3Object object : objects) {
+            template.request("direct:listObjects", exchange -> {
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteObject);
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, object.key());
+            });
+        }
+    }
+
     @Test
     public void sendInWithTimestampAndTimeout() throws Exception {
 
+        long firstUpload = System.currentTimeMillis();
+
         for (int i = 1; i <= 2; i++) {
             int count = i * 23;
+            int uploads = i;
 
             result.expectedMessageCount(count);
-
-            long beforeUpload = System.currentTimeMillis();
 
             for (int j = 0; j < 23; j++) {
                 template.sendBody("direct:stream1", "TestData\n");
@@ -59,33 +75,31 @@ public class S3StreamUploadTimestampTimeoutIT extends Aws2S3Base {
 
             MockEndpoint.assertIsSatisfied(context, 11, TimeUnit.SECONDS);
 
+            // each iteration is uploaded by the timeout to its own object, named with its timestamp (the first one too)
             Awaitility.await().atMost(11, TimeUnit.SECONDS)
                     .untilAsserted(() -> {
                         Exchange ex = template.request("direct:listObjects", this::process);
 
                         List<S3Object> resp = ex.getMessage().getBody(List.class);
-                        assertEquals(1, resp.size());
+                        assertEquals(uploads, resp.size());
 
-                        // Verify the uploaded file uses timestamp naming strategy
-                        S3Object s3Object = resp.get(0);
-                        String key = s3Object.key();
-
-                        // The file should either be the base name or have a timestamp suffix
-                        if ("fileTest.txt".equals(key)) {
-                            // This is fine - it's the base file
-                        } else if (key.startsWith("fileTest-") && key.endsWith(".txt")) {
-                            // Extract and validate timestamp
+                        long size = 0;
+                        for (S3Object s3Object : resp) {
+                            String key = s3Object.key();
+                            assertTrue(key.startsWith("fileTest-") && key.endsWith(".txt"),
+                                    "Expected a timestamp-named file (fileTest-<timestamp>.txt): " + key);
                             String timestampStr = key.substring("fileTest-".length(), key.length() - ".txt".length());
                             try {
                                 long timestamp = Long.parseLong(timestampStr);
-                                assertTrue(timestamp >= beforeUpload && timestamp <= afterUpload + 11000, // Allow extra time for timeout
+                                assertTrue(timestamp >= firstUpload && timestamp <= afterUpload + 11000, // Allow extra time for timeout
                                         "Timestamp " + timestamp + " should be within expected range");
                             } catch (NumberFormatException e) {
                                 throw new AssertionError("Expected numeric timestamp in filename: " + key, e);
                             }
-                        } else {
-                            throw new AssertionError("Unexpected filename format: " + key);
+                            size += s3Object.size();
                         }
+                        // 23 messages of "TestData\n" per iteration
+                        assertEquals(9L * 23 * uploads, size);
                     });
         }
     }

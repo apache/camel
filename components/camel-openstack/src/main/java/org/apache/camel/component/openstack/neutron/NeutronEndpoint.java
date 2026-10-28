@@ -23,6 +23,9 @@ import org.apache.camel.component.openstack.neutron.producer.NetworkProducer;
 import org.apache.camel.component.openstack.neutron.producer.PortProducer;
 import org.apache.camel.component.openstack.neutron.producer.RouterProducer;
 import org.apache.camel.component.openstack.neutron.producer.SubnetProducer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,22 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_NEUTRON, title = "OpenStack Neutron",
              syntax = "openstack-neutron:host", category = { Category.CONTAINER }, producerOnly = true,
              headersClass = NeutronConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Read by create and update only: a Network, Subnet, Port or Router of openstack4j, or else the "
+                                                + "fields from headers such as CamelOpenstackName. The other operations take the ids from headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL, Carrier.UNCHANGED }, byOption = {
+                   @BodyType.When(option = "operation", value = "create", carriers = Carrier.POJO),
+                   @BodyType.When(option = "operation", value = "get", carriers = { Carrier.POJO, Carrier.NULL }),
+                   @BodyType.When(option = "operation", value = "getAll", carriers = Carrier.LIST),
+                   @BodyType.When(option = "operation", value = "update", carriers = Carrier.POJO),
+                   @BodyType.When(option = "operation", value = "delete", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "operation", value = "attachInterface", carriers = Carrier.POJO,
+                                  javaType = "org.openstack4j.model.network.RouterInterface"),
+                   @BodyType.When(option = "operation", value = "detachInterface", carriers = Carrier.POJO,
+                                  javaType = "org.openstack4j.model.network.RouterInterface") },
+                                   description = "The Network, Subnet, Port or Router of openstack4j created, read or updated (null when get "
+                                                 + "finds none), a List of them for getAll, the RouterInterface for attachInterface and "
+                                                 + "detachInterface; delete keeps the body"))
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "networks,subnets,ports,routers")

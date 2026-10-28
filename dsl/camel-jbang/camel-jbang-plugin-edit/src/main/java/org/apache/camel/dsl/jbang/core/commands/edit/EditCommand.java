@@ -45,6 +45,7 @@ public class EditCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        requireInteractiveTerminal("camel edit");
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         try (Terminal terminal = TerminalBuilder.builder().build()) {
             String[] argv = new String[] { file };

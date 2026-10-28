@@ -23,6 +23,10 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.service.lra.LRASagaService target = (org.apache.camel.service.lra.LRASagaService) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedcoordinatorurls":
+        case "allowedCoordinatorUrls": target.setAllowedCoordinatorUrls(property(camelContext, java.lang.String.class, value)); return true;
+        case "callbacksecret":
+        case "callbackSecret": target.setCallbackSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "camelcontext":
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "coordinatorcontextpath":
@@ -40,6 +44,10 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedcoordinatorurls":
+        case "allowedCoordinatorUrls": return java.lang.String.class;
+        case "callbacksecret":
+        case "callbackSecret": return java.lang.String.class;
         case "camelcontext":
         case "camelContext": return org.apache.camel.CamelContext.class;
         case "coordinatorcontextpath":
@@ -58,6 +66,10 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.service.lra.LRASagaService target = (org.apache.camel.service.lra.LRASagaService) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedcoordinatorurls":
+        case "allowedCoordinatorUrls": return target.getAllowedCoordinatorUrls();
+        case "callbacksecret":
+        case "callbackSecret": return target.getCallbackSecret();
         case "camelcontext":
         case "camelContext": return target.getCamelContext();
         case "coordinatorcontextpath":

@@ -34,6 +34,9 @@ import org.apache.camel.Message;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants;
 import org.apache.camel.component.jackson.transform.Json;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -51,6 +54,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 @DataTypeTransformer(name = "google-sheets:application-x-struct",
                      description = "Transforms to/from JSon data and Google Sheets ValueRange object")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "A ValueRange or the JSON of one, or JSON rows: a JSON object or array, or a List of JSON objects"),
+           transformerOut = @BodyType(value = { Carrier.LIST, Carrier.TEXT, Carrier.POJO },
+                                      description = "A ValueRange, or the JSON of one, becomes a List of JSON Strings, one per row or column; "
+                                                    + "another body becomes one JSON String with the header CamelGoogleSheets.splitResults=true, "
+                                                    + "or else a ValueRange"))
 public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
 
     private static final String ROW_PREFIX = "#";

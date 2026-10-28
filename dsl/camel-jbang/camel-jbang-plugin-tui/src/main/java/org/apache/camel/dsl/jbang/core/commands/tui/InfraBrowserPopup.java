@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,7 +49,6 @@ import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -165,20 +163,12 @@ class InfraBrowserPopup {
         if (popupRect == null || itemHeights == null) {
             return -1;
         }
-        int firstRow = popupRect.top() + 1;
-        int relY = mouseY - firstRow;
-        if (relY < 0) {
+        // the rows inside the border; the list's offset counts rows, not items
+        int relY = mouseY - (popupRect.top() + 1);
+        if (relY >= popupRect.height() - 2) {
             return -1;
         }
-        int offset = browserState.offset();
-        int rowAcc = 0;
-        for (int i = offset; i < itemHeights.length; i++) {
-            rowAcc += itemHeights[i];
-            if (relY < rowAcc) {
-                return i;
-            }
-        }
-        return -1;
+        return TuiHelper.listItemAtRow(relY, browserState.offset(), itemHeights);
     }
 
     void render(Frame frame, Rect area) {
@@ -474,8 +464,8 @@ class InfraBrowserPopup {
             portState.moveCursorToStart();
         } else if (ke.isEnd()) {
             portState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.string().charAt(0))) {
-            portState.insert(ke.string().charAt(0));
+        } else if (FormHelper.typedText(ke) != null && Character.isDigit(ke.codePoint())) {
+            portState.insert(ke.string());
         }
     }
 
@@ -493,24 +483,8 @@ class InfraBrowserPopup {
         String portStr = portState != null ? portState.text().trim() : "";
         showPortDialog = false;
         try {
-            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
-            cmd.add("infra");
-            cmd.add("run");
-            cmd.add(alias);
-            if (impl != null) {
-                cmd.add(impl);
-            }
-            cmd.add("--background");
-            if (!portStr.isEmpty()) {
-                cmd.add("--port=" + portStr);
-            }
-            Path outputFile = LaunchManager.createSecureTempFile("camel-infra-", ".log");
-            outputFile.toFile().deleteOnExit();
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(outputFile.toFile());
-            Process process = pb.start();
-            launchManager.addPendingLaunchNoAutoSelect(alias, process, outputFile);
+            // a start that fails (its port taken) shows why, as the launcher keeps the output
+            launchManager.startInfra(impl != null ? alias + " " + impl : alias, portStr);
             if (burstCallback != null) {
                 burstCallback.run();
             }

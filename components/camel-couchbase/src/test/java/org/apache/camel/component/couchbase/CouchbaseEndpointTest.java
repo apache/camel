@@ -197,7 +197,21 @@ public class CouchbaseEndpointTest {
         CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
         endpoint.setBucket("myBucket");
         String query = endpoint.buildSqlQuery();
-        assertEquals("SELECT META().id AS __id, * FROM `myBucket`", query);
+        assertEquals("SELECT META().id AS __id, * FROM `myBucket`.`_default`.`_default` AS `myBucket`", query);
+    }
+
+    /**
+     * The query runs on the scope, where a single name is a collection of that scope, so the bucket name alone used to
+     * fail with "Keyspace not found". Without the collection option the consumer reads the default collection of the
+     * bucket, whatever the scope option, so the query names that one in full.
+     */
+    @Test
+    public void testBuildSqlQueryWithScopeAndNoCollection() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setBucket("myBucket");
+        endpoint.setScope("myScope");
+        String query = endpoint.buildSqlQuery();
+        assertEquals("SELECT META().id AS __id, * FROM `myBucket`.`_default`.`_default` AS `myBucket`", query);
     }
 
     @Test
@@ -216,7 +230,8 @@ public class CouchbaseEndpointTest {
         endpoint.setLimit(10);
         endpoint.setSkip(5);
         String query = endpoint.buildSqlQuery();
-        assertEquals("SELECT META().id AS __id, * FROM `myBucket` LIMIT 10 OFFSET 5", query);
+        assertEquals("SELECT META().id AS __id, * FROM `myBucket`.`_default`.`_default` AS `myBucket` LIMIT 10 OFFSET 5",
+                query);
     }
 
     @Test
@@ -226,7 +241,9 @@ public class CouchbaseEndpointTest {
         endpoint.setDescending(true);
         endpoint.setLimit(10);
         String query = endpoint.buildSqlQuery();
-        assertEquals("SELECT META().id AS __id, * FROM `myBucket` ORDER BY META().id DESC LIMIT 10", query);
+        assertEquals(
+                "SELECT META().id AS __id, * FROM `myBucket`.`_default`.`_default` AS `myBucket` ORDER BY META().id DESC LIMIT 10",
+                query);
     }
 
     @Test
@@ -237,7 +254,7 @@ public class CouchbaseEndpointTest {
         endpoint.setRangeEndKey("docZ");
         String query = endpoint.buildSqlQuery();
         assertEquals(
-                "SELECT META().id AS __id, * FROM `myBucket` WHERE META().id >= 'docA' AND META().id <= 'docZ'",
+                "SELECT META().id AS __id, * FROM `myBucket`.`_default`.`_default` AS `myBucket` WHERE META().id >= 'docA' AND META().id <= 'docZ'",
                 query);
     }
 
@@ -247,7 +264,9 @@ public class CouchbaseEndpointTest {
         endpoint.setBucket("myBucket");
         endpoint.setRangeStartKey("docA");
         String query = endpoint.buildSqlQuery();
-        assertEquals("SELECT META().id AS __id, * FROM `myBucket` WHERE META().id >= 'docA'", query);
+        assertEquals(
+                "SELECT META().id AS __id, * FROM `myBucket`.`_default`.`_default` AS `myBucket` WHERE META().id >= 'docA'",
+                query);
     }
 
     @Test

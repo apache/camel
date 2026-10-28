@@ -73,7 +73,8 @@ loads on the first request.
 - **session** — average decode rate, total input and output tokens and
   request count since the TUI started or since the last reset.
 - The sparkline is the live decode rate over the last 60 seconds when
-  the runner is on this machine, otherwise one bar per request.
+  the runner on this machine reports its live state, otherwise one bar
+  per request.
 
 ## Context
 
@@ -100,8 +101,9 @@ loads on the first request.
   it), else the window (yellow from 50%, red from 80%): that is when
   `/compact` in the AI panel, or a smaller toolset, pays off.
 
-Without the local runner the panel falls back to the last request's
-tokens against the model's context length.
+Without the runner's live state (a remote Ollama, or a model on MLX)
+the panel falls back to the last request's tokens against the model's
+context length.
 
 ## Host
 
@@ -167,14 +169,24 @@ live figures, the context panel's live state and the host panel need
 the runner on this machine; against a remote host or a container the
 tab says so and keeps the rest.
 
+## Models on MLX
+
+On Apple silicon Ollama runs a model with safetensors weights on MLX,
+in its own runner (`ollama runner`) rather than llama-server. That
+runner has no slot state to read: decode and prefill are the figures
+of the last request, the sparkline has one bar per request, and the
+context panel says the runner has no live state. The host panel and
+the request log work as for any other model.
+
 ## How often the tab reads
 
 While the tab is showing, the runner's slot state is read twice a
-second during generation and every two seconds when idle, the Ollama
-API once a second and the host probes once a second. With the tab
-closed only a version probe every ten seconds keeps the More menu
-entry current. Each read shows up in Ollama's own log at the verbosity
-it starts the runner with.
+second during generation and every two seconds when idle (a runner
+without slot state is asked once), the Ollama API once a second and
+the host probes once a second. With the tab closed only a version
+probe every ten seconds keeps the More menu entry current. Each read
+shows up in Ollama's own log at the verbosity it starts the runner
+with.
 
 ## Keyboard Shortcuts
 

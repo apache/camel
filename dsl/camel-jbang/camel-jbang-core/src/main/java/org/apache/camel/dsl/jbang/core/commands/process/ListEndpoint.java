@@ -28,7 +28,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
@@ -45,6 +47,10 @@ import picocli.CommandLine.Command;
                  "  camel get endpoint --filter=kafka*",
                  "  camel get endpoint --watch" })
 public class ListEndpoint extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime)
+            .number("total", r -> r.total)
+            .numeric("size", r -> r.meanBodySize);
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {
 
@@ -106,73 +112,70 @@ public class ListEndpoint extends ProcessWatchCommand {
             filter += "*";
         }
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject jo = (JsonObject) root.get("endpoints");
-                        if (context != null && jo != null) {
-                            JsonArray array = (JsonArray) jo.get("endpoints");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                row.name = context.getString("name");
-                                if ("CamelJBang".equals(row.name)) {
-                                    row.name = ProcessHelper.extractName(root, ph);
-                                }
-                                row.pid = Long.toString(ph.pid());
-                                row.endpoint = o.getString("uri");
-                                row.stub = o.getBooleanOrDefault("stub", false);
-                                row.remote = o.getBooleanOrDefault("remote", true);
-                                row.direction = o.getString("direction");
-                                row.total = o.getString("hits");
-                                row.meanBodySize = o.getLongOrDefault("meanBodySize", -1L);
-                                row.meanHeadersSize = o.getLongOrDefault("meanHeadersSize", -1L);
-                                row.minBodySize = o.getLongOrDefault("minBodySize", -1L);
-                                row.maxBodySize = o.getLongOrDefault("maxBodySize", -1L);
-                                row.minHeadersSize = o.getLongOrDefault("minHeadersSize", -1L);
-                                row.maxHeadersSize = o.getLongOrDefault("maxHeadersSize", -1L);
-                                row.uptime = extractSince(ph);
-                                row.age = TimeUtils.printSince(row.uptime);
-                                boolean add = true;
-                                if (filterTotal > 0 && (row.total == null || Long.parseLong(row.total) < filterTotal)) {
-                                    add = false;
-                                }
-                                if (filterDirection != null && !filterDirection.equals(row.direction)) {
-                                    add = false;
-                                }
-                                if (filter != null) {
-                                    String f = filter;
-                                    boolean negate = filter.startsWith("-");
-                                    if (negate) {
-                                        f = f.substring(1);
-                                    }
-                                    boolean match = PatternHelper.matchPattern(row.endpoint, f);
-                                    if (negate) {
-                                        match = !match;
-                                    }
-                                    if (!match) {
-                                        add = false;
-                                    }
-                                }
-                                if (limit > 0 && rows.size() >= limit) {
-                                    add = false;
-                                }
-                                if (add) {
-                                    rows.add(row);
-                                }
-                            }
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            JsonObject jo = (JsonObject) root.get("endpoints");
+            if (context != null && jo != null) {
+                JsonArray array = (JsonArray) jo.get("endpoints");
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject o = (JsonObject) array.get(i);
+                    Row row = new Row();
+                    row.name = context.getString("name");
+                    if ("CamelJBang".equals(row.name)) {
+                        row.name = ProcessHelper.extractName(root, ph);
+                    }
+                    row.pid = Long.toString(ph.pid());
+                    row.endpoint = o.getString("uri");
+                    row.stub = o.getBooleanOrDefault("stub", false);
+                    row.remote = o.getBooleanOrDefault("remote", true);
+                    row.scope = EndpointScope.of(row.endpoint, row.remote);
+                    row.direction = o.getString("direction");
+                    row.total = o.getString("hits");
+                    row.meanBodySize = o.getLongOrDefault("meanBodySize", -1L);
+                    row.meanHeadersSize = o.getLongOrDefault("meanHeadersSize", -1L);
+                    row.minBodySize = o.getLongOrDefault("minBodySize", -1L);
+                    row.maxBodySize = o.getLongOrDefault("maxBodySize", -1L);
+                    row.minHeadersSize = o.getLongOrDefault("minHeadersSize", -1L);
+                    row.maxHeadersSize = o.getLongOrDefault("maxHeadersSize", -1L);
+                    row.uptime = extractSince(ph);
+                    row.age = TimeUtils.printSince(row.uptime);
+                    boolean add = true;
+                    if (filterTotal > 0 && (row.total == null || Long.parseLong(row.total) < filterTotal)) {
+                        add = false;
+                    }
+                    if (filterDirection != null && !filterDirection.equals(row.direction)) {
+                        add = false;
+                    }
+                    if (filter != null) {
+                        String f = filter;
+                        boolean negate = filter.startsWith("-");
+                        if (negate) {
+                            f = f.substring(1);
+                        }
+                        boolean match = PatternHelper.matchPattern(row.endpoint, f);
+                        if (negate) {
+                            match = !match;
+                        }
+                        if (!match) {
+                            add = false;
                         }
                     }
-                });
+                    if (add) {
+                        rows.add(row);
+                    }
+                }
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        // the first rows after sorting
+        if (limit > 0 && rows.size() > limit) {
+            rows.subList(limit, rows.size()).clear();
+        }
+
+        if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 
@@ -183,13 +186,15 @@ public class ListEndpoint extends ProcessWatchCommand {
         if (jsonOutput) {
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
+                jo.put("uptime", r.uptime);
                 jo.put("direction", r.direction);
-                jo.put("total", r.total);
+                jo.put("total", JsonValues.number(r.total));
                 jo.put("stub", r.stub);
                 jo.put("remote", r.remote);
+                jo.put("internal", EndpointScope.INTERNAL.equals(r.scope));
                 jo.put("uri", r.endpoint);
                 if (r.meanBodySize >= 0) {
                     jo.put("minBodySize", r.minBodySize);
@@ -207,8 +212,8 @@ public class ListEndpoint extends ProcessWatchCommand {
         }
         boolean hasSize = rows.stream().anyMatch(r -> r.meanBodySize >= 0 || r.meanHeadersSize >= 0);
         // Flexible column: URI (90/140)
-        // Fixed columns: PID(8)+NAME(30)+AGE(8)+DIR(3)+TOTAL(5)+STUB(4)+REMOTE(6) ~= 64
-        int fixedW = 64;
+        // Fixed columns: PID(8)+NAME(30)+AGE(8)+DIR(3)+TOTAL(5)+STUB(4)+SCOPE(8) ~= 66
+        int fixedW = 66;
         if (hasSize) {
             // BODY-SIZE(9)+HDR-SIZE(8) = 17
             fixedW += 17;
@@ -229,7 +234,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                 new Column().header("DIR").with(r -> r.direction),
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("STUB").dataAlign(HorizontalAlign.CENTER).with(r -> r.stub ? "x" : ""),
-                new Column().header("REMOTE").dataAlign(HorizontalAlign.CENTER).with(r -> r.remote ? "x" : ""),
+                new Column().header("SCOPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.scope),
                 new Column().header("BODY-SIZE").visible(hasSize).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> sizeToString(r.meanBodySize)),
                 new Column().header("HDR-SIZE").visible(hasSize).dataAlign(HorizontalAlign.RIGHT)
@@ -274,29 +279,6 @@ public class ListEndpoint extends ProcessWatchCommand {
         }
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            case "total":
-                return Long.compare(Long.parseLong(o1.total), Long.parseLong(o2.total)) * negate;
-            case "size":
-                return Long.compare(o1.meanBodySize, o2.meanBodySize) * negate;
-            default:
-                return 0;
-        }
-    }
-
     static class Row {
         String pid;
         String name;
@@ -307,6 +289,8 @@ public class ListEndpoint extends ProcessWatchCommand {
         String total;
         boolean stub;
         boolean remote;
+        /** remote, internal or local ({@link EndpointScope}) */
+        String scope;
         long meanBodySize = -1;
         long meanHeadersSize = -1;
         long minBodySize = -1;

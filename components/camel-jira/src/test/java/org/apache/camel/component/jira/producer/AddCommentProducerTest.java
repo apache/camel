@@ -25,6 +25,7 @@ import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.domain.Comment;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import io.atlassian.util.concurrent.Promise;
 import io.atlassian.util.concurrent.Promises;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -81,14 +82,14 @@ public class AddCommentProducerTest extends CamelTestSupport {
         when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
         when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
 
-        when(issueRestClient.addComment(any(), any())).then((Answer<Void>) inv -> {
+        when(issueRestClient.addComment(any(), any())).then((Answer<Promise<Void>>) inv -> {
             Collection<Comment> comments = new ArrayList<>();
             for (Comment c : backendIssue.getComments()) {
                 comments.add(c);
             }
             comments.add(newComment(backendIssue.getId(), comments.size() + 1, comment));
             backendIssue = createIssueWithComments(backendIssue.getId(), comments);
-            return null;
+            return Promises.promise(null);
         });
         backendIssue = createIssueWithComments(1, 1);
         when(issueRestClient.getIssue(any())).then(inv -> Promises.promise(backendIssue));

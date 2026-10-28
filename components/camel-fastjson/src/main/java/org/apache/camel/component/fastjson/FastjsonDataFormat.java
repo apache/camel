@@ -28,11 +28,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.JsonPayloadHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -40,6 +44,16 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 @Dataformat("fastjson")
 @Metadata(includeProperties = "unmarshalType,unmarshalTypeName,prettyPrint,contentTypeHeader")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.ANY,
+                                 description = "A Map, a List or a POJO to write as JSON. Bytes, a stream, a file from a file"
+                                               + " consumer, or a String with a JSON object or array is written as it is; any"
+                                               + " other String becomes a JSON string"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
+                                  description = "The JSON in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, javaTypeOption = "unmarshalType",
+                                    description = "A Map (fastjson JSONObject) for a JSON object, a List (JSONArray) for an"
+                                                  + " array"))
 public class FastjsonDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
@@ -92,6 +106,16 @@ public class FastjsonDataFormat extends ServiceSupport
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
+        // a body that already is the JSON text is written as it is (CAMEL-25329)
+        long written = JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream);
+        if (written >= 0) {
+            if (contentTypeHeader) {
+                Message message = exchange.getMessage();
+                message.setHeader(Exchange.CONTENT_TYPE, "application/json");
+                message.setHeader(Exchange.CONTENT_LENGTH, written);
+            }
+            return;
+        }
         int len = JSON.writeJSONString(stream,
                 config.getCharset(),
                 graph,

@@ -33,6 +33,8 @@ import org.apache.camel.spi.Metadata;
 public class LangChain4jParagraphTokenizerDefinition extends LangChain4jTokenizerDefinition {
 
     public LangChain4jParagraphTokenizerDefinition() {
+        // the name the XML and YAML DSL do not set, as the builder does (CAMEL-25777)
+        setTokenizerName(toName("ParagraphTokenizer"));
     }
 
     public LangChain4jParagraphTokenizerDefinition(LangChain4jTokenizerDefinition source) {

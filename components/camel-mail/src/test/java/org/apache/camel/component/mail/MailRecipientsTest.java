@@ -48,7 +48,7 @@ public class MailRecipientsTest extends CamelTestSupport {
 
     @Test
     public void testMultiRecipients() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(you, camelRiders, easyRiders, me, someone, to);
 
         TestSupport.sendBody(template, "direct:a", "Camel does really rock");
 
@@ -92,7 +92,7 @@ public class MailRecipientsTest extends CamelTestSupport {
 
     @Test
     public void testHeadersBlocked() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(you, camelRiders, easyRiders, me, someone, to);
 
         // direct:b blocks all message headers
         Map<String, Object> headers = new HashMap<>();
@@ -110,7 +110,7 @@ public class MailRecipientsTest extends CamelTestSupport {
 
     @Test
     public void testSpecificHeaderBlocked() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(you, camelRiders, easyRiders, me, someone, to);
 
         // direct:c blocks the "cc" message header - so only "to" will be used here
         Map<String, Object> headers = new HashMap<>();
@@ -127,7 +127,7 @@ public class MailRecipientsTest extends CamelTestSupport {
 
     @Test
     public void testSpecificHeaderBlockedInjection() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(you, camelRiders, easyRiders, me, someone, to);
 
         // direct:c blocks the "cc" message header - but we are trying to inject cc in via another header
         Map<String, Object> headers = new HashMap<>();

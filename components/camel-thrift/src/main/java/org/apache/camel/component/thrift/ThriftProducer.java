@@ -17,9 +17,13 @@
 package org.apache.camel.component.thrift;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
@@ -28,6 +32,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.TException;
+import org.apache.thrift.async.TAsyncClientManager;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TNonblockingTransport;
 import org.apache.thrift.transport.TSSLTransportFactory;
@@ -48,7 +53,10 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     protected final ThriftEndpoint endpoint;
     private TTransport syncTransport;
     private TNonblockingTransport asyncTransport;
-    private Object thriftClient;
+    private TAsyncClientManager asyncClientManager;
+    private volatile Object thriftClient;
+    // the callbacks of the asynchronous calls that have not completed yet, failed when this producer stops
+    private final Set<PendingCallback> pendingCallbacks = ConcurrentHashMap.newKeySet();
 
     public ThriftProducer(ThriftEndpoint endpoint, ThriftConfiguration configuration) {
         super(endpoint);
@@ -60,10 +68,23 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Message message = exchange.getIn();
 
+        PendingCallback pending = new PendingCallback(exchange, callback);
+        pendingCallbacks.add(pending);
+        // read after the registration: doStop clears the client before it fails the pending calls
+        Object client = thriftClient;
+        if (client == null) {
+            // the producer is stopped
+            pending.stopped();
+            return false;
+        }
         try {
-            ThriftUtils.invokeAsyncMethod(thriftClient, configuration.getMethod(), message.getBody(),
-                    new AsyncClientMethodCallback(exchange, callback));
+            ThriftUtils.invokeAsyncMethod(client, configuration.getMethod(), message.getBody(), pending);
         } catch (Exception e) {
+            // the call was not made
+            if (!pending.discard()) {
+                // a stop of the producer completed the exchange meanwhile, with done(false)
+                return false;
+            }
             if (e.getCause() instanceof TException) {
                 exchange.setException(e.getCause());
             } else {
@@ -71,6 +92,12 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             }
             callback.done(true);
             return true;
+        }
+        if (client != thriftClient) {
+            // the producer stopped meanwhile, and may have started again with a new client: the stop may have failed
+            // the pending calls before this one was registered, and the selector thread of the stopped client manager,
+            // which may still be ending, accepts the call without ever completing it
+            pending.stopped();
         }
 
         return false;
@@ -95,6 +122,9 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     protected void doStart() throws Exception {
         super.doStart();
 
+        if (configuration.getNegotiationType() == ThriftNegotiationType.SASL) {
+            throw new IllegalArgumentException("The SASL negotiation type is not supported");
+        }
         if (configuration.getNegotiationType() == ThriftNegotiationType.SSL) {
             if (!endpoint.isSynchronous()) {
                 throw new IllegalArgumentException("The SSL negotiation type requires to set syncronous communication mode");
@@ -121,25 +151,110 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             if (asyncTransport == null) {
                 initializeAsyncTransport();
                 LOG.info("Getting asynchronous client implementation");
+                asyncClientManager = new TAsyncClientManager();
                 thriftClient = ThriftUtils.constructAsyncClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(),
                         asyncTransport,
-                        configuration.getExchangeProtocol(), endpoint.getCamelContext());
+                        configuration.getExchangeProtocol(), endpoint.getCamelContext(), asyncClientManager);
             }
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (syncTransport != null) {
-            LOG.debug("Terminating synchronous transport the remote Thrift server");
-            syncTransport.close();
-            syncTransport = null;
-        } else if (asyncTransport != null) {
-            LOG.debug("Terminating asynchronous transport the remote Thrift server");
-            asyncTransport.close();
-            asyncTransport = null;
+        try {
+            if (syncTransport != null) {
+                LOG.debug("Terminating synchronous transport the remote Thrift server");
+                syncTransport.close();
+                syncTransport = null;
+            } else if (asyncTransport != null) {
+                // before the pending calls are failed: process() fails a call whose client was cleared or replaced
+                thriftClient = null;
+                LOG.debug("Terminating asynchronous transport the remote Thrift server");
+                asyncTransport.close();
+                asyncTransport = null;
+            }
+        } finally {
+            if (asyncClientManager != null) {
+                // stops the selector thread and closes the selector of the async client
+                asyncClientManager.stop();
+                asyncClientManager = null;
+            }
+            // after the stop, so that a call registered meanwhile is failed too
+            failPendingCallbacks();
         }
         super.doStop();
+    }
+
+    /**
+     * Fails the exchanges of the asynchronous calls that have not completed: the stopped selector thread does not
+     * complete them. A call that completes meanwhile is completed once, and a continuation that throws does not skip
+     * the other calls.
+     */
+    private void failPendingCallbacks() {
+        for (PendingCallback pending : pendingCallbacks) {
+            try {
+                pending.stopped();
+            } catch (Exception e) {
+                LOG.warn("Error completing the exchange of a pending call of method {} when stopping the Thrift producer",
+                        configuration.getMethod(), e);
+            }
+        }
+    }
+
+    /**
+     * The number of asynchronous calls that have not completed yet (for tests).
+     */
+    int getPendingCallbackCount() {
+        return pendingCallbacks.size();
+    }
+
+    /**
+     * Completes the exchange of an asynchronous call once: with the response or error of the call, or with an error
+     * when the producer stops first.
+     */
+    private final class PendingCallback extends AsyncClientMethodCallback {
+        private final Exchange exchange;
+        private final AtomicBoolean done = new AtomicBoolean();
+
+        PendingCallback(Exchange exchange, AsyncCallback callback) {
+            super(exchange, callback);
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void onComplete(Object response) {
+            if (finish()) {
+                super.onComplete(response);
+            }
+        }
+
+        @Override
+        public void onError(Exception exception) {
+            if (finish()) {
+                super.onError(exception);
+            }
+        }
+
+        void stopped() {
+            if (finish()) {
+                super.onError(new CamelExchangeException(
+                        "The Thrift producer was stopped before the call of method " + configuration.getMethod()
+                                                         + " completed",
+                        exchange));
+            }
+        }
+
+        boolean discard() {
+            return finish();
+        }
+
+        private boolean finish() {
+            if (done.compareAndSet(false, true)) {
+                pendingCallbacks.remove(this);
+                return true;
+            }
+            return false;
+        }
     }
 
     protected void initializeSyncTransport() throws TTransportException {

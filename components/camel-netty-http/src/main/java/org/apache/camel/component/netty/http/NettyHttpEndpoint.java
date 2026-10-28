@@ -30,6 +30,9 @@ import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport;
 import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -52,6 +55,36 @@ import org.slf4j.LoggerFactory;
           annotations = {
                   "protocol=http",
           })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.STREAM,
+                                   javaType = "org.apache.camel.component.netty.http.NettyChannelBufferStreamCache",
+                                   dependsOn = "nettyHttpBinding",
+                                   byOption = {
+                                           @BodyType.When(option = "disableStreamCache", value = "true",
+                                                          carriers = { Carrier.POJO, Carrier.STREAM }),
+                                           @BodyType.When(option = "protocol", value = "proxy", carriers = Carrier.POJO,
+                                                          javaType = "io.netty.buffer.ByteBuf") },
+                                   description = "The request body as the stream cache of Camel, which can be read many"
+                                                 + " times; empty for a request without a body, such as a GET. The fields of"
+                                                 + " a form POST are also headers. With disableStreamCache the Netty ByteBuf"
+                                                 + " of the request, or an InputStream for a chunked request, read once"),
+           consumerReply = @BodyType(value = {
+                   Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                   Carrier.VALUE },
+                                     description = "The response body: text, bytes, a stream, a file, or a Netty ByteBuf or"
+                                                   + " HttpResponse; no body sends 204. A Map or a POJO is written as its"
+                                                   + " toString() and a List is not written at all: marshal it first. A"
+                                                   + " failed exchange sends 500 with an empty body (muteException)"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The request body: text, bytes, a stream or a file, or a Netty ByteBuf or"
+                                                + " HttpRequest. A Map, a List or a POJO fails: marshal it first. Without"
+                                                + " the CamelHttpMethod header, no body sends a GET and a body a POST"),
+           producerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", dependsOn = { "nettyHttpBinding", "sync" },
+                                   byOption = @BodyType.When(option = "disableStreamCache", value = "true",
+                                                             carriers = { Carrier.POJO, Carrier.STREAM }),
+                                   description = "The response body as a byte array, empty for a response without a body."
+                                                 + " With disableStreamCache the Netty ByteBuf of the response, or an"
+                                                 + " InputStream for a chunked response; the ByteBuf is released when the"
+                                                 + " exchange is done"))
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware, OAuthProfileAwareHttpEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);

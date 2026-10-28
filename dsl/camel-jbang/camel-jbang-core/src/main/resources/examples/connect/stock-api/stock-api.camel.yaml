@@ -1,0 +1,72 @@
+# The shop's stock service: what the warehouse has on the shelf, per SKU.
+# GET /stock lists everything, GET /stock/{sku} answers for one SKU or 404.
+- rest:
+    path: /stock
+    get:
+      - to:
+          uri: direct:all-stock
+      - path: "/{sku}"
+        to:
+          uri: direct:one-sku
+
+- route:
+    id: all-stock
+    from:
+      uri: direct
+      parameters:
+        name: all-stock
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+        - setHeader:
+            name: Content-Type
+            expression:
+              constant:
+                expression: application/json
+
+- route:
+    id: one-sku
+    from:
+      uri: direct
+      parameters:
+        name: one-sku
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+        - unmarshal:
+            json:
+              library: Jackson
+        # the item of that SKU as a map, or null when there is none
+        - setBody:
+            expression:
+              groovy:
+                expression: "body.find { it.sku == headers.sku }"
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == null"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "404"
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: '{"error": "unknown sku ${header.sku}"}'
+            otherwise:
+              steps:
+                - marshal:
+                    json:
+                      library: Jackson
+        - setHeader:
+            name: Content-Type
+            expression:
+              constant:
+                expression: application/json

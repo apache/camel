@@ -56,18 +56,23 @@ public class SshConfiguration implements Cloneable {
     private long timeout = 30000;
     @UriParam(label = "security", security = "insecure:ssl",
               description = "Sets the resource path for a known_hosts file used to verify the SSH server host key."
+                            + " The file uses the OpenSSH known_hosts format, and its entries are matched against the"
+                            + " host and port configured on the endpoint. A resource that cannot be read, or that has a"
+                            + " line that cannot be read, makes every connection fail."
                             + " When not set, the client does not verify the server host key against a known_hosts file.")
     private String knownHostsResource;
     @UriParam(label = "security", defaultValue = "false", security = "insecure:ssl", insecureValue = "false",
-              description = "Specifies whether a connection to an unknown SSH server host key should fail. When false,"
-                            + " host keys that are not present in the known_hosts resource are accepted.")
+              description = "Specifies whether a connection to a server whose host has no entry without a marker in"
+                            + " the known_hosts resource should fail. When false, such a server is accepted. A server"
+                            + " whose host has entries without a marker is always rejected when it presents a key that"
+                            + " none of them lists, and a key listed in a matching @revoked entry is always rejected.")
     private boolean failOnUnknownHost;
     @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC)
     private String channelType = Channel.CHANNEL_EXEC;
     @UriParam(label = "advanced")
     private String shellPrompt;
     @UriParam(label = "advanced", defaultValue = "100")
-    private long sleepForShellPrompt;
+    private long sleepForShellPrompt = 100;
     @UriParam(label = "security")
     private String kex;
     @UriParam(label = "security")
@@ -247,7 +252,8 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000
+     * Sets the timeout in milliseconds to wait in establishing the remote SSH server connection: connecting,
+     * authenticating and opening the channel. It does not limit how long the command runs. Defaults to 30000
      * milliseconds.
      *
      * @param timeout long milliseconds to wait.
@@ -301,8 +307,10 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies whether a connection to an unknown host should fail or not. This value is only checked when the
-     * property knownHosts is set.
+     * Specifies whether a connection to a server whose host has no entry without a marker in the known_hosts resource
+     * should fail or not. This value is only checked when the property knownHostsResource is set. A server whose host
+     * has entries without a marker is always rejected when it presents a key that none of them lists, and a key listed
+     * in a matching @revoked entry is always rejected.
      *
      * @param failOnUnknownHost boolean flag, whether a connection to an unknown host should fail
      */
@@ -330,7 +338,8 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the shellPrompt to be dropped when response is read after command execution
+     * Sets the shellPrompt to be dropped when response is read after command execution. Required when the channelType
+     * is shell.
      *
      * @param shellPrompt String defining ending string of command line which has to be dropped when response is read
      *                    after command execution.

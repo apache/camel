@@ -22,9 +22,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.dropbox.core.DbxDownloader;
@@ -34,6 +36,7 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderErrorException;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.files.SearchMatchV2;
 import com.dropbox.core.v2.files.SearchOptions;
 import com.dropbox.core.v2.files.SearchV2Result;
 import com.dropbox.core.v2.files.WriteMode;
@@ -252,7 +255,13 @@ public final class DropboxAPIFacade {
             SearchV2Result listing = client.files().searchV2Builder(query)
                     .withOptions(SearchOptions.newBuilder().withPath(remotePath).build())
                     .start();
-            return new DropboxSearchResult(listing.getMatches());
+            List<SearchMatchV2> matches = new ArrayList<>(listing.getMatches());
+            // a response holds one page of the matches: read the following pages with the cursor of the response
+            while (listing.getHasMore() && listing.getCursor() != null) {
+                listing = client.files().searchContinueV2(listing.getCursor());
+                matches.addAll(listing.getMatches());
+            }
+            return new DropboxSearchResult(matches);
         } catch (DbxException e) {
             throw new DropboxException(String.format("%s does not exist or cannot obtain metadata", remotePath), e);
         }
@@ -308,12 +317,19 @@ public final class DropboxAPIFacade {
         try {
             ListFolderResult folderResult = client.files().listFolder(path.equals("/") ? "" : path);
             Map<String, Object> returnMap = new LinkedHashMap<>();
-            for (Metadata entry : folderResult.getEntries()) {
-                Map.Entry<String, Object> singleFile = downloadSingleFile(entry.getPathDisplay());
-                if (singleFile == null) {
-                    continue;
+            while (true) {
+                for (Metadata entry : folderResult.getEntries()) {
+                    Map.Entry<String, Object> singleFile = downloadSingleFile(entry.getPathDisplay());
+                    if (singleFile == null) {
+                        continue;
+                    }
+                    returnMap.put(entry.getPathDisplay(), singleFile.getValue());
                 }
-                returnMap.put(entry.getPathDisplay(), singleFile.getValue());
+                if (!folderResult.getHasMore()) {
+                    break;
+                }
+                // a response holds one page of the folder: read the following pages with the cursor of the response
+                folderResult = client.files().listFolderContinue(folderResult.getCursor());
             }
             return returnMap;
         } catch (ListFolderErrorException e) {

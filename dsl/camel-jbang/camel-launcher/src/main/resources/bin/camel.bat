@@ -28,9 +28,9 @@ set DIRNAME=%~dp0
 if "%DIRNAME%" == "" set DIRNAME=.
 set BASEDIR=%DIRNAME%
 
-@REM --- Shared Java 17+ discovery contract ---
+@REM --- Shared Java 21+ discovery contract ---
 @REM Candidates in order: JAVACMD, %JAVA_HOME%\bin\java.exe, java.exe on PATH, CAMEL_FALLBACK_JAVA.
-set CAMEL_MIN_JAVA=17
+set CAMEL_MIN_JAVA=21
 
 set "CAMEL_JAVACMD="
 call :tryJava "%JAVACMD%"
@@ -49,9 +49,12 @@ set "JAVACMD=%CAMEL_JAVACMD%"
 @REM Set JVM options if specified
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=-Xmx512m
 
-@REM Find the launcher JAR
+@REM Find the launcher JAR, excluding sources and javadoc
 set "LAUNCHER_JAR="
-for %%i in ("%BASEDIR%\camel-launcher-*.jar") do set "LAUNCHER_JAR=%%i"
+for %%i in ("%BASEDIR%\camel-launcher-*.jar") do (
+  echo %%~nxi| findstr /i /e /l /c:"-sources.jar" /c:"-javadoc.jar" > nul
+  if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%~fi"
+)
 
 @REM Execute Camel CLI, preserving arguments and the child exit code
 for %%e in ("%JAVACMD%") do set "_JAVACMD_EXT=%%~xe"

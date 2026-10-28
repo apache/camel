@@ -34,13 +34,11 @@ import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -56,9 +54,7 @@ class ClasspathTab extends AbstractTab {
     private final AtomicBoolean loading = new AtomicBoolean(false);
     private Rect lastArea;
 
-    private boolean filterInputActive;
-    private TextInputState filterInputState = new TextInputState("");
-    private String filterTerm;
+    private final FilterField filter = new FilterField(this::refilter);
     private int scopeIndex;
     private volatile List<JarEntry> allEntries = Collections.emptyList();
     private volatile List<JarEntry> filteredEntries = Collections.emptyList();
@@ -104,27 +100,18 @@ class ClasspathTab extends AbstractTab {
     public void onIntegrationChanged() {
         allEntries = Collections.emptyList();
         filteredEntries = Collections.emptyList();
-        filterTerm = null;
-        filterInputActive = false;
+        filter.reset();
         scopeIndex = 0;
         lastPid = null;
         errorMessage = null;
         dataLoaded = false;
         loading.set(false);
-        if (ctx.selectedPid != null) {
-            lastPid = ctx.selectedPid;
-            loadClasspath();
-        }
+        // loaded when the tab is shown (onTabSelected): a hidden tab must not hold up the one the user looks at
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (filterInputActive) {
-            return handleFilterInput(ke);
-        }
-        if (ke.isChar('/')) {
-            filterInputActive = true;
-            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+        if (filter.handleKey(ke)) {
             return true;
         }
         if (ke.isCharIgnoreCase('f')) {
@@ -147,24 +134,14 @@ class ClasspathTab extends AbstractTab {
         return false;
     }
 
-    private boolean handleFilterInput(KeyEvent ke) {
-        if (ke.isKey(KeyCode.ESCAPE)) {
-            filterInputActive = false;
-            return true;
-        }
-        if (ke.isConfirm()) {
-            String text = filterInputState.text().trim();
-            filterTerm = text.isEmpty() ? null : text;
-            filterInputActive = false;
-            refilter();
-            return true;
-        }
-        FormHelper.handleTextInput(ke, filterInputState);
-        return true;
+    @Override
+    public boolean isTextInputActive() {
+        return filter.isEditing();
     }
 
-    boolean isFilterInputActive() {
-        return filterInputActive;
+    @Override
+    public boolean handlePaste(String text) {
+        return filter.handlePaste(text);
     }
 
     @Override
@@ -177,7 +154,7 @@ class ClasspathTab extends AbstractTab {
             listState.selectNext(filteredEntries.size());
             return true;
         }
-        if (me.isClick() && contains(lastArea, me.x(), me.y())) {
+        if (me.isClick() && lastArea != null && lastArea.contains(me.x(), me.y())) {
             int itemIndex = listState.offset() + (me.y() - lastArea.y() - 1);
             if (itemIndex >= 0 && itemIndex < filteredEntries.size()) {
                 listState.select(itemIndex);
@@ -189,12 +166,7 @@ class ClasspathTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
-        if (filterTerm != null) {
-            filterTerm = null;
-            refilter();
-            return true;
-        }
-        return false;
+        return filter.handleEscape();
     }
 
     @Override
@@ -252,7 +224,7 @@ class ClasspathTab extends AbstractTab {
 
         String scope = SCOPES[scopeIndex];
         StringBuilder sb = new StringBuilder(" Classpath [");
-        if (filterTerm != null || !"all".equals(scope)) {
+        if (filter.term() != null || !"all".equals(scope)) {
             sb.append(filteredEntries.size()).append('/').append(allEntries.size());
         } else {
             sb.append(filteredEntries.size());
@@ -261,8 +233,8 @@ class ClasspathTab extends AbstractTab {
         if (!"all".equals(scope)) {
             sb.append(" scope:").append(scope);
         }
-        if (filterTerm != null) {
-            sb.append(" filter:\"").append(filterTerm).append('"');
+        if (filter.term() != null) {
+            sb.append(" filter:\"").append(filter.term()).append('"');
         }
         sb.append(' ');
         String title = sb.toString();
@@ -277,34 +249,17 @@ class ClasspathTab extends AbstractTab {
         frame.renderStatefulWidget(list, area, listState);
         lastArea = area;
 
-        // Render vertical scrollbar on the right border when content overflows
-        int visibleRows = area.height() - 2; // top border + bottom border
-        if (visibleRows > 0 && filteredEntries.size() > visibleRows) {
-            Rect scrollRect = new Rect(area.x() + area.width() - 1, area.y() + 1, 1, visibleRows);
-            listScrollState.contentLength(filteredEntries.size());
-            listScrollState.viewportContentLength(visibleRows);
-            listScrollState.position(listState.offset());
-            frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, listScrollState);
-        }
+        renderListScrollbar(frame, area, filteredEntries.size(), listState.offset(), listScrollState);
     }
 
     @Override
     public void renderFooter(List<Span> spans) {
-        if (filterInputActive) {
-            spans.add(Span.styled(" /", Theme.label().bold()));
-            spans.add(Span.raw(filterInputState.text() + "█  "));
-            hint(spans, "Enter", "filter");
-            hintLast(spans, "Esc", "cancel");
+        if (filter.renderEditingFooter(spans)) {
             return;
         }
-        hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        hint(spans, "Esc", filter.escapeLabel());
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
-        if (filterTerm != null) {
-            spans.add(Span.styled("  /", Theme.label().bold()));
-            spans.add(Span.raw("\"" + filterTerm + "\"  "));
-        } else {
-            hint(spans, "/", "filter");
-        }
+        filter.renderHint(spans);
     }
 
     private void loadClasspath() {
@@ -318,10 +273,7 @@ class ClasspathTab extends AbstractTab {
         String pid = ctx.selectedPid;
         ctx.backgroundExecutor.execute(() -> {
             try {
-                JsonObject action = new JsonObject();
-                action.put("action", "jvm");
-
-                JsonObject response = ctx.executeAction(pid, action, 5000);
+                JsonObject response = ctx.jvmInfo(pid, 5000);
 
                 if (response == null) {
                     applyResult(Collections.emptyList(), "No response from integration");
@@ -374,7 +326,7 @@ class ClasspathTab extends AbstractTab {
 
     private void refilter() {
         List<JarEntry> result = new ArrayList<>();
-        String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
+        String ft = filter.term() != null ? filter.term().toLowerCase() : null;
         String scope = SCOPES[scopeIndex];
         for (JarEntry entry : allEntries) {
             if ("camel".equals(scope) && !entry.isCamel()) {
@@ -429,9 +381,8 @@ class ClasspathTab extends AbstractTab {
     }
 
     @Override
-    public boolean setFilter(String filter) {
-        filterTerm = filter != null && !filter.isEmpty() ? filter : null;
-        refilter();
+    public boolean setFilter(String term) {
+        filter.setTerm(term);
         return true;
     }
 

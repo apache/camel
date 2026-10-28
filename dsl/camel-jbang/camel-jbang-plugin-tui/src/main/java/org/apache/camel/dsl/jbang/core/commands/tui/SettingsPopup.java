@@ -24,7 +24,6 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
@@ -41,32 +40,38 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
  * Central settings dialog for the Camel TUI. Exposes user preferences (theme, starting tab, default run-from-folder)
  * backed by {@link TuiSettings}. Loading, mutating and saving go through a single {@code TuiSettings} object so all
  * {@code camel.tui.*} keys are written together. Cycling the theme previews it instantly (like {@link ThemePopup}),
- * Enter persists the previewed theme, Esc reverts it; the starting tab is applied on the next TUI launch.
+ * Enter persists the previewed theme, Esc reverts it; the panel theme previews and reverts the same way. The starting
+ * tab is applied on the next TUI launch.
  */
 class SettingsPopup {
 
-    private static final int ROW_THEME = 0;
-    private static final int ROW_START_TAB = 1;
-    private static final int ROW_SELECT_TAB = 2;
-    private static final int ROW_LOG_PIN = 3;
-    private static final int ROW_RATE_PER = 4;
-    private static final int ROW_PANEL_POSITION = 5;
-    private static final int ROW_PANEL_SPACE = 6;
-    private static final int ROW_CONFIRM_ACTIONS = 7;
-    private static final int ROW_VALIDATE_ON_SAVE = 8;
-    private static final int ROW_FOLDER = 9;
-    private static final int ROW_PROXY_HOST = 10;
-    private static final int ROW_PROXY_PORT = 11;
-    private static final int ROW_SHELL_HISTORY = 12;
-    private static final int ROW_AI_PROVIDER = 13;
-    private static final int ROW_AI_MODEL = 14;
-    private static final int ROW_AI_URL = 15;
-    private static final int ROW_AI_TOOLS = 16;
-    private static final int ROW_AI_OVERVIEW = 17;
-    private static final int ROW_AI_PROMPT_HISTORY = 18;
-    private static final int ROW_AI_ACP_COMMAND = 19;
-    static final int ROW_COUNT = 20;
-    /** Separator lines drawn between the row groups, after rows 2, 6, 9 and 12. */
+    static final int ROW_THEME = 0;
+    static final int ROW_START_TAB = 1;
+    static final int ROW_SELECT_TAB = 2;
+    static final int ROW_LOG_PIN = 3;
+    static final int ROW_RATE_PER = 4;
+    static final int ROW_PANEL_POSITION = 5;
+    static final int ROW_PANEL_SPACE = 6;
+    static final int ROW_PANEL_THEME = 7;
+    static final int ROW_CONFIRM_ACTIONS = 8;
+    static final int ROW_VALIDATE_ON_SAVE = 9;
+    static final int ROW_ROUTE_TREE = 10;
+    static final int ROW_FOLDER = 11;
+    static final int ROW_PROXY_HOST = 12;
+    static final int ROW_PROXY_PORT = 13;
+    static final int ROW_SHELL_HISTORY = 14;
+    static final int ROW_AI_PROVIDER = 15;
+    static final int ROW_AI_MODEL = 16;
+    static final int ROW_AI_URL = 17;
+    static final int ROW_AI_TOOLS = 18;
+    static final int ROW_AI_OVERVIEW = 19;
+    static final int ROW_AI_PROMPT_HISTORY = 20;
+    static final int ROW_AI_ACP_COMMAND = 21;
+    static final int ROW_COUNT = 22;
+    /**
+     * Separator lines drawn between the row groups, after the Select Tab, Panel Theme, Default Folder and Shell History
+     * rows.
+     */
     static final int DIVIDERS = 4;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
@@ -107,8 +112,13 @@ class SettingsPopup {
     private int ratePerIndex;
     private int panelPositionIndex;
     private int panelSpaceIndex;
+    /** 0 for the main theme, else 1 + the index of the theme in {@link ThemeMode#ids()}. */
+    private int panelThemeIndex;
+    /** The panel theme when the dialog opened, restored on Esc after the row previewed others. */
+    private String originalPanelTheme;
     private int confirmActionsIndex;
     private int validateOnSaveIndex;
+    private int routeTreeIndex;
     private int aiProviderIndex;
     private int aiToolsIndex;
     private int aiOverviewIndex;
@@ -188,9 +198,13 @@ class SettingsPopup {
         ratePerIndex = "minutes".equals(currentRatePer) ? 1 : 0;
         panelPositionIndex = settings.isPanelTop() ? 1 : 0;
         panelSpaceIndex = settings.isPanelOverlay() ? 1 : 0;
+        originalPanelTheme = Theme.panelTheme();
+        String currentPanelTheme = settings.getPanelTheme() != null ? settings.getPanelTheme() : originalPanelTheme;
+        panelThemeIndex = ThemeMode.ids().indexOf(currentPanelTheme) + 1;
 
         confirmActionsIndex = settings.isConfirmActions() ? 1 : 0;
         validateOnSaveIndex = settings.isValidateOnSave() ? 1 : 0;
+        routeTreeIndex = settings.isRouteTree() ? 1 : 0;
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
         proxyHostInput = new TextInputState(settings.getProxyHost() != null ? settings.getProxyHost() : "");
@@ -217,6 +231,7 @@ class SettingsPopup {
     void close() {
         if (visible) {
             Theme.revertPreview();
+            Theme.setPanelTheme(originalPanelTheme);
             refreshTheme();
         }
         visible = false;
@@ -228,6 +243,7 @@ class SettingsPopup {
         }
         if (ke.isCancel()) {
             Theme.revertPreview();
+            Theme.setPanelTheme(originalPanelTheme);
             refreshTheme();
             visible = false;
             return true;
@@ -245,13 +261,8 @@ class SettingsPopup {
             return true;
         }
         if (selectedRow == ROW_THEME) {
-            int count = ThemeMode.ids().size();
             int previous = themeIndex;
-            if (ke.isChar(' ') || ke.isRight()) {
-                themeIndex = (themeIndex + 1) % count;
-            } else if (ke.isLeft()) {
-                themeIndex = (themeIndex - 1 + count) % count;
-            }
+            themeIndex = cycle(ke, themeIndex, ThemeMode.ids().size());
             if (themeIndex != previous) {
                 Theme.preview(ThemeMode.ids().get(themeIndex));
                 refreshTheme();
@@ -260,62 +271,52 @@ class SettingsPopup {
         }
         if (selectedRow == ROW_START_TAB) {
             if (!tabNames.isEmpty()) {
-                if (ke.isChar(' ') || ke.isRight()) {
-                    startTabIndex = (startTabIndex + 1) % tabNames.size();
-                } else if (ke.isLeft()) {
-                    startTabIndex = (startTabIndex - 1 + tabNames.size()) % tabNames.size();
-                }
+                startTabIndex = cycle(ke, startTabIndex, tabNames.size());
             }
             return true;
         }
         if (selectedRow == ROW_SELECT_TAB) {
             if (!primaryTabNames.isEmpty()) {
-                if (ke.isChar(' ') || ke.isRight()) {
-                    selectTabIndex = (selectTabIndex + 1) % primaryTabNames.size();
-                } else if (ke.isLeft()) {
-                    selectTabIndex = (selectTabIndex - 1 + primaryTabNames.size()) % primaryTabNames.size();
-                }
+                selectTabIndex = cycle(ke, selectTabIndex, primaryTabNames.size());
             }
             return true;
         }
         if (selectedRow == ROW_LOG_PIN) {
-            if (ke.isChar(' ') || ke.isRight()) {
-                logPinIndex = (logPinIndex + 1) % LOG_PIN_OPTIONS.length;
-            } else if (ke.isLeft()) {
-                logPinIndex = (logPinIndex - 1 + LOG_PIN_OPTIONS.length) % LOG_PIN_OPTIONS.length;
-            }
+            logPinIndex = cycle(ke, logPinIndex, LOG_PIN_OPTIONS.length);
             return true;
         }
         if (selectedRow == ROW_RATE_PER) {
-            if (ke.isChar(' ') || ke.isRight()) {
-                ratePerIndex = (ratePerIndex + 1) % RATE_PER_OPTIONS.length;
-            } else if (ke.isLeft()) {
-                ratePerIndex = (ratePerIndex - 1 + RATE_PER_OPTIONS.length) % RATE_PER_OPTIONS.length;
-            }
+            ratePerIndex = cycle(ke, ratePerIndex, RATE_PER_OPTIONS.length);
             return true;
         }
         if (selectedRow == ROW_PANEL_POSITION) {
-            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
-                panelPositionIndex = panelPositionIndex == 0 ? 1 : 0;
-            }
+            panelPositionIndex = cycle(ke, panelPositionIndex, PANEL_POSITION_OPTIONS.length);
             return true;
         }
         if (selectedRow == ROW_PANEL_SPACE) {
-            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
-                panelSpaceIndex = panelSpaceIndex == 0 ? 1 : 0;
+            panelSpaceIndex = cycle(ke, panelSpaceIndex, PANEL_SPACE_OPTIONS.length);
+            return true;
+        }
+        if (selectedRow == ROW_PANEL_THEME) {
+            int previous = panelThemeIndex;
+            panelThemeIndex = cycle(ke, panelThemeIndex, ThemeMode.ids().size() + 1);
+            if (panelThemeIndex != previous) {
+                // previewed at once, like the theme: an open shell or AI panel shows it
+                Theme.setPanelTheme(selectedPanelTheme());
+                refreshTheme();
             }
             return true;
         }
         if (selectedRow == ROW_CONFIRM_ACTIONS) {
-            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
-                confirmActionsIndex = confirmActionsIndex == 0 ? 1 : 0;
-            }
+            confirmActionsIndex = cycle(ke, confirmActionsIndex, 2);
             return true;
         }
         if (selectedRow == ROW_VALIDATE_ON_SAVE) {
-            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
-                validateOnSaveIndex = validateOnSaveIndex == 0 ? 1 : 0;
-            }
+            validateOnSaveIndex = cycle(ke, validateOnSaveIndex, 2);
+            return true;
+        }
+        if (selectedRow == ROW_ROUTE_TREE) {
+            routeTreeIndex = cycle(ke, routeTreeIndex, 2);
             return true;
         }
         if (selectedRow == ROW_FOLDER) {
@@ -335,11 +336,7 @@ class SettingsPopup {
             return true;
         }
         if (selectedRow == ROW_AI_PROVIDER) {
-            if (ke.isChar(' ') || ke.isRight()) {
-                aiProviderIndex = (aiProviderIndex + 1) % AI_PROVIDERS.size();
-            } else if (ke.isLeft()) {
-                aiProviderIndex = (aiProviderIndex - 1 + AI_PROVIDERS.size()) % AI_PROVIDERS.size();
-            }
+            aiProviderIndex = cycle(ke, aiProviderIndex, AI_PROVIDERS.size());
             return true;
         }
         if (selectedRow == ROW_AI_MODEL) {
@@ -351,19 +348,11 @@ class SettingsPopup {
             return true;
         }
         if (selectedRow == ROW_AI_TOOLS) {
-            if (ke.isChar(' ') || ke.isRight()) {
-                aiToolsIndex = (aiToolsIndex + 1) % AI_TOOLS_OPTIONS.length;
-            } else if (ke.isLeft()) {
-                aiToolsIndex = (aiToolsIndex - 1 + AI_TOOLS_OPTIONS.length) % AI_TOOLS_OPTIONS.length;
-            }
+            aiToolsIndex = cycle(ke, aiToolsIndex, AI_TOOLS_OPTIONS.length);
             return true;
         }
         if (selectedRow == ROW_AI_OVERVIEW) {
-            if (ke.isChar(' ') || ke.isRight()) {
-                aiOverviewIndex = (aiOverviewIndex + 1) % AI_OVERVIEW_OPTIONS.length;
-            } else if (ke.isLeft()) {
-                aiOverviewIndex = (aiOverviewIndex - 1 + AI_OVERVIEW_OPTIONS.length) % AI_OVERVIEW_OPTIONS.length;
-            }
+            aiOverviewIndex = cycle(ke, aiOverviewIndex, AI_OVERVIEW_OPTIONS.length);
             return true;
         }
         if (selectedRow == ROW_AI_PROMPT_HISTORY) {
@@ -375,6 +364,20 @@ class SettingsPopup {
             return true;
         }
         return true;
+    }
+
+    /**
+     * The value a choice row moves to: Space and Right step forward, Left steps back, both wrapping around, so a row of
+     * two values toggles on any of them.
+     */
+    private static int cycle(KeyEvent ke, int index, int count) {
+        if (ke.isChar(' ') || ke.isRight()) {
+            return (index + 1) % count;
+        }
+        if (ke.isLeft()) {
+            return (index - 1 + count) % count;
+        }
+        return index;
     }
 
     private void save() {
@@ -400,6 +403,9 @@ class SettingsPopup {
             monitorContext.panelTop = panelPositionIndex == 1;
             monitorContext.panelOverlay = panelSpaceIndex == 1;
         }
+        settings.setPanelTheme(selectedPanelTheme());
+        // also when the row was not touched: the saved setting replaces a --panel-theme of this session
+        Theme.setPanelTheme(selectedPanelTheme());
         settings.setConfirmActions(confirmActionsIndex == 1 ? "true" : "false");
         if (monitorContext != null) {
             monitorContext.confirmActions = confirmActionsIndex == 1;
@@ -407,6 +413,10 @@ class SettingsPopup {
         settings.setValidateOnSave(validateOnSaveIndex == 1 ? "true" : "false");
         if (monitorContext != null) {
             monitorContext.validateOnSave = validateOnSaveIndex == 1;
+        }
+        settings.setRouteTree(routeTreeIndex == 1 ? "true" : "false");
+        if (monitorContext != null) {
+            monitorContext.routeTree = routeTreeIndex == 1;
         }
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
         settings.setProxyHost(stripControlChars(proxyHostInput.text().trim()));
@@ -504,6 +514,10 @@ class SettingsPopup {
                 selectedRow == ROW_PANEL_SPACE);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Panel Theme:", selectedRow == ROW_PANEL_THEME);
+        renderValue(frame, innerX + labelW, rowY, fieldW, panelThemeLabel(), selectedRow == ROW_PANEL_THEME);
+        rowY++;
+
         renderDivider(frame, innerX, rowY, innerW);
         rowY++;
 
@@ -516,6 +530,11 @@ class SettingsPopup {
         renderLabel(frame, innerX, rowY, labelW, "Validate on Save:", selectedRow == ROW_VALIDATE_ON_SAVE);
         renderValue(frame, innerX + labelW, rowY, fieldW, validateOnSaveIndex == 1 ? "on" : "off",
                 selectedRow == ROW_VALIDATE_ON_SAVE);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Route Tree:", selectedRow == ROW_ROUTE_TREE);
+        renderValue(frame, innerX + labelW, rowY, fieldW, routeTreeIndex == 1 ? "on" : "off",
+                selectedRow == ROW_ROUTE_TREE);
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Default Folder:", selectedRow == ROW_FOLDER);
@@ -545,6 +564,12 @@ class SettingsPopup {
         rowY++;
 
         // --- AI ---
+        renderAiRows(frame, innerX, rowY, labelW, fieldW);
+    }
+
+    /** The AI group, the last rows of the dialog, from line {@code firstY} on. */
+    private void renderAiRows(Frame frame, int innerX, int firstY, int labelW, int fieldW) {
+        int rowY = firstY;
         renderLabel(frame, innerX, rowY, labelW, "AI Provider:", selectedRow == ROW_AI_PROVIDER);
         renderValue(frame, innerX + labelW, rowY, fieldW, AI_PROVIDERS.get(aiProviderIndex),
                 selectedRow == ROW_AI_PROVIDER);
@@ -580,7 +605,8 @@ class SettingsPopup {
         if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_SELECT_TAB
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
                 || selectedRow == ROW_PANEL_POSITION || selectedRow == ROW_PANEL_SPACE
-                || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
+                || selectedRow == ROW_PANEL_THEME || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
+                || selectedRow == ROW_ROUTE_TREE
                 || selectedRow == ROW_AI_PROVIDER || selectedRow == ROW_AI_TOOLS || selectedRow == ROW_AI_OVERVIEW) {
             hint(spans, "Space", "cycle");
         }
@@ -630,10 +656,10 @@ class SettingsPopup {
             active.moveCursorToStart();
         } else if (ke.isEnd()) {
             active.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            char ch = ke.string().charAt(0);
-            if (ch >= 0x20 && ch != 0x7F) {
-                active.insert(ch);
+        } else {
+            String typed = FormHelper.typedText(ke);
+            if (typed != null) {
+                active.insert(typed);
             }
         }
     }
@@ -652,9 +678,13 @@ class SettingsPopup {
         return sb.toString();
     }
 
-    /** The content line a row is drawn on, counting the dividers that follow rows 2, 6, 9 and 12. */
+    /**
+     * The content line a row is drawn on, counting the dividers that render draws after the Select Tab, Panel Theme,
+     * Default Folder and Shell History rows.
+     */
     static int lineOf(int row) {
-        return row + (row > 2 ? 1 : 0) + (row > 6 ? 1 : 0) + (row > 9 ? 1 : 0) + (row > 12 ? 1 : 0);
+        return row + (row > ROW_SELECT_TAB ? 1 : 0) + (row > ROW_PANEL_THEME ? 1 : 0) + (row > ROW_FOLDER ? 1 : 0)
+               + (row > ROW_SHELL_HISTORY ? 1 : 0);
     }
 
     /** True when a scrolled line falls outside the popup's inner area and must not be drawn. */
@@ -725,6 +755,15 @@ class SettingsPopup {
 
     String selectedPanelSpace() {
         return PANEL_SPACE_OPTIONS[panelSpaceIndex];
+    }
+
+    /** The theme id the Panel Theme row has, or {@code null} for the main theme. */
+    String selectedPanelTheme() {
+        return panelThemeIndex == 0 ? null : ThemeMode.ids().get(panelThemeIndex - 1);
+    }
+
+    private String panelThemeLabel() {
+        return panelThemeIndex == 0 ? "same as Theme" : ThemeMode.values()[panelThemeIndex - 1].label();
     }
 
     String folderText() {

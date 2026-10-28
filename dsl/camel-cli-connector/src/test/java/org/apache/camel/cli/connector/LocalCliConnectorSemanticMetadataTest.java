@@ -1,0 +1,233 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.cli.connector;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.console.DefaultDevConsoleRegistry;
+import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.json.JsonObject;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
+class LocalCliConnectorSemanticMetadataTest {
+    @Test
+    void advertisesSemanticMetadataBeforeItsFirstUseWithoutCallingIt() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            // This test only inspects metadata; an auto-started connector would share PID files with other tests.
+            var disabled = new DefaultCliConnectorFactory();
+            disabled.setEnabled(false);
+            context.getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, disabled);
+            var lookups = new AtomicInteger();
+            var registry = new DefaultDevConsoleRegistry(context) {
+                @Override
+                public DevConsole resolveById(String id) {
+                    if ("semantic-metadata".equals(id)) {
+                        lookups.incrementAndGet();
+                    }
+                    return super.resolveById(id);
+                }
+            };
+            context.getCamelContextExtension().addContextPlugin(DevConsoleRegistry.class, registry);
+            context.start();
+            var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+            connector.setCamelContext(context);
+            assertThat(connector.status().<List<String>> getCollection("devConsoles"))
+                    .doesNotContain("semantic-metadata");
+            int firstLookup = lookups.get();
+            connector.status();
+            assertThat(lookups).hasValue(firstLookup);
+            context.getRegistry().bind("semantic-metadata-dev-console",
+                    new AbstractDevConsole("camel", "semantic-metadata", "Test", "Test") {
+                        @Override
+                        protected String doCallText(Map<String, Object> options) {
+                            throw new AssertionError("Discovery must not call the console");
+                        }
+
+                        @Override
+                        protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                            throw new AssertionError("Discovery must not call the console");
+                        }
+                    });
+            assertThat(DevConsoleRegistry.get(context).getConsoleIDs()).doesNotContain("semantic-metadata");
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
+                    connector.status().<List<String>> getCollection("devConsoles")).contains("semantic-metadata"));
+            int foundLookup = lookups.get();
+            connector.status();
+            assertThat(lookups).hasValue(foundLookup);
+        }
+    }
+
+    @Test
+    void passesExpertSelectionToTheOptionalMetadataConsole() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+            connector.setCamelContext(context);
+            var answer = new AtomicReference<JsonObject>();
+            JsonObject request = new JsonObject();
+            request.put("action", "semantic-metadata");
+            request.put("expert", "{{selected.expert}}");
+            assertThat(connector.dispatch(request, answer::set)).isTrue();
+            assertThat(answer.get()).isEmpty();
+
+            DevConsoleRegistry.get(context).register(new AbstractDevConsole("camel", "semantic-metadata", "Test", "Test") {
+                @Override
+                protected String doCallText(Map<String, Object> options) {
+                    return "";
+                }
+
+                @Override
+                protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                    JsonObject response = new JsonObject();
+                    response.putAll(options);
+                    return response;
+                }
+            });
+            assertThat(connector.dispatch(request, answer::set)).isTrue();
+            assertThat(answer.get()).containsOnlyKeys("expert").containsEntry("expert", "{{selected.expert}}");
+            request.put("overview", true);
+            request.put("ignored", "not a console option");
+            assertThat(connector.dispatch(request, answer::set)).isTrue();
+            assertThat(answer.get()).containsOnlyKeys("expert", "overview").containsEntry("overview", true);
+            request.remove("overview");
+            request.remove("expert");
+            assertThat(connector.dispatch(request, answer::set)).isTrue();
+            assertThat(answer.get()).isEmpty();
+        }
+    }
+
+    @Test
+    void forwardsAutomaticAuditProvenanceToTheAuditConsole() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+            connector.setCamelContext(context);
+            DevConsoleRegistry.get(context).register(new AbstractDevConsole("camel", "semantic-audit", "Test", "Test") {
+                @Override
+                protected String doCallText(Map<String, Object> options) {
+                    return "";
+                }
+
+                @Override
+                protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                    return new JsonObject(options);
+                }
+            });
+            var answer = new AtomicReference<JsonObject>();
+            var request = new JsonObject(
+                    Map.of("action", "semantic-audit", "executingRouteId", "nested-route",
+                            "breadcrumbId", "camel-breadcrumb", "exchangeId", "exchange-1", "ignored",
+                            "not an option"));
+            assertThat(connector.dispatch(request, answer::set)).isTrue();
+            assertThat(answer.get()).containsOnlyKeys("executingRouteId", "breadcrumbId", "exchangeId")
+                    .containsEntry("executingRouteId", "nested-route").containsEntry("breadcrumbId", "camel-breadcrumb")
+                    .containsEntry("exchangeId", "exchange-1");
+            var filters = Map.of("since", "2026-10-14T12:00:00Z", "until", "2026-10-14T13:00:00Z",
+                    "definition", "routeRequest", "operation", "score", "resultType", "SCORE",
+                    "resultValue", "1.644", "scoreMin", "1.2", "scoreMax", "1.8", "resultLabel", "test-forwarding");
+            var typed = new JsonObject(filters);
+            typed.put("action", "semantic-audit");
+            assertThat(connector.dispatch(typed, answer::set)).isTrue();
+            assertThat(answer.get()).containsExactlyInAnyOrderEntriesOf(filters);
+        }
+    }
+
+    @Test
+    void forwardsMonitoringOptionsAndRejectsRemovedAuditFilters() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+            connector.setCamelContext(context);
+            DevConsoleRegistry.get(context).register(new AbstractDevConsole("camel", "semantic-monitoring", "Test", "Test") {
+                @Override
+                protected String doCallText(Map<String, Object> options) {
+                    return "";
+                }
+
+                @Override
+                protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                    return new JsonObject(options);
+                }
+            });
+            var answer = new AtomicReference<JsonObject>();
+            assertThat(connector.dispatch(new JsonObject(
+                    Map.of("action", "semantic-monitoring", "source", "metrics")),
+                    answer::set)).isTrue();
+            assertThat(answer.get()).containsOnlyKeys("source").containsEntry("source", "metrics");
+            for (String removed : List.of("history", "since")) {
+                assertThat(connector.dispatch(new JsonObject(Map.of("action", "semantic-monitoring", removed, "value")),
+                        answer::set)).isTrue();
+                assertThat(answer.get()).containsEntry("error", "monitoring_query_invalid");
+            }
+            assertThat(
+                    connector.dispatch(new JsonObject(Map.of("action", "semantic-audit", "auditAction", "block")), answer::set))
+                    .isTrue();
+            assertThat(answer.get()).containsEntry("error", "audit_filter_removed");
+        }
+    }
+
+    @Test
+    void forwardsTypedSampleExchangeToEvaluationConsole() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+            connector.setCamelContext(context);
+            var answer = new AtomicReference<JsonObject>();
+            JsonObject request = new JsonObject();
+            request.put("action", "semantic-evaluate");
+            request.put("evaluation", "classify");
+            request.put("body", Map.of("items", List.of(1, 2), "active", true));
+            request.put("headers", Map.of("size", 2));
+            request.put("variables", Map.of("labels", List.of("a", "b")));
+            request.put("expert", "security");
+            request.put("operation", "injection");
+            request.put("input", "literal ${body} text");
+            request.put("parameters", Map.of("threshold", 0.5));
+            request.put("ignored", "not a console option");
+            assertThat(connector.dispatch(request, answer::set)).isTrue();
+            assertThat(answer.get()).isEmpty();
+            DevConsoleRegistry.get(context).register(new AbstractDevConsole("camel", "semantic-evaluate", "Test", "Test") {
+                @Override
+                protected String doCallText(Map<String, Object> options) {
+                    return "";
+                }
+
+                @Override
+                protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                    JsonObject response = new JsonObject();
+                    response.putAll(options);
+                    return response;
+                }
+            });
+            assertThat(connector.dispatch(request, answer::set)).isTrue();
+            assertThat(answer.get())
+                    .containsOnlyKeys("evaluation", "body", "headers", "variables", "expert", "operation", "input",
+                            "parameters")
+                    .containsEntry("evaluation", "classify").containsEntry("body", request.get("body"))
+                    .containsEntry("headers", request.get("headers")).containsEntry("variables", request.get("variables"))
+                    .containsEntry("expert", "security").containsEntry("operation", "injection")
+                    .containsEntry("input", "literal ${body} text").containsEntry("parameters", Map.of("threshold", 0.5));
+        }
+    }
+}

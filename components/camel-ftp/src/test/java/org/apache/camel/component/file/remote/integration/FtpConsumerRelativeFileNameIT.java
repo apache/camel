@@ -30,13 +30,18 @@ public class FtpConsumerRelativeFileNameIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/out/filename-consumer?password=admin&recursive=true&sortBy=file:name";
+               + "/out/filename-consumer?password=admin&recursive=true&sortBy=file:name&noop=true";
+    }
+
+    private String getFtpProducerUrl() {
+        return "ftp://admin@localhost:{{ftp.server.port}}/out/filename-consumer?password=admin";
     }
 
     @Override
     public void doPostSetup() throws Exception {
-        sendFile(getFtpUrl(), "Hello World", "out/filename-consumer-hello.txt");
-        sendFile(getFtpUrl(), "Bye World", "out/filename-consumer-bye.txt");
+        sendFile(getFtpProducerUrl(), "Hello World", "out/filename-consumer-hello.txt");
+        sendFile(getFtpProducerUrl(), "Bye World", "out/filename-consumer-bye.txt");
+        context.getRouteController().startRoute("ftp-filename-consumer");
     }
 
     @Override
@@ -44,7 +49,7 @@ public class FtpConsumerRelativeFileNameIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).to("mock:result");
+                from(getFtpUrl()).routeId("ftp-filename-consumer").autoStartup(false).to("mock:result");
             }
         };
     }

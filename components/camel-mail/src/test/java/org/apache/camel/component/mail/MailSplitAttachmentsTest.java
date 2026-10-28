@@ -51,7 +51,7 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
 
     @BeforeEach
     public void clearMailBox() {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james);
     }
 
     @BeforeEach

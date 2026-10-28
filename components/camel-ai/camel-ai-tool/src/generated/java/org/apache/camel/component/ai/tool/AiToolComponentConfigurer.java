@@ -32,6 +32,10 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": getOrCreateConfiguration(target).setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "argumentsasbody":
+        case "argumentsAsBody": getOrCreateConfiguration(target).setArgumentsAsBody(property(camelContext, boolean.class, value)); return true;
+        case "authorizationpolicy":
+        case "authorizationPolicy": getOrCreateConfiguration(target).setAuthorizationPolicy(property(camelContext, org.apache.camel.spi.AuthorizationPolicy.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -53,6 +57,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readOnlyHint": getOrCreateConfiguration(target).setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "returndirect":
         case "returnDirect": getOrCreateConfiguration(target).setReturnDirect(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "searchable": getOrCreateConfiguration(target).setSearchable(property(camelContext, boolean.class, value)); return true;
         case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": getOrCreateConfiguration(target).setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -64,6 +69,10 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
+        case "argumentsasbody":
+        case "argumentsAsBody": return boolean.class;
+        case "authorizationpolicy":
+        case "authorizationPolicy": return org.apache.camel.spi.AuthorizationPolicy.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -85,6 +94,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readOnlyHint": return java.lang.Boolean.class;
         case "returndirect":
         case "returnDirect": return java.lang.Boolean.class;
+        case "searchable": return boolean.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
         default: return null;
@@ -97,6 +107,10 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return getOrCreateConfiguration(target).getArgSchema();
+        case "argumentsasbody":
+        case "argumentsAsBody": return getOrCreateConfiguration(target).isArgumentsAsBody();
+        case "authorizationpolicy":
+        case "authorizationPolicy": return getOrCreateConfiguration(target).getAuthorizationPolicy();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
@@ -118,6 +132,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readOnlyHint": return getOrCreateConfiguration(target).getReadOnlyHint();
         case "returndirect":
         case "returnDirect": return getOrCreateConfiguration(target).getReturnDirect();
+        case "searchable": return getOrCreateConfiguration(target).isSearchable();
         case "tags": return getOrCreateConfiguration(target).getTags();
         case "title": return getOrCreateConfiguration(target).getTitle();
         default: return null;

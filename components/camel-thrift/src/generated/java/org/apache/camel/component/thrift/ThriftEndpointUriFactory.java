@@ -24,7 +24,7 @@ public class ThriftEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(17);
         props.add("bridgeErrorHandler");
         props.add("clientTimeout");
         props.add("compressionType");
@@ -35,6 +35,7 @@ public class ThriftEndpointUriFactory extends org.apache.camel.support.component
         props.add("lazyStartProducer");
         props.add("maxPoolSize");
         props.add("method");
+        props.add("muteException");
         props.add("negotiationType");
         props.add("poolSize");
         props.add("port");
@@ -57,7 +58,7 @@ public class ThriftEndpointUriFactory extends org.apache.camel.support.component
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, true, copy);

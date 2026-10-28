@@ -28,6 +28,7 @@ import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
@@ -103,6 +105,20 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
             assertEquals(expectedValue, value.getValue().getValue());
             assertTrue(value.getStatusCode().isGood());
             assertFalse(value.getStatusCode().isBad());
+        };
+    }
+
+    /**
+     * The report of a node whose communication with the server is lost: a null value with {@code Bad_NoCommunication},
+     * stamped with the time the loss was recognised.
+     */
+    public static Consumer<DataValue> assertNoCommunication() {
+        return value -> {
+            assertNotNull(value);
+            assertEquals(StatusCodes.Bad_NoCommunication, value.getStatusCode().getValue());
+            assertNull(value.getValue().getValue());
+            assertNotNull(value.getSourceTime());
+            assertEquals(value.getSourceTime(), value.getServerTime());
         };
     }
 

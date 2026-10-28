@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -40,6 +41,16 @@ public class EventHubsComponent extends HeaderFilterStrategyComponent {
     private EventHubsConfiguration configuration = new EventHubsConfiguration();
 
     public EventHubsComponent() {
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // keep the Camel-internal headers out of the EventData application properties
+        if (getHeaderFilterStrategy() == null) {
+            setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
+        }
     }
 
     @Override

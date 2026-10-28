@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,9 @@ import java.util.ServiceLoader;
 
 import javax.net.ssl.SSLContext;
 
+import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.accesslog.AccessLogReceiver;
+import io.undertow.util.StatusCodes;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -40,6 +43,9 @@ import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport;
 import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -61,6 +67,31 @@ import org.xnio.Options;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI", category = {
         Category.HTTP, Category.NETWORKING }, lenientProperties = true, headersClass = UndertowConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.BYTES, Carrier.NULL, Carrier.MAP, Carrier.TEXT },
+                                   dependsOn = "undertowHttpBinding",
+                                   byOption = @BodyType.When(option = "useStreaming", value = "true",
+                                                             carriers = { Carrier.STREAM, Carrier.NULL, Carrier.MAP }),
+                                   description = "HTTP: the request body as a byte array for POST, PUT and PATCH, null for"
+                                                 + " the other methods such as GET (a body they carry is dropped); a Map of"
+                                                 + " the fields of a form or a multipart request, a file as a DataHandler"
+                                                 + " (also an attachment). WebSocket: a String for a text message, a byte"
+                                                 + " array for a binary one, null for the events of"
+                                                 + " fireWebSocketChannelEvents"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                     description = "HTTP: the response body: text, bytes, a stream or a file. A Map, a List or"
+                                                   + " a POJO fails with an empty 200 response: marshal it first. A WebSocket"
+                                                   + " consumer does not reply: send to the peers with a producer"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "HTTP: the request body: text, bytes, a stream or a file; without the"
+                                                + " CamelHttpMethod header, a query string or no body sends a GET, and a body"
+                                                + " a POST. A Map, a List or a POJO is sent as an empty body: marshal it"
+                                                + " first. WebSocket: text and bytes or a stream to the peers connected to"
+                                                + " this endpoint, other bodies as their toString; no body sends nothing"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.UNCHANGED },
+                                   byOption = @BodyType.When(option = "useStreaming", value = "true",
+                                                             carriers = { Carrier.STREAM, Carrier.UNCHANGED }),
+                                   description = "HTTP: the response body as a byte array, an empty one (not null) for a"
+                                                 + " response without a body. WebSocket: the body is kept"))
 public class UndertowEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation, OAuthProfileAwareHttpEndpoint {
 
@@ -485,6 +516,43 @@ public class UndertowEndpoint extends DefaultEndpoint
 
     public void setAllowedRoles(String allowedRoles) {
         this.allowedRoles = allowedRoles;
+    }
+
+    /**
+     * The allowed roles of this endpoint, or of the component when the endpoint does not configure any.
+     */
+    public List<String> computeAllowedRoles() {
+        String allowedRolesString = allowedRoles != null ? allowedRoles : getComponent().getAllowedRoles();
+        return allowedRolesString == null ? null : Arrays.asList(allowedRolesString.split("\\s*,\\s*"));
+    }
+
+    /**
+     * Whether requests to this endpoint are checked by the {@link UndertowSecurityProvider} or restricted to the
+     * allowed roles.
+     */
+    public boolean requiresAuthentication() {
+        List<String> roles = computeAllowedRoles();
+        return securityProvider != null || roles != null && !roles.isEmpty();
+    }
+
+    /**
+     * Applies the {@link UndertowSecurityProvider} and the allowed roles of this endpoint to a request.
+     *
+     * @return {@link StatusCodes#OK} if the request is allowed, otherwise the status code to reject it with
+     */
+    public int authenticate(HttpServerExchange httpExchange) throws Exception {
+        List<String> roles = computeAllowedRoles();
+        if (securityProvider != null) {
+            // security provider decides, whether endpoint is accessible
+            return securityProvider.authenticate(httpExchange, roles);
+        }
+        if (roles != null && !roles.isEmpty()) {
+            // this case could happen due to bad configuration
+            // if allowedRoles are present but securityProvider is not, access has to be denied in this case
+            LOG.warn("Illegal state caused by missing securityProvider but existing allowed roles!");
+            return StatusCodes.FORBIDDEN;
+        }
+        return StatusCodes.OK;
     }
 
     @Override

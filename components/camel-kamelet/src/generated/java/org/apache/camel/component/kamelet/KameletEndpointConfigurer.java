@@ -23,6 +23,8 @@ public class KameletEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KameletEndpoint target = (KameletEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "advancedoptions":
+        case "advancedOptions": target.setAdvancedOptions(property(camelContext, boolean.class, value)); return true;
         case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
@@ -45,6 +47,8 @@ public class KameletEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "advancedoptions":
+        case "advancedOptions": return boolean.class;
         case "block": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
@@ -68,6 +72,8 @@ public class KameletEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KameletEndpoint target = (KameletEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "advancedoptions":
+        case "advancedOptions": return target.isAdvancedOptions();
         case "block": return target.isBlock();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();

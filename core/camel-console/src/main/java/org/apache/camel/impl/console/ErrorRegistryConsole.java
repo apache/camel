@@ -38,6 +38,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
             @Metadata(description = "Number of captured errors") int size,
             @Metadata(description = "The maximum number of entries retained") int maximumEntries,
             @Metadata(description = "The time to live for entries") String timeToLive,
+            @Metadata(description = "Whether exchanges cut off by a route stop, a route reload or a CamelContext stop are also captured") boolean includeRouteStopping,
             @Metadata(description = "The captured errors; shape depends on the underlying message implementation") List<Map<String, Object>> errors) {
     }
 
@@ -76,6 +77,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         ErrorRegistry registry = getCamelContext().getErrorRegistry();
         sb.append(String.format("%n    Enabled: %s", registry.isEnabled()));
         sb.append(String.format("%n    Size: %s", registry.size()));
+        sb.append(String.format("%n    Include Route Stopping: %s", registry.isIncludeRouteStopping()));
 
         List<BacklogErrorEventMessage> entries = fetchAndFilter(registry, options);
 
@@ -133,7 +135,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
 
         Response response = new Response(
                 registry.isEnabled(), registry.size(), registry.getMaximumEntries(), registry.getTimeToLive().toString(),
-                errors);
+                registry.isIncludeRouteStopping(), errors);
         return JsonRecordSupport.toJsonObject(response);
     }
 

@@ -16,7 +16,17 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
+import org.apache.camel.Expression;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +48,14 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     private String expressionError(String text) {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, text, true, null);
         return assertThrows(SimpleIllegalSyntaxException.class, parser::parseExpression).getMessage();
+    }
+
+    @Test
+    public void testSemanticFunctionHints() {
+        assertThat(expressionError("${sematic('q')}")).contains("${semantic('q')}");
+        assertThat(expressionError("${semantic:q}")).contains("${semantic('q')}");
+        assertThat(expressionError("${semantic}")).contains("${semantic('evaluationName')}");
+        assertThat(expressionError("${semantic('q')}")).contains("requires camel-semantic");
     }
 
     @Test
@@ -150,6 +168,31 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertEquals(false, context.resolveLanguage("simple").createPredicate("${body.length() > 3}").matches(exchange));
     }
 
+    /**
+     * An operator inside brackets or parentheses belongs to an index or an argument: a predicate inside ${ } is split
+     * at an operator outside them only, so the error quotes the text as written (a local model wrote ${body.?[qty <
+     * 1].size() > 0 ? ...} and was told about ${body.?[qty} < 1], text it never wrote).
+     */
+    @Test
+    public void testAnOperatorInsideBracketsOrParenthesesIsNotSplit() {
+        assertEquals("${body.?[qty < 1].size()} > 0", SimpleSyntaxHints.wrapFunctions("body.?[qty < 1].size() > 0"));
+        assertEquals("iif(header.a > 0 && header.b > 0, 'x', 'y')",
+                SimpleSyntaxHints.wrapFunctions("iif(header.a > 0 && header.b > 0, 'x', 'y')"));
+        assertEquals("${header.x} > 0 && ${body.size()} > 1",
+                SimpleSyntaxHints.wrapFunctions("header.x > 0 && body.size() > 1"));
+        assertEquals("${header.list[0]} == 'a'", SimpleSyntaxHints.wrapFunctions("header.list[0] == 'a'"));
+
+        // the expression parses as written now; what the index means is the runtime's to say, about the text as written
+        Expression expression = context.resolveLanguage("simple")
+                .createExpression("${body.?[qty < 1].size() > 0 ? 'not enough' : 'reserved'}");
+        exchange.getIn().setBody(List.of(Map.of("qty", 0)));
+        try {
+            expression.evaluate(exchange, String.class);
+        } catch (Exception e) {
+            assertThat(e.getMessage()).doesNotContain("[qty}");
+        }
+    }
+
     @Test
     public void testOgnlRuntimeMessages() {
         exchange.getIn().setBody("hello");
@@ -177,7 +220,144 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.typo}").evaluate(exchange,
                         String.class));
-        assertThat(e.getMessage()).contains("the value is a Map: a key is read with [typo], as in ${body[typo]}");
+        // CAMEL-25322: the dot reads a key, so the hint says the key is missing and which keys there are
+        // CAMEL-25749: and what the body is, with the step that set it when the message history is on
+        assertThat(e.getMessage()).contains("(the Map has no key typo; the body is a Map (LinkedHashMap): its keys are: type)");
+    }
+
+    @Test
+    public void testOgnlOnAStreamSaysToUnmarshal() {
+        // CAMEL-25749: ${body.qty} on the body of an HTTP request, still the text as a cached stream
+        exchange.getIn().setBody(new ByteArrayInputStreamCache(
+                new ByteArrayInputStream("{\"qty\": 2}".getBytes(StandardCharsets.UTF_8))));
+        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.qty}").evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("the body is a cached stream (ByteArrayInputStreamCache): unmarshal it first"
+                                            + " (unmarshal: json, for the Content-Type application/json) to read its fields");
+    }
+
+    @Test
+    public void testOgnlSizeOnAnIteratorSaysItHasNone() {
+        // CAMEL-25749: ${body.size()} on what sql gives with outputType=StreamList
+        exchange.getIn().setBody(List.of("A1", "A2").iterator());
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.size()}").evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("the body is an iterator")
+                .contains("it has no size and can be read once: split it, or have the producer give a List");
+    }
+
+    @Test
+    public void testEqualsOnTheBodySaysHowToCompare() {
+        // CAMEL-26041: Camel does not call equals on a bean, so the text of the body is not why it fails
+        exchange.getIn().setBody("test-value-2");
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.equals('test-value-2')}")
+                        .evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("equals('test-value-2') (Camel does not call equals on a bean: compare with an"
+                                            + " operator instead, such as ${body} == 'value' in simple)")
+                .doesNotContain("unmarshal");
+    }
+
+    @Test
+    public void testHashCodeOnAListIsNotAMissingElement() {
+        // CAMEL-26041: nor is the body a List without such a method or key
+        exchange.getIn().setBody(List.of("A1", "A2"));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.hashCode()}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("hashCode() (Camel does not call hashCode on a bean)")
+                .doesNotContain("a List has no method");
+    }
+
+    @Test
+    public void testKeyOnTheFileAsReadSaysToUnmarshal() {
+        // CAMEL-25749: ${body[status]} on the file consumer's body, before any unmarshal
+        GenericFile<File> file = new GenericFile<>();
+        file.setFile(new File("orders/order-1003.json"));
+        file.setFileName("order-1003.json");
+        exchange.getIn().setBody(file);
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "order-1003.json");
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body[status]}").evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("Key: status not found in bean")
+                .contains("(the body is the file as read (a GenericFile): unmarshal it first (unmarshal: json, for the file"
+                          + " name order-1003.json) to read its fields)");
+    }
+
+    @Test
+    public void testOgnlDotOnAListSaysHowToGetToAnElement() {
+        // ${body.orderId} on the List of an unmarshalled JSON array: pick an element, by index or by a field
+        exchange.getIn().setBody(List.of(java.util.Map.of("orderId", "ORD-1001"), java.util.Map.of("orderId", "ORD-1002")));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.orderId}").evaluate(exchange,
+                        String.class));
+        // the lookup by a field first: given [0] first, models took the first element
+        assertThat(e.getMessage()).contains("(a List has no method or key orderId: to pick the element whose orderId"
+                                            + " has a given value, use jsonpath: \"$[?(@.orderId == '${header.orderId}')]\""
+                                            + " with resultType java.util.Map (the element, or null when none or several"
+                                            + " match); [0].orderId reads the first element; or split it)");
+    }
+
+    @Test
+    public void testAMadeUpMethodOnAListSaysHowToGetToAnElement() {
+        exchange.getIn().setBody(List.of(java.util.Map.of("orderId", "ORD-1001")));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.find(o -> o.orderId == 1)}")
+                        .evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("(a List has no such method: to pick the element whose field has a given"
+                                            + " value, use jsonpath");
+    }
+
+    @Test
+    public void testKeyOfAVariableThatHoldsAFileSaysToUnmarshalIt() {
+        // pollEnrich with variableReceive: the variable holds the polled file, not its data
+        GenericFile<File> file = new GenericFile<>();
+        file.setFile(new File("customers/C-482.json"));
+        file.setFileName("C-482.json");
+        exchange.setVariable("customer", file);
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${variable.customer[name]}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("Key: name not found in bean")
+                .contains("(the value is the file as read (a GenericFile), not its data: unmarshal it first")
+                .contains("unmarshal: {json: {}, variableSend: customer, variableReceive: customer}");
+    }
+
+    @Test
+    public void testMethodOfAVariableThatHoldsAFileSaysToUnmarshalIt() {
+        // what the benchmark wrote (r22): ${variable.customer.name} reads the polled file, not the customer
+        GenericFile<File> file = new GenericFile<>();
+        file.setFile(new File("customers/C-482.json"));
+        file.setFileName("C-482.json");
+        exchange.setVariable("customer", file);
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${variable.customer.name}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("(the value is the file as read (a GenericFile), not its data: unmarshal it"
+                                            + " first")
+                .contains("unmarshal: {json: {}, variableSend: customer, variableReceive: customer}");
+        // what the file has is read as it is
+        assertEquals("C-482.json", context.resolveLanguage("simple").createExpression("${variable.customer.fileName}")
+                .evaluate(exchange, String.class));
+    }
+
+    @Test
+    public void testOgnlOnAnObjectSaysNothingAboutTheBody() {
+        // a name an object does not have is a wrong name, not a body of the wrong type
+        exchange.getIn().setBody(new StringBuilder("x"));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.qty}").evaluate(exchange, String.class));
+        assertThat(e.getMessage()).doesNotContain("the body is");
+    }
+
+    @Test
+    public void testOgnlDotOnAnEmptyMapSaysItIsEmpty() {
+        exchange.getIn().setBody(new java.util.LinkedHashMap<>());
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.orderId}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("(the Map has no key orderId; the body is a Map (LinkedHashMap): it is empty)");
     }
 
     @Test

@@ -71,13 +71,78 @@ class AiPanelTest {
     @Test
     void thePanelIsIdleOnlyWhenNothingIsTypedOrAsked() {
         AiPanel panel = new AiPanel();
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         assertTrue(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, now), "nothing typed yet");
 
         type(panel, "why");
-        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, System.currentTimeMillis()), "typing a question");
+        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, MonotonicClock.millis()), "typing a question");
         // still typed, even long after the last key
-        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, System.currentTimeMillis() + 60_000));
+        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, MonotonicClock.millis() + 60_000));
+    }
+
+    @Test
+    void anEmojiIsTypedMovedOverAndDeletedAsOneCharacter() {
+        AiPanel panel = new AiPanel();
+        type(panel, "ab");
+        panel.handleKeyEvent(KeyEvent.ofChar(0x1F600));
+        type(panel, "c");
+        assertEquals("ab\uD83D\uDE00c", panel.inputBufferForTesting());
+
+        // Left over the c and the whole emoji: x goes before the emoji
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE));
+        type(panel, "x");
+        assertEquals("abx\uD83D\uDE00c", panel.inputBufferForTesting());
+
+        // Delete takes both chars of the emoji
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.DELETE, KeyModifiers.NONE));
+        assertEquals("abxc", panel.inputBufferForTesting());
+
+        // Ctrl with a letter types nothing
+        panel.handleKeyEvent(KeyEvent.ofChar('b', KeyModifiers.of(true, false, false)));
+        assertEquals("abxc", panel.inputBufferForTesting());
+
+        // Backspace after an emoji takes both chars
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        panel.handleKeyEvent(KeyEvent.ofChar(0x1F600));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.BACKSPACE, KeyModifiers.NONE));
+        assertEquals("abxc", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void anAnswerArrivingWhileScrolledUpLeavesTheViewWhereItIs() throws Exception {
+        AiPanel panel = new AiPanel();
+        SlowSecondAnswerLlmClient client = new SlowSecondAnswerLlmClient();
+        panel.setClientForTesting(client);
+        panel.open();
+        Rect area = new Rect(0, 0, 100, 24);
+
+        type(panel, "first");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(panel.isThinkingForTesting()));
+        renderPanel(panel, area);
+
+        type(panel, "second");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(client.secondAsked.await(5, TimeUnit.SECONDS));
+        // the user scrolls up to read the first answer while the second one is on its way
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.PAGE_UP, KeyModifiers.NONE));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.PAGE_UP, KeyModifiers.NONE));
+        String before = renderPanel(panel, area);
+        assertTrue(before.contains("answer 1 line 2"), before);
+
+        client.releaseSecond.countDown();
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(panel.isThinkingForTesting()));
+        String after = renderPanel(panel, area);
+
+        assertTrue(after.contains("answer 1 line 2"), after);
+        assertFalse(after.contains("answer 2 line 30"), after);
+    }
+
+    private static String renderPanel(AiPanel panel, Rect area) {
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+        return TuiTestHelper.bufferToString(buffer);
     }
 
     @Test
@@ -1292,7 +1357,7 @@ class AiPanelTest {
                 "m", "ollama", 400, 30, 430, 8_000, "stop", now,
                 AiPanel.AiUsageSource.ROUTE, "chat-route", 0));
 
-        assertEquals(2, AiPanel.countQuestions(panel.combinedUsageEntriesForTesting()));
+        assertEquals(2, AiUsageStats.countQuestions(panel.combinedUsageEntriesForTesting()));
         String summary = panel.usageSummary();
         // 8 s of panel time over 2 questions; 16 s over 5 requests
         assertTrue(summary.contains("- **Avg per question:** 4.0s (3.2s per request)"), summary);
@@ -1411,8 +1476,9 @@ class AiPanelTest {
         RecordingLlmClient client = new RecordingLlmClient("ok");
         panel.setClientForTesting(client);
 
-        // auto mode: a hosted provider gets every tool
-        assertEquals(new TuiToolRegistry(null).getToolDefinitions().size(), panel.toolDefinitionsForTesting().size());
+        // auto mode: a hosted provider gets all tools available for the selected integration
+        assertEquals(new TuiToolRegistry(null).getAvailableToolDefinitions(List.of()).size(),
+                panel.toolDefinitionsForTesting().size());
         assertTrue(panel.systemPromptForTesting().contains("tui_draw_shape"));
 
         // auto mode: a local provider only gets the core set, and the prompt no longer suggests drawing tools
@@ -1434,7 +1500,8 @@ class AiPanelTest {
         panel.setClientForTesting(client);
 
         panel.setToolModeForTesting("full");
-        assertEquals(new TuiToolRegistry(null).getToolDefinitions().size(), panel.toolDefinitionsForTesting().size());
+        assertEquals(new TuiToolRegistry(null).getAvailableToolDefinitions(List.of()).size(),
+                panel.toolDefinitionsForTesting().size());
 
         panel.setToolModeForTesting("core");
         client.withApiType(LlmClient.ApiType.openai);
@@ -1652,6 +1719,42 @@ class AiPanelTest {
         return count;
     }
 
+    /** Answers each question with numbered lines; the second answer waits until the test releases it. */
+    private static final class SlowSecondAnswerLlmClient extends LlmClient {
+
+        private final CountDownLatch secondAsked = new CountDownLatch(1);
+        private final CountDownLatch releaseSecond = new CountDownLatch(1);
+        private int calls;
+
+        SlowSecondAnswerLlmClient() {
+            withModel("test-model");
+            withApiType(ApiType.openai);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            int call = ++calls;
+            if (call == 2) {
+                secondAsked.countDown();
+                try {
+                    releaseSecond.await(10, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            StringBuilder text = new StringBuilder();
+            for (int i = 1; i <= 30; i++) {
+                text.append("answer ").append(call).append(" line ").append(i).append("\n\n");
+            }
+            return new ChatResponse(text.toString(), null, "end_turn", false, TokenUsage.EMPTY);
+        }
+    }
+
     private static final class RecordingLlmClient extends LlmClient {
 
         private final String response;
@@ -1865,5 +1968,30 @@ class AiPanelTest {
             }
             return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
+    }
+
+    @Test
+    void askingAboutAPausedLiveEditKeepsThePanelCompactUntilTheUserSizesIt() {
+        AiPanel panel = new AiPanel();
+        panel.initHeight(80);
+        assertEquals(40, panel.panelHeight(80), "half the content by default");
+
+        panel.askAboutEdit("About edit 1 of 2: ", question -> true);
+        // the edit in the editor stays in view: a quarter of the content, at least 10 rows
+        assertEquals(20, panel.panelHeight(80));
+        assertEquals(10, panel.panelHeight(24));
+
+        // the user sizes it: then it is the user's height
+        panel.cycleHeight(80);
+        while (panel.isAnimating()) {
+            panel.tickAnimation();
+        }
+        assertEquals(60, panel.panelHeight(80), "three quarters, no longer capped");
+        panel.close();
+
+        panel.askAboutEdit("About edit 2 of 2: ", question -> true);
+        assertEquals(20, panel.panelHeight(80));
+        panel.close();
+        assertEquals(60, panel.panelHeight(80), "a normal question opens the panel at its own height again");
     }
 }

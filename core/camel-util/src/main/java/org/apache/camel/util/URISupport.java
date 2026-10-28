@@ -770,11 +770,13 @@ public final class URISupport {
                 return uri;
             }
             // use the faster and more simple normalizer
-            return doFastNormalizeUri(parts);
-        } else {
-            // use the legacy normalizer as the uri is complex and may have unsafe URL characters
-            return doComplexNormalizeUri(uri);
+            String answer = doFastNormalizeUri(parts);
+            if (answer != null) {
+                return answer;
+            }
         }
+        // use the legacy normalizer as the uri is complex and may have unsafe URL characters
+        return doComplexNormalizeUri(uri);
     }
 
     /**
@@ -870,6 +872,8 @@ public final class URISupport {
     /**
      * The fast parser for normalizing Camel endpoint URIs when the URI is not complex and can be parsed in a much more
      * efficient way.
+     *
+     * @return the normalized uri, or <tt>null</tt> if the uri must be normalized by the complex normalizer
      */
     private static String doFastNormalizeUri(String[] parts) throws URISyntaxException {
         String scheme = parts[0];
@@ -902,9 +906,10 @@ public final class URISupport {
         query = buildSafeQueryString(keys, parameters);
         if (query.indexOf('%') != -1) {
             // a key or value needed a percent escape (such as = or # in a value), and a uri with % is normalized by
-            // the complex normalizer, which form-encodes the whole query; encode the same way here so normalizing a
+            // the complex normalizer, which form-encodes the whole query and also encodes the path (such as # and all
+            // but the last @ of the user info); let the complex normalizer normalize this uri as well, so normalizing a
             // normalized uri gives the same uri (the fast parser only takes uris without %, so all % come from here)
-            query = createQueryString(keys, parameters, true);
+            return null;
         }
         return buildUri(scheme, path, query);
     }

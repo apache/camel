@@ -24,6 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <propertyPlaceholder id="properties" location="classpath:org/apache/camel/spring/processor/samplingThrottler.properties"/>
     <jmxAgent id="jmx" disabled="true"/>
         <!-- START SNIPPET: e1 -->
         <route>
@@ -45,6 +46,11 @@
             <from uri="direct:sample-long-period"/>
             <!-- 36500 days -->
             <sample samplePeriod="3153600000000"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:sample-placeholder"/>
+            <sample samplePeriod="{{sample.period}}"/>
             <to uri="mock:result"/>
         </route>
         <!-- END SNIPPET: e1 -->

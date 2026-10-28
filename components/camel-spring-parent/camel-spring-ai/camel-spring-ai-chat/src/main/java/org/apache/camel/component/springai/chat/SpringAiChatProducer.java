@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
@@ -42,6 +43,7 @@ import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
+import org.apache.camel.component.ai.tool.AiToolSearch;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.component.springai.chat.mcp.SpringAiChatMcpManager;
 import org.apache.camel.support.DefaultProducer;
@@ -108,6 +110,9 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Initialize ChatClient
         ChatClient configuredClient = getEndpoint().getConfiguration().getChatClient();
         ChatModel configuredChatModel = getEndpoint().getConfiguration().getChatModel();
+        if (getEndpoint().getConfiguration().isToolSearch()) {
+            SpringAiToolSearch.validate(getEndpoint().getConfiguration());
+        }
         if (configuredClient != null) {
             // Use the provided ChatClient
             this.chatClient = configuredClient;
@@ -126,7 +131,10 @@ public class SpringAiChatProducer extends DefaultProducer {
             }
             this.observabilityChatModel = chatModel;
 
-            ChatClient.Builder builder = ChatClient.builder(chatModel);
+            ChatClient.Builder builder = getEndpoint().getConfiguration().isToolSearch()
+                    ? ChatClient.builder(chatModel, ObservationRegistry.NOOP, null, null,
+                            new SpringAiToolSearch.AdvisorBuilder(new SpringAiToolSearch(getEndpoint().getConfiguration())))
+                    : ChatClient.builder(chatModel);
 
             // Add default advisors based on configuration
             List<Advisor> advisors = buildDefaultAdvisors();
@@ -569,7 +577,7 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Note: Augmented data is handled in the calling method for better control
 
         // Get tool callbacks first if tags are configured
-        List<ToolCallback> toolCallbacks = getToolCallbacksForTags(getEndpoint().getConfiguration().getTags());
+        List<ToolCallback> toolCallbacks = getToolCallbacksForTags(getEndpoint().getConfiguration().getTags(), exchange);
 
         // Apply chat options from configuration and headers using ToolCallingChatOptions
         // This ensures tool callbacks are properly included in the options
@@ -602,6 +610,35 @@ public class SpringAiChatProducer extends DefaultProducer {
                 callbacksByName.putIfAbsent(callback.getToolDefinition().name(), callback);
             }
             LOG.debug("Resolved tool names {} to ToolCallbacks", names);
+        }
+
+        Set<String> searchableNames = new LinkedHashSet<>();
+        if (getEndpoint().getConfiguration().isToolSearch()) {
+            for (String name : searchableRouteToolNames(getEndpoint().getConfiguration().getTags())) {
+                if (callbacksByName.containsKey(name)) {
+                    searchableNames.add(name);
+                }
+            }
+            if (mcpManager != null && mcpManager.getToolCallbackProvider() != null) {
+                for (ToolCallback callback : mcpManager.getToolCallbackProvider().getToolCallbacks()) {
+                    String name = callback.getToolDefinition().name();
+                    if (callbacksByName.putIfAbsent(name, callback) == null) {
+                        searchableNames.add(name);
+                    }
+                }
+            }
+            if (callbacksByName.containsKey(AiToolSearch.TOOL_NAME)) {
+                throw new IllegalArgumentException(
+                        "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
+            }
+            List<ToolCallback> catalogue = List.copyOf(callbacksByName.values());
+            Set<String> searchable = Set.copyOf(searchableNames);
+            request.advisors(advisor -> advisor.param(SpringAiToolSearch.CATALOGUE, catalogue));
+            request.advisors(advisor -> advisor.param(SpringAiToolSearch.SEARCHABLE, searchable));
+            String conversationId = exchange.getIn().getHeader(SpringAiChatConstants.CONVERSATION_ID, String.class);
+            if (conversationId != null && !conversationId.isBlank()) {
+                request.advisors(advisor -> advisor.param(SpringAiToolSearch.CONVERSATION, conversationId));
+            }
         }
 
         if (!callbacksByName.isEmpty()) {
@@ -648,8 +685,10 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Spring AI 2.0 takes the options builder rather than a built ChatOptions instance
         request.options(optionsBuilder);
 
-        // Add MCP tool callbacks if MCP servers are configured
-        if (mcpManager != null && mcpManager.getToolCallbackProvider() != null) {
+        // Add MCP tool callbacks if MCP servers are configured. Tool search merges them into the shared catalogue above
+        // so route and MCP tools are ranked together; tools/list still ran when the provider was created.
+        if (!getEndpoint().getConfiguration().isToolSearch()
+                && mcpManager != null && mcpManager.getToolCallbackProvider() != null) {
             request.toolCallbacks(mcpManager.getToolCallbackProvider());
             LOG.debug("Added MCP tool callback provider");
         }
@@ -1002,14 +1041,30 @@ public class SpringAiChatProducer extends DefaultProducer {
      * Tools are registered via ChatOptions.toolCallbacks() which is the correct way to pass ToolCallback instances in
      * Spring AI. The tools() method expects objects with @Tool annotated methods, not ToolCallback instances.
      */
-    private List<ToolCallback> getToolCallbacksForTags(String tags) {
+    private Set<String> searchableRouteToolNames(String tags) {
+        if (tags == null || tags.isBlank()) {
+            return Set.of();
+        }
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
+        Set<String> names = new LinkedHashSet<>();
+        for (String tag : AiToolParameterHelper.splitTags(tags)) {
+            for (AiToolSpec spec : registry.getToolsByTag(tag)) {
+                if (spec.isSearchable()) {
+                    names.add(spec.getName());
+                }
+            }
+        }
+        return names;
+    }
+
+    private List<ToolCallback> getToolCallbacksForTags(String tags, Exchange callingExchange) {
         if (tags == null || tags.trim().isEmpty()) {
             LOG.debug("No tags configured, skipping tool discovery");
             return List.of();
         }
 
         // Discover tools from the unified AiToolRegistry
-        List<ToolCallback> toolCallbacks = discoverAiRegistryTools(tags);
+        List<ToolCallback> toolCallbacks = discoverAiRegistryTools(tags, callingExchange);
 
         if (!toolCallbacks.isEmpty()) {
             // Collect tool names for enhanced logging
@@ -1079,7 +1134,7 @@ public class SpringAiChatProducer extends DefaultProducer {
      * Discover tools registered via {@code ai-tool:} consumer endpoints in the shared {@link AiToolRegistry}. Converts
      * each {@link AiToolSpec} to a Spring AI {@link ToolCallback} via {@link AiToolSpecToSpringAi}.
      */
-    private List<ToolCallback> discoverAiRegistryTools(String tags) {
+    private List<ToolCallback> discoverAiRegistryTools(String tags, Exchange callingExchange) {
         final AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
         final String[] tagArray = AiToolParameterHelper.splitTags(tags);
 
@@ -1088,7 +1143,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             uniqueSpecs.addAll(registry.getToolsByTag(tag));
         }
         final List<ToolCallback> toolCallbacks = uniqueSpecs.stream()
-                .map(AiToolSpecToSpringAi::toToolCallback)
+                .map(spec -> AiToolSpecToSpringAi.toToolCallback(spec, callingExchange))
                 .collect(Collectors.toList());
 
         LOG.debug("Discovered {} tools from AiToolRegistry for tags: {}", toolCallbacks.size(), tags);

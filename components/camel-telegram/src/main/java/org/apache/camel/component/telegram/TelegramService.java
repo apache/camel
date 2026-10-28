@@ -38,6 +38,16 @@ public interface TelegramService {
 
     boolean setWebhook(String url);
 
+    /**
+     * Registers the webhook. Telegram sends the given secret token in the {@code X-Telegram-Bot-Api-Secret-Token}
+     * header of every webhook request.
+     *
+     * @param  url         the URL of the webhook
+     * @param  secretToken the secret token
+     * @return             {@code true} if Telegram registered the webhook
+     */
+    boolean setWebhook(String url, String secretToken);
+
     boolean removeWebhook();
 
 }

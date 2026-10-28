@@ -89,12 +89,12 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
                         vertxWebsocketResultHandler.onResult(connectionKey);
                     } else {
                         if (message instanceof String) {
-                            webSocket.writeTextMessage((String) message, handler);
+                            webSocket.writeTextMessage((String) message).onComplete(handler);
                         } else if (message instanceof byte[]) {
-                            webSocket.writeBinaryMessage(Buffer.buffer((byte[]) message), handler);
+                            webSocket.writeBinaryMessage(Buffer.buffer((byte[]) message)).onComplete(handler);
                         } else {
                             // Try to fallback on String conversion
-                            webSocket.writeTextMessage(in.getBody(String.class), handler);
+                            webSocket.writeTextMessage(in.getBody(String.class)).onComplete(handler);
                         }
                     }
                 } else {

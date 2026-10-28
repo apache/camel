@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class CoAPTestSupport extends CamelTestSupport {
 
     @RegisterExtension
-    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    static AvailablePortFinder.Port PORT = CoAPTestPorts.findUdpPort();
 
     @Override
     public void doPostSetup() {

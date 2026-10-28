@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.eventbridge.client.EventbridgeClientFactory;
 import org.apache.camel.spi.*;
+import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
@@ -40,6 +41,26 @@ import software.amazon.awssdk.services.sqs.SqsClient;
                      Category.CLOUD,
                      Category.MANAGEMENT },
              headersClass = EventbridgeConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The event as JSON text, one message per event the rule sends to the SQS queue"
+                                                 + " of the consumer: the envelope of EventBridge, with the data of the event"
+                                                 + " in its detail field, and the id of the SQS message in a header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "putEvent",
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "Not used by putRule, the default, and the other operations, which take their"
+                                                + " input from headers and the eventPatternFile option. putEvent sends the body"
+                                                + " as the detail of the event, which must be a JSON object as text: bytes, a"
+                                                + " stream or a file are read as text, a Map or a POJO is sent as its"
+                                                + " toString(), so marshal it first, and no body fails. With pojoRequest=true"
+                                                + " the request of the AWS SDK, such as a PutEventsRequest"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation: a PutRuleResponse for putRule,"
+                                                 + " the default, and a PutEventsResponse for putEvent. An event that AWS"
+                                                 + " rejects, such as one whose detail is not a JSON object, fails the exchange"
+                                                 + " with the error code and message of the rejected event"))
 public class EventbridgeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private final ReentrantLock lock = new ReentrantLock();

@@ -21,9 +21,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -44,6 +49,10 @@ import org.mvel2.templates.TemplateRuntime;
 
 /**
  * Generates documentation for camel-jbang commands.
+ * <p>
+ * Each module (camel-jbang-core and every camel-jbang plugin) generates the pages of its own commands. The index page
+ * lists the commands of camel-jbang-core and of all plugins, read from the metadata of the sibling modules, so it is
+ * the same whichever module generates it.
  */
 @Mojo(name = "prepare-jbang-commands-doc", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
       requiresDependencyResolution = ResolutionScope.COMPILE)
@@ -64,6 +73,12 @@ public class PrepareCamelJBangCommandsDocMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/META-INF/camel-jbang-commands-metadata.json")
     protected File commandsJsonFile;
 
+    /**
+     * The directory with camel-jbang-core and the camel-jbang plugin modules
+     */
+    @Parameter(defaultValue = "${project.basedir}/..")
+    protected File jbangDir;
+
     @Inject
     public PrepareCamelJBangCommandsDocMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
         super(projectHelper, buildContext);
@@ -73,13 +88,20 @@ public class PrepareCamelJBangCommandsDocMojo extends AbstractGeneratorMojo {
     public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         docDir = new File(
                 project.getBasedir().getParentFile().getParentFile().getParent(), "docs/user-manual/modules/ROOT/pages");
-        commandsJsonFile
-                = new File(project.getBasedir(), "src/generated/resources/META-INF/camel-jbang-commands-metadata.json");
+        commandsJsonFile = new File(
+                project.getBasedir(), "src/generated/resources/" + PrepareCamelJBangCommandsMojo.CORE_METADATA_FILE);
+        jbangDir = project.getBasedir().getParentFile();
         super.execute(project);
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (!commandsJsonFile.exists()) {
+            // a camel-jbang plugin has its own metadata file
+            commandsJsonFile = new File(
+                    commandsJsonFile.getParentFile(),
+                    PrepareCamelJBangCommandsMojo.PLUGIN_METADATA_FILE.substring("META-INF/".length()));
+        }
         if (!commandsJsonFile.exists()) {
             getLog().debug("Commands metadata file not found: " + commandsJsonFile);
             return;
@@ -95,7 +117,7 @@ public class PrepareCamelJBangCommandsDocMojo extends AbstractGeneratorMojo {
             }
 
             // Generate index page
-            generateIndexPage(model);
+            generateIndexPage();
 
             // Generate individual command pages (including subcommands recursively)
             int totalPages = 0;
@@ -109,7 +131,75 @@ public class PrepareCamelJBangCommandsDocMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void generateIndexPage(JBangCommandModel model) throws MojoExecutionException {
+    private void generateIndexPage() throws MojoExecutionException {
+        List<JBangCommand> commands = new ArrayList<>();
+        List<JBangCommand> pluginCommands = new ArrayList<>();
+        try {
+            File core = new File(
+                    jbangDir, "camel-jbang-core/src/generated/resources/"
+                              + PrepareCamelJBangCommandsMojo.CORE_METADATA_FILE);
+            if (core.exists()) {
+                commands.addAll(loadModel(core).getCommands());
+            }
+            try (Stream<Path> modules = Files.list(jbangDir.toPath())) {
+                List<Path> plugins = modules
+                        .filter(p -> p.getFileName().toString().startsWith("camel-jbang-plugin-"))
+                        .map(p -> p.resolve("src/generated/resources/" + PrepareCamelJBangCommandsMojo.PLUGIN_METADATA_FILE))
+                        .filter(Files::exists)
+                        .toList();
+                for (Path plugin : plugins) {
+                    pluginCommands.addAll(loadModel(plugin.toFile()).getCommands());
+                }
+            }
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error loading JBang commands metadata", e);
+        }
+        pluginCommands.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+        generateIndexPage(commands, pluginCommands);
+        removeOrphanPages(commands, pluginCommands);
+    }
+
+    /**
+     * Removes the generated pages of commands that no longer exist (such as a renamed command). Pages without the
+     * auto-generated marker are written by hand and kept.
+     */
+    private void removeOrphanPages(List<JBangCommand> commands, List<JBangCommand> pluginCommands)
+            throws MojoExecutionException {
+        Set<String> pages = new HashSet<>();
+        pages.add("camel-jbang-commands.adoc");
+        collectDocFileNames(commands, pages);
+        collectDocFileNames(pluginCommands, pages);
+
+        Path dir = docDir.toPath().resolve("jbang-commands");
+        if (!Files.isDirectory(dir)) {
+            return;
+        }
+        try (Stream<Path> files = Files.list(dir)) {
+            for (Path file : files.filter(f -> f.getFileName().toString().endsWith(".adoc")).toList()) {
+                if (!pages.contains(file.getFileName().toString())
+                        && Files.readString(file).contains(AUTO_GENERATED_MARKER)) {
+                    Files.delete(file);
+                    getLog().info("Removed page of a command that no longer exists: " + file);
+                }
+            }
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error removing orphan command pages", e);
+        }
+    }
+
+    private static void collectDocFileNames(List<JBangCommand> commands, Set<String> pages) {
+        for (JBangCommand cmd : commands) {
+            pages.add(cmd.getDocFileName());
+            collectDocFileNames(cmd.getSubcommands(), pages);
+        }
+    }
+
+    private static JBangCommandModel loadModel(File file) throws IOException {
+        return JsonMapper.generateJBangCommandModel(PackageHelper.loadText(file));
+    }
+
+    private void generateIndexPage(List<JBangCommand> commands, List<JBangCommand> pluginCommands)
+            throws MojoExecutionException {
         try (InputStream templateStream = getClass().getClassLoader().getResourceAsStream("jbang-commands.mvel")) {
             if (templateStream == null) {
                 throw new MojoExecutionException("Template jbang-commands.mvel not found");
@@ -117,7 +207,8 @@ public class PrepareCamelJBangCommandsDocMojo extends AbstractGeneratorMojo {
 
             String template = PackageHelper.loadText(templateStream);
             Map<String, Object> ctx = new HashMap<>();
-            ctx.put("commands", model.getCommands());
+            ctx.put("commands", commands);
+            ctx.put("pluginCommands", pluginCommands);
 
             String content
                     = (String) TemplateRuntime.eval(template, ctx, Collections.singletonMap("util", MvelHelper.INSTANCE));

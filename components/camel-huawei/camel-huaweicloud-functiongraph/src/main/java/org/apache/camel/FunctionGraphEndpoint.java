@@ -22,6 +22,9 @@ import com.huaweicloud.sdk.functiongraph.v2.FunctionGraphClient;
 import com.huaweicloud.sdk.functiongraph.v2.region.FunctionGraphRegion;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.constants.FunctionGraphConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,15 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-functiongraph", title = "Huawei FunctionGraph",
              syntax = "hwcloud-functiongraph:operation",
              category = { Category.CLOUD, Category.SERVERLESS }, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.TEXT },
+                                  description = "The event of the function, as a Map or a JSON object as text. Bytes, a stream,"
+                                                + " a file, a JSON array, a POJO or no body fail: convert the body to a String or"
+                                                + " a Map first"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
+                                   description = "The body field of the result of the function as text: a string as it is, an"
+                                                 + " object or an array as JSON. No body when the result has no body field. With"
+                                                 + " the CamelHwCloudFgXCffLogType exchange property set, the log of the call is in"
+                                                 + " the CamelHwCloudFgXCffLogs exchange property"))
 public class FunctionGraphEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")

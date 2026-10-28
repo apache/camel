@@ -115,7 +115,7 @@ public class JCacheManager<K, V> implements Closeable {
         if (configuration.getFilteredEvents() != null) {
             List<EventType> list = new ArrayList<>();
             for (String s : configuration.getFilteredEvents().split(",")) {
-                EventType et = EventType.valueOf(s);
+                EventType et = EventType.valueOf(s.trim());
                 list.add(et);
             }
             return new JCacheEntryEventFilters.Named(list);

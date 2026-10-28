@@ -52,3 +52,15 @@ $everforest-fg: #5C6A72;
 #diagram-action  { color: #E66868; }
 #diagram-eip     { color: #DF69BA; }
 #diagram-default { color: #939F91; }
+
+/*
+ * Syntax tokens (optional), after Everforest: red keywords, aqua strings, green functions, yellow types, purple constants, grey comments.
+ * Lifted to a 3:1 contrast on this background: comment, string, function, type, constant.
+ */
+#syntax-comment  { color: #82907F; }
+#syntax-string   { color: #329D75; }
+#syntax-keyword  { color: #F85552; }
+#syntax-function { color: #829401; }
+#syntax-type     { color: #B68300; }
+#syntax-constant { color: #DC5CB4; }
+#syntax-text     { color: $everforest-fg; }

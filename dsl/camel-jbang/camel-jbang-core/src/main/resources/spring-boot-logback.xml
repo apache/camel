@@ -21,7 +21,8 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
-    <property name="LOG_FILE" value="${user.home}${file.separator}.camel${file.separator}${PID}.log"/>
+    <!-- the <name>.log file in the Camel directory, as camel run writes in this file (CAMEL-25832) -->
+    <property name="LOG_FILE" value="{{logFile}}"/>
     <property name="FILE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN}"/> <!-- log in color to file -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

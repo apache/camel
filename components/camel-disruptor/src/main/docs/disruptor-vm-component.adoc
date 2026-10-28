@@ -86,6 +86,38 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Example
+
+The first route below sends a message to a `disruptor-vm` endpoint every second.
+The second route reads the messages with four concurrent consumers.
+Unlike a `disruptor` endpoint, a `disruptor-vm` endpoint can also be read by a route in another CamelContext
+of the same JVM.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:orders
+      parameters:
+        period: 1000
+        includeMetadata: true
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Order ${exchangeProperty.CamelTimerCounter}"
+        - to:
+            uri: disruptor-vm:orders
+- route:
+    from:
+      uri: disruptor-vm:orders
+      parameters:
+        concurrentConsumers: 4
+      steps:
+        - log:
+            message: "Processing ${body}"
+----
+
 == More Documentation
 
 See the xref:disruptor-component.adoc[Disruptor] component for more information.

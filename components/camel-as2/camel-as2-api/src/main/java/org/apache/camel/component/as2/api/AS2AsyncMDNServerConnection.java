@@ -33,6 +33,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ConnectionClosedException;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.config.Http1Config;
 import org.apache.hc.core5.http.impl.io.HttpService;
@@ -195,9 +196,7 @@ public class AS2AsyncMDNServerConnection {
             // NOTE: the connection will be closed after the execution of the process.
             AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(cfg); // NOSONAR
             inConn.bind(inSocket);
-            // TODO Update once baseline is Java 21
-            // setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + threadId());
-            setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + getId());
+            setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + threadId());
             this.httpService = httpService;
             this.serverConnection = inConn;
         }
@@ -213,6 +212,9 @@ public class AS2AsyncMDNServerConnection {
                     }
                     this.httpService.handleRequest(this.serverConnection, context);
                 }
+            } catch (final ConnectionClosedException ex) {
+                // the sender closed the connection after its receipt was delivered
+                LOG.debug("I/O exception: {}", ex.getMessage());
             } catch (final IOException ex) {
                 LOG.error("I/O exception: {}", ex.getMessage(), ex);
             } catch (final HttpException ex) {

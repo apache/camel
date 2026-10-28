@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mcp.server;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -386,7 +387,17 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     private McpServerTool createTool(AiToolSpec spec) {
-        McpToolCallHandler handler = arguments -> execute(spec, arguments);
+        McpToolCallHandler handler = new McpToolCallHandler() {
+            @Override
+            public McpToolCallResult call(Map<String, Object> arguments) {
+                return execute(spec, arguments, null);
+            }
+
+            @Override
+            public McpToolCallResult call(Map<String, Object> arguments, McpToolCallContext context) {
+                return execute(spec, arguments, context);
+            }
+        };
         return new McpServerTool() {
             @Override
             public String name() {
@@ -425,8 +436,11 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         };
     }
 
-    private McpToolCallResult execute(AiToolSpec spec, Map<String, Object> arguments) {
+    private McpToolCallResult execute(AiToolSpec spec, Map<String, Object> arguments, McpToolCallContext context) {
         Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
+        if (context != null) {
+            stampCallerIdentity(exchange, context);
+        }
         boolean release = true;
         try {
             Future<AiToolResult> future = executor.submit(() -> AiToolExecutor.execute(spec, arguments, exchange));
@@ -454,6 +468,10 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return new McpToolCallResult(success.value(), false, success.structuredContent());
             } else if (result instanceof AiToolResult.ArgumentError error) {
                 return new McpToolCallResult(error.message(), true);
+            } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
+                // The denial message is already generic and caller-safe, so it is safe to return to the MCP client.
+                LOG.warn("MCP tool '{}' call denied by authorization policy", spec.getName());
+                return new McpToolCallResult(denied.message(), true);
             } else {
                 AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
                 // never leak raw route exception messages to remote MCP clients
@@ -464,6 +482,26 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             if (release) {
                 spec.getConsumer().releaseExchange(exchange, false);
             }
+        }
+    }
+
+    /**
+     * Stamps the MCP caller identity onto the tool exchange as exchange properties the model cannot set: the raw
+     * transport principal, and the runtime-neutral name and roles when the engine could derive them. A tool route's
+     * {@link org.apache.camel.spi.AuthorizationPolicy} authorizes on these.
+     */
+    private static void stampCallerIdentity(Exchange exchange, McpToolCallContext context) {
+        Object principal = context.securityPrincipal();
+        if (principal != null) {
+            exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_PROPERTY, principal);
+        }
+        String name = context.principalName();
+        if (name != null && !name.isBlank()) {
+            exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_NAME_PROPERTY, name);
+        }
+        Collection<String> roles = context.principalRoles();
+        if (roles != null && !roles.isEmpty()) {
+            exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY, roles);
         }
     }
 

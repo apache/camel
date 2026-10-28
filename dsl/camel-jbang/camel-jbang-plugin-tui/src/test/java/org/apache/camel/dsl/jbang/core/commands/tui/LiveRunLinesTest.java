@@ -48,11 +48,11 @@ class LiveRunLinesTest {
         r.processors.add(processor("classpath:Other.java:12", 99, 99, 99));
         r.processors.add(processor(null, 99, 99, 99));
 
-        Map<Integer, SourceViewer.LiveLine> lines = LiveRunLines.of(List.of(r), "/home/me/app/OrderRoute.java");
+        Map<Integer, SourceLiveColumn.LiveLine> lines = LiveRunLines.of(List.of(r), "/home/me/app/OrderRoute.java");
         assertThat(lines).containsOnlyKeys(8, 10, 11);
-        assertThat(lines.get(8)).isEqualTo(new SourceViewer.LiveLine(10, 0, 5));
-        assertThat(lines.get(10)).isEqualTo(new SourceViewer.LiveLine(10, 0, 2));
-        assertThat(lines.get(11)).isEqualTo(new SourceViewer.LiveLine(10, 1, 4));
+        assertThat(lines.get(8)).isEqualTo(new SourceLiveColumn.LiveLine(10, 0, 5));
+        assertThat(lines.get(10)).isEqualTo(new SourceLiveColumn.LiveLine(10, 0, 2));
+        assertThat(lines.get(11)).isEqualTo(new SourceLiveColumn.LiveLine(10, 1, 4));
     }
 
     @Test

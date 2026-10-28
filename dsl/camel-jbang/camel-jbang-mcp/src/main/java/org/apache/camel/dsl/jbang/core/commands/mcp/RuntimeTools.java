@@ -16,9 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -29,6 +37,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -48,6 +57,21 @@ public class RuntimeTools {
 
     private static final String NAME_OR_PID_DESC
             = "Name or PID of the Camel process. Leave empty to auto-detect (works when exactly one Camel process is running)";
+
+    private static final Set<String> MEMORY_LEAK_COMMANDS = Set.of("start", "stop", "status", "query", "compare");
+    private static final int SINGLE_DEFAULT_DURATION = 60;
+    private static final int DUAL_DEFAULT_DURATION = 30;
+
+    private static final int RECEIVE_DEFAULT_TIMEOUT = 10;
+    private static final int RECEIVE_MAX_TIMEOUT = 60;
+    private static final long RECEIVE_POLL_MS = 200;
+    // the connector applies the stop and writes the status in one tick, and dumps the console every second tick
+    // (one tick is a second by default)
+    private static final long RECEIVE_SETTLE_DEFAULT_MS = 3000;
+
+    private final ConcurrentMap<Long, ReentrantLock> receiveLocks = new ConcurrentHashMap<>();
+    /** How long to wait after the stop for the process to confirm it and to write the last messages. */
+    long receiveSettleMs = RECEIVE_SETTLE_DEFAULT_MS;
 
     @Inject
     RuntimeService runtimeService;
@@ -120,7 +144,12 @@ public class RuntimeTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics.")
+          description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics."
+                        + " A route with mixedBodyKinds has steps reached with bodies of more than one kind, which need"
+                        + " attention: camel_runtime_route_structure with varied=true shows them. The checksum of a route"
+                        + " is the same in every run while the route is not changed: compare it with an earlier run to"
+                        + " tell whether a route changed, and match routes with generated ids by it; revision counts the"
+                        + " times a reload changed the route in this run.")
     public JsonObject camel_runtime_routes(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_routes", nameOrPid, Map.of());
@@ -195,7 +224,7 @@ public class RuntimeTools {
           description = "Get the source code of routes in the running Camel application.")
     public JsonObject camel_runtime_route_source(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Filter source files by name (supports wildcards)") String filter) {
+            @ToolArg(description = "Filter source files by name (supports wildcards)", required = false) String filter) {
         return delegateToRegistry("get_route_source", nameOrPid,
                 Map.of("filter", filter != null ? filter : "*"));
     }
@@ -204,8 +233,9 @@ public class RuntimeTools {
           description = "Dump route definitions in XML, YAML, or Java DSL format.")
     public JsonObject camel_runtime_route_dump(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Route ID to dump (use * for all routes)") String routeId,
-            @ToolArg(description = "Output format: xml, yaml, or java (default: yaml)") String format) {
+            @ToolArg(description = "Route ID or pattern such as orders* to dump (default * for all routes)",
+                     required = false) String routeId,
+            @ToolArg(description = "Output format: xml, yaml, or java (default: yaml)", required = false) String format) {
         Map<String, String> args = new HashMap<>();
         args.put("routeId", routeId != null ? routeId : "*");
         args.put("format", format != null ? format : "yaml");
@@ -213,12 +243,29 @@ public class RuntimeTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Show the route structure as a tree of processors.")
+          description = "Show the route structure as a tree of processors. With the message history on (camel run --dev),"
+                        + " a processor has bodyTypes: the body types it has been reached with, across the messages, and"
+                        + " bodyKinds: null, payload, data or collection. More than one kind needs attention: a step that"
+                        + " writes fails for data, one that reads fields fails for a payload. The routes tool counts them"
+                        + " per route (mixedBodyKinds). The checksum of each route says which version of the route the"
+                        + " facts of its lines are of.")
     public JsonObject camel_runtime_route_structure(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Route ID to inspect (use * for all routes)") String routeId) {
-        return delegateToRegistry("get_route_structure", nameOrPid,
-                Map.of("routeId", routeId != null ? routeId : "*"));
+            @ToolArg(description = "Route ID or pattern such as orders* to inspect (default * for all routes)",
+                     required = false) String routeId,
+            @ToolArg(description = "Only the overall structure, without the options and expressions (default false)",
+                     required = false) Boolean brief,
+            @ToolArg(description = "Only the steps reached with more than one body type (default false)",
+                     required = false) Boolean varied) {
+        Map<String, String> args = new HashMap<>();
+        args.put("routeId", routeId != null ? routeId : "*");
+        if (Boolean.TRUE.equals(brief)) {
+            args.put("brief", "true");
+        }
+        if (Boolean.TRUE.equals(varied)) {
+            args.put("varied", "true");
+        }
+        return delegateToRegistry("get_route_structure", nameOrPid, args);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -229,8 +276,9 @@ public class RuntimeTools {
                   for each EIP option and component endpoint option.""")
     public JsonObject camel_runtime_processor_detail(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Route ID to inspect (use * for all routes)") String routeId,
-            @ToolArg(description = "If true, enrich each processor's options with documentation from the Camel catalog") Boolean includeDocs) {
+            @ToolArg(description = "Route ID to inspect (use * for all routes)", required = false) String routeId,
+            @ToolArg(description = "If true, enrich each processor's options with documentation from the Camel catalog",
+                     required = false) Boolean includeDocs) {
         Map<String, String> args = new HashMap<>();
         args.put("routeId", routeId != null ? routeId : "*");
         if (includeDocs != null && includeDocs) {
@@ -239,6 +287,8 @@ public class RuntimeTools {
         return delegateToRegistry("get_processor_detail", nameOrPid, args);
     }
 
+    // one tool for the four commands, and the hint is per tool: destructive because stop and suspend take the route's
+    // consumer offline (the shared registry, with one tool per command, marks only stop_route destructive)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Control a route: start, stop, suspend, or resume it.")
     public JsonObject camel_runtime_route_control(
@@ -284,6 +334,64 @@ public class RuntimeTools {
         putIfNotBlank(args, "datasource", datasource);
         putIfNotBlank(args, "maxRows", maxRows);
         return delegateToRegistry("execute_sql", nameOrPid, args);
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Which runtime tool groups the Camel application needs, from what it has: sql (datasources, \
+                  SQL endpoints), tracing (OpenTelemetry, message tracing, Micrometer) and resilience (circuit \
+                  breakers). Returns the core tools, each group's tools with one line of guidance, and a fingerprint \
+                  that changes only when the groups do. A client for a small model offers the core tools plus these.""")
+    public JsonObject camel_runtime_tool_groups(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateToRegistry("get_tool_groups", nameOrPid, Map.of());
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  List the HTTP endpoints the running Camel application serves (Rest DSL and platform-http): \
+                  method, path, consumes/produces, route and OpenAPI operation, the server's base URL and the \
+                  contract. includeSpec=true adds the OpenAPI contract itself.""")
+    public JsonObject camel_runtime_http_endpoints(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Add the OpenAPI contract of a contract-first service (default false)",
+                     required = false) Boolean includeSpec) {
+        Map<String, String> args = new HashMap<>();
+        if (includeSpec != null && includeSpec) {
+            args.put("includeSpec", "true");
+        }
+        return delegateToRegistry("get_http_endpoints", nameOrPid, args);
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Send an HTTP request to the running Camel application's own server (localhost and its port) and \
+                  return the status, headers and body (cut at 6000 characters). Pass the path, e.g. /api/orders/1; \
+                  other hosts are refused. Use camel_runtime_http_endpoints for the paths it serves.""")
+    public JsonObject camel_runtime_http_request(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "GET (default), POST, PUT, PATCH, DELETE, HEAD or OPTIONS",
+                     required = false) String method,
+            @ToolArg(description = "The path with query, e.g. /api/orders?status=open") String path,
+            @ToolArg(description = "Headers as a JSON object or one 'name: value' per line",
+                     required = false) String headers,
+            @ToolArg(description = "The request body", required = false) String body,
+            @ToolArg(description = "How long to wait for the answer in seconds (default 30, at most 120)",
+                     required = false) Integer timeoutSeconds) {
+        if (path == null || path.isBlank()) {
+            throw new ToolCallException("path is required, e.g. /api/orders/1", null);
+        }
+        Map<String, String> args = new HashMap<>();
+        args.put("path", path);
+        putIfNotBlank(args, "method", method);
+        putIfNotBlank(args, "headers", headers);
+        if (body != null) {
+            args.put("body", body);
+        }
+        if (timeoutSeconds != null) {
+            args.put("timeoutSeconds", timeoutSeconds.toString());
+        }
+        return delegateToRegistry("http_request", nameOrPid, args);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -346,7 +454,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the startup recorder steps of the running Camel application: each step with duration, level \
-                  and type, for diagnosing a slow startup. Requires camel.main.startup-recorder=true.""")
+                  and type, for diagnosing a slow startup. Requires camel.main.startup-recorder=backlog.""")
     public JsonObject camel_runtime_startup_steps(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_startup_steps", nameOrPid, Map.of());
@@ -388,8 +496,9 @@ public class RuntimeTools {
     public JsonObject camel_runtime_send(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to send to (e.g., direct:myRoute, seda:queue)") String endpoint,
-            @ToolArg(description = "Message body to send") String body,
-            @ToolArg(description = "Message headers as key=value pairs separated by newlines") String headers) {
+            @ToolArg(description = "Message body to send", required = false) String body,
+            @ToolArg(description = "Message headers as key=value pairs separated by newlines",
+                     required = false) String headers) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
@@ -405,7 +514,9 @@ public class RuntimeTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
-          description = "Enable, disable, or dump message tracing for the running Camel application.")
+          description = """
+                  Enable, disable, or dump message tracing for the running Camel application. \
+                  camel_runtime_trace_dump returns the traced messages too, and is offered to read-only clients.""")
     public JsonObject camel_runtime_trace(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Action: enable, disable, or dump") String action) {
@@ -413,6 +524,15 @@ public class RuntimeTools {
             throw new ToolCallException("action is required (enable, disable, dump)", null);
         }
         return delegateToRegistry("trace_control", nameOrPid, Map.of("action", action));
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Dump the messages traced in the running Camel application (tracing must be enabled, \
+                  see camel_runtime_trace). Same answer as camel_runtime_trace with action dump.""")
+    public JsonObject camel_runtime_trace_dump(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateToRegistry("trace_control", nameOrPid, Map.of("action", "dump"));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -428,8 +548,10 @@ public class RuntimeTools {
                   and to external endpoints. Returns nodes and edges describing the route graph.""")
     public JsonObject camel_runtime_route_topology(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Include live metrics (message counts, throughput) on nodes and edges") Boolean metric,
-            @ToolArg(description = "Include external systems (databases, messaging brokers, etc.) as nodes") Boolean external) {
+            @ToolArg(description = "Include live metrics (message counts, throughput) on nodes and edges",
+                     required = false) Boolean metric,
+            @ToolArg(description = "Include external systems (databases, messaging brokers, etc.) as nodes",
+                     required = false) Boolean external) {
         Map<String, String> args = new HashMap<>();
         args.put("metric", metric == null || metric ? "true" : "false");
         args.put("external", external == null || external ? "true" : "false");
@@ -458,17 +580,15 @@ public class RuntimeTools {
                   with tools like Eclipse MAT, VisualVM, or jhat. The dump is written to the process working directory.""")
     public JsonObject camel_runtime_heap_dump(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "File name for the heap dump (without .hprof extension). Defaults to heap-dump-<timestamp>") String name,
-            @ToolArg(description = "Whether to dump only live objects (default true). Live dumps trigger a GC first") String live) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "heap-dump", root -> {
-            if (name != null && !name.isBlank()) {
-                root.put("name", name);
-            }
-            if (live != null && !live.isBlank()) {
-                root.put("live", live);
-            }
-        });
+            @ToolArg(description = "File name for the heap dump, without a directory and without the .hprof extension. "
+                                   + "Defaults to heap-dump-<timestamp>",
+                     required = false) String name,
+            @ToolArg(description = "Whether to dump only live objects (default true). Live dumps trigger a GC first",
+                     required = false) String live) {
+        Map<String, String> args = new HashMap<>();
+        putIfNotBlank(args, "name", name);
+        putIfNotBlank(args, "live", live);
+        return delegateToRegistry("write_heap_dump", nameOrPid, args);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
@@ -477,33 +597,48 @@ public class RuntimeTools {
                   JFR samples objects that survive multiple GC cycles and captures their reference chains back to GC roots. \
                   This is lightweight and safe for production, but shows sampled sizes not total heap — \
                   use values to compare classes relative to each other and spot trends, not as absolute numbers. \
-                  For deep analysis, use a full heap dump (jmap -dump:live) with tools like Eclipse MAT or jhat. \
-                  Use command 'start' to begin recording, 'stop' to stop and get results, \
-                  'status' to check recording state, and 'query' to retrieve cached results from the last recording. \
-                  Use mode 'dual' with 'start' to run two sequential recordings (Xs then 2Xs) and automatically \
-                  compare trends — returns growth ratios and trend classifications (growing, stable, shrinking, new, gone). \
+                  For deep analysis, use a full heap dump (camel_runtime_heap_dump) with tools like Eclipse MAT. \
+                  Use command 'start' to begin a recording (it stops by itself after the duration), 'status' to check \
+                  it, 'query' (or 'stop' to end it early) to get the results, and 'compare' to compare the last two \
+                  recordings: growth ratios and trends (growing, stable, shrinking, new, gone). \
+                  For a trend, start a recording of X seconds, then one of 2X seconds, then compare. \
+                  mode 'dual' with 'start' does all of this in one call, which blocks for about three times the \
+                  duration (90 s with the default 30): use it only when the client waits that long. \
                   Entries with lowConfidence=true have unreliable growth percentages due to low sample counts or \
                   sample counts that diverge significantly between runs — recommend a longer recording duration.""")
     public JsonObject camel_runtime_memory_leak(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Command: start, stop, status, or query") String command,
-            @ToolArg(description = "Recording duration in seconds (only for start command, default 60, use 0 for manual stop)") String duration,
-            @ToolArg(description = "Recording mode: dual (default, two recordings at Xs and 2Xs with trend comparison) or single (one recording)") String mode,
-            @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)") String stacktrace,
-            @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise. Default 1024 (1KB) in dual mode") String minSize) {
-        if (command == null || command.isBlank()) {
-            throw new ToolCallException("command is required (start, stop, status, or query)", null);
+            @ToolArg(description = "Command: start, stop, status, query, or compare") String command,
+            @ToolArg(description = "Recording duration in seconds, for start (default 60, use 0 to stop it manually; "
+                                   + "in dual mode default 30, the second recording takes twice as long)",
+                     required = false) String duration,
+            @ToolArg(description = "Recording mode: single (default, start returns at once) or dual "
+                                   + "(two recordings at Xs and 2Xs with trend comparison, the call blocks until done)",
+                     required = false) String mode,
+            @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)",
+                     required = false) String stacktrace,
+            @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise. Default 1024 (1KB) in dual mode",
+                     required = false) String minSize) {
+        String cmd = command != null ? command.trim().toLowerCase(Locale.ROOT) : "";
+        if (!MEMORY_LEAK_COMMANDS.contains(cmd)) {
+            throw new ToolCallException("command is required: start, stop, status, query, or compare", null);
         }
+        boolean dual = mode != null && "dual".equalsIgnoreCase(mode.trim());
+        if (!dual && mode != null && !mode.isBlank() && !"single".equalsIgnoreCase(mode.trim())) {
+            throw new ToolCallException("mode must be single or dual, got: " + mode, null);
+        }
+        Integer seconds = parseDuration(duration);
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
 
-        if ("start".equals(command) && "dual".equalsIgnoreCase(mode)) {
-            return doDualJfrRecording(p.pid(), duration, stacktrace, minSize);
+        if ("start".equals(cmd) && dual) {
+            return doDualJfrRecording(p.pid(), seconds == null || seconds <= 0 ? DUAL_DEFAULT_DURATION : seconds,
+                    stacktrace, minSize);
         }
 
         return runtimeService.executeAction(p.pid(), "jfr-memory-leak", root -> {
-            root.put("command", command);
-            if ("start".equals(command) && duration != null && !duration.isBlank()) {
-                root.put("duration", duration);
+            root.put("command", cmd);
+            if ("start".equals(cmd)) {
+                root.put("duration", String.valueOf(seconds != null ? seconds : SINGLE_DEFAULT_DURATION));
             }
             if (stacktrace != null) {
                 root.put("stacktrace", stacktrace);
@@ -514,16 +649,25 @@ public class RuntimeTools {
         });
     }
 
-    private JsonObject doDualJfrRecording(long pid, String duration, String stacktrace, String minSize) {
-        int dur = 30;
-        if (duration != null && !duration.isBlank()) {
-            dur = Integer.parseInt(duration);
+    static Integer parseDuration(String duration) {
+        if (duration == null || duration.isBlank()) {
+            return null;
         }
-        if (dur <= 0) {
-            dur = 30;
+        try {
+            int seconds = Integer.parseInt(duration.trim());
+            if (seconds < 0) {
+                throw new NumberFormatException();
+            }
+            return seconds;
+        } catch (NumberFormatException e) {
+            throw new ToolCallException(
+                    "duration must be a whole number of seconds (0 or more), got: " + duration,
+                    null);
         }
-        int dur1 = dur;
-        int dur2 = dur * 2;
+    }
+
+    private JsonObject doDualJfrRecording(long pid, int dur1, String stacktrace, String minSize) {
+        int dur2 = dur1 * 2;
 
         // run 1
         JsonObject r1 = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
@@ -597,50 +741,265 @@ public class RuntimeTools {
         });
     }
 
+    /**
+     * Waits until the recording stopped by itself: sleeps for the time the console says is left, then checks again (a
+     * recording ends a little after its duration, as it is parsed).
+     */
     private void waitForJfrRecordingComplete(long pid, int dur) {
         long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
         while (System.currentTimeMillis() < deadline) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new ToolCallException("Interrupted while waiting for recording", null);
-            }
             JsonObject status = runtimeService.executeAction(pid, "jfr-memory-leak", root -> {
                 root.put("command", "status");
             });
-            if (status != null && !"recording".equals(status.getString("status"))) {
-                break;
+            if (status == null || !"recording".equals(status.getString("status"))) {
+                return;
+            }
+            long remaining = status.getLongOrDefault("remainingMs", 1000L);
+            long wait = Math.min(Math.max(remaining, 500L), Math.max(1L, deadline - System.currentTimeMillis()));
+            try {
+                TimeUnit.MILLISECONDS.sleep(wait);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new ToolCallException("Interrupted while waiting for recording", null);
             }
         }
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
-                  Get the message history trace of the last completed exchange. \
-                  This is always captured (no need to enable tracing) and shows the single most recent exchange \
-                  with its route path, processors visited, headers, body, and timing.""")
+                  Get the message history trace of the last completed exchange, with its route path, processors \
+                  visited, headers, body, and timing. Recorded when message history is on and the tracer is \
+                  enabled or on standby: the default of camel run (dev profile); otherwise set \
+                  camel.main.message-history=true and camel.trace.standby=true.""")
     public JsonObject camel_runtime_history(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_history", nameOrPid, Map.of());
     }
 
-    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
-                  Receive (poll) a message from a Camel endpoint in the running application. \
-                  This is the complement to camel_runtime_send — it consumes one message from the endpoint.""")
+                  Receive (consume) a message from an endpoint of the running application, the complement of \
+                  camel_runtime_send: starts a consumer on the endpoint, waits for a message, returns it and stops \
+                  the consumer again. Returns one message by default; limit returns up to that many, and received \
+                  counts every message the consumer took, returned or not. The consumer competes with the routes \
+                  that consume the endpoint, so the messages it takes do not reach them (a queue or topic message \
+                  is gone); one call at a time per process. To look at queued messages without taking them use \
+                  camel_runtime_browse.""")
     public JsonObject camel_runtime_receive(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Endpoint URI to receive from") String endpoint) {
+            @ToolArg(description = "Endpoint URI to receive from, or a pattern matching an endpoint the application "
+                                   + "sends to, e.g. seda:orders or kafka*") String endpoint,
+            @ToolArg(description = "How long to wait for a message in seconds (default 10, at most 60)",
+                     required = false) Integer timeoutSeconds,
+            @ToolArg(description = "How many of the messages the consumer takes to return (default 1, at least 1)",
+                     required = false) Integer limit) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
-        // receive is MCP-only (no ToolRegistry equivalent) — call RuntimeService directly
+        if (limit != null && limit < 1) {
+            throw new ToolCallException("limit must be at least 1: " + limit, null);
+        }
+        int timeout = timeoutSeconds == null || timeoutSeconds <= 0
+                ? RECEIVE_DEFAULT_TIMEOUT : Math.min(timeoutSeconds, RECEIVE_MAX_TIMEOUT);
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return runtimeService.executeAction(p.pid(), "receive", root -> {
+        return receive(p.pid(), endpoint, timeout * 1000L, limit != null ? limit : 1);
+    }
+
+    /**
+     * Enables the receive console of the process for the endpoint, waits for the messages the CLI connector writes to
+     * the receive file, and disables it again whatever happens. One call at a time per process: the console is shared,
+     * and disabling it stops every consumer it runs.
+     */
+    JsonObject receive(long pid, String endpoint, long timeoutMs, int limit) {
+        ReentrantLock lock = receiveLocks.computeIfAbsent(pid, k -> new ReentrantLock());
+        boolean locked;
+        try {
+            locked = lock.tryLock(timeoutMs, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ToolCallException("Interrupted while waiting for a message", null);
+        }
+        if (!locked) {
+            throw new ToolCallException(
+                    "Another camel_runtime_receive call is receiving from this process (the receive console is shared,"
+                                        + " and stopping it would stop that call's consumer): call again when it has finished",
+                    null);
+        }
+        try {
+            return receiveExclusively(pid, endpoint, timeoutMs, limit);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private JsonObject receiveExclusively(long pid, String endpoint, long timeoutMs, int limit) {
+        JsonObject state = runtimeService.readStatusSection(pid, "receive");
+        Collection<?> active = state.getCollection("endpoints");
+        if (Boolean.TRUE.equals(state.getBoolean("enabled")) && active != null && !active.isEmpty()) {
+            // disabling would stop those consumers too
+            throw new ToolCallException(
+                    "The process is already receiving from " + active
+                                        + " (camel cmd receive); stop that first with: camel cmd receive --action=stop",
+                    null);
+        }
+        // the console numbers every message it takes (uid) from one counter, which the status reports as total:
+        // the messages above the count before this call are the ones its consumer takes
+        long startTotal = longValue(state, "total", 0);
+        long offset = runtimeService.receiveFileSize(pid);
+        JsonObject started = runtimeService.executeAction(pid, "receive", root -> {
             root.put("enabled", "true");
             root.put("endpoint", endpoint);
         });
+        List<JsonObject> messages;
+        try {
+            messages = awaitMessages(pid, endpoint, started, offset, startTotal, timeoutMs);
+        } catch (RuntimeException e) {
+            try {
+                stopReceiving(pid);
+            } catch (RuntimeException stop) {
+                throw new ToolCallException(
+                        message(e) + ". The consumer could not be stopped (" + message(stop)
+                                            + "): stop it with: camel cmd receive --action=stop",
+                        e);
+            }
+            throw e;
+        }
+        JsonObject answer = new JsonObject();
+        answer.put("endpoint", started.getString("url"));
+        Long taken = null;
+        try {
+            stopReceiving(pid);
+            // the connector writes the queue of the console every second tick, so the messages taken between the dump
+            // read above and the stop come later: the status after the stop says how many there are
+            taken = settle(pid, offset, startTotal, messages);
+        } catch (RuntimeException e) {
+            // the messages are taken from the endpoint already: return them, and say the consumer may still run
+            answer.put("warning", "The consumer could not be stopped (" + message(e)
+                                  + ") and may still take messages from the endpoint: stop it with: "
+                                  + "camel cmd receive --action=stop");
+        }
+        long received = taken != null ? taken : messages.size();
+        int returned = (int) Math.min(limit, messages.size());
+        answer.put("received", received);
+        answer.put("messages", messages.subList(0, returned));
+        if (received == 0) {
+            answer.put("note", "No message arrived within " + (timeoutMs / 1000) + " seconds");
+            return answer;
+        }
+        long notReturned = received - returned;
+        StringBuilder note = new StringBuilder();
+        if (notReturned > 0) {
+            answer.put("notReturned", notReturned);
+            note.append(notReturned).append(" more message(s) were taken from the endpoint by this call and are not")
+                    .append(" returned");
+            if (messages.size() > returned) {
+                note.append(" (raise limit to see them)");
+            }
+            if (received > messages.size()) {
+                note.append("; ").append(received - messages.size())
+                        .append(" of them were not written by the process within the wait after the stop");
+            }
+            note.append('.');
+        }
+        if (taken == null) {
+            note.append(" The process did not confirm the stop, so received may be short of what the consumer took.");
+        }
+        if (!note.isEmpty()) {
+            answer.put("note", note.toString().trim());
+        }
+        return answer;
+    }
+
+    /**
+     * Waits for the first dump of the receive file that holds a message of this call, or for the timeout; returns the
+     * messages found (none on timeout).
+     */
+    private List<JsonObject> awaitMessages(
+            long pid, String endpoint, JsonObject started, long offset, long startTotal, long timeoutMs) {
+        if (started.getString("error") != null) {
+            throw new ToolCallException("Cannot receive from " + endpoint + ": " + started.getString("error"), null);
+        }
+        if (started.getString("url") == null) {
+            throw new ToolCallException(
+                    "No endpoint matches " + endpoint
+                                        + " (a pattern matches the endpoints the application sends to; "
+                                        + "camel_runtime_endpoints lists them)",
+                    null);
+        }
+        StopWatch watch = new StopWatch();
+        while (true) {
+            List<JsonObject> messages = ownMessages(pid, offset, startTotal, null);
+            if (!messages.isEmpty() || watch.taken() >= timeoutMs) {
+                return messages;
+            }
+            sleep();
+        }
+    }
+
+    /**
+     * After the stop: waits until the status of the process shows the console disabled, so its total is the number of
+     * messages this call took, and until the receive file holds them (the connector dumps the queue every second tick).
+     * Returns the number taken, or null when the process did not confirm the stop within the wait; the list of messages
+     * is completed with the ones dumped after the stop.
+     */
+    private Long settle(long pid, long offset, long startTotal, List<JsonObject> messages) {
+        StopWatch watch = new StopWatch();
+        Long taken = null;
+        while (true) {
+            JsonObject state = runtimeService.readStatusSection(pid, "receive");
+            if (Boolean.FALSE.equals(state.getBoolean("enabled")) && state.get("total") != null) {
+                long endTotal = longValue(state, "total", startTotal);
+                taken = Math.max(endTotal - startTotal, messages.size());
+                List<JsonObject> all = ownMessages(pid, offset, startTotal, endTotal);
+                if (all.size() >= messages.size()) {
+                    messages.clear();
+                    messages.addAll(all);
+                }
+                if (messages.size() >= taken) {
+                    return taken;
+                }
+            }
+            if (watch.taken() >= receiveSettleMs) {
+                return taken;
+            }
+            sleep();
+        }
+    }
+
+    /** The messages of the receive file after the offset that this call's consumer took: uid above the start count. */
+    private List<JsonObject> ownMessages(long pid, long offset, long startTotal, Long endTotal) {
+        List<JsonObject> messages = new ArrayList<>(runtimeService.readReceivedMessages(pid, offset));
+        messages.removeIf(m -> {
+            Object uid = m.get("uid");
+            if (!(uid instanceof Number n)) {
+                return false;
+            }
+            return n.longValue() <= startTotal || endTotal != null && n.longValue() > endTotal;
+        });
+        return messages;
+    }
+
+    /** An action without an endpoint stops the consumers of the receive console. */
+    private void stopReceiving(long pid) {
+        runtimeService.executeAction(pid, "receive", null);
+    }
+
+    private static void sleep() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(RECEIVE_POLL_MS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ToolCallException("Interrupted while waiting for a message", null);
+        }
+    }
+
+    private static long longValue(JsonObject json, String key, long defaultValue) {
+        return json.get(key) instanceof Number n ? n.longValue() : defaultValue;
+    }
+
+    /** The message of an exception, or its name when it has none. */
+    private static String message(Throwable e) {
+        return e.getMessage() != null ? e.getMessage() : e.toString();
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -648,7 +1007,7 @@ public class RuntimeTools {
     public JsonObject camel_runtime_browse(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to browse") String endpoint,
-            @ToolArg(description = "Maximum number of messages to return (default: 50)") Integer limit) {
+            @ToolArg(description = "Maximum number of messages to return (default: 50)", required = false) Integer limit) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }

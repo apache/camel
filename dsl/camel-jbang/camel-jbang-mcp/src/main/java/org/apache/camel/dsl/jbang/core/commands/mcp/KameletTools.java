@@ -20,16 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletModel;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletOptionModel;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * MCP Tools for querying the Kamelet Catalog using Quarkus MCP Server.
@@ -37,6 +43,28 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 @McpSecured
 @ApplicationScoped
 public class KameletTools {
+
+    @Inject
+    CatalogService catalogService;
+
+    /**
+     * Cache of loaded Kamelet catalogs keyed by version string. Avoids recreating a new downloader and class-loader on
+     * every request (CAMEL-25640).
+     */
+    private final ConcurrentHashMap<String, Map<String, Object>> kameletCache = new ConcurrentHashMap<>();
+
+    /**
+     * Loads the Kamelet catalog for {@code version}, returning a cached instance when available.
+     */
+    private Map<String, Object> loadKamelets(String version) throws Exception {
+        Map<String, Object> cached = kameletCache.get(version);
+        if (cached != null) {
+            return cached;
+        }
+        Map<String, Object> loaded = KameletCatalogHelper.loadKamelets(version, null);
+        Map<String, Object> existing = kameletCache.putIfAbsent(version, loaded);
+        return existing != null ? existing : loaded;
+    }
 
     /**
      * Tool to list available Kamelets.
@@ -46,20 +74,23 @@ public class KameletTools {
                         "Returns kamelet name, type (source, sink, action), support level, and description. " +
                         "Use filter to search by name or description, type to filter by category.")
     public KameletListResult camel_catalog_kamelets(
-            @ToolArg(description = "Filter kamelets by name or description (case-insensitive substring match)") String filter,
-            @ToolArg(description = "Filter by type: source, sink, or action") String type,
-            @ToolArg(description = "Maximum number of results to return (default: 50)") Integer limit,
-            @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.") String kameletsVersion) {
+            @ToolArg(description = "Filter kamelets by name or description (case-insensitive substring match)",
+                     required = false) String filter,
+            @ToolArg(description = "Filter by type: source, sink, or action", required = false) String type,
+            @ToolArg(description = "Maximum number of results to return (default: 50)", required = false) Integer limit,
+            @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.",
+                     required = false) String kameletsVersion) {
 
-        int maxResults = limit != null ? limit : 50;
+        int maxResults = limit != null && limit > 0 ? limit : 50;
 
         try {
             String version = kameletsVersion != null && !kameletsVersion.isBlank()
                     ? kameletsVersion : VersionHelper.extractKameletsVersion();
 
-            Map<String, Object> kamelets = KameletCatalogHelper.loadKamelets(version, null);
+            Map<String, Object> kamelets = loadKamelets(version);
 
-            List<KameletInfo> result = new ArrayList<>();
+            // Build the full filtered list first, then sort, then limit — never limit before sorting
+            List<KameletInfo> all = new ArrayList<>();
             for (Object o : kamelets.values()) {
                 KameletModel km = KameletCatalogHelper.createModel(o, false);
 
@@ -79,17 +110,16 @@ public class KameletTools {
                     }
                 }
 
-                result.add(new KameletInfo(km.name, km.type, km.supportLevel, km.description));
-
-                if (result.size() >= maxResults) {
-                    break;
-                }
+                all.add(new KameletInfo(km.name, km.type, km.supportLevel, km.description));
             }
 
-            // sort by name
-            result.sort((a, b) -> a.name().compareToIgnoreCase(b.name()));
+            // sort the complete filtered set by name, then apply limit
+            all.sort((a, b) -> a.name().compareToIgnoreCase(b.name()));
 
-            return new KameletListResult(result.size(), version, result);
+            int total = all.size();
+            List<KameletInfo> result = all.size() > maxResults ? all.subList(0, maxResults) : all;
+
+            return new KameletListResult(result.size(), total, version, result);
         } catch (Throwable e) {
             throw new ToolCallException(
                     "Failed to list kamelets (" + e.getClass().getName() + "): " + e.getMessage(), null);
@@ -104,7 +134,8 @@ public class KameletTools {
                         + "dependencies, and usage information.")
     public KameletDetailResult camel_catalog_kamelet_doc(
             @ToolArg(description = "Kamelet name (e.g., aws-s3-source, kafka-sink, log-action)") String kamelet,
-            @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.") String kameletsVersion) {
+            @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.",
+                     required = false) String kameletsVersion) {
 
         if (kamelet == null || kamelet.isBlank()) {
             throw new ToolCallException("Kamelet name is required", null);
@@ -114,10 +145,12 @@ public class KameletTools {
             String version = kameletsVersion != null && !kameletsVersion.isBlank()
                     ? kameletsVersion : VersionHelper.extractKameletsVersion();
 
-            KameletModel km = KameletCatalogHelper.loadKameletModel(kamelet, version, null);
-            if (km == null) {
+            Map<String, Object> kamelets = loadKamelets(version);
+            Object k = kamelets != null ? kamelets.get(kamelet) : null;
+            if (k == null) {
                 throw new ToolCallException("Kamelet not found: " + kamelet, null);
             }
+            KameletModel km = KameletCatalogHelper.createModel(k, true);
 
             List<KameletOptionInfo> options = new ArrayList<>();
             if (km.properties != null) {
@@ -133,31 +166,57 @@ public class KameletTools {
                 }
             }
 
+            // the body each data type takes or gives, as its data type transformer in the catalog says (CAMEL-25928)
+            List<KameletDataTypeInfo> dataTypes = new ArrayList<>();
+            if (km.dataTypes != null && !km.dataTypes.isEmpty()) {
+                JsonObject doc = CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + version),
+                        catalogService != null ? catalogService.getDefaultCatalog() : null);
+                if (doc.get("dataTypes") instanceof JsonArray array) {
+                    for (Object o : array) {
+                        JsonObject dt = (JsonObject) o;
+                        dataTypes.add(new KameletDataTypeInfo(
+                                dt.getString("direction"), dt.getString("name"), dt.getString("format"),
+                                dt.getBooleanOrDefault("default", false), dt.getString("mediaType"),
+                                dt.getString("description"), dt.getString("body")));
+                    }
+                }
+            }
+
             return new KameletDetailResult(
                     km.name,
                     km.type,
                     km.supportLevel,
                     km.description,
                     options,
-                    km.dependencies);
+                    km.dependencies,
+                    dataTypes.isEmpty() ? null : dataTypes);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
             throw new ToolCallException(
-                    "Kamelet not found: " + kamelet + " (" + e.getClass().getName() + "): " + e.getMessage(), null);
+                    "Failed to load kamelet '" + kamelet + "' (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
     // Result record classes for Jackson serialization
 
-    public record KameletListResult(int count, String kameletsVersion, List<KameletInfo> kamelets) {
+    /** Includes {@code total} (all matching kamelets) alongside {@code count} (the returned subset). */
+    public record KameletListResult(int count, int total, String kameletsVersion, List<KameletInfo> kamelets) {
     }
 
     public record KameletInfo(String name, String type, String supportLevel, String description) {
     }
 
     public record KameletDetailResult(String name, String type, String supportLevel, String description,
-            List<KameletOptionInfo> options, List<String> dependencies) {
+            List<KameletOptionInfo> options, List<String> dependencies, List<KameletDataTypeInfo> dataTypes) {
+    }
+
+    /**
+     * A data type of the Kamelet: in, out or error, its data type transformer (format), whether Camel uses it by
+     * default, and the body it takes (in) or gives (out).
+     */
+    public record KameletDataTypeInfo(String direction, String name, String format, boolean defaultType,
+            String mediaType, String description, String body) {
     }
 
     public record KameletOptionInfo(String name, String description, String type, boolean required,

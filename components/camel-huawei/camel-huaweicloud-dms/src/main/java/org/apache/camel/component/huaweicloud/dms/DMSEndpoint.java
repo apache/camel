@@ -27,6 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.huaweicloud.dms.models.DmsRegion;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,35 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-dms", title = "Huawei Distributed Message Service (DMS)",
              syntax = "hwcloud-dms:operation",
              category = { Category.CLOUD }, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "createInstance",
+                                                         carriers = { Carrier.TEXT, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "updateInstance",
+                                                         carriers = { Carrier.TEXT, Carrier.POJO }) },
+                                  description = "Not used by deleteInstance, listInstances and queryInstance, which take the"
+                                                + " instance id and the engine from the options or exchange properties such as"
+                                                + " CamelHwCloudDmsInstanceId. createInstance takes a CreateInstanceRequestBody or"
+                                                + " its JSON as text, and with another body, JSON as bytes or a stream too, creates"
+                                                + " the instance from the options. updateInstance needs an UpdateInstanceRequestBody"
+                                                + " or its JSON as text: another body fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "createInstance",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "listInstances",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "queryInstance",
+                                                          carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String") },
+                                   description = "The JSON of the response as text: the id of the new instance for"
+                                                 + " createInstance, the array of the instances for listInstances and the instance"
+                                                 + " for queryInstance. Unchanged after deleteInstance and updateInstance, which set"
+                                                 + " the CamelHwCloudDmsInstanceDeleted or CamelHwCloudDmsInstanceUpdated exchange"
+                                                 + " property to true. The CamelHwCloudDmsOperation exchange property overrides the"
+                                                 + " operation"))
 public class DMSEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")

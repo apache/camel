@@ -16,21 +16,27 @@
  */
 package org.apache.camel.component.github2.producer;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Base64;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.github2.GitHub2Constants;
 import org.apache.camel.component.github2.GitHub2Endpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.kohsuke.github.GHBlob;
-import org.kohsuke.github.GHCommit;
+import org.kohsuke.github.GHContent;
 
 /**
- * Producer endpoint that gets a file from a commit. The endpoint requires the "CamelGitHubCommitSha" header,
- * identifying the commit SHA. The message body should contain the file path within the repository.
+ * Producer endpoint that gets the content of a file at a commit. The "CamelGitHubCommitSha" header is the commit id (40
+ * hexadecimal characters), and the "CamelGitHubFilePath" header, or else the message body, is the path of the file in
+ * the repository. The file is read from the tree of that commit, and the body is set to its content as text.
  */
 public class GetCommitFileProducer extends AbstractGitHub2Producer {
+
+    private static final Pattern COMMIT_ID = Pattern.compile("[0-9a-fA-F]{40}");
 
     private final String encoding;
 
@@ -43,35 +49,59 @@ public class GetCommitFileProducer extends AbstractGitHub2Producer {
     public void process(Exchange exchange) throws Exception {
         String sha = exchange.getIn().getHeader(GitHub2Constants.GITHUB_COMMIT_SHA, String.class);
         if (ObjectHelper.isEmpty(sha)) {
-            sha = exchange.getIn().getBody(String.class);
+            throw new IllegalArgumentException(
+                    "The getCommitFile operation needs the " + GitHub2Constants.GITHUB_COMMIT_SHA
+                                               + " header with the commit id");
+        }
+        if (!COMMIT_ID.matcher(sha).matches()) {
+            throw new IllegalArgumentException(
+                    "The " + GitHub2Constants.GITHUB_COMMIT_SHA
+                                               + " header must be a commit id of 40 hexadecimal characters, but was: "
+                                               + sha);
         }
 
-        if (ObjectHelper.isEmpty(sha)) {
-            throw new IllegalArgumentException("Commit SHA must be specified");
+        String path = exchange.getIn().getHeader(GitHub2Constants.GITHUB_FILE_PATH, String.class);
+        if (ObjectHelper.isEmpty(path)) {
+            path = exchange.getIn().getBody(String.class);
+        }
+        if (ObjectHelper.isEmpty(path)) {
+            throw new InvalidPayloadException(
+                    exchange, String.class, exchange.getIn(),
+                    "set the " + GitHub2Constants.GITHUB_FILE_PATH + " header or the body to the path of the file");
         }
 
-        GHCommit commit = getRepository().getCommit(sha);
-        GHBlob blob = null;
-
-        // Get the tree and find the file
-        // For simplicity, we get the blob SHA from the exchange body if it's a file path
-        String filePath = exchange.getIn().getBody(String.class);
-        if (filePath != null && !filePath.equals(sha)) {
-            // Try to get the file content from the commit
-            blob = getRepository().getBlob(sha);
-        } else {
-            blob = getRepository().getBlob(sha);
+        for (String segment : path.split("/")) {
+            if (".".equals(segment) || "..".equals(segment)) {
+                throw new IllegalArgumentException(
+                        "The path of the file must be a path in the tree of the commit, without . or .. segments, but was: "
+                                                   + path);
+            }
         }
 
-        String content = null;
-        if (blob != null) {
-            String encodedContent = blob.getContent();
-            Charset charset = encoding != null ? Charset.forName(encoding) : Charset.defaultCharset();
-            content = new String(Base64.getDecoder().decode(encodedContent), charset);
+        // the file at its path in the tree of the commit
+        GHContent file = getRepository().getFileContent(path, sha);
+        if (!file.isFile()) {
+            throw new IllegalArgumentException(
+                    "The path " + path + " at commit " + sha + " is not a file but a " + file.getType());
         }
+
+        Charset charset = encoding != null ? Charset.forName(encoding) : Charset.defaultCharset();
+        String content = new String(readContent(file), charset);
 
         // copy the header of in message to the out message
         exchange.getMessage().copyFrom(exchange.getIn());
         exchange.getMessage().setBody(content);
+    }
+
+    @SuppressWarnings("deprecation")
+    private byte[] readContent(GHContent file) throws IOException {
+        if ("base64".equals(file.getEncoding())) {
+            // GitHub wraps the lines of the base64 content
+            return Base64.getMimeDecoder().decode(file.getEncodedContent());
+        }
+        // the contents API gives no content for a file of more than 1 MB: read its blob
+        try (InputStream is = getRepository().getBlob(file.getSha()).read()) {
+            return is.readAllBytes();
+        }
     }
 }

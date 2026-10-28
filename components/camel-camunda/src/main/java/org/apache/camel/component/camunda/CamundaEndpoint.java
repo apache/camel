@@ -24,6 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.camunda.internal.CamundaService;
 import org.apache.camel.component.camunda.internal.OperationName;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -39,6 +42,33 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "camunda:operationName",
              category = { Category.WORKFLOW, Category.SAAS },
              headersClass = CamundaConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "org.apache.camel.component.camunda.model.JobWorkerMessage",
+                                   byOption = @BodyType.When(option = "formatJSON", value = "true", carriers = Carrier.TEXT,
+                                                             javaType = "java.lang.String"),
+                                   description = "The job of the worker: a JobWorkerMessage with its key, type, custom"
+                                                 + " headers and variables (formatJSON: the same as JSON text). The"
+                                                 + " CamelCamundaJobKey header has the key of the job"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     description = "When the route ends the job is completed: a Map body gives its entries"
+                                                   + " as the output variables, another body completes it without"
+                                                   + " variables. A route that fails fails the job"),
+           producerIn = @BodyType(value = {
+                   Carrier.POJO, Carrier.TEXT, Carrier.MAP, Carrier.BYTES, Carrier.STREAM,
+                   Carrier.NULL },
+                                  description = "The request of the operation: a request object of"
+                                                + " org.apache.camel.component.camunda.model, or the same as JSON text with"
+                                                + " snake_case names. The job operations also take the JobWorkerMessage, or"
+                                                + " with the CamelCamundaJobKey header a Map of the variables or no body;"
+                                                + " deployResource takes text, bytes or a stream of the resource with the"
+                                                + " CamelCamundaResourceName header. JSON as bytes or a stream fails: convert"
+                                                + " it to text first"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = @BodyType.When(option = "formatJSON", value = "true", carriers = Carrier.TEXT,
+                                                             javaType = "java.lang.String"),
+                                   description = "The response of the operation: a ProcessResponse, MessageResponse,"
+                                                 + " JobResponse or DeploymentResponse, with success false and the error when"
+                                                 + " the call failed (formatJSON: the same as JSON text)"))
 public class CamundaEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(label = "common", description = "The operation to use",

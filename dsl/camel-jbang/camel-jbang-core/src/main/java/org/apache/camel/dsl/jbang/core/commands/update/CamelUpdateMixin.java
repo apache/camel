@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusExtensionRegistryMixin;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -100,8 +101,8 @@ public class CamelUpdateMixin {
             return MavenGav.fromCoordinates(quarkusMavenPluginGroupId, "quarkus-maven-plugin", quarkusMavenPluginVersion, "jar",
                     null);
         } else if (!mavenResolver.download()) {
-            throw new IllegalStateException(
-                    "Could not find default Quarkus Platform Maven BOM coordinates without --download true. You may want to either pass --download true or set --quarkus-version");
+            throw CliException.usage("--quarkusMavenPluginVersion is required with --download=false, as the version of "
+                                     + "the Quarkus Maven plugin is looked up in the Quarkus Extension Registry");
         } else {
             QuarkusPlatformBom result
                     = QuarkusHelper.findQuarkusPlatformBom(

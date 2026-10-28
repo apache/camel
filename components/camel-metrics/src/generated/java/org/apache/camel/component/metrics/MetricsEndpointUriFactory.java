@@ -50,7 +50,7 @@ public class MetricsEndpointUriFactory extends org.apache.camel.support.componen
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "metricsType", null, true, copy);
         uri = buildPathParameter(syntax, uri, "metricsName", null, true, copy);

@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-semantic-typesafe-ai/src/main/docs/semantic-typesafe-ai.adoc

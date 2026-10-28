@@ -59,11 +59,12 @@ public class SearchProducer extends DefaultProducer {
             throw new CamelExchangeException("No keywords to use for query", exchange);
         }
 
+        // a Query is immutable: every method returns a new Query
         Query query = Query.of(queryKeywords);
 
         // filter of older tweets
         if (endpoint.getProperties().isFilterOld() && myLastId != 0) {
-            query.sinceId(myLastId);
+            query = query.sinceId(myLastId);
         }
 
         // since id
@@ -72,13 +73,13 @@ public class SearchProducer extends DefaultProducer {
             sinceId = endpoint.getProperties().getSinceId();
         }
         if (ObjectHelper.isNotEmpty(sinceId)) {
-            query.sinceId(sinceId);
+            query = query.sinceId(sinceId);
         }
 
         // max id
         Long maxId = exchange.getIn().getHeader(TwitterConstants.TWITTER_MAXID, Long.class);
         if (ObjectHelper.isNotEmpty(maxId)) {
-            query.maxId(maxId);
+            query = query.maxId(maxId);
         }
 
         // language
@@ -88,7 +89,7 @@ public class SearchProducer extends DefaultProducer {
         }
 
         if (ObjectHelper.isNotEmpty(lang)) {
-            query.lang(lang);
+            query = query.lang(lang);
         }
 
         // number of elements per page
@@ -97,7 +98,7 @@ public class SearchProducer extends DefaultProducer {
             count = endpoint.getProperties().getCount();
         }
         if (ObjectHelper.isNotEmpty(count)) {
-            query.count(count);
+            query = query.count(count);
         }
 
         // number of pages

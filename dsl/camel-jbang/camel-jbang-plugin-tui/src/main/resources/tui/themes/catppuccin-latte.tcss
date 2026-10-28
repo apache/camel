@@ -52,3 +52,15 @@ $latte-fg: #4C4F69;
 #diagram-action  { color: #8839EF; }
 #diagram-eip     { color: #7287FD; }
 #diagram-default { color: #9CA0B0; }
+
+/*
+ * Syntax tokens (optional), after the Catppuccin style guide: mauve keywords, green strings, blue functions, yellow types, peach constants, overlay2 comments.
+ * Lifted to a 3:1 contrast on this background: string, type, constant.
+ */
+#syntax-comment  { color: #7C7F93; }
+#syntax-string   { color: #3E9A29; }
+#syntax-keyword  { color: #8839EF; }
+#syntax-function { color: #1E66F5; }
+#syntax-type     { color: #BD7819; }
+#syntax-constant { color: #EC5701; }
+#syntax-text     { color: $latte-fg; }

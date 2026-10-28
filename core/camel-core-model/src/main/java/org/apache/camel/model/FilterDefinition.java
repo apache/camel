@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -36,6 +39,9 @@ import org.apache.camel.spi.Metadata;
 @AsPredicate
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with; the body as it was when the predicate does not match"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class FilterDefinition extends OutputExpressionNode {
 
     @XmlAttribute

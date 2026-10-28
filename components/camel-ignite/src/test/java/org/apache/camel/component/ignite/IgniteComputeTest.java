@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
@@ -29,9 +30,11 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ignite.compute.IgniteComputeComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCluster;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.events.EventType;
 import org.assertj.core.api.Assertions;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -131,7 +134,8 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         Object result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=BROADCAST",
                 TestIgniteComputeResources.TEST_RUNNABLE, Object.class);
         Assertions.assertThat(result).isNull();
-        Assertions.assertThat(TestIgniteComputeResources.COUNTER.get()).isEqualTo(3);
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> Assertions.assertThat(TestIgniteComputeResources.COUNTER.get()).isEqualTo(3));
 
         // Single Callable.
         Collection<String> colResult = template.requestBody("ignite-compute:" + resourceUid + "?executionType=BROADCAST",
@@ -201,15 +205,32 @@ public class IgniteComputeTest extends AbstractIgniteTest {
     }
 
     private void startAdditionalGridInstance() {
-        ADDITIONAL_INSTANCES.add(Ignition.start(createConfiguration()));
+        Ignite igniteInstance = Ignition.start(createConfiguration());
+        ADDITIONAL_INSTANCES.add(igniteInstance);
+        Awaitility.await().atMost(30, TimeUnit.SECONDS)
+                .until(() -> {
+                    IgniteCluster cluster = igniteInstance.cluster();
+                    IgniteCluster mainCluster = ignite().cluster();
+                    return cluster.nodes().size() == ADDITIONAL_INSTANCES.size() + 1
+                            && cluster.state().active()
+                            && mainCluster.nodes().size() == ADDITIONAL_INSTANCES.size() + 1
+                            && mainCluster.state().active();
+                });
+
     }
 
     @AfterEach
     public void stopAdditionalIgniteInstances() {
-        for (Ignite ignite : ADDITIONAL_INSTANCES) {
-            ignite.close();
+        if (!ADDITIONAL_INSTANCES.isEmpty()) {
+            for (Ignite ignite : ADDITIONAL_INSTANCES) {
+                ignite.close();
+            }
+            ADDITIONAL_INSTANCES.clear();
+            if (ignite() != null) {
+                Awaitility.await().atMost(30, TimeUnit.SECONDS)
+                        .until(() -> ignite().cluster().nodes().size() == 1);
+            }
         }
-        ADDITIONAL_INSTANCES.clear();
     }
 
     @AfterEach

@@ -17,6 +17,7 @@
 package org.apache.camel.component.lumberjack.io;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -49,35 +50,22 @@ final class LumberjackMessageHandler extends SimpleChannelInboundHandler<Lumberj
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LumberjackWindow window) throws Exception {
-        try {
-            for (LumberjackMessage msg : window) {
-                if (process) {
-                    messageProcessor.onMessageReceived(msg.getPayload(), success -> {
-                        if (success) {
-                            notifyMessageProcessed(ctx, msg.getSequenceNumber(), window);
-                        } else {
-                            ctx.close();
-                            // Mark that we shouldn't process the next messages that are already decoded and are waiting in netty queues
-                            process = false;
+        // Count down from window size; when it reaches zero all messages have been processed successfully.
+        AtomicInteger remaining = new AtomicInteger(window.getSize());
+        for (LumberjackMessage msg : window) {
+            if (process) {
+                messageProcessor.onMessageReceived(msg.getPayload(), success -> {
+                    if (success) {
+                        if (remaining.decrementAndGet() == 0) {
+                            ctx.writeAndFlush(new LumberjackAck(window.getVersion(), window.getSize()));
                         }
-                    });
-                }
+                    } else {
+                        ctx.close();
+                        // Mark that we shouldn't process the next messages that are already decoded and are waiting in netty queues
+                        process = false;
+                    }
+                });
             }
-        } finally {
-            ctx.flush();
-        }
-    }
-
-    /**
-     * Notify message processed if end of window
-     *
-     * @param ctx
-     * @param sequenceNumber
-     * @param window
-     */
-    private void notifyMessageProcessed(ChannelHandlerContext ctx, int sequenceNumber, LumberjackWindow window) {
-        if (sequenceNumber == window.getSize()) {
-            ctx.writeAndFlush(new LumberjackAck(window.getVersion(), sequenceNumber));
         }
     }
 

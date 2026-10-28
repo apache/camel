@@ -8,7 +8,23 @@
     "javaType": "org.apache.camel.component.cloudevents.transformer.CloudEventJsonDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cloudevents",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ],
+      "description": "Any body as the data of the event, a null body as no data"
+    },
+    "transformerOut": {
+      "carriers": [
+        "text",
+        "unchanged"
+      ],
+      "format": "json",
+      "description": "The event in the Json format, unless the Content-Type header is application\/cloudevents+json already: the body is kept then"
+    }
   }
 }
 

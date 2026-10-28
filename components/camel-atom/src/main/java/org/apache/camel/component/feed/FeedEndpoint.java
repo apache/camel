@@ -40,7 +40,8 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     @UriParam(label = "advanced", defaultValue = "true", description = "Sets whether to add the feed object as a header.")
     private boolean feedHeader = true;
-    @UriParam(description = "Sets whether to sort entries by published date. Only works when splitEntries = true.")
+    @UriParam(description = "Sets whether to sort entries by updated date (by published date for an entry without an updated date),"
+                            + " so the oldest entry is routed first. Only works when splitEntries = true.")
     private boolean sortEntries;
     @UriParam(defaultValue = "true", description = "Sets whether all entries identified in a "
                                                    + "single feed poll should be delivered immediately. If true, only one entry is processed "
@@ -158,7 +159,8 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * Sets whether to sort entries by published date. Only works when splitEntries = true.
+     * Sets whether to sort entries by updated date (by published date for an entry without an updated date), so the
+     * oldest entry is routed first. Only works when splitEntries = true.
      */
     public void setSortEntries(boolean sortEntries) {
         this.sortEntries = sortEntries;

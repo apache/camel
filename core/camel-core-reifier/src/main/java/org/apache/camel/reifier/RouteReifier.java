@@ -35,7 +35,6 @@ import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupStep;
@@ -389,12 +388,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         Processor errorHandler = ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route,
                 builder, null);
         prepareErrorHandlerAware(route, errorHandler);
-
-        // only during startup phase
-        if (camelContext.getStatus().ordinal() < ServiceStatus.Started.ordinal()) {
-            // okay route has been created from the model, then the model is no longer needed, and we can de-reference
-            camelContext.getCamelContextExtension().addBootstrap(route::clearRouteModel);
-        }
 
         if (definition.getRouteTemplateContext() != null) {
             // make route stop beans from the local repository (route templates / kamelets)

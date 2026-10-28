@@ -91,7 +91,7 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
 
         artemisConfiguration.setBrokerInstance(instanceDir);
         artemisConfiguration.setJMXManagementEnabled(false);
-        artemisConfiguration.setMaxDiskUsage(98);
+        artemisConfiguration.setMaxDiskUsage(-1);
 
         final Configuration config = configure(artemisConfiguration, port, brokerId);
         if (customConfigurator != null) {

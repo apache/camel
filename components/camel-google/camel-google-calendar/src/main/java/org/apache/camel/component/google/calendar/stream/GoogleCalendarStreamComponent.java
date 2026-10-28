@@ -31,8 +31,6 @@ import org.apache.camel.support.HealthCheckComponent;
 public class GoogleCalendarStreamComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced")
-    private Calendar client;
-    @Metadata(label = "advanced")
     private GoogleCalendarClientFactory clientFactory;
     @Metadata
     private GoogleCalendarStreamConfiguration configuration;
@@ -47,22 +45,23 @@ public class GoogleCalendarStreamComponent extends HealthCheckComponent {
         this.configuration = new GoogleCalendarStreamConfiguration();
     }
 
+    /**
+     * Creates a client for the given configuration with the client factory of the component. Each endpoint creates its
+     * own client from its own options and keeps it for its lifetime.
+     */
     public Calendar getClient(GoogleCalendarStreamConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && config.getClientSecret() != null) {
-                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(),
-                        config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
-            } else if (config.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(),
-                        config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
-            }
+        if (config.getClientId() != null && config.getClientSecret() != null) {
+            return getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(),
+                    config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
+        } else if (config.getServiceAccountKey() != null) {
+            return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(),
+                    config.getApplicationName(), config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Google Calendar client");
         }
-        return client;
     }
 
     /**

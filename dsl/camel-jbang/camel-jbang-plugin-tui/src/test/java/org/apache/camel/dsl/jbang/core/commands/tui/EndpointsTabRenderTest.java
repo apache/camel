@@ -27,9 +27,12 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -202,6 +205,29 @@ class EndpointsTabRenderTest {
         assertTrue(bar.toggles().stream().anyMatch(t -> t.key().equals("f") && t.state().equals("all")),
                 "View bar should contain the filter");
         assertTrue(bar.views().stream().anyMatch(v -> v.label().equals("Detail")), "View bar should list Detail");
+    }
+
+    @Test
+    void theScopeColumnTellsRemoteInternalAndLocalApart() {
+        addEndpoint("kafka", "kafka://orders", "in", "intake", 3).scope = "remote";
+        addEndpoint("direct", "direct://charge", "out", "intake", 3).scope = "internal";
+        addEndpoint("exec", "exec://wc", "out", "report", 1).scope = "local";
+
+        EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+
+        assertThat(rendered).contains("SCOPE").doesNotContain("REMOTE");
+        assertThat(line(rendered, "kafka://orders")).contains("remote");
+        assertThat(line(rendered, "direct://charge")).contains("internal");
+        assertThat(line(rendered, "exec://wc")).contains("local");
+        // and for the tui_get_table tool
+        JsonArray rows = (JsonArray) tab.getTableDataAsJson().get("rows");
+        assertThat(rows).extracting(r -> ((JsonObject) r).getString("scope"))
+                .containsExactlyInAnyOrder("remote", "internal", "local");
+    }
+
+    private static String line(String rendered, String uri) {
+        return rendered.lines().filter(l -> l.contains(uri)).findFirst().orElse("");
     }
 
     // ---- Helper methods ----

@@ -20,6 +20,14 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_USER_PROFILE;
+
+/**
+ * Authenticates the bearer token of the request, as sent in its {@code Authorization} header (RFC 6750 section 2.1).
+ * <p>
+ * Bearer authentication is per request: the authenticated {@link UserProfile} is set as the
+ * {@link OAuth#CAMEL_OAUTH_USER_PROFILE} exchange property, and no {@link OAuthSession} is created or updated.
+ */
 public class OAuthBearerTokenProcessor extends AbstractOAuthProcessor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -33,14 +41,20 @@ public class OAuthBearerTokenProcessor extends AbstractOAuthProcessor {
 
         // Validate Authorization header
         //
-        var authHeader = msg.getHeader("Authorization", String.class);
-        if (authHeader == null) {
+        var authHeaders = HttpRequestHeaders.values(msg, "Authorization");
+        if (authHeaders.isEmpty()) {
             log.error("No Authorization header in request");
             rejectUnauthorized(exchange, "Authorization header");
             return;
         }
 
-        var toks = authHeader.split(" ");
+        if (authHeaders.size() > 1) {
+            log.error("Invalid Authorization header: expected exactly one, got {}", authHeaders.size());
+            rejectUnauthorized(exchange, "Invalid Authorization header");
+            return;
+        }
+
+        var toks = authHeaders.get(0).split(" ");
         if (toks.length != 2 || !"Bearer".equals(toks[0])) {
             log.error("Invalid Authorization header");
             rejectUnauthorized(exchange, "Invalid Authorization header");
@@ -59,10 +73,9 @@ public class OAuthBearerTokenProcessor extends AbstractOAuthProcessor {
         var access_token = toks[1];
         var userProfile = oauth.authenticate(new TokenCredentials(access_token));
 
-        // Get or create the OAuthSession
+        // The token authenticates this request only, so the profile goes on the exchange and not into an OAuthSession
         //
-        var session = oauth.getOrCreateSession(exchange);
-        session.putUserProfile(userProfile);
+        exchange.setProperty(CAMEL_OAUTH_USER_PROFILE, userProfile);
 
         log.info("Authenticated {}", userProfile.subject());
         userProfile.logDetails();

@@ -11,9 +11,16 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-languages",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "ref",
     "modelJavaType": "org.apache.camel.model.language.RefExpression"
+  },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "As the expression or the predicate in the registry reads it" },
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the expression in the registry returns; a Boolean for a predicate" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

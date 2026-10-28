@@ -71,7 +71,8 @@ public class ModelParserTest {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/xml-io";
     private static final List<String> REST_XMLS
-            = List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
+            = List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml",
+                    "restSkipBindingOnErrorCode.xml", "restVerbApiDocs.xml");
     private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
     private static final List<String> REST_CONFIGURATION_XMLS = List.of("barRestConfiguration.xml");

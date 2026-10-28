@@ -23,12 +23,19 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall;
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ai.tool.AiToolConstants;
+import org.apache.camel.component.ai.tool.AiToolRegistry;
+import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,6 +71,12 @@ class McpToolCallExecutorTest {
         context.stop();
     }
 
+    // CAMEL-24832: the executor now takes the calling exchange (copied into each route-tool invocation). These tests
+    // exercise MCP tool calls, which do not read it, so a throwaway exchange is enough to drive the batch.
+    private List<McpToolCallExecutor.ToolResult> execute(List<ChatCompletionMessageToolCall> toolCalls) throws Exception {
+        return executor.execute(toolCalls, new DefaultExchange(context));
+    }
+
     // ------------------------------------------------------------------
     // Ordering
     // ------------------------------------------------------------------
@@ -82,7 +95,7 @@ class McpToolCallExecutorTest {
         executor = startExecutor(endpoint);
 
         List<McpToolCallExecutor.ToolResult> results
-                = executor.execute(List.of(toolCall("id-a", "slow_a"), toolCall("id-b", "slow_b"),
+                = execute(List.of(toolCall("id-a", "slow_a"), toolCall("id-b", "slow_b"),
                         toolCall("id-c", "slow_c")));
 
         assertThat(results).extracting(McpToolCallExecutor.ToolResult::toolCallId)
@@ -100,7 +113,7 @@ class McpToolCallExecutorTest {
         executor = startExecutor(endpoint);
 
         List<McpToolCallExecutor.ToolResult> results
-                = executor.execute(List.of(toolCall("id-a", "tool_a"), toolCall("id-b", "tool_b")));
+                = execute(List.of(toolCall("id-a", "tool_a"), toolCall("id-b", "tool_b")));
 
         assertThat(results).extracting(McpToolCallExecutor.ToolResult::toolCallId)
                 .containsExactly("id-a", "id-b");
@@ -108,11 +121,30 @@ class McpToolCallExecutorTest {
     }
 
     @Test
+    void searchDispatchRunsBeforeRouteOrMcpLookupAndKeepsCallOrder() throws Exception {
+        OpenAIEndpoint endpoint = newEndpoint(true, 0, Map.of("slow_b", staticClient("B")), Set.of("slow_b"));
+        executor = startExecutor(endpoint);
+
+        List<McpToolCallExecutor.ToolResult> results = executor.execute(
+                List.of(toolCall("id-search", "tool_search_tool"), toolCall("id-b", "slow_b")),
+                new DefaultExchange(context),
+                call -> new McpToolCallExecutor.ToolResult(
+                        call.asFunction().id(), "tool_search_tool", "Tools found: slow_b", false, 0, true),
+                null);
+
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::toolCallId)
+                .containsExactly("id-search", "id-b");
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::content)
+                .containsExactly("Tools found: slow_b", "B");
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::returnDirect).containsExactly(false, true);
+    }
+
+    @Test
     void emptyBatchReturnsNoResults() throws Exception {
         OpenAIEndpoint endpoint = newEndpoint(true, 0, Map.of("tool_a", staticClient("A")), Set.of());
         executor = startExecutor(endpoint);
 
-        assertThat(executor.execute(List.of())).isEmpty();
+        assertThat(execute(List.of())).isEmpty();
     }
 
     // ------------------------------------------------------------------
@@ -128,7 +160,7 @@ class McpToolCallExecutorTest {
         executor = startExecutor(endpoint);
 
         List<McpToolCallExecutor.ToolResult> results
-                = executor.execute(List.of(toolCall("id-a", "direct_tool"), toolCall("id-b", "normal_tool")));
+                = execute(List.of(toolCall("id-a", "direct_tool"), toolCall("id-b", "normal_tool")));
 
         assertThat(results).extracting(McpToolCallExecutor.ToolResult::returnDirect).containsExactly(true, false);
     }
@@ -146,7 +178,7 @@ class McpToolCallExecutorTest {
                 = newEndpoint(true, 0, Map.of("direct_tool", failing), Set.of("direct_tool"));
         executor = startExecutor(endpoint);
 
-        List<McpToolCallExecutor.ToolResult> results = executor.execute(List.of(toolCall("id-a", "direct_tool")));
+        List<McpToolCallExecutor.ToolResult> results = execute(List.of(toolCall("id-a", "direct_tool")));
 
         assertThat(results).singleElement()
                 .satisfies(r -> {
@@ -180,7 +212,7 @@ class McpToolCallExecutorTest {
         executor = startExecutor(endpoint);
 
         assertThatThrownBy(
-                () -> executor.execute(List.of(toolCall("id-a", "failing_tool"), toolCall("id-b", "sibling_tool"))))
+                () -> execute(List.of(toolCall("id-a", "failing_tool"), toolCall("id-b", "sibling_tool"))))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("tool blew up");
 
@@ -201,7 +233,7 @@ class McpToolCallExecutorTest {
         executor = startExecutor(endpoint);
 
         List<McpToolCallExecutor.ToolResult> results
-                = executor.execute(List.of(toolCall("id-a", "failing_tool"), toolCall("id-b", "ok_tool")));
+                = execute(List.of(toolCall("id-a", "failing_tool"), toolCall("id-b", "ok_tool")));
 
         assertThat(results).extracting(McpToolCallExecutor.ToolResult::content)
                 .containsExactly("Error: Tool execution failed: tool blew up", "fine");
@@ -213,7 +245,7 @@ class McpToolCallExecutorTest {
         executor = startExecutor(endpoint);
 
         assertThatThrownBy(
-                () -> executor.execute(List.of(toolCall("id-a", "known_tool"), toolCall("id-b", "made_up_tool"))))
+                () -> execute(List.of(toolCall("id-a", "known_tool"), toolCall("id-b", "made_up_tool"))))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("made_up_tool");
     }
@@ -225,7 +257,7 @@ class McpToolCallExecutorTest {
         executor = startExecutor(endpoint);
 
         List<McpToolCallExecutor.ToolResult> results
-                = executor.execute(List.of(toolCall("id-a", "made_up_tool"), toolCall("id-b", "known_tool")));
+                = execute(List.of(toolCall("id-a", "made_up_tool"), toolCall("id-b", "known_tool")));
 
         assertThat(results.get(0).content()).contains("made_up_tool", "known_tool");
         assertThat(results.get(0).returnDirect()).isFalse();
@@ -254,7 +286,7 @@ class McpToolCallExecutorTest {
             executor = startExecutor(endpoint);
 
             assertThatThrownBy(
-                    () -> executor.execute(List.of(toolCall("id-a", "blocking_tool"), toolCall("id-b", "fast_tool"))))
+                    () -> execute(List.of(toolCall("id-a", "blocking_tool"), toolCall("id-b", "fast_tool"))))
                     .isInstanceOf(TimeoutException.class)
                     .hasMessageContaining("blocking_tool")
                     .hasMessageContaining("parallelToolTimeout");
@@ -278,13 +310,89 @@ class McpToolCallExecutorTest {
 
             // two calls, so the batch is dispatched in parallel rather than run inline
             List<McpToolCallExecutor.ToolResult> results
-                    = executor.execute(List.of(toolCall("id-a", "blocking_tool"), toolCall("id-b", "blocking_tool")));
+                    = execute(List.of(toolCall("id-a", "blocking_tool"), toolCall("id-b", "blocking_tool")));
 
             assertThat(results).extracting(McpToolCallExecutor.ToolResult::content)
                     .allSatisfy(content -> assertThat(content).contains("timed out after 200 ms"));
         } finally {
             release.countDown();
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Route tools (CAMEL-24832)
+    // ------------------------------------------------------------------
+
+    @Test
+    void routeToolSeesCallerExchangePropertyAndGetsACleanMessage() throws Exception {
+        // CAMEL-24832: the openai route-tool path copies the CALLING exchange, so a tool route can read the caller's
+        // authenticated subject (kept as an exchange property) and the model cannot forge it; and the tool route gets a
+        // clean message, so a tool that sets no body returns "No result" rather than the caller's prompt.
+        AtomicReference<Object> seenSubject = new AtomicReference<>();
+        AtomicReference<String> seenCallId = new AtomicReference<>();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("ai-tool:checkSubject?tags=test&description=Check the caller subject")
+                        .process(e -> {
+                            seenSubject.set(e.getProperty("CamelAuthenticatedSubject"));
+                            seenCallId.set(e.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID, String.class));
+                            assertThat(e.getMessage().getHeader(AiToolConstants.CONVERSATION_ID)).isNull();
+                        });
+            }
+        });
+
+        AiToolSpec spec = AiToolRegistry.getOrCreate(context).getToolsByTag("test").stream()
+                .filter(s -> "checkSubject".equals(s.getName()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("route tool 'checkSubject' not registered"));
+
+        OpenAIConfiguration configuration = new OpenAIConfiguration();
+        OpenAIComponent component = new OpenAIComponent();
+        component.setCamelContext(context);
+        OpenAIEndpoint endpoint = new OpenAIEndpoint("openai:chat-completion", component, configuration);
+        endpoint.setCamelContext(context);
+        endpoint.setMcpToolState(new McpToolState(
+                List.of(), Map.of(), Map.of(), Set.of(), Map.of("checkSubject", spec)));
+        executor = startExecutor(endpoint);
+
+        Exchange calling = new DefaultExchange(context);
+        calling.setProperty("CamelAuthenticatedSubject", "alice");
+        calling.getIn().setBody("the user prompt");
+
+        List<McpToolCallExecutor.ToolResult> results
+                = executor.execute(List.of(toolCall("id-x", "checkSubject")), calling);
+
+        // the tool route saw the caller's authenticated subject: the CALLING exchange was copied in, not a fresh one
+        assertThat(seenSubject).hasValue("alice");
+        assertThat(seenCallId).hasValue("id-x");
+        // and the message was clean: a tool that sets no body returns "No result", not the caller's prompt
+        assertThat(results).singleElement()
+                .satisfies(r -> assertThat(r.content()).isEqualTo("No result"));
+    }
+
+    @Test
+    void parallelRouteToolsShareTheSuppliedConversationId() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("ai-tool:conversation?tags=conversation-test")
+                        .process(e -> {
+                            assertThat(e.getMessage().getHeader(AiToolConstants.CONVERSATION_ID)).isEqualTo("conv_parallel");
+                            e.getMessage().setBody(e.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID));
+                        });
+            }
+        });
+        AiToolSpec spec = AiToolRegistry.getOrCreate(context).getToolsByTag("conversation-test").iterator().next();
+        OpenAIEndpoint endpoint = newEndpoint(true, 0, Map.of(), Set.of());
+        endpoint.setMcpToolState(new McpToolState(List.of(), Map.of(), Map.of(), Set.of(), Map.of("conversation", spec)));
+        executor = startExecutor(endpoint);
+
+        List<McpToolCallExecutor.ToolResult> results = executor.execute(
+                List.of(toolCall("call-a", "conversation"), toolCall("call-b", "conversation")),
+                new DefaultExchange(context), null, "conv_parallel");
+
+        assertThat(results).extracting(McpToolCallExecutor.ToolResult::content).containsExactly("call-a", "call-b");
     }
 
     // ------------------------------------------------------------------

@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-semantic-wolf-defender/src/main/docs/semantic-wolf-defender.adoc

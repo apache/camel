@@ -23,6 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.milo.MiloConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,24 @@ import static org.apache.camel.component.milo.MiloConstants.SCHEME_CLIENT;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_CLIENT, syntax = "milo-client:endpointUri", title = "OPC UA Client",
              category = { Category.IOT }, headersClass = MiloConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "org.eclipse.milo.opcua.stack.core.types.builtin.DataValue",
+                                   description = "The Milo DataValue of each change of a monitored node: its"
+                                                 + " getValue().getValue() is the value, and the status code tells a good"
+                                                 + " value from a lost connection. The node is in the CamelMiloNodeId header"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.POJO, Carrier.NULL },
+                                  description = "The value to write to the node, or the input arguments of the method: an"
+                                                + " OPC UA built-in value such as a String, a number, a boolean, a Variant"
+                                                + " or a DataValue. A stream, a file, a Map or a bean fails with"
+                                                + " Bad_EncodingError. With the CamelMiloNodeIds header the body is not read:"
+                                                + " the producer reads the values of those nodes"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "defaultAwaitWrites", value = "true",
+                                                             carriers = { Carrier.POJO, Carrier.LIST }),
+                                   description = "The producer does not wait, unless the CamelMiloAwait header or"
+                                                 + " defaultAwaitWrites says so; it then sets the result: the StatusCode"
+                                                 + " of a write, the CallMethodResult of a method call, or a List of"
+                                                 + " DataValue of the nodes read"))
 public class MiloClientEndpoint extends DefaultEndpoint {
 
     private final MiloClientConnectionManager connectionManager;
@@ -55,6 +76,12 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     private String node;
 
     /**
+     * Comma-separated node definitions to monitor with one consumer, instead of node (see Node ID)
+     */
+    @UriParam(label = "consumer")
+    private String nodes;
+
+    /**
      * The method definition (see Method ID)
      */
     @UriParam
@@ -63,8 +90,14 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     /**
      * The sampling interval in milliseconds
      */
-    @UriParam(defaultValue = "0.0")
-    private Double samplingInterval = 0.0;
+    @UriParam(defaultValue = "1000.0")
+    private Double samplingInterval = 1000.0;
+
+    /**
+     * The queue size used for OPC UA subscriptions. If not set, a queue size of 1 is requested.
+     */
+    @UriParam
+    private Integer queueSize;
 
     /**
      * The client configuration
@@ -79,7 +112,8 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     private boolean defaultAwaitWrites;
 
     /**
-     * Omit notifications in case of null values
+     * Omit a data change whose value is null and whose status is Good. A data change with a Bad or Uncertain status is
+     * always delivered.
      */
     @UriParam(defaultValue = "true")
     private boolean omitNullValues = true;
@@ -132,7 +166,10 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     }
 
     public MiloClientConnection createConnection() {
-        return this.connectionManager.createConnection(configuration, monitorFilterConfiguration);
+        final MiloClientConnection connection
+                = this.connectionManager.createConnection(configuration, monitorFilterConfiguration);
+        connection.setCamelContext(getCamelContext());
+        return connection;
     }
 
     public void releaseConnection(MiloClientConnection connection) {
@@ -164,6 +201,14 @@ public class MiloClientEndpoint extends DefaultEndpoint {
         }
     }
 
+    public void setNodes(final String nodes) {
+        this.nodes = nodes;
+    }
+
+    public String getNodes() {
+        return nodes;
+    }
+
     ExpandedNodeId getMethodId() {
         if (this.method != null) {
             return ExpandedNodeId.parse(this.method);
@@ -178,6 +223,17 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     public void setSamplingInterval(final Double samplingInterval) {
         this.samplingInterval = samplingInterval;
+    }
+
+    public Integer getQueueSize() {
+        return this.queueSize;
+    }
+
+    public void setQueueSize(final Integer queueSize) {
+        if (queueSize != null && queueSize < 0) {
+            throw new IllegalArgumentException("queueSize must be >= 0, got: " + queueSize);
+        }
+        this.queueSize = queueSize;
     }
 
     public boolean isDefaultAwaitWrites() {

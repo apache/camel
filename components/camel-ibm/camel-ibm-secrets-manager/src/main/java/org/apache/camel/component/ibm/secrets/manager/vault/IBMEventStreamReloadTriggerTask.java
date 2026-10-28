@@ -173,56 +173,61 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
     public void run() {
 
         lastCheckTime = Instant.now();
-        boolean triggerReloading = false;
         ObjectMapper mapper = new ObjectMapper();
 
         while (isRunAllowed()) {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeout));
 
             for (ConsumerRecord<String, String> record : records) {
-                JsonNode recordJson;
-                String secretType;
                 try {
-                    recordJson = mapper.readTree(record.value());
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+                    onRecord(mapper, record);
+                } catch (Exception e) {
+                    // this task runs only once (until Camel stops), so a record it cannot read must not end it: no later
+                    // secret rotation would trigger a reload any more
+                    LOG.warn("Skipping the IBM Event Streams record at offset {} of {}, as it cannot be processed: {}",
+                            record.offset(), record.topic(), e.getMessage());
+                    LOG.debug("Cannot process the IBM Event Streams record at offset {} of {}", record.offset(),
+                            record.topic(), e);
                 }
-                JsonNode payload = recordJson.get("data");
-                if (payload != null) {
-                    secretType = payload.get("event_type").asText();
-                    if (secretType != null) {
-                        if (secretType.equalsIgnoreCase(IBM_SECRETS_MANAGER_SECRET_ROTATED_EVENT)) {
-                            ArrayNode secretsRotated = (ArrayNode) payload.get("secrets");
-                            for (JsonNode secret : secretsRotated) {
-                                if (secret != null) {
-                                    String name = secret.get("secret_name").asText();
-                                    if (matchSecret(name)) {
-                                        updates.put(name, Instant.parse(secret.get("event_time").asText()));
-                                        if (isReloadEnabled()) {
-                                            LOG.info("Update for IBM secret: {} detected, triggering CamelContext reload",
-                                                    name);
-                                            triggerReloading = true;
-                                        }
-                                        if (triggerReloading) {
-                                            ContextReloadStrategy reload
-                                                    = camelContext.hasService(ContextReloadStrategy.class);
-                                            if (reload != null) {
-                                                // trigger reload
-                                                lastReloadTime = Instant.now();
-                                                reload.onReload(this);
-                                            }
-                                            triggerReloading = false;
-                                        }
-                                        break;
-                                    }
+            }
+        }
+
+    }
+
+    private void onRecord(ObjectMapper mapper, ConsumerRecord<String, String> record) throws JsonProcessingException {
+        boolean triggerReloading = false;
+        JsonNode recordJson = mapper.readTree(record.value());
+        JsonNode payload = recordJson.get("data");
+        if (payload != null) {
+            String secretType = payload.get("event_type").asText();
+            if (secretType != null) {
+                if (secretType.equalsIgnoreCase(IBM_SECRETS_MANAGER_SECRET_ROTATED_EVENT)) {
+                    ArrayNode secretsRotated = (ArrayNode) payload.get("secrets");
+                    for (JsonNode secret : secretsRotated) {
+                        if (secret != null) {
+                            String name = secret.get("secret_name").asText();
+                            if (matchSecret(name)) {
+                                updates.put(name, Instant.parse(secret.get("event_time").asText()));
+                                if (isReloadEnabled()) {
+                                    LOG.info("Update for IBM secret: {} detected, triggering CamelContext reload", name);
+                                    triggerReloading = true;
                                 }
+                                if (triggerReloading) {
+                                    ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
+                                    if (reload != null) {
+                                        // trigger reload
+                                        lastReloadTime = Instant.now();
+                                        reload.onReload(this);
+                                    }
+                                    triggerReloading = false;
+                                }
+                                break;
                             }
                         }
                     }
                 }
             }
         }
-
     }
 
     @Override

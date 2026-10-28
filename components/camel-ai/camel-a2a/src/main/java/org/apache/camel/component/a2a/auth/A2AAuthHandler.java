@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.a2a.A2AConfiguration;
+import org.apache.camel.component.a2a.A2AConstants;
 import org.apache.camel.component.a2a.model.AgentCard;
 import org.apache.camel.component.a2a.model.SecurityRequirement;
 import org.apache.camel.component.a2a.model.SecurityScheme;
@@ -122,6 +123,9 @@ public class A2AAuthHandler {
             try {
                 return validateRequirement(exchange, card, requirement);
             } catch (SecurityException e) {
+                // a token validated for a requirement that is not satisfied, such as one missing a required scope,
+                // is not the credential the caller is authenticated with
+                exchange.removeProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT);
                 lastFailure = e;
             }
         }
@@ -219,11 +223,22 @@ public class A2AAuthHandler {
         }
     }
 
+    /**
+     * The profile of a requirement with several schemes is the one that identifies the caller, such as the profile of a
+     * validated token, whatever the order of the schemes: the profile of a shared credential, such as an API key, only
+     * names its scheme.
+     */
     private static A2AUserProfile selectProfile(A2AUserProfile current, A2AUserProfile candidate) {
         if (current == null) {
             return candidate;
         }
-        if (candidate != null && candidate.ownerKey() != null && current.ownerKey() == null) {
+        if (candidate == null) {
+            return current;
+        }
+        if (candidate.identifiesCaller() && !current.identifiesCaller()) {
+            return candidate;
+        }
+        if (candidate.ownerKey() != null && current.ownerKey() == null) {
             return candidate;
         }
         return current;

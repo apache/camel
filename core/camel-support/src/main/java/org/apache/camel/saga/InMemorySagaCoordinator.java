@@ -51,7 +51,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         COMPENSATING,
         COMPENSATED,
         COMPLETING,
-        COMPLETED
+        COMPLETED,
+        // the compensation or completion could not be done for every step, after all the retries
+        FAILED
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemorySagaCoordinator.class);
@@ -209,10 +211,11 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     private CompletableFuture<Boolean> doCompensate(final Exchange exchange, List<StepEnlistment> steps) {
         return doFinalize(exchange, steps, CamelSagaStep::getCompensation, "compensation")
                 .whenComplete((res, ex) -> {
-                    if (ex != null || !Boolean.TRUE.equals(res)) {
+                    boolean failed = ex != null || !Boolean.TRUE.equals(res);
+                    if (failed) {
                         LOG.warn("Saga {} compensation did not fully succeed — manual intervention may be needed", sagaId);
                     }
-                    currentStatus.set(Status.COMPENSATED);
+                    currentStatus.set(failed ? Status.FAILED : Status.COMPENSATED);
                     sagaService.removeSaga(sagaId);
                 });
     }
@@ -224,10 +227,11 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     private CompletableFuture<Boolean> doComplete(final Exchange exchange, List<StepEnlistment> steps) {
         return doFinalize(exchange, steps, CamelSagaStep::getCompletion, "completion")
                 .whenComplete((res, ex) -> {
-                    if (ex != null || !Boolean.TRUE.equals(res)) {
+                    boolean failed = ex != null || !Boolean.TRUE.equals(res);
+                    if (failed) {
                         LOG.warn("Saga {} completion did not fully succeed — manual intervention may be needed", sagaId);
                     }
-                    currentStatus.set(Status.COMPLETED);
+                    currentStatus.set(failed ? Status.FAILED : Status.COMPLETED);
                     sagaService.removeSaga(sagaId);
                 });
     }

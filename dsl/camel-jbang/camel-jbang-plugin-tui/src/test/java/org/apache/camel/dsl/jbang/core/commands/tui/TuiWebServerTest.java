@@ -213,7 +213,7 @@ class TuiWebServerTest {
     private static TuiWebServer newServerWithNoOpSession(int port) {
         return new TuiWebServer(
                 port, new CamelJBangMain(), Thread.currentThread().getContextClassLoader(), null, 200,
-                "dark", connection -> {
+                "dark", terminal -> {
                 });
     }
 

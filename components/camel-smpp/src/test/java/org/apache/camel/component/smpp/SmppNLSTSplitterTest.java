@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -86,5 +88,23 @@ public class SmppNLSTSplitterTest {
                 result[1], SmppNLSTSplitter.UDHIE_NLI_MULTI_MSG_HEADER_REAL_LENGTH,
                 result[1].length - SmppNLSTSplitter.UDHIE_NLI_MULTI_MSG_HEADER_REAL_LENGTH);
         assertEquals(message, firstShortMessage + secondShortMessage);
+    }
+
+    @Test
+    public void splitIntoAtMost255Segments() {
+        // one byte more than 255 full segments
+        byte[] message = new byte[255 * SmppNLSTSplitter.MAX_SEG_BYTE_SIZE + 1];
+        Arrays.fill(message, (byte) '1');
+
+        SmppSplitter splitter = new SmppNLSTSplitter(message.length, (byte) 0x01);
+        byte[][] result = splitter.split(message);
+
+        assertEquals(255, result.length, "a long message is truncated to 255 segments");
+        for (int i = 0; i < result.length; i++) {
+            assertEquals((byte) 255, result[i][4], "total number of segments in the UDH of segment " + (i + 1));
+            assertEquals((byte) (i + 1), result[i][5], "number of segment " + (i + 1) + " in its UDH");
+            assertEquals(SmppNLSTSplitter.UDHIE_NLI_MULTI_MSG_HEADER_REAL_LENGTH + SmppNLSTSplitter.MAX_SEG_BYTE_SIZE,
+                    result[i].length, "length of segment " + (i + 1));
+        }
     }
 }

@@ -57,6 +57,7 @@ import java.util.Base64;
 import java.util.Map;
 
 import javax.net.SocketFactory;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -71,9 +72,18 @@ import org.jsmpp.session.connection.socket.SocketConnection;
  */
 public final class SmppConnectionFactory implements ConnectionFactory {
     private final SmppConfiguration config;
+    private final SSLSocketFactory sslSocketFactory;
 
     private SmppConnectionFactory(SmppConfiguration config) {
+        this(config, null);
+    }
+
+    /**
+     * Creates a factory that uses the given SSL socket factory instead of the default one of the JVM (for testing).
+     */
+    SmppConnectionFactory(SmppConfiguration config, SSLSocketFactory sslSocketFactory) {
         this.config = config;
+        this.sslSocketFactory = sslSocketFactory;
     }
 
     public static SmppConnectionFactory getInstance(SmppConfiguration config) {
@@ -82,15 +92,15 @@ public final class SmppConnectionFactory implements ConnectionFactory {
 
     @Override
     public Connection createConnection(String host, int port) throws IOException {
+        Socket socket = null;
         try {
-            Socket socket;
             SocketFactory socketFactory;
             socketFactory = config.isUsingSSL() && config.getHttpProxyHost() == null
-                    ? SSLSocketFactory
-                            .getDefault()
+                    ? getSslSocketFactory()
                     : SocketFactory.getDefault();
             // NOTE: the socket must be closed by the factory method client.
             socket = socketFactory.createSocket(); // NOSONAR
+            configureHostnameVerification(socket);
             if (config.getHttpProxyHost() != null) {
                 // setup the proxy tunnel
                 // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial connection
@@ -102,18 +112,56 @@ public final class SmppConnectionFactory implements ConnectionFactory {
                 socket.connect(new InetSocketAddress(host, port), config.getEnquireLinkTimer());
             }
 
-            if (config.isUsingSSL() && config.getHttpProxyHost() != null) {
-                // Init the SSL socket which is based on the proxy socket
-                SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-                // NOTE: the socket must be closed by the factory method client.
-                SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(socket, host, port, true); // NOSONAR
-                sslSocket.startHandshake();
-                socket = sslSocket;
+            if (config.isUsingSSL()) {
+                if (config.getHttpProxyHost() != null) {
+                    // Init the SSL socket which is based on the proxy socket
+                    // NOTE: the socket must be closed by the factory method client.
+                    socket = getSslSocketFactory().createSocket(socket, host, port, true); // NOSONAR
+                    configureHostnameVerification(socket);
+                }
+                startHandshake((SSLSocket) socket);
             }
 
             return new SocketConnection(socket);
         } catch (Exception e) {
+            // no Connection is returned, so jSMPP cannot close the socket either. The JDK closes it on a fatal
+            // alert but not on a timed out connect or handshake, which leaks one socket per reconnect attempt
+            // against an SMSC that accepts TCP and then does not answer. On the proxy path the layered SSLSocket
+            // was created with autoClose=true, so closing it closes the tunnel underneath as well
+            IOHelper.close(socket);
             throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    private SSLSocketFactory getSslSocketFactory() {
+        return sslSocketFactory != null ? sslSocketFactory : (SSLSocketFactory) SSLSocketFactory.getDefault();
+    }
+
+    /**
+     * Completes the TLS handshake here, on the thread that is creating the connection, instead of leaving it to the
+     * first read or write.
+     * <p/>
+     * {@code SMPPSession.connectAndBind} starts its {@code PDUReaderWorker} before it writes the bind, so both threads
+     * reach the first I/O on this socket and only whichever of them drives {@code SSLSocketImpl.ensureNegotiated()}
+     * sees the {@link javax.net.ssl.SSLHandshakeException}. The other gets
+     * {@code SocketException: Connection or outbound has closed}, which never mentions the certificate - so a host name
+     * mismatch could surface as a bare closed-connection error on route start. Handshaking eagerly makes the cause
+     * deterministic.
+     * <p/>
+     * The read timeout is set first: without it a server that accepts the connection and then never answers blocks the
+     * handshake indefinitely. jsmpp uses the same value as its own read timeout and sets it again later.
+     */
+    private void startHandshake(SSLSocket socket) throws IOException {
+        socket.setSoTimeout(config.getEnquireLinkTimer());
+        socket.startHandshake();
+    }
+
+    private void configureHostnameVerification(Socket socket) {
+        if (config.isHostnameVerification() && socket instanceof SSLSocket sslSocket) {
+            // check that the certificate of the SMSC matches the host we connect to
+            SSLParameters sslParameters = sslSocket.getSSLParameters();
+            sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
+            sslSocket.setSSLParameters(sslParameters);
         }
     }
 

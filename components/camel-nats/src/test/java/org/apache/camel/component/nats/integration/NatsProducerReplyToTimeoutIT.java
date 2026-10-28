@@ -28,13 +28,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class NatsProducerReplyToTimeoutIT extends NatsITSupport {
 
     protected String startUri = "direct:start";
-    protected String middleUri = "nats:foo.middle?requestTimeout=50";
+    protected String middleUri = "nats:foo.middle.timeout?requestTimeout=50";
     protected String resultUri = "mock:result";
 
     protected String body1 = "Camel";
 
     @Test
     public void testReplyToTimeout() {
+        waitForNatsConsumers(1);
+
         try {
             template.requestBody(startUri, body1, String.class);
             fail("Should have thrown an exception");

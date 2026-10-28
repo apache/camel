@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,8 +57,14 @@ public class RestProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestProducer.class);
 
-    /** The path parameters already warned about, so a misconfigured route says it once and not per message. */
-    private final Set<String> warnedParameters = ConcurrentHashMap.newKeySet();
+    /**
+     * When each path parameter was last warned about: a misconfigured route says it once a minute, not per message, and
+     * not only once, as a storm of failures that follows would push a single warning out of sight (CAMEL-25373).
+     */
+    private final Map<String, Long> warnedParameters = new ConcurrentHashMap<>();
+
+    /** How often the warning about one path parameter is repeated while it stays unresolved; visible for tests. */
+    long warnIntervalMillis = 60_000;
 
     private final CamelContext camelContext;
     private final RestConfiguration configuration;
@@ -180,11 +185,17 @@ public class RestProducer extends DefaultAsyncProducer {
                 // the request is sent with the placeholder still in the path, and the service answers 404 for a
                 // path that holds a {name}, so say which parameter had no value (CAMEL-24986)
                 String unresolved = firstPlaceholder(resolvedUriTemplate);
-                if (unresolved != null && warnedParameters.add(unresolved)) {
+                if (unresolved != null && shouldWarn(unresolved)) {
+                    // a value kept as an exchange property is the usual mistake: the path is filled from headers and
+                    // variables only
+                    String property = exchange.getProperty(unresolved) != null
+                            ? " There is an exchange property " + unresolved + ", but a path parameter is read from a"
+                              + " header or a variable, not from a property: use setHeader."
+                            : "";
                     LOG.warn("The path parameter {{}} of {} has no value: set the header {}, or an exchange variable"
-                             + " of that name, before the call. The request is sent with {{}} in the path, which the"
-                             + " service is unlikely to answer. This is logged once per parameter.",
-                            unresolved, resolvedUriTemplate, unresolved, unresolved);
+                             + " of that name, before the call.{} The request is sent with {{}} in the path, which the"
+                             + " service is unlikely to answer. This is logged at most once a minute per parameter.",
+                            unresolved, resolvedUriTemplate, unresolved, property, unresolved);
                 }
             }
         }
@@ -238,6 +249,19 @@ public class RestProducer extends DefaultAsyncProducer {
         if (isEmpty(exchange.getMessage().getHeader(RestConstants.ACCEPT)) && isNotEmpty(consumes)) {
             exchange.getMessage().setHeader(RestConstants.ACCEPT, consumes);
         }
+    }
+
+    /** Whether to warn about the parameter now: the first time, and again once the interval has passed. */
+    private boolean shouldWarn(String parameter) {
+        long now = System.currentTimeMillis();
+        Long last = warnedParameters.get(parameter);
+        if (last != null && now - last < warnIntervalMillis) {
+            return false;
+        }
+        // two threads may both pass the check above; only the one that updates the entry warns
+        return last == null
+                ? warnedParameters.putIfAbsent(parameter, now) == null
+                : warnedParameters.replace(parameter, last, now);
     }
 
     /**

@@ -30,6 +30,7 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 
@@ -67,7 +68,7 @@ public class HardenTools {
                         "Use this context to provide security hardening recommendations for the route.")
     public HardenContextResult camel_route_harden_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
-            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
+            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)", required = false) String format,
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
@@ -82,7 +83,8 @@ public class HardenTools {
             String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
 
             // Analyze security-sensitive components
-            List<String> securityComponentNames = extractSecurityComponents(route);
+            List<String> securityComponentNames = RouteComponents.of(
+                    route, format, catalog, List.copyOf(securityData.getSecuritySensitiveComponents()));
             List<SecurityComponent> securityComponents = new ArrayList<>();
             for (String comp : securityComponentNames) {
                 ComponentModel model = catalog.componentModel(comp);
@@ -138,22 +140,6 @@ public class HardenTools {
             throw new ToolCallException(
                     "Failed to analyze route security (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
-    }
-
-    /**
-     * Extract security-sensitive components from route content.
-     */
-    private List<String> extractSecurityComponents(String route) {
-        List<String> found = new ArrayList<>();
-        String lowerRoute = route.toLowerCase();
-
-        for (String comp : securityData.getSecuritySensitiveComponents()) {
-            if (containsComponent(lowerRoute, comp)) {
-                found.add(comp);
-            }
-        }
-
-        return found;
     }
 
     /**
@@ -300,12 +286,6 @@ public class HardenTools {
     private boolean containsHardcodedCredentials(String route) {
         return (route.contains("password=") || route.contains("password:"))
                 && !route.contains("{{") && !route.contains("$");
-    }
-
-    private boolean containsComponent(String content, String comp) {
-        return content.contains(comp + ":")
-                || content.contains("\"" + comp + "\"")
-                || content.contains("'" + comp + "'");
     }
 
     private boolean hasExternalConnections(String route) {

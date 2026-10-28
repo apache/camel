@@ -17,8 +17,9 @@
 package org.apache.camel.component.aws.parameterstore;
 
 import java.net.URI;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -99,7 +100,8 @@ public class ParameterStorePropertiesFunction extends ServiceSupport implements 
     private CamelContext camelContext;
     private SsmClient client;
 
-    private final Set<String> parameters = new HashSet<>();
+    // this function is shared and invoked concurrently
+    private final Set<String> parameters = ConcurrentHashMap.newKeySet();
 
     private String region;
     private boolean defaultCredentialsProvider;
@@ -278,7 +280,7 @@ public class ParameterStorePropertiesFunction extends ServiceSupport implements 
      * Names of the parameters in use
      */
     public Set<String> getParameters() {
-        return parameters;
+        return Collections.unmodifiableSet(parameters);
     }
 
     /**

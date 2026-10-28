@@ -54,6 +54,7 @@ public class AddCommentProducer extends DefaultProducer {
         // there is a bug in addComment, it doesn't use the author parameter to add the comment
         // it uses the authenticated username. https://ecosystem.atlassian.net/browse/JRJC-241
         Comment comment = new Comment(issue.getSelf(), commentStr, null, null, now, null, null, null);
-        issueClient.addComment(commentsUri, comment);
+        // wait for the result, so that a request that Jira rejects fails the exchange
+        issueClient.addComment(commentsUri, comment).claim();
     }
 }

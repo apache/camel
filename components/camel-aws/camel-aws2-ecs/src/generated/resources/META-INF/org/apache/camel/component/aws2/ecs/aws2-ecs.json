@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ecs",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "aws2-ecs",
     "extendsScheme": "",
     "syntax": "aws2-ecs:label",
@@ -54,6 +54,10 @@
     "CamelAwsECSNextToken": { "index": 3, "kind": "header", "displayName": "", "group": "listClusters", "label": "listClusters", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The token for the next set of results.", "constantName": "org.apache.camel.component.aws2.ecs.ECS2Constants#NEXT_TOKEN" },
     "CamelAwsECSIsTruncated": { "index": 4, "kind": "header", "displayName": "", "group": "listClusters", "label": "listClusters", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Whether the response has more results (is truncated).", "constantName": "org.apache.camel.component.aws2.ecs.ECS2Constants#IS_TRUNCATED" },
     "CamelAwsECSClusterArn": { "index": 5, "kind": "header", "displayName": "", "group": "createCluster describeCluster deleteCluster", "label": "createCluster describeCluster deleteCluster", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ARN of the cluster.", "constantName": "org.apache.camel.component.aws2.ecs.ECS2Constants#CLUSTER_ARN" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "pojoRequest", "value": "true", "carriers": [ "pojo" ] } ], "description": "Not used: the operations take their input from headers, such as the name of the cluster in CamelAwsECSClusterName. With pojoRequest=true the request of the AWS SDK for the operation, such as a ListClustersRequest: another body fails" },
+    "producerOut": { "carriers": [ "pojo" ], "description": "The response of the AWS SDK for the operation, such as the ListClustersResponse of listClusters, with the token of the next page in a header. describeCluster of a cluster that does not exist does not fail: the response lists it in its failures" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.ecs.ECS2Configuration", "configurationField": "configuration", "description": "Logical name" },

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vertx-websocket",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "vertx-websocket",
     "extendsScheme": "",
     "syntax": "vertx-websocket:host:port\/path",
@@ -41,6 +41,11 @@
     "CamelVertxWebsocket.sendToAll": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Sends the message to all clients which are currently connected. You can use the sendToAll option on the endpoint instead of using this header. Note that this option only applies when producing messages to endpoints hosted by the vertx-websocket consumer and not to an externally hosted WebSocket.", "constantName": "org.apache.camel.component.vertx.websocket.VertxWebsocketConstants#SEND_TO_ALL" },
     "CamelVertxWebsocket.remoteAddress": { "index": 2, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "io.vertx.core.net.SocketAddress", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The remote address.", "constantName": "org.apache.camel.component.vertx.websocket.VertxWebsocketConstants#REMOTE_ADDRESS" },
     "CamelVertxWebsocket.event": { "index": 3, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "org.apache.camel.component.vertx.websocket.VertxWebsocketEvent", "enum": [ "CLOSE", "ERROR", "MESSAGE", "OPEN" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The WebSocket event that triggered the message exchange.", "constantName": "org.apache.camel.component.vertx.websocket.VertxWebsocketConstants#EVENT" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text", "bytes" ], "byOption": [ { "option": "fireWebSocketConnectionEvents", "value": "true", "carriers": [ "text", "bytes", "pojo", "null" ] } ], "description": "The message received: a String for a text frame, a byte array for a binary frame. With fireWebSocketConnectionEvents=true, the OPEN event has the Vert.x ServerWebSocket as body and the CLOSE event no body: the CamelVertxWebsocket.event header tells them apart" },
+    "producerIn": { "carriers": [ "null", "text", "bytes", "stream", "file" ], "description": "A String is sent as a text frame and a byte array as a binary frame; any other body is converted to a String and sent as a text frame, so a stream with binary content must be converted to bytes first, and a Map or a POJO is sent as its toString: marshal it first. No body sends nothing" },
+    "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.vertx.websocket.VertxWebsocketConfiguration", "configurationField": "configuration", "description": "WebSocket hostname, such as localhost or a remote host when in client mode." },

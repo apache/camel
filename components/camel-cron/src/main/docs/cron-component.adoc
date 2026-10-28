@@ -110,6 +110,11 @@ Breaking down the parts in the schedule expression(in order):
 
 Schedule expressions can be made of five to seven parts. When expressions are composed of six parts, the first items is the _Seconds_ part (and year is considered missing).
 
+A five-part expression can also use the Unix cron syntax, with `*` in both day fields (for example `*/5 * * * *`).
+The day of month and the day of week cannot both be given. With camel-quartz, give the day of week by name (such as
+`MON-FRI`): a number is used as in Quartz, where Sunday is 1 (0 in Unix), and needs `?` in the day of month. With
+camel-spring, the day of week cannot use `*/n`.
+
 Other valid examples of schedule expressions are:
 
 - `0/2 * * * ?` (Five parts, an event every two minutes)

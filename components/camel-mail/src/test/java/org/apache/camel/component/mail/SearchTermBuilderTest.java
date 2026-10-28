@@ -44,7 +44,6 @@ public class SearchTermBuilderTest {
         assertNotNull(st);
 
         // create dummy message
-        Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
 
         MimeMessage msg = new MimeMessage(sender.getSession());
@@ -68,7 +67,6 @@ public class SearchTermBuilderTest {
         assertNotNull(st);
 
         // create dummy message
-        Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
 
         MimeMessage msg = new MimeMessage(sender.getSession());
@@ -93,7 +91,6 @@ public class SearchTermBuilderTest {
         assertNotNull(st);
 
         // create dummy message
-        Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
 
         MimeMessage msg = new MimeMessage(sender.getSession());

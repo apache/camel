@@ -29,6 +29,7 @@ import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -160,4 +161,14 @@ class SpansTabRenderTest {
                 "route1", null, "camel", Map.of());
     }
 
+    @Test
+    void remoteComponentsComeFromTheCatalog() {
+        // as the catalog marks them; a scheme it does not know counts as remote
+        assertThat(SpansTab.isRemoteScheme("kafka")).isTrue();
+        assertThat(SpansTab.isRemoteScheme("acme")).isTrue();
+        assertThat(SpansTab.isRemoteScheme("log")).isFalse();
+        // not in the list the check used to keep: a timer or an xslt step is not a remote call
+        assertThat(SpansTab.isRemoteScheme("timer")).isFalse();
+        assertThat(SpansTab.isRemoteScheme("xslt")).isFalse();
+    }
 }

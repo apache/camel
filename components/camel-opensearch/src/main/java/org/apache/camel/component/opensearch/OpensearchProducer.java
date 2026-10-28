@@ -22,7 +22,11 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -37,16 +41,16 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.config.ConnectionConfig;
-import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
 import org.apache.hc.core5.util.Timeout;
+import org.opensearch.client.Node;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
@@ -91,6 +95,9 @@ class OpensearchProducer extends DefaultAsyncProducer {
     protected final OpensearchConfiguration configuration;
     private final OpenSearchClient openSearchClient;
     private volatile RestClient client;
+    // true when this producer created the client, false when the client is the one of the component, which is
+    // shared by every endpoint of the component and is not this producer's to close
+    private volatile boolean clientCreated;
     private Sniffer sniffer;
 
     public OpensearchProducer(OpensearchEndpoint endpoint, OpensearchConfiguration configuration) {
@@ -452,14 +459,9 @@ class OpensearchProducer extends DefaultAsyncProducer {
             if (ctx.configFrom()) {
                 message.removeHeader(OpensearchConstants.PARAM_FROM);
             }
-            if (configuration.isDisconnect() && openSearchClient == null) {
+            if (configuration.isDisconnect() && clientCreated) {
+                closeClient();
                 IOHelper.close(ctx.transport());
-                if (configuration.isEnableSniffer()) {
-                    IOHelper.close(sniffer);
-                    sniffer = null;
-                }
-                IOHelper.close(client);
-                client = null;
             }
         } catch (Exception e) {
             LOG.warn("Could not execute the cleanup task", e);
@@ -483,6 +485,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
                     if (ObjectHelper.isNotEmpty(configuration.getHostAddressesList())
                             && !configuration.getHostAddressesList().isEmpty()) {
                         client = createClient();
+                        clientCreated = true;
                     } else {
                         LOG.warn("Incorrect ip address and port parameters settings for OpenSearch cluster");
                     }
@@ -495,17 +498,16 @@ class OpensearchProducer extends DefaultAsyncProducer {
 
     private RestClient createClient() {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
+        // the credentials provider reads the nodes from the client, as the sniffer can change them
+        final AtomicReference<RestClient> restClientRef = new AtomicReference<>();
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
                 .setConnectTimeout(Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout())))
                 // apply the socket/read timeout for both plain-HTTP and SSL connections, not only when SSL is enabled
                 .setResponseTimeout(Timeout.of(Duration.ofMillis(configuration.getSocketTimeout()))));
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
-            if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
-                final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                // match-all AuthScope so basic auth is sent to every node, not only the first configured host
-                credentialsProvider.setCredentials(new AuthScope(null, null, -1, null, null),
-                        new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword().toCharArray()));
+            CredentialsProvider credentialsProvider = createCredentialsProvider(() -> nodeHosts(restClientRef.get()));
+            if (credentialsProvider != null) {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
 
@@ -558,6 +560,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
         });
 
         final RestClient restClient = builder.build();
+        restClientRef.set(restClient);
         if (configuration.isEnableSniffer()) {
             SnifferBuilder snifferBuilder = Sniffer.builder(restClient);
             snifferBuilder.setSniffIntervalMillis(configuration.getSnifferInterval());
@@ -567,16 +570,49 @@ class OpensearchProducer extends DefaultAsyncProducer {
         return restClient;
     }
 
+    /**
+     * Creates the provider of the configured user and password, which offers them only to the given nodes - every node
+     * of the cluster, not only the first configured host - or returns null when no credentials are configured.
+     */
+    CredentialsProvider createCredentialsProvider(Supplier<? extends Collection<HttpHost>> nodes) {
+        if (ObjectHelper.isEmpty(configuration.getUser()) || ObjectHelper.isEmpty(configuration.getPassword())) {
+            return null;
+        }
+        return new NodeScopedCredentialsProvider(
+                new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword().toCharArray()), nodes);
+    }
+
+    private List<HttpHost> nodeHosts(RestClient restClient) {
+        if (restClient == null) {
+            return configuration.getHostAddressesList();
+        }
+        return restClient.getNodes().stream().map(Node::getHost).toList();
+    }
+
     @Override
     protected void doStop() throws Exception {
-        if (client != null && openSearchClient == null) {
+        if (clientCreated) {
             LOG.info("Disconnecting from OpenSearch cluster: {}", configuration.getClusterName());
-            client.close();
-            if (sniffer != null) {
-                sniffer.close();
-            }
+            closeClient();
         }
         super.doStop();
+    }
+
+    /**
+     * Closes the client this producer created, so that a start creates a new one.
+     */
+    private void closeClient() {
+        lock.lock();
+        try {
+            // the sniffer is closed first, it uses the client
+            IOHelper.close(sniffer);
+            sniffer = null;
+            IOHelper.close(client);
+            client = null;
+            clientCreated = false;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public RestClient getClient() {

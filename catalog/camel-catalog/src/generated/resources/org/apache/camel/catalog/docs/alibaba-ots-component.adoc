@@ -68,6 +68,25 @@ from("direct:start")
     .to("alibaba-ots:putRow?endpoint=https://my-instance.cn-hangzhou.ots.aliyuncs.com&instanceName=my-instance&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
 ----
 
+The `listTables` operation needs no message body, so it needs no Java code. In YAML:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:tables
+      steps:
+        - to:
+            uri: alibaba-ots:listTables
+            parameters:
+              endpoint: https://my-instance.cn-hangzhou.ots.aliyuncs.com
+              instanceName: my-instance
+              accessKey: "{{alibaba.access-key}}"
+              secretKey: "{{alibaba.secret-key}}"
+        - log:
+            message: "Tables: ${body}"
+----
+
 == Examples
 
 For more examples, see the unit tests in the `camel-alibaba-ots` module.

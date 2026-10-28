@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.util.StopWatch;
 import org.jline.jansi.Ansi;
@@ -33,6 +34,9 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
                         description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
+    @CommandLine.Mixin
+    DurationMixin durationOption = new DurationMixin();
+
     private Runnable waitUserTask;
     final AtomicBoolean running = new AtomicBoolean(true);
 
@@ -43,15 +47,24 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     @Override
     public Integer doCall() throws Exception {
         int exit;
+        long duration = durationOption.getDuration();
         if (watch && EnvironmentHelper.isEmbedded()) {
-            printer().println("Tip: use the TUI tabs for live monitoring");
+            printer().printTip("use the TUI tabs for live monitoring");
+            exit = doWatchCall();
+        } else if (watch && duration <= 0 && !EnvironmentHelper.isInteractiveTerminal()) {
+            // nobody can press Enter to stop watching
+            printer().printWarn("--watch needs an interactive terminal or --duration, so the output is shown once");
             exit = doWatchCall();
         } else if (watch) {
-            Thread t = new Thread(() -> {
-                waitUserTask = waitForUserEnter();
-                waitUserTask.run();
-            }, "WaitForUser");
-            t.start();
+            long deadline = duration > 0 ? System.currentTimeMillis() + duration : 0;
+            if (EnvironmentHelper.isInteractiveTerminal()) {
+                Thread t = new Thread(() -> {
+                    waitUserTask = waitForUserEnter();
+                    waitUserTask.run();
+                }, "WaitForUser");
+                t.setDaemon(true);
+                t.start();
+            }
             do {
                 exit = doWatchCall();
                 if (exit == 0) {
@@ -61,9 +74,13 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
                         while (running.get() && watchWait(watch)) {
                             Thread.sleep(100);
                         }
-                    } catch (Exception e) {
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         running.set(false);
                     }
+                }
+                if (deadline > 0 && System.currentTimeMillis() >= deadline) {
+                    running.set(false);
                 }
             } while (exit == 0 && running.get());
         } else {
@@ -81,7 +98,8 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
         if (t != null) {
             t.writer().print("\033[2J\033[H");
             t.writer().flush();
-        } else {
+        } else if (EnvironmentHelper.hasTerminal()) {
+            // the escape codes would end up in a file or a pipe
             AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
         }
     }

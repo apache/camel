@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-metrics",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "metrics",
     "extendsScheme": "",
     "syntax": "metrics:metricsType:metricsName",
@@ -21,7 +21,8 @@
     "producerOnly": true,
     "lenientProperties": false,
     "browsable": false,
-    "remote": false
+    "remote": false,
+    "internal": true
   },
   "componentProperties": {
     "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
@@ -36,6 +37,10 @@
     "CamelMetricsCounterIncrement": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override increment value in URI", "constantName": "org.apache.camel.component.metrics.MetricsConstants#HEADER_COUNTER_INCREMENT" },
     "CamelMetricsGaugeSubject": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override subject value in URI", "constantName": "org.apache.camel.component.metrics.MetricsConstants#HEADER_GAUGE_SUBJECT" },
     "CamelMetricsName": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override name value in URI", "constantName": "org.apache.camel.component.metrics.MetricsConstants#HEADER_METRIC_NAME" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "Not used: the values come from the options or the CamelMetrics headers, such as CamelMetricsCounterIncrement or CamelMetricsGaugeSubject" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged; the CamelMetrics headers are removed" }
   },
   "properties": {
     "metricsType": { "index": 0, "kind": "path", "displayName": "Metrics Type", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.metrics.MetricsType", "enum": [ "gauge", "counter", "histogram", "meter", "timer" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Type of metrics" },

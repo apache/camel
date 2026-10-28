@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -67,6 +67,7 @@
         <module>camel-test-infra-nats</module>
         <module>camel-test-infra-opa</module>
         <module>camel-test-infra-openfga</module>
+        <module>camel-test-infra-spiffe</module>
         <module>camel-test-infra-pinecone</module>
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-redis</module>
@@ -94,6 +95,7 @@
         <module>camel-test-infra-cli</module>
         <module>camel-test-infra-qdrant</module>
         <module>camel-test-infra-ollama</module>
+        <module>camel-test-infra-wolf-defender</module>
         <module>camel-test-infra-milvus</module>
         <module>camel-test-infra-hazelcast</module>
         <module>camel-test-infra-hivemq</module>

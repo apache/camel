@@ -59,6 +59,78 @@ public interface CloudtrailEndpointBuilderFactory {
             return this;
         }
         /**
+         * How often the consumer looks up the lookBackWindow again for events
+         * that CloudTrail made visible late. A late event is routed at most
+         * this long after it became visible. Must be above 0 unless
+         * lookBackWindow is 0.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: consumer
+         * 
+         * @param lookBackInterval the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder lookBackInterval(long lookBackInterval) {
+            doSetProperty("lookBackInterval", lookBackInterval);
+            return this;
+        }
+        /**
+         * How often the consumer looks up the lookBackWindow again for events
+         * that CloudTrail made visible late. A late event is routed at most
+         * this long after it became visible. Must be above 0 unless
+         * lookBackWindow is 0.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: consumer
+         * 
+         * @param lookBackInterval the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder lookBackInterval(String lookBackInterval) {
+            doSetProperty("lookBackInterval", lookBackInterval);
+            return this;
+        }
+        /**
+         * How far back the consumer looks again, every lookBackInterval, for
+         * events that CloudTrail made visible after a newer event (CloudTrail
+         * typically delivers an event within 5 minutes). Events not routed yet
+         * are routed. Set to 0 to disable.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 600000
+         * Group: consumer
+         * 
+         * @param lookBackWindow the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder lookBackWindow(long lookBackWindow) {
+            doSetProperty("lookBackWindow", lookBackWindow);
+            return this;
+        }
+        /**
+         * How far back the consumer looks again, every lookBackInterval, for
+         * events that CloudTrail made visible after a newer event (CloudTrail
+         * typically delivers an event within 5 minutes). Events not routed yet
+         * are routed. Set to 0 to disable.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 600000
+         * Group: consumer
+         * 
+         * @param lookBackWindow the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder lookBackWindow(String lookBackWindow) {
+            doSetProperty("lookBackWindow", lookBackWindow);
+            return this;
+        }
+        /**
          * Maximum number of records that will be fetched in each lookup page.
          * Each poll drains all pages, so this controls the page size rather
          * than the total per poll. AWS allows up to 50.

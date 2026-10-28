@@ -227,23 +227,24 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         CompletableFuture.runAsync(
                 () -> {
                     CountDownLatch latch = new CountDownLatch(1);
-                    server.requestHandler(router).listen(configuration.getBindPort(), configuration.getBindHost(), result -> {
-                        try {
-                            if (result.failed()) {
-                                LOGGER.warn("Failed to start Vert.x HttpServer on {}:{}, reason: {}",
-                                        configuration.getBindHost(),
-                                        configuration.getBindPort(),
-                                        result.cause().getMessage());
+                    server.requestHandler(router).listen(configuration.getBindPort(), configuration.getBindHost())
+                            .onComplete(result -> {
+                                try {
+                                    if (result.failed()) {
+                                        LOGGER.warn("Failed to start Vert.x HttpServer on {}:{}, reason: {}",
+                                                configuration.getBindHost(),
+                                                configuration.getBindPort(),
+                                                result.cause().getMessage());
 
-                                throw new RuntimeException(result.cause());
-                            }
+                                        throw new RuntimeException(result.cause());
+                                    }
 
-                            LOGGER.info("Vert.x HttpServer started on {}:{}", configuration.getBindHost(),
-                                    server.actualPort());
-                        } finally {
-                            latch.countDown();
-                        }
-                    });
+                                    LOGGER.info("Vert.x HttpServer started on {}:{}", configuration.getBindHost(),
+                                            server.actualPort());
+                                } finally {
+                                    latch.countDown();
+                                }
+                            });
 
                     try {
                         latch.await();
@@ -268,7 +269,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                         // remove the platform-http component
                         context.removeComponent(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
 
-                        server.close(result -> {
+                        server.close().onComplete(result -> {
                             try {
                                 if (result.failed()) {
                                     LOGGER.warn("Failed to close Vert.x HttpServer reason: {}",
@@ -306,7 +307,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                     () -> {
                         CountDownLatch latch = new CountDownLatch(1);
 
-                        vertx.close(result -> {
+                        vertx.close().onComplete(result -> {
                             try {
                                 if (result.failed()) {
                                     LOGGER.warn("Failed to close Vert.x reason: {}",

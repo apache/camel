@@ -149,5 +149,11 @@ public class TestPlugin implements Plugin {
         public void printf(String format, Object... args) {
             delegate.printf(format, args);
         }
+
+        @Override
+        public void printErr(String message) {
+            // errors go to the diagnostics channel (stderr) of the Camel printer
+            delegate.printErr(message);
+        }
     }
 }

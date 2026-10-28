@@ -74,6 +74,152 @@ You can pass in a timeout value that determines which method to use:
 
 The timeout values are in milliseconds.
 
+For example, to read the file `data.txt` from the inbox directory, waiting up to 10 seconds for it. Without an
+`AggregationStrategy`, the polled message is the result, so the content of the file becomes the message body:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .pollEnrich("file:inbox?fileName=data.txt", 10000)
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich timeout="10000">
+    <constant>file:inbox?fileName=data.txt</constant>
+  </pollEnrich>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - pollEnrich:
+            timeout: 10000
+            expression:
+              constant:
+                expression: file:inbox?fileName=data.txt
+        - to:
+            uri: mock:result
+----
+====
+
+=== Poll Enrich with Dynamic Endpoints
+
+Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current `Exchange`.
+
+For example, the body is an order as a Map, and the route reads the file of its customer into the variable `customer`,
+so the order stays the body:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+  .pollEnrich().simple("file:customers?fileName=${body[customer]}.json&noop=true")
+    .timeout(5000).variableReceive("customer")
+  .log("Order ${body[orderId]} for customer ${variable.customer}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <pollEnrich timeout="5000" variableReceive="customer">
+    <simple>file:customers?fileName=${body[customer]}.json&amp;noop=true</simple>
+  </pollEnrich>
+  <log message="Order ${body[orderId]} for customer ${variable.customer}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - pollEnrich:
+            expression:
+              simple:
+                expression: "file:customers?fileName=${body[customer]}.json&noop=true"
+            timeout: 5000
+            variableReceive: customer
+        - log:
+            message: "Order ${body[orderId]} for customer ${variable.customer}"
+----
+====
+
+`noop=true` leaves the customer file where it is: without it, the file is moved into `customers/.camel` once it was
+read, and the next order of the same customer finds no file. When no file is found within the timeout, the variable is
+`null`. The variable holds the content of the file as text: to read its fields, unmarshal it, such as `unmarshal` with
+`json` and both `variableSend` and `variableReceive` set to `customer`, and then `${variable.customer[name]}`.
+
+Or to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .pollEnrich().simple("seda:${header.queueName}")
+  .to("direct:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich>
+    <simple>seda:${header.queueName}</simple>
+  </pollEnrich>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - pollEnrich:
+            expression:
+              simple:
+                expression: "seda:${header.queueName}"
+        - to:
+            uri: direct:result
+----
+====
+
+TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
+
 === Using Poll Enrich
 
 The content enricher (`pollEnrich`) retrieves additional data from a _resource endpoint_ in order to enrich an incoming message (contained in the _original exchange_).
@@ -218,55 +364,6 @@ YAML::
 
 Notice that the enriched endpoint is a constant, however, Camel also supports dynamic endpoints which is covered next.
 
-=== Poll Enrich with Dynamic Endpoints
-
-Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current `Exchange`.
-
-For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:start")
-  .pollEnrich().simple("seda:${header.queueName}")
-  .to("direct:result");
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="direct:start"/>
-  <pollEnrich>
-    <simple>seda:${header.queueName}</simple>
-  </pollEnrich>
-  <to uri="direct:result"/>
-</route>
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:start
-      steps:
-        - pollEnrich:
-            expression:
-              simple:
-                expression: "seda:${header.queueName}"
-        - to:
-            uri: direct:result
-----
-====
-
-TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
-
 === Using Poll Enrich with file based components
 
 When using `poll` or `pollEnrich` with the file based components, then the `eagerLimitMaxMessagesPerPoll` option
@@ -275,6 +372,26 @@ requires to explicit set the option `eagerLimitMaxMessagesPerPoll=false` to make
 and then `poll` or `pollEnrich` will then pick the top file after the sorting.
 
 This improves performance for use-cases without need for sorting first.
+
+==== The file name of a dynamic uri
+
+With the file based components (file, ftp, ftps, sftp, smb and azure-files), Camel reuses one endpoint for every
+message, and the consumer evaluates the `fileName` option when it looks for the file:
+
+* A `fileName` that uses the file functions, such as `${file:onlyname.noext}` or `${date:file:yyyyMMdd}`, is evaluated
+  for each file found, as these functions read that file.
+* Any other `fileName` is evaluated on the message being enriched: its body, headers, variables and exchange
+  properties.
+
+The example of the customer file in <<_poll_enrich_with_dynamic_endpoints,Poll Enrich with Dynamic Endpoints>> uses a
+field of the body, `${body[customer]}`, in its `fileName`.
+
+NOTE: Before Camel 4.24, `+${body}+` in the `fileName` was the file found, not the message being enriched, and only the
+headers, variables and exchange properties of the message could be used. With an older version, put the value in a
+header or a variable first.
+
+To evaluate the whole uri on the message instead, with an endpoint for each file name, set `allowOptimisedComponents` to
+`false`.
 
 == See More
 

@@ -14,8 +14,8 @@
 
 *{component-header}*
 
-The AWS2 Eventbridge component supports assumeRole operation.
-https://aws.amazon.com/eventbridge/[AWS Eventbridge].
+The AWS2 Eventbridge component manages the rules and targets of an
+https://aws.amazon.com/eventbridge/[AWS Eventbridge] event bus, sends events to it, and consumes its events.
 
 Prerequisites
 
@@ -31,8 +31,10 @@ To create a rule that triggers on an action by an AWS service that does not emit
 == URI Format
 
 ----
-aws2-eventbridge://label[?options]
+aws2-eventbridge://eventbusNameOrArn[?options]
 ----
+
+The path is the name or the ARN of the event bus, such as `default`.
 
 You can append query options to the URI in the following format:
 
@@ -132,6 +134,8 @@ YAML::
 ====
 
 This operation will create a rule named _firstrule_, and it will use a json file for defining the EventPattern.
+The event pattern is taken from the `CamelAwsEventbridgeEventPattern` header, else from the file of the `eventPatternFile` option;
+the operation fails when neither is set.
 
 - PutTargets: this operation will add a target to the rule
 
@@ -522,7 +526,7 @@ YAML::
 
 This operation will return a list of rules associated with a target.
 
-- PutEvent: this operation will send an event to the Servicebus
+- PutEvent: this operation will send an event to the event bus, with the message body as the detail of the event, which must be a JSON object as text
 
 [tabs]
 ====
@@ -534,7 +538,7 @@ from("direct:start")
     .setHeader("CamelAwsEventbridgeResourcesArn", constant("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test"))
     .setHeader("CamelAwsEventbridgeSource", constant("com.pippo"))
     .setHeader("CamelAwsEventbridgeDetailType", constant("peppe"))
-    .setBody(constant("Test Event"))
+    .setBody(constant("{\"message\": \"Test Event\"}"))
     .to("aws2-eventbridge://test?operation=putEvent")
     .to("mock:result");
 ----
@@ -555,7 +559,7 @@ XML::
     <constant>peppe</constant>
   </setHeader>
   <setBody>
-    <constant>Test Event</constant>
+    <constant>{"message": "Test Event"}</constant>
   </setBody>
   <to uri="aws2-eventbridge://test?operation=putEvent"/>
   <to uri="mock:result"/>
@@ -580,7 +584,7 @@ YAML::
             name: CamelAwsEventbridgeDetailType
             constant: peppe
         - setBody:
-            constant: Test Event
+            constant: '{"message": "Test Event"}'
         - to:
             uri: aws2-eventbridge://test
             parameters:
@@ -590,7 +594,10 @@ YAML::
 ----
 ====
 
-This operation will return a list of entries with related ID sent to servicebus.
+This operation will return the `PutEventsResponse` with the ID of the sent event.
+The exchange fails when EventBridge rejects the event, for example a detail that is not a JSON object is rejected with `MalformedDetail`;
+the exception gives the error code and message of the rejected event, and the `CamelAwsEventbridgeFailedEntryCount` header is still set.
+A message without a body fails with an `InvalidPayloadException`.
 
 === Updating the rule
 
@@ -612,7 +619,9 @@ This is the standard AWS pattern for programmatically consuming EventBridge even
 3. It adds the queue as a target of the EventBridge rule specified by `ruleName`.
 4. It polls the SQS queue on schedule, delivering each event into the Camel route.
 5. Successfully processed messages are deleted from the queue; failed messages remain for retry.
-6. On shutdown the target is removed and the auto-created queue is deleted (configurable).
+6. On shutdown the target of an auto-created queue is removed and the queue is deleted (configurable).
+A queue given with `queueUrl` keeps its target, so it collects the events while no consumer runs, and all the
+consumers that share it use the same target (its id is derived from the queue ARN).
 
 === Consumer Configuration Options
 

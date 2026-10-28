@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,6 +77,35 @@ class AiPanelGenAiUsageTest {
         assertThat(rendered).contains("integration:");
         assertThat(rendered).contains("[tui]");
         assertThat(rendered).contains("[route:orders]");
+    }
+
+    @Test
+    void pageDownScrollsTheModelsOfTheStatsView() {
+        AiPanel panel = new AiPanel();
+        panel.setOtelSpans(spans);
+        panel.open();
+        for (int i = 0; i < 12; i++) {
+            panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                    "model-" + (char) ('a' + i), "openai", 10, 5, 15, 1000, "stop", Instant.now()));
+        }
+        panel.toggleStatsViewForTesting();
+        Rect area = new Rect(0, 0, 120, 14);
+
+        assertThat(render(panel, area)).contains("model-a").doesNotContain("model-l");
+
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.PAGE_DOWN));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.PAGE_DOWN));
+        assertThat(render(panel, area)).contains("model-l").doesNotContain("model-a ");
+
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.PAGE_UP));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.PAGE_UP));
+        assertThat(render(panel, area)).contains("model-a");
+    }
+
+    private static String render(AiPanel panel, Rect area) {
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+        return TuiTestHelper.bufferToString(buffer);
     }
 
     @Test

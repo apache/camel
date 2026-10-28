@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xslt",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "xslt",
     "extendsScheme": "",
     "syntax": "xslt:resourceUri",
@@ -38,6 +38,10 @@
     "CamelXsltResourceUri": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A URI for the template resource to load and use instead of the endpoint configured.", "constantName": "org.apache.camel.component.xslt.XsltConstants#XSLT_RESOURCE_URI" },
     "CamelXsltStylesheet": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The template to use instead of the endpoint configured.", "constantName": "org.apache.camel.component.xslt.XsltConstants#XSLT_STYLESHEET" },
     "CamelXsltFileName": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The XSLT file name", "constantName": "org.apache.camel.component.xslt.XsltConstants#XSLT_FILE_NAME" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "dependsOn": [ "source" ], "byOption": [ { "option": "failOnNullBody", "value": "false", "carriers": [ "null", "text", "bytes", "stream", "file", "pojo" ] } ], "description": "The XML to transform: text, bytes, a stream, a file, a DOM or another javax.xml.transform.Source. A Map, a List or no body fails" },
+    "producerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "dependsOn": [ "resultHandlerFactory" ], "byOption": [ { "option": "output", "value": "bytes", "carriers": [ "bytes" ], "javaType": "byte[]" }, { "option": "output", "value": "DOM", "carriers": [ "pojo" ], "javaType": "org.w3c.dom.Document" }, { "option": "output", "value": "file", "carriers": [ "file" ], "javaType": "java.io.File" } ], "description": "The result of the transformation" }
   },
   "properties": {
     "resourceUri": { "index": 0, "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Path to the template. The following is supported by the default URIResolver. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod" },

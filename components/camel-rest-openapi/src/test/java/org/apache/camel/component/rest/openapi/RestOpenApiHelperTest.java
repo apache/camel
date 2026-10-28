@@ -19,6 +19,7 @@ package org.apache.camel.component.rest.openapi;
 import java.io.InputStream;
 import java.util.stream.Stream;
 
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import org.apache.camel.spi.ContentTypeAware;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceSupport;
@@ -98,6 +99,23 @@ public class RestOpenApiHelperTest {
                 Arguments.of("classpath", "/api/openapi.txt", false),
                 Arguments.of("classpath", "", false),
                 Arguments.of("classpath", null, false));
+    }
+
+    @ParameterizedTest
+    @MethodSource("generatedOperationIds")
+    void generateOperationIdFollowsTheContractFirstRule(String path, HttpMethod method, String expected) {
+        assertThat(RestOpenApiHelper.generateOperationId(path, method)).isEqualTo(expected);
+    }
+
+    static Stream<Arguments> generatedOperationIds() {
+        return Stream.of(
+                Arguments.of("/pets", HttpMethod.GET, "GENOPID_GET.pets"),
+                Arguments.of("/pets/{petId}", HttpMethod.GET, "GENOPID_GET.pets._petId_"),
+                Arguments.of("/users/{userId}/orders/{orderId}", HttpMethod.DELETE,
+                        "GENOPID_DELETE.users._userId_.orders._orderId_"),
+                Arguments.of("/", HttpMethod.POST, "GENOPID_POST."),
+                Arguments.of("/pets/", HttpMethod.GET, "GENOPID_GET.pets."),
+                Arguments.of("/v1.0/pets-list", HttpMethod.PATCH, "GENOPID_PATCH.v1.0.pets-list"));
     }
 
     static final class FakeContentTypeAwareResource extends ResourceSupport implements ContentTypeAware {

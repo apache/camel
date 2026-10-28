@@ -108,12 +108,17 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
                    + obj + "]";
         }
 
-        if (preStartDone) {
-            logger.log(line);
-        } else {
-            // remember log lines before we are starting
-            preStartLogs.add(line);
+        if (!preStartDone) {
+            // other threads (such as the cli-connector, which is started early) can use this while camel is starting
+            synchronized (preStartLogs) {
+                if (!preStartDone) {
+                    // remember log lines before we are starting
+                    preStartLogs.add(line);
+                    return;
+                }
+            }
         }
+        logger.log(line);
     }
 
     @Override
@@ -233,9 +238,13 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     @Override
     public void afterPropertiesConfigured(CamelContext camelContext) {
         // log any pre starting logs so we can see them all
-        preStartLogs.forEach(logger::log);
-        preStartLogs.clear();
-        preStartDone = true;
+        List<String> lines;
+        synchronized (preStartLogs) {
+            lines = new ArrayList<>(preStartLogs);
+            preStartLogs.clear();
+            preStartDone = true;
+        }
+        lines.forEach(logger::log);
     }
 
     @Override

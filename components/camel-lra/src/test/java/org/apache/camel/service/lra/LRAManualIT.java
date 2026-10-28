@@ -34,7 +34,7 @@ public class LRAManualIT extends AbstractLRATestSupport {
         completeEndpoint.expectedMessageCount(1);
         completeEndpoint.expectedHeaderReceived("id", "1");
 
-        TestSupport.sendBody(template, "direct:saga", "hello", Collections.singletonMap("myid", "1"));
+        TestSupport.sendBody(template, "direct:manual-saga", "hello", Collections.singletonMap("myid", "1"));
 
         completeEndpoint.assertIsSatisfied();
     }
@@ -44,7 +44,7 @@ public class LRAManualIT extends AbstractLRATestSupport {
         MockEndpoint compensateEndpoint = getMockEndpoint("mock:compensate");
         compensateEndpoint.expectedMessageCount(1);
 
-        TestSupport.sendBody(template, "direct:saga", "fail");
+        TestSupport.sendBody(template, "direct:manual-saga", "fail");
 
         compensateEndpoint.assertIsSatisfied();
     }
@@ -54,7 +54,7 @@ public class LRAManualIT extends AbstractLRATestSupport {
         MockEndpoint compensateEndpoint = getMockEndpoint("mock:compensate");
         compensateEndpoint.expectedMessageCount(1);
 
-        TestSupport.sendBody(template, "direct:saga", "timeout");
+        TestSupport.sendBody(template, "direct:manual-saga", "timeout");
 
         compensateEndpoint.assertIsSatisfied();
     }
@@ -65,13 +65,13 @@ public class LRAManualIT extends AbstractLRATestSupport {
             @Override
             public void configure() {
 
-                from("direct:saga")
+                from("direct:manual-saga")
                         .saga()
                         .completionMode(SagaCompletionMode.MANUAL)
                         .timeout(1, TimeUnit.SECONDS)
                         .option("id", header("myid"))
-                        .completion("direct:complete")
-                        .compensation("direct:compensate")
+                        .completion("direct:manual-complete")
+                        .compensation("direct:manual-compensate")
                         .to("mock:endpoint")
                         .choice()
                         .when(body().isEqualTo("fail"))
@@ -80,11 +80,11 @@ public class LRAManualIT extends AbstractLRATestSupport {
                         .to("saga:complete")
                         .end();
 
-                from("direct:complete")
+                from("direct:manual-complete")
                         .log("YES!")
                         .to("mock:complete");
 
-                from("direct:compensate")
+                from("direct:manual-compensate")
                         .log("NO :(")
                         .to("mock:compensate");
 

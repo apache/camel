@@ -29,6 +29,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.common.CredentialType;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -47,6 +50,35 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(annotations = {
         "vault=azure-key-vault",
 })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "getSecret", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "updateSecretProperties",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "deleteSecret", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "purgeDeletedSecret",
+                                                         carriers = Carrier.ANY) },
+                                  description = "The value of the secret for createSecret, the default, read as text: a Map or"
+                                                + " a POJO is stored as its toString(), and no body fails. The name of the secret"
+                                                + " is in the CamelAzureKeyVaultSecretName header, and updateSecretProperties"
+                                                + " takes the SecretProperties from the CamelAzureKeyVaultSecretProperties header:"
+                                                + " the other operations do not use the body"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "com.azure.security.keyvault.secrets.models.KeyVaultSecret",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "getSecret", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "updateSecretProperties",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.azure.security.keyvault.secrets.models.SecretProperties"),
+                                           @BodyType.When(option = "operation", value = "deleteSecret",
+                                                          carriers = Carrier.NULL),
+                                           @BodyType.When(option = "operation", value = "purgeDeletedSecret",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "The KeyVaultSecret of the SDK for createSecret, the default; the value of the"
+                                                 + " secret as text for getSecret; the SecretProperties for"
+                                                 + " updateSecretProperties. No body after deleteSecret, which waits until the"
+                                                 + " secret is deleted"))
 public class KeyVaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SecretClient secretClient;

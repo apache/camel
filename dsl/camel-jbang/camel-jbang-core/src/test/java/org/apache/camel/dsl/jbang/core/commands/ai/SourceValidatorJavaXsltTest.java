@@ -263,4 +263,33 @@ public class SourceValidatorJavaXsltTest {
         assertThat(msgs.get(0)).contains("cannot find symbol").contains("Exchange has no setHeader")
                 .contains("exchange.getMessage().setHeader(...)").doesNotContain("//DEPS");
     }
+
+    private static String stylesheet(String body) {
+        return "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
+               + "  <xsl:template match=\"/order\">\n" + body + "\n  </xsl:template>\n</xsl:stylesheet>\n";
+    }
+
+    /** CAMEL-25514: a {expression} in element content is written out as text. */
+    @Test
+    void aBraceExpressionInElementContentIsNoted() {
+        List<String> notes = SourceValidator.xsltNotes(stylesheet("<pieces>{sum(line/@qty)}</pieces>"));
+
+        assertThat(notes).singleElement().asString()
+                .startsWith("<pieces> holds the text {sum(line/@qty)}, which is written out as it is")
+                .endsWith("<xsl:value-of select=\"sum(line/@qty)\"/>");
+    }
+
+    @Test
+    void bracesThatAreMeantAreNotNoted() {
+        // in an attribute value the braces are evaluated
+        assertThat(SourceValidator.xsltNotes(stylesheet("<slip id=\"{@id}\"/>"))).isEmpty();
+        // JSON the stylesheet writes out
+        assertThat(SourceValidator.xsltNotes(stylesheet("<json>{\"sku\": \"x\"}</json>"))).isEmpty();
+        // xsl:text is literal on purpose
+        assertThat(SourceValidator.xsltNotes(stylesheet("<xsl:text>{a/b}</xsl:text>"))).isEmpty();
+        // a plain word in braces is not an expression for sure
+        assertThat(SourceValidator.xsltNotes(stylesheet("<p>{customer}</p>"))).isEmpty();
+        // XSLT 3.0 text value templates
+        assertThat(SourceValidator.xsltNotes(stylesheet("<p xsl:expand-text=\"yes\">{sum(line/@qty)}</p>"))).isEmpty();
+    }
 }

@@ -19,9 +19,9 @@ package org.apache.camel.impl.debugger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
@@ -36,6 +36,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
@@ -56,7 +57,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();
     private final int maxConcurrentSingleSteps = 100;
-    private final Map<String, Breakpoint> singleSteps = new HashMap<>(maxConcurrentSingleSteps);
+    // written from the routing threads of concurrent exchanges
+    private final Map<String, Breakpoint> singleSteps = new ConcurrentHashMap<>(maxConcurrentSingleSteps);
     private CamelContext camelContext;
 
     /**
@@ -153,7 +155,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
                 try {
                     breakpoint.onEvent(exchange, event, definition);
                 } finally {
-                    if (event instanceof ExchangeCompletedEvent) {
+                    // an exchange that fails raises ExchangeFailedEvent instead of ExchangeCompletedEvent
+                    if (event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent) {
                         stopSingleStepExchange(exchange.getExchangeId());
                     }
                 }
@@ -397,6 +400,9 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
         private DebugEventNotifier() {
             setIgnoreCamelContextEvents(true);
             setIgnoreServiceEvents(true);
+            // AI events are ExchangeEvents but are a specialized category; the debugger must not forward them to
+            // breakpoints (it blind-casts every event to ExchangeEvent)
+            setIgnoreAiEvents(true);
         }
 
         @Override
@@ -405,8 +411,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
             Exchange exchange = aee.getExchange();
             onEvent(exchange, aee);
 
-            if (event instanceof ExchangeCompletedEvent) {
-                // fail safe to ensure we remove single steps when the Exchange is complete
+            if (event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent) {
+                // fail safe to ensure we remove single steps when the Exchange is complete (or failed)
                 singleSteps.remove(exchange.getExchangeId());
             }
         }

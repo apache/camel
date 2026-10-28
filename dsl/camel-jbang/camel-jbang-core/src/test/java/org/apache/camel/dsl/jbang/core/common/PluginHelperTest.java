@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -41,9 +42,17 @@ public class PluginHelperTest {
     @TempDir
     Path tempDir;
 
+    private Path previousHome;
+
     @BeforeEach
     public void setup() {
+        previousHome = CommandLineHelper.getHomeDir();
         CommandLineHelper.useHomeDir(tempDir.toString());
+    }
+
+    @AfterEach
+    public void restoreHome() {
+        CommandLineHelper.useHomeDir(previousHome.toString());
     }
 
     @Test
@@ -192,10 +201,12 @@ public class PluginHelperTest {
         writeConfig(buildEntry("fake", camelVersion, jar, staleMtime));
 
         // Stale mtime invalidates the cache. There is no factory-finder entry and no Maven dependency to
-        // download (gav is empty), so the resolver returns empty and quits.
+        // download (gav is empty), so the resolver returns empty and the plugin is not found.
         QuitCapture main = new QuitCapture();
-        assertThrows(RuntimeException.class, () -> PluginHelper.getActivePlugins(main, null, "fake"));
-        assertTrue(main.quitCalled, "expected resolver to give up when cache is invalid and no download path is viable");
+        CliException e = assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(main, null, "fake"));
+        assertEquals("camel-jbang-plugin-fake not found", e.getMessage(),
+                "expected resolver to give up when cache is invalid and no download path is viable");
+        assertFalse(main.quitCalled, "the error ends the command, not the JVM");
     }
 
     @Test
@@ -247,11 +258,11 @@ public class PluginHelperTest {
 
         // BEFORE CAMEL-23335: entry has no `resolved` block. resolvePlugin falls through loadFromCache,
         // misses FACTORY_FINDER (no service registered for "fake"), reaches downloadPlugin with no usable
-        // gav, gets nothing back, and quits.
+        // gav, gets nothing back, and the plugin is not found.
         writeConfig(buildEntryWithoutResolvedBlock("fake", camelVersion));
         QuitCapture before = new QuitCapture();
-        assertThrows(RuntimeException.class, () -> PluginHelper.getActivePlugins(before, null, "fake"));
-        assertTrue(before.quitCalled,
+        CliException e = assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(before, null, "fake"));
+        assertEquals("camel-jbang-plugin-fake not found", e.getMessage(),
                 "without the resolved-block cache, resolver attempted download and gave up");
 
         // AFTER CAMEL-23335: entry has a valid `resolved` block. loadFromCache builds a URLClassLoader
@@ -268,8 +279,7 @@ public class PluginHelperTest {
     @Test
     void testVersionCheckAcceptsSameSnapshotVersion() {
         // CAMEL-24469: a SNAPSHOT build must not be rejected against a plugin whose firstVersion
-        // is the same SNAPSHOT release. Rejection calls quit() which, on the real main, is System.exit
-        // and crashes the surefire fork. This regressed on patch releases such as 4.22.1-SNAPSHOT.
+        // is the same SNAPSHOT release. This regressed on patch releases such as 4.22.1-SNAPSHOT.
         QuitCapture main = new QuitCapture();
         assertThatCode(() -> PluginHelper.versionCheck(main, "4.22.1-SNAPSHOT", "4.22.1-SNAPSHOT", "fake"))
                 .doesNotThrowAnyException();
@@ -278,11 +288,13 @@ public class PluginHelperTest {
 
     @Test
     void testVersionCheckRejectsOlderVersion() {
-        // A plugin requiring a newer firstVersion than the current build must be rejected (quit).
+        // A plugin requiring a newer firstVersion than the current build must be rejected: an error of the
+        // command (exit code 1), not System.exit, which ends a JVM that embeds the CLI
         QuitCapture main = new QuitCapture();
-        assertThrows(RuntimeException.class,
+        CliException e = assertThrows(CliException.class,
                 () -> PluginHelper.versionCheck(main, "4.22.1-SNAPSHOT", "4.23.0", "fake"));
-        assertTrue(main.quitCalled, "older build than plugin firstVersion must be rejected");
+        assertEquals(CliExitCode.FAILURE, e.getExitCode(), "older build than plugin firstVersion must be rejected");
+        assertFalse(main.quitCalled);
     }
 
     private void writeConfig(JsonObject pluginEntry) throws Exception {

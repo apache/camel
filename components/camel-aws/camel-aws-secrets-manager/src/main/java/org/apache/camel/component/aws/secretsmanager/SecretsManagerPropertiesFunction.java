@@ -17,9 +17,9 @@
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.net.URI;
-import java.util.Base64;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -103,7 +103,8 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private CamelContext camelContext;
     private SecretsManagerClient client;
 
-    private final Set<String> secrets = new HashSet<>();
+    // this function is shared and invoked concurrently
+    private final Set<String> secrets = ConcurrentHashMap.newKeySet();
 
     private String region;
     private boolean defaultCredentialsProvider;
@@ -286,10 +287,13 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             GetSecretValueResponse secret = client.getSecretValue(request);
             if (ObjectHelper.isNotEmpty(secret.secretString())) {
                 returnValue = secret.secretString();
+            } else if (secret.secretBinary() != null) {
+                // a binary secret is read as the text of its bytes
+                returnValue = secret.secretBinary().asUtf8String();
             } else {
-                returnValue = new String(Base64.getDecoder().decode(secret.secretBinary().asByteBuffer()).array());
+                returnValue = null;
             }
-            if (ObjectHelper.isNotEmpty(subkey)) {
+            if (ObjectHelper.isNotEmpty(subkey) && returnValue != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode actualObj = mapper.readTree(returnValue);
                 JsonNode field = actualObj.get(subkey);
@@ -326,7 +330,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
      * Ids of the secrets in use
      */
     public Set<String> getSecrets() {
-        return secrets;
+        return Collections.unmodifiableSet(secrets);
     }
 
     /**

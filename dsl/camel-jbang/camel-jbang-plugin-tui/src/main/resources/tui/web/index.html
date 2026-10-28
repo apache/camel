@@ -209,8 +209,8 @@
 
           function sendInit() {
             fitAddon.fit();
-            // Message shape ({action: 'init'|'read'|'resize', ...}) is dictated by
-            // org.aesh:terminal-http's server-side HttpTtyConnection - it is not ours to change.
+            // Message shape ({action: 'init'|'read'|'resize', ...}) is what WebTerminal on the
+            // server reads; it answers with the terminal output as text frames.
             socket.send(JSON.stringify({
               action: 'init',
               type: 'xterm-256color',

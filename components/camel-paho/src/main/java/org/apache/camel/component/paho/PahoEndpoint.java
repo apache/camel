@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -42,6 +45,11 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", category = { Category.MESSAGING, Category.IOT },
              syntax = "paho:topic", headersClass = PahoConstants.class)
 @Deprecated(since = "4.21")
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", description = "The payload of the MQTT message"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "What converts to a byte array: text, bytes, a stream or a file, sent as"
+                                                + " the payload. A Map, a POJO or no body fails: marshal it first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class PahoEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     // Configuration members

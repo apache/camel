@@ -25,8 +25,10 @@ import org.junit.jupiter.api.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -61,6 +63,36 @@ public class PubNubPublishTest extends PubNubTestBase {
 
         template.sendBodyAndHeader("direct:publish", "Hi", PubNubConstants.OPERATION, "FIRE");
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void publishUsesConfiguredChannelWhenChannelHeaderIsPresent() throws Exception {
+        stubFor(post(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0"))
+                .willReturn(aResponse().withStatus(200).withBody("[1,\"Sent\",\"14598111595318003\"]")));
+        stubFor(post(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/otherChannel/0"))
+                .willReturn(aResponse().withStatus(200).withBody("[1,\"Sent\",\"14598111595318004\"]")));
+        mockResult.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:publish", new Hello("Hi"), PubNubConstants.CHANNEL, "otherChannel");
+        MockEndpoint.assertIsSatisfied(context);
+
+        verify(1, postRequestedFor(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0")));
+        verify(0, postRequestedFor(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/otherChannel/0")));
+    }
+
+    @Test
+    public void publishUsesOverrideChannelHeader() throws Exception {
+        stubFor(post(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0"))
+                .willReturn(aResponse().withStatus(200).withBody("[1,\"Sent\",\"14598111595318003\"]")));
+        stubFor(post(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/otherChannel/0"))
+                .willReturn(aResponse().withStatus(200).withBody("[1,\"Sent\",\"14598111595318004\"]")));
+        mockResult.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:publish", new Hello("Hi"), PubNubConstants.OVERRIDE_CHANNEL, "otherChannel");
+        MockEndpoint.assertIsSatisfied(context);
+
+        verify(1, postRequestedFor(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/otherChannel/0")));
+        verify(0, postRequestedFor(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0")));
     }
 
     @Override

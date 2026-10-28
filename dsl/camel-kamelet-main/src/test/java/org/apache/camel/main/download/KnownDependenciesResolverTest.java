@@ -16,6 +16,9 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.Map;
+
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Test;
@@ -23,8 +26,35 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class KnownDependenciesResolverTest {
+
+    @Test
+    void factoryFinderDependenciesUseRegisteredServices() {
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownFactoryFinderDependencies();
+
+        assertGav(resolver, "META-INF/services/org/apache/camel/bean-processor-factory", "org.apache.camel", "camel-bean");
+    }
+
+    @Test
+    void camelShorthandMappingsUseCatalogCoordinates() {
+        SimpleCamelContext context = new SimpleCamelContext() {
+            @Override
+            public String getVersion() {
+                return "0.0.1";
+            }
+        };
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(context, null, null);
+        resolver.addMappings(Map.of(
+                "org.example.Cataloged", "camel:whatsapp",
+                "org.example.Uncataloged", "camel:uncataloged"));
+
+        assertEquals(new DefaultCamelCatalog().componentModel("whatsapp").getVersion(),
+                resolver.mavenGavForClass("org.example.Cataloged").getVersion());
+        assertEquals("0.0.1", resolver.mavenGavForClass("org.example.Uncataloged").getVersion());
+    }
 
     @Test
     void mavenGavForClass_returnsClassScopedDependency() {
@@ -80,8 +110,76 @@ public class KnownDependenciesResolverTest {
         assertGav(resolver, "org.infinispan.client.hotrod.RemoteCacheManager", "org.infinispan", "infinispan-client-hotrod");
         assertGav(resolver, "org.infinispan.manager.DefaultCacheManager", "org.infinispan", "infinispan-core");
         assertGav(resolver, "freemarker.template.Configuration", "org.freemarker", "freemarker");
+        // the jolt-community fork that camel-jolt uses, not the old bazaarvoice library
+        assertGav(resolver, "io.joltcommunity.jolt.Chainr", "io.github.jolt-community.jolt", "jolt-community-core");
         // a shared parent package is deliberately not mapped
         assertEquals(null, resolver.mavenGavForClass("org.apache.commons.Anything"));
+    }
+
+    @Test
+    void theShippedMappingResolvesSpringTransactionClasses() {
+        // the beans of a transacted route: the Spring JDBC transaction managers and datasources come with camel-sql
+        // (spring-jdbc), the Spring transaction policy and spring-tx come with camel-spring
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownDependencies();
+
+        assertGav(resolver, "org.springframework.jdbc.datasource.DataSourceTransactionManager", "org.apache.camel",
+                "camel-sql");
+        assertGav(resolver, "org.springframework.jdbc.support.JdbcTransactionManager", "org.apache.camel", "camel-sql");
+        assertGav(resolver, "org.springframework.jdbc.datasource.DriverManagerDataSource", "org.apache.camel", "camel-sql");
+        assertGav(resolver, "org.springframework.transaction.PlatformTransactionManager", "org.apache.camel",
+                "camel-spring");
+        assertGav(resolver, "org.springframework.transaction.support.TransactionTemplate", "org.apache.camel",
+                "camel-spring");
+        assertGav(resolver, "org.apache.camel.spring.spi.SpringTransactionPolicy", "org.apache.camel", "camel-spring");
+    }
+
+    @Test
+    void anImportResolvesAnyClassOfAComponent() {
+        // CAMEL-25239: any class of a component a source imports, not only the component class itself, such as the
+        // constants of the headers of a component that a kamelet uses
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownDependencies();
+
+        assertImport(resolver, "org.apache.camel.component.aws2.s3.AWS2S3Component", "camel-aws2-s3");
+        assertImport(resolver, "org.apache.camel.component.aws2.s3.AWS2S3Constants", "camel-aws2-s3");
+        assertImport(resolver, "org.apache.camel.component.aws2.s3.utils.AWS2S3Utils", "camel-aws2-s3");
+        // a sibling package of another component is not mistaken for it
+        assertImport(resolver, "org.apache.camel.component.aws2.s3vectors.AWS2S3VectorsConstants", "camel-aws2-s3-vectors");
+        // a sub package of another component's package wins for its own classes
+        assertImport(resolver, "org.apache.camel.component.file.remote.SftpConstants", "camel-ftp");
+        assertImport(resolver, "org.apache.camel.component.file.GenericFile", "camel-file");
+        // the libraries still resolve as before
+        assertGav(resolver, "com.fasterxml.jackson.databind.ObjectMapper", "com.fasterxml.jackson.core", "jackson-databind");
+        // a component in a base package does not claim every class in it
+        assertNull(resolver.mavenGavForImport("org.apache.camel.Exchange"));
+        assertNull(resolver.mavenGavForImport("org.apache.camel.component.Anything"));
+        // a class looked up at runtime (often only probed for) still needs the component class itself
+        assertNull(resolver.mavenGavForClass("org.apache.camel.component.aws2.s3.AWS2S3Constants"));
+        assertGav(resolver, "org.apache.camel.component.aws2.s3.AWS2S3Component", "org.apache.camel", "camel-aws2-s3");
+    }
+
+    @Test
+    void semanticExpertBeansAndImportsResolveTheirOwnArtifacts() {
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownDependencies();
+
+        assertGav(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter", "org.apache.camel",
+                "camel-semantic-typesafe-ai");
+        assertImport(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter", "camel-semantic-typesafe-ai");
+        assertGav(resolver, "org.apache.camel.component.wolfdefender.WolfDefenderSemanticAdapter", "org.apache.camel",
+                "camel-semantic-wolf-defender");
+        assertImport(resolver, "org.apache.camel.component.wolfdefender.WolfDefenderSemanticAdapter",
+                "camel-semantic-wolf-defender");
+        assertImport(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiEndpoint", "camel-typesafe-ai");
+    }
+
+    private static void assertImport(KnownDependenciesResolver resolver, String className, String artifactId) {
+        MavenGav gav = resolver.mavenGavForImport(className);
+        assertNotNull(gav, className);
+        assertEquals("org.apache.camel", gav.getGroupId(), className);
+        assertEquals(artifactId, gav.getArtifactId(), className);
+        assertNotNull(gav.getVersion(), className + " version is null");
     }
 
     private static void assertGav(KnownDependenciesResolver resolver, String className, String groupId, String artifactId) {

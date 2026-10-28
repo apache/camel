@@ -19,72 +19,70 @@ package org.apache.camel.component.cxf.common;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
- * For test cases that use unique contexts, they can share the ports which will make things a bit faster as ports aren't
- * opened and closed all the time.
+ * Provides pre-allocated port numbers as system properties for test cases and Spring XML contexts.
  */
 public final class CXFTestSupport {
 
-    static final int PORT1 = AvailablePortFinder.getNextRandomAvailable();
-    static final int PORT2 = AvailablePortFinder.getNextRandomAvailable();
-    static final int PORT3 = AvailablePortFinder.getNextRandomAvailable();
-    static final int PORT4 = AvailablePortFinder.getNextRandomAvailable();
-    static final int PORT5 = AvailablePortFinder.getNextRandomAvailable();
-    static final int PORT6 = AvailablePortFinder.getNextRandomAvailable();
-    static final int PORT7 = AvailablePortFinder.getNextRandomAvailable();
-    static final int SSL_PORT = AvailablePortFinder.getNextRandomAvailable();
+    static final AvailablePortFinder.Port PORT1 = AvailablePortFinder.find();
+    static final AvailablePortFinder.Port PORT2 = AvailablePortFinder.find();
+    static final AvailablePortFinder.Port PORT3 = AvailablePortFinder.find();
+    static final AvailablePortFinder.Port PORT4 = AvailablePortFinder.find();
+    static final AvailablePortFinder.Port PORT5 = AvailablePortFinder.find();
+    static final AvailablePortFinder.Port PORT6 = AvailablePortFinder.find();
+    static final AvailablePortFinder.Port PORT7 = AvailablePortFinder.find();
+    static final AvailablePortFinder.Port SSL_PORT = AvailablePortFinder.find();
 
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
-        System.setProperty("CXFTestSupport.port1", Integer.toString(PORT1));
-        System.setProperty("CXFTestSupport.port2", Integer.toString(PORT2));
-        System.setProperty("CXFTestSupport.port3", Integer.toString(PORT3));
-        System.setProperty("CXFTestSupport.port4", Integer.toString(PORT4));
-        System.setProperty("CXFTestSupport.port5", Integer.toString(PORT5));
-        System.setProperty("CXFTestSupport.port6", Integer.toString(PORT6));
-        System.setProperty("CXFTestSupport.port7", Integer.toString(PORT7));
-        System.setProperty("CXFTestSupport.sslPort", Integer.toString(SSL_PORT));
-        System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", "true");
+        System.setProperty("CXFTestSupport.port1", PORT1.toString());
+        System.setProperty("CXFTestSupport.port2", PORT2.toString());
+        System.setProperty("CXFTestSupport.port3", PORT3.toString());
+        System.setProperty("CXFTestSupport.port4", PORT4.toString());
+        System.setProperty("CXFTestSupport.port5", PORT5.toString());
+        System.setProperty("CXFTestSupport.port6", PORT6.toString());
+        System.setProperty("CXFTestSupport.port7", PORT7.toString());
+        System.setProperty("CXFTestSupport.sslPort", SSL_PORT.toString());
     }
 
     private CXFTestSupport() {
     }
 
     public static int getPort(String name) {
-        int port = AvailablePortFinder.getNextRandomAvailable();
+        int port = AvailablePortFinder.find().getPort();
         System.setProperty(name, Integer.toString(port));
         return port;
     }
 
     public static int getPort1() {
-        return PORT1;
+        return PORT1.getPort();
     }
 
     public static int getPort2() {
-        return PORT2;
+        return PORT2.getPort();
     }
 
     public static int getPort3() {
-        return PORT3;
+        return PORT3.getPort();
     }
 
     public static int getPort4() {
-        return PORT4;
+        return PORT4.getPort();
     }
 
     public static int getPort5() {
-        return PORT5;
+        return PORT5.getPort();
     }
 
     public static int getPort6() {
-        return PORT6;
+        return PORT6.getPort();
     }
 
     public static int getPort7() {
-        return PORT7;
+        return PORT7.getPort();
     }
 
     public static int getSslPort() {
-        return SSL_PORT;
+        return SSL_PORT.getPort();
     }
 }

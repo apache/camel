@@ -36,9 +36,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class TestInfraData {
 
-    /** Component schemes that are trivial and should not be replaced with mocks. */
-    private static final Set<String> TRIVIAL_SCHEMES = Set.of("log", "direct", "seda", "mock", "controlbus", "stub");
-
     /** Component schemes that are internally triggered (user can send messages to them). */
     private static final Set<String> SENDABLE_SCHEMES = Set.of("direct", "seda");
 
@@ -167,13 +164,6 @@ public class TestInfraData {
      */
     public List<String> getSupportedSchemes() {
         return List.copyOf(TEST_INFRA_MAP.keySet());
-    }
-
-    /**
-     * Get the set of trivial component schemes that should not be replaced with mocks.
-     */
-    public Set<String> getTrivialSchemes() {
-        return TRIVIAL_SCHEMES;
     }
 
     /**

@@ -131,14 +131,14 @@ received.
 
 The size of an uploaded request is limited by the runtime:
 
-* Camel Main and Camel JBang: `camel.server.maxBodySize`. When it is not set, the Vert.x default of 10 MB applies.
+* Camel Main and the Camel CLI: `camel.server.maxBodySize`. When it is not set, the Vert.x default of 10 MB applies.
 With `useStreaming=true` this limit does not apply, so limit the size of requests in front of Camel if needed.
 * Quarkus: `quarkus.http.limits.max-body-size`, and the `quarkus.http.body.*` options for file uploads. See the
 Quarkus documentation.
 * Spring Boot: `spring.servlet.multipart.max-file-size` and `spring.servlet.multipart.max-request-size` for
 multipart uploads. See the Spring Boot documentation.
 
-On Camel Main, Camel JBang and Quarkus, `useStreaming=true` does not accept multipart requests; use a separate
+On Camel Main, the Camel CLI and Quarkus, `useStreaming=true` does not accept multipart requests; use a separate
 endpoint for multipart uploads.
 
 == Examples

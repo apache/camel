@@ -191,11 +191,8 @@ public class AWS2S3Producer extends DefaultProducer {
             contentLength = f.length();
         } else {
             // okay we use input stream
-            if (contentLength <= 0) {
-                // such as a java.nio.file.Path, byte[] or stream cache
-                contentLength = PayloadHelper.getLength(obj);
-            }
             inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
+            contentLength = bodyLength(obj, inputStream, contentLength);
             if (contentLength <= 0) {
                 contentLength = PayloadHelper.getLength(inputStream);
                 if (contentLength == -1) {
@@ -223,12 +220,11 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         LOG.debug("Payload size >= partSize ({} > {}). Uploading payload using multi-part operation", contentLength, partSize);
-        objectMetadata.put("Content-Length", "" + contentLength);
 
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                = CreateMultipartUploadRequest.builder().bucket(bucketName).key(keyName);
+                = CreateMultipartUploadRequest.builder().bucket(bucketName).key(keyName).metadata(objectMetadata);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (ObjectHelper.isNotEmpty(storageClass)) {
@@ -369,11 +365,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 contentLength = filePayload.length();
             } else {
                 // okay we use input stream
-                if (contentLength <= 0) {
-                    // such as a java.nio.file.Path, byte[] or stream cache
-                    contentLength = PayloadHelper.getLength(obj);
-                }
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
+                contentLength = bodyLength(obj, inputStream, contentLength);
                 if (contentLength <= 0) {
                     contentLength = PayloadHelper.getLength(inputStream);
                     if (contentLength == -1) {
@@ -395,6 +388,20 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
             FileUtil.deleteFile(filePayload);
         }
+    }
+
+    /**
+     * The length of the body when it is known without reading it (such as a java.nio.file.Path, byte[], String or
+     * stream cache), otherwise the given content-length header. The header is not used for a body of known length, as
+     * it can be stale once the route changed the body (for example the length of an object read by the consumer), and
+     * the SDK sends exactly that many bytes.
+     */
+    private static long bodyLength(Object body, InputStream inputStream, long contentLengthHeader) {
+        long length = PayloadHelper.getLength(body);
+        if (length < 0) {
+            length = PayloadHelper.getLength(inputStream);
+        }
+        return length >= 0 ? length : contentLengthHeader;
     }
 
     private void doPutObject(
@@ -862,11 +869,7 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void headBucket(S3Client s3Client, Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, String.class);
-        if (ObjectHelper.isEmpty(bucketName)) {
-            throw new IllegalArgumentException(
-                    "Head Bucket operation requires to specify a bucket name via Header");
-        }
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         Message message = getMessageForResponse(exchange);
         boolean exists = true;
         try {
@@ -882,13 +885,10 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void headObject(S3Client s3Client, Exchange exchange) {
-        String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
-        if (ObjectHelper.isEmpty(key)) {
-            throw new IllegalArgumentException(
-                    "Head Object operation requires to specify a bucket name via Header");
-        }
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+        final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         HeadObjectResponse headObjectResponse = s3Client.headObject(HeadObjectRequest.builder()
-                .bucket(AWS2S3Utils.determineBucketName(exchange, getConfiguration())).key(key).build());
+                .bucket(bucketName).key(keyName).build());
 
         Message message = getMessageForResponse(exchange);
         message.setBody(headObjectResponse);

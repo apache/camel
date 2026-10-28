@@ -68,6 +68,32 @@ public interface Langchain4jIngestComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * MIME type of a media body, such as audio/wav or image/png, handed to
+         * the embedding model; matched case-insensitively, parameters after a
+         * semicolon are dropped. When not set, it is derived from the document
+         * id's file extension through Camel's own MIME table (the x- audio
+         * variants rewritten to their registered form): wav, mp3, flac, ogg,
+         * opus, m4a, aac, aiff, png, jpg, gif, webp, mp4, mov, webm (video),
+         * pdf and every other extension the table knows. A document whose type
+         * cannot be determined, whose type is no medium (text/plain, say), or
+         * whose medium the model does not declare, fails the exchange before
+         * its dedup claim and before its body is read. Only valid with
+         * modality=media - with modality=text the endpoint refuses to start,
+         * the option being a sign that modality=media was forgotten.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jIngestComponentBuilder contentType(java.lang.String contentType) {
+            doSetProperty("contentType", contentType);
+            return this;
+        }
+    
         
         /**
          * Name of the header carrying the document id, such as CamelAwsS3Key
@@ -210,6 +236,32 @@ public interface Langchain4jIngestComponentBuilderFactory {
     
         
         /**
+         * What the message body is. text, the default, is read as a String,
+         * split into segments and embedded segment by segment. media is read as
+         * bytes and embedded whole, as one vector: audio, an image, video or a
+         * PDF, told apart by the MIME type, each needing an embedding model
+         * whose supportedContentTypes() include the matching type - the
+         * endpoint refuses to start with a text-only model. In media mode the
+         * splitter options and embeddingBatchSize do not apply,
+         * documentSplitter must not be set, and maxDocumentSize and
+         * minDocumentSize count bytes.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.langchain4j.ingest.IngestModality&lt;/code&gt; type.
+         * 
+         * Default: TEXT
+         * Group: producer
+         * 
+         * @param modality the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jIngestComponentBuilder modality(org.apache.camel.component.langchain4j.ingest.IngestModality modality) {
+            doSetProperty("modality", modality);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -283,12 +335,14 @@ public interface Langchain4jIngestComponentBuilderFactory {
         }
     
         /**
-         * Maximum size of one document in characters, applied to the text about
-         * to be split; 0, the default, means no limit. The pipeline holds a
-         * document in memory whole, so the cap is the protection against
-         * oversized - on a consumer-fed pipeline, attacker-sized - payloads. An
-         * oversized document fails the exchange cleanly and, with a repository
-         * configured, releases its dedup claim.
+         * Maximum size of one document: characters of the text about to be
+         * split, or bytes of a media body with modality=media; 0, the default,
+         * means no limit. The pipeline holds a document in memory whole, so the
+         * cap is the protection against oversized - on a consumer-fed pipeline,
+         * attacker-sized - payloads. An oversized document fails the exchange
+         * cleanly and, with a repository configured, releases its dedup claim.
+         * With modality=media the size a file consumer announces in
+         * CamelFileLength is checked before the body is read.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -307,9 +361,10 @@ public interface Langchain4jIngestComponentBuilderFactory {
          * #bean:name and evaluated with the message body available. A rejected
          * delivery is answered with a filtered result and releases its dedup
          * claim. Runs after the id patterns and after the dedup claim, so a
-         * duplicate is answered skipped without the filter being evaluated. Not
-         * looked up by type on purpose - an application may hold unrelated
-         * predicates.
+         * duplicate is answered skipped without the filter being evaluated. The
+         * body is still as the consumer delivered it, a file or stream say, not
+         * yet read as text or bytes. Not looked up by type on purpose - an
+         * application may hold unrelated predicates.
          * 
          * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
          * type.
@@ -366,10 +421,11 @@ public interface Langchain4jIngestComponentBuilderFactory {
         }
     
         /**
-         * Minimum size of one document in characters; 0, the default, means no
-         * minimum. A shorter document - boilerplate too small to carry
-         * retrievable content - is answered with a filtered result instead of
-         * being written, and releases its dedup claim like a blank one.
+         * Minimum size of one document in characters (bytes with
+         * modality=media); 0, the default, means no minimum. A shorter document
+         * - boilerplate too small to carry retrievable content - is answered
+         * with a filtered result instead of being written, and releases its
+         * dedup claim like a blank one.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -404,6 +460,7 @@ public interface Langchain4jIngestComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((LangChain4jIngestComponent) component).setConfiguration((org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration) value); return true;
+            case "contentType": getOrCreateConfiguration((LangChain4jIngestComponent) component).setContentType((java.lang.String) value); return true;
             case "documentIdHeader": getOrCreateConfiguration((LangChain4jIngestComponent) component).setDocumentIdHeader((java.lang.String) value); return true;
             case "embeddingBatchSize": getOrCreateConfiguration((LangChain4jIngestComponent) component).setEmbeddingBatchSize((int) value); return true;
             case "embeddingModel": getOrCreateConfiguration((LangChain4jIngestComponent) component).setEmbeddingModel((dev.langchain4j.model.embedding.EmbeddingModel) value); return true;
@@ -411,6 +468,7 @@ public interface Langchain4jIngestComponentBuilderFactory {
             case "lazyStartProducer": ((LangChain4jIngestComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxOverlapSize": getOrCreateConfiguration((LangChain4jIngestComponent) component).setMaxOverlapSize((int) value); return true;
             case "maxSegmentSize": getOrCreateConfiguration((LangChain4jIngestComponent) component).setMaxSegmentSize((int) value); return true;
+            case "modality": getOrCreateConfiguration((LangChain4jIngestComponent) component).setModality((org.apache.camel.component.langchain4j.ingest.IngestModality) value); return true;
             case "autowiredEnabled": ((LangChain4jIngestComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "documentSplitter": getOrCreateConfiguration((LangChain4jIngestComponent) component).setDocumentSplitter((dev.langchain4j.data.document.DocumentSplitter) value); return true;
             case "idempotentRepository": getOrCreateConfiguration((LangChain4jIngestComponent) component).setIdempotentRepository((org.apache.camel.spi.IdempotentRepository) value); return true;

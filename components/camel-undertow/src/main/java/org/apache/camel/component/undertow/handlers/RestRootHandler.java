@@ -50,6 +50,8 @@ public class RestRootHandler implements HttpHandler {
     //private int port; // unread field
     private String token;
     private int len;
+    // the handler of the requests that no rest-dsl consumer matches, or null to answer 404 or 405
+    private volatile HttpHandler fallbackHandler;
 
     /**
      * Initializes this handler with the given port.
@@ -93,6 +95,14 @@ public class RestRootHandler implements HttpHandler {
         return consumers.size();
     }
 
+    /**
+     * Sets the handler of the requests that no rest-dsl consumer matches, such as the handler of the plain undertow
+     * consumers of the same port. Without one, such a request gets 404 or 405.
+     */
+    public void setFallbackHandler(HttpHandler fallbackHandler) {
+        this.fallbackHandler = fallbackHandler;
+    }
+
     @Override
     public void handleRequest(HttpServerExchange httpServerExchange) throws Exception {
         String method = httpServerExchange.getRequestMethod().toString();
@@ -100,21 +110,31 @@ public class RestRootHandler implements HttpHandler {
         HttpHandler handler = getHandler(httpServerExchange, method);
         if (handler != null) {
             handler.handleRequest(httpServerExchange);
+        } else if (fallbackHandler != null) {
+            fallbackHandler.handleRequest(httpServerExchange);
         } else {
-            // okay we cannot process this requires so return either 404 or 405.
-            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
-            boolean hasAnyMethod = METHODS.stream().anyMatch(m -> isHttpMethodAllowed(httpServerExchange, m));
-            if (hasAnyMethod) {
-                //method match error, return 405
-                httpServerExchange.setStatusCode(405);
-                httpServerExchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-                httpServerExchange.getResponseSender().send("Method not allowed");
-            } else {
-                // this resource is not found, return 404
-                httpServerExchange.setStatusCode(404);
-                httpServerExchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-                httpServerExchange.getResponseSender().send("No matching path found");
-            }
+            handleNoMatch(httpServerExchange);
+        }
+    }
+
+    /**
+     * Answers a request that no consumer matches: 405 when a rest-dsl consumer matches the path with another HTTP
+     * method, otherwise 404.
+     */
+    public void handleNoMatch(HttpServerExchange httpServerExchange) {
+        // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+        boolean hasAnyMethod
+                = !consumers.isEmpty() && METHODS.stream().anyMatch(m -> isHttpMethodAllowed(httpServerExchange, m));
+        if (hasAnyMethod) {
+            //method match error, return 405
+            httpServerExchange.setStatusCode(405);
+            httpServerExchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
+            httpServerExchange.getResponseSender().send("Method not allowed");
+        } else {
+            // this resource is not found, return 404
+            httpServerExchange.setStatusCode(404);
+            httpServerExchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
+            httpServerExchange.getResponseSender().send("No matching path found");
         }
     }
 

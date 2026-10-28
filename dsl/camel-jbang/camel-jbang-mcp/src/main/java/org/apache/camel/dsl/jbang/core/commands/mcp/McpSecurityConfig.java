@@ -59,6 +59,7 @@ public class McpSecurityConfig {
     @ConfigProperty(name = "camel.mcp.security.redaction.patterns")
     Optional<String> redactionPatterns;
 
+    /** A tool call with a string argument longer than this is rejected, never cut. */
     @ConfigProperty(name = "camel.mcp.security.max-argument-length", defaultValue = "10000")
     int maxArgumentLength;
 

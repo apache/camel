@@ -35,6 +35,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.PooledExchangeTask;
 import org.apache.camel.processor.PooledExchangeTaskFactory;
@@ -58,6 +59,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeSource;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -858,7 +860,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         private void runNotAllowed() {
             LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException());
+                exchange.setException(new RouteStoppingException(notAllowedReason()));
             }
             AsyncCallback cb = callback;
             taskFactory.release(this);
@@ -983,6 +985,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             if (e == null) {
                 e = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
+            }
+
+            if (logCutOffByRouteStop(exchange, e, logger.getLevel())) {
+                return;
             }
 
             if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
@@ -1117,7 +1123,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (!isRunAllowed()) {
                 LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException());
+                    exchange.setException(new RouteStoppingException(notAllowedReason()));
                 }
                 AsyncCallback cb = callback;
                 taskFactory.release(this);
@@ -1214,8 +1220,44 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 LOG.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", redeliveryDelay,
                         exchange.getExchangeId());
             }
-            executorService.schedule(() -> reactiveExecutor.schedule(this::redeliver), redeliveryDelay,
+            if (currentRedeliveryPolicy.isAllowRedeliveryWhileStopping()) {
+                executorService.schedule(() -> reactiveExecutor.schedule(this::redeliver), redeliveryDelay,
+                        TimeUnit.MILLISECONDS);
+            } else {
+                // the redelivery is not allowed while stopping, so wake up every second to check whether we are
+                // preparing for shutdown, the same as the synchronous redelivery does (see sleep())
+                scheduleAsynchronousRedelivery(new StopWatch());
+            }
+        }
+
+        private void scheduleAsynchronousRedelivery(StopWatch watch) {
+            long delay = Math.max(0, Math.min(1000, redeliveryDelay - watch.taken()));
+            executorService.schedule(() -> reactiveExecutor.schedule(() -> onAsynchronousRedeliveryWakeUp(watch)), delay,
                     TimeUnit.MILLISECONDS);
+        }
+
+        private void onAsynchronousRedeliveryWakeUp(StopWatch watch) {
+            if (preparingShutdown) {
+                LOG.debug("Rejected redelivery while stopping");
+                rejectRedelivery(new RejectedExecutionException("Redelivery not allowed while stopping"));
+            } else if (watch.taken() < redeliveryDelay) {
+                try {
+                    scheduleAsynchronousRedelivery(watch);
+                } catch (RejectedExecutionException e) {
+                    rejectRedelivery(e);
+                }
+            } else {
+                redeliver();
+            }
+        }
+
+        private void rejectRedelivery(RejectedExecutionException cause) {
+            // the task was rejected
+            exchange.setException(cause);
+            // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
+            exchange.getExchangeExtension().setRedeliveryExhausted(true);
+            // jump to start of loop which then detects that we are failed and exhausted
+            reactiveExecutor.schedule(this);
         }
 
         private void runSynchronousRedelivery() {
@@ -1874,6 +1916,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 e = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
             }
 
+            if (!newException && logCutOffByRouteStop(exchange, e, newLogLevel)) {
+                return;
+            }
+
             if (newException) {
                 // log at most WARN level
                 if (newLogLevel == LoggingLevel.ERROR) {
@@ -2030,7 +2076,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 long max = Math.min(1000, delta);
                 if (max > 0) {
                     LOG.trace("Sleeping for: {} millis until waking up for re-check", max);
-                    Thread.sleep(max);
+                    TimeSource.sleep(max);
                 }
 
                 // are we preparing for shutdown then only do redelivery if allowed
@@ -2172,4 +2218,44 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return sb.toString();
     }
 
+    /**
+     * Why an exchange cannot go on: its route is being stopped. Without a message the error reads
+     * {@code RejectedExecutionException - null}, which looks like a fault in the route, while it is a route stop or a
+     * dev mode reload cutting the exchange off (CAMEL-25365).
+     */
+    static final String ROUTE_STOPPING_REASON = "The exchange cannot continue: its route is being stopped or reloaded";
+
+    String notAllowedReason() {
+        return shutdownStrategy.isForceShutdown()
+                ? "The exchange cannot continue: its route was forced to shut down, as the graceful shutdown timed out"
+                  + " while it was in flight (the CamelContext is being stopped)"
+                : ROUTE_STOPPING_REASON;
+    }
+
+    /**
+     * Whether the failure is an exchange cut off by a route stop, a dev mode reload or a CamelContext stop: nothing in
+     * the route failed, and a consumer that rolls back, such as file, delivers it again (CAMEL-25484, CAMEL-25502).
+     */
+    static boolean isCutOffByRouteStop(Throwable e) {
+        return e instanceof RouteStoppingException;
+    }
+
+    /**
+     * Logs an exchange that a route stop, a dev mode reload or a CamelContext stop cut off as one line at most WARN,
+     * without the message history and stack trace of a failure, as nothing in the route failed (CAMEL-25484).
+     *
+     * @return whether the exchange was cut off, and so is logged
+     */
+    boolean logCutOffByRouteStop(Exchange exchange, Throwable e, LoggingLevel level) {
+        if (!isCutOffByRouteStop(e) || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
+            return false;
+        }
+        String reason = shutdownStrategy.isForceShutdown()
+                ? "the CamelContext is being stopped" : "its route is being stopped or reloaded";
+        logger.log("Exchange cut off " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange)
+                   + ": " + reason + ", so it is not continued."
+                   + " A consumer that rolls back, such as file, delivers it again",
+                level == LoggingLevel.ERROR ? LoggingLevel.WARN : level);
+        return true;
+    }
 }

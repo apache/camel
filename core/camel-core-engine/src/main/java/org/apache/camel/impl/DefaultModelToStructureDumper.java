@@ -23,13 +23,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SwitchCaseDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.annotations.JdkService;
@@ -65,15 +68,22 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
         boolean fromRemote = isRemoteUri(fromUri, schemeRemoteMap);
         answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]", def.getDescription(), fromUri, fromRemote));
 
-        dumpChildren(def, scheme, brief, 2, answer, schemeRemoteMap);
+        // with no error handler the onException clauses of the route (a global one is copied into every route) never run
+        ErrorHandlerFactory eh = def.isErrorHandlerFactorySet()
+                ? def.getErrorHandlerFactory() : context.getCamelContextExtension().getErrorHandlerFactory();
+        boolean onException = !(eh instanceof NoErrorHandlerDefinition);
+        dumpChildren(def, scheme, brief, 2, answer, schemeRemoteMap, onException);
 
         return answer;
     }
 
     private static void dumpChildren(
             NamedNode parent, String scheme, boolean brief, int level,
-            List<ModelDumpLine> answer, Map<String, Boolean> schemeRemoteMap) {
+            List<ModelDumpLine> answer, Map<String, Boolean> schemeRemoteMap, boolean onException) {
         for (NamedNode child : parent.getChildren()) {
+            if (!onException && child instanceof OnExceptionDefinition) {
+                continue;
+            }
             if (child instanceof OptionalIdentifiedDefinition<?> output) {
                 String loc = scheme + ":" + output.getLocation();
                 if (output.getLineNumber() > 0) {
@@ -103,7 +113,7 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
                 }
                 answer.add(new ModelDumpLine(loc, kind, id, level, code, output.getDescription(), endpointUri, remote));
             }
-            dumpChildren(child, scheme, brief, level + 1, answer, schemeRemoteMap);
+            dumpChildren(child, scheme, brief, level + 1, answer, schemeRemoteMap, true);
         }
     }
 

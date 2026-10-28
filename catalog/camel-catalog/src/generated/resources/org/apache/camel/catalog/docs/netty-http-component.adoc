@@ -20,17 +20,16 @@ component to simplify HTTP transport with xref:netty-component.adoc[Netty].
 ====
 *Stream*
 
-Netty is stream-based, which means the input it receives is submitted to
-Camel as a stream. That means you will only be able to read the content
-of the stream *once*. If you find a situation where the message body appears to be empty, or
-you need to access the data multiple times (eg: doing multicasting, or
-redelivery error handling), you should use Stream caching or convert the
-message body to a `String` which is safe to be re-read multiple times. 
-
-Note also that Netty HTTP reads the entire stream into memory using
+Netty HTTP reads the entire request into memory using
 `io.netty.handler.codec.http.HttpObjectAggregator` to build the entire
-full http message. But the resulting message is still a stream-based
-message that is readable once.
+full http message. The consumer gives the request body as a Camel stream cache,
+which can be read multiple times, and the producer gives the response body as a byte array.
+
+With `disableStreamCache=true` the body is the raw Netty `ByteBuf` instead (or an `InputStream`
+for a chunked message), which you can only read *once*. If you find a situation where the
+message body then appears to be empty, or you need to access the data multiple times (eg: doing
+multicasting, or redelivery error handling), convert the message body to a `String` or a `byte[]`
+which is safe to be re-read multiple times.
 ====
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -276,6 +275,11 @@ no roles)
 * access to /guest/* requires the admin or guest role
 * access to /public/* is an exclusion that means no authentication is
 necessary, and is therefore public for everyone without logging in
+
+The roles of an inclusion are a comma-separated list of role names. A user
+is in role when one of the user roles is equal to one of the listed names.
+The comparison is case-sensitive, whitespace around each name and blank
+entries are ignored, and a value of `*` accepts any role.
 
 To use this constraint, we just need to refer to the bean id as shown
 below:

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -60,6 +61,13 @@ public class AiToolConfiguration implements Cloneable {
                             + "multi-value options. Use for nested objects, arrays, oneOf, and other complex schemas.")
     @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String argSchema;
+
+    @Metadata(label = "consumer")
+    @UriParam(defaultValue = "false", description = "Whether to populate the message body with the tool arguments "
+                                                    + "as a JSON string, excluding undeclared arguments and reserved names. "
+                                                    + "Declared argument headers remain available. "
+                                                    + "When disabled, the message body is left unchanged.")
+    private boolean argumentsAsBody;
 
     @Metadata(label = "consumer")
     @UriParam(description = "Tool output schema fields. "
@@ -106,6 +114,25 @@ public class AiToolConfiguration implements Cloneable {
                             + "Also published as an MCP tool annotation when the tool is exposed via camel-mcp-server.")
     private Boolean returnDirect;
 
+    @Metadata(label = "consumer", defaultValue = "false")
+    @UriParam(description = "When true, this route tool is eligible for tool search and is omitted from the initial "
+                            + "model request while the producer has tool search enabled. When false, the tool stays "
+                            + "directly visible to the model. Searchability is a visibility policy, not an authorization "
+                            + "policy, and has no effect when tool search is disabled.")
+    private boolean searchable;
+
+    @Metadata(label = "consumer,security")
+    @UriParam(description = "Reference to an org.apache.camel.spi.AuthorizationPolicy used to authorize tool calls "
+                            + "before the route runs. Set it on the component to guard every tool route by "
+                            + "construction, or per endpoint to override. The policy authorizes on trustworthy input "
+                            + "only: the tool name comes from the route (never from model output), and the caller "
+                            + "identity is carried as an exchange property set before the agent ran (for example by "
+                            + "camel-spiffe or camel-keycloak), which the model cannot set. Authorize on exchange "
+                            + "properties or validated tokens only, never on message headers (on a tool route the "
+                            + "headers carry the model-controlled tool arguments). A denied call surfaces to the "
+                            + "model as a short refusal rather than a stack trace.")
+    private AuthorizationPolicy authorizationPolicy;
+
     public AiToolConfiguration() {
     }
 
@@ -139,6 +166,14 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setArgSchema(String argSchema) {
         this.argSchema = argSchema;
+    }
+
+    public boolean isArgumentsAsBody() {
+        return argumentsAsBody;
+    }
+
+    public void setArgumentsAsBody(boolean argumentsAsBody) {
+        this.argumentsAsBody = argumentsAsBody;
     }
 
     public Map<String, String> getOutputParameters() {
@@ -203,6 +238,22 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setReturnDirect(Boolean returnDirect) {
         this.returnDirect = returnDirect;
+    }
+
+    public boolean isSearchable() {
+        return searchable;
+    }
+
+    public void setSearchable(boolean searchable) {
+        this.searchable = searchable;
+    }
+
+    public AuthorizationPolicy getAuthorizationPolicy() {
+        return authorizationPolicy;
+    }
+
+    public void setAuthorizationPolicy(AuthorizationPolicy authorizationPolicy) {
+        this.authorizationPolicy = authorizationPolicy;
     }
 
     public AiToolConfiguration copy() {

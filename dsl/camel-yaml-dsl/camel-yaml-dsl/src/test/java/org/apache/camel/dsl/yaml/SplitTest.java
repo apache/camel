@@ -104,6 +104,34 @@ class SplitTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    void splitXtokenizeWithLanguage() throws Exception {
+        loadRoutes("""
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - split:
+                          language:
+                            language: xtokenize
+                            expression: /orders/order
+                          steps:
+                            - to: "mock:split"
+                      - to: "mock:route"
+                """);
+
+        withMock("mock:split", mock -> {
+            mock.expectedMessageCount(3);
+            mock.expectedBodiesReceived(
+                    "<order>Camel in Action</order>",
+                    "<order>ActiveMQ in Action</order>",
+                    "<order>DSL in Action</order>");
+        });
+
+        withTemplate(t -> t.to("direct:route").withBody(createXmlBody()).send());
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     private String createXmlBody() {
         return "<?xml version=\"1.0\"?>\n"
                + "<orders>\n"

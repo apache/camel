@@ -47,7 +47,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to filter headers mapped to and
          * from the Camel message. By default the internal Camel and camel
          * header namespace (case-insensitive) is filtered out from inbound SOAP
-         * headers.
+         * headers, and the default message filter does not write it into
+         * outbound SOAP headers.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -65,7 +66,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to filter headers mapped to and
          * from the Camel message. By default the internal Camel and camel
          * header namespace (case-insensitive) is filtered out from inbound SOAP
-         * headers.
+         * headers, and the default message filter does not write it into
+         * outbound SOAP headers.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -410,7 +412,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to filter headers mapped to and
          * from the Camel message. By default the internal Camel and camel
          * header namespace (case-insensitive) is filtered out from inbound SOAP
-         * headers.
+         * headers, and the default message filter does not write it into
+         * outbound SOAP headers.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -428,7 +431,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to filter headers mapped to and
          * from the Camel message. By default the internal Camel and camel
          * header namespace (case-insensitive) is filtered out from inbound SOAP
-         * headers.
+         * headers, and the default message filter does not write it into
+         * outbound SOAP headers.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -1026,7 +1030,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to filter headers mapped to and
          * from the Camel message. By default the internal Camel and camel
          * header namespace (case-insensitive) is filtered out from inbound SOAP
-         * headers.
+         * headers, and the default message filter does not write it into
+         * outbound SOAP headers.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -1044,7 +1049,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to filter headers mapped to and
          * from the Camel message. By default the internal Camel and camel
          * header namespace (case-insensitive) is filtered out from inbound SOAP
-         * headers.
+         * headers, and the default message filter does not write it into
+         * outbound SOAP headers.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.

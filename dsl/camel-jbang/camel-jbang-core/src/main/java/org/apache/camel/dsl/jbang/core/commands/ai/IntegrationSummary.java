@@ -37,6 +37,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview.Finding;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview.Link;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview.Overview;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview.SystemUse;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Endpoint;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Route;
 import org.apache.camel.util.SensitiveUtils;
 
@@ -450,13 +451,22 @@ public final class IntegrationSummary {
             sb.append('\n');
         }
 
-        if (!overview.links().isEmpty()) {
+        List<Link> calls = overview.links().stream().filter(l -> !isErrorPath(overview, l)).toList();
+        if (!calls.isEmpty()) {
             sb.append("## Flows between routes\n\n");
-            for (Link l : overview.links()) {
+            for (Link l : calls) {
                 sb.append("- `").append(l
                         .from()).append("` ").append(linkVerb(l.kind())).append(" `").append(l.to())
                         .append("` over `").append(l.endpoint()).append("`\n");
             }
+            sb.append('\n');
+        }
+
+        // how failures travel: not flows, so listed apart, by what handles them
+        List<String> errorLines = errorHandlingLines(overview, true);
+        if (!errorLines.isEmpty()) {
+            sb.append("## Error handling\n\n");
+            errorLines.forEach(line -> sb.append("- ").append(line).append('\n'));
             sb.append('\n');
         }
 
@@ -623,6 +633,86 @@ public final class IntegrationSummary {
         };
     }
 
+    /** A link that carries a failure: sent to from an onException, a doCatch or a dead letter channel. */
+    static boolean isErrorPath(Overview overview, Link l) {
+        if (l.onError()) {
+            return true;
+        }
+        Route from = overview.route(l.from());
+        return from != null && "errorHandler".equals(from.kind());
+    }
+
+    /**
+     * The error handling of the project, one line per handler: a global one (onException, dead letter channel, route
+     * configuration) with where it is written, or a route's own, and the routes its failures go to; for a global one
+     * also the endpoints no route consumes (a broker's dead letter queue, or a route that is missing).
+     */
+    static List<String> errorHandlingLines(Overview overview, boolean markdown) {
+        String q = markdown ? "`" : "";
+        Map<String, Set<String>> targets = new LinkedHashMap<>();
+        for (Link l : overview.links()) {
+            if (isErrorPath(overview, l)) {
+                targets.computeIfAbsent(l.from(), k -> new LinkedHashSet<>()).add(q + l.to() + q);
+            }
+        }
+        for (Route r : overview.routes()) {
+            // a global handler, or a route with an error handler of its own, for where it sends while handling a failure
+            boolean own = hasOwnErrorHandler(r);
+            if (!ProjectOverview.isErrorHandler(r) && !own) {
+                continue;
+            }
+            for (Endpoint e : r.produces()) {
+                boolean linked = overview.links().stream()
+                        .anyMatch(l -> l.from().equals(r.key()) && l.endpoint().equals(e.uri()));
+                if (!e.dynamic() && !linked && (!own || e.onError())) {
+                    targets.computeIfAbsent(r.key(), k -> new LinkedHashSet<>()).add(q + e.uri() + q);
+                }
+            }
+        }
+        List<String> lines = new ArrayList<>();
+        targets.forEach((from, to) -> {
+            Route r = overview.route(from);
+            String what;
+            if (r != null && "errorHandler".equals(r.kind())) {
+                String label = r.description() != null ? r.description() : "error handling";
+                what = label + " (global, " + r.file() + ":" + r.line() + ")";
+            } else if (r != null && hasOwnErrorHandler(r)) {
+                what = ProjectRoutes.errorHandlerKind(r.errorHandler()) + " of " + q + from + q + " (" + r.file() + ":"
+                       + r.line() + ")";
+            } else {
+                what = q + from + q + " (its own error handling)";
+            }
+            lines.add(what + ": failures to " + String.join(", ", to));
+        });
+        // a route with no error handler: the global one does not apply, its failures go back to its caller, or to its
+        // own consumer when no route calls it
+        List<String> none = overview.flows().stream().filter(Route::noErrorHandler).filter(IntegrationSummary::isCalled)
+                .map(Route::key).toList();
+        if (!none.isEmpty()) {
+            lines.add("no error handler in " + String.join(", ", none.stream().map(n -> q + n + q).toList())
+                      + ": failures go back to the caller, whose error handling acts");
+        }
+        for (Route r : overview.flows()) {
+            if (r.noErrorHandler() && !isCalled(r)) {
+                lines.add("no error handler in " + q + r.key() + q + ", and no route calls it: failures go back to the"
+                          + " consumer of " + q + r.from().uri() + q);
+            }
+        }
+        return lines;
+    }
+
+    /** Whether a route has an error handler of its own, such as a dead letter channel (not noErrorHandler). */
+    private static boolean hasOwnErrorHandler(Route r) {
+        return r.errorHandler() != null && !r.noErrorHandler();
+    }
+
+    /**
+     * Whether a route is called (direct, kamelet), so a failure goes back to its caller; false for its own consumer.
+     */
+    private static boolean isCalled(Route r) {
+        return r.from() == null || r.from().dynamic() || ProjectOverview.isCall(r.from().scheme());
+    }
+
     private static String linkVerb(String kind) {
         return switch (kind) {
             case "call" -> "calls";
@@ -737,12 +827,18 @@ public final class IntegrationSummary {
                         .append(e.route() != null ? " -> " + e.route() : "").append('\n');
             }
         }
-        if (!overview.links().isEmpty()) {
+        List<Link> callLinks = overview.links().stream().filter(l -> !isErrorPath(overview, l)).toList();
+        if (!callLinks.isEmpty()) {
             sb.append("\nFlows between routes:\n");
-            for (Link l : overview.links()) {
+            for (Link l : callLinks) {
                 sb.append("- ").append(l.from()).append(' ').append(linkVerb(l.kind())).append(' ').append(l.to())
                         .append('\n');
             }
+        }
+        List<String> errorLines = errorHandlingLines(overview, false);
+        if (!errorLines.isEmpty()) {
+            sb.append("\nError handling:\n");
+            errorLines.forEach(line -> sb.append("- ").append(line).append('\n'));
         }
         if (!overview.systems().isEmpty()) {
             sb.append("\nExternal systems:\n");

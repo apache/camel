@@ -48,6 +48,7 @@ class StopAllPopup {
 
     private boolean visible;
     private boolean confirmActions;
+    private boolean unattended;
     private boolean checkIntegrations = true;
     private boolean checkInfra = true;
     private int selectedRow;
@@ -70,6 +71,11 @@ class StopAllPopup {
 
     void setConfirmActions(boolean confirmActions) {
         this.confirmActions = confirmActions;
+    }
+
+    /** Whether no one is there to choose, as a tape drives the monitor: then all of it is stopped at once. */
+    void setUnattended(boolean unattended) {
+        this.unattended = unattended;
     }
 
     boolean hasBothGroups() {
@@ -106,6 +112,10 @@ class StopAllPopup {
 
         checkIntegrations = integrationCount > 0;
         checkInfra = infraCount > 0;
+        if (unattended) {
+            executeStop();
+            return;
+        }
         selectedRow = 0;
         visible = true;
     }

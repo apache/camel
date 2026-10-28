@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -51,8 +52,14 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
     private KubernetesClient kubernetesClient;
     private ConfigMapPropertiesFunction propertiesFunction;
     private volatile Instant startingTime;
+    // released when the current watch is closed with an error, when the wait before the next watch is over, and when
+    // this task is stopped
+    private volatile CountDownLatch released;
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigmapsReloadTriggerTask.class);
+
+    static final long WATCH_AGAIN_DELAY_MILLIS = 1000;
+    static final long WATCH_AGAIN_MAX_DELAY_MILLIS = 30000;
 
     @Override
     public CamelContext getCamelContext() {
@@ -117,10 +124,63 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
     }
 
     @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        // ends the watch, or the wait before the next watch, of the thread that runs this task
+        CountDownLatch latch = released;
+        if (latch != null) {
+            latch.countDown();
+        }
+    }
+
+    /**
+     * Watches the config maps until this task is stopped. This task is submitted only once, and the Kubernetes client
+     * closes a watch for good, with an exception, when the API server answers 410 Gone (the resource version of the
+     * watch is too old, which can happen to a long-running watch), so the config maps are watched again after
+     * {@link #WATCH_AGAIN_DELAY_MILLIS}. A watch that cannot be created is tried again with a delay that doubles up to
+     * {@link #WATCH_AGAIN_MAX_DELAY_MILLIS}; the first of these delays is {@link #WATCH_AGAIN_DELAY_MILLIS} when the
+     * task starts and twice that after a closed watch.
+     */
+    @Override
     public void run() {
         startingTime = Instant.now();
-        final CountDownLatch isWatchClosed = new CountDownLatch(1);
-        Watch watch = kubernetesClient.configMaps().inNamespace(kubernetesClient.getNamespace()).watch(new Watcher<>() {
+        long delay = WATCH_AGAIN_DELAY_MILLIS;
+        while (isRunAllowed()) {
+            final CountDownLatch isWatchClosed = new CountDownLatch(1);
+            released = isWatchClosed;
+            Watch watch = null;
+            try {
+                watch = watch(isWatchClosed);
+                delay = WATCH_AGAIN_DELAY_MILLIS;
+                // Wait till watch gets closed. A stop before the latch was published could not release it
+                if (isRunAllowed()) {
+                    isWatchClosed.await();
+                }
+            } catch (InterruptedException e) {
+                LOG.debug("Interrupted while waiting for the watch to close: {}", e.getMessage());
+                Thread.currentThread().interrupt();
+                return;
+            } catch (Exception e) {
+                if (!isRunAllowed()) {
+                    return;
+                }
+                LOG.warn("Cannot watch Kubernetes ConfigMaps, trying again in {} ms: {}", delay, e.getMessage());
+                LOG.debug("Cannot watch Kubernetes ConfigMaps", e);
+            } finally {
+                if (watch != null) {
+                    watch.close();
+                }
+            }
+            if (!waitBeforeWatchingAgain(delay)) {
+                return;
+            }
+            delay = Math.min(delay * 2, WATCH_AGAIN_MAX_DELAY_MILLIS);
+        }
+    }
+
+    private Watch watch(CountDownLatch isWatchClosed) {
+        return kubernetesClient.configMaps().inNamespace(kubernetesClient.getNamespace()).watch(new Watcher<>() {
             @Override
             public void eventReceived(Action action, ConfigMap configMap) {
                 switch (action.name()) {
@@ -144,18 +204,28 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
 
             @Override
             public void onClose(WatcherException e) {
+                LOG.warn("The watch of Kubernetes ConfigMaps was closed, watching again in {} ms: {}",
+                        WATCH_AGAIN_DELAY_MILLIS, e != null ? e.getMessage() : null);
                 isWatchClosed.countDown();
             }
         });
+    }
 
-        // Wait till watch gets closed
+    /**
+     * @return false if this task was stopped, or the thread interrupted, while waiting
+     */
+    private boolean waitBeforeWatchingAgain(long delay) {
+        CountDownLatch pause = new CountDownLatch(1);
+        released = pause;
         try {
-            isWatchClosed.await();
+            if (isRunAllowed()) {
+                pause.await(delay, TimeUnit.MILLISECONDS);
+            }
         } catch (InterruptedException e) {
-            LOG.debug("Interrupted while waiting for the watch to close: {}", e.getMessage());
             Thread.currentThread().interrupt();
+            return false;
         }
-        watch.close();
+        return isRunAllowed();
     }
 
     protected boolean matchSecret(String name) {

@@ -591,3 +591,19 @@ is always lower than `10`. Messages are processed by a single thread in the Came
 The number of concurrent consumers (threads) can also be set as endpoint option (`concurrentConsumers`).
 When using 1 consumer (the default), the order of items in the source stream is maintained.
 When this value is increased, items will be processed concurrently by multiple threads (so not preserving the order).
+
+==== Suspending the consumer
+
+The consumer can be suspended: by suspending its route (route controller, JMX), by a route policy such as
+`ThrottlingInflightRoutePolicy`, and during a graceful shutdown. A suspended consumer requests no more items from the
+publisher and does not route the items it has already received (the items queued for its threads, and the items the
+publisher still sends for the demand requested before the suspend). The exchanges being routed complete normally, and
+the suspend does not wait for the queued items: they are routed in order when the consumer is resumed, or when it is
+stopped.
+
+A graceful shutdown (stopping the route, all the routes or the CamelContext) also suspends the consumer first, but then
+routes its queued items, and waits for them up to the shutdown timeout, before it stops the routes the items go to, such
+as a `direct` or `seda` route. No more items are requested from the publisher.
+
+When backpressure is disabled (`maxInflightExchanges` not positive), a suspended consumer cannot limit what the
+publisher sends: the items it receives while suspended are kept in memory until it is resumed or stopped.

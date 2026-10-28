@@ -692,6 +692,65 @@ public interface TelegramEndpointBuilderFactory {
             doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
+        /**
+         * The secret token that Telegram sends in the
+         * X-Telegram-Bot-Api-Secret-Token header of every webhook request. In
+         * webhook mode, Camel registers the webhook with this token, and
+         * rejects a webhook request that does not carry it with HTTP 403. Only
+         * the characters A-Z, a-z, 0-9, _ and - are allowed, up to 256
+         * characters. When not set, a token derived from the authorization
+         * token is used. Set it when the webhook is registered outside Camel,
+         * and register the webhook with the same secret_token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param webhookSecretToken the value to set
+         * @return the dsl builder
+         */
+        default TelegramEndpointConsumerBuilder webhookSecretToken(String webhookSecretToken) {
+            doSetProperty("webhookSecretToken", webhookSecretToken);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, Camel registers the webhook with a secret
+         * token and rejects a webhook request that does not carry it. Set it to
+         * false to restore the behaviour of earlier versions, where the webhook
+         * was registered without a secret token and webhook requests were not
+         * verified.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookSecretTokenEnabled the value to set
+         * @return the dsl builder
+         */
+        default TelegramEndpointConsumerBuilder webhookSecretTokenEnabled(boolean webhookSecretTokenEnabled) {
+            doSetProperty("webhookSecretTokenEnabled", webhookSecretTokenEnabled);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, Camel registers the webhook with a secret
+         * token and rejects a webhook request that does not carry it. Set it to
+         * false to restore the behaviour of earlier versions, where the webhook
+         * was registered without a secret token and webhook requests were not
+         * verified.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookSecretTokenEnabled the value to set
+         * @return the dsl builder
+         */
+        default TelegramEndpointConsumerBuilder webhookSecretTokenEnabled(String webhookSecretTokenEnabled) {
+            doSetProperty("webhookSecretTokenEnabled", webhookSecretTokenEnabled);
+            return this;
+        }
     }
 
     /**
@@ -872,12 +931,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -888,12 +948,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1127,12 +1188,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1143,12 +1205,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1321,12 +1384,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1337,12 +1401,13 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The initial in-memory buffer size used when transferring data between
-         * Camel and AHC Client.
+         * The initial size, in bytes, of the in-memory buffer for the body of a
+         * request sent to Telegram. The buffer grows to the size of the
+         * content, so it does not limit the size of the media that can be sent.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1048576
+         * Default: 8192
          * Group: advanced
          * 
          * @param bufferSize the value to set

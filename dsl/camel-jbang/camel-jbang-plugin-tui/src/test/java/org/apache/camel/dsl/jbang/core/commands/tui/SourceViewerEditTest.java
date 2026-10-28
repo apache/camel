@@ -71,6 +71,26 @@ class SourceViewerEditTest {
     }
 
     @Test
+    void theDiffAndTheDiscardQuestionAreDialogsOverTheEditor() {
+        // their footer goes before that of a live edit, which shows the keys of the edit
+        viewer.loadFile(sourceFile);
+        viewer.enterEditMode();
+        assertThat(viewer.showsDialog()).isFalse();
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('x', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F7, KeyModifiers.NONE));
+        assertThat(viewer.showsDialog()).as("the diff").isTrue();
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).isFalse();
+
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).as("discard the change?").isTrue();
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).isFalse();
+        assertThat(viewer.isEditMode()).isFalse();
+    }
+
+    @Test
     void loadFileMarksLocalWritableFileEditable() {
         viewer.loadFile(sourceFile);
 
@@ -100,6 +120,21 @@ class SourceViewerEditTest {
         assertThat(viewer.isEditMode()).isFalse();
         assertThat(viewer.isVisible()).isTrue();
         assertThat(viewer.isEditable()).isTrue();
+    }
+
+    @Test
+    void undoingEveryChangeLeavesTheFileUnmodified() {
+        viewer.loadFile(sourceFile);
+        viewer.enterEditMode();
+        viewer.handleKeyEvent(KeyEvent.ofChar('x', KeyModifiers.NONE));
+        assertThat(viewer.isDirty()).isTrue();
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('z', KeyModifiers.CTRL));
+
+        assertThat(viewer.isDirty()).isFalse();
+        // redo brings the change back
+        viewer.handleKeyEvent(KeyEvent.ofChar('y', KeyModifiers.CTRL));
+        assertThat(viewer.isDirty()).isTrue();
     }
 
     @Test
@@ -297,6 +332,36 @@ class SourceViewerEditTest {
     }
 
     @Test
+    void markdownScrollStaysWithinTheDocument() throws Exception {
+        StringBuilder text = new StringBuilder("# Notes\n\n");
+        for (int i = 1; i <= 60; i++) {
+            text.append("Paragraph ").append(i).append("\n\n");
+        }
+        Path md = tempDir.resolve("long.md");
+        Files.writeString(md, text, StandardCharsets.UTF_8);
+        viewer.loadFile(md);
+        Rect area = new Rect(0, 0, 80, 20);
+
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        assertThat(renderViewer(area)).contains("Paragraph 60");
+
+        // Down at the end stays at the end, it does not wrap to the top
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        String atEnd = renderViewer(area);
+        assertThat(atEnd).contains("Paragraph 60").doesNotContain("# Notes");
+
+        // PgUp after End moves up at once
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.PAGE_UP, KeyModifiers.NONE));
+        assertThat(renderViewer(area)).doesNotContain("Paragraph 60");
+    }
+
+    private String renderViewer(Rect area) {
+        Buffer buffer = Buffer.empty(area);
+        viewer.render(Frame.forTesting(buffer), area);
+        return TuiTestHelper.bufferToString(buffer);
+    }
+
+    @Test
     void cancelEditViaPublicApi() {
         viewer.loadFile(sourceFile);
         viewer.enterEditMode();
@@ -336,7 +401,7 @@ class SourceViewerEditTest {
         assertThat(viewer.isEditMode()).isTrue();
         assertThat(viewer.isVisible()).isTrue();
         // Keep tab reference used so the integration surface is exercised for construction
-        assertThat(tab.isOverlayActive()).isFalse();
+        assertThat(tab.isTextInputActive()).isFalse();
     }
 
     @Test
@@ -346,16 +411,14 @@ class SourceViewerEditTest {
                 new AtomicReference<>(List.of()),
                 new AtomicReference<>(List.of()));
         SourceTab tab = new SourceTab(ctx);
-        assertThat(tab.isSourceViewerTextInputActive()).isFalse();
+        assertThat(tab.isTextInputActive()).isFalse();
 
         tab.gotoRoutePopup.open(List.of(new SourceTab.RouteEntry("a", "direct:a", "a.java", 0)));
-        assertThat(tab.isSourceViewerTextInputActive()).isTrue();
-        assertThat(tab.isOverlayActive()).isTrue();
+        assertThat(tab.isTextInputActive()).isTrue();
         tab.gotoRoutePopup.close();
 
         tab.gotoSourceNodePopup.open(List.of(), 10);
-        assertThat(tab.isSourceViewerTextInputActive()).isTrue();
-        assertThat(tab.isOverlayActive()).isTrue();
+        assertThat(tab.isTextInputActive()).isTrue();
     }
 
     @Test
@@ -391,6 +454,37 @@ class SourceViewerEditTest {
         assertThat(viewer.isEditMode()).isFalse();
         assertThat(viewer.isMarkdownMode()).isFalse();
         assertThat(Files.readString(md, StandardCharsets.UTF_8)).endsWith("!");
+    }
+
+    @Test
+    void sourceTabFooterIsTheFieldWhileATermIsTyped() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "test-app";
+        info.directory = tempDir.toString();
+        MonitorContext ctx = new MonitorContext(
+                new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.selectedPid = "1234";
+        SourceTab tab = new SourceTab(ctx);
+        tab.onTabSelected();
+
+        // the file opened, the viewer's footer offers Tab back to the files
+        assertThat(tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE))).isTrue();
+        assertThat(footer(tab)).contains(" Tab ");
+
+        // h opens the highlight field: the footer is the field and its keys, not the viewer's navigation
+        tab.handleKeyEvent(KeyEvent.ofChar('h', KeyModifiers.NONE));
+        tab.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
+        assertThat(tab.isTextInputActive()).isTrue();
+        assertThat(footer(tab)).contains(" h:", "a█", " Enter ", " Esc ").doesNotContain(" Tab ");
+    }
+
+    private static String footer(SourceTab tab) {
+        List<Span> spans = new ArrayList<>();
+        tab.renderFooter(spans);
+        StringBuilder sb = new StringBuilder();
+        spans.forEach(s -> sb.append(s.content()));
+        return sb.toString();
     }
 
     @Test

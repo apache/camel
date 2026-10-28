@@ -97,6 +97,24 @@ public interface StateStoreComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * Factory that creates a dedicated backend for each store name. When
+         * set, it takes precedence over registry auto-discovery for endpoints
+         * without an explicit backend.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.statestore.StateStoreBackendFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param backendFactory the value to set
+         * @return the dsl builder
+         */
+        default StateStoreComponentBuilder backendFactory(org.apache.camel.component.statestore.StateStoreBackendFactory backendFactory) {
+            doSetProperty("backendFactory", backendFactory);
+            return this;
+        }
     }
 
     class StateStoreComponentBuilderImpl
@@ -114,6 +132,7 @@ public interface StateStoreComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((StateStoreComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((StateStoreComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "backendFactory": ((StateStoreComponent) component).setBackendFactory((org.apache.camel.component.statestore.StateStoreBackendFactory) value); return true;
             default: return false;
             }
         }

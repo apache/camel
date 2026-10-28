@@ -415,6 +415,40 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * The password for connecting to SMSC server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1648,6 +1682,40 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * The password for connecting to SMSC server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2351,6 +2419,40 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * The password for connecting to SMSC server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2764,7 +2866,9 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppAlphabet";
         }
         /**
-         * The command.
+         * The command to send: SubmitSm (the default when the header is
+         * missing), ReplaceSm, QuerySm, SubmitMulti, CancelSm or DataSm. The
+         * names are case-sensitive, and any other value fails.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2909,11 +3013,11 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppDoneDate";
         }
         /**
-         * only for SubmitSm, SubmitMulti and DataSm. Specifies the encoding
-         * (character set name) of the bytes in the message body. If the message
-         * body is a string then this is not relevant because Java Strings are
-         * always Unicode. If the body is a byte array then this header can be
-         * used to indicate that it is ISO-8859-1 or some other value. Default
+         * only for SubmitSm, SubmitMulti and ReplaceSm. Specifies the encoding
+         * (character set name) the text of the message body is encoded in, as
+         * the short message. A byte array body is first read as text, in the
+         * charset of the exchange, unless an 8-bit data coding or alphabet (in
+         * a header, or in the endpoint options) sends it as it is. Default
          * value is specified by the endpoint configuration parameter
          * _encoding_.
          * 

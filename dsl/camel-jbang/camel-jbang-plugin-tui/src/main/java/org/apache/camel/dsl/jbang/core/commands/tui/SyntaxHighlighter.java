@@ -87,126 +87,126 @@ class SyntaxHighlighter {
     static final Color LIGHT_CONSTANT = Color.rgb(111, 66, 193);
     static final Color LIGHT_TEXT = Color.rgb(36, 41, 46);
 
-    // Theme-aware palette: a theme may override these through optional syntax-* stylesheet tokens (see Theme);
-    // otherwise the Monokai (dark) or light palette above applies.
-    private static Color comment() {
-        return Theme.syntaxComment();
+    // Theme-aware palette: a theme may override these through optional syntax-* stylesheet tokens (see Theme), color
+    // and text-style (bold, italic, dim, underline); otherwise the Monokai (dark) or light palette above applies.
+    private static Style comment() {
+        return Theme.syntaxCommentStyle();
     }
 
-    private static Color string() {
-        return Theme.syntaxString();
+    private static Style string() {
+        return Theme.syntaxStringStyle();
     }
 
-    private static Color keyword() {
-        return Theme.syntaxKeyword();
+    private static Style keyword() {
+        return Theme.syntaxKeywordStyle();
     }
 
-    private static Color function() {
-        return Theme.syntaxFunction();
+    private static Style function() {
+        return Theme.syntaxFunctionStyle();
     }
 
-    private static Color type() {
-        return Theme.syntaxType();
+    private static Style type() {
+        return Theme.syntaxTypeStyle();
     }
 
-    private static Color constant() {
-        return Theme.syntaxConstant();
+    private static Style constant() {
+        return Theme.syntaxConstantStyle();
     }
 
-    private static Color text() {
-        return Theme.syntaxText();
+    private static Style text() {
+        return Theme.syntaxTextStyle();
     }
 
     // Java styles
     private static Style javaComment() {
-        return Style.EMPTY.fg(comment());
+        return comment();
     }
 
     private static Style javaString() {
-        return Style.EMPTY.fg(string());
+        return string();
     }
 
     private static Style javaAnnotation() {
-        return Style.EMPTY.fg(function());
+        return function();
     }
 
     private static Style javaModifier() {
-        return Style.EMPTY.fg(keyword());
+        return keyword();
     }
 
     private static Style javaKeyword() {
-        return Style.EMPTY.fg(keyword());
+        return keyword();
     }
 
     private static Style javaType() {
-        return Style.EMPTY.fg(type());
+        return type();
     }
 
     private static Style javaBoolean() {
-        return Style.EMPTY.fg(constant());
+        return constant();
     }
 
     private static Style javaNumber() {
-        return Style.EMPTY.fg(constant());
+        return constant();
     }
 
     // YAML styles
     private static Style yamlComment() {
-        return Style.EMPTY.fg(comment());
+        return comment();
     }
 
     private static Style yamlKey() {
-        return Style.EMPTY.fg(keyword());
+        return keyword();
     }
 
     private static Style yamlValue() {
-        return Style.EMPTY.fg(string());
+        return string();
     }
 
     private static Style yamlSpecial() {
-        return Style.EMPTY.fg(constant());
+        return constant();
     }
 
     private static Style yamlSeparator() {
-        return Style.EMPTY.fg(text()).bold();
+        return text().bold();
     }
 
     // XML styles
     private static Style xmlComment() {
-        return Style.EMPTY.fg(comment());
+        return comment();
     }
 
     private static Style xmlTag() {
-        return Style.EMPTY.fg(keyword());
+        return keyword();
     }
 
     private static Style xmlAttrName() {
-        return Style.EMPTY.fg(function());
+        return function();
     }
 
     private static Style xmlAttrValue() {
-        return Style.EMPTY.fg(string());
+        return string();
     }
 
     private static Style xmlEntity() {
-        return Style.EMPTY.fg(constant());
+        return constant();
     }
 
     // Properties styles
     private static Style propsComment() {
-        return Style.EMPTY.fg(comment());
+        return comment();
     }
 
     private static Style propsKey() {
-        return Style.EMPTY.fg(keyword());
+        return keyword();
     }
 
     private static Style propsSeparator() {
-        return Style.EMPTY.fg(text()).bold();
+        return text().bold();
     }
 
     private static Style propsValue() {
-        return Style.EMPTY.fg(string());
+        return string();
     }
 
     private SyntaxHighlighter() {
@@ -230,10 +230,15 @@ class SyntaxHighlighter {
             return Language.PLAIN;
         }
         ext = ext.toLowerCase();
+        // the last extension: a Kamelet is name.kamelet.yaml, which onlyExt gives as kamelet.yaml (CAMEL-25411)
+        int dot = ext.lastIndexOf('.');
+        if (dot >= 0) {
+            ext = ext.substring(dot + 1);
+        }
         return switch (ext) {
             case "java" -> Language.JAVA;
-            case "yaml", "yml", "camel.yaml", "camel.yml" -> Language.YAML;
-            case "xml", "camel.xml" -> Language.XML;
+            case "yaml", "yml" -> Language.YAML;
+            case "xml" -> Language.XML;
             case "properties" -> Language.PROPERTIES;
             default -> Language.PLAIN;
         };

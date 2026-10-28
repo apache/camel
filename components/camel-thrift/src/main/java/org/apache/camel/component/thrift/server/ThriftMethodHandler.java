@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.ThriftConstants;
 import org.apache.camel.component.thrift.ThriftConsumer;
+import org.apache.camel.component.thrift.ThriftEndpoint;
 import org.apache.camel.component.thrift.ThriftUtils;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;
@@ -56,29 +57,29 @@ public class ThriftMethodHandler implements MethodHandler {
                 exchange.getIn().setHeader(ThriftConstants.THRIFT_METHOD_NAME_HEADER, thisMethod.getName());
 
                 consumer.process(exchange, doneSync -> {
-                    Message message = null;
-                    Object response = null;
-                    Exception exception = exchange.getException();
-
-                    if (exception != null) {
-                        callback.onError(exception);
-                    }
-
-                    message = exchange.getMessage();
-
-                    if (message != null) {
-                        Class returnType = ThriftUtils.findMethodReturnType(args[args.length - 1].getClass(), "onComplete");
-                        if (returnType != null) {
-                            response = message.getBody(returnType);
-                        } else {
-                            callback.onError(new TException("Unable to detect method return type"));
+                    // complete the call exactly once: with the error of the exchange, or with its response
+                    try {
+                        Exception exception = exchange.getException();
+                        if (exception != null) {
+                            callback.onError(toClientException(thisMethod, exception));
+                            return;
                         }
-                    } else {
-                        callback.onError(new TException("Unable process null message"));
-                    }
 
-                    consumer.releaseExchange(exchange, false);
-                    callback.onComplete(response);
+                        Message message = exchange.getMessage();
+                        if (message == null) {
+                            callback.onError(new TException("Unable process null message"));
+                            return;
+                        }
+
+                        Class returnType = ThriftUtils.findMethodReturnType(args[args.length - 1].getClass(), "onComplete");
+                        if (returnType == null) {
+                            callback.onError(new TException("Unable to detect method return type"));
+                            return;
+                        }
+                        callback.onComplete(message.getBody(returnType));
+                    } finally {
+                        consumer.releaseExchange(exchange, false);
+                    }
                 });
             } else {
                 Object responseBody = null;
@@ -88,6 +89,10 @@ public class ThriftMethodHandler implements MethodHandler {
                     exchange.getIn().setHeader(ThriftConstants.THRIFT_METHOD_NAME_HEADER, thisMethod.getName());
 
                     consumer.getProcessor().process(exchange);
+                    if (exchange.getException() != null) {
+                        // let the server send the error to the client (a declared exception as such)
+                        throw toClientException(thisMethod, exchange.getException());
+                    }
                     responseBody = exchange.getIn().getBody(thisMethod.getReturnType());
                 } finally {
                     consumer.releaseExchange(exchange, false);
@@ -103,5 +108,36 @@ public class ThriftMethodHandler implements MethodHandler {
         } else {
             return proceed.invoke(self, args);
         }
+    }
+
+    /**
+     * The error to send to the client for a failed exchange. An exception that the Thrift method declares belongs to
+     * the service contract and is sent as it is; any other one is replaced by a generic error unless muteException is
+     * disabled.
+     */
+    private Exception toClientException(Method method, Exception exception) {
+        if (!consumer.getConfiguration().isMuteException() || isDeclared(method, exception)) {
+            return exception;
+        }
+        return new TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error processing " + method.getName());
+    }
+
+    private boolean isDeclared(Method method, Exception exception) {
+        // the methods of the asynchronous interface only declare TException, so read the exceptions of the IDL from
+        // the method of the synchronous interface (a Thrift service has no overloaded methods)
+        ThriftEndpoint endpoint = (ThriftEndpoint) consumer.getEndpoint();
+        Class<?> serverInterface = ThriftUtils.getServerInterface(endpoint.getServicePackage(), endpoint.getServiceName(),
+                true, endpoint.getCamelContext());
+        for (Method declaring : serverInterface.getMethods()) {
+            if (declaring.getName().equals(method.getName())) {
+                for (Class<?> declared : declaring.getExceptionTypes()) {
+                    if (declared != TException.class && declared.isInstance(exception)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

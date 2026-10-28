@@ -8,7 +8,21 @@
     "javaType": "org.apache.camel.component.qdrant.transform.QdrantEmbeddingsDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-qdrant",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ],
+      "description": "A LangChain4j TextSegment, or a String the converter of camel-langchain4j-embeddings turns into one, whose text and metadata go in the payload; another body stores no text. The embedding comes from the CamelLangChain4jEmbeddingsVector header, which must be set"
+    },
+    "transformerOut": {
+      "carriers": [
+        "pojo"
+      ],
+      "javaType": "io.qdrant.client.grpc.Points.PointStruct"
+    }
   }
 }
 

@@ -18,6 +18,9 @@ package org.apache.camel.cli.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -40,6 +43,14 @@ import org.slf4j.LoggerFactory;
  * Transport used by the Camel CLI: polls <tt>~/.camel/{pid}-action*.json</tt> files for actions, writes their results
  * to <tt>{pid}-output*.json</tt>, and the snapshots to <tt>{pid}-status.json</tt>, <tt>{pid}-trace.json</tt> and so on.
  * Deleting the <tt>{pid}</tt> lock file shuts down the integration.
+ * <p/>
+ * An action with a request id (<tt>{pid}-action-{requestId}.json</tt>) always gets a reply in
+ * <tt>{pid}-output-{requestId}.json</tt>: <tt>{"status":"failed","error":"..."}</tt> when it is unknown, throws or
+ * reports an error (with <tt>"reason":"not-found"</tt> when what it was asked to work on does not exist, and the result
+ * it wrote before it failed under <tt>"result"</tt>), its result, or <tt>{"status":"success"}</tt> when it has no
+ * result. A result that reports a failure of its own is written as it is. An action in the shared
+ * <tt>{pid}-action.json</tt> only gets its result, or the error when it threw an exception, as a Camel CLI before 4.24
+ * never reads the other replies, and the next command could read them instead of its own result.
  */
 public class FileCliConnectorTransport extends ServiceSupport implements CliConnectorTransport {
 
@@ -54,6 +65,14 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private ScheduledFuture<?> scheduledFuture;
     private int delay = 1000;
     private long counter;
+    private final Map<File, PendingAction> pending = new HashMap<>();
+
+    // an action file this young that cannot be read may still be written: the Camel CLI before 4.24 writes it in place
+    private static final long UNREADABLE_GRACE_MS = 2000;
+
+    private record PendingAction(File output, boolean replyAlways, CompletableFuture<CliActionOutcome> outcome) {
+    }
+
     private final AtomicBoolean terminating = new AtomicBoolean();
     private File lockFile;
     private File statusFile;
@@ -153,7 +172,20 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         }
     }
 
-    protected void actionTask() {
+    protected synchronized void actionTask() {
+        pending.entrySet().removeIf(entry -> {
+            File request = entry.getKey();
+            PendingAction action = entry.getValue();
+            if (!request.exists()) {
+                action.outcome().cancel(true);
+                return true;
+            }
+            if (action.outcome().isDone()) {
+                finishAction(request, action);
+                return true;
+            }
+            return false;
+        });
         // scan for all action files: {pid}-action.json (legacy) and {pid}-action-{requestId}.json (multi-client)
         File dir = lockFile.getParentFile();
         String prefix = lockFile.getName() + "-action";
@@ -170,43 +202,113 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             File of = requestId != null
                     ? new File(dir, lockFile.getName() + "-output-" + requestId + ".json")
                     : this.outputFile;
-            processAction(af, of);
+            if (!pending.containsKey(af)) {
+                processAction(af, of, requestId != null);
+            }
         }
     }
 
-    private void processAction(File af, File of) {
-        String action = null;
-        try {
-            JsonObject root = loadAction(af);
-            if (root == null || root.isEmpty()) {
+    private void processAction(File af, File of, boolean replyAlways) {
+        String text = readAction(af);
+        if (text == null) {
+            // deleted meanwhile
+            return;
+        }
+        JsonObject root = null;
+        String invalid = null;
+        if (!text.isBlank()) {
+            try {
+                Object parsed = Jsoner.deserialize(text);
+                if (parsed instanceof JsonObject jo) {
+                    root = jo;
+                } else {
+                    invalid = "not a JSON object";
+                }
+            } catch (Exception e) {
+                invalid = e.getMessage();
+            }
+        }
+        if (root == null) {
+            if (System.currentTimeMillis() - af.lastModified() < UNREADABLE_GRACE_MS) {
+                // try again at the next poll, the file may still be written
                 return;
             }
-            action = root.getString("action");
-            dispatcher.dispatch(root, result -> {
-                LOG.trace("Updating output file: {}", of);
-                IOHelper.writeText(result.toJson(), of);
-            });
-        } catch (Exception e) {
-            LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : af,
-                    e.getMessage(),
-                    e);
-        } finally {
+            if (invalid != null && replyAlways) {
+                writeReply(af, of, CliActionOutcome.failed("Invalid action: " + invalid).errorReply());
+            }
             FileUtil.deleteFile(af);
+            return;
+        }
+        PendingAction action = new PendingAction(of, replyAlways, CliActionOutcome.dispatch(dispatcher, root));
+        if (action.outcome().isDone()) {
+            finishAction(af, action);
+        } else {
+            // Keep the request file until completion; its removal means the client abandoned the request.
+            pending.put(af, action);
         }
     }
 
-    private static JsonObject loadAction(File file) {
+    private void finishAction(File request, PendingAction action) {
+        try {
+            CliActionOutcome outcome = action.outcome().join();
+            if (outcome.failure() != null) {
+                LOG.warn("Error executing action: {} due to: {}", request, outcome.error(), outcome.failure());
+            }
+            JsonObject reply = reply(outcome, action.replyAlways());
+            if (reply != null) {
+                writeReply(request, action.output(), reply);
+            }
+        } catch (Exception e) {
+            LOG.warn("Error writing action result: {} due to: {}", request, e.getMessage(), e);
+        } finally {
+            FileUtil.deleteFile(request);
+        }
+    }
+
+    /**
+     * The reply to an action: the error, its result, or an ack. The shared output file only gets the result, or the
+     * error of an exception (as before 4.24), so the next command does not read a reply meant for another command.
+     */
+    private static JsonObject reply(CliActionOutcome outcome, boolean replyAlways) {
+        if (outcome.error() != null && !outcome.failedResult()) {
+            // an exception, an unknown action or a reported error wins over a (partial) result
+            if (replyAlways || outcome.failure() != null) {
+                return outcome.errorReply();
+            }
+            return outcome.result();
+        }
+        if (outcome.result() != null) {
+            // also a result that reports a failure of its own: the CLI reads it as it is
+            return outcome.result();
+        }
+        if (replyAlways) {
+            JsonObject ack = new JsonObject();
+            ack.put("status", "success");
+            return ack;
+        }
+        return null;
+    }
+
+    private static void writeReply(File request, File output, JsonObject reply) {
+        // a deleted request means the tool has given up on it
+        if (request.exists()) {
+            try {
+                IOHelper.writeText(reply.toJson(), output);
+            } catch (Exception e) {
+                LOG.warn("Error writing action result: {} due to: {}", request, e.getMessage(), e);
+            }
+        }
+    }
+
+    private static String readAction(File file) {
         try {
             if (file != null && file.exists()) {
                 try (FileInputStream fis = new FileInputStream(file)) {
-                    String text = IOHelper.loadText(fis);
-                    if (!text.isEmpty()) {
-                        return (JsonObject) Jsoner.deserialize(text);
-                    }
+                    return IOHelper.loadText(fis);
                 }
             }
         } catch (Exception e) {
-            // ignore
+            // deleted meanwhile
         }
         return null;
     }
@@ -333,6 +435,13 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         terminating.set(true);
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
+        }
+        synchronized (this) {
+            pending.forEach((request, action) -> {
+                action.outcome().cancel(true);
+                FileUtil.deleteFile(request);
+            });
+            pending.clear();
         }
         // cleanup
         if (lockFile != null) {

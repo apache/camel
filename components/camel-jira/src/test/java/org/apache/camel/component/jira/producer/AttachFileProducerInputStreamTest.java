@@ -102,7 +102,7 @@ public class AttachFileProducerInputStreamTest extends CamelTestSupport {
             // re-create the issue with the attachment sent by the route
             issue = createIssueWithAttachment(issue.getId(), issue.getSummary(), issue.getKey(), issue.getIssueType(),
                     issue.getDescription(), issue.getPriority(), issue.getAssignee(), attachments);
-            return null;
+            return Promises.promise(null);
         });
     }
 

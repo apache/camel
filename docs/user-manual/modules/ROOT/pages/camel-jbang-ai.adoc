@@ -3,8 +3,8 @@
 The Camel CLI includes AI-powered commands that use large language models (LLMs)
 to help you understand, troubleshoot, and secure your integrations.
 
-All three commands work with local models (Ollama) or cloud APIs (OpenAI, Anthropic).
-The CLI auto-detects the LLM provider from environment variables or a locally running Ollama instance.
+The commands work with local models (Ollama) or hosted APIs (Anthropic, OpenAI, Gemini, and others).
+The CLI auto-detects the LLM provider, see xref:camel-jbang-ai-providers.adoc[AI Providers and Local Models].
 
 == Ask — chat with a running integration
 
@@ -42,7 +42,7 @@ The agent has access to tools that let it:
 * Search the Camel component catalog and read component documentation
 * List and read built-in CLI examples
 * Discover and run any CLI command
-* Read and write files in the current directory
+* Read and change the integration's files, each change validated first
 
 Use `--show-tools` to see tool calls and results as they happen:
 
@@ -50,6 +50,51 @@ Use `--show-tools` to see tool calls and results as they happen:
 ----
 camel ask "show me the route structure" --show-tools
 ----
+
+With a question, the answer is the only output on stdout, so a script can use it: the model in use, the tool calls of
+`--show-tools` and the token usage of `--show-stats` are printed on stderr. `camel ask` exits with `1` when the LLM
+cannot answer, such as when it is not reachable or the call fails.
+
+=== What asks first
+
+Most tools only read, and run without asking. A call that changes the project,
+reaches beyond the integration, may destroy data or runs code asks you first,
+on the terminal:
+
+* A file write: `camel ask` shows the change as a diff.
+* A message to an endpoint the integration does not have, or with a body read
+  from a file outside the project folder.
+* A SQL statement other than a single `SELECT`, `SHOW` or `DESCRIBE`.
+* An expression in a language that runs code, such as Groovy.
+* Stopping, killing or restarting the integration or its routes, running an
+  integration, browsing an endpoint the integration does not have, and
+  writing a heap dump.
+* A `camel` command that changes something. The commands that only read, such
+  as `camel get` and `camel ps`, run without asking.
+
+Answer `y` to let the call run. A call you do not confirm does not run, and the
+model is told so. Without a terminal to ask on, as in a script, such a call
+does not run; `--yes` lets all of them run without asking.
+
+A `camel` command the model runs gives it the exit code, the output and the
+errors apart, as a script gets them (see xref:manual::camel-jbang-exit-codes.adoc[Exit Codes and Output]),
+and stops after 60 seconds. A command that runs until it is stopped is not run,
+and the model is told the form that returns: `camel run` without `--background`,
+`--watch` without `--duration`, `camel log` that follows, or `camel shell`.
+
+=== Local and hosted models
+
+A local model gets a core set of tools: the project's files, the catalog, the
+integration's log, errors, state and control, the tools for what the
+integration uses (SQL, tracing, circuit breakers, HTTP), and `cli_exec` for
+the other commands. Every tool definition goes with every request, and a local
+model pays for it in time. A hosted model gets the full set. `--tools=core`,
+`--tools=full` or `--tools=auto` (the default) chooses.
+
+Without `--model`, Ollama uses the installed model best at tool calling, such
+as `qwen3.6`. `camel ask` notes when the model is small (under 8 billion
+parameters): the answers of such a model about a running integration are often
+wrong.
 
 === Connecting to a specific process
 
@@ -97,10 +142,18 @@ a project directory, read from the route sources (no running integration needed)
 * the *routes*, with their description, where they consume from and the file and line they are written at;
 * the *flows between routes*: a route *calls* another over `direct`, *hands off* over `seda`, *publishes events*
   over a broker (Kafka, JMS, ...), or *shares data* over the same folder or table;
+* the *error handling*, apart from the flows: each `errorHandler` and `onException` written outside routes
+  (with the file and line) and where it sends failures, the routes with error handling of their own (such as
+  a dead letter channel) and where it sends failures, and the routes with `noErrorHandler`, whose failures go
+  back to their caller, or to their own consumer when no route calls them;
 * the *external systems* grouped by category (AI, databases, messaging, files, email, HTTP, cloud), taken
   from the component labels of the Camel catalog;
-* *findings*: a `direct` or `seda` endpoint that no route consumes, routes that call each other in a cycle,
-  duplicate route ids, routes without a description;
+* *findings*: a `direct`, `seda` or `disruptor` endpoint that no route consumes (by the same rules as
+  `camel validate`), also when a dead letter channel or an `onException` sends there, routes that call each
+  other in a cycle, duplicate route ids, routes without a description, and mistakes in the error handling:
+  a route that receives the failures of an error handler and uses that error handler too (a failure in it
+  goes back to it), and a route with `noErrorHandler` that no route calls (its failures go back to its own
+  consumer, and no error handler acts on them);
 * the *architecture*: the routes grouped by what they do. Routes that set `group` in the source keep
   it. Routes that routes of two or more groups call are *shared services*. Routes reached only while
   handling a failure (from a `doCatch`, an `onException` or a dead letter channel), or that only log,
@@ -163,7 +216,7 @@ camel overview --apply-descriptions
 ----
 
 The same overview is available to AI agents through the `camel_project_overview` and
-`camel_save_project_summary` tools of the xref:camel-jbang-mcp.adoc[Camel MCP Server] and `camel tui --mcp`,
+`camel_save_project_summary` tools of the xref:camel-jbang-mcp.adoc[Camel CLI MCP Server] and `camel tui --mcp`,
 and in the xref:camel-jbang-tui.adoc[Camel TUI] with the `/overview` command of the AI panel. The TUI draws
 the architecture in the Diagram tab: its top level, Architecture.
 
@@ -192,117 +245,7 @@ NOTE: `camel harden` currently supports Ollama and OpenAI-compatible APIs only (
 
 == Choosing an LLM provider
 
-All commands auto-detect the LLM provider. The detection order is:
-
-1. `ANTHROPIC_API_KEY` environment variable → Anthropic API (`ask` and `explain` only)
-2. `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` → Vertex AI (`ask` and `explain` only)
-3. `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` → Azure OpenAI (uses the `api-key` header; optional `AZURE_OPENAI_DEPLOYMENT_NAME` and `AZURE_OPENAI_API_VERSION`)
-4. `GEMINI_API_KEY` environment variable → Google Gemini native API (`generativelanguage.googleapis.com`). With `--api-type=gemini`, `GOOGLE_API_KEY` is also accepted.
-5. `OPENAI_API_KEY` → OpenAI API (`api.openai.com`)
-6. `LLM_API_KEY` + optional `LLM_BASE_URL` (or `OPENAI_BASE_URL`) → any OpenAI-compatible API
-7. Ollama running via `camel infra` → local Ollama
-8. Ollama at `localhost:11434` → local Ollama
-
-Override with explicit options:
-
-[source,bash]
-----
-camel ask "check health" --api-type=anthropic --api-key=sk-...
-camel ask "check health" --api-type=openai --model=gpt-4
-camel ask "check health" --api-type=gemini --model=gemini-2.0-flash
-camel ask "check health" --api-type=ollama --model=llama3.1
-----
-
-=== Using a local model with Ollama
-
-Install Ollama natively for the best performance — the native binary uses GPU acceleration
-(Metal on macOS, CUDA/ROCm on Linux). Running Ollama through Docker (`camel infra run ollama`)
-bypasses the GPU and makes inference much slower.
-
-[source,bash]
-----
-# macOS
-brew install ollama
-
-# Linux
-curl -fsSL https://ollama.com/install.sh | sh
-
-# Pull a model and start asking
-ollama pull qwen3.6:35b-a3b
-camel ask "what routes are running?"
-----
-
-Ollama at `localhost:11434` is auto-detected — no environment variable needed.
-The CLI checks what models are available and auto-selects a suitable one.
-
-==== Model requirements
-
-`camel ask` and the TUI F8 panel rely on tool calling to inspect your running Camel process.
-Models smaller than ~14B do not reliably invoke tools and answer from training knowledge instead.
-Use at least a 14B model. Prefer a mixture-of-experts model such as `qwen3.6:35b-a3b`: with only
-3B parameters active per token it processes the tool-heavy prompt many times faster than a dense
-27B/32B model, so answers start in seconds instead of a minute.
-
-[options="header"]
-|===
-| Model | RAM (Q4) | Notes
-| `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+
-| `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines
-| `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing
-| `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing
-| `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+
-| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+
-|===
-
-On Apple Silicon, all RAM is unified — a 64 GB M-series Mac can run `llama3.3:70b` comfortably alongside the OS and other dev tools.
-Use the default (GGUF) tags rather than the `-mlx` tags: the Ollama MLX engine cannot yet reuse the
-cached prompt for Qwen 3.x models, so every question re-processes the whole prompt.
-
-==== Context window and keep-alive
-
-Every Ollama request from the CLI (`camel ask`, `camel explain`, `camel harden`) and from the TUI asks
-Ollama to keep the model loaded for 30 minutes, so a follow-up question reuses the cached prompt instead
-of reloading the model, and for a context window (`num_ctx`) chosen once per model:
-
-1. `OLLAMA_CONTEXT_LENGTH` in the environment wins when set.
-2. If Ollama already has the model loaded, its window is adopted (raised to 32k when smaller), so the CLI
-   never makes Ollama reload a model that another client is using. A request with a different `num_ctx`
-   makes Ollama reload the model, which costs a cold start of tens of seconds and throws away the prompt
-   cache of every client.
-3. Otherwise 64k when the model's weights plus the KV cache of a 64k window fit the machine's memory,
-   judged from what `ollama show` reports about the model, else 32k. A window that does not fit makes
-   Ollama move layers to the CPU, which slows generation far more than a smaller window costs.
-
-The tool-calling prompt alone is about 4.5k tokens, which is why 32k is the floor: Ollama's own default
-on machines with less than 24 GB is 4k and would truncate it. Keep all your Ollama clients on the same
-value; if you set `OLLAMA_CONTEXT_LENGTH` for the CLI, set it for `ollama serve` too. The TUI's Ollama
-tab shows the window in use, and xref:camel-jbang-tui-ai.adoc#_working_with_a_local_ollama_model[Working
-with a local Ollama model] explains how the AI panel manages its history inside it.
-
-=== Using an OpenAI-compatible local server
-
-Many local LLM servers expose an OpenAI-compatible API. Use `LLM_API_KEY` and `LLM_BASE_URL`
-to point the CLI at any of them:
-
-[source,bash]
-----
-export LLM_API_KEY=any-value      # required but can be any non-empty string
-export LLM_BASE_URL=http://localhost:1234   # your server's base URL
-camel ask "what routes are running?"
-----
-
-`OPENAI_BASE_URL` is accepted as an alternative to `LLM_BASE_URL` (common in other tools).
-
-The first model the server lists on `/v1/models` is used unless `--model` names another one; the
-model must support tool calling.
-
-Common OpenAI-compatible servers:
-
-[options="header"]
-|===
-| Server | Default port | Notes
-| https://lmstudio.ai[LM Studio] | 1234 | GUI app, Mac/Windows/Linux
-| https://github.com/vllm-project/vllm[vLLM] | 8000 | Production-grade, NVIDIA GPU
-| https://github.com/ggerganov/llama.cpp[llama.cpp server] | 8080 | Runs on CPU and GPU
-| https://gpt4all.io[GPT4All] | 4891 | Desktop app
-|===
+The commands detect the provider from the environment (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`,
+a local Ollama, and others), or take it from `--api-type`, `--model` and `--api-key`.
+See xref:camel-jbang-ai-providers.adoc[AI Providers and Local Models] for the detection order and for
+running a model on your own machine with Ollama or an OpenAI-compatible server.

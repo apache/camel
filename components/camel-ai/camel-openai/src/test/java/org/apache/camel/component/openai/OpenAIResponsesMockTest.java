@@ -17,7 +17,9 @@
 package org.apache.camel.component.openai;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,10 +27,14 @@ import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ai.tool.AiToolConstants;
+import org.apache.camel.component.ai.tool.AiToolSearch;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,19 +43,13 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    private final AtomicReference<String> toolConversationId = new AtomicReference<>();
+    private final AtomicReference<String> toolCallId = new AtomicReference<>();
+
     @RegisterExtension
-    public OpenAIMock openAIMock = new OpenAIMock().builder()
-            .when("hello-responses")
-            .replyWith("Hi from responses mock")
-            .end()
-            .when("turn-two")
-            .replyWith("Second turn answer")
-            .end()
-            .when("json-responses")
-            .replyWith("{\"ok\":true}")
-            .end()
-            .when("assert-previous-id")
-            .assertRequest(request -> {
+    public OpenAIMock openAIMock = new OpenAIMock().builder().when("hello-responses").replyWith("Hi from responses mock").end()
+            .when("turn-two").replyWith("Second turn answer").end().when("json-responses").replyWith("{\"ok\":true}").end()
+            .when("assert-previous-id").assertRequest(request -> {
                 try {
                     JsonNode root = OBJECT_MAPPER.readTree(request);
                     assertThat(root.get("previous_response_id").asText()).isEqualTo("resp_prev_123");
@@ -57,49 +57,25 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-            })
-            .replyWith("Acknowledged")
-            .end()
-            .when("tools-request")
-            .assertRequest(request -> {
+            }).replyWith("Acknowledged").end().when("tools-request").assertRequest(request -> {
                 try {
-                    assertThat(collectBuiltinToolTypesInRequest(request))
-                            .contains("web_search", "file_search");
+                    assertThat(collectBuiltinToolTypesInRequest(request)).contains("web_search", "file_search");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-            })
-            .replyWith("Research done")
-            .end()
-            .when("hosted-mcp")
-            .replyWith("Docs found")
-            .end()
-            .when("approval-needed")
+            }).replyWith("Research done").end().when("hosted-mcp").replyWith("Docs found").end().when("approval-needed")
             .replyWithResponsesOutput("""
                     [{"type":"mcp_approval_request","id":"mcpr_1","server_label":"deepwiki",
-                      "name":"ask_question","arguments":"{}"}]""")
-            .end()
-            .when("citations")
-            .replyWithResponsesOutput("""
+                      "name":"ask_question","arguments":"{}"}]""").end().when("citations").replyWithResponsesOutput("""
                     [{"type":"message","id":"msg_1","role":"assistant","status":"completed",
-                      "content":[{"type":"output_text","text":"Apache Camel is an integration framework.",
+                        "content":[{"type":"output_text","text":"Apache Camel is an integration framework.",
                         "annotations":[{"type":"url_citation","url":"https://camel.apache.org",
-                          "title":"Apache Camel","start_index":0,"end_index":12}]}]}]""")
-            .end()
-            .when("Summarize this document")
-            .replyWith("A short report")
-            .end()
-            .when("weather-tool")
-            .invokeTool("get_weather")
-            .withParam("city", "Rome")
-            .replyWith("It is sunny in Rome")
-            .end()
-            .when("order-tool")
-            .invokeTool("lookup_order")
-            .withParam("id", "42")
-            .replyWith("Not expected, the tool returns directly")
-            .end()
-            .build();
+                            "title":"Apache Camel","start_index":0,"end_index":12}]}]}]""").end().when("search off")
+            .replyWith("off").when("search on").replyWith("on").when("find weather").invokeTool(AiToolSearch.TOOL_NAME)
+            .withParam("terms", Arrays.asList("weather")).invokeTool("get_weather").replyWith("Sunny in Rome").end()
+            .when("Summarize this document").replyWith("A short report").end().when("weather-tool").invokeTool("get_weather")
+            .withParam("city", "Rome").replyWith("It is sunny in Rome").end().when("order-tool").invokeTool("lookup_order")
+            .withParam("id", "42").replyWith("Not expected, the tool returns directly").end().build();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -135,7 +111,11 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                         .to("openai:responses?model=gpt-5&apiKey=dummy&conversationMemory=true&baseUrl=" + base);
 
                 from("ai-tool:get_weather?tags=responses-tools&description=Get the weather for a city"
-                     + "&parameter.city=string&parameter.city.required=true")
+                     + "&parameter.city=string&parameter.city.required=true&searchable=true")
+                        .process(e -> {
+                            toolConversationId.set(e.getMessage().getHeader(AiToolConstants.CONVERSATION_ID, String.class));
+                            toolCallId.set(e.getMessage().getHeader(AiToolConstants.TOOL_CALL_ID, String.class));
+                        })
                         .setBody(simple("Sunny in ${header.city}"));
 
                 from("ai-tool:lookup_order?tags=responses-direct&description=Look up an order"
@@ -299,6 +279,8 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getBody(String.class)).isEqualTo("It is sunny in Rome");
+        assertThat(toolConversationId).hasNullValue();
+        assertThat(toolCallId.get()).isNotBlank();
         assertThat(result.getMessage().getHeader(OpenAIConstants.TOOL_ITERATIONS, Integer.class)).isEqualTo(1);
         assertThat(result.getMessage().getHeader(OpenAIConstants.MCP_TOOL_CALLS, List.class)).containsExactly("get_weather");
 
@@ -399,12 +381,29 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         var requests = openAIMock.getReceivedRequests();
         assertThat(requests).hasSize(2);
         assertThat(requests.get(0).bodyAsJson().path("conversation").asText()).isEqualTo("conv_123");
+        assertThat(toolConversationId).hasValue("conv_123");
+        assertThat(toolCallId.get()).isNotBlank();
         JsonNode followUp = requests.get(1).bodyAsJson();
         assertThat(followUp.path("conversation").asText()).isEqualTo("conv_123");
         // the server already stored the user input and the function calls, so only the tool result is sent
         assertThat(followUp.path("input")).hasSize(1);
         assertThat(followUp.path("input").path(0).path("type").asText()).isEqualTo("function_call_output");
         assertThat(followUp.path("input").path(0).path("output").asText()).isEqualTo("Sunny in Rome");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:responses-route-tools", "direct:responses-conversation-tools" })
+    void propagatesTheConversationIdFromTheHeader(String route) {
+        Exchange result = template.request(route, e -> {
+            e.getIn().setBody("weather-tool");
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv_header");
+        });
+
+        assertThat(result.getException()).isNull();
+        assertThat(toolConversationId).hasValue("conv_header");
+        assertThat(toolCallId.get()).isNotBlank();
+        assertThat(openAIMock.getReceivedRequests())
+                .allSatisfy(request -> assertThat(request.bodyAsJson().path("conversation").asText()).isEqualTo("conv_header"));
     }
 
     @Test
@@ -480,6 +479,82 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThatThrownBy(() -> OpenAIResponsesSupport.applyHostedMcpTools(
                 ResponseCreateParams.builder(), "not-json"))
                 .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    void toolSearchOffSendsSearchableTools() throws Exception {
+        Exchange result = template.request(
+                responsesUri() + "&autoToolExecution=true&tags=responses-tools",
+                e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("It is sunny in Rome");
+
+        var requests = openAIMock.getReceivedRequests();
+        assertThat(requests).hasSize(2);
+
+        JsonNode initialTools = requests.get(0).bodyAsJson().path("tools");
+        assertThat(toolNames(initialTools)).contains("get_weather");
+
+        JsonNode followUpInput = requests.get(1).bodyAsJson().path("input");
+        assertThat(followUpInput.toString()).contains("Sunny in Rome");
+    }
+
+    @Test
+    void toolSearchOnOmitsSearchableToolsUntilTheyAreFound() throws Exception {
+        Exchange result = template.request(
+                responsesUri() + "&autoToolExecution=true&toolSearch=true&tags=responses-tools",
+                e -> e.getIn().setBody("find weather"));
+
+        assertThat(result.getException()).isNull();
+
+        var requests = openAIMock.getReceivedRequests();
+        assertThat(requests).isNotEmpty();
+
+        JsonNode initialTools = requests.get(0).bodyAsJson().path("tools");
+        assertThat(toolNames(initialTools)).contains(AiToolSearch.TOOL_NAME);
+        assertThat(toolNames(initialTools)).doesNotContain("get_weather");
+
+        // Once discovery runs, the next model request should expose the discovered function.
+        assertThat(requests).hasSizeGreaterThanOrEqualTo(2);
+        JsonNode followUpTools = requests.get(1).bodyAsJson().path("tools");
+        assertThat(toolNames(followUpTools)).contains("get_weather");
+    }
+
+    @Test
+    void searchThenCallsTheOriginalHandler() throws Exception {
+        Exchange result = template.request(
+                responsesUri() + "&autoToolExecution=true&toolSearch=true&tags=responses-tools",
+                e -> e.getIn().setBody("find weather"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Sunny in Rome");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.TOOL_ITERATIONS, Integer.class))
+                .isGreaterThanOrEqualTo(1);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MCP_TOOL_CALLS, List.class))
+                .contains("get_weather");
+
+        var requests = openAIMock.getReceivedRequests();
+        assertThat(requests).hasSizeGreaterThanOrEqualTo(2);
+
+        JsonNode initialTools = requests.get(0).bodyAsJson().path("tools");
+        assertThat(toolNames(initialTools)).contains(AiToolSearch.TOOL_NAME);
+        assertThat(toolNames(initialTools)).doesNotContain("get_weather");
+
+        JsonNode followUpTools = requests.get(1).bodyAsJson().path("tools");
+        assertThat(toolNames(followUpTools)).contains("get_weather");
+    }
+
+    private static List<String> toolNames(JsonNode tools) {
+        List<String> names = new ArrayList<>();
+        if (tools.isArray()) {
+            for (JsonNode tool : tools) {
+                if ("function".equals(tool.path("type").asText())) {
+                    names.add(tool.path("name").asText());
+                }
+            }
+        }
+        return names;
     }
 
     private static List<String> collectBuiltinToolTypesInRequest(String requestBody) throws Exception {

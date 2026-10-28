@@ -99,11 +99,16 @@ class SqlQueryTab extends AbstractTab {
         super(ctx);
     }
 
-    boolean isInputActive() {
+    @Override
+    public boolean isTextInputActive() {
         return !dsNames.isEmpty() && (editMode || focusOnInput);
     }
 
-    void handlePaste(String text) {
+    @Override
+    public boolean handlePaste(String text) {
+        if (!isTextInputActive()) {
+            return false;
+        }
         if (editMode) {
             if (editInputs != null && editField >= 0 && editField < editInputs.length
                     && !columnIsPk[editField]) {
@@ -112,6 +117,7 @@ class SqlQueryTab extends AbstractTab {
         } else if (focusOnInput) {
             sqlInput.insert(text);
         }
+        return true;
     }
 
     @Override
@@ -242,8 +248,9 @@ class SqlQueryTab extends AbstractTab {
             }
 
             // typed character
-            if (ke.code() == KeyCode.CHAR) {
-                sqlInput.insert(ke.character());
+            String typed = FormHelper.typedText(ke);
+            if (typed != null) {
+                sqlInput.insert(typed);
                 return true;
             }
 
@@ -744,7 +751,7 @@ class SqlQueryTab extends AbstractTab {
         }
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(popup);

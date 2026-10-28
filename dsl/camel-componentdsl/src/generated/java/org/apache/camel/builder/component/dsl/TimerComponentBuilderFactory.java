@@ -80,8 +80,11 @@ public interface TimerComponentBuilderFactory {
     
         
         /**
-         * Whether to include metadata in the exchange such as fired time, timer
-         * name, timer count etc.
+         * Whether to include metadata in the exchange: the exchange properties
+         * CamelTimerCounter (the fire count, 1 on the first fire),
+         * CamelTimerName, CamelTimerPeriod, CamelTimerFiredTime and
+         * CamelTimerTime (when the time option is set), and the headers
+         * CamelTimerFiredTime and CamelMessageTimestamp.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

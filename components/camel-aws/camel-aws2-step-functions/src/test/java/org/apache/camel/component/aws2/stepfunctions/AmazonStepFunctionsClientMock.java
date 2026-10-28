@@ -25,6 +25,8 @@ import software.amazon.awssdk.services.sfn.model.*;
 
 public class AmazonStepFunctionsClientMock implements SfnClient {
 
+    private StartSyncExecutionRequest lastStartSyncExecutionRequest;
+
     private ListExecutionsRequest lastListExecutionsRequest;
 
     public AmazonStepFunctionsClientMock() {
@@ -137,9 +139,19 @@ public class AmazonStepFunctionsClientMock implements SfnClient {
 
     @Override
     public StartSyncExecutionResponse startSyncExecution(StartSyncExecutionRequest startSyncExecutionRequest) {
+        lastStartSyncExecutionRequest = startSyncExecutionRequest;
         StartSyncExecutionResponse.Builder result = StartSyncExecutionResponse.builder();
         result.executionArn("aws:sfn-execution::test:arn");
+        if ("failing".equals(startSyncExecutionRequest.name())) {
+            result.status(SyncExecutionStatus.FAILED).error("States.TaskFailed").cause("The task failed");
+        } else {
+            result.status(SyncExecutionStatus.SUCCEEDED).output(startSyncExecutionRequest.input());
+        }
         return result.build();
+    }
+
+    public StartSyncExecutionRequest getLastStartSyncExecutionRequest() {
+        return lastStartSyncExecutionRequest;
     }
 
     @Override

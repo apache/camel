@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,12 +30,18 @@ import org.apache.camel.component.smpp.SmppConstants;
 import org.apache.camel.component.smpp.SmppMessageType;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.examples.SMPPServerSimulator;
+import org.jsmpp.session.BindParameter;
+import org.jsmpp.session.SMPPSession;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -43,10 +51,7 @@ class SmppTRXProducerIT extends CamelTestSupport {
 
     @RegisterExtension
     static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
-    private static final Thread SMPP_SERVER_SIMULATOR = new Thread(() -> {
-        System.setProperty("jsmpp.simulator.port", "" + PORT.getPort());
-        SMPPServerSimulator.main(null);
-    });
+    private static Thread smppServerSimulator;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
@@ -62,12 +67,42 @@ class SmppTRXProducerIT extends CamelTestSupport {
 
     @BeforeAll
     public static void runSMPPServerSimulator() {
-        SMPP_SERVER_SIMULATOR.start();
+        smppServerSimulator = new Thread(() -> {
+            System.setProperty("jsmpp.simulator.port", "" + PORT.getPort());
+            SMPPServerSimulator.main(null);
+        });
+        smppServerSimulator.setDaemon(true);
+        smppServerSimulator.start();
+
+        // Wait for the SMPP server to be ready before the Camel context starts,
+        // otherwise the route startup connection attempt fails with "Connection refused".
+        // A BIND_TX (transmitter) bind is used as the readiness probe: the simulator only
+        // accepts BIND_TRX (transceiver) binds, so it rejects this immediately with a
+        // negative response code. That rejection proves the server's accept loop is running
+        // without blocking it (a raw TCP probe would stall the simulator for 30 s waiting
+        // for a bind PDU). Any IOException means the server is not yet listening.
+        await().atMost(30, TimeUnit.SECONDS).until(() -> {
+            try (SMPPSession probe = new SMPPSession()) {
+                probe.connectAndBind("localhost", PORT.getPort(),
+                        new BindParameter(
+                                BindType.BIND_TX, "j", "jpwd", null,
+                                TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
+                return true;
+            } catch (Exception e) {
+                // connectAndBind wraps NegativeResponseException in IOException.
+                // A NegativeResponseException cause means the server is up and rejected
+                // BIND_TX as expected (it only accepts BIND_TRX).
+                // Any other exception (e.g. ConnectException) means not yet ready.
+                return e.getCause() instanceof org.jsmpp.extra.NegativeResponseException;
+            }
+        });
     }
 
     @AfterAll
     public static void stopSMPPServerSimulator() {
-        SMPP_SERVER_SIMULATOR.interrupt();
+        if (smppServerSimulator != null) {
+            smppServerSimulator.interrupt();
+        }
     }
 
     @Test

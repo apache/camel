@@ -153,11 +153,11 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             final Exports exports = smooks.getApplicationContext().getRegistry().lookup(new ExportsLookup());
             if (exports.hasExports()) {
                 final Sink[] sinks = exports.createSinks();
-                smooks.filterSource(executionContext, getSource(exchange), sinks);
+                smooks.filterSource(executionContext, getSource(exchange, executionContext.getContentEncoding()), sinks);
                 setResultOnBody(exports, sinks, exchange);
             } else {
                 final OutputStreamBuilder outputStreamBuilder = OutputStreamBuilder.withExchange(exchange);
-                smooks.filterSource(executionContext, getSource(exchange),
+                smooks.filterSource(executionContext, getSource(exchange, executionContext.getContentEncoding()),
                         new StreamSink<>(outputStreamBuilder));
                 exchange.getMessage().setBody(outputStreamBuilder.build());
             }
@@ -191,10 +191,10 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         }
     }
 
-    private Source getSource(final Exchange exchange) throws InvalidPayloadException {
+    private Source getSource(final Exchange exchange, final String contentEncoding) throws InvalidPayloadException {
         final Object payload = exchange.getIn().getBody();
 
-        if (payload instanceof Source source) {
+        if (payload instanceof Source source && !hardenXmlInput) {
             return source;
         }
 
@@ -205,6 +205,9 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         if (hardenXmlInput) {
             // Untrusted XML: parse with a reader that does not resolve external entities before Smooks sees it
             try {
+                if (payload instanceof Source source) {
+                    return SmooksSecuritySupport.secureXmlSource(source, contentEncoding);
+                }
                 return SmooksSecuritySupport.secureXmlSource(exchange.getIn().getMandatoryBody(InputStream.class));
             } catch (IOException | SAXException e) {
                 throw new SmooksException(e);

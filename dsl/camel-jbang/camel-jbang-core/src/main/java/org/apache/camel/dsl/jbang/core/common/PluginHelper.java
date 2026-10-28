@@ -132,7 +132,68 @@ public final class PluginHelper {
             // Ignore errors in embedded plugin loading
         }
 
-        // allow to download plugins from 3rd party maven repositories by --repos argument
+        String repos = resolveRepos(args);
+
+        // If we found embedded plugins, and we're looking for a specific target,
+        // check if it was satisfied by embedded plugins
+        if (foundEmbeddedPlugins && target != null && !"shell".equals(target)) {
+            // Check if the target command was added by embedded plugins
+            if (commandLine.getSubcommands().containsKey(target)) {
+                return; // Target satisfied by embedded plugins, no need for JSON config
+            }
+        }
+
+        // Fall back to JSON configuration for additional or missing plugins.
+        // Pass target so only matching plugins are downloaded — avoids expensive
+        // Maven resolution for plugins unrelated to the current command.
+        Map<String, Plugin> plugins = getActivePlugins(main, repos, target);
+        for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
+            // Skip if this plugin command is already registered (e.g. loaded from embedded plugins,
+            // or stale JSON config listing a plugin that is now built-in)
+            if (commandLine.getSubcommands().containsKey(plugin.getKey())) {
+                continue;
+            }
+
+            apply(plugin.getValue(), commandLine, main);
+        }
+    }
+
+    /**
+     * Installs a known Camel plugin the first time its command is used, and adds its commands to the command line, so
+     * the command runs right away.
+     *
+     * @param  commandLine the command line, after {@link #addPlugins(CommandLine, CamelJBangMain, String...)}
+     * @param  main        the current Camel CLI main
+     * @param  args        the raw CLI args; only args[0] is inspected
+     * @return             true if a plugin was installed
+     */
+    public static boolean installOnFirstUse(CommandLine commandLine, CamelJBangMain main, String... args) {
+        String target = args != null && args.length > 0 ? args[0] : null;
+        if (target == null || target.startsWith("-") || commandLine.getSubcommands().containsKey(target)) {
+            return false;
+        }
+        Optional<PluginType> pluginType = PluginType.findByName(target);
+        if (pluginType.isEmpty()) {
+            return false;
+        }
+        enable(pluginType.get());
+        main.getOut().printDiagnostic("Installed plugin: " + pluginType.get().getName());
+        for (Map.Entry<String, Plugin> plugin : getActivePlugins(main, resolveRepos(args), target).entrySet()) {
+            if (!commandLine.getSubcommands().containsKey(plugin.getKey())) {
+                apply(plugin.getValue(), commandLine, main);
+            }
+        }
+        return true;
+    }
+
+    // adds the commands of the plugin, and the main remembers the plugin for the command lines it makes later
+    private static void apply(Plugin plugin, CommandLine commandLine, CamelJBangMain main) {
+        plugin.customize(commandLine, main);
+        main.addPlugin(plugin);
+    }
+
+    // allow to download plugins from 3rd party maven repositories by --repos argument, or the user configuration
+    private static String resolveRepos(String... args) {
         String repos = null;
         try {
             for (String a : args) {
@@ -155,38 +216,17 @@ public final class PluginHelper {
                 repos = configProperties.getProperty("repo");
             }
         }
-
-        // If we found embedded plugins, and we're looking for a specific target,
-        // check if it was satisfied by embedded plugins
-        if (foundEmbeddedPlugins && target != null && !"shell".equals(target)) {
-            // Check if the target command was added by embedded plugins
-            if (commandLine.getSubcommands().containsKey(target)) {
-                return; // Target satisfied by embedded plugins, no need for JSON config
-            }
-        }
-
-        // Fall back to JSON configuration for additional or missing plugins.
-        // Pass target so only matching plugins are downloaded — avoids expensive
-        // Maven resolution for plugins unrelated to the current command.
-        Map<String, Plugin> plugins = getActivePlugins(main, repos, target);
-        for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
-            // Skip if this plugin command is already registered (e.g. loaded from embedded plugins,
-            // or stale JSON config listing a plugin that is now built-in)
-            if (commandLine.getSubcommands().containsKey(plugin.getKey())) {
-                continue;
-            }
-
-            plugin.getValue().customize(commandLine, main);
-        }
+        return repos;
     }
 
     /**
      * Gets the active plugins according to the local plugin configuration file. Performs version check to make sure
      * that the current Camel CLI version is able to execute the plugin.
      *
-     * @param  main  to exit the CLI process in case of error
-     * @param  repos custom maven repositories
-     * @return       map of plugins where key represents the plugin command and value the plugin instance.
+     * @param  main         the Camel CLI
+     * @param  repos        custom maven repositories
+     * @return              map of plugins where key represents the plugin command and value the plugin instance.
+     * @throws CliException (exit code 1) when a plugin is not found, or needs a newer Camel CLI
      */
     public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos) {
         return getActivePlugins(main, repos, null);
@@ -197,10 +237,11 @@ public final class PluginHelper {
      * When a target command is specified (and is not "shell"), only the plugin matching that command is downloaded and
      * instantiated — other plugins are skipped entirely, avoiding expensive Maven resolution.
      *
-     * @param  main   to exit the CLI process in case of error
-     * @param  repos  custom maven repositories
-     * @param  target the target command name to filter by, or null to load all plugins
-     * @return        map of plugins where key represents the plugin command and value the plugin instance.
+     * @param  main         the Camel CLI
+     * @param  repos        custom maven repositories
+     * @param  target       the target command name to filter by, or null to load all plugins
+     * @return              map of plugins where key represents the plugin command and value the plugin instance.
+     * @throws CliException (exit code 1) when a plugin is not found, or needs a newer Camel CLI
      */
     public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos, String target) {
         Map<String, Plugin> activePlugins = new HashMap<>();
@@ -236,8 +277,7 @@ public final class PluginHelper {
                         configDirty = true;
                     }
                 } else {
-                    main.getOut().println("camel-jbang-plugin-" + command + " not found. Exit");
-                    main.quit(1);
+                    throw CliException.failure("camel-jbang-plugin-" + command + " not found");
                 }
             }
             if (configDirty) {
@@ -489,9 +529,8 @@ public final class PluginHelper {
         }
         boolean accept = VersionHelper.isGE(source, first);
         if (!accept) {
-            main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
-                                  + " because plugin has first version: " + firstVersion + ". Exit");
-            main.quit(1);
+            throw CliException.failure("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                                       + " because plugin has first version: " + firstVersion);
         }
     }
 
@@ -526,7 +565,7 @@ public final class PluginHelper {
                 instance.ifPresent(plugin -> plugin.setClassLoader(ddlcl));
             } else {
                 String gav = String.join(":", group, "camel-jbang-plugin-" + command, version);
-                printer.printf(String.format("ERROR: Failed to read file %s in dependency %s%n", path, gav));
+                printer.printErr(String.format("Failed to read file %s in dependency %s", path, gav));
             }
         } catch (IOException e) {
             throw new RuntimeCamelException(String.format("Failed to read the file %s.", path), e);
@@ -767,7 +806,7 @@ public final class PluginHelper {
                     return true;
                 }
 
-                plugin.customize(commandLine, main);
+                apply(plugin, commandLine, main);
                 return true;
             }
         } catch (Exception e) {

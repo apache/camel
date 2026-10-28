@@ -92,7 +92,6 @@ import org.apache.camel.model.language.SingleInputTypedExpressionDefinition;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.TypedExpressionDefinition;
 import org.apache.camel.model.language.VariableExpression;
-import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -1557,9 +1556,6 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof RefExpression) {
             return "ref";
         }
-        if (expr instanceof WasmExpression) {
-            return "wasm";
-        }
         String factoryMethod = languageFactoryMethod(expr);
         if (factoryMethod != null) {
             return factoryMethod;
@@ -1648,8 +1644,6 @@ public abstract class JavaDslModelWriterSupport {
         } else if (expr instanceof XMLTokenizerExpression xt) {
             appendNonDefaultOption(opts, "mode", xt.getMode(), "i");
             appendOption(opts, "group", xt.getGroup());
-        } else if (expr instanceof WasmExpression w) {
-            appendOption(opts, "module", w.getModule());
         }
 
         return opts.toString();

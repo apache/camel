@@ -11,16 +11,21 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-toon",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "toon",
     "modelJavaType": "org.apache.camel.model.dataformat.ToonDataFormat"
+  },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file", "value", "map", "list", "pojo" ], "description": "A Map, a List, a POJO or a value to write as TOON. A String, bytes, a stream or a file must be JSON text, read in the charset of the exchange" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "text", "description": "The TOON in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text" },
+    "unmarshalOut": { "carriers": [ "map", "list" ], "description": "A Map (LinkedHashMap) for an object, a List for an array; a document that is a single value gives that value" }
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "indent": { "index": 1, "kind": "attribute", "displayName": "Indent", "group": "common", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 2, "description": "Number of spaces per indentation level." },
     "delimiter": { "index": 2, "kind": "attribute", "displayName": "Delimiter", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "COMMA", "TAB", "PIPE" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "COMMA", "description": "Delimiter used for tabular array rows and inline primitive arrays." },
-    "lengthMarker": { "index": 3, "kind": "attribute", "displayName": "Length Marker", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths." },
-    "strict": { "index": 4, "kind": "attribute", "displayName": "Strict", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing." },
-    "contentTypeHeader": { "index": 5, "kind": "attribute", "displayName": "Content Type Header", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the data format should set the Content-Type header to text\/toon when marshalling." }
+    "strict": { "index": 3, "kind": "attribute", "displayName": "Strict", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict recoveries of the TOON specification, such as accepting an array whose length differs from the declared length; other malformed TOON still fails." },
+    "contentTypeHeader": { "index": 4, "kind": "attribute", "displayName": "Content Type Header", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the data format should set the Content-Type header to text\/toon when marshalling." }
   }
 }

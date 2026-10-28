@@ -16,9 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,6 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -46,7 +43,7 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class DiagramTab extends AbstractTab {
+class DiagramTab extends AbstractDiagramTab {
 
     /** The zoom levels of the tab (CAMEL-25147): Architecture › Topology › Route. */
     enum Level {
@@ -55,22 +52,12 @@ class DiagramTab extends AbstractTab {
         ROUTE
     }
 
-    private final DiagramSupport diagram = new DiagramSupport();
-    private final SourceViewer sourceViewer = new SourceViewer();
-    private final GotoNodePopup gotoNodePopup = new GotoNodePopup();
-    private boolean diagramMetrics = true;
-    private static final String[] EXTERNAL_LABELS = { " [off]", " [edges]", " [all]" };
-    private int externalMode;
-    private boolean topologyMode = true;
-    private String drillDownRouteId;
-    private final Deque<String> routeNavigationStack = new ArrayDeque<>();
     private int infoPanelWidth = 30;
     private final DragSplit hSplit = new DragSplit();
 
-    private boolean detailMode;
-    private final DiagramDetailSupport detail = new DiagramDetailSupport(ctx, diagram);
     private final ArchitectureView architecture
-            = new ArchitectureView(ctx, this::focusGroup, () -> diagram.isShowDescription());
+            = new ArchitectureView(
+                    ctx, this::focusGroup, () -> diagram.isShowDescription(), () -> diagram.isShowErrorPaths());
     /** Whether the user chose descriptions on or off with n; until then they are on when the routes have any. */
     private boolean descriptionChosen;
     /** Whether the topology shows each route's group; null until the user presses g (then on when there are groups). */
@@ -81,25 +68,10 @@ class DiagramTab extends AbstractTab {
         super(ctx);
     }
 
-    boolean isShowDiagram() {
-        return diagram.isShowDiagram();
-    }
-
-    @Override
-    public boolean isOverlayActive() {
-        return sourceViewer.isVisible() || gotoNodePopup.isVisible();
-    }
-
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         // Go-to node popup (takes priority when active)
-        if (gotoNodePopup.isVisible()) {
-            gotoNodePopup.handleKeyEvent(ke);
-            int sel = gotoNodePopup.consumeSelectedIndex();
-            if (sel >= 0) {
-                diagram.setSelectedEipNodeIndex(sel);
-                diagram.scrollToSelectedEipNode();
-            }
+        if (handleGotoNodeKeys(ke)) {
             return true;
         }
 
@@ -143,6 +115,12 @@ class DiagramTab extends AbstractTab {
                 IntegrationSummaryDoc.open(ctx, selectedSourceDirectory(), IntegrationSummaryDoc.ARCHITECTURE);
                 return true;
             }
+            // the error handling: one setting with the topology's, a box of the routes reached only on error here
+            if (ke.isCharIgnoreCase('x')) {
+                diagram.setShowErrorPaths(!diagram.isShowErrorPaths());
+                architecture.refresh();
+                return true;
+            }
             return architecture.handleKeyEvent(ke);
         }
         if (diagram.isShowDiagram() && ke.isChar('s')) {
@@ -151,239 +129,103 @@ class DiagramTab extends AbstractTab {
             return true;
         }
 
-        // Source viewer toggle (drill-down mode)
-        if (!topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
-            loadSourceForSelectedNode();
+        // the source of the selected node or route
+        if (handleSourceKey(ke)) {
             return true;
         }
-
-        // Source viewer toggle (topology mode)
-        if (topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
-            loadSourceForSelectedTopologyRoute();
+        if (topologyMode && handleGroupFoldKeys(ke)) {
             return true;
         }
-
-        if (handleNodeNavigationKeys(ke)) {
+        if (handleDiagramKeys(ke)) {
             return true;
         }
-        return handleDiagramActionKeys(ke);
+        return handleViewKeys(ke);
     }
 
     /**
-     * Arrow/Home/End navigation between topology nodes or EIP nodes of the drilled-down route.
+     * The groups of the topology folded into a box each: Space on a route folds its group (or unfolds the box
+     * selected), Enter on a box unfolds it, f folds every group and F unfolds them all.
      */
-    private boolean handleNodeNavigationKeys(KeyEvent ke) {
-        // Node selection navigation in topology mode
-        if (topologyMode && diagram.isShowDiagram() && diagram.hasDiagramData()
-                && !diagram.getNodeBoxes().isEmpty()) {
-            if (ke.isUp()) {
-                diagram.selectNodeUp();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isDown()) {
-                diagram.selectNodeDown();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isLeft()) {
-                diagram.selectNodeLeft();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isRight()) {
-                diagram.selectNodeRight();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isHome()) {
-                diagram.selectFirstNode();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isEnd()) {
-                diagram.selectLastNode();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
+    private boolean handleGroupFoldKeys(KeyEvent ke) {
+        if (!diagram.isShowDiagram() || !(ke.isChar(' ') || ke.isChar('f') || ke.isChar('F') || ke.isConfirm())) {
+            return false;
         }
-
-        // EIP node navigation in route drill-down mode
-        if (!topologyMode && diagram.isShowDiagram() && !diagram.getEipNodeBoxes().isEmpty()) {
-            if (ke.isUp()) {
-                diagram.selectEipNodeUp();
-                diagram.scrollToSelectedEipNode();
+        Map<String, RouteGroups.Tag> all = RouteGroups.of(selectedSourceDirectory(), diagram.isShowErrorPaths());
+        String selected = diagram.getSelectedRouteId();
+        String box = TopologyGroupFolds.groupOf(selected);
+        RouteDiagramZoom zoom = diagram.zoom;
+        if (box != null && (ke.isChar(' ') || ke.isConfirm())) {
+            zoom.toggleGroup(box);
+            // the first route of the group selected once it is unfolded
+            all.entrySet().stream().filter(e -> box.equals(e.getValue().group())).findFirst()
+                    .ifPresent(e -> diagram.setPendingSelectionRouteId(e.getKey()));
+        } else if (ke.isChar(' ')) {
+            RouteGroups.Tag tag = selected != null ? all.get(selected) : null;
+            if (tag == null) {
+                // a route in no group
                 return true;
             }
-            if (ke.isDown()) {
-                diagram.selectEipNodeDown();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isLeft()) {
-                diagram.selectEipNodeLeft();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isRight()) {
-                diagram.selectEipNodeRight();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isHome()) {
-                diagram.selectFirstEipNode();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isEnd()) {
-                diagram.selectLastEipNode();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
+            zoom.toggleGroup(tag.group());
+            diagram.setPendingSelectionRouteId(TopologyGroupFolds.PREFIX + tag.group());
+        } else if (ke.isChar('f')) {
+            all.values().forEach(t -> zoom.foldedGroups().add(t.group()));
+        } else if (ke.isChar('F')) {
+            zoom.foldedGroups().clear();
+        } else {
+            // Enter on a route: down to its diagram
+            return false;
         }
-        return false;
+        ctx.backgroundExecutor.execute(zoom::persist);
+        diagram.endLoad();
+        reloadDiagram();
+        return true;
     }
 
     /**
-     * Detail panel, go-to node, jump back to topology, scrolling, metrics/external/description toggles, and Enter to
-     * jump into a linked route or drill down.
+     * The keys of the Diagram tab's own views, after the keys it shares with the Routes tab: the groups of the
+     * topology, the error paths, the utility routes, and the business or technical view.
      */
-    private boolean handleDiagramActionKeys(KeyEvent ke) {
-        // Toggle detail panel in drill-down mode
-        if (!topologyMode && diagram.isShowDiagram() && !diagram.getEipNodeBoxes().isEmpty()
-                && ke.isCharIgnoreCase('d')) {
-            detailMode = !detailMode;
-            detail.reset();
-            return true;
+    private boolean handleViewKeys(KeyEvent ke) {
+        if (!diagram.isShowDiagram()) {
+            return false;
         }
-
-        // Go-to node popup in drill-down mode
-        if (!topologyMode && diagram.isShowDiagram() && !diagram.getEipNodeBoxes().isEmpty()
-                && ke.isChar('g')) {
-            gotoNodePopup.open(diagram.getEipNodeBoxes(), diagram.getSelectedEipNodeIndex());
-            return true;
-        }
-
-        // Detail panel scroll
-        if (!topologyMode && detailMode && diagram.isShowDiagram()) {
-            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                detail.scrollBy(-10);
-                return true;
-            }
-            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                detail.scrollBy(10);
-                return true;
-            }
-        }
-
-        // Jump back to topology from any depth
-        if (!topologyMode && diagram.isShowDiagram() && ke.isChar('t')) {
-            architecture.close();
-            routeNavigationStack.clear();
-            diagram.setPendingSelectionRouteId(drillDownRouteId);
-            drillDownRouteId = null;
-            topologyMode = true;
-            detailMode = false;
-            detail.reset();
-            diagram.setTopologyMode(true);
-            diagram.setSelectedEipNodeIndex(-1);
-            diagram.resetScroll();
-            if (diagram.hasNativeLayout()) {
-                return true;
-            }
-            diagram.endLoad();
-            reloadDiagram();
-            return true;
-        }
-
-        if (diagram.handleScrollKeys(ke)) {
-            return true;
-        }
-
-        // Toggle metrics
-        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('m')) {
-            diagramMetrics = !diagramMetrics;
-            diagram.endLoad();
-            reloadDiagram();
-            return true;
-        }
-
-        // Cycle external systems: off → edges → all → off
-        if (diagram.isShowDiagram() && topologyMode && ke.isCharIgnoreCase('e')) {
-            externalMode = (externalMode + 1) % 3;
-            diagram.endLoad();
-            reloadDiagram();
-            return true;
-        }
-
         // Groups in the topology: each route's route group, capability, shared services or utility
-        if (topologyMode && diagram.isShowDiagram() && ke.isCharIgnoreCase('g')) {
+        if (topologyMode && ke.isCharIgnoreCase('g')) {
             showGroups = !isShowGroups();
             return true;
         }
 
+        // Error handling: the routes reached on error and the error paths into them, in a frame below the happy path
+        if (ke.isCharIgnoreCase('x') && (topologyMode || drillDownRouteId != null)) {
+            diagram.setShowErrorPaths(!diagram.isShowErrorPaths());
+            if (!topologyMode) {
+                // the route view has no topology to prepare: load again for the route's error frame
+                reloadDiagram();
+            }
+            return true;
+        }
+
         // Utility routes: one setting for the architecture and the topology, so both show the same groups
-        if (topologyMode && diagram.isShowDiagram() && ke.isCharIgnoreCase('u') && hasUtilityRoutes()) {
+        if (topologyMode && ke.isCharIgnoreCase('u') && hasUtilityRoutes()) {
             architecture.setShowUtility(!architecture.isShowUtility());
             return true;
         }
 
         // Business or technical view: labels and what things do, or ids and endpoints
-        if (diagram.isShowDiagram() && isViewKey(ke)) {
+        if (isViewKey(ke)) {
             descriptionChosen = true;
             diagram.setShowDescription(!diagram.isShowDescription());
             diagram.endLoad();
             reloadDiagram();
             return true;
         }
-
-        // Jump to linked route from EIP node (Enter in route mode)
-        if (!topologyMode && ke.isConfirm() && !diagram.getEipNodeBoxes().isEmpty()) {
-            String linkedRouteId = diagram.findLinkedRouteId(drillDownRouteId);
-            if (linkedRouteId != null && diagram.getRouteLayout(linkedRouteId) != null) {
-                if (linkedRouteId.equals(drillDownRouteId)) {
-                    return true;
-                }
-                // Collapse breadcrumb if navigating back to a route already in the stack
-                if (routeNavigationStack.contains(linkedRouteId)) {
-                    while (!routeNavigationStack.isEmpty() && !linkedRouteId.equals(routeNavigationStack.peek())) {
-                        routeNavigationStack.pop();
-                    }
-                    routeNavigationStack.pop();
-                } else {
-                    routeNavigationStack.push(drillDownRouteId);
-                }
-                drillDownRouteId = linkedRouteId;
-                diagram.selectFromNode(linkedRouteId);
-                diagram.resetScroll();
-                return true;
-            }
-            return true;
-        }
-
-        // Drill down into route diagram (Enter from topology)
-        if (topologyMode && ke.isConfirm()) {
-            String selectedRouteId = diagram.getSelectedRouteId();
-            if (selectedRouteId != null) {
-                IntegrationInfo info = ctx.findSelectedIntegration();
-                if (info != null && info.routes.stream().anyMatch(r -> selectedRouteId.equals(r.routeId))) {
-                    routeNavigationStack.clear();
-                    drillDownRouteId = selectedRouteId;
-                    topologyMode = false;
-                    diagram.setTopologyMode(false);
-                    diagram.selectFromNode(selectedRouteId);
-                    diagram.resetScroll();
-                    diagram.endLoad();
-                    // Use cached route layout if available (no IPC needed)
-                    if (diagram.getRouteLayout(selectedRouteId) != null) {
-                        return true;
-                    }
-                    reloadDiagram();
-                }
-            }
-            return true;
-        }
         return false;
+    }
+
+    @Override
+    protected void onJumpToTopology() {
+        // t starts over at the topology: the architecture opens afresh on v
+        architecture.close();
     }
 
     @Override
@@ -413,6 +255,9 @@ class DiagramTab extends AbstractTab {
         if (diagram.handleMouseScroll(me)) {
             return true;
         }
+        if (handleFoldMarkerClick(me)) {
+            return true;
+        }
         if (me.isClick()) {
             if (topologyMode) {
                 int clicked = diagram.handleNodeClick(me);
@@ -431,12 +276,8 @@ class DiagramTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
-        if (gotoNodePopup.isVisible()) {
-            gotoNodePopup.close();
-            return true;
-        }
-        if (sourceViewer.isVisible()) {
-            sourceViewer.hide();
+        // the popup, the source, or back from a route (the architecture is shown only over the topology)
+        if (handleDiagramEscape()) {
             return true;
         }
         if (architecture.isActive()) {
@@ -445,30 +286,6 @@ class DiagramTab extends AbstractTab {
         if (topologyMode && diagram.isShowDiagram()) {
             // Esc zooms out: from the topology up to the architecture
             goToLevel(Level.ARCHITECTURE);
-            return true;
-        }
-        if (!topologyMode) {
-            if (!routeNavigationStack.isEmpty()) {
-                // Go back to the previous route in the stack
-                drillDownRouteId = routeNavigationStack.pop();
-                diagram.selectFromNode(drillDownRouteId);
-                diagram.resetScroll();
-                return true;
-            }
-            // Go back to topology
-            diagram.setPendingSelectionRouteId(drillDownRouteId);
-            topologyMode = true;
-            detailMode = false;
-            detail.reset();
-            diagram.setTopologyMode(true);
-            diagram.setSelectedEipNodeIndex(-1);
-            diagram.resetScroll();
-            // If topology layout is cached, just switch view without IPC
-            if (diagram.hasNativeLayout()) {
-                return true;
-            }
-            diagram.endLoad();
-            reloadDiagram();
             return true;
         }
         return false;
@@ -616,41 +433,27 @@ class DiagramTab extends AbstractTab {
         }
     }
 
-    /** From a route's diagram back to the topology. */
-    private void leaveRoute() {
-        routeNavigationStack.clear();
-        diagram.setPendingSelectionRouteId(drillDownRouteId);
-        topologyMode = true;
-        detailMode = false;
-        detail.reset();
-        diagram.setTopologyMode(true);
-        diagram.setSelectedEipNodeIndex(-1);
-        diagram.resetScroll();
-        if (!diagram.hasNativeLayout()) {
-            diagram.endLoad();
-            reloadDiagram();
-        }
-    }
-
     @Override
     public SubViewBar.Spec subViewBar() {
         if (ctx.findSelectedIntegration() == null || sourceViewer.isVisible() || !diagram.isShowDiagram()) {
             return null;
         }
+        // the levels lead the bar, with v that moves through them, so it is plain there are three; the view settings of
+        // the level shown are at its right
+        return new SubViewBar.Spec("v", levelViews(), viewToggles(), true);
+    }
+
+    /** The levels for the bar: the one shown highlighted, Route greyed out while no route is selected to go to. */
+    List<SubViewBar.View> levelViews() {
         Level current = level();
-        String group = diagram.getFocusName();
-        String route = routeCandidate();
-        List<SubViewBar.View> views = List.of(
+        return List.of(
                 new SubViewBar.View(
                         "Architecture", current == Level.ARCHITECTURE, true,
                         () -> goToLevel(Level.ARCHITECTURE)),
+                new SubViewBar.View("Topology", current == Level.TOPOLOGY, true, () -> goToLevel(Level.TOPOLOGY)),
                 new SubViewBar.View(
-                        group != null ? "Topology \u00b7 " + group : "Topology", current == Level.TOPOLOGY,
-                        true, () -> goToLevel(Level.TOPOLOGY)),
-                new SubViewBar.View(
-                        route != null ? "Route: " + route : "Route", current == Level.ROUTE, route != null,
+                        "Route", current == Level.ROUTE, routeCandidate() != null,
                         () -> goToLevel(Level.ROUTE)));
-        return new SubViewBar.Spec("v", views, viewToggles(), true);
     }
 
     /**
@@ -659,12 +462,13 @@ class DiagramTab extends AbstractTab {
      */
     private void prepareTopology() {
         diagram.setAiSourceDirectory(selectedSourceDirectory());
-        Map<String, RouteGroups.Tag> all = RouteGroups.of(selectedSourceDirectory());
+        Map<String, RouteGroups.Tag> all = RouteGroups.of(selectedSourceDirectory(), diagram.isShowErrorPaths());
         Map<String, RouteGroups.Tag> tags = isShowGroups() ? all : Map.of();
         Set<String> hidden = architecture.isShowUtility() ? Set.of() : RouteGroups.utility(all);
         diagram.setGroups(RouteGroups.tagLines(tags), RouteGroups.colors(tags));
         diagram.setGroupLegend(RouteGroups.legend(tags, hidden));
         diagram.setHiddenRoutes(hidden);
+        diagram.setRouteGroups(all);
         if (diagram.isTopologyStale() && !diagram.isLoading()) {
             reloadDiagram();
         }
@@ -676,7 +480,7 @@ class DiagramTab extends AbstractTab {
     }
 
     private boolean hasUtilityRoutes() {
-        return !RouteGroups.utility(RouteGroups.of(selectedSourceDirectory())).isEmpty();
+        return !RouteGroups.utility(RouteGroups.of(selectedSourceDirectory(), diagram.isShowErrorPaths())).isEmpty();
     }
 
     /** Groups are shown when the user said so, else when the project has any. */
@@ -701,14 +505,29 @@ class DiagramTab extends AbstractTab {
         return toggles;
     }
 
+    /** The mini panels over the diagram: the map and the tree of the route. */
+    private SubViewBar.Toggle panelsToggle() {
+        return new SubViewBar.Toggle("p", "panels", diagram.zoom.isPanels() ? "on" : "off");
+    }
+
+    /** On or off; an integration on a Camel before 4.23 reports no error paths, and the toggle says so. */
+    private String errorsToggle() {
+        if (!diagram.isErrorPathsKnown()) {
+            return "4.23+";
+        }
+        return diagram.isShowErrorPaths() ? "on" : "off";
+    }
+
     private List<SubViewBar.Toggle> levelToggles() {
         SubViewBar.Toggle view
-                = new SubViewBar.Toggle("b", "view", diagram.isShowDescription() ? "business" : "technical");
+                = new SubViewBar.Toggle("b", "", diagram.isShowDescription() ? "business" : "technical");
         String metrics = diagramMetrics ? "on" : "off";
         return switch (level()) {
             case ARCHITECTURE -> List.of(view,
                     new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"),
-                    new SubViewBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"));
+                    new SubViewBar.Toggle("x", "errors", diagram.isShowErrorPaths() ? "on" : "off"),
+                    new SubViewBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"),
+                    new SubViewBar.Toggle("+/-", "", architecture.zoomLabel()));
             case TOPOLOGY -> {
                 List<SubViewBar.Toggle> toggles = new ArrayList<>();
                 toggles.add(view);
@@ -716,6 +535,7 @@ class DiagramTab extends AbstractTab {
                 if (hasUtilityRoutes()) {
                     toggles.add(new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"));
                 }
+                toggles.add(new SubViewBar.Toggle("x", "errors", errorsToggle()));
                 toggles.add(new SubViewBar.Toggle("m", "metrics", metrics));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
@@ -724,34 +544,17 @@ class DiagramTab extends AbstractTab {
                             case 2 -> "all";
                             default -> "off";
                         }));
+                // the zoom and the panels last: their keys are in the footer and in the titles of the panels too
+                toggles.add(new SubViewBar.Toggle("+/-", "", diagram.zoom.label(diagram.getTopologyDensity())));
+                toggles.add(panelsToggle());
                 yield toggles;
             }
-            case ROUTE -> List.of(view, new SubViewBar.Toggle("m", "metrics", metrics),
-                    new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
+            case ROUTE -> List.of(view, new SubViewBar.Toggle("x", "errors", errorsToggle()),
+                    new SubViewBar.Toggle("+/-", "", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))),
+                    new SubViewBar.Toggle("m", "metrics", metrics),
+                    new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"),
+                    new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"), panelsToggle());
         };
-    }
-
-    /**
-     * Opens the route diagram of a route (the Route level), when the integration runs that route.
-     *
-     * @return whether it opened
-     */
-    private boolean drillIntoRoute(String routeId) {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
-            return false;
-        }
-        routeNavigationStack.clear();
-        drillDownRouteId = routeId;
-        topologyMode = false;
-        diagram.setTopologyMode(false);
-        diagram.selectFromNode(routeId);
-        diagram.resetScroll();
-        diagram.endLoad();
-        if (diagram.getRouteLayout(routeId) == null) {
-            reloadDiagram();
-        }
-        return true;
     }
 
     @Override
@@ -765,12 +568,6 @@ class DiagramTab extends AbstractTab {
         detail.reset();
         diagram.reset();
         diagram.setTopologyMode(true);
-    }
-
-    void preloadDiagram() {
-        if (ctx.selectedPid != null) {
-            diagram.preload(ctx, ctx.selectedPid);
-        }
     }
 
     @Override
@@ -789,7 +586,7 @@ class DiagramTab extends AbstractTab {
         }
 
         if (architecture.isActive()) {
-            architecture.render(frame, area, info.name);
+            architecture.render(frame, area, info.name, List.of());
             return;
         }
 
@@ -799,12 +596,13 @@ class DiagramTab extends AbstractTab {
             if (topologyMode && diagram.hasNativeLayout()) {
                 Line title;
                 if (info.name != null) {
+                    // the level is named by the bar above
                     title = Line.from(
-                            Span.raw(" Topology ["),
+                            Span.raw(" Diagram ["),
                             Span.styled(info.name, Theme.label().bold()),
                             Span.raw("] "));
                 } else {
-                    title = Line.from(Span.raw(" Topology "));
+                    title = Line.from(Span.raw(" Diagram "));
                 }
                 if (selectedRouteId != null && area.width() > 60) {
                     infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
@@ -822,10 +620,11 @@ class DiagramTab extends AbstractTab {
                 return;
             } else if (!topologyMode && drillDownRouteId != null
                     && diagram.getRouteLayout(drillDownRouteId) != null) {
-                Line title = DiagramDetailSupport.withRouteContext(
-                        DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), info,
-                        drillDownRouteId, selectedSourceDirectory(), isShowGroups());
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
+                Line title = diagram.zoom.withStepCount(DiagramDetailSupport.withRouteContext(
+                        DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), info,
+                        drillDownRouteId, selectedSourceDirectory(), isShowGroups(), diagram.isShowErrorPaths()),
+                        drillDownRouteId, routeLayout);
                 if (area.width() > 60) {
                     infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
@@ -884,6 +683,9 @@ class DiagramTab extends AbstractTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (renderGotoNodeFooter(spans)) {
+            return;
+        }
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
             return;
@@ -893,11 +695,14 @@ class DiagramTab extends AbstractTab {
             return;
         }
         if (diagram.isShowDiagram()) {
-            // actions only: the levels are on the level bar, the view settings beside it
+            // actions only: the level is in the title, the view settings on the bar above
             if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "back");
                 hint(spans, "c", "source");
                 hint(spans, "g", "go to");
+                hint(spans, "+/-", "zoom");
+                hint(spans, "Space", "fold");
+                hint(spans, "f/F", "fold/expand all");
                 hint(spans, "s", "summary");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
@@ -905,51 +710,13 @@ class DiagramTab extends AbstractTab {
             } else if (!diagram.getNodeBoxes().isEmpty()) {
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "c", "source");
+                hint(spans, "+/-", "zoom");
+                hint(spans, "Space", "fold group");
                 hint(spans, "s", "summary");
             } else {
                 diagram.renderFooterHints(spans);
             }
         }
-    }
-
-    void refreshDiagramIfNeeded() {
-        if (diagram.isShowDiagram() && diagramMetrics) {
-            reloadDiagram();
-        }
-    }
-
-    private void loadDiagram() {
-        loadDiagram(true);
-    }
-
-    private void reloadDiagram() {
-        loadDiagram(false);
-    }
-
-    private void loadDiagram(boolean showPlaceholder) {
-        if (ctx.selectedPid == null || ctx.runner == null) {
-            return;
-        }
-        if (!diagram.beginLoad()) {
-            return;
-        }
-
-        String pid = ctx.selectedPid;
-        boolean showMetrics = diagramMetrics;
-        int external = externalMode;
-
-        if (showPlaceholder) {
-            diagram.setLoadingPlaceholder();
-        }
-
-        ctx.backgroundExecutor.execute(() -> {
-            try {
-                diagram.setTopologyMode(topologyMode);
-                diagram.loadAllDiagramsInBackground(ctx, pid, showMetrics, external);
-            } finally {
-                diagram.endLoad();
-            }
-        });
     }
 
     @Override
@@ -969,63 +736,6 @@ class DiagramTab extends AbstractTab {
 
     JsonObject getTopologyDataAsJson() {
         return diagram.getTopologyDataAsJson();
-    }
-
-    private void loadSourceForSelectedTopologyRoute() {
-        String routeId = diagram.getSelectedRouteId();
-        if (routeId == null) {
-            return;
-        }
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
-            return;
-        }
-        sourceViewer.setOnLineSelected(sourceLine -> {
-            sourceViewer.hide();
-            routeNavigationStack.clear();
-            drillDownRouteId = routeId;
-            topologyMode = false;
-            diagram.setTopologyMode(false);
-            diagram.selectFromNode(routeId);
-            diagram.resetScroll();
-            diagram.endLoad();
-            if (diagram.getRouteLayout(routeId) == null) {
-                reloadDiagram();
-            }
-            int bestIdx = diagram.findClosestEipNode(sourceLine);
-            if (bestIdx >= 0) {
-                diagram.setSelectedEipNodeIndex(bestIdx);
-                diagram.scrollToSelectedEipNode();
-            }
-        });
-        sourceViewer.setQuickDocProvider(detail::provideAllQuickDocs);
-        detail.ensureProcessorDetailLoaded(routeId);
-        var rl = diagram.getRouteLayout(routeId);
-        sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
-    }
-
-    private void loadSourceForSelectedNode() {
-        if (drillDownRouteId == null) {
-            return;
-        }
-        int targetLine = 0;
-        var selected = diagram.getSelectedEipNodeBox();
-        if (selected != null && selected.layoutNode() != null
-                && selected.layoutNode().treeNode != null) {
-            targetLine = selected.layoutNode().treeNode.info.line;
-        }
-        sourceViewer.setOnLineSelected(sourceLine -> {
-            int bestIdx = diagram.findClosestEipNode(sourceLine);
-            if (bestIdx >= 0) {
-                diagram.setSelectedEipNodeIndex(bestIdx);
-                diagram.scrollToSelectedEipNode();
-                sourceViewer.hide();
-            }
-        });
-        sourceViewer.setQuickDocProvider(detail::provideAllQuickDocs);
-        detail.ensureProcessorDetailLoaded(drillDownRouteId);
-        var rl2 = diagram.getRouteLayout(drillDownRouteId);
-        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl2 != null ? rl2.source : null);
     }
 
     // ---- Quick doc (i toggle in source viewer) ----
@@ -1114,12 +824,80 @@ class DiagramTab extends AbstractTab {
         }
     }
 
+    /** The zoom for an agent: the level chosen and the one shown, fit, the folds and the mini panels. */
+    JsonObject zoomStateAsJson() {
+        RouteDiagramZoom zoom = diagram.zoom;
+        JsonObject z = new JsonObject();
+        z.put("level", zoom.density().label());
+        z.put("fit", zoom.isFit());
+        z.put("shown", topologyMode
+                ? zoom.label(diagram.getTopologyDensity())
+                : zoom.label(diagram.getRouteLayout(drillDownRouteId)));
+        if (!topologyMode && drillDownRouteId != null) {
+            z.put("foldedSteps", new JsonObject(zoom.foldedStepsOf(diagram.getRouteLayout(drillDownRouteId))));
+        }
+        z.put("foldedGroups", new JsonArray(new ArrayList<>(zoom.foldedGroups())));
+        z.put("panels", zoom.isPanels());
+        return z;
+    }
+
+    /**
+     * Zooms the diagram as an agent asks (tui_diagram_zoom): a level or fit, a step (route) or group (topology) folded
+     * or unfolded, all folded or expanded, the mini panels shown or hidden; what is not given stays as it is.
+     */
+    JsonObject zoomForAgent(
+            String level, String fold, String unfold, boolean foldAll, boolean expandAll, Boolean panels) {
+        RouteDiagramZoom zoom = diagram.zoom;
+        if ("fit".equals(level)) {
+            if (!zoom.isFit()) {
+                zoom.toggleFit();
+            }
+        } else if (level != null) {
+            zoom.setting(level);
+        }
+        String route = topologyMode ? null : drillDownRouteId;
+        var layout = route != null ? diagram.getRouteLayout(route) : null;
+        if (fold != null && layout != null && !zoom.foldedStepsOf(layout).containsKey(fold)) {
+            layout.nodes.stream().filter(n -> fold.equals(n.id)).findFirst().ifPresent(n -> zoom.toggleFold(route, n));
+        } else if (fold != null && route == null) {
+            zoom.foldedGroups().add(fold);
+        }
+        if (unfold != null && route != null) {
+            zoom.unfold(route, unfold);
+        } else if (unfold != null) {
+            zoom.foldedGroups().remove(unfold);
+        }
+        if (foldAll) {
+            if (route != null) {
+                zoom.foldAll(route, null);
+            } else {
+                RouteGroups.of(selectedSourceDirectory(), diagram.isShowErrorPaths()).values()
+                        .forEach(t -> zoom.foldedGroups().add(t.group()));
+            }
+        }
+        if (expandAll) {
+            if (route != null) {
+                zoom.expandAll(route);
+            } else {
+                zoom.foldedGroups().clear();
+            }
+        }
+        if (panels != null && panels != zoom.isPanels()) {
+            zoom.togglePanels();
+        }
+        ctx.backgroundExecutor.execute(zoom::persist);
+        diagram.endLoad();
+        reloadDiagram();
+        return zoomStateAsJson();
+    }
+
     JsonObject getDiagramStateAsJson() {
         if (!diagram.isShowDiagram()) {
             return null;
         }
         JsonObject result = new JsonObject();
         result.put("diagramMode", topologyMode ? "topology" : "route");
+        result.put("zoom", zoomStateAsJson());
 
         if (!topologyMode && drillDownRouteId != null) {
             result.put("routeId", drillDownRouteId);
@@ -1156,6 +934,12 @@ class DiagramTab extends AbstractTab {
                 String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
                 if (linkedRoute != null) {
                     node.put("linkedRoute", linkedRoute);
+                }
+                var treeNode = eipBox.layoutNode().treeNode;
+                if (treeNode != null && !treeNode.info.bodyTypes.isEmpty()) {
+                    // the body types the step has been reached with; more than one kind is a step that needs attention
+                    node.put("bodyTypes", new JsonArray(treeNode.info.bodyTypes));
+                    node.put("bodyKinds", new JsonArray(treeNode.info.bodyKinds));
                 }
                 result.put("selectedNode", node);
             }

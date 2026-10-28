@@ -17,18 +17,22 @@
 package org.apache.camel.telemetry.mock;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.telemetry.Span;
 import org.apache.camel.telemetry.TagConstants;
 
 public class MockSpanAdapter implements Span {
 
-    private final List<LogEntry> logEntries = new ArrayList<>();
-    private final Map<String, String> tags = new HashMap<>();
+    // ConcurrentHashMap: tags (including isDone) are written from exchange threads and read
+    // from the test thread without explicit synchronization.
+    private final Map<String, String> tags = new ConcurrentHashMap<>();
+    // synchronizedList: log() is called from exchange threads; logEntries() copies under the lock.
+    private final List<LogEntry> logEntries = Collections.synchronizedList(new ArrayList<>());
 
     public static long nowMicros() {
         return System.currentTimeMillis() * 1000;
@@ -44,7 +48,9 @@ public class MockSpanAdapter implements Span {
 
     @Override
     public void setComponent(String component) {
-        this.tags.put(TagConstants.COMPONENT, component);
+        if (component != null) {
+            this.tags.put(TagConstants.COMPONENT, component);
+        }
     }
 
     @Override
@@ -54,7 +60,9 @@ public class MockSpanAdapter implements Span {
 
     @Override
     public void setTag(String key, String value) {
-        this.tags.put(key, value);
+        if (key != null && value != null) {
+            this.tags.put(key, value);
+        }
     }
 
     public String getTag(String key) {
@@ -67,7 +75,9 @@ public class MockSpanAdapter implements Span {
     }
 
     public List<LogEntry> logEntries() {
-        return new ArrayList<>(this.logEntries);
+        synchronized (logEntries) {
+            return new ArrayList<>(this.logEntries);
+        }
     }
 
     public static final class LogEntry {

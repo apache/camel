@@ -167,7 +167,7 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
                     EmbeddingStoreUtil.registerSchema(configuration, cacheContainer);
                     return true;
                 } catch (HotRodClientException e) {
-                    if (!isIllegalLifecycleStateException(e)) {
+                    if (!isIllegalLifecycleStateException(e) && !isTransportException(e)) {
                         throw e;
                     }
                     if (firstAttempt[0]) {
@@ -189,6 +189,10 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
         } finally {
             camelContext.getExecutorServiceManager().shutdown(ses);
         }
+    }
+
+    private static boolean isTransportException(HotRodClientException e) {
+        return e.getClass().getSimpleName().contains("TransportException");
     }
 
     private static boolean isIllegalLifecycleStateException(HotRodClientException e) {

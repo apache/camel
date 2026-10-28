@@ -26,7 +26,6 @@ import org.apache.lucene.analysis.Analyzer;
 
 public class LuceneQueryProducer extends DefaultProducer {
     LuceneConfiguration config;
-    LuceneSearcher searcher;
     Analyzer analyzer;
     File indexDirectory;
     int maxNumberOfHits;
@@ -41,18 +40,6 @@ public class LuceneQueryProducer extends DefaultProducer {
     }
 
     @Override
-    public void doStart() throws Exception {
-        searcher = new LuceneSearcher();
-        super.doStart();
-    }
-
-    @Override
-    public void doStop() throws Exception {
-        searcher.close();
-        super.doStop();
-    }
-
-    @Override
     public void process(Exchange exchange) throws Exception {
         Hits hits;
 
@@ -61,8 +48,14 @@ public class LuceneQueryProducer extends DefaultProducer {
         boolean isReturnLuceneDocs = returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true");
 
         if (phrase != null) {
+            // a searcher (and index reader) per query: the producer is shared by concurrent exchanges
+            LuceneSearcher searcher = new LuceneSearcher();
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, isReturnLuceneDocs);
+            try {
+                hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, isReturnLuceneDocs);
+            } finally {
+                searcher.close();
+            }
         } else {
             throw new IllegalArgumentException(
                     "SearchPhrase for LucenePhraseQuerySearcher not set. Set the Header value: QUERY");

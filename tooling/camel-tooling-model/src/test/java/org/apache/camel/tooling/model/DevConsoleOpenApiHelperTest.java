@@ -148,10 +148,10 @@ class DevConsoleOpenApiHelperTest {
         route.setDescription("Route information");
         route.setReadOnly(false);
 
-        JsonObject doc = DevConsoleOpenApiHelper.buildOpenApiDocument(List.of(route, context), "4.23.0-SNAPSHOT");
+        JsonObject doc = DevConsoleOpenApiHelper.buildOpenApiDocument(List.of(route, context), "4.24.0-SNAPSHOT");
 
         assertEquals("3.0.3", doc.getString("openapi"));
-        assertEquals("4.23.0-SNAPSHOT", doc.getJsonObject("info").getString("version"));
+        assertEquals("4.24.0-SNAPSHOT", doc.getJsonObject("info").getString("version"));
         JsonObject paths = doc.getJsonObject("paths");
         assertNotNull(paths.getJsonObject("/q/dev/context").getJsonObject("get"));
         assertNotNull(paths.getJsonObject("/q/dev/route").getJsonObject("post"));

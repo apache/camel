@@ -335,6 +335,97 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
         return new EntrySet();
     }
 
+    /**
+     * Returns a view of the keys, which keep their original case. Like the lookups of this map, {@code contains},
+     * {@code remove}, {@code removeAll} and {@code retainAll} compare the keys case-insensitively.
+     */
+    @Override
+    public Set<String> keySet() {
+        return new KeySet();
+    }
+
+    private final class KeySet extends AbstractSet<String> {
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return containsKey(o);
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            int idx = findIndex((String) o);
+            if (idx == EMPTY) {
+                return false;
+            }
+            removeByIndex(idx);
+            return true;
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            // remove each element by key, so the result does not depend on the sizes
+            // (AbstractSet.removeAll would use c.contains(key), which is case-sensitive for most collections)
+            Objects.requireNonNull(c);
+            boolean modified = false;
+            for (Object o : c) {
+                modified |= remove(o);
+            }
+            return modified;
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            Objects.requireNonNull(c);
+            CaseInsensitiveMap retain = new CaseInsensitiveMap();
+            for (Object o : c) {
+                if (o instanceof String key) {
+                    retain.put(key, Boolean.TRUE);
+                }
+            }
+            boolean modified = false;
+            for (int i = 0; i < usedSlots; i++) {
+                if (keys[i] != null && !retain.containsKey(keys[i])) {
+                    removeByIndex(i);
+                    modified = true;
+                }
+            }
+            return modified;
+        }
+
+        @Override
+        public void clear() {
+            CaseInsensitiveMap.this.clear();
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return new KeyIterator();
+        }
+    }
+
+    private final class KeyIterator implements Iterator<String> {
+        private final EntryIterator it = new EntryIterator();
+
+        @Override
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+
+        @Override
+        public String next() {
+            return keys[it.nextIndex()];
+        }
+
+        @Override
+        public void remove() {
+            it.remove();
+        }
+    }
+
     private final class EntrySet extends AbstractSet<Entry<String, Object>> {
         @Override
         public int size() {
@@ -398,12 +489,16 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
 
         @Override
         public Entry<String, Object> next() {
+            return new MapEntry(nextIndex());
+        }
+
+        int nextIndex() {
             if (cursor == EMPTY) {
                 throw new NoSuchElementException();
             }
             lastReturned = cursor;
             cursor = advance(cursor + 1);
-            return new MapEntry(lastReturned);
+            return lastReturned;
         }
 
         @Override

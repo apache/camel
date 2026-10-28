@@ -52,9 +52,9 @@ public class MicrometerEndpointUriFactory extends org.apache.camel.support.compo
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
-        uri = buildPathParameter(syntax, uri, "metricsType", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "metricsType", "counter", false, copy);
         uri = buildPathParameter(syntax, uri, "metricsName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;

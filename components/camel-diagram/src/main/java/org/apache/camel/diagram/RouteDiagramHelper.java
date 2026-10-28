@@ -81,6 +81,8 @@ public final class RouteDiagramHelper {
                     node.level = level != null ? level : 0;
                     Integer lineNum = line.getInteger("line");
                     node.line = lineNum != null ? lineNum : 0;
+                    node.bodyTypes = strings(line.get("bodyTypes"));
+                    node.bodyKinds = strings(line.get("bodyKinds"));
 
                     if (line.containsKey("statistics")) {
                         JsonObject ls = line.getJsonObject("statistics");
@@ -123,6 +125,20 @@ public final class RouteDiagramHelper {
             routes.add(route);
         }
         return routes;
+    }
+
+    /** The strings of a JSON array, such as the body types of a step; empty when there are none. */
+    private static List<String> strings(Object array) {
+        if (!(array instanceof List<?> list) || list.isEmpty()) {
+            return List.of();
+        }
+        List<String> answer = new ArrayList<>(list.size());
+        for (Object o : list) {
+            if (o != null) {
+                answer.add(o.toString());
+            }
+        }
+        return List.copyOf(answer);
     }
 
     static List<String> wrapText(String text, int maxWidth) {

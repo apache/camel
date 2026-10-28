@@ -23,6 +23,8 @@ import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -36,8 +38,9 @@ class KubernetesPodLogsTest extends KubernetesBaseTestSupport {
         KubernetesPodLogs command = createCommand();
         command.name = "mickey-mouse";
         command.maxRetryAttempts = 2; // total timeout of 4 seconds
-        int exit = command.doCall();
-        Assertions.assertEquals(0, exit);
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+        Assertions.assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        Assertions.assertEquals("No pod with label app.kubernetes.io/name=mickey-mouse", e.getMessage());
 
         Assertions.assertTrue(
                 printer.getOutput().contains("Pod for label app.kubernetes.io/name=mickey-mouse not available"));

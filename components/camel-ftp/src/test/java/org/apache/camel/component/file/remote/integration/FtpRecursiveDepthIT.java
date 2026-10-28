@@ -29,9 +29,8 @@ public class FtpRecursiveDepthIT extends FtpServerTestSupport {
 
     @Test
     public void testDepth() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("a2", "b2");
-
+        // Upload all files before starting the consumer to avoid a race where
+        // the route picks up files mid-upload and produces inconsistent results.
         template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin", "a", Exchange.FILE_NAME,
                 "a.txt");
         template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin", "b", Exchange.FILE_NAME,
@@ -47,6 +46,11 @@ public class FtpRecursiveDepthIT extends FtpServerTestSupport {
         template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/bar/foo?password=admin", "b3",
                 Exchange.FILE_NAME, "b.txt");
 
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("a2", "b2");
+
+        context.getRouteController().startRoute("ftp-recursive-depth");
+
         // only expect 2 of the 6 sent, those at depth 2
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -56,7 +60,8 @@ public class FtpRecursiveDepthIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl() + "&minDepth=2&maxDepth=2").convertBodyTo(String.class).to("mock:result");
+                from(getFtpUrl() + "&minDepth=2&maxDepth=2").routeId("ftp-recursive-depth").autoStartup(false)
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

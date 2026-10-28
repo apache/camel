@@ -257,6 +257,89 @@ class ProjectCapabilitiesTest {
     }
 
     @Test
+    void theErrorHandlingInABoxOfItsOwn() {
+        // fail-well/error-handling, with a utility route that only logs and an error route of a group from the source
+        String yaml = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:parked
+                - onException:
+                    exception:
+                      - java.lang.IllegalStateException
+                    steps:
+                      - to: direct:audit-failure
+                - route:
+                    id: checkout
+                    from:
+                      uri: file:orders
+                      steps:
+                        - wireTap: seda:trace
+                        - to: direct:charge
+                - route:
+                    id: payment-provider
+                    errorHandler:
+                      noErrorHandler: {}
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - to: kafka:payments
+                - route:
+                    id: parked
+                    from:
+                      uri: direct:parked
+                      steps:
+                        - to: file:parked
+                - route:
+                    id: trace
+                    from:
+                      uri: seda:trace
+                      steps:
+                        - log: traced
+                - route:
+                    id: audit-failure
+                    group: audit
+                    from:
+                      uri: direct:audit-failure
+                      steps:
+                        - to: kafka:audit
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("x"), Map.of("shop.camel.yaml", yaml), ProjectOverviewTest.CATALOG);
+        Capabilities facts = ProjectCapabilities.build(o, null);
+        assertThat(facts.group("utility").routes()).containsExactly("parked", "trace");
+
+        Capabilities caps = ProjectCapabilities.withErrorHandling(o, facts);
+
+        // parked leaves Utility for the box; audit-failure keeps the group of its source
+        assertThat(caps.groups()).extracting(Group::id)
+                .containsExactly("group:audit", "other", "utility", ProjectCapabilities.ERRORS);
+        Group errors = caps.group(ProjectCapabilities.ERRORS);
+        assertThat(errors.name()).isEqualTo("Error handling");
+        assertThat(errors.routes()).containsExactly("parked");
+        assertThat(errors.systems()).containsExactly("File");
+        assertThat(caps.group("utility").routes()).containsExactly("trace");
+        assertThat(caps.groupOf()).containsEntry("parked", ProjectCapabilities.ERRORS);
+        // every group with a route that uses the dead letter channel of the file sends its failures there;
+        // payment-provider has none and leaves its failures to checkout
+        assertThat(caps.links()).filteredOn(l -> ProjectCapabilities.ERRORS.equals(l.to()))
+                .containsExactlyInAnyOrder(
+                        new GroupLink("other", ProjectCapabilities.ERRORS, ProjectCapabilities.ON_FAILURE),
+                        new GroupLink("utility", ProjectCapabilities.ERRORS, ProjectCapabilities.ON_FAILURE),
+                        new GroupLink("group:audit", ProjectCapabilities.ERRORS, ProjectCapabilities.ON_FAILURE));
+        assertThat(caps.links()).contains(new GroupLink("other", "utility", "async"));
+        // no route reached only on error: the grouping as it is
+        Overview plain = ProjectOverview.analyze(Path.of("x"), Map.of("tick.camel.yaml", """
+                - route:
+                    id: tick
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: kafka:ticks
+                """), ProjectOverviewTest.CATALOG);
+        Capabilities grouped = ProjectCapabilities.build(plain, null);
+        assertThat(ProjectCapabilities.withErrorHandling(plain, grouped)).isSameAs(grouped);
+    }
+
+    @Test
     void summaryCarriesUtilityAndTheMap() {
         Overview o = overview();
         String text = IntegrationSummary.render(o, AI, o.fingerprint(), "m", "2026-09-29");

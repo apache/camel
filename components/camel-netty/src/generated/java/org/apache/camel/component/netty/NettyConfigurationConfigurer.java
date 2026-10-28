@@ -71,6 +71,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "keyStoreResource": target.setKeyStoreResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazychannelcreation":
         case "lazyChannelCreation": target.setLazyChannelCreation(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "nativetransport":
         case "nativeTransport": target.setNativeTransport(property(camelContext, boolean.class, value)); return true;
         case "needclientauth":
@@ -208,6 +210,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "keyStoreResource": return java.lang.String.class;
         case "lazychannelcreation":
         case "lazyChannelCreation": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "nativetransport":
         case "nativeTransport": return boolean.class;
         case "needclientauth":
@@ -346,6 +350,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "keyStoreResource": return target.getKeyStoreResource();
         case "lazychannelcreation":
         case "lazyChannelCreation": return target.isLazyChannelCreation();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "nativetransport":
         case "nativeTransport": return target.isNativeTransport();
         case "needclientauth":

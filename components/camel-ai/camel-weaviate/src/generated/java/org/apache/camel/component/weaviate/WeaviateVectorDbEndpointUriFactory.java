@@ -24,7 +24,8 @@ public class WeaviateVectorDbEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(8);
+        props.add("action");
         props.add("apiKey");
         props.add("collection");
         props.add("grpcHost");
@@ -50,7 +51,7 @@ public class WeaviateVectorDbEndpointUriFactory extends org.apache.camel.support
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "collection", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

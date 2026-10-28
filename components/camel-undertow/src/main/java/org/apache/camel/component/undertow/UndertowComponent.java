@@ -37,6 +37,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
@@ -364,6 +365,18 @@ public class UndertowComponent extends DefaultComponent
     public HttpHandler registerEndpoint(
             UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler)
             throws Exception {
+        return registerEndpoint(consumer != null ? consumer.getEndpoint() : null, consumer, registrationInfo, sslContext,
+                handler);
+    }
+
+    /**
+     * Registers a handler on behalf of the given endpoint: the endpoint of the consumer, or a producer endpoint that
+     * registers a handler, such as a WebSocket producer, when {@code consumer} is {@code null}.
+     */
+    public HttpHandler registerEndpoint(
+            UndertowEndpoint endpoint, UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo,
+            SSLContext sslContext, HttpHandler handler)
+            throws Exception {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.computeIfAbsent(key, this::createUndertowHost);
@@ -372,11 +385,18 @@ public class UndertowComponent extends DefaultComponent
         handlers.add(registrationInfo);
 
         HttpHandler handlerWrapped = handler;
-        if (this.securityProvider != null) {
+        if (handler instanceof CamelWebSocketHandler webSocketHandler) {
+            // the WebSocket handler of a path is shared by its consumer and producers, so it must stay registered as is.
+            // It is wrapped before the registration, so that it cannot receive a request unwrapped; when the path
+            // already has a handler, the registration keeps that one and this instance is not used
+            if (this.securityProvider != null) {
+                webSocketHandler.wrapWith(this.securityProvider);
+            }
+        } else if (this.securityProvider != null) {
             handlerWrapped = this.securityProvider.wrapHttpHandler(handler);
         }
 
-        return host.registerHandler(consumer, registrationInfo, handlerWrapped);
+        return host.registerHandler(endpoint, consumer, registrationInfo, handlerWrapped);
     }
 
     public void unregisterEndpoint(

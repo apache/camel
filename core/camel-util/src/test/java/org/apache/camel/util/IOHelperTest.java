@@ -56,6 +56,16 @@ public class IOHelperTest {
     }
 
     @Test
+    public void testCharsetEmpty() {
+        // an empty charset parameter is no charset, so the default is used
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("text/plain; charset="));
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("text/plain; charset=\"\""));
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("text/plain; charset= "));
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("text/plain; charset=; format=flowed"));
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("text/plain; Charset="));
+    }
+
+    @Test
     public void testCopyMaxSize() throws IOException {
         byte[] data = new byte[100];
 

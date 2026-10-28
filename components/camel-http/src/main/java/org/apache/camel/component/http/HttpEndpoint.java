@@ -35,6 +35,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -74,6 +77,15 @@ import org.slf4j.LoggerFactory;
         "protocol=http"
 })
 @ManagedResource(description = "Managed HttpEndpoint")
+@BodyTypes(producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The request body: text, bytes, a stream or a file. A Map or a List fails:"
+                                                + " marshal it first. Without httpMethod, no body sends a GET and a body a"
+                                                + " POST"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.NULL },
+                                   description = "The response body: a byte array when its Content-Length is at most"
+                                                 + " responsePayloadStreamingThreshold (8192), otherwise the stream cache"
+                                                 + " (the stream itself with disableStreamCache); null for a response"
+                                                 + " without a body"))
 public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
@@ -197,6 +209,16 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     @UriParam(label = "producer,advanced", defaultValue = "true",
               description = "Whether the Content-Type header should automatic include charset for string based content.")
     private boolean contentTypeCharsetEnabled = true;
+    @UriParam(label = "producer,security", defaultValue = "HOST_ONLY",
+              description = "How cached OAuth2 tokens are shared between requests when oauth2CacheTokens is enabled."
+                            + " FULL_URI uses one token per request URI including the query, HOST_AND_PATH one per path,"
+                            + " and HOST_ONLY one per scheme, host and port. The token request does not depend on the"
+                            + " request URI, so HOST_AND_PATH and HOST_ONLY request fewer tokens.")
+    private OAuth2CachedTokensKey oauth2CachedTokensKey = OAuth2CachedTokensKey.HOST_ONLY;
+    @UriParam(label = "producer,security,advanced",
+              description = "To use a custom strategy to compute the key of cached OAuth2 tokens when oauth2CacheTokens is"
+                            + " enabled. When set, oauth2CachedTokensKey is not used.")
+    private OAuth2CachedTokensKeyResolver oauth2CachedTokensKeyResolver;
 
     public HttpEndpoint() {
     }
@@ -869,4 +891,28 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         return -1;
     }
 
+    public OAuth2CachedTokensKey getOauth2CachedTokensKey() {
+        return oauth2CachedTokensKey;
+    }
+
+    /**
+     * How cached OAuth2 tokens are shared between requests when oauth2CacheTokens is enabled. FULL_URI uses one token
+     * per request URI including the query, HOST_AND_PATH one per path, and HOST_ONLY one per scheme, host and port. The
+     * token request does not depend on the request URI, so HOST_AND_PATH and HOST_ONLY request fewer tokens.
+     */
+    public void setOauth2CachedTokensKey(OAuth2CachedTokensKey oauth2CachedTokensKey) {
+        this.oauth2CachedTokensKey = oauth2CachedTokensKey;
+    }
+
+    public OAuth2CachedTokensKeyResolver getOauth2CachedTokensKeyResolver() {
+        return oauth2CachedTokensKeyResolver;
+    }
+
+    /**
+     * To use a custom strategy to compute the key of cached OAuth2 tokens when oauth2CacheTokens is enabled. When set,
+     * oauth2CachedTokensKey is not used.
+     */
+    public void setOauth2CachedTokensKeyResolver(OAuth2CachedTokensKeyResolver oauth2CachedTokensKeyResolver) {
+        this.oauth2CachedTokensKeyResolver = oauth2CachedTokensKeyResolver;
+    }
 }

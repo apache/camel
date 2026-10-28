@@ -14,6 +14,15 @@ The consumer supports two types of events:
 
 The consumer uses a polling mechanism with fingerprint-based deduplication to ensure events are not processed multiple times.
 
+Keycloak returns the most recent events first. The first poll reads the latest `maxResults` events; every later poll
+reads all the events since the previous poll, page by page (`maxResults` is then the page size), so no event is skipped
+when more than `maxResults` events happened between two polls. When the first poll finds no event (a new realm, or a
+filter that has not matched yet), the later polls read every event as well.
+
+A poll after a long outage of a busy realm can therefore be large: it reads all the events that Keycloak still keeps
+(see the event expiration of the realm), and creates their exchanges before it routes them. `maxResults` does not limit
+the size of such a poll, only the size of each page.
+
 == Configuration
 
 The consumer supports the same authentication methods as the producer (access token, refresh token, username/password, or client credentials):
@@ -443,6 +452,12 @@ YAML::
 
 === Audit Trail
 
+The route below sends each admin event as a JSON audit record to Kafka, and inserts the same record into an
+`audit_trail` table with the xref:ROOT:jdbc-component.adoc[JDBC] component. The JDBC component runs the SQL in the
+message body, and with `useHeadersAsParameters=true` it takes the values of the named parameters (`:?name`) from the
+`CamelJdbcParameters` header. The `timestamp` is the time of the event as Keycloak gives it, in milliseconds since the
+epoch, the same in the JSON record and in the table, so the `event_time` column is a `BIGINT`.
+
 [tabs]
 ====
 Java::
@@ -457,23 +472,26 @@ from("keycloak:adminEvents"
      + "&delay=10000")
     .process(exchange -> {
         AdminEventRepresentation event = exchange.getIn().getBody(AdminEventRepresentation.class);
+        AuthDetailsRepresentation authDetails = event.getAuthDetails();
 
-        // Build audit record
+        // Build audit record (every named parameter of the SQL insert needs a value, null included)
         Map<String, Object> auditRecord = new HashMap<>();
-        auditRecord.put("timestamp", new Date(event.getTime()));
+        auditRecord.put("timestamp", event.getTime());
         auditRecord.put("operation", event.getOperationType());
         auditRecord.put("resourceType", event.getResourceType());
         auditRecord.put("resourcePath", event.getResourcePath());
-
-        if (event.getAuthDetails() != null) {
-            auditRecord.put("userId", event.getAuthDetails().getUserId());
-            auditRecord.put("ipAddress", event.getAuthDetails().getIpAddress());
-        }
+        auditRecord.put("userId", authDetails != null ? authDetails.getUserId() : null);
+        auditRecord.put("ipAddress", authDetails != null ? authDetails.getIpAddress() : null);
 
         exchange.getIn().setBody(auditRecord);
+        // the values of the named parameters of the SQL insert
+        exchange.getIn().setHeader("CamelJdbcParameters", auditRecord);
     })
     .marshal().json()
     .to("kafka:audit-trail?brokers=localhost:9092")
+    // the JDBC component runs the SQL in the message body
+    .setBody(constant("insert into audit_trail (event_time, operation, resource_type, resource_path, user_id, ip_address)"
+                      + " values (:?timestamp, :?operation, :?resourceType, :?resourcePath, :?userId, :?ipAddress)"))
     .to("jdbc:dataSource?useHeadersAsParameters=true");
 ----
 
@@ -491,22 +509,36 @@ YAML::
         maxResults=100&
         delay=10000
       steps:
+        # build the audit record (every named parameter of the SQL insert needs a value, null included)
         - setBody:
-            simple: >
-              {
-                "timestamp": ${body.time},
-                "operation": "${body.operationType}",
-                "resourceType": "${body.resourceType}",
-                "resourcePath": "${body.resourcePath}",
-                "userId": "${body.authDetails.userId}",
-                "ipAddress": "${body.authDetails.ipAddress}"
-              }
+            expression:
+              simple:
+                expression: >-
+                  ${map(timestamp,${body.time},
+                  operation,${body.operationType},
+                  resourceType,${body.resourceType},
+                  resourcePath,${body.resourcePath},
+                  userId,${body?.authDetails?.userId},
+                  ipAddress,${body?.authDetails?.ipAddress})}
+        # the values of the named parameters of the SQL insert
+        - setHeader:
+            name: CamelJdbcParameters
+            expression:
+              simple:
+                expression: "${body}"
         - marshal:
             json: {}
         - to:
             uri: kafka:audit-trail
             parameters:
               brokers: "localhost:9092"
+        # the JDBC component runs the SQL in the message body
+        - setBody:
+            expression:
+              constant:
+                expression: >-
+                  insert into audit_trail (event_time, operation, resource_type, resource_path, user_id, ip_address)
+                  values (:?timestamp, :?operation, :?resourceType, :?resourcePath, :?userId, :?ipAddress)
         - to:
             uri: jdbc:dataSource
             parameters:
@@ -563,21 +595,21 @@ YAML::
             expression:
               simple:
                 expression: "${body.type} == 'LOGIN_ERROR'"
-        - aggregate:
-            correlationExpression:
-              expression:
-                simple:
-                  expression: "${body.ipAddress}"
-            aggregationStrategy: "#arrayListAggregation"
-            completionSize: 5
-            completionTimeout: 300000
             steps:
-              - log:
-                  message: "SECURITY ALERT: Multiple failed login attempts from ${body[0].ipAddress}"
-              - to:
-                  uri: direct:block-ip
-              - to:
-                  uri: direct:send-security-alert
+              - aggregate:
+                  correlationExpression:
+                    simple:
+                      expression: "${body.ipAddress}"
+                  aggregationStrategy: "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy"
+                  completionSize: 5
+                  completionTimeout: 300000
+                  steps:
+                    - log:
+                        message: "SECURITY ALERT: Multiple failed login attempts from ${body[0].ipAddress}"
+                    - to:
+                        uri: direct:block-ip
+                    - to:
+                        uri: direct:send-security-alert
 ----
 ====
 
@@ -664,7 +696,7 @@ The consumer supports the following configuration options:
 
 | `realm` | | The Keycloak realm to consume events from (required)
 | `eventType` | events | Type of events to consume: `events` or `admin-events`
-| `maxResults` | 100 | Maximum number of events to retrieve per poll
+| `maxResults` | 100 | Maximum number of events of the first poll, and the page size of the later polls, which read every event since the previous poll
 | `first` | 0 | Offset for pagination (first result index)
 | `initialDelay` | 1000 | Delay before first poll (milliseconds)
 | `delay` | 500 | Delay between polls (milliseconds)
@@ -908,6 +940,7 @@ Before consuming events, you must enable event logging in Keycloak:
 The consumer uses fingerprint-based deduplication to prevent processing the same event multiple times:
 
 * Events are uniquely identified by combining timestamp and event-specific properties
-* Fingerprints are cached per timestamp and cleared when moving to newer timestamps
+* Fingerprints of the events with the latest timestamp are kept between polls, because Keycloak returns those events
+again on the next poll; fingerprints of older events are dropped when a newer timestamp is seen
 * Maximum cache size is 1000 fingerprints to prevent memory issues
 * This ensures reliable event processing even with high event volumes

@@ -28,6 +28,9 @@ import org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -37,6 +40,11 @@ import org.apache.camel.spi.Metadata;
           description = "Tokenizes the message body for AI processing, splitting text into chunks suitable for embedding or LLM input")
 @XmlRootElement(name = "tokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipIn = @BodyType(value = Carrier.TEXT,
+                             description = "The text to split into chunks"),
+           eipOut = @BodyType(value = Carrier.LIST,
+                              javaType = "java.lang.String[]",
+                              description = "The chunks of the text, as an array"))
 public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition> {
 
     @XmlElements({
@@ -66,9 +74,13 @@ public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition>
     }
 
     /**
-     * Gets the tokenizer name
+     * Gets the tokenizer name, which is the name of the tokenizer implementation when not set: the XML and YAML DSL set
+     * only the implementation (CAMEL-25777)
      */
     public String tokenizerName() {
+        if (tokenizerName == null && tokenizerImplementation != null) {
+            return tokenizerImplementation.tokenizerName();
+        }
         return tokenizerName;
     }
 

@@ -59,15 +59,72 @@ public interface RouteTopologyDumper {
     }
 
     /**
+     * The kind of an edge where the route sends to the endpoint as it routes a message (the happy path).
+     */
+    String EDGE_CALL = "call";
+
+    /**
+     * The kind of an edge where the route sends to the endpoint only when it handles a failure (an error path).
+     */
+    String EDGE_ERROR = "error";
+
+    /**
+     * An error path of the error handler of the route, such as the dead letter uri of a dead letter channel.
+     */
+    String VIA_ERROR_HANDLER = "errorHandler";
+
+    /**
+     * An error path of an onException clause.
+     */
+    String VIA_ON_EXCEPTION = "onException";
+
+    /**
+     * The failure is handled: the message ends at the error path (as with a dead letter channel).
+     */
+    String HANDLING_HANDLED = "handled";
+
+    /**
+     * The failure is handled and the route continues after the error path.
+     */
+    String HANDLING_CONTINUED = "continued";
+
+    /**
+     * The failure is not handled: the error path is a side trip, and the failure goes on to the caller.
+     */
+    String HANDLING_NOT_HANDLED = "notHandled";
+
+    /**
      * An edge in the topology representing a connection between two routes via a shared endpoint.
      *
      * @param fromRouteId    the source route id (the route that sends to the endpoint)
      * @param toRouteId      the target route id (the route that consumes from the endpoint)
      * @param endpoint       the shared endpoint URI (scheme:context-path, query parameters stripped)
      * @param connectionType the type of connection: "internal" for direct/seda, "external" for remote components
+     * @param kind           {@link #EDGE_CALL} when the source route sends as it routes a message, or
+     *                       {@link #EDGE_ERROR} when it sends only when it handles a failure (since 4.23)
+     * @param via            for an error path, what sends: {@link #VIA_ERROR_HANDLER} or {@link #VIA_ON_EXCEPTION};
+     *                       null for a call (since 4.23)
+     * @param handling       for an error path, what happens to the failure: {@link #HANDLING_HANDLED},
+     *                       {@link #HANDLING_CONTINUED} or {@link #HANDLING_NOT_HANDLED}; null for a call, and when a
+     *                       predicate decides it at runtime (since 4.23)
      * @since                4.21
      */
-    record TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType) {
+    record TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType, String kind,
+            String via, String handling) {
+
+        /**
+         * An edge of kind {@link #EDGE_CALL}.
+         */
+        public TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType) {
+            this(fromRouteId, toRouteId, endpoint, connectionType, EDGE_CALL, null, null);
+        }
+
+        /**
+         * Whether the edge is an error path: the route sends to the target only when it handles a failure.
+         */
+        public boolean isErrorPath() {
+            return EDGE_ERROR.equals(kind);
+        }
     }
 
     /**

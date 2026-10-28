@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spring.cloud.config;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,8 @@ public class SpringConfigRemaindersCache {
     private SpringConfigRemaindersCache() {
     }
 
-    private static final Map<String, String> REMAINDERS_CACHE = new HashMap<>();
+    // written by the properties function (any thread) and read by the reload task; values can be null
+    private static final Map<String, String> REMAINDERS_CACHE = Collections.synchronizedMap(new HashMap<>());
 
     public static Map<String, String> get() {
         return REMAINDERS_CACHE;
@@ -32,5 +34,14 @@ public class SpringConfigRemaindersCache {
 
     public static void put(String remainder, String value) {
         REMAINDERS_CACHE.put(remainder, value);
+    }
+
+    /**
+     * A copy of the cache that is safe to iterate while properties are being resolved.
+     */
+    public static Map<String, String> snapshot() {
+        synchronized (REMAINDERS_CACHE) {
+            return new HashMap<>(REMAINDERS_CACHE);
+        }
     }
 }

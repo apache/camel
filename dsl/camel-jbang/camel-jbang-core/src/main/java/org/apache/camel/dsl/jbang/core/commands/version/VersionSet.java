@@ -49,7 +49,8 @@ public class VersionSet extends CamelCommand {
     @CommandLine.Option(names = { "--reset" }, description = "Reset by removing any custom version settings")
     boolean reset;
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
+                        description = "Use global or local configuration")
     boolean global = true;
 
     public VersionSet(CamelJBangMain main) {
@@ -64,6 +65,7 @@ public class VersionSet extends CamelCommand {
         CommandLineHelper.loadProperties(properties -> {
             if (reset) {
                 properties.remove("camel-version");
+                properties.remove("kamelets-version");
                 properties.remove("repos");
                 properties.remove("runtime");
             } else {

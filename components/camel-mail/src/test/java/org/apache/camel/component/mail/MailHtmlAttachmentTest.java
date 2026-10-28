@@ -46,7 +46,7 @@ public class MailHtmlAttachmentTest extends CamelTestSupport {
     @Test
     public void testSendAndReceiveMailWithAttachments() throws Exception {
         // clear mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(james);
 
         // START SNIPPET: e1
 

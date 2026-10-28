@@ -841,7 +841,16 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * The default action. Can be overridden by CamelConsulAction.
+         * The default action. Can be overridden by CamelConsulAction. The
+         * actions depend on the API of the endpoint: agent has CHECKS,
+         * SERVICES, MEMBERS, AGENT, REGISTER and DEREGISTER; kv has PUT,
+         * GET_VALUE, GET_VALUES, GET_KEYS, GET_SESSIONS, DELETE_KEY,
+         * DELETE_KEYS, LOCK and UNLOCK; catalog has REGISTER, DEREGISTER,
+         * LIST_DATACENTERS, LIST_NODES, LIST_SERVICES, GET_SERVICE and
+         * GET_NODE; health has CHECKS, NODE_CHECKS, SERVICE_CHECKS and
+         * SERVICE_INSTANCES; session has CREATE, DESTROY, INFO, LIST and RENEW;
+         * preparedQuery has CREATE, GET and EXECUTE; event has FIRE and LIST;
+         * coordinates has DATACENTERS and NODES; status has LEADER and PEERS.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

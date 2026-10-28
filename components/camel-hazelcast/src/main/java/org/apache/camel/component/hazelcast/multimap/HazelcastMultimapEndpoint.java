@@ -25,6 +25,9 @@ import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MULTIMAP;
@@ -35,6 +38,36 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MUL
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MULTIMAP, title = "Hazelcast Multimap",
              syntax = "hazelcast-multimap:cacheName", category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The value of an added event, as any member of the cluster stored "
+                                                 + "it, and no body for removed: the key is in the "
+                                                 + "CamelHazelcastObjectId header and the event in "
+                                                 + "CamelHazelcastListenerAction"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "The value that put adds to the values of the key in the "
+                                                + "CamelHazelcastObjectId header, and that removeValue and "
+                                                + "containsValue look for: an object Hazelcast can serialize, so a "
+                                                + "stream fails (convert it to bytes or text first), and no body "
+                                                + "fails. The other operations do not use the body"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN, byOption = {
+                   @BodyType.When(option = "defaultOperation", value = "put", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "delete", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "removeValue", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "clear", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "get", carriers = Carrier.LIST),
+                   @BodyType.When(option = "defaultOperation", value = "valueCount", carriers = Carrier.VALUE,
+                                  javaType = "java.lang.Integer"),
+                   @BodyType.When(option = "defaultOperation", value = "containsKey", carriers = Carrier.VALUE,
+                                  javaType = "java.lang.Boolean"),
+                   @BodyType.When(option = "defaultOperation", value = "containsValue", carriers = Carrier.VALUE,
+                                  javaType = "java.lang.Boolean") },
+                                   description = "By the operation, which the CamelHazelcastOperationType header "
+                                                 + "sets, or else the defaultOperation option (without either the "
+                                                 + "producer fails): the Collection of the values of the key for "
+                                                 + "get, empty when the key is not in the multimap, an Integer for "
+                                                 + "valueCount and a Boolean for containsKey and containsValue. The "
+                                                 + "other operations keep the body"))
 public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastMultimapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,

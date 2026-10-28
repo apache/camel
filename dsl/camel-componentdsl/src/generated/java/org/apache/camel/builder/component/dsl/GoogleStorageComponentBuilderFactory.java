@@ -445,6 +445,66 @@ public interface GoogleStorageComponentBuilderFactory {
             doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
+    
+        /**
+         * The email of a service account to impersonate with the credentials of
+         * Workload Identity Federation, so the workload gets the permissions of
+         * that service account. Used when useWorkloadIdentityFederation is
+         * enabled; the federated identity needs the Service Account Token
+         * Creator role on the service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param impersonatedServiceAccount the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder impersonatedServiceAccount(java.lang.String impersonatedServiceAccount) {
+            doSetProperty("impersonatedServiceAccount", impersonatedServiceAccount);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to authenticate with Workload Identity Federation instead of
+         * a service account key: with the credential configuration file given
+         * in workloadIdentityConfig or, when it is not set, with the
+         * Application Default Credentials, which detect Workload Identity on
+         * GKE.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useWorkloadIdentityFederation the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder useWorkloadIdentityFederation(boolean useWorkloadIdentityFederation) {
+            doSetProperty("useWorkloadIdentityFederation", useWorkloadIdentityFederation);
+            return this;
+        }
+    
+        /**
+         * The Workload Identity Federation credential configuration file (JSON,
+         * of type external_account), which says how to exchange a token of an
+         * external identity provider, such as AWS, Azure or an OIDC provider,
+         * for Google credentials. Used when useWorkloadIdentityFederation is
+         * enabled. It is loaded from the classpath by default; prefix it with
+         * classpath:, file:, http: or https: to load it from another location.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param workloadIdentityConfig the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder workloadIdentityConfig(java.lang.String workloadIdentityConfig) {
+            doSetProperty("workloadIdentityConfig", workloadIdentityConfig);
+            return this;
+        }
     }
 
     class GoogleStorageComponentBuilderImpl
@@ -487,6 +547,9 @@ public interface GoogleStorageComponentBuilderFactory {
             case "autowiredEnabled": ((GoogleCloudStorageComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((GoogleCloudStorageComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((GoogleCloudStorageComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "impersonatedServiceAccount": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setImpersonatedServiceAccount((java.lang.String) value); return true;
+            case "useWorkloadIdentityFederation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setUseWorkloadIdentityFederation((boolean) value); return true;
+            case "workloadIdentityConfig": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setWorkloadIdentityConfig((java.lang.String) value); return true;
             default: return false;
             }
         }

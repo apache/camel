@@ -33,6 +33,8 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
         case "ftpClientKeyStoreParameters": target.setFtpClientKeyStoreParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "ftpclienttruststoreparameters":
         case "ftpClientTrustStoreParameters": target.setFtpClientTrustStoreParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": target.getConfiguration().setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "implicit": target.getConfiguration().setImplicit(property(camelContext, boolean.class, value)); return true;
         case "securityprotocol":
         case "securityProtocol": target.getConfiguration().setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
@@ -55,6 +57,8 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
         case "ftpClientKeyStoreParameters": return java.util.Map.class;
         case "ftpclienttruststoreparameters":
         case "ftpClientTrustStoreParameters": return java.util.Map.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "implicit": return boolean.class;
         case "securityprotocol":
         case "securityProtocol": return java.lang.String.class;
@@ -78,6 +82,8 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
         case "ftpClientKeyStoreParameters": return target.getFtpClientKeyStoreParameters();
         case "ftpclienttruststoreparameters":
         case "ftpClientTrustStoreParameters": return target.getFtpClientTrustStoreParameters();
+        case "hostnameverification":
+        case "hostnameVerification": return target.getConfiguration().isHostnameVerification();
         case "implicit": return target.getConfiguration().isImplicit();
         case "securityprotocol":
         case "securityProtocol": return target.getConfiguration().getSecurityProtocol();

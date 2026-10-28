@@ -31,6 +31,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.camel.dsl.jbang.core.commands.ai.RepeatedToolCalls;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -69,9 +73,14 @@ class TuiMcpServer {
     private final int port;
     private final McpFacade facade;
     private final TuiToolRegistry toolRegistry;
+    /** The calls of the connected client; a new {@code initialize} starts a new session. */
+    private final RepeatedToolCalls repeatedCalls = new RepeatedToolCalls();
     private HttpServer server;
     private volatile String clientName;
     private volatile long lastActivity;
+    // a client said initialize and has not closed its session (an HTTP DELETE); it stays connected while idle, as an
+    // MCP client over HTTP only sends a request when it uses a tool
+    private volatile boolean sessionOpen;
     private volatile long lastToolCallTime;
     private final AtomicInteger toolCallCount = new AtomicInteger();
     private final List<LogEntry> activityLog = new ArrayList<>();
@@ -126,24 +135,41 @@ class TuiMcpServer {
     }
 
     boolean isRecentActivity() {
-        return System.currentTimeMillis() - lastToolCallTime < 2000;
+        return MonotonicClock.millis() - lastToolCallTime < 2000;
     }
 
     int getToolCallCount() {
         return toolCallCount.get();
     }
 
+    /**
+     * The client connected to the server: one that said initialize, until it closes its session, idle or not; or, for a
+     * client that never says initialize, one that sent a request in the last minute. Null when there is none.
+     */
     String getConnectedClient() {
-        if (System.currentTimeMillis() - lastActivity < CLIENT_TIMEOUT_MS) {
+        if (sessionOpen || MonotonicClock.millis() - lastActivity < CLIENT_TIMEOUT_MS) {
             return clientName != null ? clientName : "connected";
         }
         return null;
     }
 
+    /** For tests: as if the last request came that many milliseconds ago. */
+    void idleFor(long millis) {
+        lastActivity = MonotonicClock.millis() - millis;
+    }
+
     private void handleMcp(HttpExchange exchange) throws IOException {
         try {
-            lastActivity = System.currentTimeMillis();
+            lastActivity = MonotonicClock.millis();
             String method = exchange.getRequestMethod();
+            if ("DELETE".equals(method)) {
+                // the client closes its session: it is gone
+                sessionOpen = false;
+                clientName = null;
+                lastActivity = 0;
+                exchange.sendResponseHeaders(200, -1);
+                return;
+            }
             if (!"POST".equals(method)) {
                 exchange.sendResponseHeaders(405, -1);
                 return;
@@ -252,6 +278,8 @@ class TuiMcpServer {
                 clientName = (String) clientInfo.get("name");
             }
         }
+        sessionOpen = true;
+        repeatedCalls.reset();
 
         JsonObject result = new JsonObject();
         result.put("protocolVersion", PROTOCOL_VERSION);
@@ -281,6 +309,12 @@ class TuiMcpServer {
             tool.put("name", td.name());
             tool.put("description", td.description());
             tool.put("inputSchema", td.inputSchema());
+            ToolDescriptor shared = ToolRegistry.findTool(td.name());
+            if (shared != null && shared.isDeterministic()) {
+                JsonObject meta = new JsonObject();
+                meta.put(RepeatedToolCalls.DETERMINISTIC_META_KEY, true);
+                tool.put("_meta", meta);
+            }
             toolList.add(tool);
         }
         JsonObject result = new JsonObject();
@@ -494,17 +528,33 @@ class TuiMcpServer {
             args = Map.of();
         }
 
-        lastToolCallTime = System.currentTimeMillis();
+        lastToolCallTime = MonotonicClock.millis();
         toolCallCount.incrementAndGet();
 
         String text;
         boolean isError = false;
+        ToolDescriptor tool = toolName != null ? ToolRegistry.findTool(toolName) : null;
         try {
-            text = toolRegistry.execute(toolName, args);
-        } catch (IllegalArgumentException e) {
+            JsonObject repeat = repeatedCalls.repeatOf(tool, args);
+            if (repeat != null) {
+                text = repeat.toJson();
+            } else {
+                text = toolRegistry.execute(toolName, args);
+                // some TUI tools still answer a failure as "Error: ..." text; only record the answer when the call
+                // succeeded, so failed calls do not use the retry budget
+                if (!text.startsWith("Error:")) {
+                    repeatedCalls.recordSuccessfulAnswer(tool, args);
+                }
+            }
+        } catch (TuiToolRegistry.UnknownToolException e) {
             text = "Unknown tool: " + toolName;
             isError = true;
             log(LogLevel.ERROR, "Unknown tool: " + toolName);
+        } catch (ToolExecutionException e) {
+            // the error as the tool wrote it, which can be JSON (a failed tui_run_example has the log that tells why)
+            text = e.getMessage();
+            isError = true;
+            log(LogLevel.ERROR, "Tool error: " + toolName + " - " + e.getMessage());
         } catch (Exception e) {
             text = "Error: " + e.getMessage();
             isError = true;

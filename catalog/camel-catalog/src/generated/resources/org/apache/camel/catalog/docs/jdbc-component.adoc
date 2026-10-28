@@ -54,14 +54,30 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Result
 
-By default, the result is returned in the OUT body as an
-`ArrayList<HashMap<String, Object>>`. The `List` object contains the
+By default, the result of a select is returned in the OUT body as an
+`ArrayList<LinkedHashMap<String, Object>>`. The `List` object contains the
 list of rows and the `Map` objects contain each row with the `String`
 key as the column name. You can use the option `outputType` to control
-the result.
+the result: `SelectOne` gives the `Map` of the one row, the value of its
+column when it has one column, or `null` when there is no row, and
+`StreamList` gives an `Iterator` of the rows, which can be read once.
+A statement that is not a select leaves the body as it is, with the count
+in the `CamelJdbcUpdateCount` header.
 
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.
+
+With `outputType=SelectList` the header `CamelJdbcRowCount` holds the number of rows of the result.
+
+A `BLOB` or `CLOB` value of a row is a `java.sql.Blob` or `java.sql.Clob`, which can be read only while the connection is
+open, and the producer closes the connection before the route continues (except with `outputType=StreamList`,
+which closes it when the exchange is done). So read such a value inside the producer: set `useGetBytesForBlob=true`
+to get a `BLOB` as a `byte[]`, or convert a `CLOB` to text in the SQL query with a function of the database.
+
+The `SQL` of the message body is mandatory: a message without a body fails with an `InvalidPayloadException`.
+
+The `transacted` option is not used (and deprecated). To take part in a Spring transaction, use the
+xref:spring-jdbc-component.adoc[Spring JDBC Component].
 
 === Generated keys
 
@@ -72,7 +88,8 @@ return the generated keys in headers. +
 generated keys will be provided as headers with the keys listed in the
 table above.
 
-Using generated keys does not work together with named parameters.
+The generated keys in the header `CamelGeneratedKeysRows` are a `List` of `Map` objects with the key columns,
+whatever the `outputClass` and `readSize` of the endpoint.
 
 === Using named parameters
 
@@ -336,3 +353,39 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
         .setBody(simple("insert into processed_customer values('${body[ID]}','${body[NAME]}')"))
         .to("jdbc:testdb");
 ----
+
+== Secret Rotation
+
+The JDBC component implements `SecretRotationAware`. When a secret rotation event is triggered
+(e.g. by a vault provider), the component evicts stale connections from its connection pools.
+This covers the component-level DataSource as well as any DataSources resolved by active endpoints
+(e.g. `jdbc:myDs`), with identity-based deduplication so each pool is evicted at most once.
+
+NOTE: When a `camel.component.jdbc.*` option uses a placeholder value, Camel Main replaces the
+component instance on reload. In that case the endpoint DataSources are matched against the old
+component instance and are skipped; only the component-level `dataSource` (if configured directly
+on the new component) is evicted.
+
+NOTE: The eviction is triggered by any context reload (vault rotation, JMX `onReload` operation,
+`camel cmd reload`, load-on-demand), not only by vault secret rotation events. These pools are
+often shared with non-Camel code, so applications that trigger context reloads for other reasons
+should be aware that pool connections will be evicted.
+
+Currently HikariCP and Agroal (Quarkus default) pools are supported for active eviction.
+HikariCP pools are evicted via `softEvictConnections()` called through `getHikariPoolMXBean()`
+via reflection — JMX registration (`registerMbeans=true`) is *not* required.
+Agroal pools are evicted via `flush(GRACEFUL)` called on `AgroalDataSource` via reflection.
+Other pool implementations are not actively evicted — existing connections
+will be replaced as they expire or are validated by the pool.
+
+NOTE: The pool eviction uses reflection to avoid compile-time dependencies on pool libraries.
+In GraalVM native mode (e.g. Quarkus native), the reflected classes and methods need to be registered
+for reflection: `HikariDataSource.getHikariPoolMXBean()`, `HikariPoolMXBean.softEvictConnections()`
+for HikariCP, and `AgroalDataSource.flush(FlushMode)` for Agroal.
+
+IMPORTANT: The eviction only closes existing connections — it does *not* update the pool's credentials.
+For pools configured with a static password (e.g. Spring Boot `spring.datasource.password`),
+the pool will re-open connections using the _old_ credentials.
+This feature works out of the box only with pools that resolve credentials dynamically,
+such as `HikariCredentialsProvider` (HikariCP 7.0 or later), the AWS JDBC wrapper secrets plugin,
+or a custom `DataSource` that fetches credentials from a vault at connect time.

@@ -37,6 +37,8 @@ public class NatsProducerReplyToIT extends NatsITSupport {
         resultEndpoint = context.getEndpoint(resultUri, MockEndpoint.class);
         resultEndpoint.expectedBodiesReceivedInAnyOrder("Bye Camel", "Bye World");
 
+        waitForNatsConsumers(1);
+
         String out = template.requestBody(startUri, body1, String.class);
         String out2 = template.requestBody(startUri, body2, String.class);
 

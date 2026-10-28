@@ -1,0 +1,1 @@
+../../../../../components/camel-kafka-share/src/main/docs/kafka-share-component.adoc

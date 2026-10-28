@@ -124,7 +124,7 @@ public class NettyTcpWithInOutUsingPlainSocketTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?textline=true&sync=true").process(new Processor() {
+                from("netty:tcp://localhost:{{port}}?textline=true&sync=true&muteException=false").process(new Processor() {
                     public void process(Exchange e) {
                         String in = e.getIn().getBody(String.class);
                         if ("force-null-out-body".equals(in)) {

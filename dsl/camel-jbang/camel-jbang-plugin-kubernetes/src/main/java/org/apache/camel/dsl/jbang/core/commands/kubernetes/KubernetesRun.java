@@ -36,7 +36,8 @@ import java.util.concurrent.TimeUnit;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
-import io.fabric8.kubernetes.client.vertx.VertxHttpClientFactory;
+import io.fabric8.kubernetes.client.KubernetesClientTimeoutException;
+import io.fabric8.kubernetes.client.vertx5.Vertx5HttpClientFactory;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.file.FileSystemOptions;
@@ -50,6 +51,8 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.MountTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -134,7 +137,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     boolean verbose;
 
     @CommandLine.Option(names = { "--cleanup" },
-                        defaultValue = "true",
+                        defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.")
     boolean cleanup = true;
 
@@ -156,23 +159,27 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "The image registry group used to push images to.")
     String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
-                        description = "The image builder used to build the container image (e.g. docker, jib, s2i).")
-    String imageBuilder = "jib";
+    // no default value, so that detectCluster() can tell an explicit value from the default
+    @CommandLine.Option(names = { "--image-builder" },
+                        description = "The image builder used to build the container image (e.g. docker, jib, s2i)."
+                                      + " Default is jib, or docker on Minikube unless --disable-auto is set.")
+    String imageBuilder;
 
     @CommandLine.Option(names = { "--cluster-type" },
                         completionCandidates = ClusterTypeCompletionCandidates.class,
                         converter = ClusterTypeConverter.class,
                         description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.")
-    String clusterType = "Kubernetes";
+    String clusterType;
 
-    @CommandLine.Option(names = { "--image-build" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--image-build" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to build container image as part of the run.")
     boolean imageBuild = true;
 
-    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
-                        description = "Whether to push image to given image registry as part of the run.")
-    boolean imagePush = true;
+    // no default value, so that detectCluster() can tell an explicit value from the default
+    @CommandLine.Option(names = { "--image-push" },
+                        description = "Whether to push image to given image registry as part of the run."
+                                      + " Default is true, or false on Minikube with the docker image builder unless --disable-auto is set.")
+    Boolean imagePush;
 
     @CommandLine.Option(names = { "--image-platform" },
                         description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
@@ -225,11 +232,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" },
+    @CommandLine.Option(names = { "--maven-central-enabled" }, arity = "0..1", fallbackValue = "true",
                         description = "Whether downloading JARs from Maven Central repository is enabled")
     boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
+    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, arity = "0..1", fallbackValue = "true",
                         description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     boolean mavenApacheSnapshotEnabled = true;
 
@@ -283,6 +290,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private CamelContext devModeContext;
     private Thread devModeShutdownTask;
     private int devModeReloadCount;
+    // detectCluster() runs again on every dev mode reload, the Minikube docker-env hint is printed only once
+    private boolean dockerEnvHintPrinted;
 
     private KubernetesPodLogs reusablePodLogs;
     private Printer quietPrinter;
@@ -621,8 +630,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
             }
             printer().println("Run: " + kubectlCmd);
         }
-        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
-                .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
+        Pod pod;
+        try {
+            pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
+                    .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
+        } catch (KubernetesClientTimeoutException e) {
+            throw CliException.timeout("The pod of " + projectName + " is not running after 10 minutes");
+        }
         printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
     }
 
@@ -631,12 +645,21 @@ public class KubernetesRun extends KubernetesBaseCommand {
             KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
             deleteCommand.name = projectName;
             deleteCommand.namespace = namespace;
-            try (var client = createKubernetesClientForShutdownHook()) {
+            // the client does not close a Vertx instance that is passed to it
+            var vertx = createVertxForShutdownHook();
+            try (var client = createKubernetesClientForShutdownHook(vertx)) {
                 KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
                 CommandHelper.cleanExportDir(workingDir, false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            } finally {
+                // close() returns before Vert.x is closed, and its daemon threads would not keep the JVM running
+                try {
+                    vertx.close().await(5, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    printer().printErr("Failed to close Vert.x - %s".formatted(e.getMessage()));
+                }
             }
         });
         devModeShutdownTask.setName(ThreadHelper.resolveThreadName(null, "CamelShutdownInterceptor"));
@@ -645,17 +668,19 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     // KubernetesClientVertx can no longer be used in ShutdownHook
     // https://issues.apache.org/jira/browse/CAMEL-21621
-    private KubernetesClient createKubernetesClientForShutdownHook() {
+    private Vertx createVertxForShutdownHook() {
         System.setProperty("vertx.disableDnsResolver", "true");
-        var vertx = Vertx.vertx((new VertxOptions())
+        return Vertx.vertx((new VertxOptions())
                 .setFileSystemOptions((new FileSystemOptions())
                         .setFileCachingEnabled(false)
                         .setClassPathResolvingEnabled(false))
                 .setUseDaemonThread(true));
-        var client = new KubernetesClientBuilder()
-                .withHttpClientFactory(new VertxHttpClientFactory(vertx))
+    }
+
+    private KubernetesClient createKubernetesClientForShutdownHook(Vertx vertx) {
+        return new KubernetesClientBuilder()
+                .withHttpClientFactory(new Vertx5HttpClientFactory(vertx))
                 .build();
-        return client;
     }
 
     // build the project locally to generate the artifacts in the target directory, but don't deploy it.
@@ -663,14 +688,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         printer().println("Building Camel application ...");
 
         // Run build via Maven
-        String mvnw = "/mvnw";
-        if (FileUtil.isWindows()) {
-            mvnw = "/mvnw.cmd";
-        }
         ProcessBuilder pb = new ProcessBuilder();
         List<String> args = new ArrayList<>();
 
-        args.add(workingDir + mvnw);
+        args.add(MavenCommand.wrapper(Path.of(workingDir)).toString());
         if (quiet || !verbose) {
             args.add("--quiet");
         }
@@ -702,22 +723,20 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         pb.command(args.toArray(String[]::new));
 
-        if (quiet || !verbose) {
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Path log = mavenOutput(pb);
+        try {
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            int exit = p.waitFor();
+            if (exit != 0) {
+                printer().printErr("Build failed!");
+                printMavenOutput(log);
+                return exit;
+            }
+            return 0;
+        } finally {
+            removeMavenOutput(log);
         }
-
-        Process p = pb.start();
-        // wait for that process to exit as we run in foreground
-        int exit = p.waitFor();
-        if (exit != 0) {
-            printer().printErr("Build failed!");
-            return exit;
-        }
-
-        return 0;
     }
 
     private Integer deployProject(String workingDir, boolean reload) throws Exception {
@@ -725,14 +744,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         printer().println("Deploying to %s ...".formatted(clusterType));
 
         // Run build via Maven
-        String mvnw = "/mvnw";
-        if (FileUtil.isWindows()) {
-            mvnw = "/mvnw.cmd";
-        }
         ProcessBuilder pb = new ProcessBuilder();
         List<String> args = new ArrayList<>();
 
-        args.add(workingDir + mvnw);
+        args.add(MavenCommand.wrapper(Path.of(workingDir)).toString());
         if (quiet || !verbose) {
             args.add("--quiet");
         }
@@ -784,46 +799,113 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         pb.command(args.toArray(String[]::new));
 
-        if (quiet || !verbose) {
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
-        }
-
-        Process p = pb.start();
-        // wait for that process to exit as we run in foreground
-        int exit = p.waitFor();
-        if (exit != 0) {
-            String msg = "Deployment to %s failed!";
-            if (!verbose) {
-                msg += " (use --verbose for more details)";
+        Path log = mavenOutput(pb);
+        try {
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            int exit = p.waitFor();
+            if (exit != 0) {
+                printer().printErr("Deployment to %s failed!".formatted(clusterType));
+                printMavenOutput(log);
+                return exit;
             }
-            printer().printErr(msg.formatted(clusterType));
-            return exit;
+            return 0;
+        } finally {
+            removeMavenOutput(log);
         }
-
-        return 0;
     }
 
-    private void detectCluster() {
-        if (!disableAuto) {
+    /**
+     * Shows the output of Maven with --verbose, and keeps it in a log file otherwise, for when it fails.
+     *
+     * @return the log file, or <tt>null</tt> with --verbose
+     */
+    private Path mavenOutput(ProcessBuilder pb) throws IOException {
+        if (!quiet && verbose) {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            return null;
+        }
+        Path log = Files.createTempFile("camel-kubernetes-", ".log");
+        log.toFile().deleteOnExit();
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(log.toFile());
+        return log;
+    }
+
+    /**
+     * Removes the log of Maven once it has ended: camel kubernetes run --dev builds and deploys again on every change.
+     */
+    private static void removeMavenOutput(Path log) {
+        if (log != null) {
+            try {
+                Files.deleteIfExists(log);
+            } catch (IOException e) {
+                // removed when the JVM exits
+            }
+        }
+    }
+
+    /**
+     * Prints the end of the output of Maven when it failed (it was hidden, as no --verbose was given).
+     */
+    private void printMavenOutput(Path log) {
+        if (log == null) {
+            return;
+        }
+        try {
+            List<String> lines = Files.readAllLines(log);
+            printer().printDiagnostic(String.join(System.lineSeparator(),
+                    lines.subList(Math.max(0, lines.size() - 30), lines.size())));
+        } catch (IOException e) {
+            // no output to show
+        }
+    }
+
+    void detectCluster() {
+        boolean explicitClusterType = clusterType != null;
+        if (!disableAuto && !explicitClusterType) {
             if (verbose) {
                 printer().print("Automatic Kubernetes cluster detection... ");
             }
-            ClusterType cluster = KubernetesHelper.discoverClusterType();
-            this.clusterType = cluster.name();
-            if (ClusterType.MINIKUBE == cluster) {
-                this.imageBuilder = "docker";
-                this.imagePush = false;
-            } else if (ClusterType.OPENSHIFT == cluster) {
+            this.clusterType = KubernetesHelper.discoverClusterType().name();
+            if (verbose) {
+                printer().println(this.clusterType);
+            }
+        }
+        if (clusterType == null) {
+            this.clusterType = ClusterType.KUBERNETES.name();
+        }
+        if (!disableAuto) {
+            // Apply per-cluster defaults for the resolved cluster type (explicit or detected),
+            // but keep the image options the user has set
+            if (ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+                if (imageBuilder == null) {
+                    this.imageBuilder = "docker";
+                }
+                // the docker builder builds straight into the Minikube Docker daemon, so there is nothing to push;
+                // other builders (jib) still push, as the image would otherwise not reach the cluster
+                if (imagePush == null && "docker".equals(imageBuilder)) {
+                    this.imagePush = false;
+                }
+                // the detection only returns Minikube when its Docker environment is active, and tells the user otherwise
+                if (explicitClusterType && !dockerEnvHintPrinted && imageBuild && output == null
+                        && "docker".equals(imageBuilder)
+                        && Boolean.FALSE.equals(imagePush) && !KubernetesHelper.isMinikubeDockerEnv()) {
+                    printer().println("The Minikube Docker environment is not active: run \"eval $(minikube docker-env)\""
+                                      + " so that the image is built in the Docker daemon of Minikube.");
+                    dockerEnvHintPrinted = true;
+                }
+            } else if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
                 if (ObjectHelper.isEmpty(imageGroup)) {
                     this.imageGroup = client().getNamespace();
                 }
             }
-            if (verbose) {
-                printer().println(this.clusterType);
-            }
+        }
+        if (imageBuilder == null) {
+            this.imageBuilder = "jib";
+        }
+        if (imagePush == null) {
+            this.imagePush = true;
         }
     }
 

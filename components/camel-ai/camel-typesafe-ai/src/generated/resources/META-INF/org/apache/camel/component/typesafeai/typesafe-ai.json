@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-typesafe-ai",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "typesafe-ai",
     "extendsScheme": "",
     "syntax": "typesafe-ai:name",
@@ -40,6 +40,10 @@
     "uncertainty": { "index": 13, "kind": "property", "displayName": "Uncertainty", "group": "advanced", "label": "advanced", "required": false, "type": "number", "javaType": "double", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 0.0, "configurationClass": "org.apache.camel.component.typesafeai.TypeSafeAiConfiguration", "configurationField": "configuration", "description": "Default half-width of the inclusive uncertainty band for the TypeSafe AI language. Zero disables the band." },
     "uncertaintyPolicy": { "index": 14, "kind": "property", "displayName": "Uncertainty Policy", "group": "advanced", "label": "advanced", "required": false, "type": "enum", "javaType": "org.apache.camel.language.typesafeai.TypeSafeAiLanguage.UncertaintyPolicy", "enum": [ "NonMatch", "Fail" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "NonMatch", "configurationClass": "org.apache.camel.component.typesafeai.TypeSafeAiConfiguration", "configurationField": "configuration", "description": "Default action for the TypeSafe AI language within the uncertainty band: NonMatch or Fail." },
     "apiKey": { "index": 15, "kind": "property", "displayName": "Api Key", "group": "security", "label": "security", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": true, "security": "secret", "configurationClass": "org.apache.camel.component.typesafeai.TypeSafeAiConfiguration", "configurationField": "configuration", "description": "The API key used for Bearer authentication." }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "map" ], "dependsOn": [ "questions", "questionsResource" ], "description": "The request: a Map with the state and a nonempty questions Map, and optionally the model. JSON text is not parsed: unmarshal it first. With questions or questionsResource, the state option (the body by default) selects the state instead: text, or a Map or a List of JSON values; bytes, a stream or a file fail, select ${bodyAs(String)}" },
+    "producerOut": { "carriers": [ "map" ], "javaType": "org.apache.camel.util.json.JsonObject", "format": "json", "dependsOn": [ "resultProperty" ], "description": "The response: a JsonObject with the model, the answers keyed by question name and the token usage. With resultProperty, the body is unchanged and the response is in that exchange property" }
   },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A logical name for the evaluation endpoint." },

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jte",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "jte",
     "extendsScheme": "",
     "syntax": "jte:resourceUri",
@@ -37,6 +37,10 @@
     "CamelJteResourceUri": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A URI for the template resource to use instead of the endpoint configured.", "constantName": "org.apache.camel.component.jte.JteConstants#JTE_RESOURCE_URI" },
     "CamelJteTemplate": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The template to use instead of the endpoint configured.", "constantName": "org.apache.camel.component.jte.JteConstants#JTE_TEMPLATE" },
     "CamelJteDataModel": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The data model", "constantName": "org.apache.camel.component.jte.JteConstants#JTE_DATA_MODEL" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "The template takes an org.apache.camel.component.jte.Model: the body as it is in model.body, and converted to text by model.strBody(). With allowTemplateFromHeader=true the CamelJteDataModel header replaces the model" },
+    "producerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The text the template writes, with leading and trailing whitespace trimmed. The headers are kept" }
   },
   "properties": {
     "resourceUri": { "index": 0, "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },

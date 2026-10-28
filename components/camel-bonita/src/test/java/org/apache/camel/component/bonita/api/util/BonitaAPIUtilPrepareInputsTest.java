@@ -20,9 +20,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+
 import org.apache.camel.component.bonita.api.model.FileInput;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.model.UploadFileResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,11 +45,18 @@ public class BonitaAPIUtilPrepareInputsTest {
     @Mock
     ProcessDefinitionResponse processDefinition;
 
+    private Client client;
     private BonitaAPIUtil bonitaApiUtil;
 
     @BeforeEach
     public void setup() {
-        bonitaApiUtil = BonitaAPIUtil.getInstance(new BonitaAPIConfig("hostname", "port", "username", "password"));
+        client = ClientBuilder.newClient();
+        bonitaApiUtil = BonitaAPIUtil.forClient(client, new BonitaAPIConfig("hostname", "port", "username", "password"));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        client.close();
     }
 
     @Test

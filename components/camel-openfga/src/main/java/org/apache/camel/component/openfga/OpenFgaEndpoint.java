@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.openfga;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
+
 import javax.net.ssl.SSLContext;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
@@ -24,6 +27,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,6 +47,54 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "openfga", title = "OpenFGA",
              syntax = "openfga:operation", producerOnly = true, category = { Category.SECURITY },
              headersClass = OpenFgaConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY, dependsOn = "object",
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "batchCheck",
+                                                         carriers = {
+                                                                 Carrier.LIST, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "writeTuples",
+                                                         carriers = { Carrier.MAP, Carrier.LIST, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "deleteTuples",
+                                                         carriers = { Carrier.MAP, Carrier.LIST, Carrier.POJO }) },
+                                  description = "batchCheck: the objects to check, as a List or comma-separated text."
+                                                + " writeTuples and deleteTuples: a Map with user, relation and object, a"
+                                                + " ClientTupleKey, or a List of them, used only when none of user,"
+                                                + " relation and object is configured; text fails, unmarshal JSON first. The"
+                                                + " other operations do not read the body"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "check",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "batchCheck", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.lang.String>"),
+                                           @BodyType.When(option = "operation", value = "listObjects",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.lang.String>"),
+                                           @BodyType.When(option = "operation", value = "listRelations",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.lang.String>"),
+                                           @BodyType.When(option = "operation", value = "listUsers", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.lang.String>"),
+                                           @BodyType.When(option = "operation", value = "readTuples",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "operation", value = "readChanges",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"),
+                                           @BodyType.When(option = "operation", value = "expand",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "writeTuples",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "deleteTuples",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "check, writeTuples and deleteTuples keep the body: the verdict is in the"
+                                                 + " CamelOpenFgaAllowed header, the count in CamelOpenFgaWrittenTuples or"
+                                                 + " CamelOpenFgaDeletedTuples. batchCheck: the allowed objects of the body;"
+                                                 + " the list operations: a List of String identifiers; readTuples and"
+                                                 + " readChanges: a List of Maps with user, relation, object and timestamp"
+                                                 + " (and operation for a change); expand: the UsersetTree, or null when the"
+                                                 + " object or relation does not resolve"))
 public class OpenFgaEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenFgaEndpoint.class);
@@ -56,6 +110,7 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
 
     private volatile OpenFgaAuthorizer authorizer;
     private volatile SSLContext sslContext;
+    private volatile OffsetDateTime startTime;
 
     public OpenFgaEndpoint(final String uri, final Component component, final OpenFgaConfiguration configuration) {
         super(uri, component);
@@ -76,6 +131,7 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
             sslContext = createSslContext();
             client = OpenFgaClientFactory.createClient(configuration, sslContext);
         }
+        this.startTime = parseStartTime();
         validateOperationOptions();
         authorizer = new OpenFgaAuthorizer(client, configuration, getCamelContext());
     }
@@ -108,9 +164,14 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
                 require(configuration.getObject(), "object", "names the object to list users of");
                 require(configuration.getRelation(), "relation", "names the relation to list users for");
             }
+            case expand -> {
+                require(configuration.getObject(), "object", "names the object whose relation is expanded");
+                require(configuration.getRelation(), "relation", "names the relation to expand");
+            }
             default -> {
                 // writeTuples and deleteTuples take their tuples from the message body, falling back to the
-                // user/relation/object triple, so there is nothing that must be configured up front
+                // user/relation/object triple; readTuples treats user, relation and object as an optional filter and
+                // readChanges needs nothing at all - so none of them has anything that must be configured up front
             }
         }
     }
@@ -120,6 +181,31 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(
                     option + " is required for the " + operation + " operation: it " + purpose);
         }
+    }
+
+    /**
+     * Parses {@code startTime} when the endpoint starts, so a malformed timestamp stops the route rather than failing
+     * the first exchange that happens to reach a readChanges.
+     */
+    private OffsetDateTime parseStartTime() {
+        if (ObjectHelper.isEmpty(configuration.getStartTime())) {
+            return null;
+        }
+        try {
+            return OffsetDateTime.parse(configuration.getStartTime());
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "startTime '" + configuration.getStartTime() + "' is not an ISO-8601 timestamp, for example"
+                                               + " 2026-10-01T00:00:00Z",
+                    e);
+        }
+    }
+
+    /**
+     * The parsed {@code startTime}, or null when none was configured.
+     */
+    OffsetDateTime getStartTime() {
+        return startTime;
     }
 
     /**

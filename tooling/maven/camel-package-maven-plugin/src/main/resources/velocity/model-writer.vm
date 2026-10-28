@@ -39,6 +39,7 @@ package ${package};
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import javax.annotation.processing.Generated;
@@ -144,7 +145,27 @@ public class ModelWriter extends BaseWriter {
                     #elseif( $member.xmlElementRef )
                         #set( $foo = $elementRefs.add($root) )
                         #if( $list )
+                            #if( $clazz.simpleName == "TryDefinition" && $member.name == "outputs" )
+        List<ProcessorDefinition<?>> outputs = new ArrayList<>(def.getOutputs());
+        for (CatchDefinition clause : def.getCatchClauses()) {
+            if (!outputs.contains(clause)) {
+                int index = outputs.size();
+                for (int i = 0; i < outputs.size(); i++) {
+                    if (outputs.get(i) instanceof FinallyDefinition) {
+                        index = i;
+                        break;
+                    }
+                }
+                outputs.add(index, clause);
+            }
+        }
+        if (def.getFinallyClause() != null && !outputs.contains(def.getFinallyClause())) {
+            outputs.add(def.getFinallyClause());
+        }
+        doWriteList(null, null, outputs, this::doWrite${root.simpleName}Ref);
+                            #else
         doWriteList(null, null, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
+                            #end
                         #else
         doWriteElement(null, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
                         #end

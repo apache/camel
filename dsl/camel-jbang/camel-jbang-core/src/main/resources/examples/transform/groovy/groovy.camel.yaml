@@ -1,0 +1,33 @@
+# Two orders, one with a valid customer email and one without. A Groovy expression checks the
+# address with Apache Commons Validator, a third-party library the Camel CLI downloads because it
+# is declared in application.properties.
+- route:
+    id: groovy
+    from:
+      uri: timer
+      parameters:
+        timerName: orders
+        repeatCount: 2
+        includeMetadata: true
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}"
+        - unmarshal:
+            json:
+              library: Jackson
+        - choice:
+            when:
+              - expression:
+                  groovy:
+                    expression: |-
+                      import org.apache.commons.validator.routines.EmailValidator
+                      EmailValidator.getInstance().isValid(body.email)
+                steps:
+                  - log:
+                      message: "Order ${body[orderId]} accepted: ${body[email]} is a valid address"
+            otherwise:
+              steps:
+                - log:
+                    message: "Order ${body[orderId]} rejected: ${body[email]} is not an email address"

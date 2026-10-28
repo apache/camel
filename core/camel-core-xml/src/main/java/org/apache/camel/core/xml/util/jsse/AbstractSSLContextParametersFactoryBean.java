@@ -38,7 +38,7 @@ public abstract class AbstractSSLContextParametersFactoryBean
     @XmlAttribute
     @Metadata(label = "advanced", description = "The protocol for the secure sockets created by the SSLContext"
                                                 + " represented by this instance's configuration."
-                                                + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                                                + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     private String secureSocketProtocol;
 
     @XmlAttribute

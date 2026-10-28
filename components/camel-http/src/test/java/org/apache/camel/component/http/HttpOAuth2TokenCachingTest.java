@@ -25,12 +25,14 @@ import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.component.http.handler.OAuth2TokenRequestHandler;
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NoHttpResponseException;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
@@ -106,6 +108,130 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
             Exchange exchange = template.request(requestUrl, exchange1 -> {
             });
             assertExchange(exchange);
+        }
+    }
+
+    /**
+     * By default (oauth2CachedTokensKey=HOST_ONLY) a cached token is shared by every request to the same scheme, host
+     * and port, whatever the path and query (CAMEL-22080).
+     */
+    @Test
+    public void aDifferentQueryReusesTheCachedTokenByDefault() throws Exception {
+        assertDifferentQuery("", true);
+    }
+
+    @Test
+    public void aDifferentPathReusesTheCachedTokenByDefault() throws Exception {
+        assertDifferentPath("", true);
+    }
+
+    @Test
+    public void aDifferentHttpPathHeaderReusesTheCachedTokenByDefault() throws Exception {
+        assertDifferentHttpPathHeader("", true);
+    }
+
+    /**
+     * With oauth2CachedTokensKey=FULL_URI (the behaviour before 4.23) a cached token is only reused for the same
+     * request URI, so a request with a different query or path requests a new token.
+     */
+    @Test
+    public void aDifferentQueryRequestsANewTokenWithFullUri() throws Exception {
+        assertDifferentQuery("&oauth2CachedTokensKey=FULL_URI", false);
+    }
+
+    @Test
+    public void aDifferentPathRequestsANewTokenWithFullUri() throws Exception {
+        assertDifferentPath("&oauth2CachedTokensKey=FULL_URI", false);
+    }
+
+    @Test
+    public void aDifferentHttpPathHeaderRequestsANewTokenWithFullUri() throws Exception {
+        assertDifferentHttpPathHeader("&oauth2CachedTokensKey=FULL_URI", false);
+    }
+
+    /**
+     * The token request does not depend on the request URI, so with oauth2CachedTokensKey=HOST_ONLY a token is shared
+     * by every request to the same scheme, host and port, whatever the path and query (CAMEL-22080).
+     */
+    @Test
+    public void aDifferentQueryReusesTheCachedTokenWithHostOnly() throws Exception {
+        assertDifferentQuery("&oauth2CachedTokensKey=HOST_ONLY", true);
+    }
+
+    @Test
+    public void aDifferentPathReusesTheCachedTokenWithHostOnly() throws Exception {
+        assertDifferentPath("&oauth2CachedTokensKey=HOST_ONLY", true);
+    }
+
+    @Test
+    public void aDifferentHttpPathHeaderReusesTheCachedTokenWithHostOnly() throws Exception {
+        assertDifferentHttpPathHeader("&oauth2CachedTokensKey=HOST_ONLY", true);
+    }
+
+    private void assertDifferentQuery(String keyOption, boolean reused) throws Exception {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+            String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
+            String options = "&httpMethod=POST&oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret
+                             + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2CacheTokens=true" + keyOption;
+            String base = "http://localhost:" + localServer.getLocalPort() + "/post?eventId=";
+
+            assertExchange(template.request(base + "1" + options, exchange -> {
+            }));
+            localOAuth2Server.close();
+
+            Exchange exchange = template.request(base + "2" + options, exchange1 -> {
+            });
+            assertTokenReused(exchange, reused);
+        }
+    }
+
+    private void assertDifferentPath(String keyOption, boolean reused) throws Exception {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+            String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
+            String options = "?httpMethod=POST&oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret
+                             + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2CacheTokens=true" + keyOption;
+            String base = "http://localhost:" + localServer.getLocalPort();
+
+            assertExchange(template.request(base + "/post" + options, exchange -> {
+            }));
+            localOAuth2Server.close();
+
+            Exchange exchange = template.request(base + "/other" + options, exchange1 -> {
+            });
+            assertTokenReused(exchange, reused);
+        }
+    }
+
+    private void assertDifferentHttpPathHeader(String keyOption, boolean reused) throws Exception {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+            String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:path")
+                            .to("http://localhost:" + localServer.getLocalPort() + "?httpMethod=POST&oauth2ClientId="
+                                + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint="
+                                + tokenEndpoint + "&oauth2CacheTokens=true" + keyOption);
+                }
+            });
+
+            assertExchange(template.send("direct:path", e -> e.getIn().setHeader(Exchange.HTTP_PATH, "/post")));
+            localOAuth2Server.close();
+            Exchange exchange = template.send("direct:path", e -> e.getIn().setHeader(Exchange.HTTP_PATH, "/other"));
+
+            assertTokenReused(exchange, reused);
+        }
+    }
+
+    /**
+     * The token endpoint is closed before the second request: a reused token succeeds, a new token request fails.
+     */
+    private void assertTokenReused(Exchange exchange, boolean reused) {
+        if (reused) {
+            assertExchange(exchange);
+        } else {
+            assertExceptionExchange(exchange);
         }
     }
 
@@ -189,7 +315,13 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
         assertNotNull(exchange);
         assertNotNull(exchange.getException());
         Exception exception = exchange.getException();
-        assertEquals(HttpHostConnectException.class, exception.getClass());
+        // When the token endpoint server is closed, the HTTP client may report either
+        // HttpHostConnectException (connection refused, port already released) or
+        // NoHttpResponseException (server closed the connection mid-flight during shutdown).
+        // Both indicate that the token endpoint is unreachable, so accept either.
+        assertTrue(
+                exception instanceof HttpHostConnectException || exception instanceof NoHttpResponseException,
+                "Expected a connection-failure exception but got: " + exception.getClass().getName());
     }
 
     protected void assertHeaders(Map<String, Object> headers) {
@@ -209,6 +341,13 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/post",
+                        new HeaderValidationHandler(
+                                "POST",
+                                null,
+                                null,
+                                null,
+                                expectedHeaders))
+                .register("/other",
                         new HeaderValidationHandler(
                                 "POST",
                                 null,

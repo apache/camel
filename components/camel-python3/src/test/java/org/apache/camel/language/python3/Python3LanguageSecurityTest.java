@@ -76,7 +76,7 @@ class Python3LanguageSecurityTest {
         assertThat(language.createExpression("headers['written'] = 'yes'\nheaders['written']").evaluate(exchange,
                 String.class)).isEqualTo("yes");
         assertThat(exchange.getIn().getHeader("written")).isEqualTo("yes");
-        assertThat(language.createExpression("properties['color']").evaluate(exchange, String.class)).isEqualTo("red");
+        assertThat(language.createExpression("exchangeProperties['color']").evaluate(exchange, String.class)).isEqualTo("red");
         assertThat(language.createExpression("exchangeId").evaluate(exchange, String.class))
                 .isEqualTo(exchange.getExchangeId());
     }
@@ -121,7 +121,7 @@ class Python3LanguageSecurityTest {
                 .isEqualTo(exchange.getExchangeId());
         assertThat(trusted.createExpression("message.getBody()").evaluate(exchange, Object.class))
                 .isInstanceOf(Person.class);
-        assertThat(trusted.createExpression("context.getName()").evaluate(exchange, String.class))
+        assertThat(trusted.createExpression("camelContext.getName()").evaluate(exchange, String.class))
                 .isEqualTo(context.getName());
         assertThat(trusted.createExpression("body.getAge()").evaluate(exchange, Integer.class)).isEqualTo(36);
         assertThat(trusted.createExpression("body.name").evaluate(exchange, String.class)).isEqualTo("Ada");

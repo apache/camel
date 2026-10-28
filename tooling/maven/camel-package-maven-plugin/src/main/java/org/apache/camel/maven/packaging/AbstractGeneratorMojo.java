@@ -26,7 +26,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -294,5 +296,36 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
                 .filter(o -> o.getConfigurationField() != null)
                 .filter(o -> found.add(o.getConfigurationClass()))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    /**
+     * Generates the source of the property configurer of a data format or language, from its options.
+     */
+    public String generatePropertyConfigurer(
+            String pn, String cn, String pfqn, String en, boolean hasSuper,
+            Collection<? extends BaseOptionModel> options)
+            throws IOException {
+
+        options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).toList();
+
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("generatorClass", getClass().getName());
+        ctx.put("package", pn);
+        ctx.put("className", cn);
+        ctx.put("type", en);
+        ctx.put("pfqn", pfqn);
+        ctx.put("psn", pfqn);
+        ctx.put("hasSuper", hasSuper);
+        ctx.put("component", false);
+        ctx.put("extended", true);
+        ctx.put("bootstrap", false);
+        ctx.put("options", options);
+        ctx.put("model", null);
+        ctx.put("mojo", this);
+        return velocity("velocity/property-configurer.vm", ctx);
+    }
+
+    public static String generateMetaInfConfigurer(String fqn) {
+        return "# " + GENERATED_MSG + NL + "class=" + fqn + NL;
     }
 }

@@ -29,6 +29,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,7 +45,9 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true,
-             remote = false, category = { Category.CORE, Category.SCHEDULING }, headersClass = TimerConstants.class)
+             remote = false, internal = true, category = { Category.CORE, Category.SCHEDULING },
+             headersClass = TimerConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL, description = "No body: the message only starts the route"))
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath
     @Metadata(required = true)
@@ -273,7 +278,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
+     * Whether to include metadata in the exchange: the exchange properties CamelTimerCounter (the fire count, 1 on the
+     * first fire), CamelTimerName, CamelTimerPeriod, CamelTimerFiredTime and CamelTimerTime (when the time option is
+     * set), and the headers CamelTimerFiredTime and CamelMessageTimestamp.
      */
     @ManagedAttribute(description = "Include metadata")
     public void setIncludeMetadata(boolean includeMetadata) {

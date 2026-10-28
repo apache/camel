@@ -22,6 +22,7 @@ import java.util.List;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -103,10 +104,21 @@ final class DialogHelper {
     static Rect renderConfirm(
             Frame frame, Rect area, String title, String message, boolean danger,
             String acceptKey, String acceptLabel) {
+        return renderConfirm(frame, area, title, message, danger, acceptKey, acceptLabel, null);
+    }
+
+    /**
+     * As above, recording where the keys of the dialog are drawn in {@code clicks}, so a click on one presses it.
+     *
+     * @param clicks where the keys go, or null
+     */
+    static Rect renderConfirm(
+            Frame frame, Rect area, String title, String message, boolean danger,
+            String acceptKey, String acceptLabel, HintClicks clicks) {
         Style accent = danger ? Theme.error() : Theme.warning();
         String titleText = " " + title + " ";
         String msg = message.trim();
-        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(msg.length() + 6, titleText.length() + 4));
+        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(CharWidth.of(msg) + 6, CharWidth.of(titleText) + 4));
         Rect popup = centered(area, popupW, CONFIRM_HEIGHT);
 
         frame.renderWidget(Clear.INSTANCE, popup);
@@ -117,6 +129,7 @@ final class DialogHelper {
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
+        Line hints = TuiHelper.hintLine(acceptKey, acceptLabel, "Esc", "cancel");
         frame.renderWidget(
                 Paragraph.builder()
                         .centered()
@@ -124,10 +137,19 @@ final class DialogHelper {
                                 Line.empty(),
                                 Line.from(Span.styled(msg, accent.bold())),
                                 Line.empty(),
-                                TuiHelper.hintLine(acceptKey, acceptLabel, "Esc", "cancel")))
+                                hints))
                         .build(),
                 inner);
+        captureHints(clicks, inner, 3, hints);
         return popup;
+    }
+
+    /** Records where the centered hint line on the given row of the dialog is, for its keys to be clicked. */
+    private static void captureHints(HintClicks clicks, Rect inner, int row, Line hints) {
+        if (clicks != null) {
+            int x = inner.x() + Math.max(0, (inner.width() - hints.width()) / 2);
+            clicks.capture(new Rect(x, inner.y() + row, Math.min(hints.width(), inner.width()), 1), hints.spans());
+        }
     }
 
     /**
@@ -136,14 +158,28 @@ final class DialogHelper {
      */
     static Rect renderConfirm(
             Frame frame, Rect area, String title, String message, String detail, String extraKey, String extraLabel) {
+        return renderConfirm(frame, area, title, message, detail, "Enter", "confirm", extraKey, extraLabel);
+    }
+
+    /** As above, accepted with the given key (a destructive choice takes "y", not Enter). */
+    static Rect renderConfirm(
+            Frame frame, Rect area, String title, String message, String detail, String acceptKey, String acceptLabel,
+            String extraKey, String extraLabel) {
+        return renderConfirm(frame, area, title, message, detail, acceptKey, acceptLabel, extraKey, extraLabel, null);
+    }
+
+    /** As above, recording where the keys of the dialog are drawn in {@code clicks} (when not null). */
+    static Rect renderConfirm(
+            Frame frame, Rect area, String title, String message, String detail, String acceptKey, String acceptLabel,
+            String extraKey, String extraLabel, HintClicks clicks) {
         Style accent = Theme.warning();
         String titleText = " " + title + " ";
         String msg = message.trim();
         Line hints = extraKey != null
-                ? TuiHelper.hintLine("Enter", "confirm", extraKey, extraLabel, "Esc", "cancel")
-                : TuiHelper.hintLine("Enter", "confirm", "Esc", "cancel");
-        int contentW = Math.max(msg.length(), Math.max(detail != null ? detail.length() : 0, hints.width()));
-        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(contentW + 6, titleText.length() + 4));
+                ? TuiHelper.hintLine(acceptKey, acceptLabel, extraKey, extraLabel, "Esc", "cancel")
+                : TuiHelper.hintLine(acceptKey, acceptLabel, "Esc", "cancel");
+        int contentW = Math.max(CharWidth.of(msg), Math.max(detail != null ? CharWidth.of(detail) : 0, hints.width()));
+        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(contentW + 6, CharWidth.of(titleText) + 4));
         Rect popup = centered(area, popupW, CONFIRM_HEIGHT + (detail != null ? 1 : 0));
 
         frame.renderWidget(Clear.INSTANCE, popup);
@@ -161,7 +197,9 @@ final class DialogHelper {
         }
         lines.add(Line.empty());
         lines.add(hints);
-        frame.renderWidget(Paragraph.builder().centered().text(Text.from(lines)).build(), block.inner(popup));
+        Rect inner = block.inner(popup);
+        frame.renderWidget(Paragraph.builder().centered().text(Text.from(lines)).build(), inner);
+        captureHints(clicks, inner, lines.size() - 1, hints);
         return popup;
     }
 

@@ -30,6 +30,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedDestinationAware;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
@@ -87,6 +88,8 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             @Metadata(description = "The processor name") String processor,
             @Metadata(description = "The processor level in the route tree") int level,
             @Metadata(description = "The destination URI, for processors that send to a destination (only present when applicable)") String uri,
+            @Metadata(description = "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)") List<String> bodyTypes,
+            @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention (only present when the message history recorded any)") List<String> bodyKinds,
             @Metadata(description = "Runtime statistics") Statistics statistics) {
     }
 
@@ -290,6 +293,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
     public static void includeProcessorsJSon(
             CamelContext camelContext, List<ProcessorEntry> list, int max, List<ManagedProcessorMBean> mps) {
+        BodyTypeRegistry registry = camelContext.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
         for (int i = 0; i < mps.size(); i++) {
             ManagedProcessorMBean mp = mps.get(i);
             if (list.size() >= max) {
@@ -331,10 +335,22 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             // processors which can send to a destination (such as to/toD/poll etc)
             String destination = getDestination(camelContext, mp);
 
+            // the body types the processor has been reached with (CAMEL-25750)
+            List<String> bodyTypes = null;
+            List<String> bodyKinds = null;
+            if (registry != null && mp.getRouteId() != null && mp.getProcessorId() != null) {
+                List<String> types = registry.getBodyTypes(mp.getRouteId(), mp.getProcessorId());
+                if (!types.isEmpty()) {
+                    bodyTypes = types;
+                    bodyKinds = RouteStructureDevConsole.kindNames(
+                            registry.getBodyKinds(mp.getRouteId(), mp.getProcessorId()));
+                }
+            }
+
             list.add(new ProcessorEntry(
                     mp.getRouteId(), mp.getProcessorId(), mp.getNodePrefixId(), mp.getDescription(), mp.getNote(),
                     source, mp.getState(), mp.getDisabled(), mp.getStepId(), code.isEmpty() ? null : code,
-                    mp.getProcessorName(), mp.getLevel(), destination, buildStatistics(mp)));
+                    mp.getProcessorName(), mp.getLevel(), destination, bodyTypes, bodyKinds, buildStatistics(mp)));
         }
     }
 

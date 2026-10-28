@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
+import java.util.concurrent.ExecutionException;
+
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FutureEventDrivenOperationTest {
     private String data = "Event Received";
@@ -47,6 +52,38 @@ public class FutureEventDrivenOperationTest {
         assertEquals(data, future.get().getResult());
         assertEquals(statistics, future.get().getStatistics());
         assertEquals(event, future.getWatchedEvent());
+    }
+
+    @Test
+    public void shouldIgnoreFailedWatchRequestWhenAwaitedEventAlreadyReceived() throws Exception {
+        // the event arrives before the callback of the watch request, which fails because the node is gone
+        final FutureEventDrivenOperation<String> future = failingWatchOperation();
+        future.process(new WatchedEvent(EventType.NodeDeleted, null, "somepath"));
+
+        assertEquals(data, future.get().getResult());
+    }
+
+    @Test
+    public void shouldFailWhenWatchRequestFailedAndNoEventReceived() {
+        final FutureEventDrivenOperation<String> future = failingWatchOperation();
+
+        ExecutionException e = assertThrows(ExecutionException.class, future::get);
+        assertInstanceOf(KeeperException.NoNodeException.class, e.getCause());
+    }
+
+    private FutureEventDrivenOperation<String> failingWatchOperation() {
+        return new FutureEventDrivenOperation<String>(null, "somepath", EventType.NodeDeleted) {
+
+            @Override
+            protected void installWatch() {
+                watchRequestCompleted(KeeperException.Code.NONODE.intValue());
+            }
+
+            @Override
+            public OperationResult<String> getResult() {
+                return new OperationResult<>(data, statistics);
+            }
+        };
     }
 
     private void fireEventIn(

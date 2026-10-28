@@ -27,7 +27,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -41,6 +43,11 @@ import picocli.CommandLine.Command;
                  "  camel get variable",
                  "  camel get variable --watch" })
 public class ListVariable extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .number("pid", r -> r.pid)
+            .text("name", r -> r.name)
+            .text("key", r -> r.key);
 
     public static class PidNameKeyCompletionCandidates implements Iterable<String> {
 
@@ -69,57 +76,51 @@ public class ListVariable extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
 
-                        JsonObject jv = (JsonObject) root.get("variables");
-                        if (jv != null) {
-                            JsonArray repositories = jv.getCollection("repositories");
-                            if (repositories != null) {
-                                for (Object r : repositories) {
-                                    JsonObject repo = (JsonObject) r;
-                                    String id = repo.getString("id");
-                                    JsonArray arr = repo.getCollection("variables");
-                                    if (arr != null) {
-                                        for (int i = 0; i < arr.size(); i++) {
-                                            row = row.copy();
-                                            JsonObject jo = (JsonObject) arr.get(i);
-                                            row.id = id;
-                                            row.key = jo.getString("key");
-                                            row.type = jo.getString("type");
-                                            row.value = jo.get("value");
-                                            rows.add(row);
-                                        }
-                                    }
-                                }
+            JsonObject jv = (JsonObject) root.get("variables");
+            if (jv != null) {
+                JsonArray repositories = jv.getCollection("repositories");
+                if (repositories != null) {
+                    for (Object r : repositories) {
+                        JsonObject repo = (JsonObject) r;
+                        String id = repo.getString("id");
+                        JsonArray arr = repo.getCollection("variables");
+                        if (arr != null) {
+                            for (int i = 0; i < arr.size(); i++) {
+                                row = row.copy();
+                                JsonObject jo = (JsonObject) arr.get(i);
+                                row.id = id;
+                                row.key = jo.getString("key");
+                                row.type = jo.getString("type");
+                                row.value = jo.get("value");
+                                rows.add(row);
                             }
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("repo", r.id);
                     jo.put("type", r.type);
@@ -154,25 +155,6 @@ public class ListVariable extends ProcessWatchCommand {
         return 0;
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "key":
-                return o1.key.compareToIgnoreCase(o2.key) * negate;
-            default:
-                return 0;
-        }
-    }
-
     private String getValue(Row r) {
         if (r.value != null) {
             // clip very large value
@@ -185,21 +167,13 @@ public class ListVariable extends ProcessWatchCommand {
         return "";
     }
 
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         String id;
         String key;
         String type;
         Object value;
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }

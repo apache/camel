@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.cyberark.vault;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -82,7 +83,8 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
     private CamelContext camelContext;
     private ConjurClient client;
 
-    private final Set<String> secrets = new HashSet<>();
+    // this function is shared and invoked concurrently
+    private final Set<String> secrets = ConcurrentHashMap.newKeySet();
 
     private String url;
     private String account;
@@ -269,7 +271,7 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
      * Ids of the secrets in use
      */
     public Set<String> getSecrets() {
-        return secrets;
+        return Collections.unmodifiableSet(secrets);
     }
 
     /**

@@ -45,11 +45,35 @@ include::partial$component-endpoint-headers.adoc[]
 
 Point a file consumer at a folder and the files in it become a knowledge base:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:/var/data/product-docs?noop=true&recursive=true&readLock=changed&charset=UTF-8")
     .to("langchain4j-ingest:products?documentIdHeader=CamelFileName");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:/var/data/product-docs
+      parameters:
+        noop: true
+        recursive: true
+        readLock: changed
+        charset: UTF-8
+      steps:
+        - to:
+            uri: langchain4j-ingest:products
+            parameters:
+              documentIdHeader: CamelFileName
+----
+====
 
 Each file is read as UTF-8 text, split into overlapping segments (`maxSegmentSize`,
 `maxOverlapSize`), embedded in batches (`embeddingBatchSize`, 32 by default) and written to
@@ -81,12 +105,36 @@ below.
 Any Camel consumer can feed the endpoint; where the document id lives in the exchange is the
 consumer's business, and `documentIdHeader` names it:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("aws2-s3://product-docs?region=eu-west-1&deleteAfterRead=false")
     .to("langchain4j-ingest:s3docs?documentIdHeader=CamelAwsS3Key"
         + "&embeddingStore=#bean:productsStore&embeddingModel=#bean:miniLm");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-s3://product-docs
+      parameters:
+        region: eu-west-1
+        deleteAfterRead: false
+      steps:
+        - to:
+            uri: langchain4j-ingest:s3docs
+            parameters:
+              documentIdHeader: CamelAwsS3Key
+              embeddingStore: "#bean:productsStore"
+              embeddingModel: "#bean:miniLm"
+----
+====
 
 Mind each component's own defaults: the `aws2-s3` consumer *deletes objects after reading
 them* unless `deleteAfterRead=false` is set. Without a `documentIdHeader` the producer expects
@@ -114,12 +162,36 @@ a later, acceptable delivery under the same id still ingests. A duplicate id is 
 check — it must tolerate an absent body, and rejecting a blank delivery answers `filtered`
 rather than `empty`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:knowledge-base?noop=true")
     .to("langchain4j-ingest:docs?documentIdHeader=CamelFileName"
         + "&includeId=**/*.md,**/*.txt&excludeId=**/draft-*&minDocumentSize=100");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:knowledge-base
+      parameters:
+        noop: true
+      steps:
+        - to:
+            uri: langchain4j-ingest:docs
+            parameters:
+              documentIdHeader: CamelFileName
+              includeId: "**/*.md,**/*.txt"
+              excludeId: "**/draft-*"
+              minDocumentSize: 100
+----
+====
 
 === Deduplicating deliveries
 
@@ -132,12 +204,34 @@ it, so an object created empty and populated later under the same id still inges
 failed write releases it so the delivery can be retried. The claim is eager — a duplicate
 racing an in-flight first delivery is answered `skipped` even if that delivery then fails.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:ingest-events?groupId=ingest")
     .to("langchain4j-ingest:events?documentIdHeader=CamelKafkaKey"
         + "&idempotentRepository=#bean:eventsRegister");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:ingest-events
+      parameters:
+        groupId: ingest
+      steps:
+        - to:
+            uri: langchain4j-ingest:events
+            parameters:
+              documentIdHeader: CamelKafkaKey
+              idempotentRepository: "#bean:eventsRegister"
+----
+====
 
 The repository is any `IdempotentRepository` bean — in-memory, file-backed or, to deduplicate
 across application instances, a JDBC one. It is referenced by name on purpose: an application
@@ -162,6 +256,10 @@ parses untrusted documents must capture the id *before* the parse — a crafted 
 otherwise forge its own identity. The `CamelLangChain4jIngestDocumentId` exchange property
 exists for exactly this and always wins over the header:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:/var/data/reports?noop=true&readLock=changed")
@@ -170,6 +268,37 @@ from("file:/var/data/reports?noop=true&readLock=changed")
     .process(new TikaTextDecode())
     .to("langchain4j-ingest:reports");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: tikaTextDecode
+      type: org.apache.camel.component.langchain4j.ingest.TikaTextDecode
+- route:
+    from:
+      uri: file:/var/data/reports
+      parameters:
+        noop: true
+        readLock: changed
+      steps:
+        - setProperty:
+            name: CamelLangChain4jIngestDocumentId
+            expression:
+              header:
+                expression: CamelFileName
+        - to:
+            uri: tika:parse
+            parameters:
+              tikaParseOutputFormat: text
+              tikaParseOutputEncoding: UTF-8
+        - process:
+            ref: tikaTextDecode
+        - to:
+            uri: langchain4j-ingest:reports
+----
+====
 
 Each format needs its Tika parser module on the classpath: camel-tika ships the HTML and text
 modules only, so a PDF needs `org.apache.tika:tika-parser-pdf-module`. A format without its
@@ -200,6 +329,87 @@ with a parse step in front should bound the raw payload as well, since a parse i
 memory- and CPU-expensive and a small file can still parse into a lot of text. An oversized
 document fails the exchange like any other error (see below) and releases its dedup claim, so
 a trimmed re-delivery under the same id still ingests.
+
+A body that is not yet a String, such as a file or a stream, is read only one character past
+the cap. Stream caching, on by default, reads a stream into memory before the route reaches
+the endpoint, unless it spools to disk: on a consumer-fed pipeline, limit the size at the
+consumer as well, or enable spooling.
+
+=== Ingesting media: images, audio, video and PDF
+
+With `modality=media` the body is read as bytes and embedded whole, as one vector, by a
+multimodal embedding model. The model must list the medium (`IMAGE`, `AUDIO`, `VIDEO` or
+`PDF`) in its `supportedContentTypes()`; a text-only model fails the start. The vector is
+stored under a placeholder segment whose text is the document id, with the same identity
+metadata as text segments plus the MIME type under `camel_ingest_content_type`, so
+retrieval and citation work unchanged and a retriever on a shared store can tell a media
+hit from text.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:/var/data/photos?noop=true&recursive=true&readLock=changed&antInclude=**/*.jpg,**/*.png")
+    .to("langchain4j-ingest:photos?modality=media&documentIdHeader=CamelFileName");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:/var/data/photos
+      parameters:
+        noop: true
+        recursive: true
+        readLock: changed
+        antInclude: "**/*.jpg,**/*.png"
+      steps:
+        - to:
+            uri: langchain4j-ingest:photos
+            parameters:
+              modality: media
+              documentIdHeader: CamelFileName
+----
+====
+
+Leave `charset` unset on the consumer: a file consumer with one converts the file through
+a Reader, which corrupts media. Keep other files out of the folder with the consumer's
+`antInclude`, as above, or the endpoint's `includeId` and `excludeId`: an unsupported file
+fails the exchange and is retried on every poll.
+
+The medium is taken from the MIME type: the `contentType` option when set, otherwise the
+document id's file extension looked up in Camel's MIME table (`MimeTypeHelper` in
+camel-util: wav, mp3, png, mp4, pdf and the like). Message headers are never consulted. An
+id ending in a query string, a URL say, has no usable extension and needs `contentType`. A
+document whose type is unknown, is not a medium or is one the model does not support fails
+the exchange before its dedup claim and before its body is read, so a mixed folder fails
+per file. A `.webm` file counts as video; a browser audio recording needs
+`contentType=audio/webm`. The family decides the medium and the provider decides the
+formats within it, so an `image/svg+xml` file passes as an image and fails at the
+provider. A `contentType` the model does not support, or one set with `modality=text`,
+fails the start.
+
+Nothing is split: `maxSegmentSize`, `maxOverlapSize` and `embeddingBatchSize` do not
+apply, a configured `documentSplitter` fails the start, and `maxDocumentSize` and
+`minDocumentSize` count bytes. Base64 encoding adds a third, so set `maxDocumentSize`
+against the model's request limit. A file consumer announces the length in
+`CamelFileLength`, which is checked against the cap before the file is read; any other
+body not yet in memory is read only one byte past the cap. A `documentFilter` runs before
+the body is read and sees it as delivered, a file or stream rather than text, so filter on
+headers or the id.
+
+Several LangChain4j providers embed images (Jina, Voyage AI, Cohere, Google Gemini and
+Bedrock Titan among them); none embeds audio yet, so an audio model is typically a custom
+`EmbeddingModel` calling a service such as Wav2Vec2 or CLAP. The same bean embeds the
+query at retrieval time. A model with an `EmbeddingModelListener` attached is refused at
+start: LangChain4j 1.20 builds the listener context from the input text, which media lacks.
+Only a listener added by hand is affected; the Quarkus and Spring Boot LangChain4j
+integrations attach none to embedding models today. Media embedding goes through
+LangChain4j's `EmbeddingRequest` API, still experimental in 1.20, so it may change.
 
 === When ingestion fails
 

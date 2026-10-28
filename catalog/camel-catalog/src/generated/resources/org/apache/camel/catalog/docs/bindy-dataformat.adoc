@@ -1896,51 +1896,25 @@ from("file://inbox")
   .to("direct:handleOrders");
 ----
 
-The Camel route will pick up files in the inbox directory, unmarshall
-CSV records into a collection of model objects and send the collection +
- to the route referenced by `handleOrders`.
+The Camel route will pick up files in the inbox directory, unmarshal the
+CSV records into model objects and send them to the route referenced
+by `handleOrders`.
 
-The collection returned is a *List of Map* objects. Each Map within the
-list contains the model objects marshalled out of each line of
-the CSV. The reason behind this is that _each line can correspond to
-more than one object_. This can be confusing when you expect one
-object to be returned per line.
+The body after unmarshal is a *List* of the objects of the `classType` class,
+one for each record. When there is only one record, the body is that object,
+unless `unwrapSingleInstance` is `false`. The objects of the classes that
+`@Link` links are set in the fields of the object of each record. With
+`allowEmptyStream=true`, a file without records gives an empty List.
 
-Each object can be retrieved using its class name.
+To process one Order at a time in a route, use a Splitter, which also
+takes the single Order of a file with one record:
 
 ._Java-only: Java annotation model class_
-[source,java]
-----
-List<Map<String, Object>> unmarshaledModels = (List<Map<String, Object>>) exchange.getIn().getBody();
-
-int modelCount = 0;
-for (Map<String, Object> model : unmarshaledModels) {
-  for (String className : model.keySet()) {
-     Object obj = model.get(className);
-     LOG.info("Count: {}, {}", modelCount, obj.toString());
-  }
- modelCount++;
-}
-
-LOG.info("Total CSV records received by the csv bean: {}", modelCount);
-----
-
-Assuming that you want to extract a single Order object from this map
-for processing in a route, you could use a combination of a
-Splitter and a Processor as per
-the following:
-
-._Java-only: inline Processor implementation_
 [source,java]
 ----
 from("file://inbox")
     .unmarshal(bindy)
     .split(body())
-        .process(exchange -> {
-            Message in = exchange.getIn();
-            Map<String, Object> modelMap = (Map<String, Object>) in.getBody();
-            in.setBody(modelMap.get(Order.class.getCanonicalName()));
-        })
         .to("direct:handleSingleOrder")
     .end();
 ----
@@ -1973,6 +1947,10 @@ from("direct:handleOrders")
    .marshal(bindy)
    .to("file://outbox")
 ----
+
+The body to marshal is an object of the model class (`classType`), a `List` of them,
+or a `Map` of the model class names to the objects (one record). Any other body,
+such as a `Map` of field values or a `String`, fails with an `InvalidPayloadException`.
 
 === Using Spring XML
 
@@ -2030,6 +2008,94 @@ content to generate a file containing the CSV record.
 Please verify that your model classes implement serializable otherwise
 the queue manager will raise an error.
 ====
+
+=== Using the YAML DSL
+
+In the YAML DSL, the data format is `bindy`, and its `type` is `Csv`, `Fixed` or `KeyValue`.
+The `classType` is the model class.
+
+The following route reads CSV files, unmarshals them into a list of `Order` objects
+(or one `Order` for a file with one record), and splits the list to handle one order at a time:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - unmarshal:
+            bindy:
+              type: Csv
+              classType: com.acme.model.Order
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:handleSingleOrder
+----
+
+To write CSV records, marshal a list of model objects.
+Set the `locale` when the numbers and dates must not depend on the machine: without it, Bindy uses the default locale
+of the JVM, and on a machine with a Danish or German locale `2500.45` is written as `2500,45`.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:handleOrders
+      steps:
+        - marshal:
+            bindy:
+              type: Csv
+              classType: com.acme.model.Order
+              locale: en-US
+        - to:
+            uri: file:outbox
+----
+
+Fixed-length records work the same way, with the type `Fixed`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox/fixed
+      steps:
+        - unmarshal:
+            bindy:
+              type: Fixed
+              classType: com.acme.model.fixed.Order
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:handleSingleOrder
+----
+
+For key-value pairs, such as FIX messages, the type is `KeyValue`.
+As in the Spring XML example, you can define the data format once in `dataFormats` and use it by its id:
+
+[source,yaml]
+----
+- dataFormats:
+    - bindy:
+        id: fixOrder
+        type: KeyValue
+        classType: com.acme.model.fix.Order
+- route:
+    from:
+      uri: file:inbox/fix
+      steps:
+        - unmarshal:
+            custom:
+              ref: fixOrder
+        - to:
+            uri: direct:handleFixOrder
+----
 
 == Dependencies
 

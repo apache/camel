@@ -20,7 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.style.Modifier;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,6 +72,24 @@ class ClasspathTabRenderTest {
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("Loading") || rendered.contains("No classpath") || rendered.contains("Classpath"),
                 "Should show loading or empty state");
+    }
+
+    @Test
+    void theFilterCaretFollowsTheCursor() {
+        ClasspathTab tab = new ClasspathTab(ctx);
+        tab.handleKeyEvent(KeyEvent.ofChar('/'));
+        for (char ch : "jar".toCharArray()) {
+            tab.handleKeyEvent(KeyEvent.ofChar(ch));
+        }
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT));
+
+        List<Span> spans = new ArrayList<>();
+        tab.renderFooter(spans);
+
+        String footer = spans.stream().map(Span::content).reduce("", String::concat);
+        assertTrue(footer.startsWith(" /jar  "), footer);
+        assertTrue(spans.stream().anyMatch(span -> "r".equals(span.content())
+                && span.style().effectiveModifiers().contains(Modifier.REVERSED)), footer);
     }
 
     @Test

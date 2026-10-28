@@ -20,5 +20,8 @@
     "method": { "index": 5, "kind": "attribute", "displayName": "Method", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The method name on the bean to invoke." },
     "beanType": { "index": 6, "kind": "attribute", "displayName": "Bean Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The class name (fully qualified) of the bean to use." },
     "scope": { "index": 7, "kind": "attribute", "displayName": "Scope", "group": "advanced", "label": "advanced", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "Singleton", "Request", "Prototype" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "Singleton", "description": "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unknown" ], "description": "The return value of the method, or the body as it was for a void method" }
   }
 }

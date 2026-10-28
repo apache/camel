@@ -38,7 +38,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
 
     @Test
     public void testMailUsingHeaders() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(davsclaus);
 
         // START SNIPPET: e1
         Map<String, Object> map = new HashMap<>();
@@ -66,7 +66,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
 
     @Test
     public void testMailWithFromInEndpoint() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(davsclaus);
 
         Map<String, Object> map = new HashMap<>();
         map.put("Subject", "Camel rocks");

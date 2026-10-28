@@ -84,9 +84,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
                             + " data from the request to Java and that can be a potential security risk.",
               security = "insecure:serialization")
     boolean transferException;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer", defaultValue = "true",
               description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
-    boolean muteException;
+    boolean muteException = true;
     @UriParam(label = "consumer",
               description = "If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged"
                             + " when the exception stack trace is not sent in the response's body.")
@@ -141,7 +141,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private HttpMethods httpMethod;
 
     @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM. (NTLM is deprecated)")
+              description = "The authentication method to use: Basic, Bearer or NTLM. (NTLM is deprecated)")
     private String authMethod;
     @UriParam(label = "producer,security", security = "secret", description = "Authentication username")
     private String authUsername;
@@ -643,7 +643,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM (deprecated).
+     * The authentication method to use: Basic, Bearer or NTLM (deprecated).
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;

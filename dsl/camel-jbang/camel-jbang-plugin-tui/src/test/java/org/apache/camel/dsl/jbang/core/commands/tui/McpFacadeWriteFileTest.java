@@ -30,12 +30,13 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class McpFacadeWriteFileTest {
 
     /** Answers the confirm dialog without a UI, and remembers what it was asked. */
-    private static class ConfirmingBridge implements McpFacade.MonitorBridge {
+    static class ConfirmingBridge implements McpFacade.MonitorBridge {
         final boolean answer;
         McpFacade.FileWrite request;
         int asked;
@@ -103,7 +104,11 @@ class McpFacadeWriteFileTest {
         }
     }
 
-    private static McpFacade facade(Path sourceDir, boolean devMode, ConfirmingBridge bridge) {
+    static McpFacade facade(Path sourceDir, boolean devMode, ConfirmingBridge bridge) {
+        return facade(sourceDir, devMode, bridge, null);
+    }
+
+    static McpFacade facade(Path sourceDir, boolean devMode, ConfirmingBridge bridge, MonitorContext ctx) {
         IntegrationInfo info = new IntegrationInfo();
         info.name = "demo";
         info.pid = "1";
@@ -113,8 +118,24 @@ class McpFacadeWriteFileTest {
         cp.value = "file:" + sourceDir.resolve("demo.camel.yaml");
         info.configProperties.add(cp);
         return new McpFacade(
-                null, new AtomicReference<>(List.of(info)), null, null, null, null, null, null, null, null, null,
+                ctx, new AtomicReference<>(List.of(info)), null, null, null, null, null, null, null, null, null,
                 null, bridge);
+    }
+
+    @Test
+    void writesWithoutAskingWhileATapeDrivesTheMonitor(@TempDir Path dir) throws IOException {
+        // CAMEL-25444: a model records a tape, or --record plays one, and no one is there to confirm
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(false);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of()));
+        ctx.tapeDriven = () -> true;
+        McpFacade facade = facade(dir, true, bridge, ctx);
+
+        JsonObject result = facade.writeFile("demo", "demo.camel.yaml", "- route:\n    id: x\n", true);
+
+        assertEquals("overwritten", result.getString("status"));
+        assertEquals(0, bridge.asked, "nothing asks while a tape drives the monitor");
+        assertEquals("- route:\n    id: x\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -204,6 +225,44 @@ class McpFacadeWriteFileTest {
     }
 
     @Test
+    void anEditTheUserRejectsIsNotReportedAsEdited(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route:\n    id: x\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(false);
+        McpFacade facade = facade(dir, true, bridge);
+
+        JsonObject rejected = facade.editFile("demo", "demo.camel.yaml", "id: x", "id: y", true);
+        assertEquals("rejected", rejected.getString("status"), rejected.toJson());
+        assertNull(rejected.get("editedAtLine"), rejected.toJson());
+        assertEquals(1, bridge.asked);
+        assertEquals("- route:\n    id: x\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
+    }
+
+    /** CAMEL-25501: several edits are one change to confirm; a send to a direct: no route consumes yet is noted. */
+    @Test
+    void severalEditsAreOneConfirmedChangeAndAnUnconsumedDirectIsNoted(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route:\n    id: x\n    from:\n      uri: direct:x\n"
+                                                          + "      steps:\n        - log:\n            message: hi\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(true);
+        McpFacade facade = facade(dir, true, bridge);
+
+        JsonObject half = facade.editFile("demo", "demo.camel.yaml", "message: hi",
+                "message: hi\n        - to:\n            uri: direct:ship", true);
+        assertEquals("edited", half.getString("status"));
+        assertTrue(half.get("notes").toString().contains("direct:ship has no route consuming it yet"), half.toJson());
+
+        String edits = "[{\"find\": \"id: x\", \"replace\": \"id: picked\"},"
+                       + " {\"find\": \"uri: direct:ship\\n\", \"replace\": \"uri: direct:ship\\n\\n- route:\\n    id: ship\\n"
+                       + "    from:\\n      uri: direct:ship\\n      steps:\\n        - log:\\n            message: shipped\\n\"}]";
+        JsonObject whole = facade.editFile("demo", "demo.camel.yaml", null, null, edits, true);
+        assertEquals("edited", whole.getString("status"), whole.toJson());
+        assertEquals(2, whole.getInteger("edits"));
+        assertEquals(2, bridge.asked, "the two edits are confirmed as one change");
+        assertNull(whole.get("notes"), whole.toJson());
+        String after = Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8);
+        assertTrue(after.contains("id: picked") && after.contains("id: ship"), after);
+    }
+
+    @Test
     void invalidContentIsNeverWritten(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
         ConfirmingBridge bridge = new ConfirmingBridge(true);
@@ -272,6 +331,27 @@ class McpFacadeWriteFileTest {
                 "nothing is written while the question is open");
         assertNotNull(bridge.request);
         assertEquals("- route: {}\n", bridge.request.oldContent());
+    }
+
+    @Test
+    void liveModeReturnsWhenTheUserTakesLongToDecideAndTheEditStaysInTheEditor(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(true) {
+            @Override
+            public McpFacade.ReplayOutcome replayFileWrite(McpFacade.FileWrite request) {
+                return McpFacade.ReplayOutcome.undecidedOutcome();
+            }
+        };
+        McpFacade facade = facade(dir, true, bridge);
+        facade.setWriteMode(McpFacade.WriteMode.LIVE);
+
+        JsonObject result = facade.writeFile("demo", "demo.camel.yaml", "- route:\n    id: typed\n", true);
+
+        assertEquals("pending", result.getString("status"));
+        assertTrue(result.getString("message").contains("End your turn"));
+        assertTrue(result.getString("message").contains("do not write demo.camel.yaml again"));
+        assertEquals(0, bridge.asked, "no confirm dialog: the edit is still in the editor");
+        assertEquals("- route: {}\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
     }
 
     @Test

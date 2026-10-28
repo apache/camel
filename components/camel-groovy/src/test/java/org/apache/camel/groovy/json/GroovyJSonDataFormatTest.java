@@ -16,12 +16,14 @@
  */
 package org.apache.camel.groovy.json;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import groovy.json.JsonOutput;
 import groovy.json.JsonSlurper;
 import groovy.util.Node;
 import groovy.xml.XmlParser;
@@ -309,6 +311,34 @@ public class GroovyJSonDataFormatTest extends CamelTestSupport {
 
         String json = context.getTypeConverter().convertTo(String.class, out);
         Assertions.assertEquals(JACKSON_COUNTRIES, json + "\n");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testMarshalList() throws Exception {
+        getMockEndpoint("mock:marshal").expectedMessageCount(2);
+
+        // the List that unmarshal gives for a JSON array
+        Object list = template.requestBody("direct:unmarshal", "[{\"id\":1},{\"id\":2}]");
+        Assertions.assertInstanceOf(List.class, list);
+
+        Object out = template.requestBody("direct:marshal-not-pretty", list);
+        Assertions.assertEquals("[{\"id\":1},{\"id\":2}]", context.getTypeConverter().convertTo(String.class, out));
+
+        out = template.requestBody("direct:marshal", list);
+        Assertions.assertEquals(JsonOutput.prettyPrint("[{\"id\":1},{\"id\":2}]"),
+                context.getTypeConverter().convertTo(String.class, out));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testMarshalCollection() throws Exception {
+        getMockEndpoint("mock:marshal").expectedMessageCount(1);
+
+        Object out = template.requestBody("direct:marshal-not-pretty", new LinkedHashSet<>(List.of("a", "b")));
+        Assertions.assertEquals("[\"a\",\"b\"]", context.getTypeConverter().convertTo(String.class, out));
 
         MockEndpoint.assertIsSatisfied(context);
     }

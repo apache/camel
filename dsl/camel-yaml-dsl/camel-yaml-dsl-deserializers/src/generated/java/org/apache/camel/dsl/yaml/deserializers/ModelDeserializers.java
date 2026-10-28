@@ -204,7 +204,6 @@ import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.VariableExpression;
-import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -895,7 +894,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Transform strings to various 1D/2D barcode bitmap formats and back",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "barcodeFormat", type = "enum:AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION", defaultValue = "QR_CODE", description = "Barcode format such as QR-Code.", displayName = "Barcode Format"),
+                    @YamlProperty(name = "barcodeFormat", type = "enum:AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION", defaultValue = "QR_CODE", description = "Barcode format such as QR-Code. MAXICODE, RSS_14, RSS_EXPANDED and UPC_EAN_EXTENSION cannot be written by marshal, as there is no encoder for them; unmarshal reads the format of the image.", displayName = "Barcode Format"),
                     @YamlProperty(name = "height", type = "number", defaultValue = "100", description = "Height of the barcode.", displayName = "Height"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "imageType", type = "enum:JPG,GIF,PNG", defaultValue = "PNG", description = "Image type of the barcode such as png.", displayName = "Image Type"),
@@ -4583,7 +4582,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "responseMessage", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition", description = "Response details for this REST operation", displayName = "Response Message"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id this REST service will refer to.", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
@@ -6099,7 +6098,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "responseMessage", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition", description = "Response details for this REST operation", displayName = "Response Message"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id this REST service will refer to.", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
@@ -6564,7 +6563,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             displayName = "GZip Deflater",
             description = "Compress and decompress messages using java.util.zip.GZIP*Stream",
             deprecated = false,
-            properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxDecompressedSize", type = "number", defaultValue = "1073741824", description = "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.", displayName = "Max Decompressed Size")
+            }
     )
     public static class GzipDeflaterDataFormatDeserializer extends YamlDeserializerBase<GzipDeflaterDataFormat> {
         public GzipDeflaterDataFormatDeserializer() {
@@ -6584,6 +6586,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "maxDecompressedSize": {
+                    String val = asText(node);
+                    target.setMaxDecompressedSize(val);
                     break;
                 }
                 default: {
@@ -6678,7 +6685,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "responseMessage", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition", description = "Response details for this REST operation", displayName = "Response Message"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id this REST service will refer to.", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
@@ -7449,7 +7456,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowAutoWiredMessageFormat", type = "boolean", defaultValue = "true", description = "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry", displayName = "Allow Auto Wired Message Format"),
-                    @YamlProperty(name = "configFile", type = "string", defaultValue = "j8583-config.xml", description = "The j8583 configuration file to load from classpath", displayName = "Config File"),
+                    @YamlProperty(name = "configFile", type = "string", defaultValue = "j8583-config.xml", description = "The j8583 configuration file. It is loaded from the classpath by default; use the file: or http: prefix to load it from somewhere else.", displayName = "Config File"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "isoType", type = "string", description = "The default ISO-Type to use", displayName = "Iso Type")
             }
@@ -8191,7 +8198,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowJmsType", type = "boolean", defaultValue = "false", description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.", displayName = "Allow Jms Type"),
-                    @YamlProperty(name = "allowUnmarshallType", type = "boolean", defaultValue = "false", description = "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.", displayName = "Allow Unmarshall Type"),
+                    @YamlProperty(name = "allowUnmarshallType", type = "boolean", defaultValue = "false", description = "If enabled then Jackson, Gson or JSON-B is allowed to attempt to use the CamelJacksonUnmarshalType, CamelGsonUnmarshalType or CamelJsonbUnmarshallType header during the unmarshalling. This should only be enabled when desired to be used.", displayName = "Allow Unmarshall Type"),
                     @YamlProperty(name = "autoDiscoverObjectMapper", type = "boolean", defaultValue = "false", description = "If set to true then Jackson will look for an objectMapper to use from the registry.", displayName = "Auto Discover Object Mapper"),
                     @YamlProperty(name = "autoDiscoverSchemaResolver", type = "boolean", defaultValue = "true", description = "When not disabled, the SchemaResolver will be looked up into the registry.", displayName = "Auto Discover Schema Resolver"),
                     @YamlProperty(name = "collectionType", type = "string", description = "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default.", displayName = "Collection Type"),
@@ -8377,7 +8384,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allowSimple", type = "boolean", defaultValue = "true", description = "Whether to allow in inlined Simple exceptions in the JSONPath expression.", displayName = "Allow Simple"),
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "option", type = "enum:DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES", description = "To configure additional options on JSONPath. Multiple values can be separated by comma.", displayName = "Option"),
+                    @YamlProperty(name = "option", type = "multienum:DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES", description = "To configure additional options on JSONPath. Multiple values can be separated by comma.", displayName = "Option"),
                     @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
@@ -9488,6 +9495,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage",
             deprecated = false,
             properties = {
+                    @YamlProperty(name = "allowNullBody", type = "boolean", defaultValue = "false", description = "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null.", displayName = "Allow Null Body"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat", required = true, oneOf = "dataFormatType"),
@@ -9561,6 +9569,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "allowNullBody": {
+                    String val = asText(node);
+                    target.setAllowNullBody(val);
+                    break;
+                }
                 case "dataFormatType": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
@@ -10936,7 +10949,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mockIncludePattern", type = "string", defaultValue = "classpath:camel-mock/**", description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.", displayName = "Mock Include Pattern"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id.", displayName = "Route Id"),
-                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenAPI specification file.", displayName = "Specification")
+                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenAPI specification file.", displayName = "Specification"),
+                    @YamlProperty(name = "unmatchedRequestHandling", type = "enum:platform,camel", defaultValue = "platform", description = "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).", displayName = "Unmatched Request Handling")
             }
     )
     public static class OpenApiDefinitionDeserializer extends YamlDeserializerBase<OpenApiDefinition> {
@@ -10982,6 +10996,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "specification": {
                     String val = asText(node);
                     target.setSpecification(val);
+                    break;
+                }
+                case "unmatchedRequestHandling": {
+                    String val = asText(node);
+                    target.setUnmatchedRequestHandling(val);
                     break;
                 }
                 case "id": {
@@ -11577,7 +11596,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Examples of the parameter.", displayName = "Examples"),
                     @YamlProperty(name = "name", type = "string", required = true, description = "The parameter name.", displayName = "Name"),
                     @YamlProperty(name = "required", type = "boolean", defaultValue = "true", description = "Sets the parameter required flag.", displayName = "Required"),
-                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true, defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
+                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
             }
     )
     public static class ParamDefinitionDeserializer extends YamlDeserializerBase<ParamDefinition> {
@@ -11746,7 +11765,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "responseMessage", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition", description = "Response details for this REST operation", displayName = "Response Message"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id this REST service will refer to.", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
@@ -12344,7 +12363,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "responseMessage", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition", description = "Response details for this REST operation", displayName = "Response Message"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id this REST service will refer to.", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
@@ -12894,7 +12913,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "responseMessage", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition", description = "Response details for this REST operation", displayName = "Response Message"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id this REST service will refer to.", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
@@ -14618,7 +14637,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "outType", type = "string", description = "Sets the class name to use for binding from POJO to output for the outgoing data.", displayName = "Out Type"),
                     @YamlProperty(name = "produces", type = "string", description = "The content type the REST service produces (uses for output), such as application/xml or application/json.", displayName = "Produces"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data.", displayName = "Type")
             }
     )
@@ -14751,7 +14770,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "producerApiDoc", type = "string", description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document.", displayName = "Producer Api Doc"),
                     @YamlProperty(name = "producerComponent", type = "enum:vertx-http,http,undertow,netty-http", description = "Sets the name of the Camel component to use as the REST producer.", displayName = "Producer Component"),
                     @YamlProperty(name = "scheme", type = "string", description = "The scheme to use for exposing the REST service. Usually http or https is supported.", displayName = "Scheme"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "useXForwardHeaders", type = "boolean", defaultValue = "false", description = "Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc.", displayName = "Use XForward Headers"),
                     @YamlProperty(name = "validationLevels", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure custom validation levels when using camel-openapi-validator with client request/response validator.", displayName = "Validation Levels"),
                     @YamlProperty(name = "xmlDataFormat", type = "enum:jaxb,jacksonXml", defaultValue = "jaxb", description = "Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.", displayName = "Xml Data Format")
@@ -15007,7 +15026,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "put", type = "array:org.apache.camel.model.rest.PutDefinition"),
                     @YamlProperty(name = "securityDefinitions", type = "object:org.apache.camel.model.rest.RestSecuritiesDefinition", description = "Sets the security definitions such as Basic, OAuth2 etc.", displayName = "Security Definitions"),
                     @YamlProperty(name = "securityRequirements", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Sets the security requirement(s) for all endpoints.", displayName = "Security Requirements"),
-                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "true", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "tag", type = "string", description = "To configure a special tag for the operations within this rest definition.", displayName = "Tag")
             }
     )
@@ -19331,8 +19350,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delimiter", type = "enum:COMMA,TAB,PIPE", defaultValue = "COMMA", description = "Delimiter used for tabular array rows and inline primitive arrays.", displayName = "Delimiter"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "indent", type = "number", defaultValue = "2", description = "Number of spaces per indentation level.", displayName = "Indent"),
-                    @YamlProperty(name = "lengthMarker", type = "boolean", defaultValue = "false", description = "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.", displayName = "Length Marker"),
-                    @YamlProperty(name = "strict", type = "boolean", defaultValue = "true", description = "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.", displayName = "Strict")
+                    @YamlProperty(name = "strict", type = "boolean", defaultValue = "true", description = "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict recoveries of the TOON specification, such as accepting an array whose length differs from the declared length; other malformed TOON still fails.", displayName = "Strict")
             }
     )
     public static class ToonDataFormatDeserializer extends YamlDeserializerBase<ToonDataFormat> {
@@ -19368,11 +19386,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "indent": {
                     String val = asText(node);
                     target.setIndent(val);
-                    break;
-                }
-                case "lengthMarker": {
-                    String val = asText(node);
-                    target.setLengthMarker(val);
                     break;
                 }
                 case "strict": {
@@ -20949,91 +20962,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = "wasm",
-            inline = true,
-            types = org.apache.camel.model.language.WasmExpression.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Wasm",
-            description = "Call a wasm (web assembly) function",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "module", type = "string", required = true, description = "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function.", displayName = "Module"),
-                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.", displayName = "Resolve Resource"),
-                    @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
-            }
-    )
-    public static class WasmExpressionDeserializer extends YamlDeserializerBase<WasmExpression> {
-        public WasmExpressionDeserializer() {
-            super(WasmExpression.class);
-        }
-
-        @Override
-        protected WasmExpression newInstance() {
-            return new WasmExpression();
-        }
-
-        @Override
-        protected WasmExpression newInstance(String value) {
-            return new WasmExpression(value);
-        }
-
-        @Override
-        protected boolean setProperty(WasmExpression target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "expression": {
-                    String val = asText(node);
-                    target.setExpression(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "module": {
-                    String val = asText(node);
-                    target.setModule(val);
-                    break;
-                }
-                case "resolveResource": {
-                    String val = asText(node);
-                    target.setResolveResource(val);
-                    break;
-                }
-                case "resultType": {
-                    String val = asText(node);
-                    target.setResultTypeName(val);
-                    break;
-                }
-                case "trim": {
-                    String val = asText(node);
-                    target.setTrim(val);
-                    break;
-                }
-                default: {
-                    ExpressionDefinition ed = target.getExpressionType();
-                    if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
-                    }
-                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
-                    if (ed != null) {
-                        target.setExpressionType(ed);
-                        warnCompactNotation(node);
-                    } else {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
             nodes = "weightedLoadBalancer",
             types = org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -21316,7 +21244,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "addKeyValueForEncryptedKey", type = "boolean", defaultValue = "true", description = "Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.", displayName = "Add Key Value For Encrypted Key"),
                     @YamlProperty(name = "digestAlgorithm", type = "enum:SHA1,SHA256,SHA512", defaultValue = "SHA1", description = "The digest algorithm to use with the RSA OAEP algorithm.", displayName = "Digest Algorithm"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "keyCipherAlgorithm", type = "enum:RSA_v1dot5,RSA_OAEP,RSA_OAEP_11", defaultValue = "RSA_OAEP", description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key.", displayName = "Key Cipher Algorithm"),
+                    @YamlProperty(name = "keyCipherAlgorithm", type = "enum:RSA_v1dot5,RSA_OAEP,RSA_OAEP_11", description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key. When not set, marshal uses RSA_OAEP when the recipientKeyAlias is set, and unmarshal decrypts with the symmetric key of the passPhrase.", displayName = "Key Cipher Algorithm"),
                     @YamlProperty(name = "keyOrTrustStoreParameters", type = "string", description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.", displayName = "Key Or Trust Store Parameters"),
                     @YamlProperty(name = "keyPassword", type = "string", format = "password", description = "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.", displayName = "Key Password"),
                     @YamlProperty(name = "mgfAlgorithm", type = "enum:MGF1_SHA1,MGF1_SHA256,MGF1_SHA512", defaultValue = "MGF1_SHA1", description = "The MGF Algorithm to use with the RSA OAEP algorithm.", displayName = "Mgf Algorithm"),
@@ -21325,7 +21253,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "passPhraseByte", type = "string", format = "binary", description = "A byte used as passPhrase to encrypt/decrypt content.", displayName = "Pass Phrase Byte"),
                     @YamlProperty(name = "recipientKeyAlias", type = "string", description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.", displayName = "Recipient Key Alias"),
                     @YamlProperty(name = "secureTag", type = "string", description = "The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted.", displayName = "Secure Tag"),
-                    @YamlProperty(name = "secureTagContents", type = "boolean", defaultValue = "false", description = "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false = Element Level, true = Element Content Level.", displayName = "Secure Tag Contents"),
+                    @YamlProperty(name = "secureTagContents", type = "boolean", defaultValue = "true", description = "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false = Element Level, true = Element Content Level.", displayName = "Secure Tag Contents"),
                     @YamlProperty(name = "xmlCipherAlgorithm", type = "enum:TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256", defaultValue = "AES_256_GCM", description = "The cipher algorithm to be used for encryption/decryption of the XML message content.", displayName = "Xml Cipher Algorithm")
             }
     )
@@ -21898,7 +21826,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "compressionLevel", type = "enum:-1,0,1,2,3,4,5,6,7,8,9", defaultValue = "-1", description = "Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression.", displayName = "Compression Level"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxDecompressedSize", type = "number", defaultValue = "1073741824", description = "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.", displayName = "Max Decompressed Size")
             }
     )
     public static class ZipDeflaterDataFormatDeserializer extends YamlDeserializerBase<ZipDeflaterDataFormat> {
@@ -21924,6 +21853,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "maxDecompressedSize": {
+                    String val = asText(node);
+                    target.setMaxDecompressedSize(val);
                     break;
                 }
                 default: {

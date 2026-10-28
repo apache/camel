@@ -66,7 +66,9 @@ For tasks like resume parsing, invoice extraction, or classification, **do not h
       uri: direct:extract-resume
       steps:
         - setBody:
-            simple: "${body}"
+            expression:
+              simple:
+                expression: "${body}"
         - to:
             uri: openai:chat-completion
             parameters:
@@ -159,13 +161,14 @@ The message body is the user prompt when no header overrides it:
 
 [source,yaml]
 ----
-- from:
-    uri: direct:ask
-    steps:
-      - to:
-          uri: openai:chat-completion
-          parameters:
-            model: gpt-4o-mini
+- route:
+    from:
+      uri: direct:ask
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4o-mini
 ----
 
 Send `"Summarize this CV: ..."` as the exchange body.
@@ -182,7 +185,9 @@ Use `CamelOpenAIUserMessage` to build prompts from exchange data:
       steps:
         - setHeader:
             name: CamelOpenAIUserMessage
-            simple: "Rate this candidate 1-10 for role ${header.jobTitle}. CV: ${body}"
+            expression:
+              simple:
+                expression: "Rate this candidate 1-10 for role ${header.jobTitle}. CV: ${body}"
         - to:
             uri: openai:chat-completion
             parameters:
@@ -199,17 +204,35 @@ Inline prompt strings in every route become hard to maintain. Common patterns:
 
 === External prompt files
 
-Load prompts from the classpath or file system and pass them as the body or via a processor:
+Keep a prompt in its own file as a Simple template, and load it with the `resource:` prefix: the template is read
+once and evaluated for each exchange, so `+${body}+` in it is the document the route received. For example
+`prompts/extract-resume.txt` on the classpath:
+
+[source,text]
+----
+Extract structured data from this resume. Use only facts present in the document.
+
+Document to parse:
+${body}
+----
+
+The route reads the resumes from a folder and sends each one with the prompt:
 
 [source,yaml]
 ----
-- from:
-    uri: file:prompts/extract-resume.txt?noop=true
-    steps:
-      - setHeader:
-          name: CamelOpenAIUserMessage
-          simple: "${body}\n\nDocument to parse:\n${exchangeProperty.documentText}"
-      - to: openai:chat-completion?jsonSchema=resource:classpath:schemas/resume.schema.json
+- route:
+    from:
+      uri: file:inbox/resumes
+      steps:
+        - setHeader:
+            name: CamelOpenAIUserMessage
+            expression:
+              simple:
+                expression: resource:classpath:prompts/extract-resume.txt
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              jsonSchema: resource:classpath:schemas/resume.schema.json
 ----
 
 See xref:openai-component.adoc#_basic_chat_completion_with_string_input[OpenAI — file-based prompts].
@@ -244,20 +267,23 @@ With `streaming=true`, the OpenAI component returns an `Iterator<ChatCompletionC
 
 [source,yaml]
 ----
-- from:
-    uri: direct:stream-chat
-    steps:
-      - to:
-          uri: openai:chat-completion
-          parameters:
-            userMessage: Explain Apache Camel in one paragraph
+- route:
+    from:
+      uri: direct:stream-chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              userMessage: Explain Apache Camel in one paragraph
+              streaming: true
+        - split:
             streaming: true
-      - split:
-          streaming: true
-          simple: ${body}
-          steps:
-            - log:
-                message: "chunk: ${body}"
+            expression:
+              simple:
+                expression: ${body}
+            steps:
+              - log:
+                  message: "chunk: ${body}"
 ----
 
 IMPORTANT: Conversation memory is **not** updated for streaming responses. Use non-streaming mode when you need multi-turn history on the same exchange.
@@ -385,11 +411,15 @@ A typical resume-processing pipeline (the use case from community feedback):
         # 1. Optional: extract text upstream (docling, tika, etc.)
         - setProperty:
             name: documentText
-            simple: "${body}"
+            expression:
+              simple:
+                expression: "${body}"
         # 2. Structured LLM extraction — no manual JSON parsing
         - setHeader:
             name: CamelOpenAIUserMessage
-            simple: "Extract candidate fields from this resume:\n\n${exchangeProperty.documentText}"
+            expression:
+              simple:
+                expression: "Extract candidate fields from this resume:\n\n${exchangeProperty.documentText}"
         - to:
             uri: openai:chat-completion
             parameters:
@@ -397,8 +427,10 @@ A typical resume-processing pipeline (the use case from community feedback):
               temperature: 0.1
               jsonSchema: resource:classpath:schemas/resume.schema.json
         # 3. Optional: validate then route to HR system
-        - to: json-validator:validate?schema=resource:classpath:schemas/resume.schema.json
-        - to: direct:store-candidate
+        - to:
+            uri: json-validator:classpath:schemas/resume.schema.json
+        - to:
+            uri: direct:store-candidate
 ----
 
 == Related documentation

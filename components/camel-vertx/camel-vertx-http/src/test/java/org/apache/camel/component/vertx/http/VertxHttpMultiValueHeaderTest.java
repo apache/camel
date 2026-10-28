@@ -1,0 +1,141 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.vertx.http;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * A header whose value is a collection or an object array (as the HTTP consumers map a repeated request header) must be
+ * sent as one HTTP header per value. Any other value is one header.
+ */
+class VertxHttpMultiValueHeaderTest extends VertxHttpTestSupport {
+
+    private static final String NOT_SENT = "X-Test was not sent";
+
+    @Test
+    void sendsEachValueOfAListHeader() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", List.of("a", "b"), String.class);
+        assertEquals("a|b", result);
+    }
+
+    @Test
+    void sendsASingleValueListHeaderAsSingleHeader() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", List.of("a"), String.class);
+        assertEquals("a", result);
+    }
+
+    @Test
+    void sendsEachValueOfAnArrayHeader() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", new String[] { "a", "b" },
+                String.class);
+        assertEquals("a|b", result);
+    }
+
+    @Test
+    void sendsAStringHeaderWithACommaAsOneValue() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", "a, b", String.class);
+        assertEquals("a, b", result);
+    }
+
+    @Test
+    void sendsAByteArrayHeaderAsOneValue() {
+        // a byte[] (such as a Kafka record header) is one value and not one header per byte
+        byte[] value = "abc".getBytes(StandardCharsets.UTF_8);
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", value, String.class);
+        assertEquals("abc", result);
+    }
+
+    @Test
+    void sendsAJsonObjectHeaderAsItsJson() {
+        // a Vert.x JsonObject is an Iterable of its entries, but it is one value
+        JsonObject value = new JsonObject().put("a", "b").put("c", "d");
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", value, String.class);
+        assertEquals("{\"a\":\"b\",\"c\":\"d\"}", result);
+    }
+
+    @Test
+    void sendsAJsonArrayHeaderAsItsJson() {
+        // a Vert.x JsonArray is an Iterable of its elements, but it is one value (a List has one header per value)
+        JsonArray value = new JsonArray().add("a").add("b");
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", value, String.class);
+        assertEquals("[\"a\",\"b\"]", result);
+    }
+
+    @Test
+    void sendsAMapHeaderAsOneValue() {
+        Map<String, Object> value = new LinkedHashMap<>();
+        value.put("a", "b");
+        value.put("c", "d");
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", value, String.class);
+        assertEquals("{a=b, c=d}", result);
+    }
+
+    @Test
+    void doesNotSendAHeaderForAnEmptyList() {
+        // a collection without values has no header to send (it was sent as the value "[]")
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", List.of(), String.class);
+        assertEquals(NOT_SENT, result);
+    }
+
+    @Test
+    void doesNotSendAHeaderForAnEmptyArray() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", new Object[0], String.class);
+        assertEquals(NOT_SENT, result);
+    }
+
+    @Test
+    void doesNotSendAHeaderForAListWithOnlyNullValues() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", Arrays.asList(null, null),
+                String.class);
+        assertEquals(NOT_SENT, result);
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                // the undertow consumer maps a repeated request header to a list of its values
+                from(getTestServerUri())
+                        .process(exchange -> {
+                            Object value = exchange.getMessage().getHeader("X-Test");
+                            String body;
+                            if (value == null) {
+                                body = NOT_SENT;
+                            } else if (value instanceof List<?> list) {
+                                body = String.join("|", list.stream().map(String::valueOf).toList());
+                            } else {
+                                body = String.valueOf(value);
+                            }
+                            exchange.getMessage().setBody(body);
+                        });
+            }
+        };
+    }
+}

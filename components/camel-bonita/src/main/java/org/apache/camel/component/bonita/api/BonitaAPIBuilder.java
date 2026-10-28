@@ -23,6 +23,7 @@ import jakarta.ws.rs.client.WebTarget;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
+import org.apache.camel.component.bonita.api.util.BonitaAPIUtil;
 
 public class BonitaAPIBuilder {
 
@@ -30,16 +31,31 @@ public class BonitaAPIBuilder {
 
     }
 
+    /**
+     * Builds an API that sends its requests with a new JAX-RS client. Nothing closes that client; a caller that uses
+     * the API for a while should use {@link #build(BonitaAPIConfig, Client)} with a client that it closes.
+     */
     public static BonitaAPI build(BonitaAPIConfig bonitaAPIConfig) {
         if (bonitaAPIConfig == null) {
             throw new IllegalArgumentException("bonitaApiConfig is null");
         }
-        ClientBuilder clientBuilder = ClientBuilder.newBuilder();
-        clientBuilder.register(JacksonJsonProvider.class);
-        Client client = clientBuilder.build();
+        return build(bonitaAPIConfig, ClientBuilder.newBuilder().build());
+    }
+
+    /**
+     * Builds an API that sends its requests with the given JAX-RS client. The JSON provider and the login filter of the
+     * configuration are registered on the client, and the file inputs of a case are uploaded with it too. The client
+     * stays with the caller, which closes it when the API is no longer used.
+     */
+    public static BonitaAPI build(BonitaAPIConfig bonitaAPIConfig, Client client) {
+        if (bonitaAPIConfig == null) {
+            throw new IllegalArgumentException("bonitaApiConfig is null");
+        }
+        client.register(JacksonJsonProvider.class);
         client.register(new BonitaAuthFilter(bonitaAPIConfig));
         WebTarget webTarget = client.target(bonitaAPIConfig.getBaseBonitaURI()).path("/API/bpm");
-        return new BonitaAPI(bonitaAPIConfig, webTarget);
+        // the file inputs are uploaded with the client of this API, so they go to its server with its account
+        return new BonitaAPI(bonitaAPIConfig, webTarget, BonitaAPIUtil.forClient(client, bonitaAPIConfig));
     }
 
 }

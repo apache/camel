@@ -17,8 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +47,12 @@ class AiPanelPromptBudgetTest {
     // camel_error_diagnose joined the core set
     // raised to 5000 when camel_catalog_find joined the core set (CAMEL-24760): the budget guards against accidental
     // growth of the prefix, a 32k context leaves ample room
-    static final int CORE_BUDGET_TOKENS = 5_000;
+    // raised from 5000 for the bounded component answer of camel_catalog_doc (CAMEL-25541), measured ~5040: its limit
+    // argument, the docPage that also takes a section of the page, and the full application.properties key replace
+    // the camel_component_properties tool and the 38k-character answers a client spilled to a file
+    // raised from 5100 when camel_get_errors said that it answers for an integration that is not running (CAMEL-25784),
+    // measured ~5119: without it an agent does not ask how the previous run ended
+    static final int CORE_BUDGET_TOKENS = 5_200;
     /** Measured ~6.9k tokens for 47 tools. */
     // raised from 7500 with tui_write_file and tui_validate_source
     // and from 7900 with the shared camel_* set (camel_catalog_find, camel_run and camel_error_diagnose added)
@@ -54,7 +65,23 @@ class AiPanelPromptBudgetTest {
     // saves far more tokens per edit than its schema costs once
     // raised from 9450 for camel_project_overview and camel_save_project_summary (CAMEL-25143), measured ~9750:
     // full mode only (hosted models), and the panel's own /overview sends no tools at all
-    static final int FULL_BUDGET_TOKENS = 9_850;
+    // raised from 9850 for tui_http_endpoints and tui_http_request (CAMEL-25307), measured ~10070: a model that can
+    // see what the integration serves and call it is worth the ~250 tokens
+    // raised from 10250 for the edits argument of camel_edit_file (CAMEL-25501), measured ~10400: several places of a
+    // file changed in one call, so dev mode never reloads a file half done
+    // raised from 10500 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~10485
+    // raised from 10600 for tui_diagram_zoom, measured ~10731 (~168 for the tool): a model asked to zoom or fold the
+    // diagram does it as the keys do; full mode only, its schema cut to the bone
+    static final int FULL_BUDGET_TOKENS = 10_750;
+    /** Measured ~5.5k tokens for 28 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
+    // the SQL group adds tui_execute_sql and tui_update_row (~385 tokens), each group one guidance line in the prompt
+    // (~130 for all three); an integration rarely has all of them, and the groups only load for the integration that
+    // needs them
+    // raised from 5500 for the http group (CAMEL-25307), measured ~5460: tui_http_endpoints and tui_http_request
+    // (~245 tokens) and its guidance line (~35), for the local model that otherwise cannot see or call the HTTP API
+    // it is building
+    // raised from 5750 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~5820
+    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_900;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -99,8 +126,24 @@ class AiPanelPromptBudgetTest {
         AiPanel panel = new AiPanel();
         panel.setToolRegistryForTesting(new TuiToolRegistry(null));
         panel.setToolModeForTesting(mode);
+        return measure(mode, panel);
+    }
+
+    static Prefix measure(String mode, AiPanel panel) {
         List<LlmClient.ToolDef> defs = panel.toolDefinitionsForTesting();
         return new Prefix(mode, defs.size(), panel.systemPromptForTesting().length(), wireChars(defs));
+    }
+
+    /**
+     * A core panel with every tool group loaded: datasources, OpenTelemetry, tracing, Micrometer, circuit breakers,
+     * HTTP.
+     */
+    static AiPanel coreWithAllGroups() {
+        AiPanelToolGroupsTest.FakeApp app = new AiPanelToolGroupsTest.FakeApp();
+        app.features = AiPanelToolGroupsTest.EVERYTHING;
+        AiPanel panel = AiPanelToolGroupsTest.panel(AiPanel.TOOL_MODE_CORE, app);
+        panel.refreshToolGroupsForTesting();
+        return panel;
     }
 
     @Test
@@ -113,12 +156,39 @@ class AiPanelPromptBudgetTest {
     }
 
     @Test
+    void coreWithAllGroupsPrefixStaysWithinBudget() {
+        Prefix groups = measure("core+groups", coreWithAllGroups());
+        System.out.println("AI panel static prefix: " + groups);
+
+        assertTrue(groups.totalTokens() <= CORE_WITH_GROUPS_BUDGET_TOKENS,
+                "core prefix with all groups grew to ~" + groups.totalTokens() + " tokens, budget "
+                                                                           + CORE_WITH_GROUPS_BUDGET_TOKENS + ": "
+                                                                           + groups);
+    }
+
+    @Test
     void fullPrefixStaysWithinBudget() {
         Prefix full = measure(AiPanel.TOOL_MODE_FULL);
         System.out.println("AI panel static prefix: " + full);
 
         assertTrue(full.totalTokens() <= FULL_BUDGET_TOKENS,
                 "full prefix grew to ~" + full.totalTokens() + " tokens, budget " + FULL_BUDGET_TOKENS + ": " + full);
+    }
+
+    @Test
+    void semanticHistoryHasABoundedAdditionalPromptCost() {
+        for (String mode : List.of(AiPanel.TOOL_MODE_CORE, AiPanel.TOOL_MODE_FULL)) {
+            AiPanelToolGroupsTest.FakeApp app = new AiPanelToolGroupsTest.FakeApp();
+            app.features = AiPanelToolGroupsTest.EVERYTHING.merge(AppFeatures.fromStatus(
+                    new JsonObject(Map.of("devConsoles", List.of("semantic-audit")))));
+            AiPanel panel = AiPanelToolGroupsTest.panel(mode, app);
+            panel.refreshToolGroupsForTesting();
+            Prefix prefix = measure(mode + "+semantic", panel);
+            System.out.println("AI panel semantic prefix: " + prefix);
+            // core raised from 6100 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~6170; full
+            // raised from 11000 for tui_diagram_zoom, measured ~11068
+            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6250 : 11100));
+        }
     }
 
     @Test
@@ -154,5 +224,20 @@ class AiPanelPromptBudgetTest {
         for (String prompt : List.of(core, full)) {
             assertTrue(prompt.contains("camel_write_file"), "write files with the tool");
         }
+
+        // CAMEL-24834: the guidance of the tool groups only names tools the model is given
+        AiPanel groups = coreWithAllGroups();
+        String prompt = groups.systemPromptForTesting();
+        int start = prompt.indexOf("The selected integration:");
+        assertTrue(start > 0, "the guidance is appended at the end");
+        Set<String> tools = groups.toolDefinitionsForTesting().stream().map(LlmClient.ToolDef::name)
+                .collect(Collectors.toSet());
+        Matcher m = Pattern.compile("\\b(?:tui|camel)_[a-z_]+").matcher(prompt.substring(start));
+        int named = 0;
+        while (m.find()) {
+            named++;
+            assertTrue(tools.contains(m.group()), m.group() + " is named in the guidance but not in the set");
+        }
+        assertTrue(named >= 4, "the guidance names the tools to use");
     }
 }

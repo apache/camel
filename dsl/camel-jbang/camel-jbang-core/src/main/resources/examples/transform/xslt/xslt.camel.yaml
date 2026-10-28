@@ -1,0 +1,17 @@
+# The supplier's XML order dropped in the inbox becomes the packing slip the warehouse prints,
+# transformed by the stylesheet packing-slip.xsl.
+- route:
+    id: xslt
+    from:
+      uri: file
+      parameters:
+        directoryName: inbox
+        noop: true
+        include: ".*\\.xml"
+      steps:
+        - to:
+            uri: xslt
+            parameters:
+              resourceUri: packing-slip.xsl
+        - log:
+            message: "Packing slip:\n${prettyBody}"

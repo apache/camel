@@ -36,7 +36,18 @@ public class CamelPathTemplateHandler implements HttpHandler {
     private String handlerString;
 
     public CamelPathTemplateHandler(CamelMethodHandler defaultHandler) {
+        this(defaultHandler, null);
+    }
+
+    /**
+     * @param defaultHandler  the handler of the static base path, for a request that no template matches
+     * @param fallbackHandler the handler for a request that no template matches while no static base path is set (the
+     *                        handler of the requests that no path of the server matches), or null to let the empty
+     *                        default handler answer 405
+     */
+    public CamelPathTemplateHandler(CamelMethodHandler defaultHandler, HttpHandler fallbackHandler) {
         defaultHandlerWrapper.set(defaultHandler);
+        defaultHandlerWrapper.setFallback(fallbackHandler);
         delegate = new PathTemplateHandler(defaultHandlerWrapper);
     }
 
@@ -106,9 +117,18 @@ public class CamelPathTemplateHandler implements HttpHandler {
 
     static class Wrapper implements HttpHandler {
         private CamelMethodHandler handler;
+        /**
+         * The handler for a request when {@link #handler} has no handler for any method (no static base path is set),
+         * or null to let {@link #handler} answer 405. It is set once, when the template handler is created.
+         */
+        private HttpHandler fallback;
 
         public void set(CamelMethodHandler handler) {
             this.handler = handler;
+        }
+
+        public void setFallback(HttpHandler fallback) {
+            this.fallback = fallback;
         }
 
         public CamelMethodHandler get() {
@@ -117,7 +137,16 @@ public class CamelPathTemplateHandler implements HttpHandler {
 
         @Override
         public void handleRequest(HttpServerExchange exchange) throws Exception {
-            handler.handleRequest(exchange);
+            CamelMethodHandler current = handler;
+            HttpHandler other = fallback;
+            if (other != null && current.isEmpty()) {
+                // no template and no static path of this base path matches: the request is not for this base path,
+                // so it gets the answer of a request that no path of the server matches (404, or 405 when a rest-dsl
+                // consumer of the port has the path with another method)
+                other.handleRequest(exchange);
+            } else {
+                current.handleRequest(exchange);
+            }
         }
     }
 }

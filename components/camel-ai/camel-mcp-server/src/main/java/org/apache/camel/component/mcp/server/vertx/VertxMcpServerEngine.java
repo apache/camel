@@ -28,6 +28,7 @@ import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
+import io.vertx.ext.auth.User;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.mcp.server.McpResourceReadResult;
@@ -37,6 +38,7 @@ import org.apache.camel.component.mcp.server.McpServerIcon;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerResource;
 import org.apache.camel.component.mcp.server.McpServerTool;
+import org.apache.camel.component.mcp.server.McpToolCallContext;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
@@ -65,6 +67,12 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             }
             """;
     private static final String APPLICATION_JSON = "application/json";
+
+    /**
+     * Key under which {@link VertxMcpStreamableServerTransportProvider} stashes the authenticated caller principal in
+     * the MCP transport context, so the tool-call handler reads it back via {@code exchange.transportContext()}.
+     */
+    static final String TRANSPORT_PRINCIPAL_KEY = "CamelMcpTransportPrincipal";
 
     private CamelContext camelContext;
     private McpServerInfo info;
@@ -159,7 +167,10 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 .tool(mcpTool)
                 .callHandler((exchange, request) -> {
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
-                    McpToolCallResult result = tool.handler().call(arguments);
+                    Object principal = exchange.transportContext() != null
+                            ? exchange.transportContext().get(TRANSPORT_PRINCIPAL_KEY) : null;
+                    McpToolCallContext context = toToolCallContext(principal);
+                    McpToolCallResult result = tool.handler().call(arguments, context);
                     McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
                             .addTextContent(result.text())
                             .isError(result.isError());
@@ -171,6 +182,22 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 .build();
         server.addTool(spec);
         LOG.debug("MCP tool added: {}", tool.name());
+    }
+
+    /**
+     * Builds the tool-call context from the transport principal, deriving a runtime-neutral name and roles when it is a
+     * Vert.x {@link User} so a tool route or its authorization policy can authorize on a stable identity without
+     * depending on Vert.x. A non-{@code User} principal is still carried as the raw object, and {@code null} yields the
+     * empty context.
+     */
+    private static McpToolCallContext toToolCallContext(Object principal) {
+        if (principal instanceof User user) {
+            return new McpToolCallContext(user, VertxMcpPrincipal.name(user), VertxMcpPrincipal.roles(user));
+        }
+        if (principal != null) {
+            return new McpToolCallContext(principal);
+        }
+        return McpToolCallContext.EMPTY;
     }
 
     @Override

@@ -27,6 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.IgniteConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,6 +47,48 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_CACHE;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_CACHE, title = "Ignite Cache", syntax = "ignite-cache:cacheName",
              category = { Category.CACHE, Category.CLUSTERING }, headersClass = IgniteConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "oneExchangePerUpdate", value = "false",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "fireExistingQueryResults", value = "true",
+                                                          carriers = Carrier.UNKNOWN) },
+                                   description = "The new value of the cache entry that changed, with its key in the"
+                                                 + " CamelIgniteCacheKey header, the old value in CamelIgniteCacheOldValue and"
+                                                 + " the event type in CamelIgniteCacheEventType. With oneExchangePerUpdate=false"
+                                                 + " a List of the CacheEntryEvents of Ignite per batch; with"
+                                                 + " fireExistingQueryResults=true the entries the initial query finds come"
+                                                 + " first, each as a JCache Cache.Entry"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "PUT and REPLACE store the body as the value of the key in the"
+                                                + " CamelIgniteCacheKey header, and a PUT of a Map puts all its entries; no"
+                                                + " body fails. GET and REMOVE take the key from that header, or else from the"
+                                                + " body, where a Set is several keys. QUERY needs an Ignite Query in the body"
+                                                + " or the CamelIgniteCacheQuery header. SIZE, CLEAR and REBALANCE do not use"
+                                                + " the body. The operation is the operation option or the"
+                                                + " CamelIgniteCacheOperation header; with neither the producer fails"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   dependsOn = "propagateIncomingBodyIfNoReturnValue",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "PUT",
+                                                          carriers = { Carrier.UNCHANGED, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "REPLACE",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "REMOVE",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "CLEAR",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "REBALANCE",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "SIZE", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Integer"),
+                                           @BodyType.When(option = "operation", value = "QUERY",
+                                                          carriers = Carrier.ITERATOR) },
+                                   description = "GET gives the cached value, or null when the key is not cached, and a Map"
+                                                 + " of the keys and their values for a Set of keys. QUERY gives an Iterator of"
+                                                 + " the entries found, closed when the exchange completes. SIZE gives the"
+                                                 + " number of entries. The others leave the body, but a PUT of a Map leaves no"
+                                                 + " body"))
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

@@ -31,18 +31,40 @@ import jakarta.json.bind.config.PropertyOrderStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.JsonPayloadHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Marshal POJOs to JSON and back using JSON-B.
  */
 @Dataformat("jsonb")
-@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyNamingStrategy,skipNull")
+@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyNamingStrategy,skipNull,allowUnmarshallType")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.ANY,
+                                 description = "A Map, a List or a POJO to write as JSON. Bytes, a stream, a file from a file"
+                                               + " consumer, or a String with a JSON object or array is written as it is; any"
+                                               + " other String becomes a JSON string"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
+                                  description = "The JSON in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    dependsOn = "allowUnmarshallType", javaTypeOption = "unmarshalType",
+                                    description = "A Map (HashMap with Yasson) for a JSON object, a List (ArrayList) for an"
+                                                  + " array, with the numbers as BigDecimal"))
 public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+
+    /**
+     * The header with the name of the class to unmarshal to, used when allowUnmarshallType is enabled.
+     */
+    public static final String UNMARSHAL_TYPE = "CamelJsonbUnmarshallType";
+
     private CamelContext camelContext;
     private Jsonb objectMapper;
     private String unmarshalTypeName;
@@ -54,6 +76,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     private String propertyOrder = PropertyOrderStrategy.ANY;
     private String propertyNamingStrategy = PropertyNamingStrategy.IDENTITY;
     private boolean skipNull = true;
+    private boolean allowUnmarshallType;
 
     public JsonbDataFormat() {
         this(Object.class);
@@ -155,6 +178,19 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
         this.skipNull = skipNull;
     }
 
+    public boolean isAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    /**
+     * If enabled then JSON-B is allowed to attempt to use the CamelJsonbUnmarshallType header during the unmarshalling.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setAllowUnmarshallType(boolean allowUnmarshallType) {
+        this.allowUnmarshallType = allowUnmarshallType;
+    }
+
     public String getBinaryStrategy() {
         return binaryStrategy;
     }
@@ -181,6 +217,14 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) {
+        // a body that already is the JSON text is written as it is (CAMEL-25329)
+        try {
+            if (JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream) >= 0) {
+                return;
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
         objectMapper.toJson(graph, stream);
     }
 
@@ -193,7 +237,10 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     public Object unmarshal(Exchange exchange, Object body) throws Exception {
         // is there a header with the unmarshal type?
         Class<?> expectedType = unmarshalType;
-        String type = exchange.getIn().getHeader("CamelJsonbUnmarshallType", String.class);
+        String type = null;
+        if (allowUnmarshallType) {
+            type = exchange.getIn().getHeader(UNMARSHAL_TYPE, String.class);
+        }
         if (type != null) {
             expectedType = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
         }

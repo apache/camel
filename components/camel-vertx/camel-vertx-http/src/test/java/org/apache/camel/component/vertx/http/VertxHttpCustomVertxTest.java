@@ -19,7 +19,6 @@ package org.apache.camel.component.vertx.http;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.metrics.MetricsOptions;
-import io.vertx.core.metrics.impl.DummyVertxMetrics;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
@@ -64,7 +63,6 @@ public class VertxHttpCustomVertxTest {
     public void testCustomVertxOptions() {
         MetricsOptions metrics = new MetricsOptions();
         metrics.setEnabled(true);
-        metrics.setFactory(options -> DummyVertxMetrics.INSTANCE);
 
         VertxOptions options = new VertxOptions();
         options.setMetricsOptions(metrics);

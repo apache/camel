@@ -16,14 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.support.PatternHelper;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -36,9 +36,13 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
 @Command(name = "source", description = "Display Camel route source code", sortOptions = false, showDefaultValues = true,
          footer = {
                  "%nExamples:",
-                 "  camel cmd source",
-                 "  camel cmd source --filter=myRoute" })
+                 "  camel get source",
+                 "  camel get source --filter=myRoute",
+                 "  camel get source --json" })
 public class CamelSourceAction extends ActionBaseCommand {
+
+    // a route without a source location sorts first
+    private static final RowSort<Row> ORDER = new RowSort<Row>().text("name", r -> r.location);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -51,6 +55,12 @@ public class CamelSourceAction extends ActionBaseCommand {
                         description = "Sort source by name", defaultValue = "name")
     String sort;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
 
     public CamelSourceAction(CamelJBangMain main) {
@@ -61,98 +71,58 @@ public class CamelSourceAction extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
-        this.pid = pids.get(0);
-
-        Path outputFile = prepareAction(Long.toString(pid), "source", root -> {
+        JsonObject jo = executeAction(process, "source", root -> {
             root.put("filter", "*");
         });
-
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            JsonArray arr = (JsonArray) jo.get("routes");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject o = (JsonObject) arr.get(i);
-                Row row = new Row();
-                row.location = extractSourceName(o.getString("source"));
-                // if there are 2+ routes in the same source then we would have duplicates
-                if (!rows.contains(row)) {
-                    List<JsonObject> lines = o.getCollection("code");
-                    if (lines != null) {
-                        for (JsonObject line : lines) {
-                            Code code = new Code();
-                            code.line = line.getInteger("line");
-                            code.code = line.getString("code");
-                            row.code.add(code);
-                        }
-                    }
-                    boolean add = true;
-                    if (filter != null) {
-                        String f = filter;
-                        boolean negate = filter.startsWith("-");
-                        if (negate) {
-                            f = f.substring(1);
-                        }
-                        // make filtering easier
-                        if (!f.endsWith("*")) {
-                            f += "*";
-                        }
-                        boolean match = PatternHelper.matchPattern(row.location, f);
-                        if (negate) {
-                            match = !match;
-                        }
-                        if (!match) {
-                            add = false;
-                        }
-                    }
-                    if (add) {
-                        rows.add(row);
+        JsonArray arr = jo.get("routes") instanceof JsonArray routes ? routes : new JsonArray();
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject o = (JsonObject) arr.get(i);
+            Row row = new Row();
+            row.location = extractSourceName(o.getString("source"));
+            // if there are 2+ routes in the same source then we would have duplicates
+            if (!rows.contains(row)) {
+                List<JsonObject> lines = o.getCollection("code");
+                if (lines != null) {
+                    for (JsonObject line : lines) {
+                        Code code = new Code();
+                        code.line = line.getInteger("line");
+                        code.code = line.getString("code");
+                        row.code.add(code);
                     }
                 }
+                boolean add = true;
+                if (filter != null && !matchesFilter(filter, row.location)) {
+                    add = false;
+                }
+                if (add) {
+                    rows.add(row);
+                }
             }
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows.stream().map(r -> {
+                JsonObject jo2 = new JsonObject();
+                jo2.put("location", r.location);
+                jo2.put("code", r.code.stream().map(c -> {
+                    JsonObject line = new JsonObject();
+                    line.put("line", c.line);
+                    line.put("code", c.code);
+                    return line;
+                }).toList());
+                return jo2;
+            }).toList());
+        } else if (!rows.isEmpty()) {
             printSource(rows);
         }
 
-        // delete output file after use
-        try {
-            Files.deleteIfExists(outputFile);
-        } catch (IOException e) {
-            // ignore
-        }
-
         return 0;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.location.compareToIgnoreCase(o2.location) * negate;
-            default:
-                return 0;
-        }
     }
 
     protected void printSource(List<Row> rows) {
@@ -167,10 +137,6 @@ public class CamelSourceAction extends ActionBaseCommand {
             }
             printer().println();
         }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     public static String extractSourceName(String loc) {
@@ -201,12 +167,12 @@ public class CamelSourceAction extends ActionBaseCommand {
 
             Row row = (Row) o;
 
-            return location.equals(row.location);
+            return Objects.equals(location, row.location);
         }
 
         @Override
         public int hashCode() {
-            return location.hashCode();
+            return Objects.hashCode(location);
         }
     }
 

@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.translate.client.Translate2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,14 @@ import software.amazon.awssdk.services.translate.TranslateClient;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-translate", title = "AWS Translate", syntax = "aws2-translate:label",
              producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT }, headersClass = Translate2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The text to translate: bytes, a stream or a file are read as text, a Map or a"
+                                                + " POJO is translated as its toString(), so take the text out of it first, and"
+                                                + " no body fails. With pojoRequest=true the body is a TranslateTextRequest of"
+                                                + " the AWS SDK: another body fails"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The translated text. The source language that AWS detects with"
+                                                 + " autodetectSourceLanguage=true is not kept"))
 public class Translate2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private TranslateClient translateClient;

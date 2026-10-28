@@ -75,7 +75,7 @@ public class KubernetesConfiguration implements Cloneable {
     @UriParam(label = "security", security = "secret")
     private String oauthToken;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "insecure:ssl", insecureValue = "true")
     private Boolean trustCerts;
 
     @UriParam

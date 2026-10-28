@@ -73,6 +73,23 @@ class LaunchManagerStartFailureTest {
         assertThat(new LaunchManager.PendingLaunch("metrics", null, out, 0).startFailed()).isTrue();
     }
 
+    @Test
+    void aFailedLaunchTellsWhyWithoutColorsAndStackFrames() throws Exception {
+        Path out = Files.writeString(dir.resolve("launch.log"),
+                "\u001B[32m INFO\u001B[m Starting\n"
+                                                                + "ERROR Error starting Camel: Property with key [env:OPENAI_API_KEY] returned null\n"
+                                                                + "\tat org.apache.camel.Foo.bar(Foo.java:1)\n"
+                                                                + "Caused by: java.lang.IllegalArgumentException: no key\n"
+                                                                + "\t... 12 more\n");
+
+        LaunchManager.LaunchOutcome outcome = LaunchManager.LaunchOutcome.failed(out);
+
+        assertThat(outcome.ok()).isFalse();
+        assertThat(outcome.log()).isEqualTo(" INFO Starting\n"
+                                            + "ERROR Error starting Camel: Property with key [env:OPENAI_API_KEY] returned null\n"
+                                            + "Caused by: java.lang.IllegalArgumentException: no key");
+    }
+
     private static void append(Path file, String text) throws Exception {
         Files.writeString(file, text, StandardOpenOption.APPEND);
     }

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vertx-http",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "vertx-http",
     "extendsScheme": "",
     "syntax": "vertx-http:httpUri",
@@ -54,6 +54,10 @@
     "CamelHttpUri": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "URI to call. Will override the existing URI set directly on the endpoint. This URI is the URI of the http server to call. Its not the same as the Camel endpoint URI, where you can configure endpoint options such as security etc. This header does not support that, its only the URI of the http server.", "constantName": "org.apache.camel.component.vertx.http.VertxHttpConstants#HTTP_URI" },
     "CamelHttpPath": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Request URI's path, the header will be used to build the request URI with the HTTP_URI.", "constantName": "org.apache.camel.component.vertx.http.VertxHttpConstants#HTTP_PATH" },
     "Content-Encoding": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The HTTP content encoding. Is set to provide a content encoding, such as gzip.", "constantName": "org.apache.camel.component.vertx.http.VertxHttpConstants#CONTENT_ENCODING" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "null", "text", "bytes", "stream", "file" ], "description": "The request body: text, bytes, a stream or a file (a file as a multipart form with multipartUpload), or a Vert.x Buffer, MultiMap (a form) or MultipartForm. A Map, a List or a POJO fails: marshal it first. Without httpMethod, a query string in the URI or no body sends a GET, and a body a POST" },
+    "producerOut": { "carriers": [ "bytes", "null" ], "description": "The response body as a byte array, or null for a response without a body. A Vert.x Buffer with responsePayloadAsByteArray=false, which stream caching turns into a stream" }
   },
   "properties": {
     "httpUri": { "index": 0, "kind": "path", "displayName": "Http Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.net.URI", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.vertx.http.VertxHttpConfiguration", "configurationField": "configuration", "description": "The HTTP URI to connect to" },

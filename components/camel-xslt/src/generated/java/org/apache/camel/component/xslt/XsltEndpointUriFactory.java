@@ -59,7 +59,7 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "resourceUri", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

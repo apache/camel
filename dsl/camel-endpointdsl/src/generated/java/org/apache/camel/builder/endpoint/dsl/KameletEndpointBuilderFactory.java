@@ -172,6 +172,42 @@ public interface KameletEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to forward extra URI parameters to the endpoint wrapped by
+         * the Kamelet. When enabled, parameters that are not Kamelet template
+         * properties or reserved Kamelet options are appended to the wrapped
+         * source or sink endpoint. Disabled by default.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param advancedOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointConsumerBuilder advancedOptions(boolean advancedOptions) {
+            doSetProperty("advancedOptions", advancedOptions);
+            return this;
+        }
+        /**
+         * Whether to forward extra URI parameters to the endpoint wrapped by
+         * the Kamelet. When enabled, parameters that are not Kamelet template
+         * properties or reserved Kamelet options are appended to the wrapped
+         * source or sink endpoint. Disabled by default.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param advancedOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointConsumerBuilder advancedOptions(String advancedOptions) {
+            doSetProperty("advancedOptions", advancedOptions);
+            return this;
+        }
+        /**
          * Location of the Kamelet to use which can be specified as a resource
          * from file system, classpath etc. The location cannot use wildcards,
          * and must refer to a file including extension, for example
@@ -397,6 +433,42 @@ public interface KameletEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to forward extra URI parameters to the endpoint wrapped by
+         * the Kamelet. When enabled, parameters that are not Kamelet template
+         * properties or reserved Kamelet options are appended to the wrapped
+         * source or sink endpoint. Disabled by default.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param advancedOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder advancedOptions(boolean advancedOptions) {
+            doSetProperty("advancedOptions", advancedOptions);
+            return this;
+        }
+        /**
+         * Whether to forward extra URI parameters to the endpoint wrapped by
+         * the Kamelet. When enabled, parameters that are not Kamelet template
+         * properties or reserved Kamelet options are appended to the wrapped
+         * source or sink endpoint. Disabled by default.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param advancedOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder advancedOptions(String advancedOptions) {
+            doSetProperty("advancedOptions", advancedOptions);
+            return this;
+        }
+        /**
          * Location of the Kamelet to use which can be specified as a resource
          * from file system, classpath etc. The location cannot use wildcards,
          * and must refer to a file including extension, for example
@@ -483,6 +555,42 @@ public interface KameletEndpointBuilderFactory {
             return (KameletEndpointBuilder) this;
         }
 
+        /**
+         * Whether to forward extra URI parameters to the endpoint wrapped by
+         * the Kamelet. When enabled, parameters that are not Kamelet template
+         * properties or reserved Kamelet options are appended to the wrapped
+         * source or sink endpoint. Disabled by default.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param advancedOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointBuilder advancedOptions(boolean advancedOptions) {
+            doSetProperty("advancedOptions", advancedOptions);
+            return this;
+        }
+        /**
+         * Whether to forward extra URI parameters to the endpoint wrapped by
+         * the Kamelet. When enabled, parameters that are not Kamelet template
+         * properties or reserved Kamelet options are appended to the wrapped
+         * source or sink endpoint. Disabled by default.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param advancedOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointBuilder advancedOptions(String advancedOptions) {
+            doSetProperty("advancedOptions", advancedOptions);
+            return this;
+        }
         /**
          * Location of the Kamelet to use which can be specified as a resource
          * from file system, classpath etc. The location cannot use wildcards,

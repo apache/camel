@@ -93,7 +93,9 @@ public interface SlackEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Max Result for the poll.
+         * The maximum number of messages that the consumer requests from the
+         * conversation history at a time. When more new messages are available,
+         * the consumer reads the following pages in the same poll.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

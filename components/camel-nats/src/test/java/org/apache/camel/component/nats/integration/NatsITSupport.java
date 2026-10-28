@@ -18,16 +18,21 @@ package org.apache.camel.component.nats.integration;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.component.nats.NatsComponent;
+import org.apache.camel.component.nats.NatsConsumer;
 import org.apache.camel.test.infra.nats.services.NatsService;
 import org.apache.camel.test.infra.nats.services.NatsServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.awaitility.Awaitility.await;
 
 public class NatsITSupport extends CamelTestSupport {
     @RegisterExtension
@@ -51,5 +56,25 @@ public class NatsITSupport extends CamelTestSupport {
         NatsComponent nats = context.getComponent("nats", NatsComponent.class);
         nats.getConfiguration().setServers(service.getServiceAddress());
         return context;
+    }
+
+    /**
+     * Waits until at least {@code count} NATS consumers in the current context have finished subscribing and are
+     * active. Core NATS does not persist messages for inactive subscribers, so callers must invoke this before
+     * publishing or sending any message that a consumer route is expected to receive.
+     */
+    protected void waitForNatsConsumers(int count) {
+        waitForNatsConsumers(context, count);
+    }
+
+    /**
+     * Static variant for use in support classes that do not extend {@link NatsITSupport}.
+     */
+    static void waitForNatsConsumers(CamelContext ctx, int count) {
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> ctx.getRoutes().stream()
+                        .map(Route::getConsumer)
+                        .filter(c -> c instanceof NatsConsumer nc && nc.isActive())
+                        .count() >= count);
     }
 }

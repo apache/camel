@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quickfix",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "quickfix",
     "extendsScheme": "",
     "syntax": "quickfix:configurationName",
@@ -37,6 +37,12 @@
     "EventCategory": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "org.apache.camel.component.quickfixj.QuickfixjEventCategory", "enum": [ "AppMessageReceived", "AppMessageSent", "AdminMessageReceived", "AdminMessageSent", "SessionCreated", "SessionLogon", "SessionLogoff" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The event category.", "constantName": "org.apache.camel.component.quickfixj.QuickfixjEndpoint#EVENT_CATEGORY_KEY" },
     "SessionID": { "index": 1, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "quickfix.SessionID", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The FIX message SessionID.", "constantName": "org.apache.camel.component.quickfixj.QuickfixjEndpoint#SESSION_ID_KEY" },
     "MessageType": { "index": 2, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The FIX MsgType tag value.", "constantName": "org.apache.camel.component.quickfixj.QuickfixjEndpoint#MESSAGE_TYPE_KEY" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo", "null" ], "description": "The FIX message: a quickfix.Message, such as a quickfix.fix44.Email, with the kind of event in the EventCategory header and the MsgType in the MessageType header. SessionCreated, SessionLogon and SessionLogoff events have no body" },
+    "consumerReply": { "carriers": [ "pojo", "text", "bytes" ], "description": "With exchangePattern=InOut, the reply sent back on the session of the request: a quickfix.Message, or the FIX message as text or bytes. Every event is answered with the body the route ends with: a route that sets no reply sends back the message it received" },
+    "producerIn": { "carriers": [ "pojo", "text", "bytes" ], "description": "The FIX message to send: a quickfix.Message, or the FIX message as text or bytes, parsed with the DataDictionary exchange property or the data dictionary of the session. A stream, a Map or no body fails" },
+    "producerOut": { "carriers": [ "unchanged", "pojo" ], "description": "The body is left as it was. An InOut exchange waits for the reply that matches the CorrelationCriteria exchange property, and the reply quickfix.Message is the body" }
   },
   "properties": {
     "configurationName": { "index": 0, "kind": "path", "displayName": "Configuration Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the quickfix configuration file. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the configuration file using these protocols (classpath is default). ref will lookup the configuration file in the registry. bean will call a method on a bean to be used as the configuration. For bean you can specify the method name after dot, eg bean:myBean.myMethod" },

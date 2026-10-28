@@ -7,7 +7,24 @@
     "javaType": "org.apache.camel.processor.transformer.ByteArrayDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-processor",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "text",
+        "bytes",
+        "stream",
+        "file"
+      ],
+      "description": "A body Camel can convert to a byte array: a number or a null body fails"
+    },
+    "transformerOut": {
+      "carriers": [
+        "bytes"
+      ],
+      "javaType": "byte[]"
+    }
   }
 }
 

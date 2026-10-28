@@ -19,9 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
@@ -37,6 +35,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -146,42 +145,6 @@ final class DiagramDetailSupport {
         return null;
     }
 
-    Map<Integer, List<SourceViewer.DocEntry>> provideAllQuickDocs(List<JsonObject> cd) {
-        if (cachedRouteDetail == null || cd.isEmpty()) {
-            return Map.of();
-        }
-
-        List<JsonObject> processors = getAllProcessors(cachedRouteDetail);
-        if (processors.isEmpty()) {
-            return Map.of();
-        }
-
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        CamelCatalog catalog = info != null ? getCatalog(info) : null;
-
-        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
-        for (JsonObject proc : processors) {
-            Integer line = proc.getInteger("line");
-            if (line == null || line <= 0) {
-                continue;
-            }
-
-            int eipIdx = findCodeDataIndex(cd, line, -1);
-            if (eipIdx < 0 || result.containsKey(eipIdx)) {
-                continue;
-            }
-            String endpointUri = proc.getString("endpointUri");
-            String type = proc.getString("type");
-
-            if (endpointUri != null && catalog != null) {
-                buildEndpointInlineDoc(result, cd, catalog, endpointUri, eipIdx);
-            } else if (type != null) {
-                buildEipInlineDoc(result, cd, catalog, type, proc.getMap("options"), eipIdx);
-            }
-        }
-        return result;
-    }
-
     static Line buildBreadcrumbTitle(Deque<String> routeNavigationStack, String drillDownRouteId) {
         Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
@@ -204,7 +167,8 @@ final class DiagramDetailSupport {
      * else the AI's, marked) and its group, in the group's colour, so going down a level keeps the context
      * (CAMEL-25147).
      */
-    static Line withRouteContext(Line title, IntegrationInfo info, String routeId, Path dir, boolean groups) {
+    static Line withRouteContext(
+            Line title, IntegrationInfo info, String routeId, Path dir, boolean groups, boolean errors) {
         List<Span> spans = new ArrayList<>(title.spans());
         String label = null;
         boolean ai = false;
@@ -225,7 +189,7 @@ final class DiagramDetailSupport {
                     ? Span.styled(IntegrationSummaryHints.MARK + label.strip() + " ", Theme.aiAssisted())
                     : Span.styled(label.strip() + " ", Style.EMPTY.fg(Theme.baseFg())));
         }
-        RouteGroups.Tag tag = groups ? RouteGroups.of(dir).get(routeId) : null;
+        RouteGroups.Tag tag = groups ? RouteGroups.of(dir, errors).get(routeId) : null;
         if (tag != null) {
             spans.add(Span.styled("\u00b7 ", Theme.muted()));
             spans.add(tag.ai()
@@ -264,8 +228,8 @@ final class DiagramDetailSupport {
      * The route's group: its route group from the source, or where the AI project overview placed it (a capability,
      * utility), marked and styled as AI-assisted (CAMEL-25147).
      */
-    private static void addGroup(List<Line> lines, IntegrationInfo info, RouteInfo route) {
-        RouteGroups.Tag tag = RouteGroups.of(FilesBrowser.resolveSourceDirectory(info)).get(route.routeId);
+    private static void addGroup(List<Line> lines, IntegrationInfo info, RouteInfo route, boolean errors) {
+        RouteGroups.Tag tag = RouteGroups.of(FilesBrowser.resolveSourceDirectory(info), errors).get(route.routeId);
         if (tag == null) {
             return;
         }
@@ -291,11 +255,15 @@ final class DiagramDetailSupport {
     static List<String> wrapWords(String text, int width) {
         List<String> out = new ArrayList<>();
         StringBuilder line = new StringBuilder();
+        int lineWidth = 0;
         for (String word : text.split("\\s+")) {
-            if (!line.isEmpty() && line.length() + 1 + word.length() > width) {
+            int wordWidth = CharWidth.of(word);
+            if (!line.isEmpty() && lineWidth + 1 + wordWidth > width) {
                 out.add(line.toString());
                 line.setLength(0);
+                lineWidth = 0;
             }
+            lineWidth += (line.isEmpty() ? 0 : 1) + wordWidth;
             line.append(line.isEmpty() ? "" : " ").append(word);
         }
         if (!line.isEmpty()) {
@@ -326,8 +294,13 @@ final class DiagramDetailSupport {
             lines.add(Line.from(
                     Span.styled(" State: ", Theme.muted()),
                     Span.styled(stateLabel, stateStyle)));
-            addGroup(lines, info, route);
+            addGroup(lines, info, route, diagram.isShowErrorPaths());
             addDescription(lines, info, route, area.width() - 3);
+            if (route.variedBodyTypes > 0) {
+                // the steps reached with more than one body type (CAMEL-25750): the route diagram shows which, with y
+                lines.add(Line.from(Span.styled(" Body:  ", Theme.muted()), Span.styled(RoutesTab.bodyTypesLabel(route),
+                        route.mixedBodyKinds > 0 ? Theme.warning() : Style.EMPTY.fg(Theme.baseFg()))));
+            }
 
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
@@ -346,6 +319,7 @@ final class DiagramDetailSupport {
                         Span.styled(" Coverage:   ", Theme.muted()),
                         Span.raw(route.coverage)));
             }
+            addRevision(lines, route);
 
             lines.add(Line.from(Span.raw("")));
             int w = numWidth(route.total, route.failed, route.inflight);
@@ -405,50 +379,7 @@ final class DiagramDetailSupport {
             }
 
         } else {
-            // External endpoint — show topology node data
-            var topoNode = diagram.getSelectedTopologyNode();
-            if (topoNode != null) {
-                boolean isInbound = "external-in".equals(topoNode.nodeType);
-                boolean isBridge = "external".equals(topoNode.nodeType);
-                String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
-                lines.add(Line.from(
-                        Span.styled(label, Style.EMPTY.fg(Theme.accent()).bold())));
-                lines.add(Line.from(Span.raw("")));
-                lines.add(Line.from(
-                        Span.styled(" URI: ", Theme.muted()),
-                        Span.raw(topoNode.from != null ? topoNode.from : "")));
-                if (topoNode.description != null && !topoNode.description.isBlank()) {
-                    lines.add(Line.from(
-                            Span.styled(" Path: ", Theme.muted()),
-                            Span.raw(topoNode.description)));
-                }
-                if (!isBridge) {
-                    String connectedRoute = diagram.getConnectedRouteId(routeId);
-                    if (connectedRoute != null) {
-                        lines.add(Line.from(Span.raw("")));
-                        lines.add(Line.from(
-                                Span.styled(isInbound ? " To route: " : " From route: ", Theme.muted()),
-                                Span.styled(connectedRoute, Style.EMPTY.fg(Theme.baseFg()))));
-                    }
-                }
-                if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
-                    lines.add(Line.from(Span.raw("")));
-                    lines.add(Line.from(
-                            Span.styled(" Total:  ", Theme.muted()),
-                            Span.raw(String.valueOf(topoNode.exchangesTotal))));
-                    if (topoNode.exchangesFailed > 0) {
-                        lines.add(Line.from(
-                                Span.styled(" Failed: ", Theme.muted()),
-                                Span.styled(String.valueOf(topoNode.exchangesFailed),
-                                        Theme.error().bold())));
-                    }
-                }
-            } else {
-                lines.add(Line.from(
-                        Span.styled(" " + routeId, Style.EMPTY.fg(Theme.accent()).bold())));
-                lines.add(Line.from(
-                        Span.styled(" (external endpoint)", Style.EMPTY.dim())));
-            }
+            addExternalEndpoint(lines, routeId);
         }
 
         Paragraph paragraph = Paragraph.builder()
@@ -457,6 +388,89 @@ final class DiagramDetailSupport {
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
+    }
+
+    /**
+     * The checksum of the route as written, to compare with the checksum camel cmd route-structure gives for the routes
+     * of a file, and its revision when it was added again changed in this run, such as by a reload (CAMEL-25771).
+     */
+    static void addRevision(List<Line> lines, RouteInfo route) {
+        if (route.checksum == null) {
+            return;
+        }
+        lines.add(Line.from(
+                Span.styled(" Checksum:   ", Theme.muted()),
+                Span.raw(route.checksum)));
+        if (route.revision > 1) {
+            int changes = route.revision - 1;
+            lines.add(Line.from(
+                    Span.styled(" Revision:   ", Theme.muted()),
+                    Span.raw(String.valueOf(route.revision)),
+                    Span.styled(changes == 1 ? " · 1 change" : " · " + changes + " changes", Theme.muted())));
+        }
+    }
+
+    /**
+     * A system outside the integration, selected in the topology: where it is, the route it is linked to, its counts.
+     */
+    private void addExternalEndpoint(List<Line> lines, String routeId) {
+        // External endpoint — show topology node data
+        var topoNode = diagram.getSelectedTopologyNode();
+        if (topoNode != null && TopologyGroupFolds.groupOf(routeId) != null) {
+            // a folded group of routes
+            lines.add(Line.from(Span.styled(" Group: ", Theme.muted()),
+                    Span.styled(String.valueOf(topoNode.description), Style.EMPTY.fg(Theme.baseFg()).bold())));
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Routes folded:", Theme.muted())));
+            for (String folded : String.valueOf(topoNode.from).split(", ")) {
+                lines.add(Line.from(Span.raw("  " + folded)));
+            }
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Space or Enter unfolds it", Theme.muted())));
+            return;
+        }
+        if (topoNode != null) {
+            boolean isInbound = "external-in".equals(topoNode.nodeType);
+            boolean isBridge = "external".equals(topoNode.nodeType);
+            String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
+            lines.add(Line.from(
+                    Span.styled(label, Style.EMPTY.fg(Theme.accent()).bold())));
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled(" URI: ", Theme.muted()),
+                    Span.raw(topoNode.from != null ? topoNode.from : "")));
+            if (topoNode.description != null && !topoNode.description.isBlank()) {
+                lines.add(Line.from(
+                        Span.styled(" Path: ", Theme.muted()),
+                        Span.raw(topoNode.description)));
+            }
+            if (!isBridge) {
+                String connectedRoute = diagram.getConnectedRouteId(routeId);
+                if (connectedRoute != null) {
+                    lines.add(Line.from(Span.raw("")));
+                    lines.add(Line.from(
+                            Span.styled(isInbound ? " To route: " : " From route: ", Theme.muted()),
+                            Span.styled(connectedRoute, Style.EMPTY.fg(Theme.baseFg()))));
+                }
+            }
+            if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" Total:  ", Theme.muted()),
+                        Span.raw(String.valueOf(topoNode.exchangesTotal))));
+                if (topoNode.exchangesFailed > 0) {
+                    lines.add(Line.from(
+                            Span.styled(" Failed: ", Theme.muted()),
+                            Span.styled(String.valueOf(topoNode.exchangesFailed),
+                                    Theme.error().bold())));
+                }
+            }
+        } else {
+            lines.add(Line.from(
+                    Span.styled(" " + routeId, Style.EMPTY.fg(Theme.accent()).bold())));
+            lines.add(Line.from(
+                    Span.styled(" (external endpoint)", Style.EMPTY.dim())));
+        }
     }
 
     void renderEipInfoPanel(Frame frame, Rect area, String drillDownRouteId) {
@@ -530,82 +544,11 @@ final class DiagramDetailSupport {
                         Span.styled(arrow, Theme.muted())));
             }
 
+            if (ln.treeNode != null) {
+                addBodyTypes(lines, ln.treeNode.info, area.width() - 3);
+            }
             if (ln.treeNode != null && ln.treeNode.info.stat != null) {
-                var stat = ln.treeNode.info.stat;
-                lines.add(Line.from(Span.raw("")));
-                int w = numWidth(stat.exchangesTotal, stat.exchangesFailed, stat.exchangesInflight);
-                lines.add(Line.from(
-                        Span.styled(" Total:    ", Theme.muted()),
-                        Span.raw(String.format("%" + w + "d", stat.exchangesTotal))));
-                Style failStyle = stat.exchangesFailed > 0
-                        ? Theme.error().bold() : Style.EMPTY;
-                lines.add(Line.from(
-                        Span.styled(" Failed:   ", Theme.muted()),
-                        Span.styled(String.format("%" + w + "d", stat.exchangesFailed), failStyle)));
-                lines.add(Line.from(
-                        Span.styled(" Inflight: ", Theme.muted()),
-                        Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
-                if (stat.exchangesThroughput != null && !stat.exchangesThroughput.isEmpty()) {
-                    String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
-                    String tpValue = ctx.ratePerMinute
-                            ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
-                            : stat.exchangesThroughput;
-                    lines.add(Line.from(
-                            Span.styled(" Rate:     ", Theme.muted()),
-                            Span.raw(tpValue),
-                            Span.styled(tpUnit, Theme.muted())));
-                }
-
-                if (stat.exchangesTotal > 0) {
-                    lines.add(Line.from(Span.raw("")));
-                    lines.add(Line.from(
-                            Span.styled(" Mean: ", Theme.muted()),
-                            Span.raw(formatDurationMs(stat.meanProcessingTime))));
-                    lines.add(Line.from(
-                            Span.styled(" Max:  ", Theme.muted()),
-                            Span.raw(formatDurationMs(stat.maxProcessingTime))));
-                    lines.add(Line.from(
-                            Span.styled(" Min:  ", Theme.muted()),
-                            Span.raw(formatDurationMs(stat.minProcessingTime))));
-                    lines.add(Line.from(
-                            Span.styled(" Last: ", Theme.muted()),
-                            Span.raw(formatDurationMs(stat.lastProcessingTime))));
-                    if (stat.p50ProcessingTime >= 0) {
-                        lines.add(Line.from(Span.raw("")));
-                        lines.add(Line.from(
-                                Span.styled(" p50:  ", Theme.muted()),
-                                Span.raw(formatDurationMs(stat.p50ProcessingTime))));
-                        lines.add(Line.from(
-                                Span.styled(" p95:  ", Theme.muted()),
-                                Span.raw(formatDurationMs(stat.p95ProcessingTime))));
-                        lines.add(Line.from(
-                                Span.styled(" p99:  ", Theme.muted()),
-                                Span.raw(formatDurationMs(stat.p99ProcessingTime))));
-                        lines.add(buildPercentileBarLine(
-                                stat.p50ProcessingTime, stat.p95ProcessingTime,
-                                stat.p99ProcessingTime, area.width() - 3));
-                    }
-
-                    if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
-                        long now = System.currentTimeMillis();
-                        lines.add(Line.from(Span.raw("")));
-                        lines.add(Line.from(
-                                Span.styled(" Since last:", Theme.muted())));
-                        if (stat.lastCompletedExchangeTimestamp > 0) {
-                            long ago = now - stat.lastCompletedExchangeTimestamp;
-                            lines.add(Line.from(
-                                    Span.styled("   ok:   ", Theme.muted()),
-                                    Span.raw(TimeUtils.printDuration(ago, false))));
-                        }
-                        if (stat.lastFailedExchangeTimestamp > 0) {
-                            long ago = now - stat.lastFailedExchangeTimestamp;
-                            lines.add(Line.from(
-                                    Span.styled("   fail: ", Theme.muted()),
-                                    Span.styled(TimeUtils.printDuration(ago, false),
-                                            Theme.error())));
-                        }
-                    }
-                }
+                addStepStatistics(lines, ln.treeNode.info.stat, area.width() - 3);
             }
         } else {
             lines.add(Line.from(Span.styled(" (no node selected)", Style.EMPTY.dim())));
@@ -617,6 +560,111 @@ final class DiagramDetailSupport {
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
+    }
+
+    /**
+     * The body types the step has been reached with, across the messages (CAMEL-25750), one per line, with their kind;
+     * a step reached with bodies of more than one kind needs attention. The diagram shows them cut, and with y only.
+     */
+    static void addBodyTypes(List<Line> lines, RouteDiagramLayoutEngine.NodeInfo info, int width) {
+        if (info.bodyTypes.isEmpty()) {
+            return;
+        }
+        boolean mixed = BodyTypes.mixed(info.bodyKinds);
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled(
+                mixed || info.bodyKinds.isEmpty() ? " Body types:" : " Body types (" + info.bodyKinds.get(0) + "):",
+                Theme.muted())));
+        for (String type : info.bodyTypes) {
+            lines.add(Line.from(Span.raw("   " + truncate(BodyTypes.simpleName(type), Math.max(4, width - 2)))));
+        }
+        if (mixed) {
+            List<String> warning = wrapWords(
+                    BodyTypes.kinds(info.bodyKinds) + ": the body here depends on the path a message takes",
+                    Math.max(10, width - 2));
+            for (int i = 0; i < warning.size(); i++) {
+                lines.add(Line.from(Span.styled((i == 0 ? " " + BodyTypes.MARK + " " : "   ") + warning.get(i),
+                        Theme.warning())));
+            }
+        }
+    }
+
+    /** The statistics of a step: its counts, its rate, its times, and how long since its last message. */
+    private void addStepStatistics(List<Line> lines, RouteDiagramLayoutEngine.StatInfo stat, int width) {
+        lines.add(Line.from(Span.raw("")));
+        int w = numWidth(stat.exchangesTotal, stat.exchangesFailed, stat.exchangesInflight);
+        lines.add(Line.from(
+                Span.styled(" Total:    ", Theme.muted()),
+                Span.raw(String.format("%" + w + "d", stat.exchangesTotal))));
+        Style failStyle = stat.exchangesFailed > 0
+                ? Theme.error().bold() : Style.EMPTY;
+        lines.add(Line.from(
+                Span.styled(" Failed:   ", Theme.muted()),
+                Span.styled(String.format("%" + w + "d", stat.exchangesFailed), failStyle)));
+        lines.add(Line.from(
+                Span.styled(" Inflight: ", Theme.muted()),
+                Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
+        if (stat.exchangesThroughput != null && !stat.exchangesThroughput.isEmpty()) {
+            String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
+            String tpValue = ctx.ratePerMinute
+                    ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
+                    : stat.exchangesThroughput;
+            lines.add(Line.from(
+                    Span.styled(" Rate:     ", Theme.muted()),
+                    Span.raw(tpValue),
+                    Span.styled(tpUnit, Theme.muted())));
+        }
+
+        if (stat.exchangesTotal > 0) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled(" Mean: ", Theme.muted()),
+                    Span.raw(formatDurationMs(stat.meanProcessingTime))));
+            lines.add(Line.from(
+                    Span.styled(" Max:  ", Theme.muted()),
+                    Span.raw(formatDurationMs(stat.maxProcessingTime))));
+            lines.add(Line.from(
+                    Span.styled(" Min:  ", Theme.muted()),
+                    Span.raw(formatDurationMs(stat.minProcessingTime))));
+            lines.add(Line.from(
+                    Span.styled(" Last: ", Theme.muted()),
+                    Span.raw(formatDurationMs(stat.lastProcessingTime))));
+            if (stat.p50ProcessingTime >= 0) {
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" p50:  ", Theme.muted()),
+                        Span.raw(formatDurationMs(stat.p50ProcessingTime))));
+                lines.add(Line.from(
+                        Span.styled(" p95:  ", Theme.muted()),
+                        Span.raw(formatDurationMs(stat.p95ProcessingTime))));
+                lines.add(Line.from(
+                        Span.styled(" p99:  ", Theme.muted()),
+                        Span.raw(formatDurationMs(stat.p99ProcessingTime))));
+                lines.add(buildPercentileBarLine(
+                        stat.p50ProcessingTime, stat.p95ProcessingTime,
+                        stat.p99ProcessingTime, width));
+            }
+
+            if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
+                long now = System.currentTimeMillis();
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" Since last:", Theme.muted())));
+                if (stat.lastCompletedExchangeTimestamp > 0) {
+                    long ago = now - stat.lastCompletedExchangeTimestamp;
+                    lines.add(Line.from(
+                            Span.styled("   ok:   ", Theme.muted()),
+                            Span.raw(TimeUtils.printDuration(ago, false))));
+                }
+                if (stat.lastFailedExchangeTimestamp > 0) {
+                    long ago = now - stat.lastFailedExchangeTimestamp;
+                    lines.add(Line.from(
+                            Span.styled("   fail: ", Theme.muted()),
+                            Span.styled(TimeUtils.printDuration(ago, false),
+                                    Theme.error())));
+                }
+            }
+        }
     }
 
     void renderDetail(Frame frame, Rect area, IntegrationInfo info, String drillDownRouteId) {

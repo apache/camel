@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote.mina;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1264,9 +1265,19 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
             // create parent folders
             temp.getParentFile().mkdirs();
 
+            // the consumer deletes the local work file named by this header when the exchange is done, and the file
+            // producer moves it to the target instead of copying it
+            exchange.getIn().setHeader(FtpConstants.FILE_LOCAL_WORK_PATH, local.getPath());
+
             try (InputStream is = sftpClient.read(name);
                  OutputStream os = new FileOutputStream(temp)) {
                 IOHelper.copy(is, os);
+            } catch (IOException e) {
+                // the streams are closed by now, so the partly written file can be deleted, as camel-sftp does
+                if (temp.exists() && !FileUtil.deleteFile(temp)) {
+                    LOG.warn("Cannot delete local work file: {} after retrieving file: {} failed", temp, name);
+                }
+                throw e;
             }
 
             LOG.debug("Retrieve file to local work file result: true");
@@ -1343,8 +1354,28 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
             }
         }
 
+        InputStream is = null;
+        if (exchange.getIn().getBody() == null) {
+            // Do an explicit test for a null body and decide what to do
+            if (endpoint.isAllowNullBody()) {
+                LOG.trace("Writing empty file.");
+                is = new ByteArrayInputStream(new byte[0]);
+            } else {
+                throw new GenericFileOperationFailedException("Cannot write null body to file: " + name);
+            }
+        }
+
         try {
-            InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (is == null) {
+                String charset = endpoint.getCharset();
+                if (charset != null) {
+                    // charset configured so we must convert to the desired charset so we can write with encoding
+                    is = GenericFileHelper.toInputStream(exchange, charset);
+                    LOG.trace("Using InputStream {} with charset {}.", is, charset);
+                } else {
+                    is = exchange.getIn().getMandatoryBody(InputStream.class);
+                }
+            }
 
             boolean append = endpoint.getFileExist() == GenericFileExist.Append;
 

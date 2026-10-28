@@ -103,8 +103,7 @@ public final class GistHelper {
                     String u = asGistSingleUrl(rawUrl);
                     properties.add(u);
                 } else if (routes != null) {
-                    if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
-                            || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
+                    if (GitHubHelper.isRouteExtension(ext)) {
                         String rawUrl = c.get("raw_url").asText();
                         String u = asGistSingleUrl(rawUrl);
                         routes.add(u);

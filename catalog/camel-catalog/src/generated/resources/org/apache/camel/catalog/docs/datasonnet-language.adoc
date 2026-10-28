@@ -36,7 +36,8 @@ include::partial$language-options.adoc[]
 
 === Setting a result type
 
-The xref:datasonnet-language.adoc[DataSonnet] expression will return a `com.datasonnet.document.Document` by default. The
+The xref:datasonnet-language.adoc[DataSonnet] expression will return a `com.datasonnet.document.Document` by default, or
+`null` when the result is `null`. The
 document preserves the content type metadata along with the contents of the transformation result. In predicates,
 however, the Document will be automatically unwrapped and the boolean content will be returned. Similarly, any time you
 want the content in a specific result type like a String. To do this, you have to instruct the
@@ -48,25 +49,46 @@ Java::
 +
 [source,java]
 ----
-datasonnet("body.foo", String.class);
+from("direct:start")
+    .setBody(datasonnet("body.foo", String.class))
+    .to("mock:result");
 ----
 
 XML::
 +
 [source,xml]
 ----
-<datasonnet resultType="java.lang.String">body.foo</datasonnet>
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <datasonnet resultType="java.lang.String">body.foo</datasonnet>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
 ----
-+
-[NOTE]
-=====
-In XML DSL you use the `resultType` attribute to provide a fully qualified class name.
-=====
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            expression:
+              datasonnet:
+                expression: body.foo
+                resultType: java.lang.String
+        - to:
+            uri: mock:result
+----
 ====
 
+In XML and YAML DSL, `resultType` is the fully qualified class name.
+
 If the expression results in an array, or an object, you can instruct the expression to return you `List.class`
-or `Map.class`, respectively. However, you must also set the output media type to `application/x-java-object`.
+or `Map.class`, respectively, as long as the output media type is `application/x-java-object`, which is the default.
 
 NOTE: The default `Document` object is useful in situations where there are intermediate transformation steps, and so
 retaining the content metadata through a route execution is valuable.
@@ -94,6 +116,11 @@ And for output media type:
 3. A "CamelDatasonnetOutputMediaType" message header
 4. The DataSonnet Header output media type directive
 5. `application/x-java-object`
+
+NOTE: With the body media type `application/x-java-object`, the body is the Java object it is: JSON text is a string,
+not an object, so `body.foo` fails on it. Set `bodyMediaType`, or a `Content-Type` header, to read text, bytes, a
+stream or a file in that format, such as `application/json`, `application/xml` or `application/csv`. Without a
+media type, a stream is read as text.
 
 === Functions
 
@@ -148,9 +175,21 @@ xref:ROOT:properties-component.adoc[Properties] component (property placeholders
 
 |cml.nowFmt(format) |`cml.nowFmt('yyyy-MM-dd')` |Returns the current UTC time formatted with the given pattern.
 
-|cml.formatDate(value, format) |`cml.formatDate('2026-03-20T10:30:00Z', 'dd/MM/yyyy')` |Reformats an ISO-8601 date string using the given pattern. Returns null for null input.
+|cml.formatDate(value, format) |`cml.formatDate('2026-03-20T10:30:00Z', 'dd/MM/yyyy')` |Formats an ISO-8601 date, date-time or time string (or epoch milliseconds) using the given pattern, in the default locale. Returns null for null input.
+
+|cml.formatDateLocale(value, format, locale) |`cml.formatDateLocale('2026-03-20', 'dd MMM yyyy', 'en')` |Like `cml.formatDate`, in the given locale (a language tag such as `en` or `de-DE`).
 
 |cml.parseDate(value, format) |`cml.parseDate('20/03/2026', 'dd/MM/yyyy')` |Parses a date string into epoch milliseconds. Returns null for null input.
+
+|cml.formatNumber(value, format) |`cml.formatNumber(1234.5, '#,##0.00')` |Formats a number with a `java.text.DecimalFormat` pattern, in the default locale. Any other value (such as a string) is returned as is.
+
+|cml.formatNumberLocale(value, format, locale) |`cml.formatNumberLocale(1234.5, '#,##0.00', 'de')` |Like `cml.formatNumber`, in the given locale (a language tag such as `en` or `de-DE`).
+
+|cml.parseDateTime(value, format, type) |`cml.parseDateTime('01/31/2020', 'MM/dd/yyyy', 'Date')` |Parses a string in the given format (ISO-8601 when the format is null), or a number of seconds since the epoch, into an ISO-8601 string of the given type: `Date`, `DateTime`, `LocalDateTime`, `Time` or `LocalTime`. Returns null for null input.
+
+|cml.dateAdd(value, amount) |`cml.dateAdd('2020-01-31', 'P1D')` |Adds an ISO-8601 period or duration (such as `P1D`, `PT2H` or `-P1M`) to an ISO-8601 date or time. Returns null for null input.
+
+|cml.datePart(value, part) |`cml.datePart('2020-01-31', 'year')` |A part of an ISO-8601 date or time: `year`, `month`, `day`, `hour`, `minutes`, `seconds`, `milliseconds`, `nanoseconds`, `dayOfWeek`, `dayOfYear`, `quarter`, `offsetSeconds` or `timezone`. Returns null for null input.
 |===
 
 === Math Functions
@@ -491,17 +530,80 @@ camel transform dataweave --input my-transform.dwl --output my-transform.ds
 camel transform dataweave --input src/main/resources/dwl/ --output src/main/resources/ds/
 ----
 
+=== How DataWeave is converted
+
+The converted script keeps the DataWeave semantics, which differ from plain Jsonnet in important ways. For example, in
+DataWeave a missing field, an index out of range or a selector on `null` gives `null`, a field selector on an array
+selects the field of every element (`payload.items.price`), and most functions accept `null`. The converted script uses
+the `camel-dataweave.libsonnet` library of camel-datasonnet for these semantics (imported as `dw`), DataSonnet's `ds` library,
+and the `cml` functions above.
+
+The conversion either produces a script that gives the same result as the DataWeave script, or fails:
+
+- Invalid DataWeave fails with a `DataWeaveConversionException` that reports the line and column.
+- A construct that cannot be converted, and any function or variable the converter does not know, makes the route fail
+  to start with a `DataWeaveConversionException`, instead of running a script that gives a different result.
+  The CLI transpiler emits such constructs as a `TODO` comment and `null`, and reports how many need manual review.
+
 === Supported Constructs
 
-The transpiler automatically maps DataWeave constructs to their DataSonnet equivalents, including:
+- *Header*: `%dw`, `output` (JSON, XML, CSV, Java and text; for JSON the writer properties `skipNullOn`, `indent` and
+  `encoding`, for XML `writeDeclaration`, `skipNullOn` (`elements`, `attributes` or `everywhere`), `indent`,
+  `encoding` and `inlineCloseOn`), `input`, `ns` namespace declarations, `import` of the `dw::core` modules, `var` and
+  `fun` declarations (also with default parameters, recursive and calling each other), and `type` declarations
+  (ignored).
+- *Selectors*: `.field`, `."quoted field"`, `[index]` (negative from the end), `[from to to]`, `["key"]`, `.*field`,
+  `..field`, `..*field`, `.@attribute`, `.@` (all the attributes), `.ns#field` (in the namespace declared as `ns`),
+  `field?` and `[?(condition)]`.
+- *Mule variables and attributes*: `payload` is the message body, `vars.name` (or `vars["name"]`) an exchange variable,
+  and `attributes.headers`, `attributes.queryParams` and `attributes.uriParams` message headers. `attributes.method`,
+  `requestPath`, `requestUri`, `queryString`, `statusCode` and `reasonPhrase` are the corresponding Camel HTTP headers.
+- *Operators*, with the DataWeave precedence: arithmetic, comparison, `~=`, `and`, `or`, `not`, `++`, `--`, removing a
+  key with `-`, `default`, `if`/`else`, `unless`/`else`, `match` (literal, `is Type`, `matches /regex/`, `if` guards
+  and `else` cases), `do` blocks and `using`.
+- *Functions* in prefix and infix form (`upper(x)`, `xs map f`), with lambdas `(item, index) -> ...`, the `$`, `$$` and
+  `$$$` shorthand, and references to functions: `map`, `filter`, `reduce`, `flatMap`, `flatten`, `distinctBy`,
+  `groupBy`, `orderBy`, `mapObject`, `filterObject`, `pluck`, `keysOf`, `namesOf`, `valuesOf`, `entriesOf`, `zip`,
+  `unzip`, `sizeOf`, `isEmpty`, `isBlank`, `sum`, `avg`, `min`, `max`, `maxBy`, `minBy`, `then`, `to`, `upper`, `lower`,
+  `trim`, `contains`, `startsWith`, `endsWith`, `splitBy`, `joinBy`, `replace ... with`, `matches`, `scan`, `find`,
+  `abs`, `ceil`, `floor`, `round`, `sqrt`, `pow`, `mod`, `isEven`, `isOdd`, `isInteger`, `isDecimal`, `typeOf`, `now`,
+  `uuid`, `p`, `log`, `fail`, `read` and `write`, and of the `dw::core` modules `camelize`, `capitalize`, `dasherize`,
+  `underscore`, `pluralize`, `singularize`, `leftPad`, `rightPad`, `substringBefore`, `substringAfter` (and the other
+  `Strings` functions), `take`, `drop`, `splitAt`, `divideBy`, `indexOf`, `countBy`, `sumBy`, `every`, `some`,
+  `partition`, `firstWith` and `mergeWith`.
+- *Objects*: dynamic keys `(key): value`, conditional fields `(key: value) if condition`, and object spread
+  `{ (expression) }` of an object or an array of objects.
+- *XML input*: as in DataWeave, a selector matches an element by its local name whatever its namespace prefix (such as
+  `payload.Envelope.Body` of a SOAP message), and `.ns#field` only in the given namespace. The value of an element
+  without child elements is its text (`null` when empty), `.field` of an element that repeats is the first one and
+  `.*field` all of them, and the attributes are read with `.@name` and `.@` (also of an element in a variable or
+  given to a lambda). The object functions (`keysOf`, `sizeOf`, `mapObject`, `pluck`, `entriesOf`, ...) see the child
+  elements in document order, without the attributes. In an output other than XML, an element is written as its text,
+  or as an object of its child elements, without its attributes and namespace prefixes.
+- *XML output*: attributes `key @(name: value)`, namespace-qualified keys `ns0#key` (declared on the root element),
+  `null` as an empty element, and arrays, object spreads and keys that repeat as elements that repeat, in the order of
+  the script. An element of the input is written with its child elements, attributes and namespaces; under another key
+  it gets the attributes of that key, as in DataWeave.
+- *Strings*: interpolation (`"Hello $(expression)"`, `"Hello $name"` and `$` of a lambda), and regular expressions
+  `/.../` in `replace` (also with a function of the matched groups: `replace /(\d+)/ with ($[1] ++ "!")`), `contains`,
+  `splitBy`, `matches`, `scan` and `find`.
+- *Type coercion*: `as String`, `as Number`, `as Boolean`, `as String {format: ...}` of numbers and dates,
+  `as Date`, `as DateTime`, `as LocalDateTime`, `as Time` and `as LocalTime` (with or without `format`), date literals
+  such as `|2020-01-31|`, date arithmetic with periods such as `|P1D|`, and the parts of a date such as `.year`.
+  Dates and times are ISO-8601 strings in the converted script; as in DataWeave, a date coerced with a format is
+  written in that format. Numbers and dates are formatted in the default locale (as DataWeave does), unless the
+  coercion has a `locale` property.
 
-- `payload` to `body`, `vars` to `cml.variable()`, `attributes.headers` to `cml.header()`
-- Operators: `++` to `+`, `default` to `cml.defaultVal()`, `as Number/String/Boolean` to `cml.toInteger()/std.toString()/cml.toBoolean()`
-- Collection operations: `map`, `filter`, `reduce`, `flatMap`, `groupBy`, `orderBy`, `distinctBy`
-- String operations: `contains`, `startsWith`, `endsWith`, `splitBy`, `joinBy`, `replace`
-- Functions: `sizeOf`, `upper`, `lower`, `trim`, `now`, `uuid`, `abs`, `round`, `sqrt`
+The expected output of the DataWeave scripts in the tests of the conversion is verified with the DataWeave CLI.
 
-Constructs that cannot be automatically converted (such as `match` expressions) are emitted as `null` for manual review.
+These constructs are not converted (the conversion fails): the `update` operator, `try` (`dw::Runtime`), overloaded
+functions, custom modules, `as` with a custom type, the `..@` selector, a namespace prefix that is not declared, and
+writer properties other than the ones listed above.
+
+A DataSonnet object can not repeat a key, so where DataWeave repeats a key in a JSON or Java output, the converted
+script gives an array of the values: for elements that repeat under the same name (in an XML input, such as
+`payload.order` with two `item` elements), and for the text of mixed content (`__text`). An XML output does repeat the
+elements.
 
 == Dependencies
 

@@ -56,11 +56,11 @@ public class ManagedRouteGroupTest extends ManagementTestSupport {
         Integer size = (Integer) mbeanServer.getAttribute(on, "GroupSize");
         if ("first".equals(group)) {
             assertEquals(3, size);
-            // group stats aggregate across all member routes (start, a, e each processed the exchange)
-            assertEquals(3, val);
+            // start -> a and start -> e are nested: start is outermost, so counted once
+            assertEquals(1, val);
         } else {
             assertEquals(2, size);
-            // group stats aggregate across all member routes (c, d each processed the exchange)
+            // c and d are called sequentially by "start" (not nested), each is outermost for "second"
             assertEquals(2, val);
         }
 

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "hazelcast-topic",
     "extendsScheme": "",
     "syntax": "hazelcast-topic:cacheName",
@@ -37,6 +37,11 @@
     "CamelHazelcastListenerTime": { "index": 3, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The time of the event in millis", "constantName": "org.apache.camel.component.hazelcast.HazelcastConstants#LISTENER_TIME" },
     "CamelHazelcastCacheName": { "index": 4, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the cache - e.g. foo", "constantName": "org.apache.camel.component.hazelcast.HazelcastConstants#CACHE_NAME" },
     "CamelHazelcastOperationType": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.hazelcast.HazelcastConstants#OPERATION" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "com.hazelcast.topic.Message", "description": "The Hazelcast Message, not the published object: ${body.messageObject} is the object and ${body.publishingMember} the member that published it. The CamelHazelcastListenerAction header is received" },
+    "producerIn": { "carriers": [ "text", "bytes", "file", "value", "map", "list", "pojo" ], "description": "The object to publish: an object Hazelcast can serialize, so convert a stream to bytes or text first; no body fails" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "The producer publishes the body and keeps it" }
   },
   "properties": {
     "cacheName": { "index": 0, "kind": "path", "displayName": "Cache Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the cache" },

@@ -18,9 +18,11 @@
 package org.apache.camel.impl.converter;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,6 +48,9 @@ import org.apache.camel.util.ObjectHelper;
  *
  */
 final class TypeResolverHelper {
+    // larger than any real distance, and small enough that two of them can be added
+    private static final int UNREACHED_DISTANCE = Integer.MAX_VALUE / 4;
+
     private TypeResolverHelper() {
 
     }
@@ -123,22 +128,75 @@ final class TypeResolverHelper {
         /*
          Let's try classes derived from this toType: basically it traverses the entries looking for assignable types
          matching both the "from type" and the "to type" which are NOT Object (we usually try this later).
+
+         More than one entry can match, so the nearest one wins: the one with the fewest levels between its types and
+         the requested types in the type hierarchy. Equally near entries are ordered by the names of their types. This
+         makes the result independent of the iteration order of the converters map, which can change between JVM runs.
          */
+        TypeConvertible<?, ?> bestKey = null;
+        TypeConverter best = null;
+        int bestDistance = 0;
         for (var entry : converters.entrySet()) {
             if (entry.getValue() == CoreTypeConverterRegistry.MISS_CONVERTER) {
                 continue;
             }
             final TypeConvertible<?, ?> key = entry.getKey();
+            final int keyDistance;
             if (key.isAssignableMatch(typeConvertible)) {
-                return entry.getValue();
+                keyDistance = distance(typeConvertible.getFrom(), key.getFrom())
+                              + distance(typeConvertible.getTo(), key.getTo());
+            } else if (typeConvertible.isAssignableMatch(key)) {
+                keyDistance = distance(key.getFrom(), typeConvertible.getFrom())
+                              + distance(key.getTo(), typeConvertible.getTo());
             } else {
-                if (typeConvertible.isAssignableMatch(key)) {
-                    return entry.getValue();
-                }
+                continue;
+            }
+            if (best == null || keyDistance < bestDistance
+                    || keyDistance == bestDistance && compareByTypeNames(key, bestKey) < 0) {
+                bestKey = key;
+                best = entry.getValue();
+                bestDistance = keyDistance;
             }
         }
 
-        return null;
+        return best;
+    }
+
+    private static int compareByTypeNames(TypeConvertible<?, ?> a, TypeConvertible<?, ?> b) {
+        int answer = a.getFrom().getName().compareTo(b.getFrom().getName());
+        return answer != 0 ? answer : a.getTo().getName().compareTo(b.getTo().getName());
+    }
+
+    /**
+     * The number of levels from a type up to one of its super types, walking the interfaces and the super class
+     * breadth-first. A super type that this walk does not reach (such as {@link Object} for an interface, or
+     * {@code Object[]} for {@code String[]}) counts as the farthest.
+     */
+    private static int distance(Class<?> type, Class<?> superType) {
+        if (type == superType) {
+            return 0;
+        }
+        List<Class<?>> level = List.of(type);
+        Set<Class<?>> visited = new HashSet<>();
+        for (int levels = 1; !level.isEmpty(); levels++) {
+            List<Class<?>> next = new ArrayList<>();
+            for (Class<?> t : level) {
+                for (Class<?> i : t.getInterfaces()) {
+                    if (visited.add(i)) {
+                        next.add(i);
+                    }
+                }
+                Class<?> superClass = t.getSuperclass();
+                if (superClass != null && visited.add(superClass)) {
+                    next.add(superClass);
+                }
+            }
+            if (next.contains(superType)) {
+                return levels;
+            }
+            level = next;
+        }
+        return UNREACHED_DISTANCE;
     }
 
     /**

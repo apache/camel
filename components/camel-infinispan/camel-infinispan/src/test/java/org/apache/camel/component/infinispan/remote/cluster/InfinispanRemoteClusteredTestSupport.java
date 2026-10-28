@@ -35,10 +35,12 @@ public final class InfinispanRemoteClusteredTestSupport {
 
         properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
 
+        // Normalise "localhost" to "127.0.0.1" so the JVM does not resolve it to ::1 (IPv6),
+        // which the server does not bind to in host-network mode on Podman/Linux.
         return new ConfigurationBuilder()
                 .withProperties(properties)
                 .addServer()
-                .host(service.host())
+                .host("localhost".equalsIgnoreCase(service.host()) ? "127.0.0.1" : service.host())
                 .port(service.port())
                 .security()
                 .authentication()

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stitch",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "stitch",
     "extendsScheme": "",
     "syntax": "stitch:tableName",
@@ -42,6 +42,10 @@
     "CamelStitchCode": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "HTTP Status code that is returned from Stitch Import HTTP API.", "constantName": "org.apache.camel.component.stitch.StitchConstants#CODE" },
     "CamelStitchHeaders": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "HTTP headers that are returned from Stitch Import HTTP API.", "constantName": "org.apache.camel.component.stitch.StitchConstants#HEADERS" },
     "CamelStitchStatus": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The status message that Stitch returns after sending the data through Stitch Import API.", "constantName": "org.apache.camel.component.stitch.StitchConstants#STATUS" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "pojo", "map", "list" ], "description": "A StitchRequestBody, a StitchMessage, a Map of the Stitch batch JSON (table_name, schema, messages, key_names as a list), or a List of StitchMessage, Map of a message, StitchRequestBody, Message or Exchange. Text, bytes, a stream or no body fails. The tableName, keyNames and schema options or headers set the rest of the batch" },
+    "producerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The message of the response of Stitch, empty when it has none; the HTTP status code, the status and the response headers are in the CamelStitchCode, CamelStitchStatus and CamelStitchHeaders headers" }
   },
   "properties": {
     "tableName": { "index": 0, "kind": "path", "displayName": "Table Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.stitch.StitchConfiguration", "configurationField": "configuration", "description": "The name of the destination table the data is being pushed to. Table names must be unique in each destination schema, or loading issues will occur. Note: The number of characters in the table name should be within the destination's allowed limits or data will rejected." },

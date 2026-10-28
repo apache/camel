@@ -59,6 +59,44 @@ from("direct:start")
     .split().body()
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <tokenizer>
+        <langChain4jParagraphTokenizer maxTokens="1024" maxOverlap="10" tokenizerType="OPEN_AI"/>
+    </tokenizer>
+    <split>
+        <simple>${body}</simple>
+        <to uri="mock:result"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - tokenizer:
+            langChain4jParagraphTokenizer:
+              maxTokens: 1024
+              maxOverlap: 10
+              tokenizerType: OPEN_AI
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: mock:result
+----
 ====
 
 === Tokenize by tokens
@@ -81,6 +119,45 @@ from("direct:start")
                 .end())
     .split().body()
     .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <tokenizer>
+        <langChain4jParagraphTokenizer maxTokens="1024" modelName="gpt-4o-mini" maxOverlap="10" tokenizerType="OPEN_AI"/>
+    </tokenizer>
+    <split>
+        <simple>${body}</simple>
+        <to uri="mock:result"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - tokenizer:
+            langChain4jParagraphTokenizer:
+              maxTokens: 1024
+              modelName: gpt-4o-mini
+              maxOverlap: 10
+              tokenizerType: OPEN_AI
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: mock:result
 ----
 ====
 

@@ -42,3 +42,38 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+== Usage
+
+A loading cache has a `cacheLoader`, which makes the value of a key that is not in the cache yet.
+The first GET of a key calls the loader, and the next GETs of that key get the value from the cache.
+The cache is shared by name, so all `caffeine-loadcache:prices` endpoints use the same cache.
+
+In this example, the loader is a Groovy closure, and the key comes from the `CamelCaffeineKey` header:
+
+[source,yaml]
+----
+- beans:
+    - name: priceLoader
+      type: com.github.benmanes.caffeine.cache.CacheLoader
+      scriptLanguage: groovy
+      script: "{ key -> 'price of ' + key } as com.github.benmanes.caffeine.cache.CacheLoader"
+- route:
+    from:
+      uri: direct:price
+      steps:
+        - setHeader:
+            name: CamelCaffeineKey
+            expression:
+              simple:
+                expression: "${header.product}"
+        - to:
+            uri: caffeine-loadcache:prices
+            parameters:
+              action: GET
+              cacheLoader: "#priceLoader"
+        - log:
+            message: "${body}"
+----
+
+The operations and their result headers are the same as for the xref:caffeine-cache-component.adoc[Caffeine Cache] component.

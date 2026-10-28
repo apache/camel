@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dapr.consumer;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,21 +34,26 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
+import reactor.util.retry.Retry;
 
 public class DaprConfigurationConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DaprConfigurationConsumer.class);
+    private static final Duration UNSUBSCRIBE_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration RESUBSCRIBE_DELAY = Duration.ofSeconds(1);
+    private static final Duration MAX_RESUBSCRIBE_DELAY = Duration.ofSeconds(30);
     private final String configStore;
     private final List<String> configKeys;
-    private final DaprClient client;
-    private String subscriptionId;
+    private DaprClient client;
+    private volatile String subscriptionId;
+    private Disposable subscription;
 
     public DaprConfigurationConsumer(final DaprEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
         configStore = endpoint.getConfiguration().getConfigStore();
         configKeys = endpoint.getConfiguration().getConfigKeysAsList();
-        client = endpoint.getClient();
     }
 
     @Override
@@ -66,13 +72,32 @@ public class DaprConfigurationConsumer extends DefaultConsumer {
 
         LOG.debug("Creating connection to Dapr Configuration");
 
-        SubscribeConfigurationRequest configRequest = new SubscribeConfigurationRequest(configStore, configKeys);
-        Flux<SubscribeConfigurationResponse> subscription = client.subscribeConfiguration(configRequest);
+        // the endpoint creates its client (or takes the configured one) when it starts, which can be after this
+        // consumer was created
+        client = getEndpoint().getClient();
 
-        subscription.subscribe((response) -> {
-            // first ever response contains the subscription id
+        SubscribeConfigurationRequest configRequest = new SubscribeConfigurationRequest(configStore, configKeys);
+        // the stream ends when the call to the sidecar fails or is closed (for example when the sidecar restarts), and
+        // the Dapr client does not open it again: subscribe again (after a delay) for as long as the consumer runs, else
+        // the consumer stays started and receives no further configuration changes
+        Flux<SubscribeConfigurationResponse> responses = Flux.defer(() -> client.subscribeConfiguration(configRequest))
+                .doOnComplete(() -> LOG.warn(
+                        "The subscription to configuration changes of store {} ended. Subscribing again in {} ms",
+                        configStore, RESUBSCRIBE_DELAY.toMillis()))
+                .repeatWhen(completed -> completed.delayElements(RESUBSCRIBE_DELAY))
+                .retryWhen(Retry.backoff(Long.MAX_VALUE, RESUBSCRIBE_DELAY).maxBackoff(MAX_RESUBSCRIBE_DELAY)
+                        .transientErrors(true)
+                        .doBeforeRetry(signal -> {
+                            LOG.warn("The subscription to configuration changes of store {} failed: {}. Subscribing again",
+                                    configStore, signal.failure().getMessage());
+                            LOG.debug("The subscription to configuration changes of store {} failed", configStore,
+                                    signal.failure());
+                        }));
+
+        subscription = responses.subscribe((response) -> {
+            // every response contains the subscription id, the first response of a subscription has no items
+            subscriptionId = response.getSubscriptionId();
             if (response.getItems() == null || response.getItems().isEmpty()) {
-                subscriptionId = response.getSubscriptionId();
                 LOG.debug("App subscribed to config changes with subscription id: {}", subscriptionId);
             } else {
                 final Exchange exchange = createServiceBusExchange(response);
@@ -81,14 +106,26 @@ public class DaprConfigurationConsumer extends DefaultConsumer {
                 AsyncCallback cb = defaultConsumerCallback(exchange, true);
                 getAsyncProcessor().process(exchange, cb);
             }
-        });
+        }, error -> getExceptionHandler().handleException("Error subscribing to configuration changes", error));
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (client != null) {
-            client.unsubscribeConfiguration(subscriptionId, configStore);
-            client.close();
+        // the client belongs to the endpoint (or is configured or autowired, and shared with other endpoints): end the
+        // subscription but do not close the client, it is used again when the route is started again
+        if (subscription != null) {
+            subscription.dispose();
+            subscription = null;
+        }
+        String id = subscriptionId;
+        if (id != null) {
+            subscriptionId = null;
+            try {
+                client.unsubscribeConfiguration(id, configStore).block(UNSUBSCRIBE_TIMEOUT);
+            } catch (Exception e) {
+                LOG.warn("Failed to unsubscribe from config changes with subscription id: {} due to: {}", id,
+                        e.getMessage(), e);
+            }
         }
 
         // shutdown camel consumer

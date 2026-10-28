@@ -34,6 +34,7 @@ import io.vertx.core.http.ServerWebSocket;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.json.JsonObject;
@@ -103,6 +104,40 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
     }
 
     @Test
+    void slowEvaluationCompletesOnItsOwnRequestWithoutBlockingOtherActions() throws Exception {
+        WaitingSemanticConsole console = new WaitingSemanticConsole(1);
+        DevConsoleRegistry.get(context).register(console);
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        try {
+            tool.send(action("slow", "semantic-evaluate", "input", "expected"));
+            assertThat(console.entered.await(5, TimeUnit.SECONDS)).isTrue();
+            tool.send(action("fast", "route-dump", "format", "yaml"));
+            assertThat(tool.awaitResult("fast").toJson()).contains("hello");
+            console.release.countDown();
+            assertThat(tool.awaitResult("slow").toJson()).contains("expected");
+        } finally {
+            console.release.countDown();
+        }
+    }
+
+    @Test
+    void stoppingTheWebSocketConnectorInterruptsPendingEvaluation() throws Exception {
+        WaitingSemanticConsole console = new WaitingSemanticConsole(1);
+        DevConsoleRegistry.get(context).register(console);
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        try {
+            tool.send(action("slow", "semantic-evaluate"));
+            assertThat(console.entered.await(5, TimeUnit.SECONDS)).isTrue();
+            connector.stop();
+            assertThat(console.interrupted.await(5, TimeUnit.SECONDS)).isTrue();
+        } finally {
+            console.release.countDown();
+        }
+    }
+
+    @Test
     void sendsHelloAndSnapshotsOnceConnected() throws Exception {
         // the tool does not check it here (see keepsRetryingWhenTheTokenIsRejected), it must not leak in the status
         property("camel.cli.websocket.token", "t0k3n-4-t3st");
@@ -146,7 +181,8 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
         tool.send(action("r1", "route", "command", "start", "id", "does-not-exist"));
         JsonObject result = tool.awaitResult("r1");
         assertThat(result.getBoolean("ok")).isFalse();
-        assertThat(result.getString("error")).contains("does-not-exist");
+        assertThat(result.getString("error")).isEqualTo("No route matching: does-not-exist");
+        assertThat(result.getString("reason")).isEqualTo("not-found");
 
         tool.send(action("r2", "does-not-exist"));
         result = tool.awaitResult("r2");
@@ -255,6 +291,29 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
         // the tool accepts the token after all (e.g. it was restarted with it)
         tool.requiredToken = "wrong";
         tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+    }
+
+    @Test
+    void keepsTheConnectionWhileASlowStatusIsCollected() throws Exception {
+        // the status of a large integration (thousands of processors) can take seconds to collect: it must hold up
+        // neither hello nor the heartbeats
+        property("camel.cli.websocket.heartbeat-interval", "200");
+        connector = new LocalCliConnector(new DefaultCliConnectorFactory()) {
+            @Override
+            public JsonObject status() throws Exception {
+                Thread.sleep(2000);
+                return super.status();
+            }
+        };
+        connector.setCamelContext(context);
+        long start = System.currentTimeMillis();
+        connector.start();
+
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        assertThat(System.currentTimeMillis() - start).isLessThan(1500);
+        // longer than 3 heartbeat intervals behind several status collections: still the first connection
+        await().during(6, TimeUnit.SECONDS).atMost(8, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(tool.handshakes).hasValue(1));
     }
 
     @Test

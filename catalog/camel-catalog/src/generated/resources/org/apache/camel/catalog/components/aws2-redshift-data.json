@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-redshift",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "aws2-redshift-data",
     "extendsScheme": "",
     "syntax": "aws2-redshift-data:label",
@@ -73,6 +73,10 @@
     "CamelAwsRedshiftDataSqlStatement": { "index": 22, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The SQL statement text to run.", "constantName": "org.apache.camel.component.aws2.redshift.data.RedshiftData2Constants#SQL_STATEMENT" },
     "CamelAwsRedshiftDataSqlParameterList": { "index": 23, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "List<SqlParameterList>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The parameters for the SQL statement.", "constantName": "org.apache.camel.component.aws2.redshift.data.RedshiftData2Constants#SQL_PARAMETER_LIST" },
     "CamelAwsRedshiftDataSqlStatementList": { "index": 24, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "List", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The List of SQL statements text to run.", "constantName": "org.apache.camel.component.aws2.redshift.data.RedshiftData2Constants#SQL_STATEMENT_LIST" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "byOption": [ { "option": "pojoRequest", "value": "true", "carriers": [ "pojo" ] } ], "description": "Not used: the operations take their input from headers, such as the SQL of executeStatement in CamelAwsRedshiftDataSqlStatement; SQL in the body is not run. With pojoRequest=true the request of the AWS SDK for the operation, such as an ExecuteStatementRequest: another body fails" },
+    "producerOut": { "carriers": [ "pojo" ], "description": "The response of the AWS SDK for the operation, such as the ExecuteStatementResponse of executeStatement, which does not wait for the statement, or the GetStatementResultResponse of getStatementResult with one page of records" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.redshift.data.RedshiftData2Configuration", "configurationField": "configuration", "description": "Logical name" },

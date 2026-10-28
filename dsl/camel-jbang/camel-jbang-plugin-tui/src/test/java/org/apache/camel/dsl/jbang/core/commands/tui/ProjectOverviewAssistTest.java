@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -249,6 +250,31 @@ class ProjectOverviewAssistTest {
         assertTrue(assist.command("", project, null, null, sink).startsWith("No LLM client available"));
         Files.delete(project.resolve("orders.camel.yaml"));
         assertTrue(assist.command("", project, null, null, sink).startsWith("No routes found"));
+    }
+
+    @Test
+    void aFolderOfProjectsIsNotExplainedAsOne(@TempDir Path workspace) throws Exception {
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiOverview("auto");
+        settings.save();
+        // a workspace with a checkout of each repository, as the TUI started there sees it
+        Files.createDirectories(workspace.resolve("camel/.git"));
+        Files.createDirectories(workspace.resolve("camel-website/.git"));
+        Files.writeString(workspace.resolve("camel/orders.camel.yaml"), ROUTES, StandardCharsets.UTF_8);
+        AnsweringClient client = new AnsweringClient(ANSWER);
+        ProjectOverviewAssist assist = new ProjectOverviewAssist();
+
+        // auto mode leaves it alone, and says so once
+        assertThat(assist.autoExplain(workspace, client, null, sink)).isFalse();
+        assertThat(assist.autoExplain(workspace, client, null, sink)).isFalse();
+        assertThat(entries).singleElement().asString()
+                .contains("holds 2 projects (camel, camel-website)")
+                .contains("AI Overview: auto leaves it alone");
+
+        // and /overview tells why instead of asking the model
+        assertThat(assist.command("", workspace, client, null, sink)).contains("not one project");
+        assertThat(client.calls).hasValue(0);
+        assertThat(workspace.resolve(IntegrationSummary.FILE_NAME)).doesNotExist();
     }
 
     private void rewrite(String content) {

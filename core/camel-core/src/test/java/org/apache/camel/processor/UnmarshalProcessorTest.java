@@ -18,10 +18,15 @@ package org.apache.camel.processor;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -89,12 +94,101 @@ public class UnmarshalProcessorTest extends TestSupport {
     @Test
     public void testAllowNullBody() throws Exception {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), null);
+        exchange.getIn().setHeader("foo", "bar");
+        Message in = exchange.getIn();
         Processor processor = new UnmarshalProcessor(new MyDataFormat(exchange), true);
 
         processor.process(exchange);
 
         assertNull(exchange.getMessage().getBody(), "UnmarshalProcessor should allow null body");
         assertNull(exchange.getException(), "UnmarshalProcessor should allow null body");
+        assertSame(in, exchange.getMessage(), "UnmarshalProcessor should leave the message as it is");
+        assertEquals("bar", exchange.getMessage().getHeader("foo"), "UnmarshalProcessor should keep the headers");
+    }
+
+    @Test
+    public void testNullBodySaysTheBodyIsNull() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), null);
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+
+        processor.process(exchange);
+
+        NoTypeConversionAvailableException e
+                = assertInstanceOf(NoTypeConversionAvailableException.class, exchange.getException());
+        // what the body is, and how to read the data (CAMEL-25749)
+        assertEquals("Cannot unmarshal using MyDataFormat: the body is null, so there is nothing to unmarshal: read the"
+                     + " data first - setBody with constant: resource:file:data.json for a known file, or poll:, pollEnrich"
+                     + " or a from: consumer for one that is not (a route reached with direct: has the body of its caller);"
+                     + " or set allowNullBody=true to skip a null body.",
+                e.getMessage());
+        assertNull(e.getValue());
+        assertEquals(InputStream.class, e.getToType());
+        assertInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+    }
+
+    @Test
+    public void testNullVariableSaysTheVariableIsNull() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
+        UnmarshalProcessor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+        processor.setVariableSend("order");
+
+        processor.process(exchange);
+
+        assertEquals("Cannot unmarshal using MyDataFormat: the variable order is null, so there is nothing to unmarshal. "
+                     + "Set the variable order first, or set allowNullBody=true to skip a null body.",
+                exchange.getException().getMessage());
+    }
+
+    @Test
+    public void testParsedDataSaysItIsDataAlready() throws Exception {
+        // what the benchmark wrote (r22): the order was unmarshalled, and is unmarshalled again
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), new LinkedHashMap<>(Map.of("orderId", "1")));
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+
+        processor.process(exchange);
+
+        NoTypeConversionAvailableException e
+                = assertInstanceOf(NoTypeConversionAvailableException.class, exchange.getException());
+        assertEquals("Cannot unmarshal using MyDataFormat: the body is a Map (LinkedHashMap), which is data already, and"
+                     + " the data format reads text: read its fields as they are, and leave this unmarshal out; to parse the"
+                     + " text in a variable, unmarshal it with variableSend and variableReceive set to its name",
+                e.getMessage());
+        assertEquals(InputStream.class, e.getToType());
+        assertInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+    }
+
+    @Test
+    public void testParsedDataInAVariableSaysItIsDataAlready() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
+        exchange.setVariable("order", new ArrayList<>(List.of("A1")));
+        UnmarshalProcessor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+        processor.setVariableSend("order");
+
+        processor.process(exchange);
+
+        assertEquals("Cannot unmarshal using MyDataFormat: the variable order holds data (ArrayList) already, and the data"
+                     + " format reads text: read its fields as they are, such as ${variable.order[name]}, and leave this"
+                     + " unmarshal out",
+                exchange.getException().getMessage());
+
+        // the List of List.of goes by its interface, not by the class the JDK keeps to itself
+        exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
+        exchange.setVariable("order", List.of("A1"));
+        processor.process(exchange);
+        assertTrue(exchange.getException().getMessage().contains("the variable order holds data (List) already"),
+                exchange.getException().getMessage());
+    }
+
+    @Test
+    public void testBodyThatCannotBeConvertedKeepsTheConverterMessage() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), new Object());
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+
+        processor.process(exchange);
+
+        assertEquals("No type converter available to convert from type: java.lang.Object to the required type: "
+                     + "java.io.InputStream",
+                exchange.getException().getMessage());
     }
 
     private static class MyDataFormat extends ServiceSupport implements DataFormat {

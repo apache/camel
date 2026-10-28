@@ -39,6 +39,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,11 +229,11 @@ public class JsonPathEngine {
         if (json == null) {
             // a timer alone, or a jsonpath step placed before the file was read: nothing to evaluate
             if (fromBody) {
+                // what the body is, the step that left it so, and how to read the data (CAMEL-24838, CAMEL-25749)
+                String hint = BodyFacts.hint(exchange, BodyFacts.Need.A_BODY);
                 throw new CamelExchangeException(
-                        "The jsonpath expression got no message body to evaluate (the body is null): a route reached"
-                                                 + " with direct: has the body of its caller, so when the caller has none, read the data"
-                                                 + " first - setBody with constant: resource:file:data.json for a known file, or poll:,"
-                                                 + " pollEnrich or a from: consumer for one that is not",
+                        "The jsonpath expression got no message body to evaluate: " + BodyFacts.describe(exchange)
+                                                 + (hint != null ? ": " + hint : ""),
                         exchange);
             }
             throw new CamelExchangeException(

@@ -162,7 +162,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String snapshotModeCustomName;
     @UriParam(label = LABEL_NAME, defaultValue = "none")
     private String schemaNameAdjustmentMode = "none";
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    @UriParam(label = LABEL_NAME, defaultValue = "false", security = "insecure:ssl")
     private boolean mongodbSslInvalidHostnameAllowed = false;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private int mongodbHeartbeatFrequencyMs = 10000;

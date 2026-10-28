@@ -18,12 +18,14 @@ package org.apache.camel.component.cometd;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.DispatcherType;
 
@@ -33,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.server.BayeuxServerImpl;
@@ -46,6 +49,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.util.resource.MountedPathResourceFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
@@ -144,26 +148,28 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
                 server.start();
 
                 connectors.put(connectorKey, connectorRef);
+
+                // the server is shared by the producers and consumers of this host and port: configure it once,
+                // or the extensions and listeners are called once per producer and consumer
+                BayeuxServerImpl bayeux = (BayeuxServerImpl) connectorRef.servlet.getBayeuxServer();
+                if (securityPolicy != null) {
+                    bayeux.setSecurityPolicy(securityPolicy);
+                }
+                if (extensions != null) {
+                    for (BayeuxServer.Extension extension : extensions) {
+                        bayeux.addExtension(extension);
+                    }
+                }
+                if (serverListeners != null) {
+                    for (BayeuxServer.BayeuxServerListener serverListener : serverListeners) {
+                        bayeux.addListener(serverListener);
+                    }
+                }
             } else {
                 connectorRef.increment();
             }
 
-            BayeuxServerImpl bayeux = (BayeuxServerImpl) connectorRef.servlet.getBayeuxServer();
-
-            if (securityPolicy != null) {
-                bayeux.setSecurityPolicy(securityPolicy);
-            }
-            if (extensions != null) {
-                for (BayeuxServer.Extension extension : extensions) {
-                    bayeux.addExtension(extension);
-                }
-            }
-            if (serverListeners != null) {
-                for (BayeuxServer.BayeuxServerListener serverListener : serverListeners) {
-                    bayeux.addListener(serverListener);
-                }
-            }
-            prodcon.setBayeux(bayeux);
+            prodcon.setBayeux((BayeuxServerImpl) connectorRef.servlet.getBayeuxServer());
         } finally {
             connectorsLock.unlock();
         }
@@ -231,6 +237,13 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         holder.setInitParameter("multiFrameInterval", Integer.toString(endpoint.getMultiFrameInterval()));
         holder.setInitParameter("JSONCommented", Boolean.toString(endpoint.isJsonCommented()));
         holder.setInitParameter("logLevel", Integer.toString(endpoint.getLogLevel()));
+        if (endpoint.getAllowedTransports() != null) {
+            String transports = Arrays.stream(endpoint.getAllowedTransports().split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.joining(","));
+            holder.setInitParameter("allowedTransports", transports);
+        }
 
         return servlet;
     }
@@ -377,9 +390,27 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
             FilterHolder filterHolder = new FilterHolder();
             CrossOriginFilter filter = new CrossOriginFilter();
             filterHolder.setFilter(filter);
-            filterHolder.setInitParameter("allowedOrigins", endpoint.getAllowedOrigins());
+            String allowedOrigins = endpoint.getAllowedOrigins();
+            filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, allowedOrigins);
+            // Jetty's filter allows credentials unless told otherwise: only allow them for origins that were named
+            filterHolder.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM,
+                    Boolean.toString(isNamedOrigins(allowedOrigins)));
             context.addFilter(filterHolder, endpoint.getFilterPath(), EnumSet.allOf(DispatcherType.class));
         }
+    }
+
+    private static boolean isNamedOrigins(String allowedOrigins) {
+        if (ObjectHelper.isEmpty(allowedOrigins)) {
+            return false;
+        }
+        // parse the same way as the filter, and treat any wildcard (such as https://*) or null (the origin sent by
+        // sandboxed pages) as not naming the origin
+        for (String origin : StringUtil.csvSplit(allowedOrigins)) {
+            if (origin.contains("*") || "null".equalsIgnoreCase(origin)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

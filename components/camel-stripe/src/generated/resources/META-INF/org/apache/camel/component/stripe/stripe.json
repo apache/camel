@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stripe",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "stripe",
     "extendsScheme": "",
     "syntax": "stripe:operation",
@@ -33,6 +33,10 @@
     "CamelStripeOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.stripe.StripeConstants#OPERATION_HEADER" },
     "CamelStripeMethod": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The method to invoke (create, retrieve, update, delete, list, cancel, capture)", "constantName": "org.apache.camel.component.stripe.StripeConstants#METHOD_HEADER" },
     "CamelStripeObjectId": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ID of the object to retrieve, update, or delete", "constantName": "org.apache.camel.component.stripe.StripeConstants#OBJECT_ID" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "map", "text", "null" ], "description": "The request parameters of the call: a Map, or a JSON object as text; null for none. Bytes, a stream or a POJO fails: convert it to a String first. retrieve, delete and cancel ignore the body; they and update and capture take the id of the object from the CamelStripeObjectId header" },
+    "producerOut": { "carriers": [ "pojo" ], "description": "The Stripe object the call returns, such as a com.stripe.model.Customer; list gives a collection of them, such as a CustomerCollection, with the objects in its data" }
   },
   "properties": {
     "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.stripe.StripeOperation", "enum": [ "charges", "customers", "paymentIntents", "paymentMethods", "refunds", "subscriptions", "invoices", "products", "prices", "balanceTransactions" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.stripe.StripeConfiguration", "configurationField": "configuration", "description": "The Stripe operation to perform" },

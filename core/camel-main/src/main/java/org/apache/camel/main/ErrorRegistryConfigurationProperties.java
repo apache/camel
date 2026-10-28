@@ -46,6 +46,8 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
     private boolean includeExchangeProperties = true;
     @Metadata(defaultValue = "true")
     private boolean includeExchangeVariables = true;
+    @Metadata
+    private boolean includeRouteStopping;
 
     public ErrorRegistryConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -166,6 +168,19 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
         this.includeExchangeVariables = includeExchangeVariables;
     }
 
+    public boolean isIncludeRouteStopping() {
+        return includeRouteStopping;
+    }
+
+    /**
+     * Whether to also capture an exchange cut off by a route stop, a route reload or a CamelContext stop
+     * (RouteStoppingException). Nothing in the route failed, but a consumer that does not roll back may lose the
+     * message, so enable it to see how often stops cut off work.
+     */
+    public void setIncludeRouteStopping(boolean includeRouteStopping) {
+        this.includeRouteStopping = includeRouteStopping;
+    }
+
     // -- fluent builder methods --
 
     /**
@@ -242,6 +257,16 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
      */
     public ErrorRegistryConfigurationProperties withIncludeExchangeVariables(boolean includeExchangeVariables) {
         this.includeExchangeVariables = includeExchangeVariables;
+        return this;
+    }
+
+    /**
+     * Whether to also capture an exchange cut off by a route stop, a route reload or a CamelContext stop
+     * (RouteStoppingException). Nothing in the route failed, but a consumer that does not roll back may lose the
+     * message, so enable it to see how often stops cut off work.
+     */
+    public ErrorRegistryConfigurationProperties withIncludeRouteStopping(boolean includeRouteStopping) {
+        this.includeRouteStopping = includeRouteStopping;
         return this;
     }
 }

@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 class RouteInfo {
     String routeId;
@@ -48,5 +49,15 @@ class RouteInfo {
     String sinceLastStarted;
     String sinceLastCompleted;
     String sinceLastFailed;
+    /** The statistics as the status file has them, for the route diagram (DiagramTopology). */
+    Map<String, ?> statistics;
+    /** The steps reached with more than one body type, across the messages (CAMEL-25750). */
+    int variedBodyTypes;
+    /** The steps reached with bodies of more than one kind, which need attention (CAMEL-25750). */
+    int mixedBodyKinds;
+    /** The checksum of the route as written, the same in every run; null when unknown (CAMEL-25771). */
+    String checksum;
+    /** The revision of the route in this run: 1 when added, one more each time it is added again changed. */
+    int revision;
     final List<ProcessorInfo> processors = new ArrayList<>();
 }

@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The capability view of the Diagram tab (CAMEL-25147): groups as boxes with their facts, AI-assisted groups marked,
- * Enter opens a group's routes and a route's diagram, Esc goes back up, utility hidden until u.
+ * Enter opens a group's routes and a route's diagram, Esc goes back up, utility shown until u.
  */
 @Isolated
 @Timeout(60)
@@ -151,14 +151,14 @@ class ArchitectureViewTest {
         assertTrue(screen.contains("Shared services"), screen);
         // the business view: what the capability achieves (the technical view shows entry points and systems)
         assertTrue(screen.contains(IntegrationSummaryHints.MARK + "Takes orders."), "what it achieves: " + screen);
-        assertFalse(screen.contains("Utility"), "utility hidden by default: " + screen);
+        assertTrue(screen.contains("Utility"), "utility shown by default: " + screen);
         // boxes are as wide as their longest line, not wider
         String boxTop = screen.lines().filter(l -> l.contains("\u250c")).findFirst().orElseThrow();
         int width = boxTop.indexOf('\u2510', boxTop.indexOf('\u250c')) - boxTop.indexOf('\u250c') + 1;
         assertTrue(width <= "platform-http:/orders".length() + 8, "box width " + width + ": " + screen);
 
         view.handleKeyEvent(KeyEvent.ofChar('u'));
-        assertTrue(render(view).contains("Utility"));
+        assertFalse(render(view).contains("Utility"), "u hides it");
     }
 
     @Test
@@ -222,6 +222,36 @@ class ArchitectureViewTest {
 
         view.handleKeyEvent(KeyEvent.ofChar('e'));
         assertTrue(systemBoxes(render(view)).isEmpty(), "off again");
+    }
+
+    @Test
+    void theErrorHandlingInABoxOfItsOwn() {
+        boolean[] errors = { false };
+        ArchitectureView view = new ArchitectureView(null, opened::add, () -> true, () -> errors[0]);
+        view.open(project);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !view.isLoadingForTesting());
+        assertFalse(render(view, 60).contains("Error handling"), "off by default");
+
+        // x: dlq, reached only from the doCatch of order, leaves Utility for a box of its own (CAMEL-25466)
+        errors[0] = true;
+        view.refresh();
+        String screen = render(view, 60);
+        String box = screen.lines().filter(l -> l.contains("Error handling")).findFirst().orElse("");
+        assertTrue(box.chars().filter(c -> c == '\u2506').count() >= 2, "a dashed box: " + screen);
+
+        view.selectForTesting(ProjectCapabilities.ERRORS);
+        screen = render(view, 60);
+        assertTrue(screen.contains("reached only on error"), screen);
+        assertTrue(screen.contains("Failures from"), screen);
+        assertTrue(screen.contains("Order taking"), "the capability of order, whose doCatch sends there: " + screen);
+
+        // the capability's failures go there
+        view.selectForTesting("capability:Order taking");
+        assertTrue(render(view, 60).contains("on failure \u2192 Error handling"), render(view, 60));
+
+        errors[0] = false;
+        view.refresh();
+        assertFalse(render(view, 60).contains("Error handling"), "off again");
     }
 
     /** The lines of the dashed boxes: the external systems. */

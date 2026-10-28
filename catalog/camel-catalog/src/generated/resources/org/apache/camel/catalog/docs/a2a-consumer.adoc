@@ -36,7 +36,9 @@ YAML::
         - log:
             message: "Received: ${body}"
         - setBody:
-            constant: "Hello from my agent!"
+            expression:
+              constant:
+                expression: "Hello from my agent!"
 ----
 
 Java::
@@ -145,7 +147,9 @@ By default, the consumer uses the REST binding (HTTP+JSON with colon-notation pa
         validateAuth: false
       steps:
         - setBody:
-            constant: "JSON-RPC response"
+            expression:
+              constant:
+                expression: "JSON-RPC response"
 ----
 
 This example is local-only because it disables operation auth. Keep `validateAuth=true` and configure a card security scheme for network-exposed agents.
@@ -198,7 +202,9 @@ Validate incoming bearer tokens via the `camel-oauth` SPI. When an `oauthProfile
         validateAuth: true
       steps:
         - setBody:
-            constant: "Authenticated response"
+            expression:
+              constant:
+                expression: "Authenticated response"
 ----
 
 Configure the OIDC provider in application properties (these properties are owned by the `camel-oauth` component — see its documentation for the canonical format):
@@ -234,7 +240,7 @@ The agent card must declare the security scheme:
 }
 ----
 
-When authentication succeeds, the `CamelA2AUserProfile` exchange property is populated with a `Map<String, Object>` containing the authenticated user's profile (subject, issuer, scopes, claims). When using OAuth/OIDC, the full `OAuthTokenValidationResult` is also available as the `CamelOAuthTokenValidationResult` exchange property.
+When authentication succeeds, the `CamelA2AUserProfile` exchange property is populated with a `Map<String, Object>` containing the authenticated user's profile (subject, issuer, scopes, claims). When using OAuth/OIDC, the full `OAuthTokenValidationResult` is also available as the `CamelOAuthTokenValidationResult` exchange property. See <<_caller_profile,Caller Profile>> for how the profile is derived.
 
 ==== API Key Authentication
 
@@ -251,7 +257,9 @@ The `apiKeyHeader` parameter controls which HTTP header carries the API key. It 
         apiKeyHeader: X-API-Key      # default is Authorization
       steps:
         - setBody:
-            constant: "API key protected response"
+            expression:
+              constant:
+                expression: "API key protected response"
 ----
 
 The agent card must declare an `apiKey` security scheme:
@@ -293,7 +301,9 @@ When the scheme declares `location=header` and `name`, that header name takes pr
         validateAuth: true
       steps:
         - setBody:
-            constant: "Bearer token protected response"
+            expression:
+              constant:
+                expression: "Bearer token protected response"
 ----
 
 The agent card must declare an `http` bearer security scheme:
@@ -322,6 +332,28 @@ The agent card must declare an `http` bearer security scheme:
 
 NOTE: The agent card endpoint (`GET /.well-known/agent-card.json`) is always public — clients need it for discovery before they can authenticate.
 
+==== Caller Profile
+
+The consumer derives the caller profile from the security schemes it validated, and sets it as the `CamelA2AUserProfile` exchange property of the exchange the route processes:
+
+[cols="1,3"]
+|===
+| Scheme | Caller profile
+
+| OAuth 2.0, OpenID Connect, and HTTP bearer with `oauthProfile`
+| The validated token: `scheme`, `subject`, `issuer`, `audience`, `scopes` and `claims`. The `OAuthTokenValidationResult` of the token is also set as the `CamelOAuthTokenValidationResult` exchange property. A token must identify the caller with its `sub` claim or, for a token without `sub`, with the `username` that a token introspection response gives, or with its `client_id` or `azp` claim, such as a client credentials token. A token that has none of these claims is rejected.
+
+| HTTP bearer with the static `bearerToken` option
+| Only the scheme (`bearer`): every caller that sends the token is the same caller.
+
+| API key
+| Only the scheme (`apiKey`): every caller that sends the key is the same caller.
+|===
+
+When a security requirement combines several schemes, such as an API key and an OAuth token, the caller profile is the one of the token, whatever the order of the schemes in the requirement.
+
+Tasks and push notification configurations belong to the caller that created the task: the issuer and subject of a token, or for a token without subject the issuer and its user name, else its client. Callers that authenticate with the same API key or static bearer token share their tasks.
+
 === SSE Streaming with `${a2a:emit()}`
 
 Agents can emit progressive status updates during processing using the `${a2a:emit()}` Simple language function. Clients receive these as Server-Sent Events (SSE).
@@ -342,17 +374,29 @@ YAML::
         httpServerComponent: undertow
       steps:
         - script:
-            simple: "${a2a:emit('Connecting to database...')}"
+            expression:
+              simple:
+                expression: "${a2a:emit('Connecting to database...')}"
         - delay:
-            constant: 2000
+            expression:
+              constant:
+                expression: 2000
         - script:
-            simple: "${a2a:emit('Processing 1000 records...')}"
+            expression:
+              simple:
+                expression: "${a2a:emit('Processing 1000 records...')}"
         - delay:
-            constant: 3000
+            expression:
+              constant:
+                expression: 3000
         - script:
-            simple: "${a2a:emit('Analysis complete!')}"
+            expression:
+              simple:
+                expression: "${a2a:emit('Analysis complete!')}"
         - setBody:
-            constant: "Final analysis results: ..."
+            expression:
+              constant:
+                expression: "Final analysis results: ..."
 ----
 
 Java::
@@ -380,7 +424,9 @@ You can also emit with an explicit state:
 ----
 steps:
   - script:
-      simple: "${a2a:emit(INPUT_REQUIRED, 'Please provide your address')}"
+      expression:
+        simple:
+          expression: "${a2a:emit(INPUT_REQUIRED, 'Please provide your address')}"
 ----
 
 NOTE: Use `script` EIP (not `setBody`) for `${a2a:emit()}` calls — `script` evaluates the expression for its side effect without changing the message body. Use `setBody` only for the final response.
@@ -428,7 +474,9 @@ Use stable `id` values on long-lived sub-tasks so route tracing and route-struct
                   ref: answerDraftingService
                   method: draft
         - setBody:
-            simple: "Final answer: ${body}"
+            expression:
+              simple:
+                expression: "Final answer: ${body}"
 ----
 
 The route examples in this section are local-only because they disable operation auth. Keep `validateAuth=true` and configure a card security scheme for network-exposed agents.
@@ -500,9 +548,13 @@ For long-running operations, enable `returnImmediately` to return a `SUBMITTED` 
         asyncTimeout: 30000          # default is 300000 (5 minutes)
       steps:
         - delay:
-            constant: 10000
+            expression:
+              constant:
+                expression: 10000
         - setBody:
-            constant: "Long computation result"
+            expression:
+              constant:
+                expression: "Long computation result"
 ----
 
 The `asyncTimeout` parameter (default: 300,000 ms / 5 minutes) controls how long the background processing can run before the task is marked `FAILED`.
@@ -519,6 +571,50 @@ The consumer manages the task lifecycle automatically: `SUBMITTED` -> `WORKING` 
 `SendMessageRequest.configuration` is modeled as `SendMessageConfiguration`. The consumer interprets `returnImmediately`, `blocking`, and `historyLength`; unknown fields are retained for protocol extensions and future A2A options. `configuration.historyLength` limits the task history returned by synchronous `SendMessage` task responses.
 
 NOTE: The REST consumer rejects `returnImmediately` for streaming operations (`SendStreamingMessage`) with 400 Bad Request.
+
+=== Calling another agent
+
+An agent route can call an A2A producer directly. The producer uses its `operation` option,
+or an explicit `CamelA2AOperation` header set by the route. The incoming method does not select
+the downstream operation: a streaming caller can invoke a non-streaming downstream agent.
+
+The consumer exposes its incoming method, task ID and context ID as `CamelA2ARequestOperation`,
+`CamelA2ARequestTaskId` and `CamelA2ARequestContextId` headers. Copies in exchange properties with
+the same names preserve the consumer identity for replies and `A2AProgress` / `a2aSubTask` updates,
+even if the route removes or changes message headers. Treat these properties as consumer-owned state.
+For example, `${exchangeProperty.CamelA2ARequestTaskId}` always addresses the outer task.
+
+The existing `CamelA2ATaskId`, `CamelA2AContextId`, `CamelA2ATaskState` and `CamelA2AResponseType`
+headers describe the downstream operation and its result. They do not change the outer task.
+Set `CamelA2AReplyTaskState` to choose the state returned by `SendMessage`, or `CamelA2AReplyType`
+to `message` for a message-only reply. The default is a completed task. The consumer assigns
+its own context and task identity to reply messages, including a `Message` body returned by a producer.
+
+With `dataFormat=POJO`, forwarding the same incoming `Message` instance to a producer copies its
+content without the incoming task and context IDs. The original immutable message remains available
+in the `CamelA2ARequestMessage` exchange property; this is not a message header.
+
+A new `Message` supplied by the route retains its task/context IDs, even when it is equal to the
+incoming message. This includes `Message.builder(incoming).build()` and copies with edited content.
+When copying or transforming a message to start a new downstream conversation, clear inherited IDs
+with `.taskId(null).contextId(null)`. To continue a downstream conversation, set the downstream
+task/context IDs on the new message, or set `CamelA2AContextId` for its context. These explicit IDs
+are preserved even when their values match the incoming IDs.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:orchestrator-card.json
+      steps:
+        - to:
+            uri: a2a:https://worker.example.com
+        - log:
+            message: "Worker replied to outer task ${exchangeProperty.CamelA2ARequestTaskId}"
+----
+
+The worker's result body becomes the outer reply content. Its task ID, state and response type
+remain available as producer results, while the outer consumer completes its own task.
 
 === Push Notifications
 
@@ -559,7 +655,9 @@ Control concurrent task processing and queue overflow:
         taskQueueSize: 50
       steps:
         - setBody:
-            constant: "Processing..."
+            expression:
+              constant:
+                expression: "Processing..."
 ----
 
 [cols="1,1,3"]
@@ -598,7 +696,9 @@ The consumer enforces `maxPayloadSize` (default 6,291,456 bytes / 6 MiB) on inco
         maxPayloadSize: 10485760
       steps:
         - setBody:
-            constant: "final response"
+            expression:
+              constant:
+                expression: "final response"
 ----
 
 === CORS Support

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,9 +29,8 @@ public class FtpRecursiveDepth2IT extends FtpServerTestSupport {
 
     @Test
     public void testDepthMin2Max99() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("a2", "b2", "a3", "b3");
-
+        // Upload all files before starting the consumer to avoid a race where
+        // the route picks up files mid-upload and produces inconsistent results.
         template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth2?password=admin", "a", Exchange.FILE_NAME,
                 "a.txt");
         template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth2?password=admin", "b", Exchange.FILE_NAME,
@@ -47,7 +44,12 @@ public class FtpRecursiveDepth2IT extends FtpServerTestSupport {
         template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth2/bar/foo?password=admin", "b3",
                 Exchange.FILE_NAME, "b3.txt");
 
-        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("a2", "b2", "a3", "b3");
+
+        context.getRouteController().startRoute("ftp-recursive-depth2");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -55,7 +57,8 @@ public class FtpRecursiveDepth2IT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl() + "&minDepth=2&maxDepth=99").convertBodyTo(String.class).to("mock:result");
+                from(getFtpUrl() + "&minDepth=2&maxDepth=99").routeId("ftp-recursive-depth2").autoStartup(false)
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -30,6 +30,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -50,6 +53,20 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "4.8.0", scheme = "solr", title = "Solr", syntax = "solr:host:port/basePath", producerOnly = true,
              category = { Category.SEARCH, Category.MONITORING }, headersClass = SolrConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "DELETE",
+                                                            carriers = { Carrier.TEXT, Carrier.LIST }),
+                                  description = "What the operation needs: INSERT a Map or a SolrInputDocument, a List of"
+                                                + " them or of @Field beans, a JSON array or XML text, or a file; DELETE the id"
+                                                + " or, with deleteByQuery=true, the query, as text or a List of text; SEARCH"
+                                                + " the query as text or a SolrQuery; PING does not use it. Convert bytes or a"
+                                                + " stream to text first. The CamelSolrField. and CamelSolrQueryString headers"
+                                                + " can replace the body"),
+           producerOut = @BodyType(value = Carrier.MAP,
+                                   description = "The response of Solr as a Map (a SimpleOrderedMap) with the responseHeader"
+                                                 + " and, for a search, the documents under response as a SolrDocumentList."
+                                                 + " Convert it to a QueryResponse or a SolrPingResponse to read it with"
+                                                 + " SolrJ"))
 public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrEndpoint.class);

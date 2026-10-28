@@ -20,9 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -131,6 +136,54 @@ class PopupManagerTest {
     }
 
     @Test
+    void aClickInTheScrolledSwitchPopupPicksTheIntegrationUnderTheMouse() {
+        List<IntegrationInfo> many = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            IntegrationInfo info = new IntegrationInfo();
+            info.pid = String.valueOf(1000 + i);
+            info.name = "app-" + i;
+            many.add(info);
+        }
+        PopupManager manager = new PopupManager(ctx, () -> many, List::of, new FilesBrowser(), new NoCallbacks());
+        // the last integration is selected, so the list is scrolled to the end
+        manager.openSwitchPopup("1029", many);
+        Rect area = new Rect(0, 0, 80, 16);
+        Buffer buffer = Buffer.empty(area);
+        manager.renderSwitchPopup(Frame.forTesting(buffer), area);
+
+        String[] rows = TuiTestHelper.bufferToString(buffer).split("\n");
+        int y = 0;
+        while (!rows[y].contains("app-25 ")) {
+            y++;
+        }
+        manager.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, rows[y].indexOf("app-25"), y), 0, 2);
+
+        assertEquals("1025", ctx.selectedPid);
+    }
+
+    private static final class NoCallbacks implements PopupManager.PopupCallbacks {
+        @Override
+        public void selectMoreTab(int index) {
+        }
+
+        @Override
+        public void resetIntegrationTabState() {
+        }
+
+        @Override
+        public void refreshLogData() {
+        }
+
+        @Override
+        public void stopSelectedProcess(boolean forceKill) {
+        }
+
+        @Override
+        public void fallbackToOverviewIfTabInactive() {
+        }
+    }
+
+    @Test
     void morePopupShortcutMatchesEitherCase() {
         // Both Beans and Browse use 'B' — pressing 'b'/'B' cycles between them (matchCount=2)
         // morePopupShortcut returns int[] {selectedIndex, matchCount}
@@ -210,5 +263,78 @@ class PopupManagerTest {
 
         popupManager.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE), 0, 2);
         assertFalse(popupManager.isKillConfirmVisible(), "Esc cancels the kill confirm");
+    }
+
+    // The confirm dialogs are modal: a click on one of their keys presses it, a click outside cancels, and no click
+    // reaches the screen under them.
+
+    @Test
+    void aClickOnAKeyOfTheConfirmDialogPressesIt() {
+        List<String> chosen = new ArrayList<>();
+        popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", "1 integration was started here",
+                () -> chosen.add("quit"), 's', "stop and quit", () -> chosen.add("stop"));
+        String[] rows = renderConfirm();
+        int row = rowWith(rows, "stop and quit");
+
+        assertTrue(popupManager.handleMouseEvent(click(rows[row].indexOf("stop and quit"), row), 0, 2));
+        assertEquals(List.of("stop"), chosen, "the second choice");
+        assertFalse(popupManager.isConfirmVisible());
+
+        popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> chosen.add("quit"));
+        rows = renderConfirm();
+        row = rowWith(rows, "confirm");
+        popupManager.handleMouseEvent(click(rows[row].indexOf("Enter"), row), 0, 2);
+        assertEquals(List.of("stop", "quit"), chosen, "Enter, clicked");
+        assertFalse(popupManager.isConfirmVisible());
+    }
+
+    @Test
+    void aClickOutsideTheConfirmDialogCancelsIt() {
+        List<String> chosen = new ArrayList<>();
+        popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> chosen.add("quit"), () -> chosen.add("cancel"));
+        String[] rows = renderConfirm();
+        int row = rowWith(rows, "Quit the TUI?");
+
+        assertTrue(popupManager.handleMouseEvent(click(rows[row].indexOf("Quit the TUI?"), row), 0, 2),
+                "a click inside the dialog stays there");
+        assertTrue(popupManager.isConfirmVisible(), "the question is not a key");
+        assertTrue(chosen.isEmpty());
+
+        assertTrue(popupManager.handleMouseEvent(click(1, 1), 0, 2), "the screen under the dialog gets nothing");
+        assertEquals(List.of("cancel"), chosen);
+        assertFalse(popupManager.isConfirmVisible());
+    }
+
+    @Test
+    void aClickOnCancelClosesTheKillConfirm() {
+        popupManager.showKillConfirm();
+        Rect area = new Rect(0, 0, 100, 30);
+        Buffer buffer = Buffer.empty(area);
+        popupManager.renderKillConfirm(Frame.forTesting(buffer), area);
+        String[] rows = TuiTestHelper.bufferToString(buffer).split("\n");
+        int row = rowWith(rows, "cancel");
+
+        popupManager.handleMouseEvent(click(rows[row].indexOf("cancel"), row), 0, 2);
+        assertFalse(popupManager.isKillConfirmVisible());
+    }
+
+    private String[] renderConfirm() {
+        Rect area = new Rect(0, 0, 100, 30);
+        Buffer buffer = Buffer.empty(area);
+        popupManager.renderConfirm(Frame.forTesting(buffer), area);
+        return TuiTestHelper.bufferToString(buffer).split("\n");
+    }
+
+    private static int rowWith(String[] rows, String text) {
+        for (int i = 0; i < rows.length; i++) {
+            if (rows[i].contains(text)) {
+                return i;
+            }
+        }
+        throw new AssertionError(text + " not drawn: " + String.join("\n", rows));
+    }
+
+    private static MouseEvent click(int x, int y) {
+        return MouseEvent.press(MouseButton.LEFT, x, y);
     }
 }

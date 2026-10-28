@@ -11,9 +11,16 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jactl",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "jactl",
     "modelJavaType": "org.apache.camel.model.language.JactlExpression"
+  },
+  "bodyTypes": {
+    "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in the variable body. Without host access a script uses text, a number, bytes, a Map or a List, not the methods of other objects: JSON text is not parsed" },
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the script returns" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

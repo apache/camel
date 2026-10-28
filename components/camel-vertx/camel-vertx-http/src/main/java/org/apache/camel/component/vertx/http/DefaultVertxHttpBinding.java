@@ -38,6 +38,7 @@ import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -54,8 +55,11 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         // Query string is already encoded in resolveHttpURI to avoid decode/re-encode issues
         URI uri = VertxHttpHelper.resolveHttpURI(exchange, endpoint);
 
-        // Determine the HTTP method to use if not specified in the HTTP_METHOD header
-        HttpMethod method = message.getHeader(VertxHttpConstants.HTTP_METHOD, configuration.getHttpMethod(), HttpMethod.class);
+        // as camel-http: the method of the endpoint, which the HTTP_METHOD header cannot override, then the header
+        HttpMethod method = configuration.getHttpMethod();
+        if (method == null) {
+            method = message.getHeader(VertxHttpConstants.HTTP_METHOD, HttpMethod.class);
+        }
         if (method == null) {
             if (ObjectHelper.isNotEmpty(uri.getQuery())) {
                 method = HttpMethod.GET;
@@ -138,10 +142,14 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                     continue;
                 }
 
-                if (!strategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
-                    String str = tc.convertTo(String.class, headerValue);
-                    headers.set(key, str);
-                }
+                // a collection or an object array is sent as one header per value; any other value is a single header
+                HttpUtil.applyHeaderValue(strategy, exchange, headerValue, tc, key, (multiValues, prev) -> {
+                    if (multiValues != null) {
+                        headers.set(key, multiValues);
+                    } else if (prev != null) {
+                        headers.set(key, prev);
+                    }
+                });
             }
         }
     }

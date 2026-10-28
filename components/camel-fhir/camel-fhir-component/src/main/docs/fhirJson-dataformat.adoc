@@ -18,3 +18,25 @@ JSON parser to parse to/from JSON format to/from a HAPI-FHIR's `IBaseResource`.
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
+
+== Usage
+
+The following route parses a FHIR resource from JSON and writes it as XML.
+The `fhirVersion` must match the version of the resources (R4 is the default):
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:patient
+      steps:
+        - unmarshal:
+            fhirJson:
+              fhirVersion: R4
+        - marshal:
+            fhirXml:
+              fhirVersion: R4
+              prettyPrint: true
+        - to:
+            uri: mock:result
+----

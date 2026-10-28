@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +34,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.StepDefinition;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RouteIdAware;
@@ -142,6 +144,25 @@ public class ManagedProcessor extends ManagedPerformanceCounter
     public Integer getSourceLineNumber() {
         int line = definition.getLineNumber();
         return line >= 0 ? line : null;
+    }
+
+    @Override
+    public String[] getBodyTypes() {
+        BodyTypeRegistry registry = context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        if (registry == null || getRouteId() == null || getProcessorId() == null) {
+            return new String[0];
+        }
+        return registry.getBodyTypes(getRouteId(), getProcessorId()).toArray(new String[0]);
+    }
+
+    @Override
+    public String[] getBodyKinds() {
+        BodyTypeRegistry registry = context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        if (registry == null || getRouteId() == null || getProcessorId() == null) {
+            return new String[0];
+        }
+        return registry.getBodyKinds(getRouteId(), getProcessorId()).stream()
+                .map(kind -> kind.name().toLowerCase(Locale.ROOT)).toArray(String[]::new);
     }
 
     @Override

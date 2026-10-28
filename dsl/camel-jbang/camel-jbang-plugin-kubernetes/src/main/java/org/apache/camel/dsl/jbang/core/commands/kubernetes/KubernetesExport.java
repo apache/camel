@@ -114,7 +114,7 @@ public class KubernetesExport extends Export {
                         description = "The image builder used to build the container image (e.g. docker, jib, s2i).")
     protected String imageBuilder = "jib";
 
-    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to push the container image to a given image registry.")
     protected boolean imagePush = true;
 

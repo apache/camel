@@ -29,7 +29,6 @@ import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import org.apache.camel.component.undertow.handlers.CamelRootHandler;
-import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.apache.camel.component.undertow.handlers.RestRootHandler;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.slf4j.Logger;
@@ -49,6 +48,8 @@ public class DefaultUndertowHost implements UndertowHost {
     private Undertow undertow;
     private String hostString;
     private DeploymentManager deploymentManager;
+    // the server handler, or the servlet deployment around it once an endpoint needs a servlet context
+    private volatile HttpHandler entryHandler;
 
     public DefaultUndertowHost(UndertowHostKey key) {
         this(key, null);
@@ -57,9 +58,13 @@ public class DefaultUndertowHost implements UndertowHost {
     public DefaultUndertowHost(UndertowHostKey key, UndertowHostOptions options) {
         this.key = key;
         this.options = options;
-        this.rootHandler = new CamelRootHandler(new NotFoundHandler());
         this.restHandler = new RestRootHandler();
         this.restHandler.init(key.getPort());
+        // the server serves both kinds of consumers on the same port: the rest-dsl consumers first, as their paths are
+        // exact or templates, then a request that matches none of them goes to the plain endpoints (so that a plain
+        // catch-all, such as matchOnUriPrefix on /, does not hide them), and gets 404 or 405 when none matches either
+        this.rootHandler = new CamelRootHandler(restHandler::handleNoMatch);
+        this.restHandler.setFallbackHandler(rootHandler);
     }
 
     @Override
@@ -70,6 +75,13 @@ public class DefaultUndertowHost implements UndertowHost {
     @Override
     public HttpHandler registerHandler(
             UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler) {
+        return registerHandler(consumer != null ? consumer.getEndpoint() : null, consumer, registrationInfo, handler);
+    }
+
+    @Override
+    public HttpHandler registerHandler(
+            UndertowEndpoint endpoint, UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo,
+            HttpHandler handler) {
         lock.lock();
         try {
             if (undertow == null) {
@@ -122,12 +134,12 @@ public class DefaultUndertowHost implements UndertowHost {
                     }
                 }
 
-                if (consumer != null && consumer.isRest()) {
-                    // use the rest handler as its a rest consumer
-                    undertow = registerHandler(consumer, builder, restHandler);
-                } else {
-                    undertow = registerHandler(consumer, builder, rootHandler);
+                entryHandler = restHandler;
+                if (requiresServletContext(endpoint)) {
+                    // deploy before the server starts, so that a failure leaves no server running
+                    deployServletContext();
                 }
+                undertow = builder.setHandler(exchange -> entryHandler.handleRequest(exchange)).build();
                 LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http",
                         key.getHost(),
                         key.getPort());
@@ -147,9 +159,17 @@ public class DefaultUndertowHost implements UndertowHost {
                     // initialization again.
                     undertow.stop();
                     undertow = null;
+                    if (deploymentManager != null) {
+                        deploymentManager.undeploy();
+                        deploymentManager = null;
+                    }
 
                     throw e;
                 }
+            }
+            if (deploymentManager == null && requiresServletContext(endpoint)) {
+                // a later endpoint needs a servlet context: wrap the handler of the running server
+                deployServletContext();
             }
             if (consumer != null && consumer.isRest()) {
                 restHandler.addConsumer(consumer, handler);
@@ -163,36 +183,44 @@ public class DefaultUndertowHost implements UndertowHost {
         }
     }
 
-    private Undertow registerHandler(UndertowConsumer consumer, Undertow.Builder builder, HttpHandler handler) {
-        UndertowSecurityProvider securityProvider = consumer == null
-                ? null
-                : consumer.getEndpoint().getComponent().getSecurityProvider() != null
-                        ? consumer.getEndpoint().getComponent().getSecurityProvider()
-                : consumer.getEndpoint().getSecurityProvider();
-        //if security provider needs servlet context, start empty servlet
-        if (securityProvider != null && securityProvider.requireServletContext()) {
-            DeploymentInfo deployment = Servlets.deployment()
-                    .setContextPath("")
-                    .setDisplayName("application")
-                    .setDeploymentName("camel-undertow")
-                    .setClassLoader(getClass().getClassLoader())
-                    //httpHandler for servlet is ignored, camel handler is used instead of it
-                    .addOuterHandlerChainWrapper(h -> handler);
-
-            deploymentManager = Servlets.newContainer().addDeployment(deployment);
-            deploymentManager.deploy();
-            try {
-                return builder.setHandler(deploymentManager.start()).build();
-            } catch (ServletException e) {
-                LOG.warn("Failed to start Undertow server on {}://{}:{}, reason: {}",
-                        key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
-
-                throw new RuntimeException(e);
-            }
-
+    /**
+     * Whether the security provider of the endpoint, or of its component, needs a servlet context, for example to run
+     * servlet filters. A producer endpoint can register first on a server, such as a WebSocket producer.
+     */
+    private static boolean requiresServletContext(UndertowEndpoint endpoint) {
+        if (endpoint == null) {
+            return false;
         }
+        UndertowSecurityProvider endpointProvider = endpoint.getSecurityProvider();
+        UndertowSecurityProvider componentProvider = endpoint.getComponent().getSecurityProvider();
+        return endpointProvider != null && endpointProvider.requireServletContext()
+                || componentProvider != null && componentProvider.requireServletContext();
+    }
 
-        return builder.setHandler(handler).build();
+    /**
+     * Starts an empty servlet deployment around the handler of the server, so that every request has a servlet context.
+     */
+    private void deployServletContext() {
+        HttpHandler handler = restHandler;
+        DeploymentInfo deployment = Servlets.deployment()
+                .setContextPath("")
+                .setDisplayName("application")
+                .setDeploymentName("camel-undertow")
+                .setClassLoader(getClass().getClassLoader())
+                //httpHandler for servlet is ignored, camel handler is used instead of it
+                .addOuterHandlerChainWrapper(h -> handler);
+
+        DeploymentManager manager = Servlets.newContainer().addDeployment(deployment);
+        manager.deploy();
+        try {
+            entryHandler = manager.start();
+        } catch (ServletException e) {
+            LOG.warn("Failed to start the servlet context of the Undertow server on {}://{}:{}, reason: {}",
+                    key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
+            manager.undeploy();
+            throw new RuntimeException(e);
+        }
+        deploymentManager = manager;
     }
 
     @Override
@@ -203,20 +231,19 @@ public class DefaultUndertowHost implements UndertowHost {
                 return;
             }
 
-            boolean stop;
             if (consumer != null && consumer.isRest()) {
                 restHandler.removeConsumer(consumer);
-                stop = restHandler.consumers() <= 0;
             } else {
                 rootHandler.remove(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(),
                         registrationInfo.isMatchOnUriPrefix());
-                stop = rootHandler.isEmpty();
             }
-            if (deploymentManager != null) {
-                deploymentManager.undeploy();
-            }
-
-            if (stop) {
+            // the rest-dsl and the plain endpoints of the port share the server, so it stops with the last of both
+            if (restHandler.consumers() <= 0 && rootHandler.isEmpty()) {
+                // the servlet deployment serves every endpoint of the server, so it can only go with the server
+                if (deploymentManager != null) {
+                    deploymentManager.undeploy();
+                    deploymentManager = null;
+                }
                 LOG.info("Stopping Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http",
                         key.getHost(),
                         key.getPort());

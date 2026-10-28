@@ -33,7 +33,8 @@ public class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
     @Override
     public Processor createProcessor() {
         DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
-        MarshalProcessor answer = new MarshalProcessor(dataFormat);
+        MarshalProcessor answer
+                = new MarshalProcessor(dataFormat, Boolean.TRUE == parseBoolean(definition.getAllowNullBody()));
         answer.setVariableSend(parseString(definition.getVariableSend()));
         answer.setVariableReceive(parseString(definition.getVariableReceive()));
         answer.setDisabled(isDisabled(camelContext, definition));

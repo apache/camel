@@ -449,6 +449,27 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
     }
 
+    @Override
+    public int routeStackLevel(Predicate<Route> filter) {
+        lock.lock();
+        try {
+            int level = 0;
+            if (route != null && filter.test(route)) {
+                level++;
+            }
+            if (routeStack != null) {
+                for (Route r : routeStack) {
+                    if (filter.test(r)) {
+                        level++;
+                    }
+                }
+            }
+            return level;
+        } finally {
+            lock.unlock();
+        }
+    }
+
     private static int countRoute(Route r, boolean includeRouteTemplate, boolean includeKamelet) {
         if (r.isCreatedByKamelet()) {
             return includeKamelet ? 1 : 0;

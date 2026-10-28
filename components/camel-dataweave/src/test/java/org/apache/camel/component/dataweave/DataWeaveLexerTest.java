@@ -145,9 +145,41 @@ class DataWeaveLexerTest {
 
     @Test
     void shouldSkipUnknownCharactersInsteadOfFailing() {
-        // '@' is not a recognized token; the lexer drops it and keeps going
+        // '@' is now a recognized AT token; only truly unknown characters are silently dropped
         assertEquals(
-                List.of(TokenType.IDENTIFIER, TokenType.IDENTIFIER, TokenType.EOF),
+                List.of(TokenType.IDENTIFIER, TokenType.AT, TokenType.IDENTIFIER, TokenType.EOF),
                 types("a @ b"));
+    }
+
+    // -- CAMEL-25324: new tokens --
+
+    @Test
+    void shouldTokenizeDoubleDollarAsDoubleDollarToken() {
+        // $$ must be a single DOLLAR_DOLLAR token, not two DOLLAR tokens
+        List<Token> tokens = tokenize("$$");
+        assertEquals(2, tokens.size()); // DOLLAR_DOLLAR + EOF
+        assertEquals(TokenType.DOLLAR_DOLLAR, tokens.get(0).type());
+        assertEquals("$$", tokens.get(0).value());
+    }
+
+    @Test
+    void shouldDistinguishSingleAndDoubleDollar() {
+        assertEquals(
+                List.of(TokenType.DOLLAR, TokenType.DOLLAR_DOLLAR, TokenType.EOF),
+                types("$ $$"));
+    }
+
+    @Test
+    void shouldTokenizeAtAsAtToken() {
+        assertEquals(
+                List.of(TokenType.AT, TokenType.EOF),
+                types("@"));
+    }
+
+    @Test
+    void shouldTokenizeQuestionMarkAsQuestionToken() {
+        assertEquals(
+                List.of(TokenType.IDENTIFIER, TokenType.QUESTION, TokenType.EOF),
+                types("payload?"));
     }
 }

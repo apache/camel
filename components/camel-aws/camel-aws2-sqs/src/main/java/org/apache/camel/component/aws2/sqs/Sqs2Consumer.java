@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -107,13 +108,16 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
+        // the visibility timeout of a message starts at its receive, and a poll with several (long polling) receive
+        // requests returns only when the last of them is done, so the messages are dated from the start of the poll
+        final Instant pollStarted = Instant.now();
         List<software.amazon.awssdk.services.sqs.model.Message> messages = pollingTask.call();
         // okay we have some response from aws so lets mark the consumer as
         // ready
         forceConsumerAsReady();
 
         Queue<Exchange> exchanges = createExchanges(messages);
-        return processBatch(CastUtils.cast(exchanges));
+        return processBatch(CastUtils.cast(exchanges), pollStarted);
     }
 
     protected Queue<Exchange> createExchanges(List<software.amazon.awssdk.services.sqs.model.Message> messages) {
@@ -134,7 +138,27 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
+        return processBatch(exchanges, Instant.now());
+    }
+
+    private int processBatch(Queue<Object> exchanges, Instant received) throws Exception {
         int total = exchanges.size();
+
+        // the visibility timeout of every message of the batch runs from the receive, so all of them are extended from
+        // now on, and not only when their turn comes: otherwise a message that waits behind slow ones becomes visible
+        // again and is delivered a second time
+        final TimeoutExtender extender = this.timeoutExtender;
+        if (extender != null) {
+            boolean due = false;
+            for (Object exchange : exchanges) {
+                due |= extender.add((Exchange) exchange, received);
+            }
+            if (due && isBatchAllowed()) {
+                // a message received long before this batch started may expire before the next scheduled run (not
+                // when the consumer is stopping or suspending: the batch is then not routed, see below)
+                extendNow(extender);
+            }
+        }
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
@@ -146,10 +170,6 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
-
-            if (this.timeoutExtender != null) {
-                timeoutExtender.add(exchange);
-            }
 
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
@@ -174,16 +194,43 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             try {
                 getAsyncProcessor().process(exchange, cb);
             } catch (Error e) {
-                if (this.timeoutExtender != null) {
+                if (extender != null) {
                     // fatal error so stop the timeout extender
-                    timeoutExtender.cancel();
-                    timeoutExtender.entries.clear();
+                    extender.cancel();
+                    extender.entries.clear();
                 }
+                throw e;
+            } catch (RuntimeException e) {
+                stopExtending(extender, exchanges);
                 throw e;
             }
         }
 
+        // the messages that are not routed (the consumer is stopping or suspending) are no longer extended, so they
+        // become visible again when their current visibility timeout runs out
+        stopExtending(extender, exchanges);
+
         return total;
+    }
+
+    private void extendNow(TimeoutExtender extender) {
+        final ScheduledExecutorService executor = this.scheduledExecutor;
+        if (executor != null) {
+            try {
+                // the executor has a single thread, so this run does not overlap with a scheduled one
+                executor.execute(extender);
+            } catch (RejectedExecutionException e) {
+                LOG.debug("Cannot extend the visibility of the received messages now, the consumer is stopping", e);
+            }
+        }
+    }
+
+    private static void stopExtending(TimeoutExtender extender, Queue<Object> notRouted) {
+        if (extender != null) {
+            for (Object exchange : notRouted) {
+                extender.remove((Exchange) exchange);
+            }
+        }
     }
 
     /**
@@ -398,7 +445,14 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             this.delayBetweenExecutions = delayBetweenExecutions;
         }
 
-        public void add(Exchange exchange) {
+        /**
+         * Starts extending the visibility of the message of the given exchange.
+         *
+         * @param  received the time the message was received (or an earlier time), its visibility timeout runs from
+         *                  then
+         * @return          true if the message must be extended before the next scheduled run of the extender
+         */
+        public boolean add(Exchange exchange, Instant received) {
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
@@ -412,7 +466,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
                 private void remove(Exchange exchange) {
                     LOG.trace("Removing exchangeId {} from the TimeoutExtender, processing done", exchange.getExchangeId());
-                    entries.remove(exchange.getExchangeId());
+                    TimeoutExtender.this.remove(exchange);
                 }
             });
 
@@ -420,7 +474,17 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                     .id(exchange.getExchangeId()).visibilityTimeout(visibilityTimeout)
                     .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class)).build();
 
-            entries.put(exchange.getExchangeId(), new TimeoutExtenderEntry(entry));
+            TimeoutExtenderEntry extenderEntry = new TimeoutExtenderEntry(entry, received);
+            entries.put(exchange.getExchangeId(), extenderEntry);
+            return extenderEntry.isDeadlineReachedAt(Instant.now().plusSeconds(Math.max(1, delayBetweenExecutions)));
+        }
+
+        /**
+         * Stops extending the visibility of the message of the given exchange. The message is not made visible: it
+         * becomes visible again when its current (possibly just extended) visibility timeout runs out.
+         */
+        public void remove(Exchange exchange) {
+            entries.remove(exchange.getExchangeId());
         }
 
         public void cancel() {
@@ -452,6 +516,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                         try {
                             LOG.trace("Extending visibility window by {} seconds for request entries: {}", visibilityTimeout,
                                     batchEntries);
+                            // SQS counts the new visibility timeout from the time of the call, so the next deadline is
+                            // counted from before the call (never later than when SQS extended the message)
+                            final Instant sent = Instant.now();
                             ChangeMessageVisibilityBatchResponse br
                                     = getEndpoint().getClient().changeMessageVisibilityBatch(request);
                             if (br.hasFailed()) {
@@ -467,7 +534,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             if (br.hasSuccessful()) {
                                 br.successful().forEach(successEntry -> {
                                     LOG.debug("Extended visibility window for request entry: {}", successEntry.id());
-                                    entries.computeIfPresent(successEntry.id(), (t, u) -> u.extendDeadline());
+                                    entries.computeIfPresent(successEntry.id(), (t, u) -> u.extendDeadline(sent));
                                 });
                             }
                         } catch (SdkException e) {
@@ -496,16 +563,23 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
              */
             private final ChangeMessageVisibilityBatchRequestEntry extendRequest;
 
-            TimeoutExtenderEntry(ChangeMessageVisibilityBatchRequestEntry extendRequest) {
+            /**
+             * @param start the time the current visibility timeout of the message started (its receive or its last
+             *              extension)
+             */
+            TimeoutExtenderEntry(ChangeMessageVisibilityBatchRequestEntry extendRequest, Instant start) {
 
-                // setting deadline to 80% of now until expected visibility
-                // timeout, this is for taking into account processing time
-                this.deadline = Instant.now().plusMillis(extendRequest.visibilityTimeout() * 800);
+                // setting deadline to 80% of the visibility timeout after its
+                // start, this is for taking into account processing time
+                this.deadline = start.plusMillis(extendRequest.visibilityTimeout() * 800L);
                 this.extendRequest = extendRequest;
             }
 
-            TimeoutExtenderEntry extendDeadline() {
-                return new TimeoutExtenderEntry(extendRequest);
+            /**
+             * @param start the time the extension request was sent, the new visibility timeout runs from then
+             */
+            TimeoutExtenderEntry extendDeadline(Instant start) {
+                return new TimeoutExtenderEntry(extendRequest, start);
             }
 
             boolean isDeadlineReachedAt(Instant time) {

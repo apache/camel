@@ -32,7 +32,7 @@ public class FromFileSendMailTest extends CamelTestSupport {
 
     @Test
     public void testSendFileAsMail() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

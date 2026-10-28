@@ -137,7 +137,7 @@ final class IntegrationSummaryHints {
     }
 
     private static Entry entry(Path dir) {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         Entry e = CACHE.get(dir);
         if (e != null && now - e.checkedAt() < RECHECK_MS) {
             return e;
@@ -179,7 +179,7 @@ final class IntegrationSummaryHints {
 
     /** Whether the AI overview setting is not off, whatever the ai view setting. */
     static boolean settingEnabled() {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - modeCheckedAt > MODE_RECHECK_MS) {
             modeCheckedAt = now;
             enabled = !ProjectOverviewAssist.MODE_OFF.equals(ProjectOverviewAssist.mode());

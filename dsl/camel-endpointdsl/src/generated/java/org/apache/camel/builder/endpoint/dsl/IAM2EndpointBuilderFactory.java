@@ -631,8 +631,8 @@ public interface IAM2EndpointBuilderFactory {
             return "CamelAwsIAMAccessKeyID";
         }
         /**
-         * The Status of the AccessKey you want to set, possible value are
-         * active and inactive.
+         * The Status of the AccessKey you want to set: Active or Inactive (in
+         * any case).
          * 
          * The option is a: {@code String} type.
          * 

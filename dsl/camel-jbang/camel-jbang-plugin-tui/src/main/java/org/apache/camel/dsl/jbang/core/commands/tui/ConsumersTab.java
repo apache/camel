@@ -78,16 +78,19 @@ class ConsumersTab extends AbstractTableTab {
                     ? hc.message
                     : (ci.uri != null ? ci.uri : "");
 
+            // the URI gets the rest of the width: the borders, ">> ", 8 gaps and the other columns; a long id or URI
+            // ends with an ellipsis where it is cut
+            int uriWidth = Math.max(0, area.width() - 2 - 3 - 8 - (20 + 10 + 16 + 8 + 8 + 22 + 8 + 22));
             rows.add(Row.from(
-                    Cell.from(Span.styled(" " + (ci.id != null ? ci.id : ""), Style.EMPTY.fg(Theme.accent()))),
+                    Cell.from(Span.styled(" " + TuiHelper.truncate(ci.id, 19), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
-                    Cell.from(ci.remote ? "x" : ""),
+                    Cell.from(ci.remote ? TuiIcons.CHECK : ""),
                     rightCell(String.valueOf(ci.inflight), 8),
                     Cell.from(schedule),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     Cell.from(sinceLast),
-                    Cell.from(Span.styled(uri, healthDown ? Theme.error() : Style.EMPTY))));
+                    Cell.from(Span.styled(TuiHelper.truncate(uri, uriWidth), healthDown ? Theme.error() : Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {

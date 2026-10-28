@@ -73,6 +73,7 @@ class MemoryLeakTab extends AbstractTab {
     private State state = State.IDLE;
     private RecordingMode recordingMode = RecordingMode.DUAL;
     private int duration = 60;
+    // the wall clock (epoch millis): the start of a recording may come from the integration's status
     private long recordingStartTime;
     private int currentRecordingDuration;
 
@@ -520,7 +521,10 @@ class MemoryLeakTab extends AbstractTab {
                 Span.styled(formatDuration(entry.objectAge), Style.EMPTY.fg(Theme.baseFg()))));
 
         // Reference chain
-        if (entry.referenceChain != null && !entry.referenceChain.isEmpty()) {
+        if (entry.referenceChain != null && entry.referenceChain.size() == 1) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(noChainLine());
+        } else if (entry.referenceChain != null && !entry.referenceChain.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Reference Chain (Object → GC Root):", Theme.muted())));
@@ -685,7 +689,10 @@ class MemoryLeakTab extends AbstractTab {
         }
 
         // reference chain from the entry
-        if (entry.referenceChain != null && !entry.referenceChain.isEmpty()) {
+        if (entry.referenceChain != null && entry.referenceChain.size() == 1) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(noChainLine());
+        } else if (entry.referenceChain != null && !entry.referenceChain.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Reference Chain (Object -> GC Root):", Theme.muted())));
@@ -841,6 +848,16 @@ class MemoryLeakTab extends AbstractTab {
         return key;
     }
 
+    /**
+     * The chain of a sample that has only the object itself: JFR records the path to a GC root only when the recording
+     * asks for it (the cutoff of jdk.OldObjectSample), so there is no chain to show, and the heading would promise one.
+     */
+    private static Line noChainLine() {
+        return Line.from(Span.styled("  Reference chain: not recorded (JFR records the path to a GC root only with its "
+                                     + "cutoff setting)",
+                Theme.muted()));
+    }
+
     private static ChainLink holderFromChain(List<ChainLink> chain) {
         if (chain == null || chain.size() < 2) {
             return null;
@@ -962,7 +979,10 @@ class MemoryLeakTab extends AbstractTab {
 
         // reference chain from the largest member
         SampleEntry representative = sorted.get(0);
-        if (representative.referenceChain != null && !representative.referenceChain.isEmpty()) {
+        if (representative.referenceChain != null && representative.referenceChain.size() == 1) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(noChainLine());
+        } else if (representative.referenceChain != null && !representative.referenceChain.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Reference Chain (Object → GC Root):", Theme.muted())));
@@ -1123,7 +1143,10 @@ class MemoryLeakTab extends AbstractTab {
 
         // reference chain from the largest member
         ComparisonEntry representative = sorted.get(0);
-        if (representative.referenceChain != null && !representative.referenceChain.isEmpty()) {
+        if (representative.referenceChain != null && representative.referenceChain.size() == 1) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(noChainLine());
+        } else if (representative.referenceChain != null && !representative.referenceChain.isEmpty()) {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Reference Chain (Object → GC Root):", Theme.muted())));
@@ -1499,8 +1522,8 @@ class MemoryLeakTab extends AbstractTab {
             return;
         }
         startDaemonThread("jfr-poll-" + pid, () -> {
-            long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
-            while (System.currentTimeMillis() < deadline) {
+            long deadline = MonotonicClock.millis() + (dur + 30) * 1000L;
+            while (MonotonicClock.millis() < deadline) {
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {

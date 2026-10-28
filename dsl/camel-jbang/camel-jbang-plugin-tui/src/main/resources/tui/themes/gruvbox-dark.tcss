@@ -52,3 +52,14 @@ $gruvbox-fg: #EBDBB2;
 #diagram-action  { color: #D3869B; }
 #diagram-eip     { color: #8EC07C; }
 #diagram-default { color: #A89984; }
+
+/*
+ * Syntax tokens (optional), after gruvbox: red keywords, green strings, aqua annotations, yellow types, purple constants.
+ */
+#syntax-comment  { color: #928374; }
+#syntax-string   { color: #B8BB26; }
+#syntax-keyword  { color: #FB4934; }
+#syntax-function { color: #8EC07C; }
+#syntax-type     { color: #FABD2F; }
+#syntax-constant { color: #D3869B; }
+#syntax-text     { color: $gruvbox-fg; }

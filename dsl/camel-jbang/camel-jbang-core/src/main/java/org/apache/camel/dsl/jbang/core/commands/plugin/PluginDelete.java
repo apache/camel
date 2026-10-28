@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
@@ -46,7 +47,7 @@ public class PluginDelete extends PluginBaseCommand {
             saveConfig(pluginConfig);
         } else {
             printer().printErr("Plugin %s not found in configuration".formatted(name));
-            return 1;
+            return CliExitCode.NOT_FOUND;
         }
 
         return 0;

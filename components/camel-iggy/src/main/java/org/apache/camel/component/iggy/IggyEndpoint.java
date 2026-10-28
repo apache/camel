@@ -26,6 +26,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -50,7 +53,20 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "iggy", title = "Iggy", syntax = "iggy:topicName",
              category = { Category.MESSAGING }, headersClass = IggyConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The payload of the Iggy message, decoded as text with the default charset"
+                                                 + " of the JVM: a binary payload does not survive"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is converted to text and sent as one message, so bytes are"
+                                                + " decoded as text (a binary payload is corrupted) and a Map or a POJO is"
+                                                + " sent as its toString(): marshal it first. A List of String or of Iggy"
+                                                + " Message is sent as one message per element, and an Iggy Message as it"
+                                                + " is. No body or an empty List fails"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+
+    private static final BigInteger MICROS_PER_SECOND = BigInteger.valueOf(1_000_000L);
+    private static final BigInteger U64_MAX = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE);
 
     private static final Logger LOG = LoggerFactory.getLogger(IggyEndpoint.class);
 
@@ -122,7 +138,7 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                         TopicDetails topicDetails = client.topics().createTopic(StreamId.of(stream),
                                 iggyConfiguration.getPartitionsCount(),
                                 iggyConfiguration.getCompressionAlgorithm(),
-                                BigInteger.valueOf(iggyConfiguration.getMessageExpiry()),
+                                toIggyExpiry(iggyConfiguration.getMessageExpiry()),
                                 BigInteger.valueOf(iggyConfiguration.getMaxTopicSize()),
                                 topic,
                                 options);
@@ -132,6 +148,22 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                         return topicDetails;
                     });
         }
+    }
+
+    /**
+     * Converts the messageExpiry option, in seconds, to the message expiry of an Iggy topic, which is in microseconds.
+     * 0 is passed as 0 (no expiry is set on the topic) and a negative value is passed unchanged, as before; a value too
+     * large for an unsigned 64-bit number of microseconds becomes u64::MAX, which Iggy reads as never expire.
+     */
+    static BigInteger toIggyExpiry(Long seconds) {
+        if (seconds == null) {
+            return BigInteger.ZERO;
+        }
+        if (seconds <= 0) {
+            return BigInteger.valueOf(seconds);
+        }
+        BigInteger micros = BigInteger.valueOf(seconds).multiply(MICROS_PER_SECOND);
+        return micros.compareTo(U64_MAX) >= 0 ? U64_MAX : micros;
     }
 
     public void initializeTopic(IggyBaseClient client) throws Exception {
@@ -159,6 +191,14 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     return consumerGroupDetails;
                 });
 
+        joinConsumerGroup(client);
+    }
+
+    /**
+     * Makes the client a member of the consumer group. The membership belongs to the connection of the client, so each
+     * client the consumer polls with must join.
+     */
+    public void joinConsumerGroup(IggyBaseClient client) {
         client.consumerGroups().joinConsumerGroup(
                 StreamId.of(getConfiguration().getStreamName()),
                 TopicId.of(getTopicName()),

@@ -64,18 +64,10 @@ public class Plc4XProducer extends DefaultAsyncProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        try {
-            plc4XEndpoint.reconnectIfNeeded();
-            if (plc4XEndpoint.isConnected() && !plc4XEndpoint.canWrite()) {
-                throw new PlcException("This connection (" + plc4XEndpoint.getUri() + ") doesn't support writing.");
-            }
-        } catch (PlcConnectionException e) {
-            if (log.isTraceEnabled()) {
-                log.warn("Unable to reconnect, skipping request", e);
-            } else {
-                log.warn("Unable to reconnect, skipping request");
-            }
-            return;
+        // a failed reconnect fails the exchange: the write was not done
+        plc4XEndpoint.reconnectIfNeeded();
+        if (plc4XEndpoint.isConnected() && !plc4XEndpoint.canWrite()) {
+            throw new PlcException("This connection (" + plc4XEndpoint.getUri() + ") doesn't support writing.");
         }
 
         Message in = exchange.getIn();
@@ -91,7 +83,7 @@ public class Plc4XProducer extends DefaultAsyncProducer {
         int currentlyOpenRequests = openRequests.incrementAndGet();
         try {
             log.debug("Currently open requests including {}:{}", exchange, currentlyOpenRequests);
-            Object plcWriteResponse = completableFuture.get(5000, TimeUnit.MILLISECONDS);
+            Object plcWriteResponse = completableFuture.get(Plc4XEndpoint.REQUEST_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             if (exchange.getPattern().isOutCapable()) {
                 Message out = exchange.getMessage();
                 out.copyFrom(exchange.getIn());
@@ -112,7 +104,6 @@ public class Plc4XProducer extends DefaultAsyncProducer {
             Message out = exchange.getMessage();
             out.copyFrom(exchange.getIn());
         } catch (Exception e) {
-            exchange.setMessage(null);
             exchange.setException(e);
         }
         callback.done(true);

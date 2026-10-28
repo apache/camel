@@ -33,6 +33,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AsEndpointUri;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
@@ -46,6 +49,9 @@ import org.apache.camel.util.TimeUtils;
                         + " Unlike XA transactions, Sagas use compensating actions for rollback and work across heterogeneous services.")
 @XmlRootElement(name = "saga")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
     @XmlTransient

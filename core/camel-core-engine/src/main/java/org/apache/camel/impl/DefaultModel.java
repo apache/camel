@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -61,9 +63,11 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.LocalBeanRegistry;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.util.AntPathMatcher;
@@ -533,6 +537,15 @@ public class DefaultModel implements Model {
             String parentRouteId, String parentProcessorId,
             RouteTemplateContext routeTemplateContext)
             throws Exception {
+        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, group, parentRouteId, parentProcessorId,
+                routeTemplateContext, null);
+    }
+
+    private String doAddRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, String group,
+            String parentRouteId, String parentProcessorId,
+            RouteTemplateContext routeTemplateContext, Resource templatedRouteResource)
+            throws Exception {
 
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
@@ -645,6 +658,22 @@ public class DefaultModel implements Model {
         if (group != null) {
             def.setGroup(group);
         }
+        // a route from a template (or a Kamelet) must not replace an existing route with the same id, unless that
+        // route was created from the same template (such as the route of a Kamelet with a route id that is created
+        // again when its parent route is updated); a route that exists in the CamelContext but has no route
+        // definition in the model is never replaced
+        String id = def.getId();
+        if (id != null) {
+            RouteDefinition existing = getRouteDefinition(id);
+            boolean sameTemplate = existing != null && routeTemplateId.equals(existing.getRouteTemplateId());
+            if (!sameTemplate && (existing != null || camelContext.getRoute(id) != null)) {
+                throw new FailedToCreateRouteFromTemplateException(
+                        id, routeTemplateId,
+                        "Route with id: " + id
+                                             + " already exists. Remove the existing route first or use another route id.");
+            }
+        }
+        def.setRouteTemplateId(routeTemplateId);
         def.setTemplateParameters(prop);
         def.setTemplateDefaultParameters(propDefaultValues);
         def.setRouteTemplateContext(routeTemplateContext);
@@ -671,7 +700,8 @@ public class DefaultModel implements Model {
         String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions, prefixId);
         if (duplicate != null) {
             throw new FailedToCreateRouteFromTemplateException(
-                    routeId, routeTemplateId,
+                    def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)),
+                    routeTemplateId,
                     "Duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
         }
 
@@ -681,6 +711,12 @@ public class DefaultModel implements Model {
         routeCollection.setCamelContext(camelContext);
         routeCollection.setRoutes(getRouteDefinitions());
         routeCollection.prepareRoute(def);
+
+        // the route is in the resource with the route template (its source location is there too), and is declared
+        // in the resource with the templated route (if any); set after the route is prepared, as preparing it sets the
+        // resource of the route collection
+        def.setResource(target.getResource());
+        def.setTemplatedRouteResource(templatedRouteResource);
 
         // add route and return the id it was assigned
         addRouteDefinition(def);
@@ -708,7 +744,16 @@ public class DefaultModel implements Model {
 
     private static void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target)
             throws Exception {
+        // a bean the caller has bound (TemplatedRouteBuilder or templated route) takes precedence over the template
+        // bean with the same name, as a parameter takes precedence over the default value of the template
+        Set<String> callerBeans = Collections.emptySet();
+        if (routeTemplateContext.getLocalBeanRepository() instanceof LocalBeanRegistry local) {
+            callerBeans = new HashSet<>(local.keys());
+        }
         for (BeanFactoryDefinition b : target.getTemplateBeans()) {
+            if (callerBeans.contains(b.getName())) {
+                continue;
+            }
             // route template beans do not directly support property placeholders
             // but need to use rtc.property API calls
             b.setScriptPropertyPlaceholders("false");
@@ -730,8 +775,9 @@ public class DefaultModel implements Model {
             }
         }
         // Add the route
-        addRouteFromTemplate(templatedRouteDefinition.getRouteId(), templatedRouteDefinition.getRouteTemplateRef(),
-                templatedRouteDefinition.getPrefixId(), templatedRouteDefinition.getGroup(), routeTemplateContext);
+        doAddRouteFromTemplate(templatedRouteDefinition.getRouteId(), templatedRouteDefinition.getRouteTemplateRef(),
+                templatedRouteDefinition.getPrefixId(), templatedRouteDefinition.getGroup(), null, null,
+                routeTemplateContext, templatedRouteDefinition.getResource());
     }
 
     private RouteTemplateContext toRouteTemplateContext(TemplatedRouteDefinition templatedRouteDefinition) {

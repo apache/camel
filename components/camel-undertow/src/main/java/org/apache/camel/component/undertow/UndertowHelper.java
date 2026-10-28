@@ -22,7 +22,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
@@ -65,12 +64,16 @@ public final class UndertowHelper {
                 path = path.substring(1);
             }
             if (!path.isEmpty()) {
+                // insert the path before the query of the uri, if it has one (as camel-http does)
+                int idx = uri.indexOf('?');
+                String base = idx == -1 ? uri : uri.substring(0, idx);
+                String query = idx == -1 ? "" : uri.substring(idx);
                 // make sure that there is exactly one "/" between HTTP_URI and
                 // HTTP_PATH
-                if (!uri.endsWith("/")) {
-                    uri = uri + "/";
+                if (!base.endsWith("/")) {
+                    base = base + "/";
                 }
-                uri = uri.concat(path);
+                uri = base + path + query;
             }
         }
 
@@ -154,6 +157,31 @@ public final class UndertowHelper {
         return answer;
     }
 
+    /**
+     * Rejects a value that cannot be written to the HTTP request line or a header line as it is. The Undertow client
+     * writes each character of the request path, query and header values as a single byte without any validation, so a
+     * CR or LF would break the request into further lines or headers, and a character above {@code 0xFF} is narrowed to
+     * a single, different byte (for example {@code U+010A} would be written as {@code LF}). A control character, a
+     * {@code DEL} or a character above {@code 0xFF} is therefore refused; {@code SP} and {@code HTAB}, which do not
+     * change the framing, are allowed.
+     *
+     * @param  what                     a short description of the value, used in the error message
+     * @param  value                    the value to check, may be {@code null}
+     * @throws IllegalArgumentException if the value holds a character that cannot be written as it is
+     */
+    public static void checkWriteable(String what, String value) {
+        if (value == null) {
+            return;
+        }
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (ch > 0xFF || ch == 0x7F || (ch < 0x20 && ch != '\t')) {
+                throw new IllegalArgumentException(
+                        "Illegal character 0x" + Integer.toHexString(ch) + " in " + what);
+            }
+        }
+    }
+
     public static URI makeHttpURI(String httpURI) {
         return makeHttpURI(
                 URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI)));
@@ -188,16 +216,38 @@ public final class UndertowHelper {
      *                     not supported, in which case the body is converted as before (UTF-8 by default)
      */
     public static ByteBuffer toByteBuffer(String body, String contentType) {
-        String name = contentType != null ? Headers.extractQuotedValueFromHeader(contentType, "charset") : null;
-        if (ObjectHelper.isEmpty(name)) {
+        String name = getCharsetFromContentType(contentType);
+        if (name == null) {
             return null;
         }
         try {
-            return ByteBuffer.wrap(body.getBytes(Charset.forName(IOHelper.normalizeCharset(name))));
+            return ByteBuffer.wrap(body.getBytes(Charset.forName(name)));
         } catch (IllegalArgumentException e) {
             // unknown or unsupported charset in the Content-Type
             return null;
         }
+    }
+
+    /**
+     * Gets the charset parameter of a Content-Type. The parameter name is case-insensitive (RFC 9110), as in the other
+     * HTTP components. Unlike {@link IOHelper#getCharsetNameFromContentType(String)}, there is no default: a
+     * Content-Type without a charset gives <tt>null</tt>.
+     *
+     * @param  contentType the Content-Type, may be <tt>null</tt>
+     * @return             the charset name, or <tt>null</tt> when the Content-Type declares no charset
+     */
+    public static String getCharsetFromContentType(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        for (String parameter : contentType.split(";")) {
+            parameter = parameter.trim();
+            if (parameter.regionMatches(true, 0, "charset=", 0, 8)) {
+                String name = IOHelper.normalizeCharset(parameter.substring(8));
+                return ObjectHelper.isEmpty(name) ? null : name;
+            }
+        }
+        return null;
     }
 
 }

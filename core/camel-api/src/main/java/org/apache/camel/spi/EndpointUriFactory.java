@@ -51,6 +51,9 @@ public interface EndpointUriFactory extends CamelContextAware {
 
     /**
      * Assembles an endpoint uri for the given component name with the given parameters.
+     * <p/>
+     * The options are in the order of the properties when the map has one (such as a {@code LinkedHashMap}), otherwise
+     * they are sorted by name.
      *
      * @param  scheme     the component name
      * @param  properties endpoint options

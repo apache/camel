@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
@@ -112,7 +113,7 @@ public class Bind extends CamelCommand {
 
         if (pipe.isEmpty()) {
             printer().printErr("Failed to construct Pipe resource");
-            return -1;
+            return CliExitCode.FAILURE;
         }
 
         return dumpPipe(pipe);
@@ -251,7 +252,7 @@ public class Bind extends CamelCommand {
                 break;
             default:
                 printer().printErr("Unsupported output format '%s' (supported: file, yaml, json)".formatted(output));
-                return -1;
+                return CliExitCode.USAGE;
         }
         return 0;
     }

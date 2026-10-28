@@ -24,7 +24,8 @@ import picocli.CommandLine;
                      description = "Start Camel route groups", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd start-group myGroup" })
+                             "  camel cmd start-group --id=myGroup",
+                             "  camel cmd start-group myApp --id=myGroup" })
 public class CamelRouteGroupStartAction extends CamelRouteAction {
 
     public CamelRouteGroupStartAction(CamelJBangMain main) {

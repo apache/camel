@@ -8,7 +8,22 @@
     "javaType": "org.apache.camel.component.neo4j.transformer.Neo4jEmbeddingDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-neo4j",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "text",
+        "pojo"
+      ],
+      "description": "A LangChain4j TextSegment, or a String the converter of camel-langchain4j-embeddings turns into one; the embedding comes from the CamelLangChain4jEmbeddingsVector header. A null body or no embedding fails"
+    },
+    "transformerOut": {
+      "carriers": [
+        "pojo"
+      ],
+      "javaType": "org.apache.camel.component.neo4j.Neo4jEmbedding"
+    }
   }
 }
 

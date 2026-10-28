@@ -21,15 +21,18 @@ import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for the row sorting logic of {@link CatalogKamelet}.
  *
  * The {@code doCall()} method downloads the Kamelet catalog from Maven and is therefore not unit tested here; the
- * deterministic, user-visible ordering produced by {@link CatalogKamelet#sortRow} is what these tests pin down.
+ * deterministic, user-visible ordering produced by {@link CatalogKamelet#order()} is what these tests pin down.
  */
 class CatalogKameletTest extends CamelCommandBaseTestSupport {
 
@@ -65,10 +68,22 @@ class CatalogKameletTest extends CamelCommandBaseTestSupport {
         cmd.sort = "name";
 
         List<KameletModel> rows = sampleRows();
-        rows.sort(cmd::sortRow);
+        rows.sort(cmd.order());
 
         // case-insensitive: "Aws-S3-sink" sorts before "kafka-source"
         assertEquals(List.of("Aws-S3-sink", "kafka-source", "timer-source"), names(rows));
+    }
+
+    @Test
+    void shouldSortAKameletWithoutDescriptionFirst() {
+        CatalogKamelet cmd = command();
+        cmd.sort = "description";
+
+        List<KameletModel> rows = sampleRows();
+        rows.add(model("no-description-sink", "sink", null, null));
+        rows.sort(cmd.order());
+
+        assertEquals(List.of("no-description-sink", "timer-source", "kafka-source", "Aws-S3-sink"), names(rows));
     }
 
     @Test
@@ -77,7 +92,7 @@ class CatalogKameletTest extends CamelCommandBaseTestSupport {
         cmd.sort = "-name";
 
         List<KameletModel> rows = sampleRows();
-        rows.sort(cmd::sortRow);
+        rows.sort(cmd.order());
 
         assertEquals(List.of("timer-source", "kafka-source", "Aws-S3-sink"), names(rows));
     }
@@ -88,7 +103,7 @@ class CatalogKameletTest extends CamelCommandBaseTestSupport {
         cmd.sort = "type";
 
         List<KameletModel> rows = sampleRows();
-        rows.sort(cmd::sortRow);
+        rows.sort(cmd.order());
 
         // ordered by type: action, sink, source
         assertEquals(List.of("timer-source", "Aws-S3-sink", "kafka-source"), names(rows));
@@ -99,12 +114,12 @@ class CatalogKameletTest extends CamelCommandBaseTestSupport {
         List<KameletModel> rowsLevel = sampleRows();
         CatalogKamelet level = command();
         level.sort = "level";
-        rowsLevel.sort(level::sortRow);
+        rowsLevel.sort(level.order());
 
         List<KameletModel> rowsSupportLevel = sampleRows();
         CatalogKamelet supportLevel = command();
         supportLevel.sort = "support-level";
-        rowsSupportLevel.sort(supportLevel::sortRow);
+        rowsSupportLevel.sort(supportLevel.order());
 
         // "level" and "support-level" are documented aliases and must produce identical ordering
         assertEquals(names(rowsLevel), names(rowsSupportLevel));
@@ -118,23 +133,20 @@ class CatalogKameletTest extends CamelCommandBaseTestSupport {
         cmd.sort = "description";
 
         List<KameletModel> rows = sampleRows();
-        rows.sort(cmd::sortRow);
+        rows.sort(cmd.order());
 
         assertEquals(List.of("timer-source", "kafka-source", "Aws-S3-sink"), names(rows));
     }
 
     @Test
-    void shouldLeaveOrderUnchangedForUnknownSortKey() {
+    void unknownSortKeyIsAUsageError() {
         CatalogKamelet cmd = command();
         cmd.sort = "bogus";
 
-        List<KameletModel> original = sampleRows();
-        List<KameletModel> rows = sampleRows();
-        rows.sort(cmd::sortRow);
-
-        // an unrecognized key yields a comparator that returns 0, so the input order is preserved
-        assertEquals(names(original), names(rows));
-        assertEquals(0, cmd.sortRow(original.get(0), original.get(1)),
-                "unknown sort key must produce a no-op comparator");
+        CliException e = assertThrows(CliException.class, cmd::order);
+        assertEquals(CliExitCode.USAGE, e.getExitCode());
+        assertEquals("--sort must be one of name, type, level, support-level, description (with - in front for the reverse"
+                     + " order), was: bogus",
+                e.getMessage());
     }
 }

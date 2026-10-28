@@ -50,12 +50,14 @@ public class AdvisoryTools {
                         + "advisories published after this Camel version was released are not included - check the "
                         + "web page for the very latest.")
     public AdvisoriesResult camel_security_advisories(
-            @ToolArg(description = "Camel version to check, e.g. 4.10.1 (optional)") String camelVersion,
+            @ToolArg(description = "Camel version to check, e.g. 4.10.1 (optional)", required = false) String camelVersion,
             @ToolArg(description = "Component to filter by, e.g. kafka or camel-kafka (optional; best-effort match "
                                    + "against components named in the advisory text - older advisories may not name "
-                                   + "components)") String component,
+                                   + "components)",
+                     required = false) String component,
             @ToolArg(description = "Severity to filter by: LOW, MEDIUM, HIGH, or CRITICAL "
-                                   + "(optional)") String severity) {
+                                   + "(optional)",
+                     required = false) String severity) {
         try {
             List<SecurityAdvisoryModel> advisories = advisoryService.advisories();
             List<AdvisoryService.AdvisoryView> matches

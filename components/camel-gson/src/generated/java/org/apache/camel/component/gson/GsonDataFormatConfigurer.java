@@ -22,6 +22,7 @@ public class GsonDataFormatConfigurer extends org.apache.camel.support.component
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowUnmarshallType", boolean.class);
         map.put("ContentTypeHeader", boolean.class);
         map.put("DateFormatPattern", java.lang.String.class);
         map.put("PrettyPrint", boolean.class);
@@ -33,6 +34,8 @@ public class GsonDataFormatConfigurer extends org.apache.camel.support.component
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GsonDataFormat target = (GsonDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowunmarshalltype":
+        case "allowUnmarshallType": target.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
         case "contenttypeheader":
         case "contentTypeHeader": target.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "dateformatpattern":
@@ -53,6 +56,8 @@ public class GsonDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowunmarshalltype":
+        case "allowUnmarshallType": return boolean.class;
         case "contenttypeheader":
         case "contentTypeHeader": return boolean.class;
         case "dateformatpattern":
@@ -69,6 +74,8 @@ public class GsonDataFormatConfigurer extends org.apache.camel.support.component
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GsonDataFormat target = (GsonDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowunmarshalltype":
+        case "allowUnmarshallType": return target.isAllowUnmarshallType();
         case "contenttypeheader":
         case "contentTypeHeader": return target.isContentTypeHeader();
         case "dateformatpattern":

@@ -146,7 +146,7 @@ class ErrorsTabRenderTest {
         ErrorsTab tab = new ErrorsTab(ctx);
         String rendered = renderToString(tab, 160, 30);
         assertEquals(0, tab.tableState.selected());
-        assertTrue(rendered.contains("ID-001"), rendered);
+        assertTrue(rendered.contains(ActivityTab.shortExchangeId("ID-001")), rendered);
     }
 
     @Test
@@ -157,8 +157,8 @@ class ErrorsTabRenderTest {
         ErrorsTab tab = new ErrorsTab(ctx);
         String rendered = renderToString(tab, 160, 30);
 
-        assertTrue(rendered.contains("ID-AAA"), "Should render first error");
-        assertTrue(rendered.contains("ID-BBB"), "Should render second error");
+        assertTrue(rendered.contains(ActivityTab.shortExchangeId("ID-AAA")), "Should render first error");
+        assertTrue(rendered.contains(ActivityTab.shortExchangeId("ID-BBB")), "Should render second error");
         assertTrue(rendered.contains("IOException"), "Should render first exception type");
         assertTrue(rendered.contains("NullPointerException"), "Should render second exception type");
     }
@@ -240,14 +240,14 @@ class ErrorsTabRenderTest {
 
         // Default shows all
         String all = renderToString(tab, 160, 30);
-        assertTrue(all.contains("ID-001"), "All filter should show unhandled errors");
-        assertTrue(all.contains("ID-002"), "All filter should show handled errors");
+        assertTrue(all.contains(ActivityTab.shortExchangeId("ID-001")), "All filter should show unhandled errors");
+        assertTrue(all.contains(ActivityTab.shortExchangeId("ID-002")), "All filter should show handled errors");
 
         // Press 'f' to filter to handled=true
         tab.handleKeyEvent(KeyEvent.ofChar('f', KeyModifiers.NONE));
         String handledOnly = renderToString(tab, 160, 30);
-        assertTrue(handledOnly.contains("ID-002"), "handled filter should show handled error");
-        assertFalse(handledOnly.contains("ID-001"), "handled filter should hide unhandled error");
+        assertTrue(handledOnly.contains(ActivityTab.shortExchangeId("ID-002")), "handled filter should show handled error");
+        assertFalse(handledOnly.contains(ActivityTab.shortExchangeId("ID-001")), "handled filter should hide unhandled error");
     }
 
     @Test

@@ -18,10 +18,10 @@ This rule file contains branching, commit, PR, and task-finding conventions for 
 - **Find-task experienced JQL:** `project = CAMEL AND status = Open AND labels = help-wanted` (maxResults=10)
 - **Scope-too-large redirect:** create a Jira issue directly
 - **Merge procedure:**
-  1. Derive milestone from target branch: read `<version>` from root `pom.xml` on the target branch and strip `-SNAPSHOT` (e.g., `4.23.0-SNAPSHOT` → `4.23.0`)
-  2. Assign milestone to PR (`gh pr edit <PR> --milestone <version>`) and set `fixVersions` on the JIRA issue to the same version (before closing)
+  1. Derive milestone from target branch: read `<version>` from root `pom.xml` on the target branch and strip `-SNAPSHOT` (e.g., `4.24.0-SNAPSHOT` → `4.24.0`)
+  2. Assign milestone to PR (`gh pr edit <PR> --milestone <version>`; if the milestone does not exist yet, create it with `gh api repos/{owner}/{repo}/milestones -f title="<version>"`) and set `fixVersions` on the JIRA issue to the same version (before closing, as it cannot be set on a closed issue)
   3. Assign PR to the PR author (`gh pr edit <PR> --add-assignee <author>`) and verify JIRA issue is assigned to the contributor. **Never guess the author** — look it up with `gh pr view <PR> --json author --jq '.author.login'`
-  4. Categorize PR with labels based on JIRA issue type or PR content: `bug` (Bug), `enhancement` (Improvement/New Feature), `documentation` (Documentation), `task` (Task/refactoring), `dependency` (dependency upgrades), `test` (Test)
-  5. Merge the PR (after verifying human approval and no unresolved conversations)
+  4. Categorize PR with labels based on JIRA issue type or PR content: `bug` (Bug; Camel end-user facing fixes only, CI/build/internal fixes are `task`), `enhancement` (Improvement/New Feature), `documentation` (Documentation), `task` (Task/refactoring/build), `dependency` (dependency upgrades), `test` (Test)
+  5. Merge the PR (`gh pr merge <PR> --squash`, or `--merge` / `--rebase` as appropriate) after verifying human approval and no unresolved conversations (a straight-cherry-pick backport PR needs no new approval once CI is green). If any commit was AI-assisted, the squash-merge commit message MUST keep the AI co-authorship trailer (e.g., `Co-authored-by: Claude Opus 4.6 <noreply@anthropic.com>`)
   6. Close the JIRA issue (transition to Resolved/Fixed, add comment linking to merged PR)
   7. Delete the PR branch

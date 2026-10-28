@@ -34,6 +34,7 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteGroupMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
+import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementStrategy;
@@ -60,9 +61,17 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
             return null;
         }
 
-        Processor processor = camelContext.getProcessor(id);
-        ProcessorDefinition<?> def
-                = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
+        Processor processor;
+        ProcessorDefinition<?> def;
+        if (getManagementStrategy().getManagementAgent() instanceof DefaultManagementAgent agent
+                && agent.getProcessorMBean(id, false) instanceof ManagedProcessor mp) {
+            // the processor is managed, so use its processor and definition instead of walking every route
+            processor = mp.getProcessor();
+            def = mp.getDefinition();
+        } else {
+            processor = camelContext.getProcessor(id);
+            def = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
+        }
 
         // processor may be null if its anonymous inner class or as lambda
         if (def != null) {
@@ -85,9 +94,17 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
             return null;
         }
 
-        Processor processor = camelContext.getProcessor(id);
-        ProcessorDefinition<?> def
-                = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
+        Processor processor;
+        ProcessorDefinition<?> def;
+        if (getManagementStrategy().getManagementAgent() instanceof DefaultManagementAgent agent
+                && agent.getProcessorMBean(id, true) instanceof ManagedProcessor mp) {
+            // the step is managed, so use its processor and definition instead of walking every route
+            processor = mp.getProcessor();
+            def = mp.getDefinition();
+        } else {
+            processor = camelContext.getProcessor(id);
+            def = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
+        }
 
         // processor may be null if its anonymous inner class or as lambda
         if (def != null) {

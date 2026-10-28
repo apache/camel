@@ -16,20 +16,31 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
                              "  camel config list",
-                             "  camel config list --global" })
+                             "  camel config list --global",
+                             "  camel config list --json" })
 public class ConfigList extends CamelCommand {
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
+                        description = "Use global or local configuration")
     boolean global = true;
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format: one entry per key, with its scope (local or global)")
+    boolean jsonOutput;
 
     public ConfigList(CamelJBangMain main) {
         super(main);
@@ -37,25 +48,35 @@ public class ConfigList extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        listConfigurations(true);
-        if (!global) {
-            return 0;
+        List<JsonObject> rows = new ArrayList<>();
+        listConfigurations(true, rows);
+        if (global) {
+            listConfigurations(false, rows);
         }
-
-        listConfigurations(false);
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows);
+        }
         return 0;
     }
 
-    private void listConfigurations(boolean local) {
+    private void listConfigurations(boolean local, List<JsonObject> rows) {
         CommandLineHelper
                 .loadProperties(p -> {
-                    if (!p.stringPropertyNames().isEmpty()) {
-                        String configurationType = local ? "Local" : "Global";
+                    String configurationType = local ? "Local" : "Global";
+                    if (!jsonOutput && !p.stringPropertyNames().isEmpty()) {
                         printer().println("----- " + configurationType + " -----");
                     }
                     for (String k : p.stringPropertyNames()) {
                         String v = p.getProperty(k);
-                        printer().printf("%s = %s%n", k, v);
+                        if (jsonOutput) {
+                            JsonObject jo = new JsonObject();
+                            jo.put("key", k);
+                            jo.put("value", v);
+                            jo.put("scope", local ? "local" : "global");
+                            rows.add(jo);
+                        } else {
+                            printer().printf("%s = %s%n", k, v);
+                        }
                     }
                 }, local);
     }

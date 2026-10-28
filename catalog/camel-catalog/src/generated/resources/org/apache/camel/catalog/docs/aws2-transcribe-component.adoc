@@ -43,7 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 Required Transcribe component options
 
-You have to provide the amazonTranscribeClient in the
+You have to provide the transcribeClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/transcribe/[Amazon Transcribe] service.
 
@@ -67,6 +67,45 @@ You have also the possibility of using Profile Credentials Provider, by specifyi
 Only one of static, default and profile credentials could be used at the same time.
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== Example
+
+The following route starts a transcription job for an audio file in S3. The job comes from the headers:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transcribe
+      steps:
+        - setHeader:
+            name: CamelAwsTranscribeTranscriptionJobName
+            expression:
+              constant:
+                expression: meeting-2026-10-17
+        - setHeader:
+            name: CamelAwsTranscribeLanguageCode
+            expression:
+              constant:
+                expression: en-US
+        - setHeader:
+            name: CamelAwsTranscribeMediaFormat
+            expression:
+              constant:
+                expression: mp3
+        - setHeader:
+            name: CamelAwsTranscribeMediaUri
+            expression:
+              constant:
+                expression: s3://my-audio/meeting.mp3
+        - to:
+            uri: aws2-transcribe:transcribe
+            parameters:
+              operation: startTranscriptionJob
+              region: eu-west-1
+              accessKey: "{{aws.access-key}}"
+              secretKey: "{{aws.secret-key}}"
+----
 
 == Dependencies
 

@@ -48,6 +48,18 @@ public class CamelQuartzCronService implements CamelCronService, CamelContextAwa
     private String convertSchedule(String schedule) {
         String[] parts = schedule.split("\\s");
         if (parts.length == 5) {
+            // Unix cron syntax: Quartz cannot match both the day of month and the day of week, one of them must be ?
+            // and * (any day) in the other one is ? in Quartz. A day of week given by number is left as it is, since
+            // Quartz counts the days from SUN=1 and Unix from SUN=0
+            if (!"?".equals(parts[2]) && !"?".equals(parts[4])) {
+                if ("*".equals(parts[4])) {
+                    parts[4] = "?";
+                    schedule = String.join(" ", parts);
+                } else if ("*".equals(parts[2]) && parts[4].chars().noneMatch(Character::isDigit)) {
+                    parts[2] = "?";
+                    schedule = String.join(" ", parts);
+                }
+            }
             // Seconds are mandatory in Quartz, let's add them back
             return "0 " + schedule;
         }

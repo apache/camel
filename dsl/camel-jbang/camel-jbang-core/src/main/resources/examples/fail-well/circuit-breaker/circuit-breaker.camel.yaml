@@ -23,10 +23,23 @@
                   uri: direct:supplier
             onFallback:
               steps:
-                - setBody:
-                    expression:
-                      simple:
-                        expression: "no answer, using last known stock"
+                # rejected: the breaker is open, so the supplier was not called at all
+                - choice:
+                    when:
+                      - expression:
+                          simple:
+                            expression: "${exchangeProperty.CamelCircuitBreakerResponseRejected} == true"
+                        steps:
+                          - setBody:
+                              expression:
+                                simple:
+                                  expression: "breaker open, supplier not called, using last known stock"
+                    otherwise:
+                      steps:
+                        - setBody:
+                            expression:
+                              simple:
+                                expression: "supplier failed, using last known stock"
         - log:
             message: "Stock check ${header.CamelTimerCounter} (breaker ${exchangeProperty.CamelCircuitBreakerState}): ${body}"
 

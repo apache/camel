@@ -48,6 +48,48 @@ shows how to configure a route from endpoint *direct:start* which then
 goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether the XML matches the given schema (which is
 supplied on the classpath).
+When the XML does not match the schema, the validator throws an `org.apache.camel.ValidationException`,
+which the `doCatch` handles:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - doTry:
+            steps:
+              - to:
+                  uri: validator:org/apache/camel/component/validator/schema.xsd
+              - to:
+                  uri: mock:valid
+            doCatch:
+              - exception:
+                  - org.apache.camel.ValidationException
+                steps:
+                  - to:
+                      uri: mock:invalid
+            doFinally:
+              steps:
+                - to:
+                    uri: mock:finally
+----
+
+To validate a header instead of the message body, set the `headerName` option:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:startHeaders
+      steps:
+        - to:
+            uri: validator:org/apache/camel/component/validator/schema.xsd
+            parameters:
+              headerName: headerToValidate
+        - to:
+            uri: mock:valid
+----
 
 == Advanced: JMX method `clearCachedSchema`
 

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.groovy.xml;
 
+import java.util.List;
+import java.util.Map;
+
 import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,6 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import groovy.util.Node;
 import groovy.xml.XmlParser;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -319,6 +324,16 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         Assertions.assertEquals(COUNTRIES, xml);
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testMarshalListFails() {
+        List<Map<String, Object>> list = List.of(Map.of("id", 1), Map.of("id", 2));
+
+        CamelExecutionException e = Assertions.assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:marshal", list));
+        InvalidPayloadException cause = Assertions.assertInstanceOf(InvalidPayloadException.class, e.getCause());
+        Assertions.assertTrue(cause.getMessage().contains("a List has no root element"), cause.getMessage());
     }
 
     @Override

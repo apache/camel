@@ -90,6 +90,7 @@ class VersionSetTest extends BaseConfigTestSupport {
     void shouldRemoveAllSettingsOnReset() throws Exception {
         UserConfigHelper.createUserConfig("""
                 camel-version=4.9.0
+                kamelets-version=4.9.0
                 repos=https://repo.example.org/maven
                 runtime=spring-boot
                 other=keep-me
@@ -101,9 +102,10 @@ class VersionSetTest extends BaseConfigTestSupport {
 
         CommandLineHelper.loadProperties(properties -> {
             assertFalse(properties.containsKey("camel-version"), "camel-version must be removed on reset");
+            assertFalse(properties.containsKey("kamelets-version"), "kamelets-version must be removed on reset");
             assertFalse(properties.containsKey("repos"), "repos must be removed on reset");
             assertFalse(properties.containsKey("runtime"), "runtime must be removed on reset");
-            // unrelated settings are preserved: reset only clears the three version keys
+            // unrelated settings are preserved: reset only clears the version keys
             assertEquals("keep-me", properties.get("other"));
         });
     }

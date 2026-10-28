@@ -21,9 +21,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,14 +57,15 @@ public final class AiToolExecutor {
      * Executes a Camel route tool by resolving the route processor from the spec's consumer, populating the exchange
      * with the provided arguments, and invoking the route.
      * <p>
-     * Arguments are validated against the tool's declared parameters (undeclared arguments are filtered out with a
-     * warning, required arguments are checked). Each argument is set as an individual exchange header so that route
-     * expressions like {@code ${header.city}} and SQL bindings work naturally. Argument names that start with
-     * {@code camel} or {@code org.apache.camel.} (case-insensitive) are rejected to prevent collision with internal
-     * Camel headers (following the same pattern as the A2A component).
+     * Arguments are checked against the tool's declared parameters (undeclared arguments are excluded from argument
+     * headers with a warning, required arguments are checked). Each declared argument is set as an individual exchange
+     * header so that route expressions like {@code ${header.city}} and SQL bindings work naturally. Argument names that
+     * start with {@code camel} or {@code org.apache.camel.} (case-insensitive) are rejected to prevent collision with
+     * internal Camel headers (following the same pattern as the A2A component).
      * <p>
-     * The calling adapter owns the exchange lifecycle: it must create the exchange before calling this method and
-     * release it afterwards (via {@code consumer.releaseExchange()}) in a try-finally block.
+     * The calling adapter obtains the exchange from {@link #createToolExchange(Exchange)} and passes it in. That copy
+     * is not a pooled consumer exchange, so the adapter does not release it afterwards (there is no
+     * {@code releaseExchange()} to call).
      * <p>
      * All errors — validation failures and route execution errors — are caught and returned as typed
      * {@link AiToolResult} variants rather than propagated. Framework adapters inspect the result type and decide how
@@ -74,6 +78,22 @@ public final class AiToolExecutor {
      * @return           an {@link AiToolResult} classifying the outcome; never null
      */
     public static AiToolResult execute(AiToolSpec spec, Map<String, Object> arguments, Exchange exchange) {
+        return execute(spec, arguments, exchange, null, null);
+    }
+
+    /**
+     * Executes a tool route with the invocation identifiers supplied by the calling framework. Identifiers are exposed
+     * as headers independently of whether the tool populates arguments into the body.
+     *
+     * @param  spec           the tool specification
+     * @param  arguments      the tool arguments
+     * @param  exchange       the exchange to populate and execute
+     * @param  toolCallId     the tool invocation identifier, or {@code null} when unavailable
+     * @param  conversationId the conversation identifier, or {@code null} when unavailable
+     * @return                the outcome of the invocation
+     */
+    public static AiToolResult execute(
+            AiToolSpec spec, Map<String, Object> arguments, Exchange exchange, String toolCallId, String conversationId) {
         String toolName = spec.getName();
 
         DefaultConsumer consumer = spec.getConsumer();
@@ -83,7 +103,9 @@ public final class AiToolExecutor {
             return new AiToolResult.ExecutionError(cause.getMessage(), cause);
         }
 
-        Processor routeProcessor = consumer.getProcessor();
+        // Use the authorization-guarded processor when the consumer applied an AuthorizationPolicy, so the guard runs
+        // before the route body; falls back to the plain route processor otherwise.
+        Processor routeProcessor = consumer instanceof AiToolConsumer atc ? atc.getToolProcessor() : consumer.getProcessor();
         if (routeProcessor == null) {
             IllegalStateException cause = new IllegalStateException(
                     String.format("No route processor available for tool '%s'", toolName));
@@ -113,37 +135,46 @@ public final class AiToolExecutor {
             });
         }
 
+        // Filter out Camel-internal names before required-argument validation so a discarded
+        // argument cannot satisfy a required parameter.
+        argsCopy.keySet().removeIf(name -> {
+            String lower = name.toLowerCase(Locale.ROOT);
+            if (lower.startsWith("camel") || lower.startsWith("org.apache.camel.")) {
+                LOG.warn("Rejecting tool argument '{}' for tool '{}' -- argument names starting with "
+                         + "'Camel' or 'org.apache.camel.' are reserved for internal use",
+                        name, toolName);
+                return true;
+            }
+            return false;
+        });
+
         for (String requiredName : spec.getRequiredArgumentNames()) {
             if (!argsCopy.containsKey(requiredName)) {
-                LOG.warn("Missing required argument '{}' for tool '{}' -- the LLM did not send "
-                         + "a parameter that is declared as required in the tool specification",
+                LOG.warn("Missing required argument '{}' for tool '{}' after argument filtering",
                         requiredName, toolName);
                 IllegalArgumentException cause = new IllegalArgumentException(
                         String.format("Missing required argument '%s' for tool '%s'", requiredName, toolName));
                 return new AiToolResult.ArgumentError(cause.getMessage(), cause);
             }
         }
-        // Set each argument as an exchange header so route expressions (${header.city})
-        // and SQL bindings work naturally. Filter out Camel-internal names to prevent
-        // header-namespace injection (CVE-2025-27636 family).
-        for (Map.Entry<String, Object> entry : argsCopy.entrySet()) {
-            String name = entry.getKey();
-            String lower = name.toLowerCase(Locale.ROOT);
-            if (lower.startsWith("camel") || lower.startsWith("org.apache.camel.")) {
-                LOG.warn("Rejecting tool argument '{}' for tool '{}' -- argument names starting with "
-                         + "'Camel' or 'org.apache.camel.' are reserved for internal use",
-                        name, toolName);
-                continue;
-            }
-            exchange.getMessage().setHeader(name, entry.getValue());
-        }
+        // Set declared arguments as headers for route expressions and SQL bindings.
+        argsCopy.forEach(exchange.getMessage()::setHeader);
+        setInvocationHeader(exchange, AiToolConstants.TOOL_CALL_ID, toolCallId);
+        setInvocationHeader(exchange, AiToolConstants.CONVERSATION_ID, conversationId);
 
         // Execute the route
         try {
+            if (consumer.getEndpoint() instanceof AiToolEndpoint endpoint && endpoint.getConfiguration().isArgumentsAsBody()) {
+                exchange.getMessage().setBody(Jsoner.serialize(argsCopy));
+            }
             routeProcessor.process(exchange);
 
             if (exchange.getException() != null) {
                 Exception routeError = exchange.getException();
+                AiToolResult denied = authorizationDenied(toolName, routeError, exchange);
+                if (denied != null) {
+                    return denied;
+                }
                 LOG.error("Error executing tool '{}': {}", toolName, routeError.getMessage(), routeError);
                 return new AiToolResult.ExecutionError(
                         String.format("Error executing tool '%s': %s", toolName, routeError.getMessage()), routeError);
@@ -153,10 +184,65 @@ public final class AiToolExecutor {
             LOG.debug("Tool '{}' execution completed successfully", toolName);
             return buildSuccessResult(spec, exchange, result);
         } catch (Exception e) {
+            AiToolResult denied = authorizationDenied(toolName, e, exchange);
+            if (denied != null) {
+                return denied;
+            }
             LOG.error("Error executing tool '{}': {}", toolName, e.getMessage(), e);
             return new AiToolResult.ExecutionError(
                     String.format("Error executing tool '%s': %s", toolName, e.getMessage()), e);
         }
+    }
+
+    private static void setInvocationHeader(Exchange exchange, String name, String value) {
+        if (value != null) {
+            exchange.getMessage().setHeader(name, value);
+        } else {
+            exchange.getMessage().removeHeader(name);
+        }
+    }
+
+    /**
+     * Classifies an error from route execution as an authorization denial when a {@link CamelAuthorizationException} is
+     * present in its cause chain (the route's {@link org.apache.camel.spi.AuthorizationPolicy} rejected the call).
+     * Returns a caller-safe {@link AiToolResult.AuthorizationDenied} refusal that does not leak the policy's internal
+     * message, or {@code null} when the error is not an authorization denial.
+     * <p>
+     * On a denial it also logs at {@code WARN} and emits an {@link AiToolAuthorizationDeniedEvent} so operators can
+     * observe and alert on denials; neither affects the refusal returned to the model.
+     */
+    private static AiToolResult authorizationDenied(String toolName, Throwable error, Exchange exchange) {
+        CamelAuthorizationException denial = findAuthorizationException(error);
+        if (denial == null) {
+            return null;
+        }
+        LOG.warn("Tool '{}' call denied by authorization policy: {}", toolName, denial.getMessage());
+        fireAuthorizationDeniedEvent(exchange, toolName, denial);
+        return new AiToolResult.AuthorizationDenied(
+                String.format("Access denied: not authorized to call tool '%s'", toolName), denial);
+    }
+
+    /**
+     * Emits an {@link AiToolAuthorizationDeniedEvent} for the denied tool call. The policy guards the route's outer
+     * processor, so a denial never runs the route's unit of work and fires no exchange-lifecycle event or route span;
+     * this event is the observable signal. Best-effort: when no {@code EventNotifier} is registered nothing is emitted,
+     * and a failure to notify is swallowed so it never affects the refusal returned to the model.
+     */
+    private static void fireAuthorizationDeniedEvent(Exchange exchange, String toolName, CamelAuthorizationException denial) {
+        // Route through EventHelper like every other event category: it skips notifiers with ignoreAiEvents set,
+        // creates the event lazily, and isolates a failing notifier (its doNotifyEvent swallows a Throwable) - so a
+        // broken notifier never turns the denial into a propagating failure or changes the refusal to the model.
+        EventHelper.notifyAiEvent(exchange.getContext(),
+                () -> new AiToolAuthorizationDeniedEvent(exchange, toolName, denial));
+    }
+
+    private static CamelAuthorizationException findAuthorizationException(Throwable error) {
+        for (Throwable t = error; t != null; t = t.getCause()) {
+            if (t instanceof CamelAuthorizationException cae) {
+                return cae;
+            }
+        }
+        return null;
     }
 
     private static AiToolResult buildSuccessResult(AiToolSpec spec, Exchange exchange, String stringBody) {
@@ -174,5 +260,39 @@ public final class AiToolExecutor {
             return new AiToolResult.ExecutionError(
                     String.format("Error executing tool '%s': %s", spec.getName(), e.getMessage()), e);
         }
+    }
+
+    /**
+     * Builds the exchange used to invoke a route tool from the calling (agent) exchange. The caller's <em>context</em>
+     * is carried over - exchange properties (most importantly the authenticated caller's identity, so a tool route can
+     * be guarded on {@code exchangeProperty.subject} and the model cannot forge it) and variables - but the tool route
+     * is given a <em>clean message</em>: it receives only its own tool arguments (set as headers by
+     * {@link #execute(AiToolSpec, Map, Exchange)}), not the caller's body or inbound headers, and a tool that sets no
+     * body returns {@code No result} rather than echoing the caller's body back to the model.
+     * <p>
+     * The tool exchange runs in its <em>own</em> unit of work and with its own exchange id - it does not share the
+     * caller's. This keeps each tool call independent: the tool route's own {@code onCompletion}, error handler and
+     * {@code useOriginalMessage()} apply to the tool call (not to the caller), parallel tool calls in one batch get
+     * distinct ids, and an error handler cannot restore the caller's message into the result. Changes the tool makes
+     * are isolated to this copy and do not leak back into the calling exchange. Every route-tool runtime
+     * (langchain4j-agent, openai, spring-ai-chat) builds the tool exchange this way, so an authorization check on an
+     * exchange property behaves identically across them (CAMEL-24832, CAMEL-23944).
+     *
+     * @param  callingExchange the exchange driving the agent
+     * @return                 an isolated copy with its own unit of work and id, carrying the caller's properties and
+     *                         variables but a clean message, to pass to {@link #execute(AiToolSpec, Map, Exchange)}
+     */
+    public static Exchange createToolExchange(Exchange callingExchange) {
+        // copy() carries the caller's context (properties and variables). The tool route must then run in its OWN unit
+        // of work and with its own exchange id, NOT the caller's: sharing the caller's UnitOfWork would stop the tool
+        // route's onCompletion from firing, give every parallel tool call the caller's exchange id, and -- through an
+        // error handler's useOriginalMessage() -- restore the caller's body and headers into the result, undoing the
+        // clean message. So detach the unit of work, then wipe the message so the tool route starts from its own
+        // arguments only.
+        Exchange toolExchange = callingExchange.copy();
+        toolExchange.getExchangeExtension().setUnitOfWork(null);
+        toolExchange.getMessage().setBody(null);
+        toolExchange.getMessage().getHeaders().clear();
+        return toolExchange;
     }
 }

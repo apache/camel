@@ -148,8 +148,8 @@ public class MailBinding {
             setRecipientFromEndpointConfiguration(mimeMessage, endpoint, exchange);
         }
 
-        // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
-        // and headers, the headers win UNLESS useHeaderReplyTo is set to false.
+        // set the replyTo if it was passed in as an option in the uri. Note: the Reply-To header is
+        // ignored unless useHeaderReplyTo is set to true (default false), in which case the header wins.
         String replyTo = null;
         if (endpoint.getConfiguration().isUseHeaderReplyTo()) {
             replyTo = exchange.getIn().getHeader(MailConstants.MAIL_REPLY_TO, String.class);
@@ -173,8 +173,8 @@ public class MailBinding {
             throw new IllegalArgumentException("The mail message does not have any recipients set.");
         }
 
-        // set the subject if it was passed in as an option in the uri. Note: if it is in both the URI
-        // and headers the headers win UNLESS useHeaderSubject is set to false.
+        // set the subject if it was passed in as an option in the uri. Note: the Subject header is
+        // ignored unless useHeaderSubject is set to true (default false), in which case the header wins.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
             mimeMessage.setSubject(subject, ExchangeHelper.getCharsetName(exchange, false));
@@ -220,11 +220,23 @@ public class MailBinding {
             String charset = determineCharSet(configuration, exchange);
             // must replace charset, even with null in case its an unsupported charset
             contentType = MailUtils.replaceCharSet(contentType, charset);
+            if (isText(contentType) && MailUtils.getCharSetFromContentType(contentType) == null) {
+                // the text is encoded in the default charset of Jakarta Mail (mail.mime.charset, else the JVM default),
+                // so declare it, as a reader takes text without a charset as US-ASCII
+                contentType
+                        = MailUtils.replaceCharSet(contentType, MimeUtility.mimeCharset(MimeUtility.getDefaultJavaCharset()));
+            }
         }
 
         LOG.trace("Determined Content-Type: {}", contentType);
 
         return contentType;
+    }
+
+    private static boolean isText(String contentType) {
+        // Perform a case-insensitive "startsWith" check that works for different locales
+        String prefix = "text/";
+        return contentType.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 
     protected static String determineCharSet(MailConfiguration configuration, Exchange exchange) {

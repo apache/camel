@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpRegexPatternIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/regexp?password=admin&include=report.*";
+        return "ftp://admin@localhost:{{ftp.server.port}}/regexp?password=admin&include=report.*&noop=true";
     }
 
     @Override

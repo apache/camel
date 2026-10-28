@@ -37,6 +37,15 @@ public class GoogleCloudStorageConfiguration implements Cloneable, GoogleCommonC
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
 
+    @UriParam(label = "security")
+    private boolean useWorkloadIdentityFederation;
+
+    @UriParam(label = "security")
+    private String workloadIdentityConfig;
+
+    @UriParam(label = "security")
+    private String impersonatedServiceAccount;
+
     @UriParam(label = "producer",
               enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,createDownloadLink")
     private GoogleCloudStorageOperations operation;
@@ -106,6 +115,49 @@ public class GoogleCloudStorageConfiguration implements Cloneable, GoogleCommonC
      */
     public void setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
+    }
+
+    @Override
+    public boolean isUseWorkloadIdentityFederation() {
+        return useWorkloadIdentityFederation;
+    }
+
+    /**
+     * Whether to authenticate with Workload Identity Federation instead of a service account key: with the credential
+     * configuration file given in workloadIdentityConfig or, when it is not set, with the Application Default
+     * Credentials, which detect Workload Identity on GKE.
+     */
+    public void setUseWorkloadIdentityFederation(boolean useWorkloadIdentityFederation) {
+        this.useWorkloadIdentityFederation = useWorkloadIdentityFederation;
+    }
+
+    @Override
+    public String getWorkloadIdentityConfig() {
+        return workloadIdentityConfig;
+    }
+
+    /**
+     * The Workload Identity Federation credential configuration file (JSON, of type external_account), which says how
+     * to exchange a token of an external identity provider, such as AWS, Azure or an OIDC provider, for Google
+     * credentials. Used when useWorkloadIdentityFederation is enabled. It is loaded from the classpath by default;
+     * prefix it with classpath:, file:, http: or https: to load it from another location.
+     */
+    public void setWorkloadIdentityConfig(String workloadIdentityConfig) {
+        this.workloadIdentityConfig = workloadIdentityConfig;
+    }
+
+    @Override
+    public String getImpersonatedServiceAccount() {
+        return impersonatedServiceAccount;
+    }
+
+    /**
+     * The email of a service account to impersonate with the credentials of Workload Identity Federation, so the
+     * workload gets the permissions of that service account. Used when useWorkloadIdentityFederation is enabled; the
+     * federated identity needs the Service Account Token Creator role on the service account.
+     */
+    public void setImpersonatedServiceAccount(String impersonatedServiceAccount) {
+        this.impersonatedServiceAccount = impersonatedServiceAccount;
     }
 
     public String getObjectName() {

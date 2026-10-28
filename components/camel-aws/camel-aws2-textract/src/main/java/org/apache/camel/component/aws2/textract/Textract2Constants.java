@@ -31,7 +31,9 @@ public interface Textract2Constants {
     @Metadata(label = "producer", description = "The S3 object version of the document to process", javaType = "String")
     String S3_OBJECT_VERSION = "CamelAwsTextractS3ObjectVersion";
     @Metadata(label = "producer",
-              description = "The job ID for async operations (StartDocumentTextDetection, StartDocumentAnalysis)",
+              description = "The job ID of an async operation. It is set from the response of the startDocumentTextDetection, "
+                            + "startDocumentAnalysis and startExpenseAnalysis operations, and it is the job ID of the "
+                            + "getDocumentTextDetection, getDocumentAnalysis and getExpenseAnalysis operations (else the body is used as the job ID)",
               javaType = "String")
     String JOB_ID = "CamelAwsTextractJobId";
     @Metadata(label = "producer", description = "The maximum number of results to return in paginated operations",
@@ -40,7 +42,10 @@ public interface Textract2Constants {
     @Metadata(label = "producer", description = "The next token for pagination in operations that return multiple pages",
               javaType = "String")
     String NEXT_TOKEN = "CamelAwsTextractNextToken";
-    @Metadata(label = "producer", description = "The feature types for document analysis (TABLES, FORMS, SIGNATURES, etc.)",
+    @Metadata(label = "producer",
+              description = "The feature types of the analyzeDocument and startDocumentAnalysis operations (TABLES, FORMS, QUERIES, "
+                            + "SIGNATURES, LAYOUT): a list of FeatureType or String values, or a String with comma separated values. "
+                            + "The String values are case-insensitive. Without this header TABLES and FORMS are used.",
               javaType = "List<FeatureType>")
     String FEATURE_TYPES = "CamelAwsTextractFeatureTypes";
 }

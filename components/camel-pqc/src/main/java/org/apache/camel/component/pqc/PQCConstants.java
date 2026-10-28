@@ -22,7 +22,9 @@ import org.apache.camel.spi.Metadata;
  * Constants used in PQC module
  */
 public interface PQCConstants {
-    @Metadata(description = "The operation we want to perform", javaType = "String")
+    @Metadata(description = "The operation we want to perform. It must be one the endpoint holds the key material for:"
+                            + " an override crossing between the signature and the key encapsulation operations is rejected",
+              javaType = "org.apache.camel.component.pqc.PQCOperations")
     String OPERATION = "CamelPQCOperation";
 
     @Metadata(description = "The signature of a body", javaType = "String")
@@ -32,7 +34,7 @@ public interface PQCConstants {
     String VERIFY = "CamelPQCVerification";
 
     @Metadata(description = "The extracted key in case of extractSecretKeyFromEncapsulation operation and storeExtractedSecretKeyAsHeader option enabled",
-              javaType = "Boolean")
+              javaType = "javax.crypto.SecretKey")
     String SECRET_KEY = "CamelPQCSecretKey";
 
     @Metadata(description = "The remaining signatures for a stateful key", javaType = "Long")

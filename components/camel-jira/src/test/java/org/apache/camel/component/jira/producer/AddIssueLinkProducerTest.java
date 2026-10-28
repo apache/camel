@@ -28,6 +28,8 @@ import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.IssueLink;
 import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
+import io.atlassian.util.concurrent.Promise;
+import io.atlassian.util.concurrent.Promises;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
@@ -128,11 +130,11 @@ public class AddIssueLinkProducerTest extends CamelTestSupport {
         headers.put(LINK_TYPE, linkType);
 
         when(issueRestClient.linkIssue(any(LinkIssuesInput.class)))
-                .then((Answer<Void>) inv -> {
+                .then((Answer<Promise<Void>>) inv -> {
                     Collection<IssueLink> links = new ArrayList<>();
                     links.add(newIssueLink(childIssue.getId(), 1, comment));
                     parentIssue = createIssueWithLinks(parentIssue.getId(), links);
-                    return null;
+                    return Promises.promise(null);
                 });
 
         template.sendBodyAndHeaders(comment, headers);
@@ -152,11 +154,11 @@ public class AddIssueLinkProducerTest extends CamelTestSupport {
         headers.put(LINK_TYPE, linkType);
 
         when(issueRestClient.linkIssue(any(LinkIssuesInput.class)))
-                .then((Answer<Void>) inv -> {
+                .then((Answer<Promise<Void>>) inv -> {
                     Collection<IssueLink> links = new ArrayList<>();
                     links.add(newIssueLink(childIssue.getId(), 1, null));
                     parentIssue = createIssueWithLinks(parentIssue.getId(), links);
-                    return null;
+                    return Promises.promise(null);
                 });
 
         template.sendBodyAndHeaders(null, headers);

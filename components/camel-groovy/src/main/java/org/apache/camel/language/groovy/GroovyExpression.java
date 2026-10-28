@@ -34,6 +34,8 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
+import org.apache.camel.spi.BodyTypeRegistry;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.support.LanguageHelper;
@@ -96,11 +98,52 @@ public class GroovyExpression extends ExpressionSupport {
             // the cause and lose the hint
             String name = e.getProperty();
             boolean bean = name != null && exchange.getContext().getRegistry().lookupByName(name) != null;
-            String hint = bean
-                    ? "'" + name + "' is a bean in the registry, not a script variable; use"
-                      + " exchange.getContext().getRegistry().lookupByName('" + name + "'), or call it from the route with"
-                      + " - bean: {ref: " + name + "}"
-                    : "the script variables are " + SCRIPT_VARIABLES_HINT;
+            Object body = exchange.getMessage().getBody();
+            // body.find { it.sku == ... } on the payload text iterates its bytes or characters: the body was not
+            // unmarshalled (CAMEL-25330). The same with JSON text in a header: headers.items.find { ... }
+            boolean onText = e.getType() == Byte.class || e.getType() == Character.class || e.getType() == String.class;
+            boolean bodyText = onText && (body instanceof byte[] || body instanceof String);
+            String textHeader = onText && !bodyText ? jsonTextHeader(exchange) : null;
+            // body.email on the body itself: the file as read or a stream, which is not data yet, or an iterator
+            // (CAMEL-25749); null for an object, where the name read is wrong
+            String payload = !onText && body != null && e.getType() == body.getClass() && !(body instanceof Map)
+                    ? BodyFacts.hint(exchange, BodyFacts.Need.DATA) : null;
+            // customer.customerNo on parsed data, where customer holds the text C-482: the text is a value of the
+            // data, and the body needs no unmarshal
+            BodyTypeRegistry.Kind kind = BodyFacts.kindOf(body);
+            boolean bodyData = kind == BodyTypeRegistry.Kind.DATA || kind == BodyTypeRegistry.Kind.COLLECTION;
+            String hint;
+            if (bodyText) {
+                // what the body is, the step that set it, and the unmarshal that parses it (CAMEL-25749)
+                hint = BodyFacts.describe(exchange) + ", not parsed data: "
+                       + BodyFacts.hint(exchange, BodyFacts.Need.DATA);
+            } else if (payload != null) {
+                hint = BodyFacts.describe(exchange) + ": " + payload;
+            } else if (textHeader != null) {
+                String ref = isIdentifier(textHeader) ? "headers." + textHeader : "headers['" + textHeader + "']";
+                String variable
+                        = isIdentifier(textHeader) ? "variables." + textHeader : "variables['" + textHeader + "']";
+                // the parsed data is kept in a variable, not a header: a header is sent on with the message
+                hint = "header '" + textHeader + "' is still JSON text, not parsed data: parse it in the script with"
+                       + " new groovy.json.JsonSlurper().parseText(" + ref + "), or keep the parsed data in a variable"
+                       + " (setVariable with simple ${body} after unmarshal: json) and read " + variable;
+            } else if (onText && bodyData && !bean) {
+                String keys = BodyFacts.hint(exchange, BodyFacts.Need.DATA);
+                hint = "the value read here is text (a " + e.getType().getSimpleName() + ") in the body, not an object"
+                       + " with fields: " + BodyFacts.describe(exchange) + ", which is data already, so no unmarshal is"
+                       + " needed; check the name read, and the value it is read on" + (keys != null ? " (" + keys + ")" : "");
+            } else if (onText && !bean) {
+                hint = "the value read here is still text (a " + e.getType().getSimpleName()
+                       + " comes from iterating text), not parsed data: unmarshal it first (unmarshal: json for JSON),"
+                       + " or parse it in the script with new groovy.json.JsonSlurper().parseText(...)";
+            } else if (bean) {
+                hint = "'" + name + "' is a bean in the registry, not a script variable; use"
+                       + " exchange.getContext().getRegistry().lookupByName('" + name
+                       + "'), or call it from the route with"
+                       + " - bean: {ref: " + name + "}";
+            } else {
+                hint = "the script variables are " + SCRIPT_VARIABLES_HINT;
+            }
             throw new groovy.lang.MissingPropertyException(
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
         }
@@ -339,5 +382,45 @@ public class GroovyExpression extends ExpressionSupport {
                     return null;
             }
         }
+    }
+
+    /** The first header that holds JSON text (a String or byte[] starting with { or [), or null. */
+    private static String jsonTextHeader(Exchange exchange) {
+        for (Map.Entry<String, Object> header : exchange.getMessage().getHeaders().entrySet()) {
+            int first = firstNonBlank(header.getValue());
+            if (first == '{' || first == '[') {
+                return header.getKey();
+            }
+        }
+        return null;
+    }
+
+    private static boolean isIdentifier(String name) {
+        if (name.isEmpty() || !Character.isJavaIdentifierStart(name.charAt(0))) {
+            return false;
+        }
+        for (int i = 1; i < name.length(); i++) {
+            if (!Character.isJavaIdentifierPart(name.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int firstNonBlank(Object body) {
+        if (body instanceof byte[] bytes) {
+            for (int i = 0; i < bytes.length && i < 256; i++) {
+                if (!Character.isWhitespace(bytes[i])) {
+                    return bytes[i];
+                }
+            }
+        } else if (body instanceof String text) {
+            for (int i = 0; i < text.length() && i < 256; i++) {
+                if (!Character.isWhitespace(text.charAt(i))) {
+                    return text.charAt(i);
+                }
+            }
+        }
+        return -1;
     }
 }

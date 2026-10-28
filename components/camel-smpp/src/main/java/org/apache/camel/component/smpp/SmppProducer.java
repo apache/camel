@@ -93,11 +93,8 @@ public class SmppProducer extends DefaultProducer {
                     connectLock.unlock();
                 }
             } else {
-                // TODO Update once baseline is Java 21
-                //                LOG.warn("Thread {} could not acquire a lock for creating the session during producer start",
-                //                        Thread.currentThread().threadId());
                 LOG.warn("Thread {} could not acquire a lock for creating the session during producer start",
-                        Thread.currentThread().getId());
+                        Thread.currentThread().threadId());
             }
         }
     }
@@ -172,11 +169,8 @@ public class SmppProducer extends DefaultProducer {
                         connectLock.unlock();
                     }
                 } else {
-                    // TODO Update once baseline is Java 21
-                    //                    LOG.warn("Thread {} could not acquire a lock for creating the session during lazy initialization",
-                    //                            Thread.currentThread().threadId());
                     LOG.warn("Thread {} could not acquire a lock for creating the session during lazy initialization",
-                            Thread.currentThread().getId());
+                            Thread.currentThread().threadId());
                 }
             }
         }
@@ -223,11 +217,8 @@ public class SmppProducer extends DefaultProducer {
                 connectLock.unlock();
             }
         } else {
-            // TODO Update once baseline is Java 21
-            //            LOG.warn("Thread {} could not acquire a lock for creating the session during producer reconnection",
-            //                    Thread.currentThread().threadId());
             LOG.warn("Thread {} could not acquire a lock for creating the session during producer reconnection",
-                    Thread.currentThread().getId());
+                    Thread.currentThread().threadId());
         }
     }
 

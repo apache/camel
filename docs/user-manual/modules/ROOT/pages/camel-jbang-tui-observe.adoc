@@ -29,6 +29,8 @@ dev mode or explicit enablement, the tab is empty.
 The top panel shows aggregated statistics: total / OK / failed exchange counts, total sends,
 p50 / p95 / max elapsed times, and the time window of the visible entries.
 
+image::jbang/camel-tui-observe-activity.png[The Activity tab: the last exchanges of three Kafka routes and a file route, with the summary on top]
+
 Select an exchange to see its details below: exchange ID, route, elapsed time, the remote endpoints
 called during the exchange with individual timings, and exception details if the exchange failed.
 
@@ -129,6 +131,20 @@ Inspect tab):
 
 This combination of error details + visual diagram replay gives you a complete picture of
 what went wrong and why -- without leaving the terminal.
+
+Press *Shift+F8* on an error to ask the AI to fix it: the AI panel opens with the source line of the processor the
+error happened at, and its exception, the same question as *Shift+F8* on a failing line in the
+xref:camel-jbang-tui-source-editor.adoc#_fix_with_ai[Source editor].
+
+image::jbang/camel-tui-errors-fix-with-ai.png[Shift+F8 on an error writes the question for the AI]
+
+The Log tab has the same key. *Shift+F8* asks the AI about the ERROR on the screen: for a failed exchange, the step that
+failed comes from its Message History, so the AI is asked to fix that line of the route; for a `log` with
+`loggingLevel: ERROR`, the logger names the source line. Any other ERROR is explained, and fixed when the cause is in the
+project. When different ERRORs are on the screen, a list comes up to pick one, newest first; the same error repeated is
+listed once.
+
+image::jbang/camel-tui-log-fix-with-ai-pick.png[Shift+F8 in the Log tab with two different ERRORs on the screen]
 
 image::jbang/camel-tui-observe-error-diagram.png[A failed order: the path from checkout to payment-provider, and the onException handler that parked it]
 
@@ -250,12 +266,16 @@ When your integration includes a DataSource, two SQL tabs appear under More > Da
 * *SQL Trace* -- captures and displays SQL statements executed by your routes in real-time,
   showing query text, execution time, and the route that triggered them.
 
+image::jbang/camel-tui-observe-sql-query.png[A query in the SQL Query tab against the DataSource of the integration, with the key column marked]
+
 === Memory Leak Detection
 
 The Memory Leak tab (under More > JVM) uses Java Flight Recorder (JFR) to diagnose memory leaks
 in your running integration. It runs two sequential recordings and compares object retention trends,
 classifying each class as growing, stable, shrinking, new, or gone. This is lightweight and safe
 for production use.
+
+image::jbang/camel-tui-observe-memory-leak.png[Two recordings compared: byte arrays grow 133% and are flagged as a leak, with the line of code that allocates them]
 
 === JFR Runtime Profiling
 
@@ -291,6 +311,10 @@ The Catalog tab (under More > Project) lets you browse the full Camel component 
 the TUI. Search for components by name, view their documentation, options, and supported headers --
 useful when building routes and you need to check what options a component supports.
 
+It lists Kamelets too: the project's own Kamelet files first, marked `project`, and the Kamelets of the catalog that the
+routes use (all of them with the full catalog, *a*). *f* cycles the kind, `kamelet` included, and *d* shows the
+properties of a Kamelet: required, type, default and description.
+
 == Keyboard Shortcuts
 
 === Inspect Tab
@@ -304,6 +328,258 @@ useful when building routes and you need to check what options a component suppo
 | *w* | Toggle word wrap
 | *g* | Toggle waterfall view
 | *d* | Toggle diagram replay mode
+| *+* / *-*, *z* | Zoom the replay diagram in or out, or fit it to the screen (the zoom of the Diagram tab, see xref:camel-jbang-tui-diagram.adoc#_zoom_and_folding[Zoom and Folding])
 | *n* | Toggle description labels
 | *F5* | Refresh / clear traces
 |===
+
+== Semantic
+
+The Semantic tab (*More > AI > Semantic*) inspects the selected running application's
+xref:next@components:languages:semantic-language.adoc[Semantic language] definitions and expert contracts.
+It appears when the runtime provides the semantic metadata console.
+
+Press *v* or click the view bar to switch between three views:
+
+* *Definitions* lists published definitions with their expert, operation, result type and state selector.
+  The detail pane shows the state selector, configured parameters and the operation's contract.
+* *Experts* places a compact expert list above the selected expert's contract on the left, including
+  input types, result meaning, supported evidence and parameter constraints. The right column lists
+  definitions using the expert, with their state selectors, above a larger inline playground for
+  calling the expert directly with text or structured input. The contract remains visible when the playground is expanded.
+* *Relationships* maps definitions to their expert operations. Definitions sharing an operation
+  join the same card. Definition cards include their state; expert cards show the operation, input and
+  result types and reuse count. Labeled arrows represent references, with the selected relationship
+  highlighted. The diagram scrolls with the selection. Below 120 columns, the map fills the view.
+
+All three views share the selected definition and expert. Selecting a definition, including one
+in the Experts view, selects its operation in the contract and playground. *Enter* follows a definition to its
+expert, or returns from an expert to its selected definition. *Tab* changes pane focus,
+*Up/Down* and *PgUp/PgDn* navigate, */* filters published metadata (including parameters and errors), and *r* refreshes the runtime snapshot.
+Inspection reads published runtime declarations, so unsaved source edits are not reflected here.
+Reading the contracts does not run an inference.
+
+=== Try an expert directly
+
+In *Experts*, click the operation strip or use *[* and *]* to select an operation. The strip includes
+usage counts. The linked-definition highlight follows a matching operation and clears if none uses it.
+Press *t* to edit the playground. If the contract publishes a free-text `instructions` parameter,
+it appears in a dedicated *Instructions* editor above *Text to assess* (or *State to assess* in JSON mode).
+Enter the question in Instructions and the content being evaluated in the text/state box below it.
+Criteria and other parameters stay on the right. Operations without instructions use a single Input editor.
+*Enter* inserts a new line; *Ctrl+r* or the *Run* button explicitly evaluates the input.
+*Tab* and *Shift+Tab* move through Instructions (when present), text/state, parameter controls and output. Tab past the output to return to the expert list.
+*Ctrl+l* clears the current field or restores an optional choice to its expert default;
+*Esc* leaves the editor while preserving the input and output.
+
+Click *Load params* or press *Ctrl+p* to copy the selected definition's parameters, including
+Instructions, into the form. The shortcut works while editing; *p* also works outside the editor.
+Click *Clear params* or press *Ctrl+k* to empty Instructions and all other parameter fields and rows.
+Both actions preserve the text/state to assess and change only the editable draft. The definition's state
+selector is not applied. Unset optional parameters use expert defaults; required values must be filled before Run.
+These controls are disabled while an evaluation is running.
+
+While editing text/state, use *Ctrl+t* to switch between literal text and JSON state when the operation supports both.
+Instructions remain plain text.
+Structured-only operations open in JSON mode. JSON state must be an object or array.
+Parameters use a form generated from the operation contract: multiline text fields, numbers,
+Boolean/allowed-value selectors, key/value rows for maps, and ordered rows for lists.
+Required fields are marked; optional fields can be left unset to use expert defaults.
+For decision experts, fill in instructions, then the named categories or ordered score levels.
+
+Use *Ctrl+n* or the *Add entry* button to add a collection row, *Ctrl+d* to remove it,
+and *Ctrl+Up/Down* to move it. List indices start at zero and follow the order sent to the expert.
+Use *Left/Right*, *Space* or *Enter* to cycle Boolean and allowed-value controls.
+The form validates required values, numeric bounds, sizes and duplicate map keys before calling the expert.
+For collection items whose type is itself a map, list or arbitrary object, the individual value
+still uses JSON because the contract does not describe its nested fields.
+
+*Ctrl+e* expands the playground into the right pane, giving more space to edit the fields and
+inspect the result; press it again to restore. The form scrolls to keep the focused control visible.
+
+The playground uses Camel Semantic's expert abstraction without a named definition, state
+expression or route. Text is passed literally, including any `${...}` or `{{...}}` fragments.
+The selected operation's contract and provider validate parameters, input and the typed result.
+For example, enter `0.5` directly into a published `threshold` field. Expert defaults are independent
+of any definition's configured parameters. To reuse a definition's parameters, leave editing and press *p*.
+This replaces the parameter draft, including instructions, with an editable copy labeled with its source.
+It preserves your input text/state and does not apply the definition's state selector.
+Input modes, field types and constraints come from the expert contract. Static result bounds are labeled
+*Supported range*. If the expert publishes a `scoreLevelsParameter` relationship, Definitions and
+Relationships also show the *Effective range* derived from the configured levels. Try expert derives
+its range from the entered parameters. Results label score probabilities with the level descriptions
+and explain fractional scores between adjacent levels. Result labels retain the levels used by that
+run when the draft changes. Experts without this metadata retain their published bounds and raw labels.
+
+The answer appears below the input, followed by its result meaning, elapsed time and any returned
+probability, confidence, a labeled probability distribution or structured metadata. *Tab* focuses the output for scrolling.
+A changed input is marked until it is evaluated again. Each expert and operation keeps its own draft
+and last result until the integration changes. A changed operation contract starts a new draft.
+Late responses stay associated with the operation that ran them.
+
+A configured expert is not a service-health guarantee. Provider failures and request timeouts
+appear inline and keep the input and parameter draft for an explicit retry. If the selected
+application disconnects, Run is disabled and the cached draft stays visible until that connection
+returns or another integration is selected. Inspecting a contract does not probe the provider by running inference.
+
+=== Monitor semantic evaluations
+
+The *Monitoring* view reads the same cached measurements as the semantic monitoring CLI, MCP and JMX.
+It does not run inference or scan retained audit events. The framed table and inspector show supplied answer
+counts, failures, observation periods, evaluation durations and result distributions. Score results use the
+producer's histogram boundaries. Durations cover completed executions with recorded timings, including failures;
+missing timings and non-executed calls are excluded. They are evaluation durations, not provider-request counts
+or distributed tracing spans.
+
+The view shows current measurements only. Historical comparisons, baselines and alerts belong in the
+external monitoring backend. Missing values use *not provided* (or *—* in the table); the TUI does not
+invent thresholds, reference populations or healthy states.
+
+Click *Group* or press *g* to select *Expert*, *Definition* or *All sources*. Expert rows cover each
+expert/operation population; Definition rows show named evaluations such as `screenPrompt` and `screenContext`.
+The switch selects aggregates already collected by the source. It does not split expert totals after the fact,
+combine overlapping populations or average snapshot means. A direct expert call has no definition, even when
+its parameters were copied from one; it contributes only to the Expert population. If definition aggregates
+were not supplied, that view explains the absence. *All sources* also includes sources without grouping metadata.
+
+Click the Definition, Expert and Availability filters or use *a*, *x* and *s*. These controls only filter
+displayed data. *Tab* focuses the inspector; arrows and *Page Up/Down* scroll. *i* or *Enter* expands it to show
+measurement identity, dimensions and collection health. *Esc* restores the split view. *Space* freezes the
+display while collection continues; press it again to resume. *r* requests a refresh. The footer reports
+source errors, evicted series and omitted sources. Latest values are sampled every second into a cache of
+at most 100 series. It retains no time history and is cleared on restart. Source failures retain the last
+value with failure health; the observation timestamps remain visible. Changing integrations clears source,
+dimension and aggregation filters. There are no historical-period or comparison controls.
+
+=== Evaluate a definition with a sample exchange
+
+Press *e* in any of the three views to open the selected definition's sample form. Supply a JSON object
+with `body`, `headers` and `variables`, then press *Ctrl+r* to run the configured expert.
+Opening the form does not run the evaluation. For example:
+
+[source,json]
+----
+{
+  "body": "Please summarize this document",
+  "headers": {"text": "A sample header value"},
+  "variables": {"items": ["first", "second"]}
+}
+----
+
+The definition's existing state expression selects its input from this sample exchange.
+Headers and variables must be JSON objects. Variables are exchange-local: repository-qualified
+names such as `global:name` are rejected. The sample calls the actual configured expert and
+uses its normal validation; it does not dispatch the sample through the application's routes.
+
+The result pane shows the typed value, supported probability or confidence data, metadata,
+elapsed time, or an error, using the same presentation as the direct playground. *Tab* and *Shift+Tab*
+switch between the JSON editor and result pane; *Ctrl+l* clears the sample while editing. *Esc* closes
+the form. Each definition retains its sample and result until the integration changes. Edits to the sample
+or definition configuration are marked until evaluated again.
+Closing the form preserves an evaluation already in progress. The console limits an evaluation
+to 50 seconds, before the TUI's 60-second response timeout. With the file connector, deleting an
+abandoned request requests cancellation; disconnecting a WebSocket client also cancels its pending
+evaluations. Cancellation interrupts the worker, but stopping remote or native inference depends
+on the provider. Use provider-specific timeouts as well.
+
+
+=== Semantic screens through MCP
+
+`tui_get_table` includes the selected operation and focused pane. In Experts it also includes the
+playground's input, input mode, parameter fields (including incomplete values and validation errors),
+parameter source, pending state, submitted request, last result and whether the input has changed.
+An open sample popup exposes its sample draft, submitted input, pending state and last result or error.
+Reading this state does not run an evaluation.
+
+`tui_set_input` edits the visible form. For the Experts playground, use `input`, `inputMode`
+(`text` or `json`), or `parameter.<name>`, for example `parameter.instructions` or `parameter.criteria`.
+Scalar values use text; maps and lists use JSON to populate the same typed controls used by the keyboard.
+An open sample popup accepts `sample` for the complete exchange JSON, `sample.body` for literal text,
+and `sample.headers` or `sample.variables` for JSON objects. Use the complete `sample` field for a
+structured body. Fields cannot be edited while their evaluation is pending. Edits remain visible in
+the TUI and use the same validation as manual input; send *Ctrl+r* explicitly to evaluate.
+
+
+=== Semantic audit history
+
+The *Audit* view in the Semantic tab browses retained expert evaluations and request outcomes.
+Configure capture in the semantic DSL. Auditing works without a TUI connection and is independent
+of OpenTelemetry. Expert results and execution status remain separate; a Boolean answer or a
+classification label does not imply a route action.
+
+Use `/` for exact `field=value` filters (`category`, `expert`, `routeId`, `executingRouteId`,
+`exchangeId`, `breadcrumbId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
+The header shows the global audit default, per-expert overrides and OpenTelemetry independently,
+with the active filters and reader below. Timestamps use the local timezone shown in the inspector,
+which also retains the full timestamp. `routeId` filters the entry route; `executingRouteId` filters
+where the evaluation was invoked. Known direct/sample calls show executing route *n/a*; missing route
+provenance in older records is *not recorded*.
+
+Press `t` for rolling 10-minute, one-hour or one-day presets. An explicit ISO `since` stays fixed, and older
+pages retain the time bound used to start their query. Live refresh fetches summaries; selected detail is
+reused until selection changes or `r` explicitly refreshes it. Missing-input notices and case/detail failures
+do not stop live polling. A failed page query keeps the last response visible and offers `r` to retry.
+
+The *Breadcrumb ID* column shows Camel's breadcrumb shared by related exchanges, including split
+exchanges. Set `camel.main.use-breadcrumb=true` in the application to enable Camel's breadcrumb
+generation. Audit uses the existing breadcrumb; records without one show `—`. Both the exchange ID
+and breadcrumb remain available in the inspector.
+
+Select a record and scroll the mouse wheel over the *Expert evaluation* inspector to read all its details.
+Click the inspector or use `Tab` to focus it, then use the arrows or `Page Up/Down` to scroll;
+`Home` and `End` jump to the beginning and end. A scrollbar and visible line range indicate hidden content.
+Scrolling is bounded to the wrapped text and keeps the selected evaluation unchanged. Use `Tab` to return
+to the record list. Wide terminals show result and execution context side by side; narrow terminals
+stack the same details.
+
+Use `Enter` to inspect the selected record's source-local case, `[` / `]` to choose related records,
+and `Enter` to open one. `Esc` returns to the previous record. Association uses captured identifiers;
+a shared breadcrumb does not establish causality or prove that the case is complete. Missing records
+and unsupported case retrieval remain explicit.
+
+The Input column and Input type detail distinguish text, images and mixed input, including when
+payload capture is disabled. Older records show that the input type was not recorded.
+For retained images, `u` renders an inline colour preview without printing base64. Decoding happens
+in the background and uses local image readers; unavailable/corrupt/oversized images show a reason.
+No remote URL is fetched. The preview uses the first frame and at most 64 pixels per dimension.
+
+When input capture is enabled for an expert, `u` reveals the permitted stored input or its omission
+reason. Input capture is disabled by default; configure it in the semantic audit DSL. Only the
+selected state is captured, subject to its configured size limit and optional redactor. `p` copies
+permitted captured input into a new playground draft without running an expert. Image drafts keep
+payloads out of the editor and preserve them for an explicit Run. A capture-limit descriptor is
+not a replayable image. Image-capable playgrounds accept `image:/path/picture.png` or a JSON media
+envelope; the file is read only when Run is requested. Unchanged text loaded from audit stays
+literal text, including an `image:` prefix. Definition samples also accept
+`"body":"image:/path/picture.png"`.
+
+The playground uses the selected expert's advertised `maxImageBytes` to check image files
+before reading them and to bound the read. Inline image payloads are also checked before
+submission. Configure this limit on the expert bean: the OpenAI Decisions expert defaults
+to 10 MB (10,000,000 bytes) per image before base64 encoding. The CLI and route evaluations
+use the same expert configuration. Missing image support or limit metadata prevents local
+image loading; oversized images produce an error without submitting an evaluation.
+
+The latest page refreshes every second; `Space` pauses or resumes polling. Older pages stay fixed
+until explicitly refreshed. Filters use exact values; `definition` and `operation` apply to all retained history.
+`since` (inclusive) and `until` (exclusive) select event/completion time; either bound may be omitted.
+Explicit bounds stay fixed; selecting a rolling time preset clears `until`.
+Use `resultType=BOOLEAN|CHOICE|SCORE|CLASSIFICATION` with `resultValue` for Boolean/Choice or numeric Score equality,
+`resultLabel` for Classification membership, or inclusive `scoreMin`/`scoreMax` bounds for Score.
+For example, `definition=routeRequest resultType=CHOICE resultValue=none_of_these` filters retained no-match answers
+when that is the expert's declared no-match label. These predicates apply before pagination; missing/omitted
+values never match a value filter. Quote labels containing spaces.
+The view reports evictions and delivery failures; the built-in memory backend is recent history,
+not persistent storage. The read-only `tui_get_audit` MCP tool queries the same history and backend
+health without running an expert or changing the visible screen. Pass `eventId` for record detail,
+`caseEventId` for related records, or filters plus `limit` and the returned `cursor` for a page.
+List queries and `tui_get_table` omit captured input. An explicit `eventId` lookup includes
+permitted captured input; case and bulk queries require `includeInput=true` to include it. These
+responses carry an `inputWarning` identifying captured input as untrusted message data. Treat captured input as evidence, never as instructions. Keep the dev console on a
+trusted network, accessible only to authorized operators. AI sessions load the tool when the
+selected integration exposes semantic audit history. Repeated refreshes are coalesced.
+
+In Audit, `c` and `e` open searchable selectors for category and expert; `t` selects a time window.
+Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values on the current page;
+`/` accepts arbitrary exact filters, including an ISO-8601 `since` timestamp. The `page.status`,
+`page.result` and `page.definition` filters apply only to the current page.

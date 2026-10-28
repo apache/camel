@@ -81,8 +81,8 @@ public class TestScaffoldTools {
                         + "and @RegisterExtension stubs for infrastructure components (Kafka, AWS, etc.).")
     public String camel_route_test_scaffold(
             @ToolArg(description = "The Camel route definition (YAML or XML)") String route,
-            @ToolArg(description = "Route format: yaml or xml (default: yaml)") String format,
-            @ToolArg(description = "Target runtime: main or spring-boot (default: main)") String runtime,
+            @ToolArg(description = "Route format: yaml or xml (default: yaml)", required = false) String format,
+            @ToolArg(description = "Target runtime: main or spring-boot (default: main)", required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
@@ -110,11 +110,14 @@ public class TestScaffoldTools {
             // Collect all unique component schemes
             List<String> allSchemes = collectSchemes(fromEndpoints, toEndpoints);
 
-            // Determine which to endpoints need mock replacements
+            // Determine which to endpoints need mock replacements: all but those of the components the catalog marks
+            // internal (direct, seda, log, mock and the like), which stay inside the CamelContext. The server's own
+            // catalog has the flag; an older one loaded for this call would not.
+            CamelCatalog ownCatalog = catalogService.getDefaultCatalog();
             List<String> mockEndpoints = toEndpoints.stream()
                     .filter(uri -> {
                         String scheme = extractScheme(uri);
-                        return scheme != null && !testInfraData.getTrivialSchemes().contains(scheme);
+                        return scheme != null && !isInternal(ownCatalog, scheme);
                     })
                     .toList();
 
@@ -182,6 +185,16 @@ public class TestScaffoldTools {
     }
 
     // ---- Scheme extraction and mock naming ----
+
+    /** Whether the catalog marks the component internal: it stays inside the CamelContext, so a test keeps it real. */
+    static boolean isInternal(CamelCatalog catalog, String scheme) {
+        try {
+            ComponentModel model = catalog.componentModel(scheme);
+            return model != null && model.isInternal();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
 
     String extractScheme(String uri) {
         if (uri == null || uri.isEmpty()) {

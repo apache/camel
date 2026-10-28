@@ -31,6 +31,7 @@ import io.vertx.core.http.HttpServerRequest;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.ProducerTemplate;
@@ -44,9 +45,11 @@ import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.assertj.core.api.Assertions;
@@ -66,6 +69,7 @@ import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.con
 import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.httpAttribute;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
 
@@ -379,6 +383,86 @@ public class KnativeHttpTest {
         }
 
         mock.assertIsSatisfied();
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testConsumeStructuredContentWithCharset(CloudEvent ce) throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceEndpoint(
+                        "myEndpoint",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:endpoint/myEndpoint")
+                    .to("mock:ce");
+        });
+
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:ce", MockEndpoint.class);
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, ce.version());
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event");
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_ID, "myEventID");
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "/somewhere");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain");
+        mock.expectedBodiesReceived("test");
+        mock.expectedMessageCount(1);
+
+        // the structured content mode is identified by the media type, whatever its parameters and case
+        given()
+                .contentType("Application/CloudEvents+JSON; charset=UTF-8")
+                .body(
+                        Map.of(
+                                "specversion", ce.version(),
+                                "type", "org.apache.camel.event",
+                                "id", "myEventID",
+                                "source", "/somewhere",
+                                "datacontenttype", "text/plain",
+                                "data", "test"),
+                        ObjectMapperType.JACKSON_2)
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
+
+        mock.assertIsSatisfied();
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testConsumeBatchContentWithCharset(CloudEvent ce) throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceEndpoint(
+                        "myEndpoint",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:endpoint/myEndpoint")
+                    .to("mock:ce");
+        });
+
+        context.start();
+
+        // batched CloudEvents are not supported, also when the media type has parameters
+        given()
+                .contentType("application/cloudevents-batch+json; charset=UTF-8")
+                .body("[]")
+                .when()
+                .post()
+                .then()
+                .statusCode(500);
+
+        MockEndpoint mock = context.getEndpoint("mock:ce", MockEndpoint.class);
+        assertThat(mock.getReceivedCounter()).isZero();
     }
 
     @ParameterizedTest
@@ -908,6 +992,84 @@ public class KnativeHttpTest {
 
     @ParameterizedTest
     @EnumSource(CloudEvents.class)
+    void testConsumerStoppedAndStartedAgain(CloudEvent ce) throws Exception {
+        configureTwoConsumersAndStart(ce, r2 -> {
+        });
+
+        // the consumer is not Suspendable, so a route policy that suspends and resumes it stops and starts it again
+        Consumer consumer = context.getRoute("r2").getConsumer();
+        ServiceHelper.stopService(consumer);
+        assertThat(template.request("direct:start", e -> e.getMessage().setBody("h2"))).satisfies(e -> {
+            assertThat(e.isFailed()).isTrue();
+            assertThat(e.getException()).isInstanceOf(HttpOperationFailedException.class);
+        });
+
+        ServiceHelper.startService(consumer);
+
+        assertThat(template.requestBody("direct:start", "h2", String.class)).isEqualTo("r2");
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testConsumerStartedAgainByCircuitBreakerRoutePolicy(CloudEvent ce) throws Exception {
+        ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(1, 60000, 1000, null);
+        AtomicBoolean fail = new AtomicBoolean(true);
+        configureTwoConsumersAndStart(ce, r2 -> r2.routePolicy(policy).process(e -> {
+            if (fail.get()) {
+                throw new IllegalStateException("Forced");
+            }
+        }));
+        Consumer consumer = context.getRoute("r2").getConsumer();
+
+        // the failure opens the circuit, which stops the consumer as it is not Suspendable
+        assertThat(template.request("direct:start", e -> e.getMessage().setBody("h2")).isFailed()).isTrue();
+        await().atMost(20, TimeUnit.SECONDS).until(() -> ServiceHelper.isStopped(consumer));
+        fail.set(false);
+
+        // after halfOpenAfter the circuit is half open: the consumer is started again to let a request through
+        await().atMost(20, TimeUnit.SECONDS).until(() -> ServiceHelper.isStarted(consumer));
+
+        assertThat(template.requestBody("direct:start", "h2", String.class)).isEqualTo("r2");
+    }
+
+    private void configureTwoConsumersAndStart(CloudEvent ce, java.util.function.Consumer<RouteDefinition> r2)
+            throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceEndpoint(
+                        "ep1",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + "h", "h1")),
+                sourceEndpoint(
+                        "ep2",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + "h", "h2")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:endpoint/ep1")
+                    .routeId("r1")
+                    .setBody().simple("${routeId}");
+            RouteDefinition route = b.from("knative:endpoint/ep2")
+                    .routeId("r2");
+            r2.accept(route);
+            route.setBody().simple("${routeId}");
+        });
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .setHeader("h").body()
+                    .toF("http://localhost:%d", platformHttpPort);
+        });
+
+        context.start();
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
     void testAddConsumer(CloudEvent ce) throws Exception {
         configureKnativeComponent(
                 context,
@@ -1396,6 +1558,45 @@ public class KnativeHttpTest {
                 .post()
                 .then()
                 .statusCode(204)
+                .body(is(emptyOrNullString()));
+    }
+
+    /**
+     * Without a reply the consumer answers 204 No Content, which tells Knative that the event has been delivered: a
+     * failed exchange must keep its error status, or the event is lost.
+     */
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testNoReplyFailure(CloudEvent ce) throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceChannel(
+                        "channel",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:channel/channel?reply=false")
+                    .throwException(new IllegalStateException("Forced"));
+        });
+
+        context.start();
+
+        given()
+                .body("test")
+                .header(Exchange.CONTENT_TYPE, "text/plain")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
+                .when()
+                .post()
+                .then()
+                .statusCode(500)
                 .body(is(emptyOrNullString()));
     }
 

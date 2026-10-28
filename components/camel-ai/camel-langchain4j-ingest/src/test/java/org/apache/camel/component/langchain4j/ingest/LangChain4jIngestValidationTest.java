@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.langchain4j.ingest;
 
+import java.util.List;
+
+import dev.langchain4j.data.document.DocumentSplitter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
@@ -124,6 +127,52 @@ class LangChain4jIngestValidationTest {
     @Test
     void overlapNotSmallerThanSegmentSizeFailsTheStart() throws Exception {
         assertBoundsRejected("langchain4j-ingest:pipe?maxSegmentSize=100&maxOverlapSize=100");
+    }
+
+    @Test
+    void contentTypeWithTextModalityFailsTheStart() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:in").to("langchain4j-ingest:pipe?contentType=audio/wav");
+                }
+            });
+
+            assertThatThrownBy(context::start)
+                    .hasStackTraceContaining("contentType only applies to modality=media");
+        }
+    }
+
+    @Test
+    void documentSplitterWithMediaModalityFailsTheStart() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.getRegistry().bind("splitter", (DocumentSplitter) document -> List.of());
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:in").to("langchain4j-ingest:pipe?modality=media&documentSplitter=#bean:splitter");
+                }
+            });
+
+            assertThatThrownBy(context::start)
+                    .hasStackTraceContaining("documentSplitter does not apply to modality=media");
+        }
+    }
+
+    @Test
+    void unknownModalityFailsTheStart() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:in").to("langchain4j-ingest:pipe?modality=video");
+                }
+            });
+
+            assertThatThrownBy(context::start)
+                    .hasStackTraceContaining("video");
+        }
     }
 
     private static void assertBoundsRejected(String uri) throws Exception {

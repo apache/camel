@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jmx",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "jmx",
     "extendsScheme": "",
     "syntax": "jmx:serverURL",
@@ -29,6 +29,9 @@
   },
   "headers": {
     "jmx.handback": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The handback.", "constantName": "org.apache.camel.component.jmx.JMXConstants#JMX_HANDBACK" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "format": "xml", "byOption": [ { "option": "format", "value": "raw", "carriers": [ "pojo" ], "javaType": "javax.management.Notification" } ], "description": "The notification as XML text, such as an AttributeChangeNotification or a MonitorNotification element; with format=raw the Notification object. The handback object is in the jmx.handback header" }
   },
   "properties": {
     "serverURL": { "index": 0, "kind": "path", "displayName": "Server URL", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Server url comes from the remaining endpoint. Use platform to connect to local JVM." },

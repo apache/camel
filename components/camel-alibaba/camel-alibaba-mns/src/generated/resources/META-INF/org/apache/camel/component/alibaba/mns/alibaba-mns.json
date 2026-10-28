@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-alibaba-mns",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "alibaba-mns",
     "extendsScheme": "",
     "syntax": "alibaba-mns:queueName",
@@ -41,6 +41,11 @@
     "CamelAlibabaMnsEnqueueTime": { "index": 7, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "java.util.Date", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Time when the message was enqueued", "constantName": "org.apache.camel.component.alibaba.mns.constants.MNSHeaders#ENQUEUE_TIME" },
     "CamelAlibabaMnsNextVisibleTime": { "index": 8, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "java.util.Date", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Next time the message becomes visible", "constantName": "org.apache.camel.component.alibaba.mns.constants.MNSHeaders#NEXT_VISIBLE_TIME" },
     "CamelAlibabaMnsFirstDequeueTime": { "index": 9, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "java.util.Date", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Time when the message was first dequeued", "constantName": "org.apache.camel.component.alibaba.mns.constants.MNSHeaders#FIRST_DEQUEUE_TIME" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The body of the MNS message as text, with the message id, the receipt handle and the dequeue count in headers" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "byOption": [ { "option": "operation", "value": "deleteMessage", "carriers": [ "any" ] } ], "description": "The body of the message to send or publish, as text: bytes, a stream or a file are read as text, which corrupts binary data, a Map or a POJO is sent as its toString(), so marshal it first, and no body fails. deleteMessage does not use the body: it takes the receipt handle from the CamelAlibabaMnsReceiptHandle header" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged: the message id, the request id and the MD5 of the body are set as exchange properties, not headers" }
   },
   "properties": {
     "queueName": { "index": 0, "kind": "path", "displayName": "Queue Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Queue name, or topic name when using the topic URI syntax" },

@@ -76,15 +76,15 @@ final class RouteKeys {
         List<Running> running = RUNNING.getOrDefault(key, List.of());
         Entry e = CACHE.get(key);
         boolean stale = e == null || !e.running().equals(running)
-                || System.currentTimeMillis() - e.checkedAt() > RECHECK_MS;
+                || MonotonicClock.millis() - e.checkedAt() > RECHECK_MS;
         if (stale && !running.isEmpty() && LOADING.add(key)) {
             Thread t = new Thread(() -> {
                 try {
                     CamelCatalog catalog = ProjectOverviewAssist.catalog();
                     ProjectOverview.Overview o = ProjectOverview.analyze(key, catalog);
-                    CACHE.put(key, new Entry(System.currentTimeMillis(), running, match(o, running, catalog)));
+                    CACHE.put(key, new Entry(MonotonicClock.millis(), running, match(o, running, catalog)));
                 } catch (RuntimeException ex) {
-                    CACHE.put(key, new Entry(System.currentTimeMillis(), running, Map.of()));
+                    CACHE.put(key, new Entry(MonotonicClock.millis(), running, Map.of()));
                 } finally {
                     LOADING.remove(key);
                 }

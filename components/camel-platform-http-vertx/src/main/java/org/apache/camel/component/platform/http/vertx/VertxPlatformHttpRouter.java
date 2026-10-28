@@ -199,6 +199,21 @@ public class VertxPlatformHttpRouter implements Router {
     }
 
     @Override
+    public Route query() {
+        return delegate.query();
+    }
+
+    @Override
+    public Route query(String s) {
+        return delegate.query(s);
+    }
+
+    @Override
+    public Route queryWithRegex(String s) {
+        return delegate.queryWithRegex(s);
+    }
+
+    @Override
     public Route delete() {
         return delegate.delete();
     }
@@ -269,19 +284,13 @@ public class VertxPlatformHttpRouter implements Router {
     }
 
     @Override
-    @Deprecated(since = "4.23")
-    public Route mountSubRouter(String mountPoint, Router subRouter) {
-        if (mountPoint.endsWith("*")) {
-            throw new IllegalArgumentException("Don't include * when mounting a sub router");
-        }
-
-        return route(mountPoint + "*")
-                .subRouter(subRouter);
+    public Router errorHandler(int i, Handler<RoutingContext> handler) {
+        return delegate.errorHandler(i, handler);
     }
 
     @Override
-    public Router errorHandler(int i, Handler<RoutingContext> handler) {
-        return delegate.errorHandler(i, handler);
+    public Router uncaughtErrorHandler(Handler<RoutingContext> handler) {
+        return delegate.uncaughtErrorHandler(handler);
     }
 
     @Override

@@ -20,12 +20,13 @@ camel dev [options]
 |===
 | Option | Description | Default | Type
 | `--background` | Run in the background | false | boolean
-| `--background-wait` | To wait for run in background to startup successfully, before returning | true | boolean
+| `--background-wait` | How long to wait for the integration in the background to start, before returning, in millis or as a duration such as 2m (true waits 60 seconds, false does not wait) | 60s | long
 | `--backlog-trace` | Enables backlog tracing of the routed messages | false | boolean
 | `--camel-spring-boot-version` | To run using a different Camel Spring Boot version than the default version. |  | String
 | `--camel-version` | To run using a different Camel version than the default version. |  | String
 | `--code` | Run the given text or file as Java DSL routes |  | String
 | `--console` | Developer console on the local HTTP server (port 8080 by default): /q/dev with the jbang and Camel Main runtimes, /actuator/camel with Spring Boot, and /q/camel/dev-console with Quarkus | false | boolean
+| `--data-dir` | Folders under the source directory (comma separated) that hold data the routes read or write, not sources: in dev mode a change in them does not reload the routes (such as inbox,archive). |  | String
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--empty` | Run an empty Camel without loading source files | false | boolean
@@ -62,7 +63,7 @@ camel dev [options]
 | `--mcp-tags` | Comma-separated ai-tool tags to expose on the ai-tool MCP server (maps to camel.server.mcp-tags). Use with --mcp-stdio or when camel.server.mcp-enabled is configured for HTTP transport. Not used by --mcp (dev/diagnostics MCP). |  | String
 | `--metrics` _(deprecated)_ | Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) | false | boolean
 | `--modeline` | Whether to support JBang style //DEPS to specify additional dependencies | true | boolean
-| `--name` | The name of the Camel application | CamelJBang | String
+| `--name` | The name of the Camel application. By default the name of the directory when running a whole directory (--source-dir, or a directory), else the name of the first file | CamelJBang | String
 | `--observe` | Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab) | false | boolean
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
 | `--open-telemetry-agent` | Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries (HTTP clients, JDBC, Kafka clients, gRPC, etc.). Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta. | false | boolean

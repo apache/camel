@@ -85,7 +85,7 @@ public class SSLContextParametersDefinition {
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "TLSv1.3",
               description = "The protocol for the secure sockets created by the SSLContext."
-                            + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                            + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     private String secureSocketProtocol;
 
     @XmlAttribute
@@ -177,7 +177,7 @@ public class SSLContextParametersDefinition {
     @XmlAttribute
     @Metadata(label = "advanced",
               description = "The type of the key store to load."
-                            + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                            + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     private String keyStoreType;
 
     @XmlAttribute
@@ -214,7 +214,7 @@ public class SSLContextParametersDefinition {
     @XmlAttribute
     @Metadata(label = "advanced",
               description = "Algorithm name used for creating the KeyManagerFactory."
-                            + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                            + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     private String keyManagerAlgorithm;
 
     @XmlAttribute
@@ -227,7 +227,7 @@ public class SSLContextParametersDefinition {
     @XmlAttribute
     @Metadata(label = "advanced",
               description = "Algorithm name used for creating the SecureRandom."
-                            + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                            + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     private String secureRandomAlgorithm;
 
     @XmlAttribute

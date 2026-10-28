@@ -20,11 +20,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
@@ -34,7 +36,24 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 public final class RuntimeUtil {
 
-    private static final AtomicBoolean INIT_DONE = new AtomicBoolean();
+    /**
+     * The system property with the directory of the log files, which the logging configurations of the CLI name their
+     * files after: the Camel directory of the CLI ({@link CommandLineHelper#getCamelDir()}), where camel run, camel log
+     * and the AI tools look for them. It can differ from <tt>~/.camel</tt>, such as for a CLI with a home of its own (a
+     * test), or when the user has no home (a container), where <tt>user.home</tt> is <tt>?</tt>. The CLI sets it, it is
+     * not an option.
+     */
+    static final String LOG_DIR = "camel.jbang.logDir";
+
+    /**
+     * The logging configuration of the CLI with color: the console, and the log file of the process.
+     */
+    static final String COLOR_CONFIG = "log4j2-color.properties";
+
+    // the logging configuration log4j was configured with, or null when not yet
+    private static String configured;
+    // whether the command that runs next may configure the logging again (see newCommand)
+    private static boolean newCommand;
 
     private RuntimeUtil() {
     }
@@ -50,82 +69,120 @@ public final class RuntimeUtil {
             String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath,
             List<String> loggingCategories, boolean mcpStdio)
             throws Exception {
-        if (INIT_DONE.compareAndSet(false, true)) {
-            long pid = ProcessHandle.current().pid();
-            System.setProperty("pid", Long.toString(pid));
-            // make it possible to manage log4j via JMX and camel-cli
-            System.setProperty("log4j2.disable.jmx", "false");
+        String location;
+        if (loggingConfigPath != null) {
+            // use custom logging configuration as-is
+            location = Path.of(loggingConfigPath).toAbsolutePath().toUri().toString();
+        } else if (mcpStdio) {
+            location = "log4j2-mcp-stdio.properties";
+        } else if (loggingCategories != null && !loggingCategories.isEmpty()) {
+            // enrich logging file with custom logging categories
+            String name = "log4j2-no-color.properties";
+            if (export) {
+                name = "log4j2-export.properties";
+            } else if (script) {
+                name = "log4j2-script.properties";
+            } else if (json) {
+                name = "log4j2-json.properties";
+            } else if (color) {
+                name = COLOR_CONFIG;
+            }
+            InputStream is = RuntimeUtil.class.getClassLoader().getResourceAsStream(name);
+            String content = IOHelper.loadText(is);
+            IOHelper.close(is);
 
-            if (loggingConfigPath != null) {
-                // ust custom logging configuration as-is
-                Configurator.initialize("CamelJBang", "file://" + Path.of(loggingConfigPath).toAbsolutePath());
-            } else if (mcpStdio) {
-                Configurator.initialize("CamelJBang", "log4j2-mcp-stdio.properties");
-            } else if (loggingCategories != null && !loggingCategories.isEmpty()) {
-                // enrich logging file with custom logging categories
-                String name = "log4j2-no-color.properties";
-                if (export) {
-                    name = "log4j2-export.properties";
-                } else if (script) {
-                    name = "log4j2-script.properties";
-                } else if (json) {
-                    name = "log4j2-json.properties";
-                } else if (color) {
-                    name = "log4j2.properties";
-                }
-                InputStream is = RuntimeUtil.class.getClassLoader().getResourceAsStream(name);
-                String content = IOHelper.loadText(is);
-                IOHelper.close(is);
-
-                StringJoiner sj = new StringJoiner(System.lineSeparator());
-                int i = 0;
-                for (String lc : loggingCategories) {
-                    String prefix = "custom" + i++;
-                    String catName = StringHelper.before(lc, "=", "").trim();
-                    String catLevel = StringHelper.after(lc, "=", "").trim();
-                    if ("root".equalsIgnoreCase(catName)) {
-                        // log4j allows one root logger only, which the template already defines: a root category is
-                        // the root logging level
-                        if (!catLevel.isEmpty()) {
-                            level = catLevel;
-                        }
-                        continue;
+            StringJoiner sj = new StringJoiner(System.lineSeparator());
+            int i = 0;
+            for (String lc : loggingCategories) {
+                String prefix = "custom" + i++;
+                String catName = StringHelper.before(lc, "=", "").trim();
+                String catLevel = StringHelper.after(lc, "=", "").trim();
+                if ("root".equalsIgnoreCase(catName)) {
+                    // log4j allows one root logger only, which the template already defines: a root category is
+                    // the root logging level
+                    if (!catLevel.isEmpty()) {
+                        level = catLevel;
                     }
-                    if (!catName.isEmpty() && !catLevel.isEmpty()) {
-                        sj.add("logger." + prefix + ".name=" + catName);
-                        sj.add("logger." + prefix + ".level=" + catLevel);
-                        // the category gets the same appenders as the root logger, so it must not also pass its
-                        // events up to the root, or every line is printed twice (CAMEL-24701)
-                        sj.add("logger." + prefix + ".additivity=false");
-                        if (!export && !script) {
-                            sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
-                        }
-                        sj.add("logger." + prefix + ".appenderRef.$2.ref=file");
-                    }
+                    continue;
                 }
-                content = content + System.lineSeparator() + sj;
-
-                name = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/log4j2.properties";
-                Files.writeString(Paths.get(name), content);
-
-                Configurator.initialize("CamelJBang", Path.of(name).toAbsolutePath().toUri().toString());
-            } else {
-                // use out of the box logging configuration
-                if (export) {
-                    Configurator.initialize("CamelJBang", "log4j2-export.properties");
-                } else if (script) {
-                    Configurator.initialize("CamelJBang", "log4j2-script.properties");
-                } else if (json) {
-                    Configurator.initialize("CamelJBang", "log4j2-json.properties");
-                } else if (color) {
-                    Configurator.initialize("CamelJBang", "log4j2.properties");
-                } else {
-                    Configurator.initialize("CamelJBang", "log4j2-no-color.properties");
+                if (!catName.isEmpty() && !catLevel.isEmpty()) {
+                    sj.add("logger." + prefix + ".name=" + catName);
+                    sj.add("logger." + prefix + ".level=" + catLevel);
+                    // the category gets the same appenders as the root logger, so it must not also pass its
+                    // events up to the root, or every line is printed twice (CAMEL-24701)
+                    sj.add("logger." + prefix + ".additivity=false");
+                    if (!export && !script) {
+                        sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
+                    }
+                    sj.add("logger." + prefix + ".appenderRef.$2.ref=file");
                 }
             }
+            content = content + System.lineSeparator() + sj;
+
+            name = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/log4j2.properties";
+            Files.writeString(Paths.get(name), content);
+            // the categories are part of what the command asks for
+            location = Path.of(name).toAbsolutePath().toUri() + "#" + content.hashCode();
+        } else if (export) {
+            // use out of the box logging configuration
+            location = "log4j2-export.properties";
+        } else if (script) {
+            location = "log4j2-script.properties";
+        } else if (json) {
+            location = "log4j2-json.properties";
+        } else if (color) {
+            location = COLOR_CONFIG;
+        } else {
+            location = "log4j2-no-color.properties";
+        }
+
+        synchronized (RuntimeUtil.class) {
+            // log4j resolves the name of a log file when it loads the configuration. Always the Camel directory of the
+            // CLI, not an option: camel log and the AI tools read the log of a pid there
+            System.setProperty(LOG_DIR, CommandLineHelper.getCamelDir().toString());
+            if (configured == null) {
+                long pid = ProcessHandle.current().pid();
+                System.setProperty("pid", Long.toString(pid));
+                // make it possible to manage log4j via JMX and camel-cli
+                System.setProperty("log4j2.disable.jmx", "false");
+                Configurator.initialize("CamelJBang", withoutHash(location));
+                configured = location;
+            } else if (newCommand && !configured.equals(location)) {
+                // a CLI that runs several commands in this JVM (camel ask, camel shell, the monitor) runs one that
+                // logs otherwise, such as export to its log file: log4j is configured once, so configure it again
+                Configurator.reconfigure(toUri(withoutHash(location)));
+                configured = location;
+            }
+            // as for a command run on its own, the first configuration of the command is the one it logs with
+            newCommand = false;
         }
 
         setRootLoggingLevel(level);
+    }
+
+    /**
+     * A CLI that runs several commands in this JVM (camel ask, camel shell, the monitor) runs another one: its first
+     * logging configuration is applied, as for a command run on its own, also when log4j was configured otherwise by a
+     * command before.
+     */
+    public static void newCommand() {
+        synchronized (RuntimeUtil.class) {
+            newCommand = true;
+        }
+    }
+
+    private static String withoutHash(String location) {
+        int pos = location.lastIndexOf('#');
+        return pos > 0 ? location.substring(0, pos) : location;
+    }
+
+    // a configuration on the classpath, or a file
+    private static URI toUri(String location) throws URISyntaxException {
+        if (location.startsWith("file:")) {
+            return new URI(location);
+        }
+        URL url = RuntimeUtil.class.getClassLoader().getResource(location);
+        return url != null ? url.toURI() : new URI(location);
     }
 
     public static void setRootLoggingLevel(String level) {

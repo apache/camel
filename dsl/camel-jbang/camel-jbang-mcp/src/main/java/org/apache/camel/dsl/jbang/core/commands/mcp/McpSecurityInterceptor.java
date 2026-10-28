@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
 import io.quarkiverse.mcp.server.Tool;
+import io.quarkiverse.mcp.server.ToolArg;
+import io.quarkiverse.mcp.server.ToolCallException;
 
 /**
  * CDI interceptor for the MCP security execution layer.
@@ -128,7 +131,12 @@ public class McpSecurityInterceptor {
             if (params[i] instanceof String s) {
                 String clean = stripControlChars(s);
                 if (clean.length() > maxLen) {
-                    clean = clean.substring(0, maxLen);
+                    // rejected, never cut: a shortened file content or replacement would be written as if complete
+                    throw new ToolCallException(
+                            "Argument '" + parameterName(ctx.getMethod(), i) + "' is " + clean.length()
+                                                + " characters long, over the limit of " + maxLen
+                                                + "; nothing was done. Change a large file in parts with camel_edit_file,"
+                                                + " or raise camel.mcp.security.max-argument-length");
                 }
                 if (!clean.equals(s)) {
                     params[i] = clean;
@@ -140,6 +148,16 @@ public class McpSecurityInterceptor {
         if (modified) {
             ctx.setParameters(params);
         }
+    }
+
+    /** The name the client gives the argument (its {@code @ToolArg} name, else the parameter name). */
+    static String parameterName(Method method, int index) {
+        Parameter parameter = method.getParameters()[index];
+        ToolArg arg = parameter.getAnnotation(ToolArg.class);
+        if (arg != null && !ToolArg.ELEMENT_NAME.equals(arg.name())) {
+            return arg.name();
+        }
+        return parameter.getName();
     }
 
     static String stripControlChars(String input) {

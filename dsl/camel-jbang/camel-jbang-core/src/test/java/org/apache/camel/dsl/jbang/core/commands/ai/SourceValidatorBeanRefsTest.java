@@ -98,6 +98,76 @@ public class SourceValidatorBeanRefsTest {
     }
 
     @Test
+    void aClassOfTheProjectInTheMavenLayoutIsFound(@TempDir Path dir) throws IOException {
+        // camel run --source-dir compiles src/main/java/<package>/<Class>.java too, so a bean of that class is no error
+        // another class of the project, so the directory is known and the check judges; a name that is not on the test
+        // classpath (camel.example.OrderNumber is, for the bundled example tests)
+        Files.writeString(dir.resolve("Other.java"), "public class Other {}\n");
+        String beans = """
+                - beans:
+                  - name: shipmentNumber
+                    type: "#class:com.acme.shop.ShipmentNumber"
+                """;
+        assertThat(
+                SourceValidator.validate("beans.yaml", beans, CATALOG, null, dir))
+                .anyMatch(m -> m.contains("class com.acme.shop.ShipmentNumber was not found"));
+
+        Path pkg = Files.createDirectories(dir.resolve("src/main/java/com/acme/shop"));
+        Files.writeString(pkg.resolve("ShipmentNumber.java"), """
+                package com.acme.shop;
+
+                public class ShipmentNumber {
+                    public String next() {
+                        return "ORD-1001";
+                    }
+                }
+                """);
+        assertThat(
+                SourceValidator.validate("beans.yaml", beans, CATALOG, null, dir))
+                .isEmpty();
+    }
+
+    @Test
+    void beansDeclaredInTheMavenLayoutAreFound(@TempDir Path dir) throws IOException {
+        // camel run --source-dir loads the whole directory, src/main/resources included: a model that put the class in
+        // src/main/java wrote beans.yaml in src/main/resources, and each reference to the bean was refused as not declared
+        Path pkg = Files.createDirectories(dir.resolve("src/main/java/camel/example"));
+        Files.writeString(pkg.resolve("OrderNumber.java"), """
+                package camel.example;
+
+                public class OrderNumber {
+                    public String next() {
+                        return "ORD-1001";
+                    }
+                }
+                """);
+        String route = """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setHeader:
+                          name: orderId
+                          simple: "${bean:orderNumber.next}"
+                """;
+        assertThat(SourceValidator.validateYamlBeanRefs(route,
+                SourceValidator.BeanDeclarations.scan(dir, "order-generator.camel.yaml"), CATALOG))
+                .anyMatch(m -> m.contains("bean 'orderNumber' is not declared"));
+
+        Path resources = Files.createDirectories(dir.resolve("src/main/resources"));
+        Files.writeString(resources.resolve("beans.yaml"), """
+                - beans:
+                    - name: orderNumber
+                      type: camel.example.OrderNumber
+                """);
+        assertThat(SourceValidator.validateYamlBeanRefs(route,
+                SourceValidator.BeanDeclarations.scan(dir, "order-generator.camel.yaml"), CATALOG))
+                .isEmpty();
+        // the file being validated is left out by its path: its own declarations come from its new content
+        assertThat(SourceValidator.BeanDeclarations.scan(dir, "src/main/resources/beans.yaml").names())
+                .doesNotContain("orderNumber");
+    }
+
+    @Test
     void classReferencesPlaceholdersAndUnknownDirectoryAreLeftAlone(@TempDir Path dir) {
         String yaml = ROUTE.replace("aggregationStrategy: myAggregator",
                 "aggregationStrategy: \"#class:com.example.MyAggregator\"");

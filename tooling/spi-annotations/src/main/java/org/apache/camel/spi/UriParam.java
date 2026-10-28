@@ -78,6 +78,14 @@ public @interface UriParam {
     String enums() default "";
 
     /**
+     * Whether the option takes several of its {@link #enums()} values, separated by comma, such as
+     * <tt>CREATED,UPDATED</tt>. Spaces around the commas are allowed.
+     *
+     * Tooling can then offer to pick several values, and validation checks each value of the list.
+     */
+    boolean multiEnum() default false;
+
+    /**
      * To associate this parameter with label(s).
      *
      * Multiple labels can be defined as a comma separated value.

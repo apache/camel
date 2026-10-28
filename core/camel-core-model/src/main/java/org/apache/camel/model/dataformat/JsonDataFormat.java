@@ -110,7 +110,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     private String disableFeatures;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",
-              description = "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling."
+              description = "If enabled then Jackson, Gson or JSON-B is allowed to attempt to use the CamelJacksonUnmarshalType,"
+                            + " CamelGsonUnmarshalType or CamelJsonbUnmarshallType header during the unmarshalling."
                             + " This should only be enabled when desired to be used.")
     private String allowUnmarshallType;
     @XmlAttribute
@@ -839,8 +840,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
-         * unmarshalling.
+         * If enabled then Jackson, Gson or JSON-B is allowed to attempt to use the CamelJacksonUnmarshalType,
+         * CamelGsonUnmarshalType or CamelJsonbUnmarshallType header during the unmarshalling.
          * <p/>
          * This should only be enabled when desired to be used.
          */
@@ -850,8 +851,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
-         * unmarshalling.
+         * If enabled then Jackson, Gson or JSON-B is allowed to attempt to use the CamelJacksonUnmarshalType,
+         * CamelGsonUnmarshalType or CamelJsonbUnmarshallType header during the unmarshalling.
          * <p/>
          * This should only be enabled when desired to be used.
          */

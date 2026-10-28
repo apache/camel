@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-eventhubs",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "azure-eventhubs",
     "extendsScheme": "",
     "syntax": "azure-eventhubs:namespace\/eventHubName",
@@ -59,6 +59,11 @@
     "CamelAzureEventHubsMetadata": { "index": 5, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "Map<String, Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The set of free-form event properties which may be used for passing metadata associated with the event with the event body during Event Hubs operations.", "constantName": "org.apache.camel.component.azure.eventhubs.EventHubsConstants#METADATA" },
     "CamelMessageTimestamp": { "index": 6, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timestamp of the message", "constantName": "org.apache.camel.component.azure.eventhubs.EventHubsConstants#MESSAGE_TIMESTAMP" },
     "CamelAzureEventHubsCheckpointUpdatedBy": { "index": 7, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "It sets the reason for the checkpoint to have been updated. This is only present on a received EventData.", "constantName": "org.apache.camel.component.azure.eventhubs.EventHubsConstants#CHECKPOINT_UPDATED_BY" }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "The body of the event, one message per event" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "list" ], "description": "What converts to a byte array: text, bytes, a stream or a file, sent as one event; a Map, a number or a POJO fails: marshal it first. A List is sent as one event per element, in one batch, and an element that is an Exchange or a Message is sent with its headers" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged: a send gives no result, and no header is set" }
   },
   "properties": {
     "namespace": { "index": 0, "kind": "path", "displayName": "Namespace", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.azure.eventhubs.EventHubsConfiguration", "configurationField": "configuration", "description": "EventHubs namespace created in Azure Portal." },

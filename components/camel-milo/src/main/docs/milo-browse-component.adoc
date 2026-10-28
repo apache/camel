@@ -54,7 +54,7 @@ include::partial$component-endpoint-headers.adoc[]
 === Client
 
 The browse component shares the same base options like the Camel Milo Client component, e.g. concerning topics like discovery,
-security policies, the construction of node ids, etc.
+security policies, the validation of the server certificate, the construction of node ids, etc.
 
 Please refer to the documentation of the Camel Milo Client component for further details.
 
@@ -80,6 +80,39 @@ from("direct:start")
         // Retrieve the values for the nodes of interest
         .enrich("milo-client:opc.tcp://localhost:4334", (oldExchange, newExchange) -> newExchange)
 
+----
+
+In YAML, the browse result can go straight to the client. The browse producer sets the `CamelMiloNodeIds` header to
+the node IDs it found, and that is the header the milo-client producer reads. `defaultAwaitWrites` makes the client
+wait for the values, so the next step has them in the body. This route reads the values of the items of the
+xref:milo-server-component.adoc[OPC UA Server] example:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMiloNodeIds
+            expression:
+              groovy:
+                expression: "['nsu=urn:org:apache:camel;s=items']"
+        - to:
+            uri: milo-browse:opc.tcp://localhost:12685
+            parameters:
+              username: camel
+              password: secret
+              allowedSecurityPolicies: None
+        - to:
+            uri: milo-client:opc.tcp://localhost:12685
+            parameters:
+              username: camel
+              password: secret
+              allowedSecurityPolicies: None
+              defaultAwaitWrites: true
+        - log:
+            message: "Values: ${body}"
 ----
 
 === Recursion

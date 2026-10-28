@@ -628,7 +628,7 @@ public final class IOHelper {
      * Get the charset name from the content type string
      *
      * @param  contentType the content type
-     * @return             the charset name, or <tt>UTF-8</tt> if no found
+     * @return             the charset name, or <tt>UTF-8</tt> if no found (or the charset parameter is empty)
      */
     public static String getCharsetNameFromContentType(String contentType) {
         // try optimized for direct match without using splitting
@@ -651,7 +651,9 @@ public final class IOHelper {
             } else {
                 charset = contentType.substring(pos + 8);
             }
-            return normalizeCharset(charset);
+            charset = normalizeCharset(charset);
+            // an empty charset parameter is no charset
+            return charset.isEmpty() ? "UTF-8" : charset;
         }
 
         String[] values = contentType.split(";");
@@ -661,8 +663,9 @@ public final class IOHelper {
             String prefix = "charset=";
             if (value.regionMatches(true, 0, prefix, 0, prefix.length())) {
                 // Take the charset name
-                String charset = value.substring(8);
-                return normalizeCharset(charset);
+                String charset = normalizeCharset(value.substring(8));
+                // an empty charset parameter is no charset
+                return charset.isEmpty() ? "UTF-8" : charset;
             }
         }
         // use UTF-8 as default

@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_JOB;
@@ -32,6 +35,24 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_J
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_JOB, title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl",
              category = { Category.CONTAINER, Category.CLOUD }, producerOnly = true, headersClass = KubernetesConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the name of the Job in "
+                                                + "CamelKubernetesJobName and its JobSpec in CamelKubernetesJobSpec"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listJob", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listJobByLabels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getJob",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "createJob", carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.batch.v1.Job"),
+                                           @BodyType.When(option = "operation", value = "updateJob", carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.batch.v1.Job"),
+                                           @BodyType.When(option = "operation", value = "deleteJob",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "A List of the Jobs for the list operations, the Job of get, create and update (null "
+                                                 + "when getJob finds none), and the body as it was after deleteJob"))
 public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesJobEndpoint(String uri, KubernetesJobComponent component, KubernetesConfiguration config) {

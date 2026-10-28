@@ -93,17 +93,9 @@ public class SmppNLSTSplitter extends SmppSplitter {
 
         int segmentLength = getSegmentLength();
 
-        // determine how many messages
-        int segmentNum = message.length / segmentLength;
-        int messageLength = message.length;
-        if (segmentNum > MAX_SEG_COUNT) {
-            // this is too long, can't fit, so chop
-            segmentNum = MAX_SEG_COUNT;
-            messageLength = segmentNum * segmentLength;
-        }
-        if ((messageLength % segmentLength) > 0) {
-            segmentNum++;
-        }
+        // determine how many messages (a message that is too long is chopped)
+        int segmentNum = getSegmentCount(message.length, segmentLength);
+        int messageLength = Math.min(message.length, segmentNum * segmentLength);
 
         byte[][] segments = new byte[segmentNum][];
 

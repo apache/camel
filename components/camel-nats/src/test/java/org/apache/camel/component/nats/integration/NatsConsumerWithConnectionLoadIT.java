@@ -51,8 +51,10 @@ public class NatsConsumerWithConnectionLoadIT extends NatsITSupport {
         Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
         Connection connection = Nats.connect(options);
 
+        waitForNatsConsumers(1);
+
         for (int i = 0; i < 100; i++) {
-            connection.publish("test", ("test" + i).getBytes());
+            connection.publish("consumer-connection-load", ("test" + i).getBytes());
         }
 
         mockResultEndpoint.assertIsSatisfied();
@@ -64,8 +66,8 @@ public class NatsConsumerWithConnectionLoadIT extends NatsITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("nats:test?connection=#connection").to(mockResultEndpoint);
-                from("nats:test1?connection=#connection").to(mockResultEndpoint1);
+                from("nats:consumer-connection-load?connection=#connection").to(mockResultEndpoint);
+                from("nats:consumer-connection-load1?connection=#connection").to(mockResultEndpoint1);
             }
         };
     }

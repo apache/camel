@@ -41,7 +41,8 @@ public class ForyDataFormat extends DataFormatDefinition {
     @Metadata(description = "Class of the java type to use when unmarshalling")
     private String unmarshalTypeName;
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Whether to require register classes", defaultValue = "true",
+    @Metadata(label = "security", security = "insecure:serialization", insecureValue = "false",
+              description = "Whether to require register classes", defaultValue = "true",
               javaType = "java.lang.Boolean")
     private String requireClassRegistration;
     @XmlAttribute

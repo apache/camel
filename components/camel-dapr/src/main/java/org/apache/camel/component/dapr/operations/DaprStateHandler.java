@@ -87,7 +87,8 @@ public class DaprStateHandler implements DaprOperationHandler {
         SaveStateRequest stateRequest = new SaveStateRequest(stateStore);
         stateRequest.setStates(states);
 
-        client.saveBulkState(stateRequest);
+        // the request is only sent when the returned Mono is subscribed to
+        client.saveBulkState(stateRequest).block();
 
         return DaprOperationResponse.create(stateRequest);
     }
@@ -146,7 +147,8 @@ public class DaprStateHandler implements DaprOperationHandler {
         stateRequest.setOperations(transactions);
         stateRequest.setMetadata(metadata);
 
-        client.executeStateTransaction(stateRequest);
+        // the request is only sent when the returned Mono is subscribed to
+        client.executeStateTransaction(stateRequest).block();
 
         return DaprOperationResponse.create(stateRequest);
     }

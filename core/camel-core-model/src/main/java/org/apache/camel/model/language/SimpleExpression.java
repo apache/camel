@@ -43,7 +43,8 @@ public class SimpleExpression extends TypedExpressionDefinition {
               description = "To pretty format the output (only JSon or XML supported).")
     private String pretty;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean", label = "advanced",
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean", label = "advanced,security",
+              security = "insecure:dev",
               description = "If the result is a nested simple expression should this expression be evaluated as well.")
     private String nested;
 

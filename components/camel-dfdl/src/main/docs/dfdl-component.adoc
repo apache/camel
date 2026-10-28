@@ -36,10 +36,6 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-/ component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == DFDL Schemas
 
 Many DFDL schemas are freely available at https://github.com/DFDLSchemas[DFDLSchemas on GitHub] including:

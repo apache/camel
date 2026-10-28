@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.camel.BeanConfigInject;
 import org.apache.camel.BeanInject;
@@ -333,6 +334,11 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
     }
 
+    private static String[] splitUsingSeparator(String value, String separator) {
+        // the separator is a plain string, not a regular expression
+        return value.split(Pattern.quote(separator));
+    }
+
     private static Map<String, Object> convertMapUsingSeparator(
             CamelContext camelContext, Type genericType, String value, String separator)
             throws NoTypeConversionAvailableException {
@@ -348,7 +354,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             }
         }
         Map<String, Object> values = new LinkedHashMap<>();
-        String[] arr = value.split(separator);
+        String[] arr = splitUsingSeparator(value, separator);
         for (String s : arr) {
             String v = s.trim(); // trim values as user may have whitespace noise
             if (v.contains("=")) {
@@ -375,7 +381,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
         boolean set = type.isAssignableFrom(Set.class);
         Collection<Object> values = set ? new LinkedHashSet<>() : new ArrayList<>();
-        String[] arr = value.split(separator);
+        String[] arr = splitUsingSeparator(value, separator);
         for (String s : arr) {
             String v = s.trim(); // trim values as user may have whitespace noise
             values.add(camelContext.getTypeConverter().mandatoryConvertTo(ct, v));
@@ -385,7 +391,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     private static Object[] convertArrayUsingSeparator(CamelContext camelContext, Class<?> type, String value, String separator)
             throws NoTypeConversionAvailableException {
-        String[] arr = value.split(separator);
+        String[] arr = splitUsingSeparator(value, separator);
         Object[] values = new Object[arr.length];
         Class<?> ct = type.getComponentType();
         for (int i = 0; i < arr.length; i++) {

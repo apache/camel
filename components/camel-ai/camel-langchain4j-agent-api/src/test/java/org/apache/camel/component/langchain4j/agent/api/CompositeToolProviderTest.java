@@ -18,10 +18,11 @@ package org.apache.camel.component.langchain4j.agent.api;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
+import dev.langchain4j.agent.tool.ReturnBehavior;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.service.tool.AiServiceTool;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
@@ -50,8 +51,8 @@ public class CompositeToolProviderTest {
         ToolProviderResult result = composite.provideTools(DUMMY_REQUEST);
 
         assertNotNull(result);
-        assertEquals(1, result.tools().size());
-        assertTrue(result.tools().containsKey(spec));
+        assertEquals(1, result.aiServiceTools().size());
+        assertEquals(spec, toolByName(result, "tool1").toolSpecification());
     }
 
     @Test
@@ -71,9 +72,9 @@ public class CompositeToolProviderTest {
         ToolProviderResult result = composite.provideTools(DUMMY_REQUEST);
 
         assertNotNull(result);
-        assertEquals(2, result.tools().size());
-        assertTrue(result.tools().containsKey(spec1));
-        assertTrue(result.tools().containsKey(spec2));
+        assertEquals(2, result.aiServiceTools().size());
+        assertEquals(spec1, toolByName(result, "tool1").toolSpecification());
+        assertEquals(spec2, toolByName(result, "tool2").toolSpecification());
     }
 
     @Test
@@ -82,7 +83,7 @@ public class CompositeToolProviderTest {
         ToolProviderResult result = composite.provideTools(DUMMY_REQUEST);
 
         assertNotNull(result);
-        assertTrue(result.tools().isEmpty());
+        assertTrue(result.aiServiceTools().isEmpty());
     }
 
     @Test
@@ -110,22 +111,20 @@ public class CompositeToolProviderTest {
         ToolSpecification spec2 = ToolSpecification.builder().name("tool2").description("Tool 2").build();
 
         ToolProvider provider1 = request -> ToolProviderResult.builder()
-                .add(spec1, NOOP_EXECUTOR)
-                .immediateReturnToolNames(Set.of("tool1"))
+                .add(spec1, NOOP_EXECUTOR, ReturnBehavior.IMMEDIATE)
                 .build();
 
         ToolProvider provider2 = request -> ToolProviderResult.builder()
-                .add(spec2, NOOP_EXECUTOR)
-                .immediateReturnToolNames(Set.of("tool2"))
+                .add(spec2, NOOP_EXECUTOR, ReturnBehavior.IMMEDIATE)
                 .build();
 
         CompositeToolProvider composite = new CompositeToolProvider(List.of(provider1, provider2));
         ToolProviderResult result = composite.provideTools(DUMMY_REQUEST);
 
         assertNotNull(result);
-        assertEquals(2, result.tools().size());
-        assertTrue(result.immediateReturnToolNames().contains("tool1"));
-        assertTrue(result.immediateReturnToolNames().contains("tool2"));
+        assertEquals(2, result.aiServiceTools().size());
+        assertEquals(ReturnBehavior.IMMEDIATE, toolByName(result, "tool1").returnBehavior());
+        assertEquals(ReturnBehavior.IMMEDIATE, toolByName(result, "tool2").returnBehavior());
     }
 
     @Test
@@ -142,7 +141,14 @@ public class CompositeToolProviderTest {
         ToolProviderResult result = composite.provideTools(DUMMY_REQUEST);
 
         assertNotNull(result);
-        assertEquals(1, result.tools().size());
-        assertTrue(result.tools().containsKey(spec1));
+        assertEquals(1, result.aiServiceTools().size());
+        assertEquals(spec1, toolByName(result, "tool1").toolSpecification());
+    }
+
+    private static AiServiceTool toolByName(ToolProviderResult result, String name) {
+        return result.aiServiceTools().stream()
+                .filter(t -> name.equals(t.name()))
+                .findFirst()
+                .orElseThrow();
     }
 }

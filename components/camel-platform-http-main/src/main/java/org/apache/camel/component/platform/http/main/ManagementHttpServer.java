@@ -38,6 +38,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -432,6 +433,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         VertxPlatformHttpServer mainServer = camelContext.hasService(VertxPlatformHttpServer.class);
         if (mainServer != null && mainServer.getConfigurationPort() == configuration.getPort()) {
             // reuse main server as we should use same port
+            checkSettingsApplyOnSharedServer(mainServer);
             server = mainServer;
         } else {
             server = new VertxPlatformHttpServer(configuration);
@@ -446,6 +448,42 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             getCamelContext().getCamelContextExtension().addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
         }
         ServiceHelper.initService(pluginRegistry);
+    }
+
+    /**
+     * On a shared port the management endpoints are added to the main server, which keeps its own host, path, SSL and
+     * authentication. Fail instead of ignoring the management server settings it cannot apply.
+     */
+    private void checkSettingsApplyOnSharedServer(VertxPlatformHttpServer mainServer) {
+        List<String> ignored = new ArrayList<>();
+        String host = configuration.getBindHost();
+        if (!VertxPlatformHttpServerConfiguration.DEFAULT_BIND_HOST.equals(host)
+                && !Objects.equals(host, mainServer.getHost())) {
+            ignored.add("camel.management.host=" + host + " (the HTTP server binds to " + mainServer.getHost() + ")");
+        }
+        String path = configuration.getPath();
+        if (!VertxPlatformHttpServerConfiguration.DEFAULT_PATH.equals(path)
+                && !Objects.equals(path, mainServer.getPath())) {
+            ignored.add("camel.management.path=" + path + " (the HTTP server uses " + mainServer.getPath() + ")");
+        }
+        if (configuration.getSslContextParameters() != null) {
+            ignored.add("sslContextParameters (the HTTP server uses its own SSL configuration)");
+        } else if (configuration.isUseGlobalSslContextParameters() && !mainServer.isUseGlobalSslContextParameters()) {
+            ignored.add("camel.management.useGlobalSslContextParameters=true (the HTTP server does not use the global SSL"
+                        + " configuration)");
+        }
+        if (configuration.getAuthenticationConfig().isEnabled()) {
+            ignored.add("authentication (camel.management.authenticationEnabled)");
+        }
+        if (!ignored.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "The HTTP management server uses the same port " + configuration.getPort()
+                                               + " as the HTTP server, which serves the management endpoints but cannot apply"
+                                               + " these management server settings: " + String.join(", ", ignored)
+                                               + ". Set camel.management.port to another port so that the management server"
+                                               + " applies them, or remove them and configure the HTTP server (camel.server.*)"
+                                               + " instead.");
+        }
     }
 
     @Override

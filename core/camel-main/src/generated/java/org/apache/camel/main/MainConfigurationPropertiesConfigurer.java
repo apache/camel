@@ -109,6 +109,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("RoutesReloadDirectory", java.lang.String.class);
         map.put("RoutesReloadDirectoryRecursive", boolean.class);
         map.put("RoutesReloadEnabled", boolean.class);
+        map.put("RoutesReloadInterval", long.class);
         map.put("RoutesReloadPattern", java.lang.String.class);
         map.put("RoutesReloadRemoveAllRoutes", boolean.class);
         map.put("RoutesReloadRestartDuration", boolean.class);
@@ -328,6 +329,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "routesReloadDirectoryRecursive": target.setRoutesReloadDirectoryRecursive(property(camelContext, boolean.class, value)); return true;
         case "routesreloadenabled":
         case "routesReloadEnabled": target.setRoutesReloadEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routesreloadinterval":
+        case "routesReloadInterval": target.setRoutesReloadInterval(property(camelContext, long.class, value)); return true;
         case "routesreloadpattern":
         case "routesReloadPattern": target.setRoutesReloadPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routesreloadremoveallroutes":
@@ -595,6 +598,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "routesReloadDirectoryRecursive": return boolean.class;
         case "routesreloadenabled":
         case "routesReloadEnabled": return boolean.class;
+        case "routesreloadinterval":
+        case "routesReloadInterval": return long.class;
         case "routesreloadpattern":
         case "routesReloadPattern": return java.lang.String.class;
         case "routesreloadremoveallroutes":
@@ -858,6 +863,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "routesReloadDirectoryRecursive": return target.isRoutesReloadDirectoryRecursive();
         case "routesreloadenabled":
         case "routesReloadEnabled": return target.isRoutesReloadEnabled();
+        case "routesreloadinterval":
+        case "routesReloadInterval": return target.getRoutesReloadInterval();
         case "routesreloadpattern":
         case "routesReloadPattern": return target.getRoutesReloadPattern();
         case "routesreloadremoveallroutes":

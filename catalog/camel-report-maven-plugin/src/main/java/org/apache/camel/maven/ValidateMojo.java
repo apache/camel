@@ -17,6 +17,7 @@
 package org.apache.camel.maven;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +35,6 @@ import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.common.FileUtil;
 import org.apache.camel.catalog.maven.MavenVersionManager;
-import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
@@ -55,9 +55,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaType;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
 import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
@@ -560,7 +557,7 @@ public class ValidateMojo extends AbstractMojo {
 
         for (File file : javaFiles) {
             if (matchFile(file)) {
-                parseJavaRouteFile(endpoints, simpleExpressions, routeIds, file);
+                parseJavaRouteFile(catalog, endpoints, simpleExpressions, routeIds, file);
             }
         }
         for (File file : xmlFiles) {
@@ -835,7 +832,7 @@ public class ValidateMojo extends AbstractMojo {
     }
 
     private void parseJavaRouteFile(
-            List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions,
+            CamelCatalog catalog, List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions,
             List<CamelRouteDetails> routeIds, File file) {
         try {
             List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
@@ -843,28 +840,24 @@ public class ValidateMojo extends AbstractMojo {
             List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
             List<String> unparsable = new ArrayList<>();
 
-            // parse the java source code and find Camel RouteBuilder classes
-            String fqn = file.getPath();
-            String baseDir = ".";
-            JavaType<?> out = Roaster.parse(file);
-            // we should only parse java classes (not interfaces and enums etc.)
-            if (out instanceof JavaClassSource clazz) {
-                RouteBuilderParser.parseRouteBuilderEndpoints(clazz, baseDir, fqn, fileEndpoints, unparsable, includeTest);
-                RouteBuilderParser.parseRouteBuilderSimpleExpressions(clazz, baseDir, fqn, fileSimpleExpressions);
-                if (duplicateRouteId) {
-                    RouteBuilderParser.parseRouteBuilderRouteIds(clazz, baseDir, fqn, fileRouteIds);
-                }
+            // read the java source into the Camel model with the Java DSL parser, without compiling it (CAMEL-25591)
+            JavaRouteModelReader reader = JavaRouteModelReader.read(
+                    catalog, file.getPath(), Files.readString(file.toPath(), StandardCharsets.UTF_8));
+            reader.endpoints(fileEndpoints, unparsable);
+            reader.simpleExpressions(fileSimpleExpressions);
+            if (duplicateRouteId) {
+                reader.routeIds(fileRouteIds);
+            }
 
-                // add what we found in this file to the total list
-                endpoints.addAll(fileEndpoints);
-                simpleExpressions.addAll(fileSimpleExpressions);
-                routeIds.addAll(fileRouteIds);
+            // add what we found in this file to the total list
+            endpoints.addAll(fileEndpoints);
+            simpleExpressions.addAll(fileSimpleExpressions);
+            routeIds.addAll(fileRouteIds);
 
-                // was there any unparsable?
-                if (logUnparseable && !unparsable.isEmpty()) {
-                    for (String uri : unparsable) {
-                        getLog().warn("Cannot parse endpoint uri " + uri + " in java file " + file);
-                    }
+            // was there any unparsable?
+            if (logUnparseable && !unparsable.isEmpty()) {
+                for (String uri : unparsable) {
+                    getLog().warn("Cannot parse endpoint uri " + uri + " in java file " + file);
                 }
             }
         } catch (Exception e) {

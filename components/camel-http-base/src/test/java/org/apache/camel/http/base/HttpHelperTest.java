@@ -61,4 +61,14 @@ class HttpHelperTest {
         assertNotEquals(0, headers.size());
         assertEquals("url", headers.get("key"));
     }
+
+    @Test
+    void testDecodePathParameter() {
+        assertEquals("café", HttpHelper.decodePathParameter("caf%C3%A9"));
+        assertEquals("a/b", HttpHelper.decodePathParameter("a%2Fb"));
+        assertEquals("a+b", HttpHelper.decodePathParameter("a%2Bb"));
+        // a + is a literal in a path, and a malformed escape is kept
+        assertEquals("a+b c", HttpHelper.decodePathParameter("a+b%20c"));
+        assertEquals("100%", HttpHelper.decodePathParameter("100%"));
+    }
 }

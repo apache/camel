@@ -17,7 +17,8 @@
 The Ignite Cache endpoint is one of camel-ignite endpoints that allow you to interact with an https://apacheignite.readme.io/docs/data-grid[Ignite Cache].
 This offers both a Producer (to invoke cache operations on an Ignite cache) and a Consumer (to consume changes from a continuous query).
 
-The cache value is always the body of the message, whereas the cache key is always stored in the `CamelIgniteCacheKey` message header.
+The cache value is the body of the message, and the cache key is in the `CamelIgniteCacheKey` message header.
+GET and REMOVE take the key from the body when that header is not set, and a PUT of a `Map` body puts all its entries.
 
 Even if you configure a fixed operation in the endpoint URI, you can vary it per-exchange by setting the `CamelIgniteCacheOperation` message header.
 
@@ -27,3 +28,45 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The component needs an Ignite node: xref:ignite-summary.adoc[Ignite] describes the ways to give it one.
+A node of its own with the default configuration takes one line in `application.properties`.
+On Java 17 and later, Ignite also needs the `--add-opens` JVM options that its documentation lists.
+
+[source,properties]
+----
+camel.component.ignite-cache.ignite-configuration = #class:org.apache.ignite.configuration.IgniteConfiguration
+----
+
+The following routes put an order in the `orders` cache, and get it back by its key:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:putOrder
+      steps:
+        - setHeader:
+            name: CamelIgniteCacheKey
+            expression:
+              simple:
+                expression: "${header.orderId}"
+        - to:
+            uri: ignite-cache:orders
+            parameters:
+              operation: PUT
+- route:
+    from:
+      uri: direct:getOrder
+      steps:
+        - setHeader:
+            name: CamelIgniteCacheKey
+            expression:
+              simple:
+                expression: "${header.orderId}"
+        - to:
+            uri: ignite-cache:orders
+            parameters:
+              operation: GET
+----

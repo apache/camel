@@ -147,6 +147,54 @@ YAML::
 
 It's possible to automate Java code generation for .thrift files using *thrift-maven-plugin*, but before start the thrift compiler binary distribution for your operating system must be present on the running host.
 
+== SSL/TLS
+
+Set `negotiationType=SSL` and configure `sslParameters` to use SSL/TLS. SSL/TLS requires the synchronous communication
+mode (`synchronous=true`), on the producer and on the consumer: an endpoint that combines `negotiationType=SSL` with
+`synchronous=false` (the default) fails to start. The `SASL` negotiation type is not supported, and an endpoint
+configured with it fails to start.
+
+The consumer creates its server socket from the SSL context of `sslParameters`, so all of its settings apply: the key
+managers (required, with the `keyPassword` of a key protected by a password), the trust managers, the secure socket
+protocols and cipher suites, and the server parameters. For example, require a client certificate with `serverParameters.clientAuthentication=REQUIRE` and trust managers that
+trust the certificates of the clients:
+
+[source,java]
+----
+KeyStoreParameters keyStore = new KeyStoreParameters();
+keyStore.setResource("file:server-keystore.jks");
+keyStore.setPassword("changeit");
+KeyManagersParameters keyManagers = new KeyManagersParameters();
+keyManagers.setKeyStore(keyStore);
+keyManagers.setKeyPassword("changeit");
+
+KeyStoreParameters trustStore = new KeyStoreParameters();
+trustStore.setResource("file:client-truststore.jks");
+trustStore.setPassword("changeit");
+TrustManagersParameters trustManagers = new TrustManagersParameters();
+trustManagers.setKeyStore(trustStore);
+
+SSLContextServerParameters serverParameters = new SSLContextServerParameters();
+serverParameters.setClientAuthentication("REQUIRE");
+
+SSLContextParameters sslParameters = new SSLContextParameters();
+sslParameters.setKeyManagers(keyManagers);
+sslParameters.setTrustManagers(trustManagers);
+sslParameters.setServerParameters(serverParameters);
+context.getRegistry().bind("sslParams", sslParameters);
+
+from("thrift://0.0.0.0:1101/org.apache.camel.component.thrift.generated.Calculator?negotiationType=SSL&sslParameters=#sslParams&synchronous=true")
+    .to("direct:thrift-service");
+----
+
+== Errors sent to the client
+
+When the exchange of a consumer fails, the Thrift client receives an error. An exception that the Thrift method
+declares in the IDL (such as `throws (1:InvalidOperation ouch)`) belongs to the service contract and is sent as it is.
+Any other exception is sent as a generic `TApplicationException` of type `INTERNAL_ERROR`, without the message of the
+exception, as long as the `muteException` option is enabled (the default). Set `muteException=false` to send the
+message of the exception to the client.
+
 == For more information, see these resources
 
 https://github.com/apache/thrift/[Thrift project GitHub]

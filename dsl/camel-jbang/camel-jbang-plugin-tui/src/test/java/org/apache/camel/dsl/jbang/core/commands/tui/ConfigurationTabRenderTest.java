@@ -26,6 +26,7 @@ import dev.tamboui.terminal.Frame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -137,6 +138,32 @@ class ConfigurationTabRenderTest {
     }
 
     // ---- Helper methods ----
+
+    @Test
+    void sourceFallsBackToLocation() {
+        // a property that no placeholder has used yet has no source, only the file it was loaded from
+        ConfigurationTab.ConfigProperty prop = addProperty("greeting", "Hello", null);
+        prop.location = "application.properties";
+
+        ConfigurationTab tab = new ConfigurationTab(ctx);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
+
+        assertTrue(rendered.contains("application.properties"), "Should render the location as the source");
+    }
+
+    @Test
+    void sourceOfPrefersResolvedSource() {
+        ConfigurationTab.ConfigProperty prop = new ConfigurationTab.ConfigProperty();
+        prop.source = "file:application.properties";
+        prop.location = "initial";
+        assertEquals("file:application.properties", ConfigurationTab.sourceOf(prop));
+
+        prop.source = null;
+        assertEquals("camel-main", ConfigurationTab.sourceOf(prop));
+
+        prop.location = null;
+        assertEquals("", ConfigurationTab.sourceOf(prop));
+    }
 
     private ConfigurationTab.ConfigProperty addProperty(String key, String value, String source) {
         ConfigurationTab.ConfigProperty prop = new ConfigurationTab.ConfigProperty();

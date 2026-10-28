@@ -51,7 +51,7 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
 
     @Test
     public void testSendAndReceiveMails() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james, bar);
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);

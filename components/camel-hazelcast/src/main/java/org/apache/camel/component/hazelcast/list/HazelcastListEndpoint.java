@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_LIST;
@@ -34,6 +37,33 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_LIS
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_LIST, title = "Hazelcast List", syntax = "hazelcast-list:cacheName",
              category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.hazelcast.collection.ItemEvent",
+                                   description = "The Hazelcast ItemEvent of an item added to or removed from the "
+                                                 + "list, not the item: ${body.item} is the item, and the "
+                                                 + "CamelHazelcastListenerAction header is added or removed"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "The item that add and setValue store, at the index in the "
+                                                + "CamelHazelcastObjectIndex header when set, and that removeValue "
+                                                + "removes when the header is not set: an object Hazelcast can "
+                                                + "serialize, so a stream or no body fails. A Collection for "
+                                                + "addAll, removeAll and retainAll. The other operations do not use "
+                                                + "the body"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN, byOption = {
+                   @BodyType.When(option = "defaultOperation", value = "add", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "setValue", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "removeValue", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "clear", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "addAll", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "removeAll", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "retainAll", carriers = Carrier.UNCHANGED),
+                   @BodyType.When(option = "defaultOperation", value = "getAll", carriers = Carrier.LIST) },
+                                   description = "By the operation, which the CamelHazelcastOperationType header "
+                                                 + "sets, or else the defaultOperation option (without either the "
+                                                 + "producer fails): the item at the index in the "
+                                                 + "CamelHazelcastObjectIndex header for get, which needs the "
+                                                 + "header, and the Hazelcast list itself for getAll: a live "
+                                                 + "distributed List, not a copy. The other operations keep the body"))
 public class HazelcastListEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastListEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,

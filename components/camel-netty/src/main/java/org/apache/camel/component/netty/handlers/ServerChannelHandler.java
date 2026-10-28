@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger LOG = LoggerFactory.getLogger(ServerChannelHandler.class);
+    private static final String MUTED_EXCEPTION_MESSAGE = "Exchange processing failed";
     private final NettyConsumer consumer;
     private final CamelLogger noReplyLogger;
 
@@ -220,13 +221,27 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         // if there was an exception then use that as response body
         boolean exception = exchange.getException() != null && !consumer.getEndpoint().getConfiguration().isTransferExchange();
         if (exception) {
-            return exchange.getException();
+            return consumer.getEndpoint().getConfiguration().isMuteException()
+                    ? mutedException() : exchange.getException();
         }
         if (exchange.hasOut()) {
             return NettyPayloadHelper.getOut(consumer.getEndpoint(), exchange);
         } else {
             return NettyPayloadHelper.getIn(consumer.getEndpoint(), exchange);
         }
+    }
+
+    /**
+     * The stand-in written back to the remote peer when {@code muteException} is enabled.
+     * <p>
+     * Still an {@link Exception}, so a peer that expects one - an object encoder serialises whatever was written -
+     * keeps getting one, but it carries neither the class nor the message of the route's exception. Its own stack trace
+     * is cleared as well: leaving it would serialise this consumer's frames to the peer instead.
+     */
+    private static Exception mutedException() {
+        Exception muted = new Exception(MUTED_EXCEPTION_MESSAGE);
+        muted.setStackTrace(new StackTraceElement[0]);
+        return muted;
     }
 
     /**

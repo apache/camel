@@ -814,13 +814,6 @@ public class RestOpenApiReader {
             final List<String> allowableValues,
             final Class<?> type) {
         Schema parameterSchema = serializableParameter.getSchema();
-        if (allowableValues != null && !allowableValues.isEmpty()) {
-            if (String.class.equals(type)) {
-                parameterSchema.setEnum(allowableValues);
-            } else {
-                convertAndSetItemsEnum(parameterSchema, allowableValues, type);
-            }
-        }
         if (Objects.equals(parameterSchema.getType(), "array")) {
 
             Schema<?> itemsSchema;
@@ -850,6 +843,16 @@ public class RestOpenApiReader {
             }
 
             parameterSchema.setItems(itemsSchema);
+        }
+        if (allowableValues != null && !allowableValues.isEmpty()) {
+            // the allowable values of an array parameter restrict its items (an enum on the array schema itself
+            // would only accept arrays equal to one of the values, that is, no array at all)
+            Schema enumSchema = parameterSchema.getItems() != null ? parameterSchema.getItems() : parameterSchema;
+            if (String.class.equals(type)) {
+                enumSchema.setEnum(allowableValues);
+            } else {
+                convertAndSetItemsEnum(enumSchema, allowableValues, type);
+            }
         }
     }
 

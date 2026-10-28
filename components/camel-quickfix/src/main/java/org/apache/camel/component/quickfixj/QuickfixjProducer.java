@@ -80,13 +80,25 @@ public class QuickfixjProducer extends DefaultProducer {
         }
 
         Callable<Message> callable = null;
+        MessageCorrelator messageCorrelator = null;
 
         if (exchange.getPattern().isOutCapable()) {
-            MessageCorrelator messageCorrelator = getEndpoint().getEngine().getMessageCorrelator();
+            messageCorrelator = getEndpoint().getEngine().getMessageCorrelator();
+            // registered before the send so that a fast reply is not missed
             callable = messageCorrelator.getReply(exchange);
         }
 
-        if (!session.send(message)) {
+        boolean sent = false;
+        try {
+            sent = session.send(message);
+        } finally {
+            if (!sent && messageCorrelator != null) {
+                // the exchange fails, so nobody waits for the reply (QuickFIX/J has stored an application message before
+                // it found the session not logged on, and may still resend it after the next logon)
+                messageCorrelator.cancelReply(exchange);
+            }
+        }
+        if (!sent) {
             throw new CannotSendException("Cannot send FIX message: " + message.toString());
         }
 

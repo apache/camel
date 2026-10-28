@@ -61,7 +61,7 @@ public class MiloClientCachingConnectionManager implements MiloClientConnectionM
         try {
             final String identifier = configuration.toCacheId();
             final ManagedConnection managedConnection
-                    = cache.computeIfAbsent(identifier, k -> managedConnection(configuration, monitorFilterConfiguration));
+                    = cache.computeIfAbsent(identifier, k -> managedConnection(configuration));
             managedConnection.increment();
             return managedConnection.connection;
         } finally {
@@ -94,14 +94,12 @@ public class MiloClientCachingConnectionManager implements MiloClientConnectionM
     }
 
     private ManagedConnection managedConnection(
-            MiloClientConfiguration configuration,
-            MonitorFilterConfiguration monitorFilterConfiguration) {
-        return new ManagedConnection(miloClientConnection(configuration, monitorFilterConfiguration));
+            MiloClientConfiguration configuration) {
+        return new ManagedConnection(miloClientConnection(configuration));
     }
 
     private MiloClientConnection miloClientConnection(
-            MiloClientConfiguration configuration,
-            MonitorFilterConfiguration monitorFilterConfiguration) {
-        return new MiloClientConnection(configuration, monitorFilterConfiguration);
+            MiloClientConfiguration configuration) {
+        return new MiloClientConnection(configuration);
     }
 }

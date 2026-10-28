@@ -55,6 +55,7 @@ import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -73,6 +74,8 @@ final class JavaRouteReader {
     private final String file;
     private final CamelCatalog catalog;
     private final List<Route> routes = new ArrayList<>();
+    /** The RouteBuilder's own errorHandler(...): each route it creates holds the same one. */
+    private ErrorHandlerFactory builderErrorHandler;
 
     private JavaRouteReader(String file, CamelCatalog catalog) {
         this.file = file;
@@ -83,6 +86,7 @@ final class JavaRouteReader {
     static List<Route> read(String file, String content, CamelCatalog catalog, ConstantResolver constants) {
         JavaParseResult result = parse(content, catalog, constants);
         JavaRouteReader reader = new JavaRouteReader(file, catalog);
+        reader.builderErrorHandler = result.routes().getErrorHandlerFactory();
         List<Integer> starts = new ArrayList<>();
         result.routes().getRoutes().forEach(r -> starts.add(r.getLineNumber()));
         for (RouteDefinition r : result.routes().getRoutes()) {
@@ -150,10 +154,26 @@ final class JavaRouteReader {
         for (ProcessorDefinition<?> p : r.getOutputs()) {
             decisions(p, scope, decisions, visited, 0);
         }
-        routes.add(new Route(
+        // where the route's own dead letter channel sends its failures (the builder's is read as a handler of its own)
+        if (r.isErrorHandlerFactorySet() && r.getErrorHandlerFactory() instanceof DeadLetterChannelDefinition dlc
+                && dlc != builderErrorHandler && dlc.getDeadLetterUri() != null) {
+            add(produces, ProjectRoutes.endpoint(dlc.getDeadLetterUri(), null, false, catalog).asOnError());
+        }
+        Route route = new Route(
                 id, template != null ? "routeTemplate" : "route", description, r.getGroup(), file, Math.max(1, line),
                 "java", partial, from, consumes, produces, r.getOutputs().size(), -1, 0, null, null,
-                logOnly(r, produces), note, decisions));
+                logOnly(r, produces), note, decisions);
+        // the route's own error handler, such as errorHandler(noErrorHandler()); a dead letter channel the route holds
+        // because the RouteBuilder has it is the builder's, used by all its routes, but noErrorHandler is none either way
+        if (r.isErrorHandlerFactorySet()) {
+            ErrorHandlerFactory eh = r.getErrorHandlerFactory();
+            if (eh instanceof NoErrorHandlerDefinition) {
+                route = route.withErrorHandler("noErrorHandler");
+            } else if (eh instanceof DeadLetterChannelDefinition && eh != builderErrorHandler) {
+                route = route.withErrorHandler("deadLetterChannel");
+            }
+        }
+        routes.add(route);
     }
 
     /** The decision points below a step, with their paths (see {@link RouteDecisions}). */
@@ -304,25 +324,35 @@ final class JavaRouteReader {
     /** onException and dead letter channels outside a route, as one error handler route of the file. */
     private void errorHandlers(JavaParseResult result) {
         List<Endpoint> produces = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
         int line = Integer.MAX_VALUE;
         Set<Object> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         for (OnExceptionDefinition oe : result.routes().getOnExceptions()) {
             walk(oe, true, produces, new ArrayList<>(), seen, 0);
+            labels.add(oe.getExceptions().isEmpty()
+                    ? "onException"
+                    : "onException " + String.join(", ",
+                            oe.getExceptions().stream().map(ProjectRoutes::simpleName).toList()));
             if (oe.getLineNumber() > 0) {
                 line = Math.min(line, oe.getLineNumber());
             }
         }
         for (RouteDefinition r : result.routes().getRoutes()) {
             ErrorHandlerFactory eh = r.getErrorHandlerFactory();
-            if (eh instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
+            // the RouteBuilder's dead letter channel, which each of its routes holds; a route's own is read with it
+            if (eh == builderErrorHandler && eh instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
                 add(produces, ProjectRoutes.endpoint(dlc.getDeadLetterUri(), null, false, catalog).asOnError());
+                if (!labels.contains("dead letter channel")) {
+                    labels.add("dead letter channel");
+                }
                 line = Math.min(line, Math.max(1, r.getLineNumber()));
             }
         }
         if (!produces.isEmpty()) {
             int at = line == Integer.MAX_VALUE ? 1 : line;
             routes.add(new Route(
-                    ProjectRoutes.ERROR_HANDLER_PREFIX + file + ":" + at, "errorHandler", null, null, file, at, "java",
+                    ProjectRoutes.ERROR_HANDLER_PREFIX + file + ":" + at, "errorHandler",
+                    labels.isEmpty() ? null : String.join("; ", labels), null, file, at, "java",
                     false, null, List.of(), produces.stream().map(Endpoint::asOnError).toList(), 0, -1, 0, null, null,
                     false, null));
         }

@@ -27,4 +27,14 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 |===
 | Command | Description
 @foreach{cmd : commands}| xref:@{cmd.docXref}[camel @{cmd.name}] | @if{cmd.description != null}@{cmd.description}@end{}
-@end{}|===
+@end{}|===@if{!pluginCommands.isEmpty()}
+
+== Plugin commands
+
+These commands are provided by plugins. A plugin is installed with `camel plugin add <plugin>`.
+
+[cols="2,1,5",options="header"]
+|===
+| Command | Plugin | Description
+@foreach{cmd : pluginCommands}| xref:@{cmd.docXref}[camel @{cmd.name}] | `@{cmd.plugin}` | @if{cmd.description != null}@{cmd.description}@end{}
+@end{}|===@end{}

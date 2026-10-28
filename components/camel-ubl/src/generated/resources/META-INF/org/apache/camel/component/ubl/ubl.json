@@ -11,9 +11,15 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ubl",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "modelName": "ubl",
     "modelJavaType": "org.apache.camel.model.dataformat.UblDataFormat"
+  },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo" ], "description": "A UBL 2.1 document of ph-ubl, such as an InvoiceType or a CreditNoteType: its class name gives the document type. Text fails" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "xml", "description": "The UBL XML in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "xml", "description": "A UBL 2.1 document, whose root element gives the document type" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "description": "The ph-ubl object of the document type, such as an InvoiceType for an Invoice" }
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },

@@ -19,8 +19,8 @@ package org.apache.camel.dsl.yaml.common;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -107,7 +107,8 @@ public final class YamlSupport {
                     // otherwise we have to compose it but we can still leverage the
                     // discovered EndpointUriFactory to properly handle secrets
                     //
-                    Map<String, Object> options = new TreeMap<>(parameters);
+                    // in the order the parameters are written
+                    Map<String, Object> options = new LinkedHashMap<>(parameters);
 
                     for (String secretParameter : factory.secretPropertyNames()) {
                         Object val = options.get(secretParameter);
@@ -119,21 +120,23 @@ public final class YamlSupport {
                         }
                     }
 
-                    // flatten multiValue map parameters
-                    for (Map.Entry<String, String> multi : factory.multiValuePrefixes().entrySet()) {
-                        Object val = options.get(multi.getKey());
-                        if (val instanceof Map<?, ?> m) {
-                            String prefix = multi.getValue();
+                    // flatten multiValue map parameters, where the map parameter is written
+                    Map<String, String> prefixes = factory.multiValuePrefixes();
+                    Map<String, Object> flat = new LinkedHashMap<>();
+                    for (Map.Entry<String, Object> option : options.entrySet()) {
+                        String prefix = prefixes.get(option.getKey());
+                        if (prefix != null && option.getValue() instanceof Map<?, ?> m) {
                             for (var entry : m.entrySet()) {
                                 if (entry.getValue() != null) {
-                                    options.put(prefix + entry.getKey(), entry.getValue());
+                                    flat.put(prefix + entry.getKey(), entry.getValue());
                                 }
                             }
-                            options.remove(multi.getKey());
+                        } else {
+                            flat.put(option.getKey(), option.getValue());
                         }
                     }
 
-                    answer += "?" + URISupport.createQueryString(options, false);
+                    answer += "?" + URISupport.createQueryString(flat, false);
                 }
             } else {
                 answer += "?" + URISupport.createQueryString(parameters, false);

@@ -69,9 +69,20 @@ class ActivityTab extends AbstractTableTab {
 
     @Override
     public void onTabSelected() {
+        // read at once, so the tab does not open on the activity of the last refresh
+        refreshWhileVisible();
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info != null && !info.activity.isEmpty() && tableState.selected() == null) {
             tableState.select(0);
+        }
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        DataRefreshService data = ctx.dataService;
+        List<Long> pids = data != null ? data.selectedPidAsList() : List.of();
+        if (!pids.isEmpty()) {
+            data.refreshActivityData(pids);
         }
     }
 
@@ -155,7 +166,7 @@ class ActivityTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No activity captured", 7));
+            rows.add(emptyRow("No activity captured", 7, 6));
         }
 
         ActivityEntry selectedEntry = null;
@@ -274,9 +285,10 @@ class ActivityTab extends AbstractTableTab {
                 oldestTs < Long.MAX_VALUE
                         ? Span.styled("   Window: ", dim)
                         : Span.raw(""),
+                // newest to oldest, as ages: "2m18s - 2m20s ago" (the larger first read as a range going backwards)
                 oldestTs < Long.MAX_VALUE
-                        ? Span.raw(TimeUtils.printSince(oldestTs)
-                                   + " ... " + TimeUtils.printSince(newestTs))
+                        ? Span.raw(TimeUtils.printSince(newestTs)
+                                   + " - " + TimeUtils.printSince(oldestTs) + " ago")
                         : Span.raw("")));
 
         String title = paused

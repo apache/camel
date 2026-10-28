@@ -36,6 +36,8 @@ class HelpOverlay {
     private boolean visible;
     private String markdown;
     private int scroll;
+    // the furthest the help scrolls, from the last render (unknown before it)
+    private int maxScroll = Integer.MAX_VALUE;
 
     boolean isVisible() {
         return visible;
@@ -44,6 +46,7 @@ class HelpOverlay {
     void open(String markdown) {
         this.markdown = markdown;
         this.scroll = 0;
+        this.maxScroll = Integer.MAX_VALUE;
         this.visible = true;
     }
 
@@ -66,7 +69,7 @@ class HelpOverlay {
             return true;
         }
         if (ke.isDown() || ke.isChar('j')) {
-            scroll++;
+            scroll = Math.min(maxScroll, scroll + 1);
             return true;
         }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
@@ -74,7 +77,7 @@ class HelpOverlay {
             return true;
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            scroll += 10;
+            scroll = Math.min(maxScroll, scroll + 10);
             return true;
         }
         return true;
@@ -94,14 +97,15 @@ class HelpOverlay {
                 .title(" Help ")
                 .build();
 
-        MarkdownView view = MarkdownView.builder()
+        MarkdownView.Builder view = MarkdownView.builder()
                 .source(markdown)
-                .scroll(scroll)
-                .block(block)
                 .styles(Theme.markdownStyles())
-                .syntaxTheme(Theme.syntaxTheme())
-                .build();
-        frame.renderWidget(view, popup);
+                .syntaxTheme(Theme.syntaxTheme());
+        // the scroll stays within the text, so Up moves at once after scrolling down past the end
+        Rect inner = block.inner(popup);
+        maxScroll = Math.max(0, view.build().computeHeight(inner.width()) - inner.height());
+        scroll = Math.min(scroll, maxScroll);
+        frame.renderWidget(view.scroll(scroll).block(block).build(), popup);
     }
 
     void renderFooter(List<Span> spans) {

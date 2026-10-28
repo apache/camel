@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -30,6 +32,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -47,9 +50,10 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.maven.htmlxlsx.process.CoverageResultsProcessor;
 import org.apache.camel.maven.model.RouteCoverageNode;
-import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.helper.RouteCoverageHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
@@ -60,9 +64,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaType;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
 import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
@@ -115,6 +116,8 @@ public class RouteCoverageMojo extends AbstractMojo {
     /**
      * Whether to include test source code
      */
+    private CamelCatalog catalog;
+
     @Parameter(property = "camel.includeTest", defaultValue = "false")
     private boolean includeTest;
 
@@ -153,6 +156,28 @@ public class RouteCoverageMojo extends AbstractMojo {
      */
     @Parameter(property = "camel.generateHtmlReport", defaultValue = "false")
     private boolean generateHtmlReport;
+
+    /**
+     * Whether to show the body types each step has been reached with, which the route coverage dump has when the tests
+     * ran with the message history on (Camel 4.24 or newer).
+     */
+    @Parameter(property = "camel.bodyTypes", defaultValue = "false")
+    private boolean bodyTypes;
+
+    /**
+     * Whether to fail when a step has been reached with bodies of more than one kind (null, payload, data or
+     * collection) in the tests: some messages reach it with data and others with a payload, so a step that writes the
+     * body, or reads its fields, fails for some of them. The route coverage dump has the body types when the tests ran
+     * with the message history on (Camel 4.24 or newer).
+     */
+    @Parameter(property = "camel.failOnMixedBodyKinds", defaultValue = "false")
+    private boolean failOnMixedBodyKinds;
+
+    // whether a route coverage dump had body types
+    private boolean bodyTypesSeen;
+
+    // the steps reached with bodies of more than one kind
+    private final List<String> mixedBodyKinds = new ArrayList<>();
 
     private File createJacocoDir() {
         final File file = new File(project.getBasedir() + "/target/site/jacoco");
@@ -266,6 +291,15 @@ public class RouteCoverageMojo extends AbstractMojo {
         if (generateHtmlReport) {
             doGenerateHtmlReport();
         }
+        if ((bodyTypes || failOnMixedBodyKinds) && !bodyTypesSeen) {
+            getLog().info("The route coverage dump has no body types: the tests record them while the message history is"
+                          + " on (such as camel.main.messageHistory=true), with Camel 4.24 or newer");
+        }
+        if ((bodyTypes || failOnMixedBodyKinds) && !mixedBodyKinds.isEmpty()) {
+            getLog().warn(mixedBodyKinds.size() + " step(s) have been reached with bodies of more than one kind: some"
+                          + " messages bring data and others a payload, so a step that writes the body, or reads its"
+                          + " fields, fails for some of them:\n    " + String.join("\n    ", mixedBodyKinds));
+        }
 
         // compute and log overall coverage across routes
         AtomicBoolean overallCoverageAboveThreshold = new AtomicBoolean();
@@ -274,6 +308,10 @@ public class RouteCoverageMojo extends AbstractMojo {
         getLog().info("");
 
         evalFailingConditions(notCovered, overallCoverageAboveThreshold);
+        if (failOnMixedBodyKinds && !mixedBodyKinds.isEmpty()) {
+            throw new MojoExecutionException(
+                    "There are " + mixedBodyKinds.size() + " step(s) reached with bodies of more than one kind!");
+        }
     }
 
     private void evalFailingConditions(AtomicInteger notCovered, AtomicBoolean overallCoverageAboveThreshold)
@@ -469,17 +507,21 @@ public class RouteCoverageMojo extends AbstractMojo {
         }
     }
 
+    private CamelCatalog catalog() {
+        if (catalog == null) {
+            catalog = new DefaultCamelCatalog();
+        }
+        return catalog;
+    }
+
     private void addJavaFiles(File file, List<CamelNodeDetails> routeTrees) {
         if (matchFile(file)) {
             try {
-                // parse the java source code and find Camel RouteBuilder classes
-                String fqn = file.getPath();
-                JavaType<?> out = Roaster.parse(file);
-                // we should only parse java classes (not interfaces and enums etc)
-                if (out instanceof JavaClassSource clazz) {
-                    List<CamelNodeDetails> result = RouteBuilderParser.parseRouteBuilderTree(clazz, fqn, true);
-                    routeTrees.addAll(result);
-                }
+                // read the java source into the Camel model with the Java DSL parser, without compiling it, and build
+                // the node tree of its routes (CAMEL-25591)
+                JavaRouteModelReader reader = JavaRouteModelReader.read(
+                        catalog(), file.getPath(), Files.readString(file.toPath(), StandardCharsets.UTF_8));
+                routeTrees.addAll(reader.routeTrees());
             } catch (Exception e) {
                 getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
             }
@@ -510,6 +552,8 @@ public class RouteCoverageMojo extends AbstractMojo {
             if (existing != null) {
                 int count = existing.getCount() + node.getCount();
                 existing.setCount(count);
+                existing.setBodyTypes(union(existing.getBodyTypes(), node.getBodyTypes()));
+                existing.setBodyKinds(union(existing.getBodyKinds(), node.getBodyKinds()));
             } else {
                 // its a new node
                 toBeAdded.add(node);
@@ -553,16 +597,16 @@ public class RouteCoverageMojo extends AbstractMojo {
             sw.println("Route:\t" + routeId);
         }
         sw.println();
-        sw.printf(MAIN_FORMAT_PATTERN, "Line #", "Count", "Route");
-        sw.printf(MAIN_FORMAT_PATTERN, "------", "-----", "-----");
+        boolean hasBodyTypes = model.stream().anyMatch(node -> !node.getBodyTypes().isEmpty());
+        bodyTypesSeen |= hasBodyTypes;
+        mixedBodyKinds.addAll(mixedBodyKinds(fileName, routeId, model));
+        printTable(sw, model, bodyTypes && hasBodyTypes);
 
         int covered = 0;
         for (RouteCoverageNode node : model) {
             if (node.getCount() > 0) {
                 covered++;
             }
-            String pad = padString(node.getLevel());
-            sw.printf(MAIN_FORMAT_PATTERN, node.getLineNumber(), node.getCount(), pad + node.getName());
         }
 
         coveredNodes.addAndGet(covered);
@@ -584,6 +628,75 @@ public class RouteCoverageMojo extends AbstractMojo {
         sw.println();
 
         return bos.toString();
+    }
+
+    /**
+     * The table of a route: the line, the count and the step, and the body types each step has been reached with when
+     * they are shown.
+     */
+    static void printTable(PrintStream sw, List<RouteCoverageNode> model, boolean showBodyTypes) {
+        int width = "Route".length();
+        if (showBodyTypes) {
+            for (RouteCoverageNode node : model) {
+                width = Math.max(width, padString(node.getLevel()).length() + node.getName().length());
+            }
+        }
+        String withBodyTypes = "%-" + width + "s    %s";
+        if (showBodyTypes) {
+            sw.printf(MAIN_FORMAT_PATTERN, "Line #", "Count", String.format(withBodyTypes, "Route", "Body types"));
+            sw.printf(MAIN_FORMAT_PATTERN, "------", "-----", String.format(withBodyTypes, "-----", "----------"));
+        } else {
+            sw.printf(MAIN_FORMAT_PATTERN, "Line #", "Count", "Route");
+            sw.printf(MAIN_FORMAT_PATTERN, "------", "-----", "-----");
+        }
+        for (RouteCoverageNode node : model) {
+            String route = padString(node.getLevel()) + node.getName();
+            if (showBodyTypes && !node.getBodyTypes().isEmpty()) {
+                route = String.format(withBodyTypes, route, bodyTypesText(node.getBodyTypes(), node.getBodyKinds()));
+            }
+            sw.printf(MAIN_FORMAT_PATTERN, node.getLineNumber(), node.getCount(), route);
+        }
+    }
+
+    /**
+     * The steps of a route that have been reached with bodies of more than one kind: where they are, and their types.
+     */
+    static List<String> mixedBodyKinds(String fileName, String routeId, List<RouteCoverageNode> model) {
+        List<String> answer = new ArrayList<>();
+        for (RouteCoverageNode node : model) {
+            if (node.getBodyKinds().size() > 1) {
+                answer.add(fileName + ":" + node.getLineNumber() + " " + node.getName()
+                           + (routeId != null ? " (route " + routeId + ")" : "") + ": "
+                           + bodyTypesText(node.getBodyTypes(), node.getBodyKinds()));
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The body types by their simple class names, such as {@code String | LinkedHashMap}, followed by the kinds when
+     * there is more than one: {@code String | LinkedHashMap (payload and data)}, a step that needs attention.
+     */
+    static String bodyTypesText(List<String> types, List<String> kinds) {
+        StringJoiner sj = new StringJoiner(" | ");
+        for (String type : types) {
+            sj.add(type.substring(type.lastIndexOf('.') + 1));
+        }
+        String answer = sj.toString();
+        if (kinds != null && kinds.size() > 1) {
+            answer += " (" + String.join(", ", kinds.subList(0, kinds.size() - 1)) + " and " + kinds.get(kinds.size() - 1)
+                      + ")";
+        }
+        return answer;
+    }
+
+    /**
+     * The values of both lists, each once, in the order first seen.
+     */
+    private static List<String> union(List<String> first, List<String> second) {
+        Set<String> answer = new LinkedHashSet<>(first);
+        answer.addAll(second);
+        return List.copyOf(answer);
     }
 
     private String templateOverallCoverageData(
@@ -649,6 +762,8 @@ public class RouteCoverageMojo extends AbstractMojo {
                     || (holder.getNode().equals(node.getName()));
             if (found) {
                 data.setCount(holder.getCount());
+                data.setBodyTypes(holder.getBodyTypes());
+                data.setBodyKinds(holder.getBodyKinds());
             }
         }
 

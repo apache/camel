@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saga",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "saga",
     "extendsScheme": "",
     "syntax": "saga:action",
@@ -29,6 +29,10 @@
   },
   "headers": {
     "Long-Running-Action": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The long running action", "constantName": "org.apache.camel.component.saga.SagaConstants#SAGA_LONG_RUNNING_ACTION" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ] },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged: the saga service calls the completion or compensation endpoints with messages of its own" }
   },
   "properties": {
     "action": { "index": 0, "kind": "path", "displayName": "Action", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.saga.SagaEndpoint.SagaEndpointAction", "enum": [ "COMPLETE", "COMPENSATE" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Action to execute (complete or compensate)" },

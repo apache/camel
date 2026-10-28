@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -43,6 +44,8 @@ import picocli.CommandLine.Command;
                  "  camel get count",
                  "  camel get count --watch" })
 public class CamelCount extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -67,59 +70,53 @@ public class CamelCount extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
-                        Map<String, ?> stats = context.getMap("statistics");
-                        if (stats != null) {
-                            row.total = stats.get("exchangesTotal").toString();
-                            row.failed = stats.get("exchangesFailed").toString();
-                        }
-                        rows.add(row);
-                    }
-                });
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
+            Map<String, ?> stats = context.getMap("statistics");
+            if (stats != null) {
+                row.total = stats.get("exchangesTotal").toString();
+                row.failed = stats.get("exchangesFailed").toString();
+            }
+            rows.add(row);
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!total && !fail) {
+        if (jsonOutput) {
+            // also with --total or --fail, as the rows have both counters
+            printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", JsonValues.pid(r.pid));
+                jo.put("name", r.name);
+                jo.put("age", r.age);
+                jo.put("uptime", r.uptime);
+                jo.put("total", JsonValues.number(r.total));
+                jo.put("failed", JsonValues.number(r.failed));
+                return jo;
+            }).collect(Collectors.toList())));
+        } else if (!total && !fail) {
             if (!rows.isEmpty()) {
-                if (jsonOutput) {
-                    printer().println(Jsoner.serialize(rows.stream().map(r -> {
-                        JsonObject jo = new JsonObject();
-                        jo.put("pid", r.pid);
-                        jo.put("name", r.name);
-                        jo.put("age", r.age);
-                        jo.put("total", r.total);
-                        jo.put("failed", r.failed);
-                        return jo;
-                    }).collect(Collectors.toList())));
-                } else {
-                    printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                            new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                    .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                    .with(r -> r.name),
-                            new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                            new Column().header("TOTAL").with(r -> r.total),
-                            new Column().header("FAIL").with(r -> r.failed))));
-                }
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
+                        new Column().header("TOTAL").with(r -> r.total),
+                        new Column().header("FAIL").with(r -> r.failed))));
             }
         } else {
             StringBuilder builder = new StringBuilder();
@@ -148,25 +145,6 @@ public class CamelCount extends ProcessWatchCommand {
         }
 
         return 0;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
     }
 
     private static class Row {

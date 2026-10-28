@@ -40,6 +40,21 @@ public class TopologyImageRenderer {
     public static BufferedImage renderImage(
             TopologyLayoutResult result, DiagramColors colors,
             int fontSize, int nodeWidth, boolean metrics, boolean showDescription) {
+        return renderImage(result, colors, fontSize, nodeWidth, metrics, showDescription, null);
+    }
+
+    /** The height of a line of text under a route of the error frame, in layout units, for the font size. */
+    public static int rowHeight(int fontSize) {
+        return fontSize * RouteDiagramLayoutEngine.SCALE * 3 / 2;
+    }
+
+    /**
+     * Renders the diagram with its error handling in a frame below the routes, laid out by
+     * {@link TopologyErrorFrame#layout} with the {@link #rowHeight(int)} of the font size; null draws none.
+     */
+    public static BufferedImage renderImage(
+            TopologyLayoutResult result, DiagramColors colors,
+            int fontSize, int nodeWidth, boolean metrics, boolean showDescription, TopologyErrorFrame frame) {
 
         int scale = RouteDiagramLayoutEngine.SCALE;
         int width = result.totalWidth + RouteDiagramLayoutEngine.PADDING;
@@ -47,6 +62,23 @@ public class TopologyImageRenderer {
 
         width = Math.max(width, nodeWidth * scale + RouteDiagramLayoutEngine.PADDING * 2);
         height = Math.max(height, 100 * scale);
+        if (frame != null && frame.routeIds().isEmpty()) {
+            frame = null;
+        }
+        if (frame != null) {
+            // the frame takes in the lines under its routes
+            Graphics2D measure = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics();
+            measure.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize * scale));
+            FontMetrics m = measure.getFontMetrics();
+            for (TopologyLayoutNode node : result.nodes) {
+                if (frame.routeIds().contains(node.routeId)) {
+                    for (String line : frame.lines(node.routeId, TopologyErrorFrame.LineStyle.TEXT)) {
+                        width = Math.max(width, node.x + m.stringWidth(line) + RouteDiagramLayoutEngine.PADDING);
+                    }
+                }
+            }
+            measure.dispose();
+        }
 
         Color bgColor = colors.getBg();
 
@@ -73,11 +105,59 @@ public class TopologyImageRenderer {
         int arrowSize = 6 * scale;
         int nw = nodeWidth * scale;
 
+        if (frame != null) {
+            drawErrorFrame(g, frame, colors, fm, image.getWidth(), result.totalHeight, arc, strokeWidth);
+        }
         drawEdges(g, result, colors, nw, strokeWidth, arrowSize);
         drawNodes(g, result, colors, font, fm, nw, fontSizeScaled, arc, strokeWidth, metrics, showDescription);
+        if (frame != null) {
+            drawErrorLines(g, result, frame, colors, fm);
+        }
 
         g.dispose();
         return image;
+    }
+
+    /** The frame of the error handling, dashed, from its top to the bottom of the diagram, with its title. */
+    private static void drawErrorFrame(
+            Graphics2D g, TopologyErrorFrame frame, DiagramColors colors, FontMetrics fm, int width, int bottom,
+            int arc, float strokeWidth) {
+        int pad = RouteDiagramLayoutEngine.PADDING / 2;
+        float[] dash = { 8 * strokeWidth, 6 * strokeWidth };
+        g.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dash, 0f));
+        g.setColor(colors.getArrow());
+        g.drawRoundRect(pad, frame.topY(), width - 2 * pad, bottom - frame.topY(), arc, arc);
+        g.setStroke(new BasicStroke(strokeWidth));
+        // the title on the top border, with the background behind it
+        String title = " " + TopologyErrorFrame.TITLE + " ";
+        int titleX = pad + 2 * arc;
+        int titleWidth = fm.stringWidth(title);
+        if (colors.getBg() != null) {
+            g.setColor(colors.getBg());
+            g.fillRect(titleX, frame.topY() - fm.getAscent() / 2, titleWidth, fm.getAscent());
+        }
+        g.setColor(colors.getRouteLabel());
+        g.drawString(title, titleX, frame.topY() + fm.getAscent() / 2 - fm.getDescent() / 2);
+    }
+
+    /** Under each route of the frame: where its failures come from and how they are handled. */
+    private static void drawErrorLines(
+            Graphics2D g, TopologyLayoutResult result, TopologyErrorFrame frame, DiagramColors colors, FontMetrics fm) {
+        for (TopologyLayoutNode node : result.nodes) {
+            if (frame.routeIds().contains(node.routeId)) {
+                int y = node.y + node.height + fm.getHeight();
+                for (String line : frame.lines(node.routeId, TopologyErrorFrame.LineStyle.TEXT)) {
+                    if (colors.getBg() != null) {
+                        // over the arrow to an external system below
+                        g.setColor(colors.getBg());
+                        g.fillRect(node.x, y - fm.getAscent(), fm.stringWidth(line), fm.getHeight());
+                    }
+                    g.setColor(colors.getRouteLabel());
+                    g.drawString(line, node.x, y);
+                    y += fm.getHeight();
+                }
+            }
+        }
     }
 
     private static void drawEdges(

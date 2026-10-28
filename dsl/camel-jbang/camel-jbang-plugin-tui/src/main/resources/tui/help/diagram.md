@@ -65,25 +65,39 @@ When a route is selected, an **Info panel** appears on the left
 showing key metrics: state, uptime, throughput, exchange counts,
 and processing times.
 
+The Info panel also has the **checksum** of the route: a short hash of
+the route as written, the same in every run. `camel cmd route-structure`
+gives the checksum of the routes of a source file, so it tells whether a
+file has the route that runs. A route added again changed in this run,
+such as by a reload, has its **revision** too: `Revision: 3 · 2 changes`.
+An integration of a Camel version before 4.24, or without camel-xml-io, has
+neither: `camel run` always has camel-xml-io, while a Spring Boot or Quarkus
+application may not.
+
 Press `Enter` on a selected route to **drill down** into its
 internal EIP structure (the route diagram). Press `Esc` to
 return to the topology view.
 
 ## Levels
 
-The line above the diagram shows its three zoom levels:
+The line above the diagram shows its three levels:
 Architecture › Topology › Route. The level shown is highlighted,
-one that does not apply yet is greyed out. `Enter` zooms in, `Esc`
-zooms out (route, topology, architecture), `v` (at the start of
-the line) moves to the next level, a click goes to a level.
+one that does not apply yet is greyed out. `Enter` goes down a
+level, `Esc` up a level (route, topology, architecture), `v` (at
+the start of the line) moves to the next level, a click goes to a
+level. Zooming (`+` and `-`) is something else: how much room the
+steps of the topology or a route take.
 The right side shows the view settings of the level with their
 state: `a` ai (off shows only what the sources and the runtime
 say: no AI labels, notes or capabilities; it does not change the AI
 overview setting; with no summary yet it has the AI write one, as
 `/overview` does), `b` view (business: labels and what capabilities achieve;
-technical: route ids and endpoints), `m` metrics, `e` external, `d`
-detail, `g` group, `u` utility (one setting for the architecture
-and the topology, so both show the same groups). The footer lists
+technical: route ids and endpoints), `m` metrics, `e` external, `y` types
+(the body types on the arrows of a route), `+/-` zoom (how much room a step of a route takes;
+fit when `z` chose it for the screen), `d` detail, `g` group, `u` utility (one setting for the architecture
+and the topology, so both show the same groups), `x` errors (the
+error handling in a frame below the routes; in the architecture
+a box of the routes reached only on error). The footer lists
 only actions.
 
 ## Architecture View
@@ -92,8 +106,11 @@ The Architecture level shows the routes grouped by what they
 do for the business, one box per group: route groups from the
 source, the capabilities the AI project overview proposed (`✦`,
 italic), shared services (routes several groups use), Other, and
-Utility (plumbing: error handling, logging; `u` shows it). A box
-lists its route count, entry points and external systems; the
+Utility (plumbing: error handling, logging; `u` hides it). With
+`x` on, the routes reached only on error leave Utility for a dashed
+Error handling box, with dashed arrows from the groups whose
+failures go there. A box lists its route count, entry points,
+external systems and warnings (the Info panel lists them); the
 Flow panel at the bottom right shows the inside of the selected group:
 each route in flow order, with the routes and remote systems it
 hands off to (a log is left out).
@@ -117,15 +134,16 @@ business view (`b`), marked with `✦`; the technical view (`n`)
 keeps the expression. The Info panel of such a node shows the
 label, why the route decides there, and the code.
 
-The endpoints of remote systems are the edges of the integration
-and have their own color, in the route diagram as in the topology.
-The input of a route from a remote system shows where it comes
-from in the top border of its box, `AMQP ──▶`. Where a message is
-sent to a remote system and no route of the integration consumes
-it, the bottom border names where it leaves to: `──▶ AMQP`. A
-hand-off to another route of the integration shows `↵ route`
-beside the box. A route that starts itself on a schedule (timer,
-cron, quartz, scheduler) shows `↻ ──▶` at its input.
+The endpoints of remote systems are the edges of the integration:
+they have their own color and a dashed frame (solid while
+selected), in the route diagram as in the topology. The input of
+a route from a remote system shows where it comes from in the top
+border of its box, `AMQP ──▶`. Where a message is sent to a remote
+system and no route of the integration consumes it, the bottom
+border names where it leaves to: `──▶ AMQP`. A hand-off to another
+route of the integration shows `↵ route` beside the box. A route
+that starts itself on a schedule (timer, cron, quartz, scheduler)
+shows `↻ ──▶` at its input.
 
 ## Route Diagram
 
@@ -136,6 +154,41 @@ linked route's diagram.
 
 Navigation history is maintained as a stack: pressing `Esc` goes
 back to the previous route, and eventually back to the topology view.
+
+The route shows its own steps (the happy path). Its error handling,
+the onException clauses (a global one is in every route) and where
+its failures go, is in a frame below the route when `x` is on. The
+history view always shows the onException clauses, so a replay can
+step into them.
+
+## Body Types
+
+With the message history on (such as `camel run --dev`), Camel keeps the
+body types each step has been reached with, across the messages. In the
+route diagram, `y` shows them beside the arrow into each step, so the
+arrows show how the body changes along the route:
+
+```
+           ┌──────────────────────┐
+           │   unmarshal[json]    │
+           └──────────────────────┘
+                      │
+                      │ ⚠ byte[] | LinkedHashMap (payload and data)
+                    3 ▼ 12
+           ┌────────────────────⚠─┐
+           │   to[file:outbox]    │
+           └──────────────────────┘
+```
+
+A step reached with bodies of more than one kind (`null`, `payload`,
+`data` or `collection`) needs attention, as its body depends on the path
+a message takes: its box has a `⚠` in its top border, whether the types
+are shown or not. Where the arrows of a branch are side by side, the
+types are cut to the room there is: the first ones and how many more
+(`ByteArrayInputStreamCache +2`). The Info panel of the selected step
+lists them all with their kind, and in the topology the Info panel of a
+route says how many of its steps were reached with more than one type
+(`⚠ 1 mixed · 2 varied`).
 
 ## Route Structure Preview
 
@@ -155,17 +208,39 @@ you an at-a-glance view of where you are in the route.
 - `↑↓←→` — navigate between route boxes
 - `Enter` — drill down into selected route
 - `c` — show route source code
+- `+` / `-` — zoom in or out: detailed, compact (the default: boxes of
+  one line, the count in the border, the layers closer together) and
+  bare (a mark, the name and the count of each route on one row)
+- `z` — fit: the most detail in which the whole topology fits the screen
+- `Space` — fold the group of the selected route (as `g` shows it) into
+  one box, which says how many routes it has; `Space` or `Enter` on the
+  box unfolds it; `f` folds every group, `F` unfolds them all
+- `p` — show or hide the mini panels over the diagram: the map of the
+  topology (top right of a route) and the tree of the route (bottom right)
 - `v` — next level: architecture, topology, route
 - `g` — show each route's group in the topology, its colour as in
   the architecture, with a legend of the groups at the bottom
 - `u` — show or hide utility routes (as in the architecture)
+- `x` — show or hide the error handling: the routes reached only on
+  error, in a frame below the routes, with where each one's failures
+  come from and how they are handled (select one to highlight the
+  routes that send to it; a route with error handling has a dim ⚡ on
+  its box; with `e`, the external systems only they use are in the
+  frame too; needs Camel 4.23+ in the integration);
+  in the route view, the route's onException clauses and where its
+  failures go, in a frame below its steps
 - `s` — open the integration summary (camel-summary.md)
 - `Esc` — close diagram
 
 **Architecture view:**
 - `↑↓←→` — navigate between groups or routes
 - `Enter` — the topology of all routes, the group's highlighted
+- `+` / `-` — zoom in or out: at compact a group is a box with its
+  name, at bare a mark in its colour and its name; `z` — fit
 - `u` — show or hide utility routes
+- `x` — show or hide the error handling: the routes reached only on
+  error in a box of their own, linked from the groups whose failures
+  go there (one setting with the topology's `x`)
 - `e` — external systems as boxes linked to the groups that use them
 - `s` — open the integration summary at its Architecture section
 - `Esc` — back to the groups, then to the topology
@@ -175,7 +250,26 @@ you an at-a-glance view of where you are in the route.
 - `Enter` — jump to linked route (when `↵` indicator shown)
 - `c` — show source code at selected node
 - `d` — toggle EIP detail panel (shows configured options)
+- `x` — show or hide the route's error handling, in a frame below it
+- `y` — show the body types each step has been reached with, beside the
+  arrows into the steps
 - `g` — go to node (fuzzy search popup)
+- `+` / `-` — zoom in or out: detailed (boxes with up to three lines),
+  compact (the default: boxes with one line, the steps closer together) and bare (a
+  mark and the text of each step on one row, no boxes) and overview
+  (a cell per step, to see the shape of a large route, only the
+  selected step with its text); the view bar
+  shows the level and where it is (`compact 3/4`), the title how many
+  steps the route has and how many are folded (`38 steps · 12 folded`);
+  the selected step stays where it is on the screen
+- `z` — fit: the most detail in which the whole route fits the screen
+- `Space` — fold the block of the selected step (a choice, a branch,
+  a split, a doTry...) into its first step, which says how many steps
+  are folded; `Space` on a folded step unfolds it, as does a click on
+  its `▸ 12 steps folded`; the folds are kept for the next start
+- `f` — fold all the blocks of the route, the blocks in other blocks too
+  (`Space` on one then shows its steps with the blocks in it folded)
+- `F` — expand all the blocks of the route
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
 

@@ -122,6 +122,40 @@ public class MailEndpoint extends ScheduledPollEndpoint {
 
 Aliases are descriptive names for discovery only; they cannot be used as the scheme in an endpoint URI.
 
+=== Body types in the Catalog
+
+The options of a component say how to configure it, but not what the message body is after a step. That is the
+question people, IDEs and AI agents ask most when they write the next step of a route: the file consumer gives the
+file it read, the `http` producer leaves the response as a byte array or a stream, and after `unmarshal: json` the body
+is a `Map` or a `List`.
+
+A component, data format, language or EIP that declares its body types has a `bodyTypes` section in the catalog, with
+an entry per side: what a consumer gives, what a producer needs and leaves, what a data format marshals and unmarshals
+to, what an expression reads and gives, and what an EIP needs, leaves and starts its own steps with:
+
+[source,json]
+----
+"bodyTypes": {
+  "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ],
+    "description": "What converts to an InputStream: text, bytes, a stream or a file. A Map or a List fails: marshal it first" },
+  "producerOut": { "carriers": [ "unchanged" ] }
+}
+----
+
+The Java API gives them on the model:
+
+[source,java]
+----
+CamelCatalog catalog = new DefaultCamelCatalog();
+
+BodyTypeModel out = catalog.componentModel("xslt").getBodyType(BodyTypeModel.PRODUCER_OUT);
+out.getCarriers();     // [text]
+out.getJavaType();     // java.lang.String
+----
+
+See xref:body-types.adoc[Message Body Types] for what the body types are, the tools that use them, how components
+declare them, and the JSON of each side with the rule to read it for the options of a step.
+
 === Documentation in the Catalog
 
 The catalog includes the AsciiDoc documentation pages from all modules. This makes the full

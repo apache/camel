@@ -33,9 +33,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,6 +118,9 @@ class FakeStorageRpc extends StorageRpcTestBase {
     //Bucketname -> bucket
     Map<String, Bucket> buckets = new HashMap<>();
 
+    // fullnames of the objects whose content cannot be read (403), as for an object the caller has no access to
+    Set<String> refusedReads = new HashSet<>();
+
     private final boolean throwIfOption;
 
     /** @param throwIfOption if true, we throw when given any option */
@@ -129,6 +134,17 @@ class FakeStorageRpc extends StorageRpcTestBase {
         metadata = new HashMap<>();
         contents = new HashMap<>();
         buckets = new HashMap<>();
+        refusedReads = new HashSet<>();
+    }
+
+    void refuseReads(String bucket, String name) {
+        refusedReads.add(fullname(bucket, name));
+    }
+
+    private void checkReadable(String key) {
+        if (refusedReads.contains(key)) {
+            throw new StorageException(403, "Access denied: " + key);
+        }
     }
 
     @Override
@@ -326,6 +342,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     @Override
     public byte[] load(StorageObject storageObject, Map<Option, ?> options) throws StorageException {
         String key = fullname(storageObject);
+        checkReadable(key);
         if (!contents.containsKey(key)) {
             throw new StorageException(NOT_FOUND, "File not found: " + key);
         }
@@ -346,6 +363,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
             }
         }
         String key = fullname(from);
+        checkReadable(key);
         if (!contents.containsKey(key)) {
             throw new StorageException(NOT_FOUND, "File not found: " + key);
         }
@@ -381,6 +399,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
             }
         }
         String key = fullname(from);
+        checkReadable(key);
         if (!contents.containsKey(key)) {
             throw new StorageException(NOT_FOUND, "File not found: " + key);
         }

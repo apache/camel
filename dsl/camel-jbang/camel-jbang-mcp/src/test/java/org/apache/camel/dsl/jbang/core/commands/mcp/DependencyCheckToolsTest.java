@@ -181,10 +181,107 @@ class DependencyCheckToolsTest {
         DependencyCheckTools.DependencyCheckResult result
                 = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null, null);
 
-        // 4.10.0 is older than the catalog version (4.23.0-SNAPSHOT)
+        // 4.10.0 is older than the latest release, which is a release and not the SNAPSHOT catalog version
         assertThat(result.versionStatus().status()).isEqualTo("outdated");
         assertThat(result.versionStatus().outdated()).isTrue();
         assertThat(result.versionStatus().catalogVersion()).isNotEmpty();
+        assertThat(result.versionStatus().latestVersion()).matches("\\d+\\.\\d+\\.\\d+");
+        assertThat(result.recommendations()).filteredOn(r -> r.category().equals("Version Upgrade"))
+                .singleElement().satisfies(r -> assertThat(r.action()).doesNotContain("SNAPSHOT"));
+    }
+
+    @Test
+    void runtimeArtifactsProvideTheirComponent() {
+        String route = "from:\n  uri: kafka:myTopic\n  steps:\n    - to: jms:queue:out";
+        String springBoot = POM_SPRING_BOOT.replace("<artifactId>camel-spring-boot-starter</artifactId>",
+                "<artifactId>camel-kafka-starter</artifactId>");
+        String quarkus = """
+                <project>
+                    <dependencyManagement>
+                        <dependencies>
+                            <dependency>
+                                <groupId>io.quarkus.platform</groupId>
+                                <artifactId>quarkus-camel-bom</artifactId>
+                                <version>${quarkus.platform.version}</version>
+                                <type>pom</type>
+                                <scope>import</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.camel.quarkus</groupId>
+                                <artifactId>camel-quarkus-jms</artifactId>
+                                <version>3.27.0</version>
+                            </dependency>
+                        </dependencies>
+                    </dependencyManagement>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel.quarkus</groupId>
+                            <artifactId>camel-quarkus-kafka</artifactId>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """;
+
+        // camel-kafka-starter and camel-quarkus-kafka are camel-kafka; jms is missing, also when only managed
+        DependencyCheckTools.DependencyCheckResult sb = tools.camel_dependency_check(springBoot, route, null, null, null, null);
+        assertThat(sb.missingDependencies()).singleElement().satisfies(d -> {
+            assertThat(d.component()).isEqualTo("jms");
+            assertThat(d.groupId()).isEqualTo("org.apache.camel.springboot");
+            assertThat(d.artifactId()).isEqualTo("camel-jms-starter");
+        });
+
+        DependencyCheckTools.DependencyCheckResult q = tools.camel_dependency_check(quarkus, route, null, null, null, null);
+        assertThat(q.projectInfo().runtimeType()).isEqualTo("quarkus");
+        assertThat(q.missingDependencies()).singleElement().satisfies(d -> {
+            assertThat(d.groupId()).isEqualTo("org.apache.camel.quarkus");
+            assertThat(d.artifactId()).isEqualTo("camel-quarkus-jms");
+        });
+    }
+
+    @Test
+    void quarkusBomIsNotVersionedLikeCamel() {
+        DependencyData data = new DependencyData();
+
+        assertThat(data.formatBomSnippet("quarkus", "4.22.0", null))
+                .contains("<artifactId>camel-quarkus-bom</artifactId>")
+                .contains("<version>${camel-quarkus.version}</version>")
+                .contains("camel_version_list")
+                .doesNotContain("4.22.0");
+        assertThat(data.formatBomSnippet("quarkus", "4.22.0", "3.27.1"))
+                .contains("<groupId>io.quarkus.platform</groupId>")
+                .contains("<artifactId>quarkus-camel-bom</artifactId>")
+                .contains("<version>3.27.1</version>");
+        // the Camel Quarkus version of the project (camel-quarkus.version or the camel-quarkus-bom), when known
+        assertThat(data.formatBomSnippet("quarkus", "4.22.0", null, "3.27.0"))
+                .contains("<groupId>org.apache.camel.quarkus</groupId>")
+                .contains("<artifactId>camel-quarkus-bom</artifactId>")
+                .contains("<version>3.27.0</version>")
+                .doesNotContain("camel_version_list");
+    }
+
+    @Test
+    void quarkusBomRecommendationUsesTheCamelQuarkusVersionOfTheProject() {
+        String pom = """
+                <project>
+                    <properties>
+                        <camel.version>4.14.0</camel.version>
+                        <camel-quarkus.version>3.27.0</camel-quarkus.version>
+                    </properties>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel.quarkus</groupId>
+                            <artifactId>camel-quarkus-kafka</artifactId>
+                            <version>${camel-quarkus.version}</version>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """;
+
+        DependencyCheckTools.DependencyCheckResult result = tools.camel_dependency_check(pom, null, null, null, null, null);
+        assertThat(result.recommendations()).filteredOn(r -> r.category().equals("Best Practice"))
+                .singleElement().satisfies(r -> assertThat(r.snippet())
+                        .contains("<artifactId>camel-quarkus-bom</artifactId>")
+                        .contains("<version>3.27.0</version>"));
     }
 
     @Test

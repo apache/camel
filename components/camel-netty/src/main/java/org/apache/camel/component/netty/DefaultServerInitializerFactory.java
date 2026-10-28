@@ -130,6 +130,29 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         return answer;
     }
 
+    /**
+     * Creates the engine, carrying the host and port when this consumer connects as a client with host name
+     * verification enabled.
+     * <p/>
+     * The JDK reads the name to match from {@code SSLSession.getPeerHost()}, which the no-arg factory method leaves
+     * {@code null} - and then {@code HostnameChecker.match} throws
+     * {@code CertificateException: Hostname or IP address is undefined} rather than checking anything. See
+     * {@code DefaultClientInitializerFactory} for the producer side.
+     * <p/>
+     * In server mode there is nothing to attach, and the algorithm is not set at all: the JDK does not support it on
+     * that side. When it checks a client certificate it skips the SNI name and uses {@code getPeerHost()}, and on a
+     * server engine it turns the resulting failure into
+     * {@code CertificateException: Endpoint Identification Algorithm HTTPS is not supported on the server side}. So it
+     * could only break a handshake in which the client presents a certificate - it never verified anything.
+     */
+    private SSLEngine createServerSSLEngine() {
+        NettyConfiguration configuration = consumer.getConfiguration();
+        if (configuration.isClientMode() && configuration.isHostnameVerification()) {
+            return sslContext.createSSLEngine(configuration.getHost(), configuration.getPort());
+        }
+        return sslContext.createSSLEngine();
+    }
+
     private SslHandler configureServerSSLOnDemand() {
         if (!consumer.getConfiguration().isSsl()) {
             return null;
@@ -138,14 +161,14 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         if (consumer.getConfiguration().getSslHandler() != null) {
             return consumer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
-            SSLEngine engine = sslContext.createSSLEngine();
+            SSLEngine engine = createServerSSLEngine();
             engine.setUseClientMode(consumer.getConfiguration().isClientMode());
             if (consumer.getConfiguration().isNeedClientAuth()) {
                 // only when enabled, to keep the client authentication from the sslContextParameters (such as
                 // REQUIRE or WANT) when needClientAuth is not enabled
                 engine.setNeedClientAuth(true);
             }
-            if (consumer.getConfiguration().isHostnameVerification()) {
+            if (consumer.getConfiguration().isClientMode() && consumer.getConfiguration().isHostnameVerification()) {
                 SSLParameters sslParams = engine.getSSLParameters();
                 sslParams.setEndpointIdentificationAlgorithm("HTTPS");
                 engine.setSSLParameters(sslParams);

@@ -27,5 +27,6 @@ class InfraInfo {
     Map<String, Object> properties = new TreeMap<>();
     boolean alive;
     boolean vanishing;
+    // when it was found gone, a MonotonicClock time: it fades out from then
     long vanishStart;
 }

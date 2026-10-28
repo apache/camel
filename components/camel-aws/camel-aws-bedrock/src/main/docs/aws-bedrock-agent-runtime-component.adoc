@@ -140,11 +140,32 @@ header, to continue an existing conversation; when neither is supplied a random 
 invocation. The session id used is always echoed back on the `CamelAwsBedrockAgentRuntimeSessionId` header of the
 out-message so a route can reuse it on the next call.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:agent")
     .to("aws-bedrock-agent-runtime://label?operation=invokeAgent&agentId=RAWAGENTID&agentAliasId=RAWALIASID");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:agent
+      steps:
+        - to:
+            uri: aws-bedrock-agent-runtime:label
+            parameters:
+              operation: invokeAgent
+              agentId: RAWAGENTID
+              agentAliasId: RAWALIASID
+----
+====
 
 === Invoking an inline Bedrock Agent
 

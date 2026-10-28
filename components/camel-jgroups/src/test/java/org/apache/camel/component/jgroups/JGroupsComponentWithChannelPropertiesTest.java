@@ -34,7 +34,8 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
 
     static final String MESSAGE = "MESSAGE";
 
-    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s?channelProperties=%s", CLUSTER_NAME, "udp.xml");
+    static final String CONFIGURED_ENDPOINT_URI
+            = String.format("jgroups:%s?channelProperties=%s&acceptAllObjects=true", CLUSTER_NAME, "udp.xml");
 
     // Fixtures
 
@@ -53,7 +54,7 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
                 defaultComponent.setChannel(defaultComponentChannel);
                 context().addComponent("my-default-jgroups", defaultComponent);
 
-                from("my-default-jgroups:" + CLUSTER_NAME).to("mock:default");
+                from("my-default-jgroups:" + CLUSTER_NAME + "?acceptAllObjects=true").to("mock:default");
                 from(CONFIGURED_ENDPOINT_URI).to("mock:configured");
             }
         };
@@ -94,7 +95,8 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
     @Test
     public void shouldCreateChannel() {
         // When
-        JGroupsEndpoint endpoint = getMandatoryEndpoint("my-default-jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
+        JGroupsEndpoint endpoint
+                = getMandatoryEndpoint("my-default-jgroups:" + CLUSTER_NAME + "?acceptAllObjects=true", JGroupsEndpoint.class);
         JGroupsComponent component = (JGroupsComponent) endpoint.getComponent();
 
         // Then

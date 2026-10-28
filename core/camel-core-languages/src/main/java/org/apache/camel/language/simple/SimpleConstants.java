@@ -517,6 +517,12 @@ public final class SimpleConstants {
                       "param=exp:String:required::The JQ expression" })
     public static final String JQ = "jq(input,exp)";
 
+    @Metadata(description = "Invoke a named semantic evaluation and return its typed value. Preserves the body and publishes CamelSemanticResult. Each occurrence invokes the expert. Requires camel-semantic.",
+              label = "ai", javaType = "Object", displayName = "Semantic Evaluation",
+              examples = { "${semantic('injection')} -> true // the expert's Boolean verdict" },
+              annotations = { "param=name:String:required::The declared evaluation name" })
+    public static final String SEMANTIC = "semantic(name)";
+
     @Metadata(description = "When working with JSon data, then this allows using the JSonPath language, for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath. For input (optional), you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.",
               label = "json", javaType = "Object", displayName = "JSonPath",
               examples = {

@@ -46,13 +46,15 @@ public class SpringCloudConfigReloadTriggerTask extends ServiceSupport implement
 
     @Override
     public void run() {
-        if (SpringConfigRemaindersCache.get().isEmpty()) {
+        // iterate a copy as the properties function can add entries concurrently
+        Map<String, String> remainders = SpringConfigRemaindersCache.snapshot();
+        if (remainders.isEmpty()) {
             return;
         }
 
         ConfigData configData = new SpringConfigProvider().getConfigData(getCamelContext());
 
-        for (Map.Entry<String, String> entry : SpringConfigRemaindersCache.get().entrySet()) {
+        for (Map.Entry<String, String> entry : remainders.entrySet()) {
             for (PropertySource propertySource : configData.getPropertySources()) {
                 if (propertySource.containsProperty(entry.getKey())
                         && !propertySource.getProperty(entry.getKey()).equals(entry.getValue())) {

@@ -838,7 +838,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1341,7 +1340,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1435,7 +1433,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1572,7 +1569,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1725,8 +1721,6 @@
                 "required" : [ "tokenize" ]
               }, {
                 "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -1913,14 +1907,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "wasm" ],
-            "properties" : {
-              "wasm" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -1969,7 +1955,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
@@ -2128,7 +2113,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -2336,7 +2320,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -2837,7 +2820,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -2849,6 +2831,95 @@
         "description" : "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage",
         "type" : "object",
         "additionalProperties" : false,
+        "properties" : {
+          "allowNullBody" : {
+            "type" : "boolean",
+            "title" : "Allow Null Body",
+            "description" : "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null.",
+            "default" : false
+          },
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "The description for this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+            "default" : false
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "The note for this node"
+          },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
+          },
+          "asn1" : { },
+          "avro" : { },
+          "barcode" : { },
+          "base64" : { },
+          "beanio" : { },
+          "bindy" : { },
+          "cbor" : { },
+          "crypto" : { },
+          "csv" : { },
+          "custom" : { },
+          "dfdl" : { },
+          "fhirJson" : { },
+          "fhirXml" : { },
+          "flatpack" : { },
+          "fory" : { },
+          "grok" : { },
+          "groovyJson" : { },
+          "groovyXml" : { },
+          "gzipDeflater" : { },
+          "hl7" : { },
+          "ical" : { },
+          "iso8583" : { },
+          "jacksonXml" : { },
+          "jaxb" : { },
+          "json" : { },
+          "jsonApi" : { },
+          "lzf" : { },
+          "mimeMultipart" : { },
+          "ocsf" : { },
+          "parquetAvro" : { },
+          "pgp" : { },
+          "pqc" : { },
+          "protobuf" : { },
+          "rss" : { },
+          "smooks" : { },
+          "soap" : { },
+          "swiftMt" : { },
+          "swiftMx" : { },
+          "syslog" : { },
+          "tarFile" : { },
+          "thrift" : { },
+          "toon" : { },
+          "ubl" : { },
+          "univocityCsv" : { },
+          "univocityFixed" : { },
+          "univocityTsv" : { },
+          "xmlSecurity" : { },
+          "yaml" : { },
+          "zipDeflater" : { },
+          "zipFile" : { }
+        },
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -3251,90 +3322,7 @@
               }
             }
           } ]
-        } ],
-        "properties" : {
-          "description" : {
-            "type" : "string",
-            "title" : "Description",
-            "description" : "The description for this node"
-          },
-          "disabled" : {
-            "type" : "boolean",
-            "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
-            "default" : false
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node"
-          },
-          "note" : {
-            "type" : "string",
-            "title" : "Note",
-            "description" : "The note for this node"
-          },
-          "variableReceive" : {
-            "type" : "string",
-            "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
-          },
-          "variableSend" : {
-            "type" : "string",
-            "title" : "Variable Send",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
-          },
-          "asn1" : { },
-          "avro" : { },
-          "barcode" : { },
-          "base64" : { },
-          "beanio" : { },
-          "bindy" : { },
-          "cbor" : { },
-          "crypto" : { },
-          "csv" : { },
-          "custom" : { },
-          "dfdl" : { },
-          "fhirJson" : { },
-          "fhirXml" : { },
-          "flatpack" : { },
-          "fory" : { },
-          "grok" : { },
-          "groovyJson" : { },
-          "groovyXml" : { },
-          "gzipDeflater" : { },
-          "hl7" : { },
-          "ical" : { },
-          "iso8583" : { },
-          "jacksonXml" : { },
-          "jaxb" : { },
-          "json" : { },
-          "jsonApi" : { },
-          "lzf" : { },
-          "mimeMultipart" : { },
-          "ocsf" : { },
-          "parquetAvro" : { },
-          "pgp" : { },
-          "pqc" : { },
-          "protobuf" : { },
-          "rss" : { },
-          "smooks" : { },
-          "soap" : { },
-          "swiftMt" : { },
-          "swiftMx" : { },
-          "syslog" : { },
-          "tarFile" : { },
-          "thrift" : { },
-          "toon" : { },
-          "ubl" : { },
-          "univocityCsv" : { },
-          "univocityFixed" : { },
-          "univocityTsv" : { },
-          "xmlSecurity" : { },
-          "yaml" : { },
-          "zipDeflater" : { },
-          "zipFile" : { }
-        }
+        } ]
       },
       "org.apache.camel.model.MulticastDefinition" : {
         "title" : "Multicast",
@@ -3706,7 +3694,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4170,7 +4157,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4280,7 +4266,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4444,7 +4429,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4909,7 +4893,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5593,7 +5576,6 @@
             "spel" : { },
             "tokenize" : { },
             "variable" : { },
-            "wasm" : { },
             "xpath" : { },
             "xquery" : { },
             "xtokenize" : { },
@@ -5787,7 +5769,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5859,7 +5840,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5976,7 +5956,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6091,7 +6070,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6169,7 +6147,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6273,8 +6250,6 @@
               }, {
                 "required" : [ "variable" ]
               }, {
-                "required" : [ "wasm" ]
-              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -6344,7 +6319,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6527,7 +6501,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7007,7 +6980,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7447,7 +7419,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -8070,7 +8041,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -8165,7 +8135,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -8665,7 +8634,7 @@
           "barcodeFormat" : {
             "type" : "string",
             "title" : "Barcode Format",
-            "description" : "Barcode format such as QR-Code.",
+            "description" : "Barcode format such as QR-Code. MAXICODE, RSS_14, RSS_EXPANDED and UPC_EAN_EXTENSION cannot be written by marshal, as there is no encoder for them; unmarshal reads the format of the image.",
             "default" : "QR_CODE",
             "enum" : [ "AZTEC", "CODABAR", "CODE_39", "CODE_93", "CODE_128", "DATA_MATRIX", "EAN_8", "EAN_13", "ITF", "MAXICODE", "PDF_417", "QR_CODE", "RSS_14", "RSS_EXPANDED", "UPC_A", "UPC_E", "UPC_EAN_EXTENSION" ]
           },
@@ -9757,6 +9726,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "maxDecompressedSize" : {
+            "type" : "number",
+            "title" : "Max Decompressed Size",
+            "description" : "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+            "default" : 1073741824
           }
         }
       },
@@ -9824,7 +9799,7 @@
           "configFile" : {
             "type" : "string",
             "title" : "Config File",
-            "description" : "The j8583 configuration file to load from classpath",
+            "description" : "The j8583 configuration file. It is loaded from the classpath by default; use the file: or http: prefix to load it from somewhere else.",
             "default" : "j8583-config.xml"
           },
           "id" : {
@@ -10105,7 +10080,7 @@
           "allowUnmarshallType" : {
             "type" : "boolean",
             "title" : "Allow Unmarshall Type",
-            "description" : "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.",
+            "description" : "If enabled then Jackson, Gson or JSON-B is allowed to attempt to use the CamelJacksonUnmarshalType, CamelGsonUnmarshalType or CamelJsonbUnmarshallType header during the unmarshalling. This should only be enabled when desired to be used.",
             "default" : false
           },
           "autoDiscoverObjectMapper" : {
@@ -10920,16 +10895,10 @@
             "description" : "Number of spaces per indentation level.",
             "default" : 2
           },
-          "lengthMarker" : {
-            "type" : "boolean",
-            "title" : "Length Marker",
-            "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
-            "default" : false
-          },
           "strict" : {
             "type" : "boolean",
             "title" : "Strict",
-            "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+            "description" : "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict recoveries of the TOON specification, such as accepting an array whose length differs from the declared length; other malformed TOON still fails.",
             "default" : true
           }
         }
@@ -11320,8 +11289,7 @@
           "keyCipherAlgorithm" : {
             "type" : "string",
             "title" : "Key Cipher Algorithm",
-            "description" : "The cipher algorithm to be used for encryption/decryption of the asymmetric key.",
-            "default" : "RSA_OAEP",
+            "description" : "The cipher algorithm to be used for encryption/decryption of the asymmetric key. When not set, marshal uses RSA_OAEP when the recipientKeyAlias is set, and unmarshal decrypts with the symmetric key of the passPhrase.",
             "enum" : [ "RSA_v1dot5", "RSA_OAEP", "RSA_OAEP_11" ]
           },
           "keyOrTrustStoreParameters" : {
@@ -11373,7 +11341,7 @@
             "type" : "boolean",
             "title" : "Secure Tag Contents",
             "description" : "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false = Element Level, true = Element Content Level.",
-            "default" : false
+            "default" : true
           },
           "xmlCipherAlgorithm" : {
             "type" : "string",
@@ -11481,6 +11449,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "maxDecompressedSize" : {
+            "type" : "number",
+            "title" : "Max Decompressed Size",
+            "description" : "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+            "default" : 1073741824
           }
         }
       },
@@ -12221,14 +12195,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "wasm" ],
-            "properties" : {
-              "wasm" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -12277,7 +12243,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
@@ -12615,7 +12580,7 @@
               "type" : "string",
               "title" : "Option",
               "description" : "To configure additional options on JSONPath. Multiple values can be separated by comma.",
-              "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
+              "pattern" : "^\\s*(DEFAULT_PATH_LEAF_TO_NULL|ALWAYS_RETURN_LIST|AS_PATH_LIST|SUPPRESS_EXCEPTIONS|REQUIRE_PROPERTIES)\\s*(,\\s*(DEFAULT_PATH_LEAF_TO_NULL|ALWAYS_RETURN_LIST|AS_PATH_LIST|SUPPRESS_EXCEPTIONS|REQUIRE_PROPERTIES)\\s*)*$"
             },
             "resolveResource" : {
               "type" : "boolean",
@@ -13222,51 +13187,6 @@
         } ],
         "required" : [ "expression" ]
       },
-      "org.apache.camel.model.language.WasmExpression" : {
-        "title" : "Wasm",
-        "description" : "Call a wasm (web assembly) function",
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "additionalProperties" : false,
-          "properties" : {
-            "expression" : {
-              "type" : "string",
-              "title" : "Expression",
-              "description" : "The expression value in your chosen language syntax."
-            },
-            "id" : {
-              "type" : "string",
-              "title" : "Id",
-              "description" : "The id of this node."
-            },
-            "module" : {
-              "type" : "string",
-              "title" : "Module",
-              "description" : "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function."
-            },
-            "resolveResource" : {
-              "type" : "boolean",
-              "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
-              "default" : false
-            },
-            "resultType" : {
-              "type" : "string",
-              "title" : "Result Type",
-              "description" : "The class of the result type (type from output)."
-            },
-            "trim" : {
-              "type" : "boolean",
-              "title" : "Trim",
-              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-              "default" : true
-            }
-          }
-        } ],
-        "required" : [ "expression", "module" ]
-      },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
         "title" : "XML Tokenize",
         "description" : "Tokenize XML payloads",
@@ -13868,7 +13788,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -14012,7 +13932,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -14156,7 +14076,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -14298,6 +14218,13 @@
             "type" : "string",
             "title" : "Specification",
             "description" : "Path to the OpenAPI specification file."
+          },
+          "unmatchedRequestHandling" : {
+            "type" : "string",
+            "title" : "Unmatched Request Handling",
+            "description" : "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).",
+            "default" : "platform",
+            "enum" : [ "platform", "camel" ]
           }
         },
         "required" : [ "specification" ]
@@ -14401,7 +14328,7 @@
             "enum" : [ "body", "formData", "header", "path", "query" ]
           }
         },
-        "required" : [ "name", "type" ]
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.rest.PatchDefinition" : {
         "title" : "Patch",
@@ -14526,7 +14453,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -14670,7 +14597,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -14814,7 +14741,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -15013,7 +14940,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
-            "default" : false
+            "default" : true
           },
           "type" : {
             "type" : "string",
@@ -15200,7 +15127,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
-            "default" : false
+            "default" : true
           },
           "useXForwardHeaders" : {
             "type" : "boolean",
@@ -15362,7 +15289,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "tag" : {
             "type" : "string",
@@ -16474,86 +16401,142 @@
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer" : {
         "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "question" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema"
-            }
-          }
-        },
-        "required" : [ "question" ]
-      },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "criteria" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "instructions" : {
-            "type" : "string"
-          },
-          "state" : {
-            "type" : "string"
-          },
-          "threshold" : {
-            "type" : "number"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "boolean" ]
-          },
-          "uncertainty" : {
-            "type" : "number"
-          },
-          "uncertaintyPolicy" : {
-            "type" : "string",
-            "enum" : [ "fail", "non-match" ]
-          }
-        },
-        "required" : [ "instructions", "type" ]
-      },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "criteria" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "instructions" : {
-            "type" : "string"
-          },
-          "state" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "choice" ]
-          }
-        },
-        "required" : [ "criteria", "instructions", "type" ]
-      },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema" : {
-        "type" : "object",
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema"
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationDeclarationSchema"
           }, {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema"
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditDeclarationSchema"
           }, {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema"
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditedEvaluationDeclarationSchema"
           } ]
         } ]
       },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema" : {
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditDeclarationSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "audit" : {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema"
+          },
+          "state" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "audit" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditExpertSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "input" : {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditInputSchema"
+          }
+        },
+        "required" : [ "enabled" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditInputSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "maxChars" : {
+            "type" : "integer"
+          },
+          "redactor" : {
+            "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "capacity" : {
+            "type" : "integer"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "experts" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditExpertSchema"
+            }
+          },
+          "queueCapacity" : {
+            "type" : "integer"
+          },
+          "reader" : {
+            "type" : "string"
+          },
+          "sinks" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditedEvaluationDeclarationSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "audit" : {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema"
+          },
+          "evaluation" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
+            }
+          },
+          "state" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "audit", "evaluation" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$DeclarationSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "state" : {
+            "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationDeclarationSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "evaluation" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
+            }
+          },
+          "state" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "evaluation" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema" : {
+        "type" : "object",
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$MapCriteriaSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ListCriteriaSchema"
+          } ]
+        } ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ListCriteriaSchema" : {
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -16563,18 +16546,75 @@
               "type" : "string"
             }
           },
+          "expert" : {
+            "type" : "string"
+          },
           "instructions" : {
             "type" : "string"
+          },
+          "operation" : {
+            "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object"
           },
           "state" : {
             "type" : "string"
           },
+          "threshold" : {
+            "type" : "number"
+          },
           "type" : {
-            "type" : "string",
-            "enum" : [ "score" ]
+            "type" : "string"
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string"
           }
         },
-        "required" : [ "criteria", "instructions", "type" ]
+        "required" : [ "criteria", "expert" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$MapCriteriaSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "expert" : {
+            "type" : "string"
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "operation" : {
+            "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "threshold" : {
+            "type" : "number"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "expert" ]
       },
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition$Inline" : {
         "type" : "object",
@@ -16795,14 +16835,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "wasm" ],
-            "properties" : {
-              "wasm" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -16851,7 +16883,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }

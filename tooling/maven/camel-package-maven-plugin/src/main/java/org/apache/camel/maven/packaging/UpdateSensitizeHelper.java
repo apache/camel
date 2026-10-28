@@ -86,7 +86,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     private static final String[] EXTRA_KEYS
             = new String[] {
                     "apipassword", "apisecret", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
-                    "db_password",
+                    "callbacksecret", "db_password",
                     SECRET, "keystorePassword" };
 
     // extra security options from camel-main properties that are not in component JSON files
@@ -179,6 +179,13 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                         collectSecretOption(o, secrets);
                         collectSecurityOption(o, securityOptions, securityOptionOwners, owners);
                     });
+                    // the options of the language itself, which camel.language.<name>.<option> sets
+                    if (lm.getLanguageOptions() != null) {
+                        lm.getLanguageOptions().forEach(o -> {
+                            collectSecretOption(o, secrets);
+                            collectSecurityOption(o, securityOptions, securityOptionOwners, owners);
+                        });
+                    }
                 }
             } catch (Exception e) {
                 throw new MojoExecutionException("Error loading json: " + name, e);

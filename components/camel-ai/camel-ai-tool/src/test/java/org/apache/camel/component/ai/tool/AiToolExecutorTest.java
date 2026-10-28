@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -69,6 +70,12 @@ public class AiToolExecutorTest extends CamelTestSupport {
                      + "?tags=test"
                      + "&description=A tool that always fails")
                         .throwException(new RuntimeException("Simulated failure"));
+
+                from("ai-tool:dlqTool"
+                     + "?tags=test"
+                     + "&description=A tool whose error handler restores the original message")
+                        .errorHandler(deadLetterChannel("mock:dlq").useOriginalMessage())
+                        .throwException(new RuntimeException("boom"));
 
                 from("ai-tool:exchangeExceptionTool"
                      + "?tags=test"
@@ -455,6 +462,63 @@ public class AiToolExecutorTest extends CamelTestSupport {
 
         assertThat(result).isInstanceOf(AiToolResult.ExecutionError.class);
         assertThat(((AiToolResult.ExecutionError) result).message()).contains("must not be null");
+    }
+
+    @Test
+    void createToolExchangeCopiesCallerContextButGivesACleanMessage() {
+        // CAMEL-24832: the tool exchange carries the caller's context - an authenticated subject kept as an exchange
+        // property, and variables - so a tool route can be guarded on it; but the message is clean, so the route gets
+        // only its own arguments, not the caller's body or inbound headers, and changes do not leak back.
+        Exchange calling = new DefaultExchange(context);
+        calling.setProperty("CamelAuthenticatedSubject", "alice");
+        calling.setVariable("tenant", "acme");
+        calling.getIn().setHeader("origHeader", "h1");
+        calling.getIn().setBody("original-body");
+
+        Exchange toolExchange = AiToolExecutor.createToolExchange(calling);
+
+        // the caller's context reaches the tool route
+        assertThat(toolExchange.getProperty("CamelAuthenticatedSubject")).isEqualTo("alice");
+        assertThat(toolExchange.getVariable("tenant")).isEqualTo("acme");
+
+        // the tool exchange has its own id, not the caller's
+        assertThat(toolExchange.getExchangeId()).isNotEqualTo(calling.getExchangeId());
+
+        // but the message is clean: no caller body, no caller inbound headers
+        assertThat(toolExchange.getMessage().getBody()).isNull();
+        assertThat(toolExchange.getMessage().getHeader("origHeader")).isNull();
+
+        // and changes on the tool exchange do not leak back into the caller
+        toolExchange.setProperty("CamelAuthenticatedSubject", "mallory");
+        toolExchange.getMessage().setBody("tool-body");
+        assertThat(calling.getProperty("CamelAuthenticatedSubject")).isEqualTo("alice");
+        assertThat(calling.getIn().getBody()).isEqualTo("original-body");
+    }
+
+    @Test
+    void createToolExchangeGivesTheToolRouteItsOwnUnitOfWork() throws Exception {
+        // CAMEL-24832: the tool exchange runs in its OWN unit of work, not the caller's. Otherwise an error handler's
+        // useOriginalMessage() would restore the caller's body (the user prompt) into the tool result, undoing the
+        // clean message, and the tool route's own completion/original-message handling would not apply.
+        AiToolSpec spec = findSpec("dlqTool");
+
+        Exchange calling = new DefaultExchange(context);
+        calling.getIn().setBody("caller-prompt");
+        calling.getIn().setHeader("origHeader", "h1");
+
+        MockEndpoint dlq = getMockEndpoint("mock:dlq");
+        dlq.expectedMessageCount(1);
+
+        AiToolResult result = AiToolExecutor.execute(spec, Map.of(), AiToolExecutor.createToolExchange(calling));
+
+        dlq.assertIsSatisfied();
+        // the dead-letter message is the tool exchange's own (clean) original, NOT the caller's prompt or headers
+        Exchange dead = dlq.getExchanges().get(0);
+        assertThat(dead.getMessage().getBody()).isNull();
+        assertThat(dead.getMessage().getHeader("origHeader")).isNull();
+        // the error handler handled the exception, so the tool returns its own clean body, not the caller's prompt
+        assertThat(result).isInstanceOf(AiToolResult.Success.class);
+        assertThat(((AiToolResult.Success) result).value()).isEqualTo("No result");
     }
 
     private AiToolSpec findSpec(String toolName) {

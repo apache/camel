@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,8 +34,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.yaml.validator.DocBlocks;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -89,6 +92,10 @@ public final class CatalogSamples {
             Map.entry("redeliveryPolicy", "onException"),
             Map.entry("deadLetterChannel", "errorHandler"),
             Map.entry("defaultErrorHandler", "errorHandler"),
+            Map.entry("noErrorHandler", "errorHandler"),
+            Map.entry("jtaTransactionErrorHandler", "errorHandler"),
+            Map.entry("springTransactionErrorHandler", "errorHandler"),
+            Map.entry("refErrorHandler", "errorHandler"),
             Map.entry("get", "rest"),
             Map.entry("post", "rest"),
             Map.entry("aggregationStrategy", "aggregate"));
@@ -99,11 +106,21 @@ public final class CatalogSamples {
      * is here: a task (read file, call service), a wording of the outcome (retry, batch) or a technology (json, cron).
      * A protocol or a product (mqtt, s3) is what camel_catalog_find turns into a component, so it is not here.
      */
+    private static final String[] HTTP_CALL = {
+            "http", "a to: with the http component (toD: when the URI is built from the message, such as a path"
+                    + " parameter); the response becomes the message body" };
+    // a JMS broker without a component of its own (CAMEL-25783)
+    private static final String[] JMS_BROKER = {
+            "jms", "the jms component, with the ConnectionFactory of the broker's client library as a bean on the"
+                   + " component (the jms page shows it under Connecting to a broker)" };
+    private static final String[] OPENAPI_CALL = {
+            "rest-openapi", "a to: with the rest-openapi component, its specificationUri and operationId; path and"
+                            + " query parameters come from headers of the same name, the body is the request body" };
+
     static final Map<String, String> INTENTS = Map.ofEntries(
             Map.entry("read file", "poll"), Map.entry("readfile", "poll"), Map.entry("load file", "poll"),
             Map.entry("read a file", "poll"), Map.entry("read", "poll"), Map.entry("fetch", "poll"),
             Map.entry("consume once", "poll"), Map.entry("poll once", "poll"),
-            Map.entry("call service", "enrich"), Map.entry("call", "enrich"), Map.entry("http call", "enrich"),
             Map.entry("lookup", "enrich"),
             Map.entry("batch", "aggregate"), Map.entry("collect", "aggregate"), Map.entry("group", "aggregate"),
             Map.entry("retry", "onException"), Map.entry("error handling", "onException"),
@@ -115,6 +132,19 @@ public final class CatalogSamples {
             Map.entry("rest api", "rest"), Map.entry("http server", "rest"), Map.entry("endpoint", "rest"),
             Map.entry("convert", "convertBodyTo"), Map.entry("json", "marshal"),
             Map.entry("schedule", "from"), Map.entry("cron", "from"));
+
+    /**
+     * What a request is about, to the component that does it, with how. Calling a service is a to: (or a toD: when the
+     * URI is built from the message) on the http component, not the enrich EIP, which also merges the answer into the
+     * message with an aggregation strategy.
+     */
+    static final Map<String, String[]> COMPONENT_INTENTS = Map.ofEntries(
+            Map.entry("call service", HTTP_CALL), Map.entry("call", HTTP_CALL), Map.entry("http call", HTTP_CALL),
+            Map.entry("call api", HTTP_CALL), Map.entry("http client", HTTP_CALL), Map.entry("call http", HTTP_CALL),
+            Map.entry("openapi client", OPENAPI_CALL), Map.entry("call by contract", OPENAPI_CALL),
+            Map.entry("call operation", OPENAPI_CALL),
+            Map.entry("artemis", JMS_BROKER), Map.entry("activemq artemis", JMS_BROKER), Map.entry("ibm mq", JMS_BROKER),
+            Map.entry("ibmmq", JMS_BROKER), Map.entry("websphere mq", JMS_BROKER));
 
     private static volatile Map<String, List<Map<String, String>>> samples;
 
@@ -172,7 +202,6 @@ public final class CatalogSamples {
         return sample(catalog, null, name, limit);
     }
 
-    private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\s*\\n----\\n(.*?)\\n----", Pattern.DOTALL);
     private static final Map<String, Found> DOC_CACHE = new ConcurrentHashMap<>();
 
     /** The validated examples of a page family, and for a component whether any of them uses its endpoint. */
@@ -203,7 +232,7 @@ public final class CatalogSamples {
         try {
             found = switch (kind) {
                 case "component" -> componentSamples(catalog, key);
-                case "dataformat" -> pageSamples(catalog, dataFormatPages(catalog, key), null);
+                case "dataformat" -> pageSamples(catalog, dataFormatPages(catalog, key), dataFormatUse(catalog, key));
                 case "language" -> pageSamples(catalog, List.of(key + "-language"), null);
                 default -> eipSamples(catalog, key);
             };
@@ -219,13 +248,71 @@ public final class CatalogSamples {
         return found;
     }
 
+    /**
+     * The entries whose examples are on the page of another EIP, after the examples of that EIP: interceptFrom and
+     * interceptSendToEndpoint are on the page of intercept, and had no sample (CAMEL-25735).
+     */
+    static final Map<String, String> SAMPLES_ON_PAGE_OF
+            = Map.of("interceptFrom", "intercept", "interceptSendToEndpoint", "intercept");
+
+    /**
+     * The EIPs whose own page has no example: their samples are the examples on the pages of what they belong to that
+     * write them, the first of each page first (CAMEL-25774). loadBalance is on the pages of its policies, the circuit
+     * breaker settings on the pages of Resilience4j and Fault Tolerance, and the resequencer settings on its page.
+     */
+    static final Map<String, List<String>> SAMPLES_IN_PAGES_OF = Map.of(
+            "loadBalance", List.of("failoverLoadBalancer-eip", "roundRobinLoadBalancer-eip", "weightedLoadBalancer-eip",
+                    "randomLoadBalancer-eip", "stickyLoadBalancer-eip", "topicLoadBalancer-eip", "customLoadBalancer-eip"),
+            "resilience4jConfiguration", List.of("resilience4j-eip"),
+            "faultToleranceConfiguration", List.of("fault-tolerance-eip"),
+            "batchConfig", List.of("resequence-eip"),
+            "streamConfig", List.of("resequence-eip"));
+
+    /** The settings written inside an EIP as one of its options, not as a step (CAMEL-25774). */
+    static final Map<String, String> SETTINGS_OF = Map.of(
+            "resilience4jConfiguration", "circuitBreaker", "faultToleranceConfiguration", "circuitBreaker",
+            "batchConfig", "resequence", "streamConfig", "resequence");
+
     private static Found eipSamples(CamelCatalog catalog, String key) {
+        List<String> pages = SAMPLES_IN_PAGES_OF.get(key);
+        if (pages != null) {
+            Pattern writes = Pattern.compile("(?m)^\\s*(- )?" + Pattern.quote(key) + ":");
+            List<List<Map<String, String>>> perPage = new ArrayList<>();
+            for (String page : pages) {
+                perPage.add(pageSamples(catalog, List.of(page), null).samples().stream()
+                        .filter(s -> writes.matcher(s.get("yaml")).find()).toList());
+            }
+            List<Map<String, String>> all = interleave(perPage);
+            return all.isEmpty() ? Found.NONE : new Found(all, false);
+        }
+        String host = SAMPLES_ON_PAGE_OF.get(key);
+        if (host != null) {
+            // the examples of the page that start with the entry, not those of the EIP the page is about
+            String start = "- " + key + ":";
+            List<Map<String, String>> own = eipSamples(catalog, host).samples().stream()
+                    .filter(s -> s.get("yaml").stripLeading().startsWith(start)).toList();
+            return own.isEmpty() ? Found.NONE : new Found(own, false);
+        }
         for (String candidate : List.of(key + "-eip", kebab(key) + "-eip", kebab(key), key)) {
             if (catalog.asciiDoc(candidate) != null) {
                 return pageSamples(catalog, List.of(candidate), null);
             }
         }
         return Found.NONE;
+    }
+
+    /** The samples of each page in turn: the first of every page, then the second, and so on. */
+    private static List<Map<String, String>> interleave(List<List<Map<String, String>>> perPage) {
+        List<Map<String, String>> answer = new ArrayList<>();
+        int longest = perPage.stream().mapToInt(List::size).max().orElse(0);
+        for (int i = 0; i < longest; i++) {
+            for (List<Map<String, String>> page : perPage) {
+                if (i < page.size()) {
+                    answer.add(page.get(i));
+                }
+            }
+        }
+        return answer;
     }
 
     private static Found componentSamples(CamelCatalog catalog, String name) {
@@ -251,13 +338,10 @@ public final class CatalogSamples {
             if (doc == null) {
                 continue;
             }
-            Matcher m = YAML_BLOCK.matcher(doc);
-            while (m.find()) {
-                String yaml = m.group(1).stripTrailing() + "\n";
-                if (!yaml.stripLeading().startsWith("- ")) {
-                    // a fragment (an option list, a manifest), not a route file
-                    continue;
-                }
+            // the route examples as the doc-samples plugin and the documentation tests read them (CAMEL-25736): a
+            // longer delimiter and a leading comment are fine, callout markers are left out, and a block marked as
+            // what to avoid is no sample; the fragments (an option list, a manifest) are not route files
+            for (String yaml : DocBlocks.examples(doc)) {
                 if (!SourceValidator.validateYamlSchema(yaml, catalog).isEmpty()) {
                     continue;
                 }
@@ -359,10 +443,20 @@ public final class CatalogSamples {
         }
     }
 
+    /**
+     * Examples that use a component without naming its scheme: the contract-first Rest DSL ({@code rest: openApi:})
+     * runs on rest-openapi and is the form its page recommends for serving an API, so it ranks with the examples that
+     * use the endpoint instead of after them (where an example of a rest-openapi consumer pushed it out of the first
+     * two).
+     */
+    private static final Map<String, String> ALSO_USED_BY = Map.of("rest-openapi", "^\\s+openApi:");
+
     /** Matches an endpoint uri of one of the schemes: {@code uri: kafka:...}, {@code uri: "kafka:..."}. */
     private static Pattern schemePattern(Set<String> schemes) {
         String any = schemes.stream().map(Pattern::quote).collect(Collectors.joining("|"));
-        return Pattern.compile("(uri:\\s*[\"']?|[\"'])(" + any + "):");
+        String also = schemes.stream().map(ALSO_USED_BY::get).filter(Objects::nonNull).map(p -> "|" + p)
+                .collect(Collectors.joining());
+        return Pattern.compile("(uri:\\s*[\"']?|[\"'])(" + any + "):" + also, Pattern.MULTILINE);
     }
 
     private static ComponentModel componentModel(CamelCatalog catalog, String name) {
@@ -394,6 +488,68 @@ public final class CatalogSamples {
      * @param limit   the maximum number of samples, at most {@link #MAX_LIMIT}
      */
     public static JsonObject sample(CamelCatalog catalog, String kind, String name, int limit) {
+        String lower = name != null ? name.trim().toLowerCase(Locale.ROOT) : "";
+        boolean kameletKind = "kamelet".equalsIgnoreCase(kind) || "kamelet file".equalsIgnoreCase(kind);
+        if (kameletKind || lower.contains("kamelet") && !lower.equals("kamelet") && kind == null) {
+            // kamelet-custom, custom-kamelet, kamelet-action: how to write a Kamelet file
+            List<Map<String, String>> files = kameletFileSamples(catalog);
+            if (!files.isEmpty()) {
+                JsonObject answer = new JsonObject();
+                answer.put("name", name.trim());
+                answer.put("kind", "kamelet file");
+                answer.put("placement", KAMELET_FILE_PLACEMENT);
+                putSamples(answer, files, Math.max(1, Math.min(MAX_LIMIT, limit <= 0 ? DEFAULT_LIMIT : limit)));
+                answer.put("guide", AuthoringTools.KAMELET_GUIDE);
+                return answer;
+            }
+        }
+        JsonObject answer = doSample(catalog, kind, name, limit);
+        if (lower.equals("kamelet") && !answer.containsKey("error")) {
+            // the samples show a route that uses a Kamelet; a model asking for kamelet often wants to write one
+            List<Map<String, String>> files = kameletFileSamples(catalog);
+            if (!files.isEmpty()) {
+                JsonObject file = new JsonObject();
+                file.put("source", files.get(0).get("source"));
+                file.put("placement", KAMELET_FILE_PLACEMENT);
+                file.put("yaml", files.get(0).get("yaml"));
+                answer.put("kameletFile", file);
+            }
+            answer.put("guide", AuthoringTools.KAMELET_GUIDE);
+        }
+        return answer;
+    }
+
+    static final String KAMELET_FILE_PLACEMENT = "a file of its own, <name>.kamelet.yaml, beside the routes; a route"
+                                                 + " uses it as kamelet:<name>";
+
+    private static final Pattern KAMELET_FILE_BLOCK = Pattern.compile(
+            "(?m)^\\.([\\w.-]+\\.kamelet\\.yaml)\\s*\\n\\[source,yaml\\]\\s*\\n----\\n(.*?)\\n----", Pattern.DOTALL);
+
+    /** The Kamelet files of the guide on writing a Kamelet (kamelet-custom.adoc), the action first. */
+    static List<Map<String, String>> kameletFileSamples(CamelCatalog catalog) {
+        String adoc = null;
+        try {
+            adoc = catalog != null ? catalog.asciiDoc("kamelet-custom") : null;
+        } catch (Exception e) {
+            // no guide in this catalog
+        }
+        List<Map<String, String>> answer = new ArrayList<>();
+        if (adoc != null) {
+            Matcher m = KAMELET_FILE_BLOCK.matcher(adoc);
+            while (m.find()) {
+                Map<String, String> sample = Map.of("source", "kamelet-custom.adoc: " + m.group(1), "yaml", m.group(2) + "\n");
+                // the action first: the building block a project writes most
+                if (m.group(2).contains("kamelet.type: action")) {
+                    answer.add(0, sample);
+                } else {
+                    answer.add(sample);
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static JsonObject doSample(CamelCatalog catalog, String kind, String name, int limit) {
         JsonObject answer = new JsonObject();
         String given = name != null ? name.trim() : "";
         if (given.isEmpty()) {
@@ -408,6 +564,13 @@ public final class CatalogSamples {
         int max = Math.max(1, Math.min(MAX_LIMIT, limit <= 0 ? DEFAULT_LIMIT : limit));
         boolean eips = wanted == null || wanted.equals("eip");
 
+        // what to do that a component does (call service)
+        String[] componentIntent = COMPONENT_INTENTS.get(given.toLowerCase(Locale.ROOT));
+        if (componentIntent != null && catalog != null && (wanted == null || wanted.equals("component"))) {
+            JsonObject found = catalogAnswer(catalog, "component", componentIntent[0], max);
+            found.put("note", "'" + given + "' is done with " + componentIntent[1]);
+            return found;
+        }
         // an EIP or a file entry by its name, a part of it, or what to do
         if (eips) {
             String key = resolveExact(given);
@@ -477,7 +640,6 @@ public final class CatalogSamples {
         answer.put("kind", "eip");
         if (partOf != null) {
             answer.put("partOf", partOf);
-            answer.put("note", given + " is a part of " + partOf + "; the sample shows it in place");
         } else if (!key.equalsIgnoreCase(normalize(given))) {
             answer.put("note", "'" + given + "' is done with the " + key + " EIP");
         }
@@ -486,6 +648,12 @@ public final class CatalogSamples {
         if (list.isEmpty()) {
             list = samples().getOrDefault(key, List.of());
         }
+        if (partOf != null) {
+            answer.put("note", given + " is a part of " + partOf + "; " + (shows(list, given)
+                    ? "the sample shows it in place"
+                    : "the samples show another kind in the same place: write " + given + " where they write theirs,"
+                      + " and camel_catalog_doc " + given + " gives its options"));
+        }
         putSamples(answer, list, max);
         if (!also.isEmpty()) {
             answer.put("also", new JsonArray(also));
@@ -493,6 +661,12 @@ public final class CatalogSamples {
                                + "; ask with kind for that sample");
         }
         return answer;
+    }
+
+    /** Whether one of the samples writes the given key, such as refErrorHandler: under errorHandler:. */
+    private static boolean shows(List<Map<String, String>> samples, String key) {
+        String k = key.toLowerCase(Locale.ROOT) + ":";
+        return samples.stream().anyMatch(s -> s.get("yaml") != null && s.get("yaml").toLowerCase(Locale.ROOT).contains(k));
     }
 
     private static JsonObject catalogAnswer(CamelCatalog catalog, String kind, String name, int max) {
@@ -508,6 +682,10 @@ public final class CatalogSamples {
         } else if ("component".equals(kind) && !found.endpoint()) {
             answer.put("note", "none of the examples of the documentation uses a " + name + " endpoint; they show the "
                                + "component in another way (a properties function, a policy, a converter)");
+        }
+        if ("component".equals(kind) && "kamelet".equals(name)) {
+            // the samples show how a route uses a Kamelet; writing the .kamelet.yaml file is on its own page
+            answer.put("guide", AuthoringTools.KAMELET_GUIDE);
         }
         return answer;
     }
@@ -598,6 +776,28 @@ public final class CatalogSamples {
         return variants;
     }
 
+    /**
+     * What the samples that use the data format itself write, to put them first: a page can show its siblings too (the
+     * univocity pages show the csv, fixed and tsv formats), and bindyCsv, bindyFixed and bindyKvp are all bindy, with
+     * the type Csv, Fixed or KeyValue.
+     */
+    static Pattern dataFormatUse(CamelCatalog catalog, String name) {
+        DataFormatModel model = catalog.findDataFormatNames().contains(name) ? catalog.dataFormatModel(name) : null;
+        if (model == null) {
+            return null;
+        }
+        if (name.equals(model.getModelName())) {
+            return Pattern.compile("^[\\s-]*" + Pattern.quote(name) + ":", Pattern.MULTILINE);
+        }
+        return model.getOptions().stream()
+                .filter(o -> "type".equals(o.getName()) && o.getDefaultValue() != null)
+                .findFirst()
+                .map(o -> Pattern.compile(
+                        "^\\s*type:\\s*[\"']?" + Pattern.quote(o.getDefaultValue().toString()) + "[\"']?\\s*$",
+                        Pattern.MULTILINE))
+                .orElse(null);
+    }
+
     static String normalizeKind(String kind) {
         if (kind == null || kind.isBlank()) {
             return null;
@@ -609,11 +809,56 @@ public final class CatalogSamples {
         return k;
     }
 
+    /** The kinds of error handler, each the one key under errorHandler:. */
+    static final Set<String> ERROR_HANDLERS = Set.of("errorHandler", "deadLetterChannel", "defaultErrorHandler",
+            "noErrorHandler", "jtaTransactionErrorHandler", "springTransactionErrorHandler", "refErrorHandler");
+
     static String placement(String key) {
+        if (ERROR_HANDLERS.contains(key)) {
+            // a step it is not, and it has two places (CAMEL-25370)
+            return "errorHandler: with the kind (deadLetterChannel, defaultErrorHandler, noErrorHandler) as its one key,"
+                   + " either as a top-level list item - errorHandler: for every route, or under one route, next to from:,"
+                   + " for that route only, or inside a routeConfiguration for the routes that use it; never a step";
+        }
         if (TOP_LEVEL.contains(key)) {
             return "top-level entry: a list item at the same level as route or from, not a step inside a route";
         }
+        String owner = SETTINGS_OF.get(key);
+        if (owner != null) {
+            return "the settings of " + owner + ": written inside " + owner + " as " + key + ":, not as a step";
+        }
         return "a step inside the steps of a route (or of another EIP)";
+    }
+
+    /**
+     * Where an EIP of the catalog goes in a YAML file, for its camel_catalog_doc answer (CAMEL-25539): a top-level
+     * entry, the error handler, a part of another EIP, or a step. Null for an element written under the EIP or the
+     * configuration that holds it (resilience4jConfiguration, a load balancer) and for a verb of rest, whose place the
+     * doc of that EIP gives.
+     */
+    static String placement(EipModel model) {
+        String name = model.getName();
+        if (ERROR_HANDLERS.contains(name) || TOP_LEVEL.contains(name)) {
+            return placement(name);
+        }
+        String partOf = PART_OF.get(name);
+        if (partOf != null) {
+            return "a part of " + partOf + ": written inside " + partOf + ", not as a step of its own";
+        }
+        String label = model.getLabel() != null ? model.getLabel() : "";
+        if (model.isInput() && !List.of(label.split(",")).contains("rest")) {
+            return placement(name);
+        }
+        return null;
+    }
+
+    /**
+     * Whether camel_catalog_sample answers the EIP with at least one sample: one validated from its documentation page,
+     * or a shipped one (also the sample of the EIP it is a part of, which shows it in place).
+     */
+    static boolean hasEipSample(CamelCatalog catalog, String name) {
+        JsonArray samples = (JsonArray) sample(catalog, "eip", name, 1).get("samples");
+        return samples != null && !samples.isEmpty();
     }
 
     static String placement(CamelCatalog catalog, String kind, String name) {
@@ -655,6 +900,19 @@ public final class CatalogSamples {
             return partOf;
         }
         for (String k : samples().keySet()) {
+            if (k.equalsIgnoreCase(n)) {
+                return k;
+            }
+        }
+        // an entry whose examples are on the page of another EIP, which the shipped set does not have: they come from
+        // the catalog's documentation (CAMEL-25735)
+        for (String k : SAMPLES_ON_PAGE_OF.keySet()) {
+            if (k.equalsIgnoreCase(n)) {
+                return k;
+            }
+        }
+        // an EIP whose examples are on the pages of what it belongs to (CAMEL-25774)
+        for (String k : SAMPLES_IN_PAGES_OF.keySet()) {
             if (k.equalsIgnoreCase(n)) {
                 return k;
             }

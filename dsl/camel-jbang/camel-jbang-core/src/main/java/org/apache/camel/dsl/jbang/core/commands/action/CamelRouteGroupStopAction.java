@@ -24,7 +24,8 @@ import picocli.CommandLine;
                      description = "Stop Camel route groups", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd stop-group myGroup" })
+                             "  camel cmd stop-group --id=myGroup",
+                             "  camel cmd stop-group myApp --id=myGroup" })
 public class CamelRouteGroupStopAction extends CamelRouteAction {
 
     public CamelRouteGroupStopAction(CamelJBangMain main) {

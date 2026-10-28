@@ -68,8 +68,6 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
 
     private static final String BODY_VERBS = "DELETE,PUT,POST,PATCH";
 
-    private static final String GEN_OPID = "GENOPID_";
-
     private CamelContext camelContext;
     private ProducerCache producerCache;
     private String component = "direct";
@@ -163,12 +161,11 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
      *
      * @param  path       The path for this operation, such as /users.
      * @param  httpMethod The operation to perform
-     * @return            A generated operation id based on the path and the operation. Slashes and braces in the path
-     *                    are replaced with placeholder characters.
+     * @return            A generated operation id based on the path and the operation, see
+     *                    {@link RestOpenApiHelper#generateOperationId(String, HttpMethod)}
      */
     private String generateOperationId(String path, HttpMethod httpMethod) {
-        final String sanitizedPath = path.replace('/', '.').replaceAll("[{}]", "_");
-        final String opId = GEN_OPID + httpMethod.name() + sanitizedPath;
+        final String opId = RestOpenApiHelper.generateOperationId(path, httpMethod);
         LOG.debug("Generated operationId {} for path {} and method {}", opId, path, httpMethod.name());
         return opId;
     }
@@ -269,7 +266,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         });
     }
 
-    private void loadMockData(Operation operation, String verb, String path, Exchange exchange) {
+    // package-private for testing (CAMEL-25663)
+    void loadMockData(Operation operation, String verb, String path, Exchange exchange) {
         final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         final String[] includes = mockIncludePattern != null ? mockIncludePattern.split(",") : null;
 
@@ -333,8 +331,11 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 String contentType = ExchangeHelper.getContentType(exchange);
                 String accept = exchange.getMessage().getHeader("Accept", String.class);
                 if (operation.getResponses() != null) {
+                    // CAMEL-25663: an operation whose responses have no 200 (for example only 201, 204, default or
+                    // 2XX) has a null ApiResponse here; treat it like a response without content so the mock returns
+                    // an empty 204 body instead of throwing a NullPointerException
                     ApiResponse a = operation.getResponses().get("200");
-                    Content c = a.getContent();
+                    Content c = a != null ? a.getContent() : null;
                     if (c != null && !c.isEmpty()) {
                         // prefer media-type that is the same as the incoming content-type
                         // if none found, then find first matching content-type from the HTTP Accept header

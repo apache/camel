@@ -41,6 +41,7 @@ public final class ImportantHeaderUtils {
                     "CamelKafkaKey",
                     "CamelKafkaOffset",
                     "CamelKafkaPartition",
+                    "CamelKafkaShareDeliveryCount",
                     "CamelKafkaTopic",
                     "CamelMqttTopic",
                     "CamelNatsDeliveryCounter",

@@ -37,11 +37,26 @@ public class BonitaAPI {
 
     private BonitaAPIConfig bonitaApiConfig;
     private WebTarget webTarget;
+    private final BonitaAPIUtil bonitaApiUtil;
 
+    /**
+     * @deprecated the file inputs are uploaded with a JAX-RS client of their own, which is never closed. Use
+     *             {@link #BonitaAPI(BonitaAPIConfig, WebTarget, BonitaAPIUtil)} with a helper from
+     *             {@link BonitaAPIUtil#forClient}, as {@code BonitaAPIBuilder} does.
+     */
+    @Deprecated(since = "4.24.0")
     protected BonitaAPI(BonitaAPIConfig bonitaApiConfig, WebTarget webTarget) {
+        this(bonitaApiConfig, webTarget, BonitaAPIUtil.getInstance(bonitaApiConfig));
+    }
+
+    /**
+     * @param bonitaApiUtil the helper that uploads the file inputs of {@link #startCase}; it has to use the same Bonita
+     *                      server and account as the given target
+     */
+    protected BonitaAPI(BonitaAPIConfig bonitaApiConfig, WebTarget webTarget, BonitaAPIUtil bonitaApiUtil) {
         this.bonitaApiConfig = bonitaApiConfig;
         this.webTarget = webTarget;
-
+        this.bonitaApiUtil = bonitaApiUtil;
     }
 
     private WebTarget getBaseResource() {
@@ -74,8 +89,7 @@ public class BonitaAPI {
         if (rawInputs == null) {
             throw new IllegalArgumentException("The contract input is null");
         }
-        Map<String, Serializable> inputs = BonitaAPIUtil.getInstance(bonitaApiConfig)
-                .prepareInputs(processDefinition, rawInputs);
+        Map<String, Serializable> inputs = bonitaApiUtil.prepareInputs(processDefinition, rawInputs);
         WebTarget resource = getBaseResource().path("process/{processId}/instantiation")
                 .resolveTemplate("processId", processDefinition.getId());
         return resource.request().accept(MediaType.APPLICATION_JSON)

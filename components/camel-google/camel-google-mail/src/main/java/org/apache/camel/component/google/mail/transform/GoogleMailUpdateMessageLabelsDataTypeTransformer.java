@@ -32,6 +32,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.google.mail.GoogleMailComponent;
 import org.apache.camel.component.google.mail.internal.GoogleMailConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -43,6 +46,10 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "google-mail:update-message-labels",
                      description = "Updates Gmail message labels by resolving label names from addLabels/removeLabels exchange variables")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "The body is not read: the labels come from the addLabels and removeLabels variables"),
+           transformerOut = @BodyType(value = Carrier.POJO,
+                                      javaType = "com.google.api.services.gmail.model.ModifyMessageRequest"))
 public class GoogleMailUpdateMessageLabelsDataTypeTransformer extends Transformer {
 
     public static final String VARIABLE_ADD_LABELS = "addLabels";
@@ -128,6 +135,6 @@ public class GoogleMailUpdateMessageLabelsDataTypeTransformer extends Transforme
 
     private Gmail getGmailClient() {
         GoogleMailComponent component = getCamelContext().getComponent("google-mail", GoogleMailComponent.class);
-        return component.getClient(component.getConfiguration());
+        return component.getClient();
     }
 }

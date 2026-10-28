@@ -158,17 +158,20 @@ public class LdifProducer extends DefaultProducer {
                     LOG.debug("attempting delete of {}", ldifEntry);
                 }
                 conn.delete(ldifEntry.getDn());
-            } else if (ldifEntry.isChangeModDn()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("attempting DN move of {}", ldifEntry);
+            } else if (ldifEntry.isChangeModDn() || ldifEntry.isChangeModRdn()) {
+                // RFC 2849: modrdn and moddn are the same change type; the entry moves only with a newsuperior
+                if (ldifEntry.getNewSuperior() != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("attempting DN move of {}", ldifEntry);
+                    }
+                    conn.moveAndRename(ldifEntry.getDn(), new Dn(ldifEntry.getNewRdn(), ldifEntry.getNewSuperior()),
+                            ldifEntry.isDeleteOldRdn());
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("attempting RDN move of {}", ldifEntry);
+                    }
+                    conn.rename(ldifEntry.getDn(), new Rdn(ldifEntry.getNewRdn()), ldifEntry.isDeleteOldRdn());
                 }
-                conn.moveAndRename(ldifEntry.getDn(), new Dn(ldifEntry.getNewRdn(), ldifEntry.getNewSuperior()),
-                        ldifEntry.isDeleteOldRdn());
-            } else if (ldifEntry.isChangeModRdn()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("attempting RDN move of {}", ldifEntry);
-                }
-                conn.rename(ldifEntry.getDn(), new Rdn(ldifEntry.getNewRdn()), ldifEntry.isDeleteOldRdn());
             }
 
             LOG.debug("ldif success");

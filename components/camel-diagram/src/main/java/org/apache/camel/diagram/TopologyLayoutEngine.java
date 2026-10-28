@@ -332,6 +332,16 @@ public class TopologyLayoutEngine {
         public String toRouteId;
         public String endpoint;
         public String connectionType;
+        // call, or error for an error path (sent to only when the route handles a failure)
+        public String kind = "call";
+        // for an error path: errorHandler or onException
+        public String via;
+        // for an error path: handled, continued or notHandled (null when a predicate decides)
+        public String handling;
+
+        public boolean isErrorPath() {
+            return "error".equals(kind);
+        }
     }
 
     // Layout output

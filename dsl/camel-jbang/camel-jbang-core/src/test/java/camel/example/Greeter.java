@@ -16,30 +16,25 @@
  */
 package camel.example;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-
 /**
- * Test fixture mirroring {@code src/main/resources/examples/routes/Greeter.java}, which the CLI compiles at runtime. A
- * compiled copy is needed on the test classpath so that {@code examples/routes/beans.yaml} can instantiate its
- * {@code greeter} bean while {@link org.apache.camel.dsl.jbang.core.common.ExampleRoutesLoadTest} pre-parses it.
+ * Test fixture mirroring {@code src/main/resources/examples/quick-start/routes/Greeter.java}, which the CLI compiles at
+ * runtime. A compiled copy is needed on the test classpath so that {@code examples/quick-start/routes/beans.yaml} can
+ * instantiate its {@code greeter} bean while {@link org.apache.camel.dsl.jbang.core.common.ExampleRoutesLoadTest}
+ * pre-parses it.
  *
- * Keep this in sync with the example source. Only the type and its {@code message} property are load-bearing for the
- * test: a missing property fails bean binding loudly, whereas the {@link #process} behavior is never exercised (the
- * test does not start the context), so behavioral drift would go unnoticed.
+ * Keep this in sync with the example source (synced from camel-jbang-examples). Only the type and its {@code greeting}
+ * property are load-bearing for the test: a missing property fails bean binding loudly, whereas {@link #greet} is never
+ * called (the test does not start the context), so behavioral drift would go unnoticed.
  */
-public class Greeter implements Processor {
+public class Greeter {
 
-    private String message;
+    private String greeting;
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
     }
 
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        String body = exchange.getIn().getBody(String.class);
-        exchange.getIn().setBody(message + " " + body);
+    public String greet(String name) {
+        return greeting + ", " + name + "!";
     }
-
 }

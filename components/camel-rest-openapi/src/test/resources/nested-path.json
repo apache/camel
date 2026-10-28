@@ -1,0 +1,39 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Stock API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/stock": {
+      "get": {
+        "operationId": "listStock",
+        "responses": {
+          "200": {
+            "description": "The stock levels"
+          }
+        }
+      },
+      "/stock/{sku}": {
+        "get": {
+          "operationId": "getStock",
+          "parameters": [
+            {
+              "name": "sku",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The stock item"
+            }
+          }
+        }
+      }
+    }
+  }
+}

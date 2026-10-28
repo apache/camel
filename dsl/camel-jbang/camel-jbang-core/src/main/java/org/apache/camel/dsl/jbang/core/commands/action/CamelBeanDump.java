@@ -16,18 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -38,10 +42,17 @@ import picocli.CommandLine.Command;
          showDefaultValues = true,
          footer = {
                  "%nExamples:",
-                 "  camel cmd bean",
-                 "  camel cmd bean --filter=myBean",
-                 "  camel cmd bean --scope=user" })
+                 "  camel get bean",
+                 "  camel get bean --filter=myBean",
+                 "  camel get bean --scope=user",
+                 "  camel get bean --json" })
 public class CamelBeanDump extends ActionBaseCommand {
+
+    private static final List<String> SCOPES = List.of("all", "user", "camel", "spring", "quarkus");
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.name)
+            .text("type", r -> r.type);
 
     public static class NameTypeCompletionCandidates implements Iterable<String> {
 
@@ -62,7 +73,7 @@ public class CamelBeanDump extends ActionBaseCommand {
 
         @Override
         public Iterator<String> iterator() {
-            return List.of("all", "user", "camel", "spring", "quarkus").iterator();
+            return SCOPES.iterator();
         }
 
     }
@@ -79,11 +90,11 @@ public class CamelBeanDump extends ActionBaseCommand {
     String filter = "all";
 
     @CommandLine.Option(names = { "--properties" },
-                        description = "Show bean properties", defaultValue = "true")
+                        description = "Show bean properties", defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean properties;
 
     @CommandLine.Option(names = { "--nulls" },
-                        description = "Include null values", defaultValue = "true")
+                        description = "Include null values", defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean nulls;
 
     @CommandLine.Option(names = { "--scope" }, completionCandidates = ScopeCompletionCandidates.class,
@@ -99,6 +110,12 @@ public class CamelBeanDump extends ActionBaseCommand {
                         description = "Include only beans from YAML or XML DSL", defaultValue = "false")
     boolean dsl;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
 
     public CamelBeanDump(CamelJBangMain main) {
@@ -109,70 +126,59 @@ public class CamelBeanDump extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
+        if (!SCOPES.contains(scope)) {
+            throw CliException.usage("--scope must be one of " + String.join(", ", SCOPES) + ", was: " + scope);
         }
 
-        this.pid = pids.get(0);
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "bean");
-        if (!"all".equals(filter)) {
-            root.put("filter", filter);
-        }
-        root.put("properties", properties);
-        root.put("nulls", nulls);
-        root.put("internal", !"all".equals(scope) || internal);
-        Path f = getActionFile(Long.toString(pid));
-        PathUtils.writeTextSafely(root.toJson(), f);
-
-        JsonObject jo = waitForOutputFile(outputFile);
-
-        if (jo != null) {
-            JsonObject beans;
-            if (dsl) {
-                beans = (JsonObject) jo.get("bean-models");
-            } else {
-                beans = (JsonObject) jo.get("beans");
+        JsonObject jo = executeAction(process, "bean", root -> {
+            if (!"all".equals(filter)) {
+                root.put("filter", filter);
             }
-            for (String name : beans.keySet()) {
-                JsonObject jt = (JsonObject) beans.get(name);
-                Row row = new Row();
-                row.name = jt.getString("name");
-                row.type = jt.getString("type");
-                JsonArray arr = jt.getCollection("properties");
-                JsonArray arr2 = jt.getCollection("modelProperties");
-                if (arr != null) {
-                    row.properties = new ArrayList<>();
-                    for (int i = 0; i < arr.size(); i++) {
-                        PropertyRow pr = new PropertyRow();
-                        row.properties.add(pr);
-                        JsonObject p = (JsonObject) arr.get(i);
-                        pr.name = p.getString("name");
-                        pr.type = p.getString("type");
-                        pr.value = p.get("value");
-                        if (arr2 != null) {
-                            JsonObject p2 = (JsonObject) arr2.get(i);
-                            if (p2 != null) {
-                                pr.configValue = p2.getString("value");
-                            }
-                        }
-                    }
-                }
-                rows.add(row);
-            }
+            root.put("properties", properties);
+            root.put("nulls", nulls);
+            root.put("internal", !"all".equals(scope) || internal);
+        });
+
+        JsonObject beans;
+        if (dsl) {
+            beans = (JsonObject) jo.get("bean-models");
         } else {
-            printer().printErr("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
+            beans = (JsonObject) jo.get("beans");
+        }
+        if (beans == null) {
+            throw CliException.failure("Bean data not available from the running integration");
+        }
+        for (String name : beans.keySet()) {
+            JsonObject jt = (JsonObject) beans.get(name);
+            Row row = new Row();
+            row.name = jt.getString("name");
+            row.type = jt.getString("type");
+            JsonArray arr = jt.getCollection("properties");
+            // the configuration of the properties in the DSL, by name: the two lists can differ without --nulls
+            Map<String, String> configValues = new HashMap<>();
+            JsonArray arr2 = jt.getCollection("modelProperties");
+            if (arr2 != null) {
+                for (Object o : arr2) {
+                    JsonObject p2 = (JsonObject) o;
+                    configValues.put(p2.getString("name"), p2.getString("value"));
+                }
+            }
+            if (arr != null) {
+                row.properties = new ArrayList<>();
+                for (int i = 0; i < arr.size(); i++) {
+                    PropertyRow pr = new PropertyRow();
+                    row.properties.add(pr);
+                    JsonObject p = (JsonObject) arr.get(i);
+                    pr.name = p.getString("name");
+                    pr.type = p.getString("type");
+                    pr.value = p.get("value");
+                    pr.configValue = configValues.get(pr.name);
+                }
+            }
+            rows.add(row);
         }
 
         // filter by scope
@@ -181,8 +187,10 @@ public class CamelBeanDump extends ActionBaseCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
-        if (properties) {
+        rows.sort(ORDER.comparator(sort));
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows.stream().map(this::toJson).toList());
+        } else if (properties) {
             for (Row row : rows) {
                 String line = "BEAN: " + row.name + " (" + row.type + "):";
                 printer().println(line);
@@ -196,10 +204,26 @@ public class CamelBeanDump extends ActionBaseCommand {
             singleTable(rows);
         }
 
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
-
         return 0;
+    }
+
+    private JsonObject toJson(Row r) {
+        JsonObject jo = new JsonObject();
+        jo.put("name", r.name);
+        jo.put("type", r.type);
+        if (r.properties != null) {
+            jo.put("properties", r.properties.stream().map(pr -> {
+                JsonObject p = new JsonObject();
+                p.put("name", pr.name);
+                p.put("type", pr.type);
+                p.put("value", pr.value);
+                if (pr.configValue != null) {
+                    p.put("configValue", pr.configValue);
+                }
+                return p;
+            }).toList());
+        }
+        return jo;
     }
 
     protected void singleTable(List<Row> rows) {
@@ -284,25 +308,6 @@ public class CamelBeanDump extends ActionBaseCommand {
             return true;
         }
         return r.type != null && r.type.startsWith("io.quarkus");
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            default:
-                return 0;
-        }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     private static class Row {

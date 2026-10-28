@@ -77,7 +77,7 @@ public final class CamelJBangConstants {
     public static final String PARENT_POM = "camel.jbang.parentPom";
 
     @Metadata(description = "Java version",
-              javaType = "String", enums = "21", defaultValue = "21")
+              javaType = "String", enums = "21,25", defaultValue = "21")
     public static final String JAVA_VERSION = "camel.jbang.javaVersion";
 
     @Metadata(description = "Apache Camel Kamelets version. By default the Kamelets are the same version as Camel.",
@@ -174,6 +174,12 @@ public final class CamelJBangConstants {
     @Metadata(description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.",
               javaType = "String", label = "advanced")
     public static final String SOURCE_DIR = "camel.jbang.sourceDir";
+
+    @Metadata(description = "Folders under the source directory (comma separated) that hold data the routes read or write,"
+                            + " not sources: in dev mode a change in them does not reload the routes. Use this for an"
+                            + " inbox, outbox or archive folder under the source directory.",
+              javaType = "String", label = "advanced")
+    public static final String DATA_DIR = "camel.jbang.dataDir";
 
     @Metadata(description = "Whether to ignore route loading and compilation errors (use this with care!)",
               javaType = "boolean", label = "advanced")

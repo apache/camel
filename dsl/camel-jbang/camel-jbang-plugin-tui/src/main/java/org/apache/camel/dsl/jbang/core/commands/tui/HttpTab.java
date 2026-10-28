@@ -84,7 +84,9 @@ class HttpTab extends AbstractTableTab {
         return sortedVisibleEndpoints(ctx.findSelectedIntegration()).size();
     }
 
-    boolean isProbeMode() {
+    /** The probe editor (the request form of an endpoint) has the keyboard while it is open. */
+    @Override
+    public boolean isTextInputActive() {
         return probe.isActive();
     }
 
@@ -278,10 +280,13 @@ class HttpTab extends AbstractTableTab {
         }
     }
 
-    void handlePaste(String text) {
-        if (probe.isActive()) {
-            probe.handlePaste(text);
+    @Override
+    public boolean handlePaste(String text) {
+        if (!probe.isActive()) {
+            return false;
         }
+        probe.handlePaste(text);
+        return true;
     }
 
     private void enterProbeModeFromTable() {

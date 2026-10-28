@@ -24,7 +24,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(55);
+        Set<String> props = new HashSet<>(60);
         props.add("accessToken");
         props.add("apiName");
         props.add("as2From");
@@ -61,7 +61,12 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("mdnPassword");
         props.add("mdnUserName");
         props.add("methodName");
+        props.add("muteException");
         props.add("password");
+        props.add("proxyAuthPassword");
+        props.add("proxyAuthUsername");
+        props.add("proxyHost");
+        props.add("proxyPort");
         props.add("receiptDeliveryOption");
         props.add("requestUri");
         props.add("requestUriPattern");
@@ -81,12 +86,14 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("userName");
         props.add("validateSigningCertificateChain");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(6);
+        Set<String> secretProps = new HashSet<>(8);
         secretProps.add("accessToken");
         secretProps.add("mdnAccessToken");
         secretProps.add("mdnPassword");
         secretProps.add("mdnUserName");
         secretProps.add("password");
+        secretProps.add("proxyAuthPassword");
+        secretProps.add("proxyAuthUsername");
         secretProps.add("userName");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
@@ -103,7 +110,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "apiName", null, true, copy);
         uri = buildPathParameter(syntax, uri, "methodName", null, true, copy);

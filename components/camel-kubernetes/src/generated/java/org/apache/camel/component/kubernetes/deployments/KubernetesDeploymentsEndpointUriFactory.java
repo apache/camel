@@ -60,7 +60,7 @@ public class KubernetesDeploymentsEndpointUriFactory extends org.apache.camel.su
         props.add("trustCerts");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(12);
+        Set<String> secretProps = new HashSet<>(11);
         secretProps.add("caCertData");
         secretProps.add("caCertFile");
         secretProps.add("clientCertData");
@@ -71,7 +71,6 @@ public class KubernetesDeploymentsEndpointUriFactory extends org.apache.camel.su
         secretProps.add("clientKeyPassphrase");
         secretProps.add("oauthToken");
         secretProps.add("password");
-        secretProps.add("trustCerts");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
@@ -88,7 +87,7 @@ public class KubernetesDeploymentsEndpointUriFactory extends org.apache.camel.su
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "masterUrl", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

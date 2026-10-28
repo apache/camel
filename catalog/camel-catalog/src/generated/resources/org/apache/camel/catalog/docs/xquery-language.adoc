@@ -133,11 +133,14 @@ YAML::
 
 === Using namespaces
 
-If you have a standard set of namespaces you wish to work with and wish
-to share them across many XQuery expressions, you can use the
-`org.apache.camel.support.builder.Namespaces` when using Java DSL as shown:
+An XQuery expression that uses a namespace prefix needs the namespace declared. In Java DSL use
+`org.apache.camel.support.builder.Namespaces`, which is passed to `xquery` as the second parameter. In XML DSL
+declare the prefix on a root element (`routes` or `route`), and in YAML DSL list the namespaces on the expression:
 
-._Java-only: programmatic namespace configuration with Namespaces builder_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
@@ -147,8 +150,41 @@ from("direct:start")
   .to("mock:result");
 ----
 
-Notice how the namespaces are provided to `xquery` with the `ns` variable
-that are passed in as the second parameter.
+XML::
++
+[source,xml]
+----
+<routes xmlns="http://camel.apache.org/schema/xml-io" xmlns:c="http://acme.com/cheese">
+  <route>
+    <from uri="direct:start"/>
+    <filter>
+      <xquery>/c:person[@name='James']</xquery>
+      <to uri="mock:result"/>
+    </filter>
+  </route>
+</routes>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            expression:
+              xquery:
+                expression: "/c:person[@name='James']"
+                namespace:
+                  - key: c
+                    value: http://acme.com/cheese
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
 
 Each namespace is a key=value pair, where the prefix is the key.
 In the XQuery expression then the namespace is used by its prefix, e.g.:
@@ -207,6 +243,19 @@ option:
 
 [tabs]
 ====
+Java::
++
+[source,java]
+----
+@BindToRegistry("myNamespaces")
+Namespaces myNamespaces = new Namespaces("c", "http://acme.com/cheese")
+        .add("w", "http://acme.com/wine");
+
+from("direct:start")
+    .filter(expression().xquery("/c:person[@name='James']").namespacesRef("myNamespaces").end())
+    .to("mock:result");
+----
+
 XML::
 +
 [source,xml]
@@ -308,25 +357,92 @@ Notice that xquery will use DOMResult by default, so if we want to grab
 the value of the person node, using `text()` we need to tell XQuery to use
 String as the result type, as shown:
 
-._Java-only: specifying result type with String.class parameter_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:start").
-   transform().xquery("/people/person/text()", String.class);
+from("direct:start")
+    .transform().xquery("/people/person/text()", String.class);
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <xquery resultType="java.lang.String">/people/person/text()</xquery>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            expression:
+              xquery:
+                expression: /people/person/text()
+                resultType: java.lang.String
+----
+====
 
 If you want to use Camel variables like headers, you have to explicitly
 declare them in the XQuery expression.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .transform().xquery("declare variable $in.headers.foo external; element item {$in.headers.foo}")
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
-<transform>
+<route>
+  <from uri="direct:start"/>
+  <transform>
     <xquery>
         declare variable $in.headers.foo external;
         element item {$in.headers.foo}
     </xquery>
-</transform>
+  </transform>
+  <to uri="mock:result"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            expression:
+              xquery:
+                expression: |
+                  declare variable $in.headers.foo external;
+                  element item {$in.headers.foo}
+        - to:
+            uri: mock:result
+----
+====
 
 == Loading script from external resource
 

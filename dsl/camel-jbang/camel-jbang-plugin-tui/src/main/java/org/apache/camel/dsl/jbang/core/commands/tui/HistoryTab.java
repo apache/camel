@@ -36,7 +36,6 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
-import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -138,7 +137,7 @@ class HistoryTab extends AbstractTab {
     private boolean historyWordWrap = true;
     private int historyDetailScroll;
     private int historyDetailHScroll;
-    volatile boolean historyRefreshRequested;
+    private volatile boolean historyRefreshRequested;
 
     HistoryTab(MonitorContext ctx,
                AtomicReference<List<TraceEntry>> traces,
@@ -146,12 +145,18 @@ class HistoryTab extends AbstractTab {
         super(ctx);
         this.traces = traces;
         this.traceFilePositions = traceFilePositions;
+        diagram.zoom = ctx.routeZoom;
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()
                 && handleHistoryDiagramKeys(ke)) {
+            return true;
+        }
+        if (diagram.isShowDiagram() && diagram.zoom.handleZoomKey(ke, ctx.backgroundExecutor)) {
+            // the zoom of the route diagram, shared with the Diagram and Routes tabs
+            diagram.zoomHistoryRoutes();
             return true;
         }
         if (diagram.handleScrollKeys(ke)) {
@@ -276,23 +281,10 @@ class HistoryTab extends AbstractTab {
      */
     private boolean handleHistoryDiagramKeys(KeyEvent ke) {
         if (diagram.isHistoryTopologyMode()) {
-            if (ke.isUp()) {
-                diagram.selectNodeUp();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isDown()) {
-                diagram.selectNodeDown();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isLeft()) {
-                diagram.selectNodeLeft();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isRight()) {
-                diagram.selectNodeRight();
+            Runnable move = ke.isUp() ? diagram::selectNodeUp : ke.isDown() ? diagram::selectNodeDown
+                    : ke.isLeft() ? diagram::selectNodeLeft : ke.isRight() ? diagram::selectNodeRight : null;
+            if (move != null) {
+                move.run();
                 diagram.scrollToSelectedNode();
                 return true;
             }
@@ -706,6 +698,16 @@ class HistoryTab extends AbstractTab {
 
     @Override
     public void onTabSelected() {
+        if (ctx.selectedPid == null) {
+            return;
+        }
+        // the history is read when the tab opens; while it stays open only when F5 asks for it
+        DataRefreshService data = ctx.dataService;
+        List<Long> pids = data != null ? data.selectedPidAsList() : List.of();
+        if (!pids.isEmpty()) {
+            historyEntries = data.loadHistoryData(pids);
+            data.refreshTraceData(pids);
+        }
         if (!historyEntries.isEmpty()) {
             historyTableState.select(0);
         }
@@ -714,6 +716,20 @@ class HistoryTab extends AbstractTab {
         if (!traces.get().isEmpty()) {
             traceTableState.select(0);
         }
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        DataRefreshService data = ctx.dataService;
+        List<Long> pids = data != null ? data.selectedPidAsList() : List.of();
+        if (pids.isEmpty()) {
+            return;
+        }
+        if (historyRefreshRequested) {
+            historyRefreshRequested = false;
+            historyEntries = data.loadHistoryData(pids);
+        }
+        data.refreshTraceData(pids);
     }
 
     boolean isTraceDetailView() {
@@ -1357,7 +1373,8 @@ class HistoryTab extends AbstractTab {
             String changes = computeTraceChanges(prev, entry);
             rows.add(buildStepRow(i + 1, entry.inlineDepth,
                     entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes));
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes,
+                    area.width()));
         }
 
         String stepTitle
@@ -1367,7 +1384,8 @@ class HistoryTab extends AbstractTab {
         Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastTraceStepArea = chunks.get(0);
         detailSplit.setBorderPos(chunks.get(1).y());
-        Table stepTable = buildStepTable(rows, stepTitle, showDescription, tableBorderStyle, tableHighlight);
+        Table stepTable = buildStepTable(rows, stepTitle, showDescription, tableBorderStyle, tableHighlight,
+                idColumnWidth(area.width()));
         traceStepTableState.scrollToSelected(stepTable.viewportHeight(chunks.get(0)), rows);
         frame.renderStatefulWidget(stepTable, chunks.get(0), traceStepTableState);
         renderTableScrollbar(frame, lastTraceStepArea, stepTable, traceStepTableState, traceStepScrollState,
@@ -1690,7 +1708,8 @@ class HistoryTab extends AbstractTab {
             String changes = computeHistoryChanges(prev, entry);
             rows.add(buildStepRow(i + 1, entry.inlineDepth,
                     entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes));
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes,
+                    area.width()));
         }
 
         Title historyTitle = buildHistoryTitle(current);
@@ -1699,7 +1718,8 @@ class HistoryTab extends AbstractTab {
         Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastHistoryTableArea = chunks.get(0);
         vSplit.setBorderPos(chunks.get(1).y());
-        Table historyTable = buildStepTable(rows, historyTitle, showDescription, tableBorderStyle, tableHighlight);
+        Table historyTable = buildStepTable(rows, historyTitle, showDescription, tableBorderStyle, tableHighlight,
+                idColumnWidth(area.width()));
         historyTableState.scrollToSelected(historyTable.viewportHeight(chunks.get(0)), rows);
         frame.renderStatefulWidget(historyTable, chunks.get(0), historyTableState);
         renderTableScrollbar(frame, lastHistoryTableArea, historyTable, historyTableState, historyTableScrollState,
@@ -2055,11 +2075,23 @@ class HistoryTab extends AbstractTab {
         return sortStyle(column, traceSort);
     }
 
+    /** ROUTE and ID give way on a narrow screen, so the processor keeps room. */
+    static int idColumnWidth(int areaWidth) {
+        return areaWidth < 130 ? 16 : 25;
+    }
+
+    /** The width the PROCESSOR column gets: the borders, ">> ", 7 gaps and the other columns. */
+    static int processorWidth(int areaWidth) {
+        // 2 of slack: the table sits a little inside the area of the tab
+        return Math.max(0, areaWidth - 2 - 3 - 7 - 2 - (3 + 4 + 12 + 2 * idColumnWidth(areaWidth) + 4 + 11));
+    }
+
     private static Row buildStepRow(
             int stepNumber, int inlineDepth,
             String direction, boolean first, boolean last, boolean failed,
             String timestamp, String routeId, String nodeId, String processor,
-            String description, long elapsed, String changes) {
+            String description, long elapsed, String changes, int areaWidth) {
+        int idWidth = idColumnWidth(areaWidth);
         Style dirStyle;
         if (first || last || !direction.isBlank()) {
             dirStyle = failed ? Theme.error() : Theme.success();
@@ -2074,9 +2106,11 @@ class HistoryTab extends AbstractTab {
                 rightCell(String.valueOf(stepNumber), 3),
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? TuiHelper.truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, 25) : "", Style.EMPTY.fg(Theme.accent()))),
-                Cell.from(indent + (nodeId != null ? TuiHelper.truncate(nodeId, 25) : "")),
-                Cell.from(indent + display),
+                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, idWidth) : "",
+                        Style.EMPTY.fg(Theme.accent()))),
+                Cell.from(TuiHelper.truncate(indent + (nodeId != null ? nodeId : ""), idWidth)),
+                // a long processor ends with an ellipsis where it is cut
+                Cell.from(TuiHelper.truncate(indent + display, processorWidth(areaWidth))),
                 Cell.from(Line.from(changeSpans)),
                 rightCell(elapsedStr, 10));
     }
@@ -2122,12 +2156,12 @@ class HistoryTab extends AbstractTab {
     }
 
     private static Table buildStepTable(List<Row> rows, Object title, boolean descriptionMode) {
-        return buildStepTable(rows, title, descriptionMode, Style.EMPTY, Theme.selectionBg());
+        return buildStepTable(rows, title, descriptionMode, Style.EMPTY, Theme.selectionBg(), 25);
     }
 
     private static Table buildStepTable(
             List<Row> rows, Object title, boolean descriptionMode,
-            Style borderStyle, Style highlightStyle) {
+            Style borderStyle, Style highlightStyle, int idWidth) {
         Row header = Row.from(
                 rightCell("#", 3, Style.EMPTY.bold()),
                 Cell.from(Span.styled("", Style.EMPTY.bold())),
@@ -2148,8 +2182,8 @@ class HistoryTab extends AbstractTab {
                         Constraint.length(3),
                         Constraint.length(4),
                         Constraint.length(12),
-                        Constraint.length(25),
-                        Constraint.length(25),
+                        Constraint.length(idWidth),
+                        Constraint.length(idWidth),
                         Constraint.fill(),
                         Constraint.length(4),
                         Constraint.length(11))
@@ -2415,39 +2449,9 @@ class HistoryTab extends AbstractTab {
     private static List<Line> applyHSkip(List<Line> lines, int hSkip) {
         List<Line> result = new ArrayList<>(lines.size());
         for (Line line : lines) {
-            result.add(hSkipLine(line, hSkip));
+            result.add(TuiHelper.skipColumns(line, hSkip));
         }
         return result;
-    }
-
-    private static Line hSkipLine(Line line, int hSkip) {
-        List<Span> result = new ArrayList<>();
-        int skip = hSkip;
-        for (Span span : line.spans()) {
-            if (skip <= 0) {
-                result.add(span);
-                continue;
-            }
-            String text = span.content();
-            int spanWidth = CharWidth.of(text);
-            if (spanWidth <= skip) {
-                skip -= spanWidth;
-            } else {
-                int i = 0;
-                int consumed = 0;
-                while (i < text.length() && consumed < skip) {
-                    int cp = text.codePointAt(i);
-                    consumed += CharWidth.of(cp);
-                    i += Character.charCount(cp);
-                }
-                skip = 0;
-                String remaining = text.substring(i);
-                if (!remaining.isEmpty()) {
-                    result.add(Span.styled(remaining, span.style()));
-                }
-            }
-        }
-        return Line.from(result);
     }
 
     @Override

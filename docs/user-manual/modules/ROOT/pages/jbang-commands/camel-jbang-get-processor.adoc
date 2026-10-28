@@ -20,6 +20,7 @@ camel get processor [options]
 |===
 | Option | Description | Default | Type
 | `--description` | Include description in the ID column (if available) |  | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--filter` | Filter processors by id |  | String
 | `--filter-mean` | Filter processors that must be slower than the given time (ms) |  | long
 | `--group` | Filter processors by group |  | String

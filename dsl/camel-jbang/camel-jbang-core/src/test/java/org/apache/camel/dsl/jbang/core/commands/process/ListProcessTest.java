@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 
@@ -46,7 +49,28 @@ class ListProcessTest extends ProcessCommandTestSupport {
             int exit = command.doCall();
 
             assertEquals(0, exit);
-            assertEquals("", printer.getOutput().trim());
+            assertEquals("", printer.getStdout());
+            assertEquals("No running Camel integrations", printer.getStderr());
+        }
+    }
+
+    @Test
+    void testUnknownSortKeyIsAUsageError() throws Exception {
+        writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
+
+        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        command.sort = "nmae";
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            CliException e = assertThrows(CliException.class, command::doCall);
+            assertEquals(CliExitCode.USAGE, e.getExitCode());
+            assertEquals("--sort must be one of pid, name, age (with - in front for the reverse order), was: nmae",
+                    e.getMessage());
         }
     }
 

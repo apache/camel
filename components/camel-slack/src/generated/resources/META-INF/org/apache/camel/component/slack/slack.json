@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-slack",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "slack",
     "extendsScheme": "",
     "syntax": "slack:channel",
@@ -32,11 +32,16 @@
     "token": { "index": 5, "kind": "property", "displayName": "Token", "group": "token", "label": "token", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The token to access Slack. This app needs to have channels:history, groups:history, im:history, mpim:history, channels:read, groups:read, im:read and mpim:read permissions. The User OAuth Token is the kind of token needed." },
     "webhookUrl": { "index": 6, "kind": "property", "displayName": "Webhook Url", "group": "webhook", "label": "webhook", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The incoming webhook URL" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "com.slack.api.model.Message", "description": "One message per new message of the conversation, the most recent first, or the oldest first with naturalOrder; the first poll gives the last message of the history. The text is ${body.text}" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "description": "The text of the message, or a com.slack.api.model.Message with its blocks: bytes, a stream or a file are read as text. A Map or another POJO is sent as its toString(): marshal it first. No body sends no text, which Slack rejects" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged: the answer of Slack is not kept" }
+  },
   "properties": {
     "channel": { "index": 0, "kind": "path", "displayName": "Channel", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The channel name (syntax #name) or slack user (syntax userName) to send a message directly to an user." },
     "token": { "index": 1, "kind": "parameter", "displayName": "Token", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "The token to access Slack. This app needs to have channels:history, groups:history, im:history, mpim:history, channels:read, groups:read, im:read and mpim:read permissions. The User OAuth Token is the kind of token needed." },
     "conversationType": { "index": 2, "kind": "parameter", "displayName": "Conversation Type", "group": "consumer", "label": "consumer", "required": false, "type": "enum", "javaType": "com.slack.api.model.ConversationType", "enum": [ "PUBLIC_CHANNEL", "PRIVATE_CHANNEL", "MPIM", "IM" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "PUBLIC_CHANNEL", "description": "Type of conversation" },
-    "maxResults": { "index": 3, "kind": "parameter", "displayName": "Max Results", "group": "consumer", "label": "consumer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "10", "description": "The Max Result for the poll" },
+    "maxResults": { "index": 3, "kind": "parameter", "displayName": "Max Results", "group": "consumer", "label": "consumer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "10", "description": "The maximum number of messages that the consumer requests from the conversation history at a time. When more new messages are available, the consumer reads the following pages in the same poll." },
     "naturalOrder": { "index": 4, "kind": "parameter", "displayName": "Natural Order", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Create exchanges in natural order (oldest to newest) or not" },
     "sendEmptyMessageWhenIdle": { "index": 5, "kind": "parameter", "displayName": "Send Empty Message When Idle", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead." },
     "serverUrl": { "index": 6, "kind": "parameter", "displayName": "Server Url", "group": "consumer", "label": "consumer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "https:\/\/slack.com", "description": "The Server URL of the Slack instance" },

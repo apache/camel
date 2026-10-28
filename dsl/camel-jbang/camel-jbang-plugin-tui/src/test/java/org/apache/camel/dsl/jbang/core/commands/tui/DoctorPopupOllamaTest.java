@@ -69,7 +69,7 @@ class DoctorPopupOllamaTest {
         DoctorPopup.addOllamaLines(lines, status);
 
         assertThat(lineTexts(lines)).anyMatch(text -> text.contains("2 models"));
-        assertThat(lineTexts(lines)).anyMatch(text -> text.contains("models: qwen2.5:32b, llama3.2:latest"));
+        assertThat(lineTexts(lines)).anyMatch(text -> text.contains("models: qwen2.5:32b, llama3"));
     }
 
     @Test

@@ -25,6 +25,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": target.getConfiguration().setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "argumentsasbody":
+        case "argumentsAsBody": target.getConfiguration().setArgumentsAsBody(property(camelContext, boolean.class, value)); return true;
+        case "authorizationpolicy":
+        case "authorizationPolicy": target.getConfiguration().setAuthorizationPolicy(property(camelContext, org.apache.camel.spi.AuthorizationPolicy.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "description": target.getConfiguration().setDescription(property(camelContext, java.lang.String.class, value)); return true;
@@ -47,6 +51,7 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "readOnlyHint": target.getConfiguration().setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "returndirect":
         case "returnDirect": target.getConfiguration().setReturnDirect(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "searchable": target.getConfiguration().setSearchable(property(camelContext, boolean.class, value)); return true;
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": target.getConfiguration().setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -58,6 +63,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
+        case "argumentsasbody":
+        case "argumentsAsBody": return boolean.class;
+        case "authorizationpolicy":
+        case "authorizationPolicy": return org.apache.camel.spi.AuthorizationPolicy.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "description": return java.lang.String.class;
@@ -80,6 +89,7 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "readOnlyHint": return java.lang.Boolean.class;
         case "returndirect":
         case "returnDirect": return java.lang.Boolean.class;
+        case "searchable": return boolean.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
         default: return null;
@@ -92,6 +102,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return target.getConfiguration().getArgSchema();
+        case "argumentsasbody":
+        case "argumentsAsBody": return target.getConfiguration().isArgumentsAsBody();
+        case "authorizationpolicy":
+        case "authorizationPolicy": return target.getConfiguration().getAuthorizationPolicy();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "description": return target.getConfiguration().getDescription();
@@ -114,6 +128,7 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "readOnlyHint": return target.getConfiguration().getReadOnlyHint();
         case "returndirect":
         case "returnDirect": return target.getConfiguration().getReturnDirect();
+        case "searchable": return target.getConfiguration().isSearchable();
         case "tags": return target.getConfiguration().getTags();
         case "title": return target.getConfiguration().getTitle();
         default: return null;

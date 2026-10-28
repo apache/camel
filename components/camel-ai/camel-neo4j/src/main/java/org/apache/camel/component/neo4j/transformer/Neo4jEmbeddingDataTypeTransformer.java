@@ -24,12 +24,21 @@ import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.neo4j.Neo4jEmbedding;
 import org.apache.camel.component.neo4j.Neo4jHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
 @DataTypeTransformer(name = "neo4j:embeddings",
                      description = "Prepares the message to become an object writable by Neo4j component")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO },
+                                     description = "A LangChain4j TextSegment, or a String the converter of"
+                                                   + " camel-langchain4j-embeddings turns into one; the embedding comes from"
+                                                   + " the CamelLangChain4jEmbeddingsVector header. A null body or no"
+                                                   + " embedding fails"),
+           transformerOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.component.neo4j.Neo4jEmbedding"))
 public class Neo4jEmbeddingDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {

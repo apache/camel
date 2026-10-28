@@ -21,6 +21,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.security.GeneralSecurityException;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
@@ -32,13 +36,11 @@ import org.apache.camel.component.thrift.server.ThriftHsHaServer;
 import org.apache.camel.component.thrift.server.ThriftMethodHandler;
 import org.apache.camel.component.thrift.server.ThriftThreadPoolServer;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
-import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.TZlibTransport;
@@ -51,6 +53,9 @@ import org.slf4j.LoggerFactory;
 public class ThriftConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumer.class);
+
+    // the backlog of the server sockets of TSSLTransportFactory
+    private static final int SERVER_SOCKET_BACKLOG = 100;
 
     private TNonblockingServerSocket asyncServerTransport;
     private TServerSocket syncServerTransport;
@@ -116,6 +121,15 @@ public class ThriftConsumer extends DefaultConsumer {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void initializeServer() throws TTransportException, IOException {
+        if (configuration.getNegotiationType() == ThriftNegotiationType.SASL) {
+            throw new IllegalArgumentException("The SASL negotiation type is not supported");
+        }
+        if (configuration.getNegotiationType() == ThriftNegotiationType.SSL && !endpoint.isSynchronous()) {
+            // only the synchronous server is built on a TLS server socket
+            throw new IllegalArgumentException(
+                    "The SSL negotiation type requires to set synchronous communication mode (synchronous=true)");
+        }
+
         Class serverImplementationClass;
         Object serverImplementationInstance;
         Object serverProcessor;
@@ -148,39 +162,30 @@ public class ThriftConsumer extends DefaultConsumer {
                                                    + configuration.getNegotiationType());
             }
 
-            ObjectHelper.notNull(sslParameters.getSecureSocketProtocol(), "Security protocol");
-            ObjectHelper.notNull(sslParameters.getKeyManagers().getKeyStore().getResource(), "Keystore path");
-            ObjectHelper.notNull(sslParameters.getKeyManagers().getKeyStore().getPassword(), "Keystore password");
+            ObjectHelper.notNull(sslParameters.getKeyManagers(), "Key managers");
 
-            TSSLTransportFactory.TSSLTransportParameters sslParams;
-            sslParams = new TSSLTransportFactory.TSSLTransportParameters(
-                    sslParameters.getSecureSocketProtocol(),
-                    sslParameters.getCipherSuites() == null
-                            ? null
-                            : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
-
-            if (ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getProvider())
-                    && ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getType())) {
-                sslParams.setKeyStore(
-                        ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                sslParameters.getKeyManagers().getKeyStore().getResource()),
-                        sslParameters.getKeyManagers().getKeyStore().getPassword(),
-                        sslParameters.getKeyManagers().getKeyStore().getProvider(),
-                        sslParameters.getKeyManagers().getKeyStore().getType());
-            } else {
-                sslParams.setKeyStore(
-                        ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                sslParameters.getKeyManagers().getKeyStore().getResource()),
-                        sslParameters.getKeyManagers().getKeyStore().getPassword());
-            }
-
+            // the server socket factory of the SSL context applies all the sslParameters: the key and trust managers,
+            // the protocols and cipher suites, and the server parameters such as the client authentication
+            SSLServerSocket serverSocket;
             try {
-                syncServerTransport = TSSLTransportFactory.getServerSocket(configuration.getPort(),
-                        configuration.getClientTimeout(), InetAddress.getByName(configuration.getHost()),
-                        sslParams);
+                SSLContext sslContext = sslParameters.createSSLContext(endpoint.getCamelContext());
+                serverSocket = (SSLServerSocket) sslContext.getServerSocketFactory().createServerSocket(
+                        configuration.getPort(), SERVER_SOCKET_BACKLOG, InetAddress.getByName(configuration.getHost()));
             } catch (UnknownHostException e) {
                 throw new IllegalArgumentException("Unknown host defined: " + configuration.getHost());
+            } catch (GeneralSecurityException e) {
+                throw new IllegalArgumentException(
+                        "Unable to create the SSL context of the Thrift server"
+                                                   + (sslParameters.getKeyManagers().getKeyPassword() == null
+                                                           ? " (set keyPassword on the key managers of sslParameters when the"
+                                                             + " key is protected by a password)"
+                                                           : ""),
+                        e);
             }
+            serverSocket.setSoTimeout(configuration.getClientTimeout());
+            syncServerTransport = new TServerSocket(
+                    new TServerSocket.ServerSocketTransportArgs().serverSocket(serverSocket)
+                            .clientTimeout(configuration.getClientTimeout()));
             ThriftThreadPoolServer.Args args = new ThriftThreadPoolServer.Args(syncServerTransport);
             args.processor((TProcessor) serverProcessor);
             args.executorService(getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(this,

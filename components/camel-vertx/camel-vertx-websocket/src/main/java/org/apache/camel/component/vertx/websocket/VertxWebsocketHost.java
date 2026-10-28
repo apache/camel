@@ -18,8 +18,10 @@ package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
@@ -53,6 +55,8 @@ public class VertxWebsocketHost {
     private final VertxWebsocketHostKey hostKey;
     // guarded by this host's monitor, together with the server it decides the lifecycle of
     private final Map<String, Route> routeRegistry = new HashMap<>();
+    // guarded by this host's monitor, the consumers that got as far as connect, and so may disconnect
+    private final Set<VertxWebsocketConsumer> connectedConsumers = new HashSet<>();
     private final List<VertxWebsocketPeer> connectedPeers = new CopyOnWriteArrayList<>(); // thread-safe
     private final CamelContext camelContext;
     private volatile HttpServer server;
@@ -63,6 +67,14 @@ public class VertxWebsocketHost {
         this.camelContext = camelContext;
         this.hostConfiguration = websocketHostConfiguration;
         this.hostKey = key;
+    }
+
+    /**
+     * The SSLContextParameters of the server that every consumer on this host and port is served by, or null when it
+     * runs without TLS
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return hostConfiguration.getSslContextParameters();
     }
 
     /**
@@ -100,7 +112,7 @@ public class VertxWebsocketHost {
                     request.pause();
                 }
                 // upgrade
-                request.toWebSocket(toWebSocket -> {
+                request.toWebSocket().onComplete(toWebSocket -> {
                     if (toWebSocket.succeeded()) {
                         // resume the parsing
                         if (!parseEnded) {
@@ -155,12 +167,19 @@ public class VertxWebsocketHost {
         });
 
         routeRegistry.put(websocketURI.getPath(), route);
+        connectedConsumers.add(consumer);
     }
 
     /**
-     * Removes the Vert.x route and handler for the WebSocket path specified by the consumer configuration
+     * Removes the Vert.x route and handler for the WebSocket path specified by the consumer configuration. A consumer
+     * that never connected, for example one that failed to start, owns no route, and must not remove the route another
+     * consumer registered on the same path.
      */
-    public synchronized void disconnect(String path) {
+    public synchronized void disconnect(VertxWebsocketConsumer consumer) {
+        if (!connectedConsumers.remove(consumer)) {
+            return;
+        }
+        String path = consumer.getEndpoint().getConfiguration().getWebsocketURI().getPath();
         LOG.info("Disconnected consumer for path {}", path);
         Route route = routeRegistry.remove(path);
         if (route != null) {
@@ -200,7 +219,7 @@ public class VertxWebsocketHost {
             }
 
             CompletableFuture<Void> future = new CompletableFuture<>();
-            server.requestHandler(router).listen(hostKey.getPort(), hostKey.getHost(), result -> {
+            server.requestHandler(router).listen(hostKey.getPort(), hostKey.getHost()).onComplete(result -> {
                 if (!result.failed()) {
                     port = result.result().actualPort();
                     future.complete(null);
@@ -221,7 +240,7 @@ public class VertxWebsocketHost {
             LOG.info("Stopping server");
             try {
                 CompletableFuture<Void> future = new CompletableFuture<>();
-                server.close(result -> {
+                server.close().onComplete(result -> {
                     if (result.failed()) {
                         future.completeExceptionally(result.cause());
                         return;
@@ -236,6 +255,7 @@ public class VertxWebsocketHost {
         }
         connectedPeers.clear();
         routeRegistry.clear();
+        connectedConsumers.clear();
         port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
     }
 

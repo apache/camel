@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
@@ -32,7 +31,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
     public void setup() throws Exception {
         super.setup();
 
-        CommandLineHelper.useHomeDir("target");
+        useTestHomeDir();
         PluginHelper.createPluginConfig();
     }
 

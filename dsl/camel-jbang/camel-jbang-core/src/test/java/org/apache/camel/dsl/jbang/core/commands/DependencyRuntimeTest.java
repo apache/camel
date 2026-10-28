@@ -31,6 +31,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DependencyRuntimeTest extends CamelCommandBaseTestSupport {
 
@@ -73,7 +74,8 @@ class DependencyRuntimeTest extends CamelCommandBaseTestSupport {
         command.pomXml = tempDir.toPath().resolve("non-existing/pom.xml");
         int exit = command.doCall();
 
-        assertEquals(1, exit);
+        assertEquals(3, exit);
+        assertTrue(printer.getStderr().startsWith("ERROR: Cannot find "), printer.getStderr());
     }
 
     @ParameterizedTest

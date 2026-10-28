@@ -310,11 +310,11 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         }
 
         if (ObjectHelper.isNotEmpty(readTimeout)) {
-            builder.withConnectTimeoutMillis(readTimeout.toMillis());
+            builder.withReadTimeoutMillis(readTimeout.toMillis());
         }
 
         if (ObjectHelper.isNotEmpty(writeTimeout)) {
-            builder.withConnectTimeoutMillis(writeTimeout.toMillis());
+            builder.withWriteTimeoutMillis(writeTimeout.toMillis());
         }
 
         return builder.build();

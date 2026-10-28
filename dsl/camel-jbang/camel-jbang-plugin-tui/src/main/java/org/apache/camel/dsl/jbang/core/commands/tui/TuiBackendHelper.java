@@ -30,10 +30,9 @@ final class TuiBackendHelper {
 
     static TuiRunner createTuiRunner() throws Exception {
         Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
-        // Build the JLine backend explicitly rather than leaving backend selection to
-        // TamboUI's ServiceLoader-based auto-discovery: with tamboui-aesh-backend also on the
-        // classpath (for --web), auto-discovery can pick AeshBackend for the local session too,
-        // which drives a native PosixSysTerminal that doesn't shut down cleanly here.
+        // Build the JLine backend explicitly rather than leaving backend selection to TamboUI's
+        // ServiceLoader-based auto-discovery, on the terminal camel shell already uses when there
+        // is one; a web session (TuiWebServer) runs on a JLineBackend too.
         JLineBackend backend = activeTerminal != null ? new JLineBackend(activeTerminal) : new JLineBackend();
         return createTuiRunner(backend);
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.toon;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -33,6 +34,10 @@ import dev.toonformat.jtoon.PathExpansion;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -48,6 +53,17 @@ import org.apache.camel.util.IOHelper;
  */
 @Dataformat("toon")
 @Metadata(firstVersion = "4.23.0", title = "TOON")
+@BodyTypes(marshalIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP,
+        Carrier.LIST, Carrier.POJO },
+                                 description = "A Map, a List, a POJO or a value to write as TOON. A String, bytes, a stream or"
+                                               + " a file must be JSON text, read in the charset of the exchange"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The TOON in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    description = "A Map (LinkedHashMap) for an object, a List for an array; a document that is"
+                                                  + " a single value gives that value"))
 public class ToonDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
@@ -59,10 +75,9 @@ public class ToonDataFormat extends ServiceSupport
     @Metadata(description = "Delimiter used for tabular array rows and inline primitive arrays.",
               defaultValue = "COMMA", enums = "COMMA,TAB,PIPE")
     private String delimiter = Delimiter.COMMA.name();
-    @Metadata(description = "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
-              defaultValue = "false", javaType = "java.lang.Boolean")
-    private boolean lengthMarker = EncodeOptions.DEFAULT.lengthMarker();
-    @Metadata(description = "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+    @Metadata(description = "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict"
+                            + " recoveries of the TOON specification, such as accepting an array whose length differs from the"
+                            + " declared length; other malformed TOON still fails.",
               defaultValue = "true", javaType = "java.lang.Boolean")
     private boolean strict = DecodeOptions.DEFAULT.strict();
     @Metadata(description = "Whether the data format should set the Content-Type header to text/toon when marshalling.",
@@ -91,6 +106,12 @@ public class ToonDataFormat extends ServiceSupport
         if (graph instanceof String json) {
             // String bodies are JSON documents (JSON-to-TOON), not TOON string scalars.
             // JToon.encodeJson rejects non-JSON text such as "hello world".
+            toon = JToon.encodeJson(json, options);
+        } else if (graph instanceof byte[] || graph instanceof InputStream || graph instanceof File
+                || graph instanceof WrappedFile) {
+            // bytes, a stream or a file hold JSON text as a String does (read in the charset of the exchange),
+            // which JToon.encode would write as an array of numbers, nothing or the path of the file
+            String json = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, graph);
             toon = JToon.encodeJson(json, options);
         } else {
             toon = JToon.encode(graph, options);
@@ -129,7 +150,7 @@ public class ToonDataFormat extends ServiceSupport
     }
 
     private EncodeOptions encodeOptions() {
-        return new EncodeOptions(indent, resolveDelimiter(), lengthMarker, KeyFolding.OFF, Integer.MAX_VALUE);
+        return new EncodeOptions(indent, resolveDelimiter(), KeyFolding.OFF, Integer.MAX_VALUE);
     }
 
     private DecodeOptions decodeOptions() {
@@ -159,14 +180,6 @@ public class ToonDataFormat extends ServiceSupport
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
-    }
-
-    public boolean isLengthMarker() {
-        return lengthMarker;
-    }
-
-    public void setLengthMarker(boolean lengthMarker) {
-        this.lengthMarker = lengthMarker;
     }
 
     public boolean isStrict() {

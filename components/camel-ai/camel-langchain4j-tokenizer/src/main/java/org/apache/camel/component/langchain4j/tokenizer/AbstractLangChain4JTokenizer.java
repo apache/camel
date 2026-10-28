@@ -19,6 +19,7 @@ package org.apache.camel.component.langchain4j.tokenizer;
 
 import dev.langchain4j.data.document.DocumentSplitter;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.langchain4j.tokenizer.config.LangChain4JConfiguration;
 import org.apache.camel.component.langchain4j.tokenizer.util.SplitterUtil;
 import org.apache.camel.spi.Tokenizer;
@@ -45,6 +46,10 @@ abstract class AbstractLangChain4JTokenizer<T extends LangChain4JConfiguration> 
     @Override
     public final String[] tokenize(Exchange exchange) {
         final String body = exchange.getIn().getBody(String.class);
+
+        if (body == null) {
+            throw new RuntimeCamelException("Cannot tokenize a null body");
+        }
 
         LOG.debug("Starting LangChain4j tokenizer for message: {}", body);
 

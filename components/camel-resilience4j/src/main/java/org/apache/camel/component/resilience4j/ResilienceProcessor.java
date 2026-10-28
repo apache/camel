@@ -26,8 +26,9 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -581,7 +582,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
             task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
             // guard to prevent the worker thread from writing results back to the original exchange
             // after a timeout has triggered fallback processing on the caller thread
-            AtomicBoolean exchangeWriteGuard = new AtomicBoolean(false);
+            ExchangeWriteGuard exchangeWriteGuard = new ExchangeWriteGuard();
             task.exchangeWriteGuard = exchangeWriteGuard;
             fallbackTask.exchangeWriteGuard = exchangeWriteGuard;
             final CircuitBreakerTask ftask = task; // annoying final java thingy!
@@ -640,7 +641,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
         CircuitBreakerFallbackTask fallbackTask = null;
         try {
             fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, callback);
-            AtomicBoolean exchangeWriteGuard = new AtomicBoolean(false);
+            ExchangeWriteGuard exchangeWriteGuard = new ExchangeWriteGuard();
             fallbackTask.exchangeWriteGuard = exchangeWriteGuard;
 
             if (LOG.isTraceEnabled()) {
@@ -716,7 +717,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
         exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, circuitBreaker.getState().name());
     }
 
-    private Exchange processTask(Exchange exchange, AtomicBoolean exchangeWriteGuard) {
+    private Exchange processTask(Exchange exchange, ExchangeWriteGuard exchangeWriteGuard) {
         String state = circuitBreaker.getState().name();
 
         Exchange copy = null;
@@ -748,19 +749,27 @@ public class ResilienceProcessor extends BaseProcessorSupport
             processor.process(copy);
 
             // handle the processing result, but only write back if the fallback has not taken over
-            if (exchangeWriteGuard.compareAndSet(false, true)) {
-                if (copy.getException() != null) {
-                    exchange.setException(copy.getException());
-                } else {
-                    // copy the result as its regarded as success
-                    ExchangeHelper.copyResults(exchange, copy);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+            if (exchangeWriteGuard.tryClaimForWriteBack()) {
+                try {
+                    if (copy.getException() != null) {
+                        exchange.setException(copy.getException());
+                    } else {
+                        // copy the result as its regarded as success
+                        ExchangeHelper.copyResults(exchange, copy);
+                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
+                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    }
+                } finally {
+                    exchangeWriteGuard.writeBackDone();
                 }
             }
         } catch (Exception e) {
-            if (exchangeWriteGuard.compareAndSet(false, true)) {
-                exchange.setException(e);
+            if (exchangeWriteGuard.tryClaimForWriteBack()) {
+                try {
+                    exchange.setException(e);
+                } finally {
+                    exchangeWriteGuard.writeBackDone();
+                }
             }
         } finally {
             // must done uow
@@ -782,7 +791,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
     }
 
     private CompletableFuture<Exchange> processTaskAsync(
-            Exchange exchange, AtomicBoolean exchangeWriteGuard, CompletableFuture<Exchange> future) {
+            Exchange exchange, ExchangeWriteGuard exchangeWriteGuard, CompletableFuture<Exchange> future) {
         String state = circuitBreaker.getState().name();
 
         Exchange copy = null;
@@ -809,18 +818,27 @@ public class ResilienceProcessor extends BaseProcessorSupport
             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
             asyncProcessor.process(copy, doneSync -> {
                 try {
-                    if (exchangeWriteGuard.compareAndSet(false, true)) {
-                        if (fCopy.getException() != null) {
-                            exchange.setException(fCopy.getException());
-                        } else {
-                            ExchangeHelper.copyResults(exchange, fCopy);
-                            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
-                            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    if (exchangeWriteGuard.tryClaimForWriteBack()) {
+                        try {
+                            if (fCopy.getException() != null) {
+                                exchange.setException(fCopy.getException());
+                            } else {
+                                ExchangeHelper.copyResults(exchange, fCopy);
+                                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION,
+                                        true);
+                                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                            }
+                        } finally {
+                            exchangeWriteGuard.writeBackDone();
                         }
                     }
                 } catch (Exception e) {
-                    if (exchangeWriteGuard.compareAndSet(false, true)) {
-                        exchange.setException(e);
+                    if (exchangeWriteGuard.tryClaimForWriteBack()) {
+                        try {
+                            exchange.setException(e);
+                        } finally {
+                            exchangeWriteGuard.writeBackDone();
+                        }
                     }
                 } finally {
                     UnitOfWorkHelper.doneUow(fUow, fCopy);
@@ -845,10 +863,56 @@ public class ResilienceProcessor extends BaseProcessorSupport
         return future;
     }
 
+    /**
+     * Makes the write-back of the task and the takeover by the caller (the fallback, or the timeout exception) mutually
+     * exclusive, for one call. The task writes its result only if it claims the exchange before the caller. The caller
+     * always writes: if it takes over while the write-back of the task is in progress, it waits until that is done, and
+     * then works on the exchange that holds the result of the task.
+     */
+    private static final class ExchangeWriteGuard {
+        private final Lock lock = new ReentrantLock();
+        private boolean claimed;
+
+        /**
+         * Claims the exchange for the write-back of the task. When this returns true, the lock is held until
+         * {@link #writeBackDone()} is called.
+         */
+        boolean tryClaimForWriteBack() {
+            lock.lock();
+            if (claimed) {
+                lock.unlock();
+                return false;
+            }
+            claimed = true;
+            return true;
+        }
+
+        /**
+         * Ends the write-back of the task, after {@link #tryClaimForWriteBack()} returned true. Must be called in a
+         * {@code finally} block, as the lock stays held until then.
+         */
+        void writeBackDone() {
+            lock.unlock();
+        }
+
+        /**
+         * Claims the exchange for the caller. This always succeeds; it waits for a write-back of the task that is in
+         * progress, and stops the task from writing afterwards.
+         */
+        void claim() {
+            lock.lock();
+            try {
+                claimed = true;
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+
     private final class CircuitBreakerTask implements PooledExchangeTask, Callable<Exchange>, Supplier<Exchange> {
 
         private Exchange exchange;
-        private AtomicBoolean exchangeWriteGuard;
+        private ExchangeWriteGuard exchangeWriteGuard;
 
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
@@ -885,7 +949,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
     private final class CircuitBreakerFallbackTask implements PooledExchangeTask, Function<Throwable, Exchange> {
 
         private Exchange exchange;
-        private AtomicBoolean exchangeWriteGuard;
+        private ExchangeWriteGuard exchangeWriteGuard;
 
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
@@ -906,9 +970,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
         @Override
         public Exchange apply(Throwable throwable) {
-            // prevent the worker thread from writing results back to the original exchange
+            // prevent the worker thread from writing results back to the original exchange (waits for a
+            // write-back that the worker has already started)
             if (exchangeWriteGuard != null) {
-                exchangeWriteGuard.set(true);
+                exchangeWriteGuard.claim();
             }
 
             String state = circuitBreaker.getState().name();

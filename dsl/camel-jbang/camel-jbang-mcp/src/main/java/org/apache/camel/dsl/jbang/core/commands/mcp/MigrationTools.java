@@ -26,6 +26,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.tooling.model.ReleaseModel;
 
 /**
  * MCP Tools for Camel migration and upgrade workflows.
@@ -38,12 +39,19 @@ import io.quarkiverse.mcp.server.ToolCallException;
 @ApplicationScoped
 public class MigrationTools {
 
-    private static final String OPENREWRITE_VERSION = "6.29.0";
     private static final String CAMEL_UPGRADE_RECIPES_ARTIFACT = "camel-upgrade-recipes";
     private static final String CAMEL_SPRING_BOOT_UPGRADE_RECIPES_ARTIFACT = "camel-spring-boot-upgrade-recipes";
+    // the recipes of META-INF/rewrite/latest.yaml in each artifact of apache/camel-upgrade-recipes
+    private static final String CAMEL_MIGRATION_RECIPE = "org.apache.camel.upgrade.CamelMigrationRecipe";
+    private static final String CAMEL_SPRING_BOOT_MIGRATION_RECIPE
+            = "org.apache.camel.upgrade.CamelSpringBootMigrationRecipe";
+    private static final int SNIPPET_LINES = 30;
 
     @Inject
     MigrationData migrationData;
+
+    @Inject
+    CatalogService catalogService;
 
     /**
      * Step 1: Analyze a project's pom.xml to detect runtime, Camel version, Java version, and components.
@@ -58,7 +66,8 @@ public class MigrationTools {
             @ToolArg(description = "The pom.xml file content. "
                                    + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
                                    + "Sensitive content is automatically detected and masked.") String pomContent,
-            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials") Boolean sanitizePom) {
+            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials",
+                     required = false) Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
@@ -89,7 +98,7 @@ public class MigrationTools {
             if ("wildfly".equals(runtimeType) || "karaf".equals(runtimeType)) {
                 nextStep = "Call camel_migration_wildfly_karaf to get migration guidance for " + runtimeType + ".";
             } else {
-                nextStep = "Call camel_migration_compatibility with the detected components and target version.";
+                nextStep = "Call camel_migration_compatibility with the detected and the target Camel version.";
             }
 
             return new ProjectAnalysisResult(
@@ -106,19 +115,16 @@ public class MigrationTools {
      * Step 2: Check compatibility and provide relevant migration guide references.
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Check migration compatibility for Camel components by providing relevant migration guide "
-                        + "URLs and Java version requirements. The LLM should consult the migration guides for "
-                        + "detailed component rename mappings and API changes.")
+          description = "Check whether a migration between two Camel versions is possible on the project's Java version "
+                        + "(the JDK versions each Camel release supports, as camel_version_list reports them) and "
+                        + "return the relevant migration guide URLs. The LLM should consult the migration guides, or "
+                        + "camel_migration_guide_search, for component renames and API changes.")
     public CompatibilityResult camel_migration_compatibility(
-            @ToolArg(description = "Comma-separated list of Camel component artifactIds") String camelComponents,
             @ToolArg(description = "Current Camel version (e.g., 3.20.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
             @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
-            @ToolArg(description = "Current Java version (e.g., 11, 17, 21)") String javaVersion) {
+            @ToolArg(description = "Current Java version (e.g., 21, 25)", required = false) String javaVersion) {
 
-        if (camelComponents == null || camelComponents.isBlank()) {
-            throw new ToolCallException("camelComponents is required", null);
-        }
         if (currentVersion == null || currentVersion.isBlank()) {
             throw new ToolCallException("currentVersion is required", null);
         }
@@ -136,30 +142,19 @@ public class MigrationTools {
         JavaCompatibility javaCompat = null;
 
         if (javaVersion != null && !javaVersion.isBlank()) {
-            int javaVer = parseJavaVersion(javaVersion);
-            boolean javaCompatible = true;
-            String requiredVersion;
-
-            if (targetMajor >= 4) {
-                int targetMinor = parseMinorVersion(targetVersion);
-                if (targetMajor > 4 || targetMinor >= 19) {
-                    requiredVersion = "21";
-                    if (javaVer < 21) {
-                        javaCompatible = false;
-                        blockers.add("Camel 4.19+ requires Java 21+. Current Java version is " + javaVersion + ".");
-                    }
-                } else {
-                    requiredVersion = "17";
-                    if (javaVer < 17) {
-                        javaCompatible = false;
-                        blockers.add("Camel 4.x requires Java 17+. Current Java version is " + javaVersion + ".");
-                    }
-                }
+            JavaRequirement requirement = javaRequirement(targetVersion);
+            if (requirement == null) {
+                warnings.add("The catalog has no release data for Camel " + targetVersion
+                             + ": check its Java requirement with camel_version_list.");
             } else {
-                requiredVersion = "11";
+                int javaVer = CamelReleases.javaVersion(javaVersion);
+                boolean javaCompatible = javaVer >= requirement.minimum();
+                if (!javaCompatible) {
+                    blockers.add(requirement.describe(targetVersion) + " Current Java version is " + javaVersion + ".");
+                }
+                javaCompat = new JavaCompatibility(
+                        javaVersion, String.valueOf(requirement.minimum()), requirement.supported(), javaCompatible);
             }
-
-            javaCompat = new JavaCompatibility(javaVersion, requiredVersion, javaCompatible);
         }
 
         // Collect relevant migration guides
@@ -206,7 +201,9 @@ public class MigrationTools {
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get Maven commands to run Camel OpenRewrite migration recipes for upgrading between versions. "
-                        + "Returns the exact Maven commands to execute on the project. "
+                        + "Returns the exact Maven commands to execute on the project: camel-upgrade-recipes for "
+                        + "Camel Main, camel-spring-boot-upgrade-recipes for Spring Boot, and the quarkus-maven-plugin "
+                        + "update goal for Quarkus. "
                         + "PREREQUISITE: The project MUST compile successfully ('mvn clean compile' must pass) "
                         + "BEFORE running the OpenRewrite recipes. If the project does not compile, fix the build "
                         + "errors first. OpenRewrite requires a compilable project to parse and transform the code.")
@@ -214,8 +211,13 @@ public class MigrationTools {
             @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
             @ToolArg(description = "Current Camel version (e.g., 4.4.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
-            @ToolArg(description = "Current Java version (e.g., 11, 17)") String javaVersion,
-            @ToolArg(description = "If true, perform a dry run without making changes (default: true)") Boolean dryRun) {
+            @ToolArg(description = "Current Java version (e.g., 21, 25)", required = false) String javaVersion,
+            @ToolArg(description = "If true, perform a dry run without making changes (default: true)",
+                     required = false) Boolean dryRun,
+            @ToolArg(description = "Quarkus only: the Quarkus platform version to update to (e.g. 3.27.1), the one "
+                                   + "camel_version_list runtime=quarkus reports for the target Camel version. "
+                                   + "Without it the update goes to the latest recommended Quarkus platform.",
+                     required = false) String quarkusPlatformVersion) {
 
         if (runtime == null || runtime.isBlank()) {
             throw new ToolCallException("runtime is required", null);
@@ -235,17 +237,25 @@ public class MigrationTools {
             // The quarkus-maven-plugin:update command internally uses OpenRewrite recipes
             // including Camel-specific recipes (e.g., io.quarkus.updates.camel.camel44.CamelQuarkusMigrationRecipe)
             // to handle both Quarkus platform and Camel Quarkus upgrades.
-            String quarkusCommand;
-            if (targetVersion != null && !targetVersion.isBlank()) {
-                quarkusCommand = String.format(
-                        "mvn --no-transfer-progress io.quarkus.platform:quarkus-maven-plugin:%s:update %s",
-                        targetVersion, isDryRun ? "-DrewriteDryRun" : "-DrewriteFullRun");
+            // The plugin is versioned like the Quarkus platform, not like Camel; its update goal reads
+            // platformVersion (or stream), rewriteDryRun and rewrite.
+            String rewriteMode = isDryRun ? "-DrewriteDryRun=true" : "-Drewrite=true";
+            if (quarkusPlatformVersion != null && !quarkusPlatformVersion.isBlank()) {
+                String qv = quarkusPlatformVersion.trim();
+                mavenCommands.add(String.format(
+                        "mvn --no-transfer-progress io.quarkus.platform:quarkus-maven-plugin:%s:update "
+                                                + "-DplatformVersion=%s %s",
+                        qv, qv, rewriteMode));
             } else {
-                quarkusCommand = String.format(
-                        "mvn --no-transfer-progress io.quarkus.platform:quarkus-maven-plugin:update %s",
-                        isDryRun ? "-DrewriteDryRun" : "-DrewriteFullRun");
+                mavenCommands.add(String.format(
+                        "mvn -U --no-transfer-progress io.quarkus.platform:quarkus-maven-plugin:update %s",
+                        rewriteMode));
+                notes.add("No quarkusPlatformVersion was given, so the update goes to the latest recommended Quarkus "
+                          + "platform, which may ship a newer Camel than " + targetVersion
+                          + ". To stop at Camel " + targetVersion
+                          + ", call camel_version_list with runtime=quarkus, take the Quarkus platform version of "
+                          + "that Camel release and call this tool again with quarkusPlatformVersion.");
             }
-            mavenCommands.add(quarkusCommand);
             notes.add("The quarkus-maven-plugin:update command uses OpenRewrite under the hood. "
                       + "It automatically applies both Quarkus platform upgrade recipes and Camel Quarkus "
                       + "migration recipes (e.g., CamelQuarkusMigrationRecipe). "
@@ -256,26 +266,36 @@ public class MigrationTools {
                       + "you must first create a new Quarkus project using the archetype from "
                       + "camel_migration_wildfly_karaf, then run this update command.");
         } else {
-            String artifact = "spring-boot".equals(resolvedRuntime)
-                    ? CAMEL_SPRING_BOOT_UPGRADE_RECIPES_ARTIFACT
-                    : CAMEL_UPGRADE_RECIPES_ARTIFACT;
+            boolean springBoot = "spring-boot".equals(resolvedRuntime);
+            String artifact = springBoot ? CAMEL_SPRING_BOOT_UPGRADE_RECIPES_ARTIFACT : CAMEL_UPGRADE_RECIPES_ARTIFACT;
+            String recipe = springBoot ? CAMEL_SPRING_BOOT_MIGRATION_RECIPE : CAMEL_MIGRATION_RECIPE;
+            String recipesVersion = recipesVersion(targetVersion);
 
+            // the recipes README runs the plugin without a version (with -U), so Maven resolves its latest release
             String command = String.format(
-                    "mvn --no-transfer-progress org.openrewrite.maven:rewrite-maven-plugin:%s:%s "
+                    "mvn -U --no-transfer-progress org.openrewrite.maven:rewrite-maven-plugin:%s "
                                            + "-Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:%s:%s "
-                                           + "-Drewrite.activeRecipes=org.apache.camel.upgrade.CamelMigrationRecipe",
-                    OPENREWRITE_VERSION, runMode, artifact, targetVersion);
+                                           + "-Drewrite.activeRecipes=%s",
+                    runMode, artifact, recipesVersion, recipe);
             mavenCommands.add(command);
+            notes.add("The recipes are released once per Camel minor version (" + artifact + ":<major>.<minor>.0), "
+                      + "and " + recipe + " of version " + recipesVersion + " migrates the project to Camel "
+                      + recipesVersion + ". For a patch release, set the Camel version afterwards. If "
+                      + recipesVersion + " is not published (there is no recipes release for every minor version), "
+                      + "use the next published one, which migrates to its own version, or LATEST for the newest.");
         }
 
-        // Java upgrade suggestion
+        // Java upgrade suggestion, from the JDK versions of the target release
         List<String> javaUpgradeSuggestions = new ArrayList<>();
         if (javaVersion != null && !javaVersion.isBlank()) {
-            int javaVer = parseJavaVersion(javaVersion);
-            if (javaVer < 21) {
-                javaUpgradeSuggestions.add(
-                        "Camel 4.19+ requires Java 21+. "
-                                           + "OpenRewrite recipe: org.openrewrite.java.migrate.UpgradeToJava21");
+            JavaRequirement requirement = javaRequirement(targetVersion);
+            int javaVer = CamelReleases.javaVersion(javaVersion);
+            if (requirement != null && javaVer > 0 && javaVer < requirement.minimum()) {
+                String suggestion = requirement.describe(targetVersion) + " The project uses Java " + javaVersion + ".";
+                if (requirement.minimum() == 17 && !"quarkus".equals(resolvedRuntime)) {
+                    suggestion += " The Camel recipes include org.apache.camel.upgrade.UpgradeToJava17.";
+                }
+                javaUpgradeSuggestions.add(suggestion);
             }
         }
 
@@ -287,51 +307,59 @@ public class MigrationTools {
     }
 
     /**
-     * Search migration guides for a specific term.
+     * Search migration guides for a specific term, optionally scoped to the versions being migrated between.
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Search Camel migration and upgrade guides for a specific term or component name. "
-                        + "Returns matching snippets from the official guides with version info and URLs. "
-                        + "Supports fuzzy matching for typo tolerance. "
+                        + "Each result is one topic entry of a release (e.g. 'Upgrading Camel 4.20 to 4.21 / camel-cxf') "
+                        + "with the lines around the best match, version info and URL. "
+                        + "Pass currentVersion/targetVersion (e.g. 2.25 and 4.22) to search only the guides for that "
+                        + "migration, with the 2.x to 3.0 and 3.x to 4.0 migration guides ranked higher. "
+                        + "Results are ranked by relevance with typo tolerance; generic words such as camel, "
+                        + "migration or upgrade are ignored, and no results are returned when nothing is relevant. "
                         + "Use this instead of web search when looking up migration-related changes, "
                         + "removed components, API renames, or breaking changes.")
     public GuideSearchResult camel_migration_guide_search(
             @ToolArg(description = "Search query — component name, API class, method, or keyword "
-                                   + "(e.g., direct-vm, getOut, camel-http4, ExchangePattern)") String query,
-            @ToolArg(description = "Maximum number of results to return (default: 3)") Integer limit) {
+                                   + "(e.g., direct-vm, getOut, camel-http4, cxf servlet, camel-mail subject header)") String query,
+            @ToolArg(description = "Maximum number of results to return (default: 3)", required = false) Integer limit,
+            @ToolArg(description = "Current Camel version, migrating from (e.g., 2.25 or 3.20.1). "
+                                   + "Guides for releases up to this version are omitted.",
+                     required = false) String currentVersion,
+            @ToolArg(description = "Target Camel version, migrating to (e.g., 4.22). "
+                                   + "Guides for releases after this version are omitted.",
+                     required = false) String targetVersion) {
 
         if (query == null || query.isBlank()) {
             throw new ToolCallException("query is required", null);
         }
 
         int maxResults = limit != null && limit > 0 ? limit : 3;
-        List<MigrationData.GuideSection> matches = migrationData.searchGuides(query, maxResults);
+        List<MigrationData.SearchHit> hits;
+        try {
+            hits = migrationData.search(query, currentVersion, targetVersion, maxResults);
+        } catch (IllegalArgumentException e) {
+            throw new ToolCallException(e.getMessage(), e);
+        }
 
         List<GuideSnippet> snippets = new ArrayList<>();
-        for (MigrationData.GuideSection section : matches) {
-            // Truncate content to avoid huge responses
-            String snippet = truncateSnippet(section.content(), 30);
+        for (MigrationData.SearchHit hit : hits) {
+            MigrationData.GuideSection section = hit.section();
             snippets.add(new GuideSnippet(
                     section.guide(), section.version(), section.sectionTitle(),
-                    snippet, section.url()));
+                    migrationData.snippet(hit, SNIPPET_LINES), section.url()));
         }
 
-        String nextStep = "Call camel_migration_guide_search again for other terms, or call camel_migration_recipes.";
+        String nextStep;
+        if (snippets.isEmpty()) {
+            nextStep = "No migration guide entry is relevant to this query. Rephrase it with a component name, "
+                       + "option or API class (e.g. camel-cxf, getOut), widen or drop currentVersion/targetVersion, "
+                       + "or ask camel_catalog_doc for the component's current documentation.";
+        } else {
+            nextStep = "Call camel_migration_guide_search again for other terms, or call camel_migration_recipes.";
+        }
 
         return new GuideSearchResult(query, snippets.size(), snippets, nextStep);
-    }
-
-    private String truncateSnippet(String content, int maxLines) {
-        String[] lines = content.split("\n");
-        if (lines.length <= maxLines) {
-            return content;
-        }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < maxLines; i++) {
-            sb.append(lines[i]).append("\n");
-        }
-        sb.append("... (truncated, ").append(lines.length - maxLines).append(" more lines)");
-        return sb.toString();
     }
 
     // Helpers
@@ -347,32 +375,47 @@ public class MigrationTools {
         }
     }
 
-    private int parseMinorVersion(String version) {
-        if (version == null) {
-            return 0;
+    /**
+     * The camel-upgrade-recipes version for a target Camel version: the recipes are released per minor version.
+     */
+    static String recipesVersion(String targetVersion) {
+        String[] parts = targetVersion.trim().split("[.-]");
+        if (parts.length >= 2 && isNumber(parts[0]) && isNumber(parts[1])) {
+            return parts[0] + "." + parts[1] + ".0";
         }
-        try {
-            String[] parts = version.split("\\.");
-            if (parts.length >= 2) {
-                return Integer.parseInt(parts[1]);
-            }
-            return 0;
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+        return targetVersion.trim();
     }
 
-    private int parseJavaVersion(String version) {
-        if (version == null) {
-            return 0;
+    private static boolean isNumber(String s) {
+        return !s.isEmpty() && s.chars().allMatch(Character::isDigit);
+    }
+
+    /**
+     * The Java versions the target Camel version supports, from the catalog's release data, or null when the catalog
+     * does not know the version.
+     */
+    private JavaRequirement javaRequirement(String targetVersion) {
+        ReleaseModel release = CamelReleases.forVersion(catalogService.getDefaultCatalog(), targetVersion);
+        List<Integer> jdks = CamelReleases.jdks(release);
+        if (jdks.isEmpty()) {
+            return null;
         }
-        try {
-            if (version.startsWith("1.")) {
-                return Integer.parseInt(version.substring(2));
-            }
-            return Integer.parseInt(version.split("\\.")[0]);
-        } catch (NumberFormatException e) {
-            return 0;
+        return new JavaRequirement(
+                release.getVersion(), jdks.get(0),
+                jdks.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+    }
+
+    /**
+     * @param release   the release whose data was used (the target itself, or the release of the same line)
+     * @param minimum   the oldest supported Java version
+     * @param supported the supported Java versions, e.g. "17, 21, 25"
+     */
+    private record JavaRequirement(String release, int minimum, String supported) {
+
+        String describe(String targetVersion) {
+            String source = release.equals(targetVersion.trim()) ? "" : " (as Camel " + release + ")";
+            return "Camel " + targetVersion.trim() + source + " requires Java " + minimum + "+ (supported: "
+                   + supported + ").";
         }
     }
 
@@ -398,9 +441,14 @@ public class MigrationTools {
             String nextStep) {
     }
 
+    /**
+     * @param requiredVersion   the oldest Java version the target Camel version supports
+     * @param supportedVersions the Java versions the target Camel version supports, e.g. "17, 21, 25"
+     */
     public record JavaCompatibility(
             String currentVersion,
             String requiredVersion,
+            String supportedVersions,
             boolean compatible) {
     }
 

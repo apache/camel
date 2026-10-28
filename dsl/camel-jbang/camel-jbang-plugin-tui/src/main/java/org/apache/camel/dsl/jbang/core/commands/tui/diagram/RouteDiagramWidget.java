@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,8 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import dev.tamboui.text.CharWidth;
+import dev.tamboui.text.GraphemeClusters;
 import dev.tamboui.widget.Widget;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
@@ -33,6 +36,8 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
+import org.apache.camel.diagram.RouteErrorFrame;
+import org.apache.camel.dsl.jbang.core.commands.tui.BodyTypes;
 import org.apache.camel.dsl.jbang.core.commands.tui.BusinessEndpointLabels;
 import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 
@@ -47,6 +52,12 @@ public class RouteDiagramWidget implements Widget {
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
     private static final int MAX_WRAP_LINES = 3;
+    /** The columns of a step at the overview density: its cell, and the room to the next branch. */
+    private static final int OVERVIEW_COLUMNS = 2;
+    /** The widest the body types beside an arrow are: the Info panel has them all. */
+    private static final int MAX_BODY_TYPES_WIDTH = 48;
+    /** The room a count at the head of an arrow takes before the body types, at most. */
+    private static final int COUNT_WIDTH = 10;
 
     // Dashed scope box characters
     private static final char SCOPE_H = '╌';
@@ -54,7 +65,7 @@ public class RouteDiagramWidget implements Widget {
 
     private final LayoutRoute layoutRoute;
     private final int nodeWidth;
-    private final int boxWidth;
+    private int boxWidth;
     private final int selectedNodeIndex;
     private final int scrollX;
     private final int scrollY;
@@ -148,10 +159,17 @@ public class RouteDiagramWidget implements Widget {
     @Override
     public void render(Rect area, Buffer buffer) {
         nodeBoxes.clear();
+        foldHits.clear();
+        arrowCells.clear();
+        arrowEnds.clear();
+
+        if (errorFrame != null) {
+            drawErrorFrame(buffer, area);
+        }
 
         // Scope boxes (behind everything)
         for (LayoutNode ln : layoutRoute.nodes) {
-            if (!"route".equals(ln.type)
+            if (density.boxed() && !"route".equals(ln.type)
                     && ln.treeNode != null && RouteDiagramLayoutEngine.hasScope(ln.treeNode)) {
                 drawScopeBox(buffer, area, ln);
             }
@@ -177,14 +195,25 @@ public class RouteDiagramWidget implements Widget {
                 continue;
             }
             if (ln.treeNode != null && ln.treeNode.table) {
-                drawTable(buffer, area, ln);
+                if (density == RouteDensity.OVERVIEW) {
+                    drawOverviewTable(buffer, area, ln);
+                } else {
+                    drawTable(buffer, area, ln);
+                }
             } else if (!"route".equals(ln.type)) {
                 drawNode(buffer, area, ln);
             }
         }
+        // the body types beside the arrows, where the boxes, the arrows and the markers leave room for them
+        for (ArrowEnd end : arrowEnds) {
+            drawBodyTypes(buffer, area, end);
+        }
         // the markers beside the boxes last, so a long one stops at a box instead of drawing over it
         for (Marker m : markers) {
             writeMarker(buffer, area, m);
+        }
+        if (errorMark) {
+            drawErrorMark(buffer, area);
         }
     }
 
@@ -194,8 +223,8 @@ public class RouteDiagramWidget implements Widget {
      */
     private String borderText(String name, boolean in) {
         String arrow = "──▶";
-        int room = boxWidth - 6 - arrow.length() - 3;
-        String n = name.length() > room ? name.substring(0, Math.max(1, room - 1)) + "…" : name;
+        int room = boxWidth - 6 - CharWidth.of(arrow) - 3;
+        String n = DiagramText.fit(name, room);
         return in ? " " + n + " " + arrow + " " : " " + arrow + " " + n + " ";
     }
 
@@ -219,19 +248,197 @@ public class RouteDiagramWidget implements Widget {
         if (y < area.top() || y >= area.bottom()) {
             return;
         }
-        for (int i = 0; i < m.text().length(); i++) {
-            int x = area.x() + m.col() - scrollX + i;
-            if (x >= area.right()) {
+        // a character at a time, by the columns it takes: an emoji or a CJK character two, and all the code points of
+        // an emoji (a ZWJ sequence, a flag) or of a letter with a combining mark go together
+        String text = m.text();
+        int offset = 0;
+        for (int i = 0; i < text.length();) {
+            int end = GraphemeClusters.clusterEnd(text, i);
+            int width = Math.max(1, CharWidth.of(text.substring(i, end)));
+            int x = area.x() + m.col() - scrollX + offset;
+            if (x + width > area.right()) {
                 return;
             }
-            if (x < area.left()) {
-                continue;
+            if (x >= area.left()) {
+                if (inBox(m.row(), m.col() + offset) || width > 1 && inBox(m.row(), m.col() + offset + 1)) {
+                    // lines may be crossed, another box not
+                    return;
+                }
+                buffer.setString(x, y, text.substring(i, end), m.style());
             }
-            if (inBox(m.row(), m.col() + i)) {
-                // lines may be crossed, another box not
+            offset += width;
+            i = end;
+        }
+    }
+
+    private RouteErrorFrame errorFrame;
+    private boolean errorMark;
+    private RouteDensity density = RouteDensity.DETAILED;
+    private Map<String, Integer> foldedSteps = Map.of();
+
+    /** How much room a step takes: the layout must have been placed with the same density. */
+    public RouteDiagramWidget withDensity(RouteDensity density) {
+        this.density = density != null ? density : RouteDensity.DETAILED;
+        if (this.density == RouteDensity.OVERVIEW) {
+            // a step is a cell: the branches a few columns apart
+            this.boxWidth = OVERVIEW_COLUMNS;
+        }
+        return this;
+    }
+
+    /** The folded steps, and how many steps are folded into each: a mark beside them says so. */
+    public RouteDiagramWidget withFoldedSteps(Map<String, Integer> foldedSteps) {
+        this.foldedSteps = foldedSteps != null ? foldedSteps : Map.of();
+        return this;
+    }
+
+    /** The route has error handling: a dim mark on its from box, whether the error handling is shown or not. */
+    public RouteDiagramWidget withErrorMark(boolean mark) {
+        this.errorMark = mark;
+        return this;
+    }
+
+    private boolean bodyTypes;
+    private boolean bodyKindMarks;
+    /** The cells of the arrows and their counts, which the body types beside an arrow stop at. */
+    private final Set<Long> arrowCells = new HashSet<>();
+    private final List<ArrowEnd> arrowEnds = new ArrayList<>();
+
+    /** Where an arrow goes into a step, for the body types beside it: its columns and rows, the width of its count. */
+    private record ArrowEnd(LayoutNode to, int fromCx, int fromRow, int toCx, int toTop, int countWidth) {
+    }
+
+    /**
+     * The body types each step has been reached with, across the messages (CAMEL-25750), beside the arrow into it: as
+     * much of them as there is room for, as the arrows of a branch are side by side; the Info panel has them all.
+     */
+    public RouteDiagramWidget withBodyTypes(boolean show) {
+        this.bodyTypes = show;
+        return this;
+    }
+
+    /**
+     * A ⚠ on the top border of a step reached with bodies of more than one kind (CAMEL-25750), which needs attention,
+     * whether the body types are shown or not.
+     */
+    public RouteDiagramWidget withBodyKindMarks(boolean marks) {
+        this.bodyKindMarks = marks;
+        return this;
+    }
+
+    private void addArrowEnd(LayoutNode to, int fromCx, int fromRow, int toCx, int toTop, int countWidth) {
+        if (bodyTypes && to.treeNode != null && !to.treeNode.info.bodyTypes.isEmpty()) {
+            arrowEnds.add(new ArrowEnd(to, fromCx, fromRow, toCx, toTop, countWidth));
+        }
+    }
+
+    /**
+     * The body types beside the arrow into a step: on its shaft above the head, or after the count at the head where
+     * the arrow bends right above it (a branch); cut to the room before the next box, arrow or marker.
+     */
+    private void drawBodyTypes(Buffer buffer, Rect area, ArrowEnd end) {
+        int shaftTop = end.fromCx() == end.toCx() ? end.fromRow() : end.fromRow() + (end.toTop() - end.fromRow()) / 2 + 1;
+        int row = end.toTop() - 2;
+        int col = end.toCx() + 2;
+        if (row < shaftTop) {
+            row = end.toTop() - 1;
+            col += end.countWidth() > 0 ? end.countWidth() + 2 : 0;
+        }
+        var info = end.to().treeNode.info;
+        String text = BodyTypes.fit(info.bodyTypes, info.bodyKinds, room(row, col));
+        if (!text.isEmpty()) {
+            writeText(buffer, area, row, col, text, BodyTypes.style(info.bodyKinds));
+        }
+    }
+
+    /**
+     * The columns free on the row from the column, two left blank before a box, an arrow or a marker so the types do
+     * not read as part of it.
+     */
+    private int room(int row, int col) {
+        for (int c = col; c < col + MAX_BODY_TYPES_WIDTH; c++) {
+            if (arrowCells.contains(cell(row, c)) || inBox(row, c) || markerAt(row, c)) {
+                return Math.max(0, c - col - 2);
+            }
+        }
+        return MAX_BODY_TYPES_WIDTH;
+    }
+
+    private boolean markerAt(int row, int col) {
+        for (Marker m : markers) {
+            if (m.row() == row && col >= m.col() && col < m.col() + CharWidth.of(m.text())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static long cell(int row, int col) {
+        return ((long) row << 32) | (col & 0xffffffffL);
+    }
+
+    /** A cell of an arrow or of its count: the body types beside another arrow stop there. */
+    private void occupy(int row, int col, int width) {
+        if (bodyTypes) {
+            for (int c = col; c < col + width; c++) {
+                arrowCells.add(cell(row, c));
+            }
+        }
+    }
+
+    /** The mark on the top border of the from box, at its right end (the route has error handling). */
+    private void drawErrorMark(Buffer buffer, Rect area) {
+        if (density == RouteDensity.OVERVIEW) {
+            // a cell has no room for it
+            return;
+        }
+        for (EipNodeBox box : density.boxed() ? List.<EipNodeBox> of() : nodeBoxes) {
+            if ("from".equals(box.type())) {
+                // after the text of a bare from
+                writeText(buffer, area, box.startRow(), box.endCol() + 2, "\u26a1", Theme.warning().dim());
                 return;
             }
-            buffer.setString(x, y, String.valueOf(m.text().charAt(i)), m.style());
+        }
+        for (LayoutNode ln : layoutRoute.nodes) {
+            if (density.boxed() && "from".equals(ln.type)) {
+                int col = toCol(ln.x) + boxWidth - 3;
+                writeText(buffer, area, toRow(ln.y), col, "\u26a1",
+                        org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning().dim());
+                return;
+            }
+        }
+    }
+
+    /**
+     * The error handling of the route, in a frame below its happy path (its onException blocks are laid out in it).
+     */
+    public RouteDiagramWidget withErrorFrame(RouteErrorFrame frame) {
+        this.errorFrame = frame;
+        return this;
+    }
+
+    private void drawErrorFrame(Buffer buffer, Rect area) {
+        int top = toRow(errorFrame.topY());
+        int bottom = toRow(errorFrame.bottomY());
+        int right = getTotalCols() - 2;
+        Style s = org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning().dim();
+        for (int c = 1; c < right; c++) {
+            setChar(buffer, area, top, c, SCOPE_H, s);
+            setChar(buffer, area, bottom, c, SCOPE_H, s);
+        }
+        for (int r = top + 1; r < bottom; r++) {
+            setChar(buffer, area, r, 0, SCOPE_V, s);
+            setChar(buffer, area, r, right, SCOPE_V, s);
+        }
+        setChar(buffer, area, top, 0, '\u256d', s);
+        setChar(buffer, area, top, right, '\u256e', s);
+        setChar(buffer, area, bottom, 0, '\u2570', s);
+        setChar(buffer, area, bottom, right, '\u256f', s);
+        writeText(buffer, area, top, 2, " Error handling ",
+                org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning().bold());
+        int row = top + 1;
+        for (String line : errorFrame.lines()) {
+            writeText(buffer, area, row++, 2, line, org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning());
         }
     }
 
@@ -240,14 +447,37 @@ public class RouteDiagramWidget implements Widget {
     }
 
     public int getTotalCols() {
-        return toCol(layoutRoute.maxX + PADDING) + boxWidth + 4;
+        int cols = toCol(layoutRoute.maxX + PADDING) + boxWidth + 4;
+        if (errorFrame != null) {
+            for (String line : errorFrame.lines()) {
+                cols = Math.max(cols, CharWidth.of(line) + 6);
+            }
+        }
+        if (bodyTypes) {
+            // the body types beside the arrows can be scrolled to: as wide as they are before something cuts them
+            for (LayoutNode ln : layoutRoute.nodes) {
+                if (!ln.tableRow && ln.treeNode != null && !ln.treeNode.info.bodyTypes.isEmpty()) {
+                    int label = CharWidth.of(BodyTypes.label(ln.treeNode.info.bodyTypes, ln.treeNode.info.bodyKinds));
+                    cols = Math.max(cols, centerCol(ln) + 2 + COUNT_WIDTH + Math.min(MAX_BODY_TYPES_WIDTH, label) + 2);
+                }
+            }
+        }
+        return cols;
     }
 
     private void drawNode(Buffer buffer, Rect area, LayoutNode node) {
+        if (density == RouteDensity.OVERVIEW) {
+            drawOverviewNode(buffer, area, node);
+            return;
+        }
+        if (!density.boxed()) {
+            drawBareNode(buffer, area, node);
+            return;
+        }
         int col = toCol(node.x);
         int row = toRow(node.y);
         int innerWidth = boxWidth - 4;
-        List<String> lines = rewrapText(node, innerWidth);
+        List<String> lines = density == RouteDensity.COMPACT ? List.of(labelText(node)) : rewrapText(node, innerWidth);
         int height = 2 + lines.size();
 
         int nodeIdx = nodeBoxes.size();
@@ -267,8 +497,9 @@ public class RouteDiagramWidget implements Widget {
             borderStyle = borderStyle.patch(selectionStyle());
         }
 
-        char hChar = external ? DASH_H : H;
-        char vChar = external ? DASH_V : V;
+        // a selected box has a solid frame like any other: dashes on the selection colour break up, the vertical ones most
+        char hChar = external && !selected ? DASH_H : H;
+        char vChar = external && !selected ? DASH_V : V;
 
         // Top border
         setChar(buffer, area, row, col, TL, borderStyle);
@@ -297,34 +528,32 @@ public class RouteDiagramWidget implements Widget {
             }
 
             String text = lines.get(i);
-            if (text.length() > innerWidth) {
-                text = text.substring(0, Math.max(1, innerWidth - 3)) + "...";
+            if (CharWidth.of(text) > innerWidth) {
+                text = CharWidth.substringByWidth(text, Math.max(1, innerWidth - 3)) + "...";
             }
-            int textCol = col + 2 + Math.max(0, (innerWidth - text.length()) / 2);
+            int textCol = col + 2 + Math.max(0, (innerWidth - CharWidth.of(text)) / 2);
 
             // First line: [type] tag with EIP color, rest: label text
-            if (i == 0) {
+            if (density == RouteDensity.COMPACT) {
+                writeLabel(buffer, area, r, textCol, text, eipColor, selected);
+            } else if (i == 0) {
                 writeText(buffer, area, r, textCol, text, style(Style.EMPTY.fg(eipColor).bold(), selected));
             } else {
                 writeText(buffer, area, r, textCol, text, style(fromLabelStyle(), selected));
             }
         }
 
+        if (bodyKindMarks && node.treeNode != null && BodyTypes.mixed(node.treeNode.info.bodyKinds)) {
+            // bodies of more than one kind reach the step: it needs attention
+            writeText(buffer, area, row, col + boxWidth - 3, BodyTypes.MARK, Theme.warning());
+        }
+
         // Link indicator for nodes that connect to other routes
         String linkedRouteId = findLinkedRouteId(node);
         if (linkedRouteId != null) {
-            Style linkStyle = Theme.label().bold();
-            String name = linkedRouteId;
-            if (showDescription && "from".equals(node.type)) {
-                // a from box names its caller in words; a to box already shows the route it links to in words, so
-                // its marker names the route by id, as the breadcrumb does
-                String desc = routeDescriptions.get(linkedRouteId);
-                if (desc != null && !desc.isBlank()) {
-                    name = desc;
-                }
-            }
-            markers.add(new Marker(bottom, col + boxWidth, " ↵ " + name, linkStyle));
+            markers.add(new Marker(bottom, col + boxWidth, " ↵ " + linkName(node, linkedRouteId), Theme.label().bold()));
         }
+        addFoldedMarker(node, row, col + boxWidth);
         // where the input comes from and where a message leaves, set in the border so every box keeps its size:
         // in at the top left (AMQP ──▶), out at the bottom right (──▶ AMQP)
         if ("from".equals(node.type) && !external && node.treeNode != null && isScheduled(node.treeNode.info)) {
@@ -339,7 +568,7 @@ public class RouteDiagramWidget implements Widget {
             } else if (system != null && linkedRouteId == null) {
                 // no route of the integration on the other side: the message leaves to a system
                 String out = borderText(system, false);
-                writeText(buffer, area, bottom, col + boxWidth - 1 - out.length(), out, edgeStyle);
+                writeText(buffer, area, bottom, col + boxWidth - 1 - CharWidth.of(out), out, edgeStyle);
             }
         }
 
@@ -362,11 +591,14 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed, external, bothHighlighted);
-        drawCounters(buffer, area, toCx, toTop, stat);
+        if (density != RouteDensity.OVERVIEW) {
+            // the steps of the overview are next to each other: no room for a count
+            addArrowEnd(to, fromCx, fromBottom, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
+        }
     }
 
     private void drawMergeArrow(Buffer buffer, Rect area, LayoutNode to) {
-        int fromCx = toCol(to.mergeCx);
+        int fromCx = !density.boxed() && to.parentNode != null ? centerCol(to.parentNode) : toCol(to.mergeCx);
         int fromRow = toRow(to.mergeY);
         int toCx = centerCol(to);
         int toTop = getTopRow(to);
@@ -379,7 +611,9 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed, false, highlighted);
-        drawCounters(buffer, area, toCx, toTop, stat);
+        if (density != RouteDensity.OVERVIEW) {
+            addArrowEnd(to, fromCx, fromRow, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
+        }
     }
 
     private void drawArrowPath(
@@ -404,48 +638,106 @@ public class RouteDiagramWidget implements Widget {
 
         if (fromCx == toCx) {
             for (int r = fromRow; r < toRow - 1; r++) {
-                setChar(buffer, area, r, fromCx, vChar, edgeStyle);
+                arrowChar(buffer, area, r, fromCx, vChar, edgeStyle);
             }
-            setChar(buffer, area, toRow - 1, toCx, ARROW, edgeStyle);
+            if (density.boxed()) {
+                arrowChar(buffer, area, toRow - 1, toCx, ARROW, edgeStyle);
+            } else {
+                // a branch straight below: through the line to the other branches
+                joinChar(buffer, area, toRow - 1, toCx, vChar, edgeStyle);
+            }
         } else {
             int midRow = fromRow + (toRow - fromRow) / 2;
 
             for (int r = fromRow; r < midRow; r++) {
-                setChar(buffer, area, r, fromCx, vChar, edgeStyle);
+                arrowChar(buffer, area, r, fromCx, vChar, edgeStyle);
             }
 
             int minC = Math.min(fromCx, toCx);
             int maxC = Math.max(fromCx, toCx);
-            for (int c = minC; c <= maxC; c++) {
-                setChar(buffer, area, midRow, c, hChar, edgeStyle);
+            if (density == RouteDensity.DETAILED) {
+                for (int c = minC; c <= maxC; c++) {
+                    arrowChar(buffer, area, midRow, c, hChar, edgeStyle);
+                }
+                arrowChar(buffer, area, midRow, fromCx, T_UP, edgeStyle);
+                arrowChar(buffer, area, midRow, toCx, T_DOWN, edgeStyle);
+            } else {
+                // the heads of the branches are on this row too: an arrow joins the lines already there
+                for (int c = minC; c <= maxC; c++) {
+                    if (c != toCx) {
+                        joinChar(buffer, area, midRow, c, hChar, edgeStyle);
+                    }
+                }
+                joinChar(buffer, area, midRow, fromCx, T_UP, edgeStyle);
+                joinChar(buffer, area, midRow, toCx, toCx > fromCx ? TR : TL, edgeStyle);
             }
-
-            setChar(buffer, area, midRow, fromCx, T_UP, edgeStyle);
-            setChar(buffer, area, midRow, toCx, T_DOWN, edgeStyle);
 
             for (int r = midRow + 1; r < toRow - 1; r++) {
-                setChar(buffer, area, r, toCx, vChar, edgeStyle);
+                arrowChar(buffer, area, r, toCx, vChar, edgeStyle);
             }
-            setChar(buffer, area, toRow - 1, toCx, ARROW, edgeStyle);
+            if (density.boxed()) {
+                arrowChar(buffer, area, toRow - 1, toCx, ARROW, edgeStyle);
+            } else if (toRow - 1 > midRow) {
+                arrowChar(buffer, area, toRow - 1, toCx, vChar, edgeStyle);
+            }
         }
     }
 
-    private void drawCounters(Buffer buffer, Rect area, int toCx, int toTop, StatInfo stat) {
-        if (!showMetrics || stat == null) {
+    /**
+     * Draws a line character where the lines of other arrows may be: a junction, a corner turned into a junction, a
+     * head and a count stay.
+     */
+    private void joinChar(Buffer buffer, Rect area, int row, int col, char ch, Style style) {
+        int x = area.x() + col - scrollX;
+        int y = area.y() + row - scrollY;
+        if (x < area.left() || x >= area.right() || y < area.top() || y >= area.bottom()) {
             return;
+        }
+        String existing = buffer.get(x, y).symbol();
+        char e = existing.length() == 1 ? existing.charAt(0) : ' ';
+        char joined = ch;
+        if (Character.isDigit(e) || e == ARROW || e == CROSS) {
+            joined = e;
+        } else if (ch == H || ch == DASH_H) {
+            joined = e == TL || e == TR ? T_DOWN : e == T_DOWN || e == T_UP ? e : ch;
+        } else if (ch == V || ch == DASH_V) {
+            joined = e == H || e == DASH_H || e == T_UP || e == T_DOWN ? CROSS : ch;
+        } else if (ch == T_UP) {
+            joined = e == T_DOWN || e == V || e == DASH_V ? CROSS : T_UP;
+        } else if (ch == TL || ch == TR) {
+            joined = e == H || e == DASH_H || e == T_DOWN || (e == TL || e == TR) && e != ch ? T_DOWN
+                    : e == T_UP ? CROSS : ch;
+        }
+        arrowChar(buffer, area, row, col, joined, style);
+    }
+
+    private void arrowChar(Buffer buffer, Rect area, int row, int col, char ch, Style style) {
+        setChar(buffer, area, row, col, ch, style);
+        occupy(row, col, 1);
+    }
+
+    /** The counts at the head of an arrow, failed left of it and ok right of it; returns the width of the ok count. */
+    private int drawCounters(Buffer buffer, Rect area, int toCx, int toTop, StatInfo stat) {
+        if (!showMetrics || stat == null) {
+            return 0;
         }
         long total = stat.exchangesTotal;
         long failed = stat.exchangesFailed;
         long ok = total - failed;
+        int okWidth = 0;
         if (ok > 0) {
             String okStr = String.valueOf(ok);
             writeText(buffer, area, toTop - 1, toCx + 2, okStr, metricsOkStyle());
+            okWidth = okStr.length();
+            occupy(toTop - 1, toCx + 2, okWidth);
         }
         if (failed > 0) {
             String failStr = String.valueOf(failed);
             int col = toCx - 1 - failStr.length();
             writeText(buffer, area, toTop - 1, col, failStr, metricsFailStyle());
+            occupy(toTop - 1, col, failStr.length());
         }
+        return okWidth;
     }
 
     private void drawScopeBox(Buffer buffer, Rect area, LayoutNode scopeNode) {
@@ -461,6 +753,11 @@ public class RouteDiagramWidget implements Widget {
         int row1 = toRow(bounds.minY - SCOPE_BOX_PAD);
         int col2 = toCol(bounds.maxX + SCOPE_BOX_PAD);
         int row2 = toRow(bounds.maxY + SCOPE_BOX_PAD);
+        if (density == RouteDensity.COMPACT) {
+            // a row above the block and a row below it
+            row1 = toRow(scopeNode.y) - 1;
+            row2 = toRow(density.blockBottom(tn));
+        }
 
         Color scopeColor = getEipColor(scopeNode.type);
         Style scopeStyle = Style.EMPTY.fg(scopeColor).dim();
@@ -487,21 +784,32 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private int getTopRow(LayoutNode node) {
-        if (node.treeNode != null && RouteDiagramLayoutEngine.hasScope(node.treeNode)) {
-            return toRow(node.y - SCOPE_BOX_PAD);
+        if (density.boxed() && node.treeNode != null && RouteDiagramLayoutEngine.hasScope(node.treeNode)) {
+            return density == RouteDensity.COMPACT ? toRow(node.y) - 1 : toRow(node.y - SCOPE_BOX_PAD);
         }
         return toRow(node.y);
     }
 
     private int centerCol(LayoutNode node) {
+        if (!density.boxed() && node.width == 0) {
+            // a bare step: its mark, at the left
+            return toCol(node.x) + 1;
+        }
         return toCol(node.x + (node.width > 0 ? node.width : nodeWidth) / 2);
     }
 
     private int boxHeight(LayoutNode node) {
+        if (density == RouteDensity.OVERVIEW) {
+            return 1;
+        }
         if (node.treeNode != null && node.treeNode.table) {
             return 2 + tableVisibleRows(node.treeNode.children.size());
         }
-        return 2 + rewrapText(node, boxWidth - 4).size();
+        return switch (density) {
+            case BARE -> 1;
+            case COMPACT -> 3;
+            default -> 2 + rewrapText(node, boxWidth - 4).size();
+        };
     }
 
     /** The rows a table shows: its cases up to the limit, and a line that says there are more. */
@@ -552,8 +860,8 @@ public class RouteDiagramWidget implements Widget {
             }
         }
         String header = " " + tableHeader(table) + " ";
-        if (header.length() > width - 4) {
-            header = header.substring(0, Math.max(1, width - 5)) + "… ";
+        if (CharWidth.of(header) > width - 4) {
+            header = DiagramText.fit(header, Math.max(1, width - 5)) + " ";
         }
         writeText(buffer, area, row, col + 2, header, style(Style.EMPTY.fg(eipColor).bold(), selected));
         // the table itself: its top border, so a click on a row selects the row
@@ -562,7 +870,7 @@ public class RouteDiagramWidget implements Widget {
         int inner = width - 4;
         int valueWidth = 4;
         for (TreeNode r : rows) {
-            valueWidth = Math.max(valueWidth, caseValue(r).length());
+            valueWidth = Math.max(valueWidth, CharWidth.of(caseValue(r)));
         }
         valueWidth = Math.min(valueWidth, Math.max(4, inner / 3));
         for (int i = 0; i < rows.size(); i++) {
@@ -585,14 +893,10 @@ public class RouteDiagramWidget implements Widget {
             String link = findLinkedRouteId(rowNode) != null ? "↵ " : "";
             String target = withoutOptions(caseTarget(rows.get(i)));
             String value = caseValue(rows.get(i));
-            if (value.length() > valueWidth) {
-                value = value.substring(0, Math.max(1, valueWidth - 1)) + "…";
-            }
+            value = DiagramText.fit(value, valueWidth);
             String tail = link + count;
-            int targetRoom = Math.max(1, inner - valueWidth - 3 - tail.length() - 1);
-            if (target.length() > targetRoom) {
-                target = target.substring(0, Math.max(1, targetRoom - 1)) + "…";
-            }
+            int targetRoom = Math.max(1, inner - valueWidth - 3 - CharWidth.of(tail) - 1);
+            target = DiagramText.fit(target, targetRoom);
 
             Style base = rowSelected ? selectionStyle() : Style.EMPTY;
             for (int c = col + 1; c < right; c++) {
@@ -604,12 +908,12 @@ public class RouteDiagramWidget implements Widget {
             // idle when its counter says so; a row without one (no statistics) is not dimmed
             boolean idle = stat != null && total == 0 && !highlighted;
             Style targetStyle = idle ? Theme.muted() : fromLabelStyle();
-            writeText(buffer, area, r, col + 2, String.format("%-" + valueWidth + "s", value),
+            writeText(buffer, area, r, col + 2, value + " ".repeat(Math.max(0, valueWidth - CharWidth.of(value))),
                     style(valueStyle, rowSelected));
             writeText(buffer, area, r, col + 2 + valueWidth, " → ", style(Theme.muted(), rowSelected));
             writeText(buffer, area, r, col + 5 + valueWidth, target, style(targetStyle, rowSelected));
             if (!tail.isEmpty()) {
-                writeText(buffer, area, r, right - 1 - tail.length(), tail,
+                writeText(buffer, area, r, right - 1 - CharWidth.of(tail), tail,
                         style(link.isEmpty() ? metricsOkStyle() : Theme.label().bold(), rowSelected));
             }
             nodeBoxes.add(new EipNodeBox(rowNode.id, rowNode.type, r, r, col, right, rowNode));
@@ -672,6 +976,11 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private List<String> rewrapText(LayoutNode node, int maxWidth) {
+        return wrapText(labelText(node), maxWidth);
+    }
+
+    /** The text of a step on one line: its code, or in the business view its description. */
+    private String labelText(LayoutNode node) {
         String label = String.join("", node.wrappedLines);
         if (showDescription) {
             if ("from".equals(node.type) && currentRouteLabel != null) {
@@ -686,47 +995,159 @@ public class RouteDiagramWidget implements Widget {
                 }
             }
         }
-        return wrapText(label, maxWidth);
+        return label;
+    }
+
+    /** The route a link marker names: by id, or a from box's caller in words in the business view. */
+    private String linkName(LayoutNode node, String linkedRouteId) {
+        if (showDescription && "from".equals(node.type)) {
+            // a from box names its caller in words; a to box already shows the route it links to in words, so
+            // its marker names the route by id, as the breadcrumb does
+            String desc = routeDescriptions.get(linkedRouteId);
+            if (desc != null && !desc.isBlank()) {
+                return desc;
+            }
+        }
+        return linkedRouteId;
+    }
+
+    private void addFoldedMarker(LayoutNode node, int row, int col) {
+        Integer steps = node.id != null ? foldedSteps.get(node.id) : null;
+        if (steps != null) {
+            String text = " ▸ " + steps + (steps == 1 ? " step" : " steps") + " folded";
+            markers.add(new Marker(row, col, text, Theme.muted()));
+            foldHits.add(new FoldHit(node.id, row, col + 1, col + CharWidth.of(text) - 1));
+        }
+    }
+
+    /** Where a fold marker is drawn (row and columns of the diagram), for a click on it to unfold its step. */
+    public record FoldHit(String nodeId, int row, int startCol, int endCol) {
+    }
+
+    private final List<FoldHit> foldHits = new ArrayList<>();
+
+    public List<FoldHit> getFoldHits() {
+        return foldHits;
+    }
+
+    /** A text with its EIP (up to its first bracket) in the EIP's colour, and the rest as a label. */
+    private void writeLabel(Buffer buffer, Rect area, int row, int col, String text, Color eipColor, boolean selected) {
+        int open = text.indexOf('[');
+        String eip = open > 0 ? text.substring(0, open) : text;
+        writeText(buffer, area, row, col, eip, style(Style.EMPTY.fg(eipColor).bold(), selected));
+        if (open > 0) {
+            writeText(buffer, area, row, col + CharWidth.of(eip), text.substring(open), style(fromLabelStyle(), selected));
+        }
+    }
+
+    /**
+     * A step at the bare density: a mark of its kind and its text on one row, with no box; the arrows meet at the mark.
+     * Its text goes on up to half way to the next branch.
+     */
+    private void drawBareNode(Buffer buffer, Rect area, LayoutNode node) {
+        int col = toCol(node.x);
+        int row = toRow(node.y);
+        boolean selected = nodeBoxes.size() == selectedNodeIndex;
+        boolean external = isExternalEndpoint(node);
+        boolean highlighted = node.id != null && highlightNodeIds.contains(node.id);
+        Color eipColor;
+        if (highlighted) {
+            eipColor = highlightFailed ? highlightFailColor() : highlightOkColor();
+        } else {
+            eipColor = external ? externalColor() : getEipColor(node.type);
+        }
+        String text = DiagramText.fit(labelText(node), boxWidth + boxWidth / 2 - 4);
+        writeText(buffer, area, row, col + 1, bareMark(node), style(Style.EMPTY.fg(eipColor).bold(), selected));
+        if (selected) {
+            setChar(buffer, area, row, col + 2, ' ', selectionStyle());
+        }
+        writeLabel(buffer, area, row, col + 3, text, eipColor, selected);
+        int end = col + 3 + CharWidth.of(text);
+
+        String linkedRouteId = findLinkedRouteId(node);
+        if (linkedRouteId != null) {
+            String link = linkName(node, linkedRouteId);
+            markers.add(new Marker(row, end, " ↵ " + link, Theme.label().bold()));
+            end += 3 + CharWidth.of(link);
+        }
+        addFoldedMarker(node, row, end);
+        nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row, col, col + 2 + CharWidth.of(text), node));
+    }
+
+    /**
+     * A step at the overview density: a cell in the colour of its EIP, red when the step has failed, where the arrows
+     * meet; the selected step has its text beside it, so the shape of a large route shows and where you are in it.
+     */
+    private void drawOverviewNode(Buffer buffer, Rect area, LayoutNode node) {
+        int col = centerCol(node);
+        int row = toRow(node.y);
+        boolean selected = nodeBoxes.size() == selectedNodeIndex;
+        boolean highlighted = node.id != null && highlightNodeIds.contains(node.id);
+        StatInfo stat = node.treeNode != null ? node.treeNode.info.stat : null;
+        Color color;
+        if (highlighted) {
+            color = highlightFailed ? highlightFailColor() : highlightOkColor();
+        } else if (stat != null && stat.exchangesFailed > 0) {
+            color = highlightFailColor();
+        } else {
+            color = isExternalEndpoint(node) ? externalColor() : getEipColor(node.type);
+        }
+        String cell;
+        if ("from".equals(node.type)) {
+            cell = "▶";
+        } else if (node.id != null && foldedSteps.containsKey(node.id)) {
+            cell = "⊞";
+        } else if (node.treeNode != null && (node.treeNode.table || !node.treeNode.children.isEmpty())) {
+            cell = "◆";
+        } else {
+            cell = "■";
+        }
+        writeText(buffer, area, row, col, cell, style(Style.EMPTY.fg(color).bold(), selected));
+        if (selected) {
+            markers.add(new Marker(row, col + 1, " " + labelText(node), Theme.label().bold()));
+        }
+        nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row, col, col, node));
+    }
+
+    /**
+     * A Switch at the overview density: one cell, its cases steps to select in it (in the order of its rows), the one
+     * selected with its text beside the cell.
+     */
+    private void drawOverviewTable(Buffer buffer, Rect area, LayoutNode table) {
+        drawOverviewNode(buffer, area, table);
+        EipNodeBox cell = nodeBoxes.get(nodeBoxes.size() - 1);
+        for (TreeNode row : table.treeNode.children) {
+            LayoutNode rowNode = row.layoutNode;
+            if (nodeBoxes.size() == selectedNodeIndex) {
+                markers.add(new Marker(
+                        cell.startRow(), cell.startCol() + 1, " " + labelText(rowNode),
+                        Theme.label().bold()));
+            }
+            nodeBoxes.add(new EipNodeBox(
+                    rowNode.id, rowNode.type, cell.startRow(), cell.endRow(), cell.startCol(),
+                    cell.endCol(), rowNode));
+        }
+    }
+
+    /** The mark of a bare step: where the route starts, a step that branches or has steps in it, a branch, a step. */
+    private String bareMark(LayoutNode node) {
+        if ("from".equals(node.type)) {
+            return "▶";
+        }
+        if (node.id != null && foldedSteps.containsKey(node.id)) {
+            return "⊞";
+        }
+        if (node.treeNode != null && BRANCH_CHILD_TYPES.contains(node.type)) {
+            return "◇";
+        }
+        if (node.treeNode != null && !node.treeNode.children.isEmpty()) {
+            return "◆";
+        }
+        return "●";
     }
 
     static List<String> wrapText(String text, int maxWidth) {
-        if (maxWidth <= 0 || text.length() <= maxWidth) {
-            return new ArrayList<>(List.of(text));
-        }
-
-        List<String> lines = new ArrayList<>();
-        String remaining = text;
-
-        while (!remaining.isEmpty() && lines.size() < MAX_WRAP_LINES) {
-            if (remaining.length() <= maxWidth) {
-                lines.add(remaining);
-                remaining = "";
-                break;
-            }
-
-            int breakAt = -1;
-            for (int i = 0; i < maxWidth && i < remaining.length(); i++) {
-                char c = remaining.charAt(i);
-                if (c == ' ' || c == ':' || c == '/' || c == '.' || c == ',' || c == '&' || c == '?') {
-                    breakAt = i + 1;
-                }
-            }
-            if (breakAt <= 0) {
-                breakAt = maxWidth;
-            }
-
-            lines.add(remaining.substring(0, breakAt).stripTrailing());
-            remaining = remaining.substring(breakAt).stripLeading();
-        }
-
-        if (!remaining.isEmpty()) {
-            int lastIdx = lines.size() - 1;
-            String lastLine = lines.get(lastIdx);
-            String combined = lastLine + remaining;
-            lines.set(lastIdx, combined.substring(0, Math.max(1, maxWidth - 3)) + "...");
-        }
-
-        return lines;
+        return DiagramText.wrap(text, maxWidth, MAX_WRAP_LINES);
     }
 
     private void setChar(Buffer buffer, Rect area, int gridRow, int gridCol, char ch, Style style) {
@@ -738,20 +1159,7 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private void writeText(Buffer buffer, Rect area, int gridRow, int gridCol, String text, Style style) {
-        int x = area.x() + gridCol - scrollX;
-        int y = area.y() + gridRow - scrollY;
-        if (y >= area.top() && y < area.bottom() && x < area.right()) {
-            int startIdx = 0;
-            if (x < area.left()) {
-                startIdx = area.left() - x;
-                x = area.left();
-            }
-            if (startIdx < text.length()) {
-                int maxLen = area.right() - x;
-                String visible = text.substring(startIdx, Math.min(text.length(), startIdx + maxLen));
-                buffer.setString(x, y, visible, style);
-            }
-        }
+        DiagramText.write(buffer, area, area.x() + gridCol - scrollX, area.y() + gridRow - scrollY, text, style);
     }
 
     private Style style(Style base, boolean selected) {

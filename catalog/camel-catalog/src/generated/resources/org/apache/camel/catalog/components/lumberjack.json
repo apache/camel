@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-lumberjack",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "lumberjack",
     "extendsScheme": "",
     "syntax": "lumberjack:host:port",
@@ -28,6 +28,9 @@
     "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "sslContextParameters": { "index": 2, "kind": "property", "displayName": "Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "org.apache.camel.support.jsse.SSLContextParameters", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level." },
     "useGlobalSslContextParameters": { "index": 3, "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." }
+  },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "map", "list", "text", "value", "null" ], "description": "The log event: a Map of its fields, such as message, source and host, with the nested objects as Maps and the arrays as Lists. A JSON frame that is not an object gives a List, a String, a number, a boolean or null" }
   },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Network interface on which to listen for Lumberjack" },

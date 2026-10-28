@@ -70,6 +70,59 @@ class SecurityScanToolsTest {
     }
 
     @Test
+    void securityOptionMatchingIsAnchoredOnTokenBoundaries() {
+        // startTls ends in the "tls" security option but is a different option; without a token-boundary check it was
+        // reported as an insecure tls=false
+        SecurityScanTools.SecurityScanResult falsePositive = tools.camel_security_scan("""
+                - route:
+                    from:
+                      uri: smtp://mail.example.com?startTls=false
+                """, "yaml");
+        assertThat(falsePositive.findings()).noneMatch(f -> f.issue().contains("tls="));
+
+        // a boundary-delimited tls=false is still detected
+        SecurityScanTools.SecurityScanResult real = tools.camel_security_scan("""
+                - route:
+                    from:
+                      uri: netty://host:9999?tls=false
+                """, "yaml");
+        assertThat(real.findings())
+                .anyMatch(f -> f.issue().contains("tls=false") && f.category().equals("insecure:ssl"));
+    }
+
+    @Test
+    void detectsNestedSimpleExpression() {
+        // nested=true evaluates the result of the expression as another simple expression
+        SecurityScanTools.SecurityScanResult nested = tools.camel_security_scan("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            simple:
+                              expression: "${header.template}"
+                              nested: true
+                """, "yaml");
+        assertThat(nested.findings())
+                .anyMatch(f -> f.issue().contains("nested=true") && f.category().equals("insecure:dev"));
+
+        SecurityScanTools.SecurityScanResult notNested = tools.camel_security_scan("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            simple:
+                              expression: "${header.template}"
+                              nested: false
+                        - setHeader:
+                            name: isNested
+                            constant: "unnested: true"
+                """, "yaml");
+        assertThat(notNested.findings()).noneMatch(f -> f.issue().contains("nested="));
+    }
+
+    @Test
     void detectsAllowJavaSerializedObject() {
         String route = """
                 - route:

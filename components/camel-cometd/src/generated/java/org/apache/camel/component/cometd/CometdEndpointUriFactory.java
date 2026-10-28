@@ -25,8 +25,9 @@ public class CometdEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(20);
+        Set<String> props = new HashSet<>(21);
         props.add("allowedOrigins");
+        props.add("allowedTransports");
         props.add("baseResource");
         props.add("bridgeErrorHandler");
         props.add("channelName");
@@ -67,7 +68,7 @@ public class CometdEndpointUriFactory extends org.apache.camel.support.component
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, true, copy);

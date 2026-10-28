@@ -8,7 +8,24 @@
     "javaType": "org.apache.camel.component.jackson3.transform.JsonDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jackson3",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "text",
+        "pojo",
+        "null"
+      ],
+      "description": "A Json object or array as text, a JsonNode or a POJO, of the class of the X-Content-Class exchange property when set: other text, bytes, a stream, a Map or a List fail, and a null body becomes null"
+    },
+    "transformerOut": {
+      "carriers": [
+        "bytes"
+      ],
+      "javaType": "byte[]",
+      "format": "json"
+    }
   }
 }
 

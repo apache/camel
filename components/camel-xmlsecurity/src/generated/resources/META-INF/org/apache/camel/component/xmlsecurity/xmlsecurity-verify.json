@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "scheme": "xmlsecurity-verify",
     "extendsScheme": "",
     "syntax": "xmlsecurity-verify:name",
@@ -55,6 +55,10 @@
     "CamelXmlSignatureXAdESNamespace": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "overwrites the XAdES namespace parameter value", "constantName": "org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants#HEADER_XADES_NAMESPACE" },
     "CamelXmlSignatureXAdESPrefix": { "index": 8, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "overwrites the XAdES prefix parameter value", "constantName": "org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants#HEADER_XADES_PREFIX" },
     "CamelCharsetName": { "index": 9, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the charset", "constantName": "org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants#CHARSET_NAME" }
+  },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "xml", "description": "The signed XML document: text, bytes, a stream, a file or a DOM Document. A document without a Signature element, a body that is not XML or no body fails" },
+    "producerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "dependsOn": [ "xmlSignature2Message" ], "description": "The verified content as bytes, in the outputXmlEncoding when set: by default the document without its Signature for an enveloped or detached signature, and the content of the Object for an enveloping one, which is the plain text when it was signed with plainText; outputNodeSearchType picks another node. A signature that does not verify fails the exchange" }
   },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name part in the URI can be chosen by the user to distinguish between different verify endpoints within the camel context." },

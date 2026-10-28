@@ -49,7 +49,7 @@ public class NestedMimeMessageConsumeTest extends CamelTestSupport {
 
     @Test
     public void testNestedMultipart() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james3, james4);
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);

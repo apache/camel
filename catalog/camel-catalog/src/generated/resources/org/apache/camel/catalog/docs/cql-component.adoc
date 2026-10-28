@@ -59,12 +59,14 @@ your own Cluster instance and give it to the Camel endpoint.
 
 The Camel Cassandra endpoint expects a bunch of simple objects (`Object`
 or `Object[]` or `Collection<Object>`) which will be bound to the CQL
-statement as query parameters. If the message body is null or empty, then
-CQL query will be executed without binding parameters.
+statement as query parameters. If the message body is null, an empty array or
+an empty collection, then the CQL query will be executed without binding parameters.
+Any other body is bound as a single parameter, so a body that is left from an earlier
+step makes a query without parameters fail: clear the body first.
 
 Headers:
 
-* `CamelCqlQuery` (optional, `String` or `RegularStatement`): CQL query
+* `CamelCqlQuery` (optional, `String` or `SimpleStatement`): CQL query
 either as a plain String or built using the `QueryBuilder`.
 
 ==== Outgoing Message
@@ -74,7 +76,7 @@ objects depending on the `resultSetConversionStrategy`:
 
 * `List<Row>` if `resultSetConversionStrategy` is `ALL` or
 `LIMIT_[0-9]+`
-* Single` Row` if `resultSetConversionStrategy` is `ONE`
+* Single `Row` if `resultSetConversionStrategy` is `ONE`, or `null` when there is no row
 * Anything else, if `resultSetConversionStrategy` is a custom
 implementation of the `ResultSetConversionStrategy`
 
@@ -184,13 +186,31 @@ This could be accomplished by changing the deserializationFilter field in the re
 
 To insert something on a table, you can use the following code:
 
-._Java-only: route with CQL query string concatenation_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
 from("direct:input")
     .to("cql://localhost/camel_ks?cql=" + CQL);
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:input
+      steps:
+        - to:
+            uri: cql://localhost/camel_ks
+            parameters:
+              cql: "insert into camel_user(login, first_name, last_name) values (?, ?, ?)"
+----
+====
 
 At this point, you should be able to insert data by using a list as body
 
@@ -201,3 +221,23 @@ Arrays.asList("davsclaus", "Claus", "Ibsen");
 ----
 
 The same approach can be used for updating or querying the table.
+For example, a query with `resultSetConversionStrategy` set to `ONE` returns a single `Row`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findUser
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "${header.login}"
+        - to:
+            uri: cql://localhost/camel_ks
+            parameters:
+              cql: "select first_name, last_name from camel_user where login = ?"
+              resultSetConversionStrategy: ONE
+        - log:
+            message: "Found ${body.getString('first_name')} ${body.getString('last_name')}"
+----

@@ -66,6 +66,34 @@ In Spring the dataformat is configured first and then used in routes
 </camelContext>
 ----
 
+In the YAML DSL, the key is a bean that the data format refers to by name.
+Here the bean is a new DES key, made by a Groovy script when the application starts:
+
+[source,yaml]
+----
+- beans:
+    - name: desKey
+      type: javax.crypto.SecretKey
+      scriptLanguage: groovy
+      script: "javax.crypto.KeyGenerator.getInstance('DES').generateKey()"
+- route:
+    from:
+      uri: direct:basic-encryption
+      steps:
+        - marshal:
+            crypto:
+              algorithm: DES
+              key: desKey
+        - to:
+            uri: mock:encrypted
+        - unmarshal:
+            crypto:
+              algorithm: DES
+              key: desKey
+        - to:
+            uri: mock:unencrypted
+----
+
 
 == Specifying the Encryption Algorithm
 
@@ -87,7 +115,7 @@ from("direct:hmac-algorithm")
     .to("mock:unencrypted");
 ----
 
-A list of the available algorithms in Java 17 is available via the https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html[Java Security Standard Algorithm Names] documentation.
+A list of the available algorithms in Java 21 is available via the https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html[Java Security Standard Algorithm Names] documentation.
 
 
 == Specifying an Initialization Vector
@@ -154,6 +182,42 @@ Spring XML::
 <crypto id="inline-decrypt" algorithm="DES/CBC/PKCS5Padding" key="desKey" inline="true" />
 ----
 
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: initializationVector
+      scriptLanguage: groovy
+      script: "[0, 1, 2, 3, 4, 5, 6, 7] as byte[]"
+- dataFormats:
+    - crypto:
+        id: inline
+        algorithm: DES/CBC/PKCS5Padding
+        key: desKey
+        initVector: initializationVector
+        inline: true
+    - crypto:
+        id: inline-decrypt
+        algorithm: DES/CBC/PKCS5Padding
+        key: desKey
+        inline: true
+- route:
+    from:
+      uri: direct:inline
+      steps:
+        - marshal:
+            custom:
+              ref: inline
+        - to:
+            uri: mock:encrypted
+        - unmarshal:
+            custom:
+              ref: inline-decrypt
+        - to:
+            uri: mock:unencrypted
+----
+
 ====
 
 For more information about the use of Initialization Vectors, consult
@@ -191,6 +255,32 @@ Spring XML::
 <crypto id="hmac" algorithm="DES" key="desKey" shouldAppendHMAC="true" />
 ----
 
+YAML::
++
+[source,yaml]
+----
+- dataFormats:
+    - crypto:
+        id: hmac
+        algorithm: DES
+        key: desKey
+        shouldAppendHMAC: true
+- route:
+    from:
+      uri: direct:hmac
+      steps:
+        - marshal:
+            custom:
+              ref: hmac
+        - to:
+            uri: mock:encrypted
+        - unmarshal:
+            custom:
+              ref: hmac
+        - to:
+            uri: mock:unencrypted
+----
+
 ====
 
 By default, the HMAC is calculated using the HmacSHA1 mac algorithm, though this can be easily changed by supplying a different algorithm name. See here for how to check what algorithms are available through the configured security providers
@@ -219,6 +309,33 @@ Spring XML::
 [source,xml]
 ----
 <crypto id="hmac-algorithm" algorithm="DES" key="desKey" macAlgorithm="HmacMD5" shouldAppendHMAC="true" />
+----
+
+YAML::
++
+[source,yaml]
+----
+- dataFormats:
+    - crypto:
+        id: hmac-algorithm
+        algorithm: DES
+        key: desKey
+        macAlgorithm: HmacMD5
+        shouldAppendHMAC: true
+- route:
+    from:
+      uri: direct:hmac-algorithm
+      steps:
+        - marshal:
+            custom:
+              ref: hmac-algorithm
+        - to:
+            uri: mock:encrypted
+        - unmarshal:
+            custom:
+              ref: hmac-algorithm
+        - to:
+            uri: mock:unencrypted
 ----
 
 ====
@@ -263,6 +380,35 @@ Spring XML::
 [source,xml]
 ----
 <crypto id="nokey" algorithm="DES" />
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:key-in-header-encrypt
+      steps:
+        - marshal:
+            crypto:
+              algorithm: DES
+        # remove the key so it does not leak with the message
+        - removeHeader:
+            name: CamelCryptoKey
+        - to:
+            uri: mock:encrypted
+- route:
+    from:
+      uri: direct:key-in-header-decrypt
+      steps:
+        - unmarshal:
+            crypto:
+              algorithm: DES
+        - removeHeader:
+            name: CamelCryptoKey
+        - to:
+            uri: mock:unencrypted
 ----
 
 ====

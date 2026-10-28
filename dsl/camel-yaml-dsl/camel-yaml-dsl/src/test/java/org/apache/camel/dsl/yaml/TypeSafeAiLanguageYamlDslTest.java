@@ -20,13 +20,16 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter;
 import org.apache.camel.language.typesafeai.TypeSafeAiLanguage;
 import org.apache.camel.main.Main;
+import org.apache.camel.semantic.SemanticCapabilities;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -112,6 +115,58 @@ class TypeSafeAiLanguageYamlDslTest {
             }
             assertThat(requests).hasSize(4).allSatisfy(request -> assertThat(request)
                     .contains("Does this message request a refund?").doesNotContain("PRIVATE BODY"));
+        } finally {
+            main.stop();
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void extractedSemanticExpertLoadsAsANamedYamlBean() throws Exception {
+        var requests = new ConcurrentLinkedQueue<String>();
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/v1/systemone", http -> {
+            requests.add(new String(http.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
+            byte[] response = """
+                    {"model":"jev-1.13.0","usage":{},"answers":{
+                      "first":{"type":"noul","noul":0.9},"second":{"type":"noul","noul":0.1}}}
+                    """.getBytes(StandardCharsets.UTF_8);
+            http.sendResponseHeaders(200, response.length);
+            http.getResponseBody().write(response);
+            http.close();
+        });
+        server.start();
+        Main main = new Main();
+        try {
+            Path routes = directory.resolve("semantic-typesafe-ai.yaml");
+            Files.writeString(routes, """
+                    - beans:
+                        - name: decisions
+                          type: org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter
+                    - semantic:
+                        evaluation:
+                          first: {expert: decisions, operation: boolean, parameters: {instructions: Refund requested?}}
+                          second: {expert: decisions, operation: boolean, parameters: {instructions: Urgent?}}
+                    - from:
+                        uri: direct:semantic
+                        steps:
+                          - setBody:
+                              language:
+                                language: semantic
+                                expression: refs:first,second
+                    """);
+            main.addProperty("camel.component.typesafe-ai.api-key", "test-key");
+            main.addProperty("camel.component.typesafe-ai.base-url", "http://127.0.0.1:" + server.getAddress().getPort());
+            main.configure().withRoutesIncludePattern("file:" + routes);
+            main.start();
+            var expert = main.getCamelContext().getRegistry().lookupByNameAndType("decisions", TypeSafeAiSemanticAdapter.class);
+            assertThat(SemanticCapabilities.from(expert.getClass()).getArtifactId()).isEqualTo("camel-semantic-typesafe-ai");
+            assertThat(requests).isEmpty();
+            try (var producer = main.getCamelContext().createProducerTemplate()) {
+                assertThat(producer.requestBody("direct:semantic", "Refund", Map.class))
+                        .containsEntry("first", true).containsEntry("second", false);
+            }
+            assertThat(requests).hasSize(1);
         } finally {
             main.stop();
             server.stop(0);

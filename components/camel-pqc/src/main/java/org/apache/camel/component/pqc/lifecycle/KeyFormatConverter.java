@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.pqc.lifecycle;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+
+import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 
 /**
  * Utility class for converting PQC keys between different formats (PEM, DER, PKCS8, X509).
@@ -71,7 +76,9 @@ public class KeyFormatConverter {
 
             // Concatenate with separator for PEM
             if (format == KeyLifecycleManager.KeyFormat.PEM) {
-                return (new String(publicKeyBytes) + "\n" + new String(privateKeyBytes)).getBytes();
+                return (new String(publicKeyBytes, StandardCharsets.UTF_8) + "\n"
+                        + new String(privateKeyBytes, StandardCharsets.UTF_8))
+                        .getBytes(StandardCharsets.UTF_8);
             } else {
                 // For DER, just return private key (contains public key info)
                 return privateKeyBytes;
@@ -95,8 +102,7 @@ public class KeyFormatConverter {
         }
 
         X509EncodedKeySpec spec = new X509EncodedKeySpec(derBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
-        return keyFactory.generatePublic(spec);
+        return keyFactory(algorithm).generatePublic(spec);
     }
 
     /**
@@ -113,8 +119,45 @@ public class KeyFormatConverter {
         }
 
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(derBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
-        return keyFactory.generatePrivate(spec);
+        return keyFactory(algorithm).generatePrivate(spec);
+    }
+
+    /**
+     * Resolves the {@link KeyFactory} of an algorithm with the BouncyCastle provider that serves it, so an imported key
+     * is of the same provider as the keys this component generates and signs with. From JDK 24 the JDK itself
+     * implements ML-DSA and ML-KEM and is listed before BouncyCastle, so a plain {@code KeyFactory.getInstance} returns
+     * a JDK key, which the component's BouncyCastle {@code Signature} rejects as an unknown private key. An algorithm
+     * the component does not map, or whose provider is not installed, keeps the default lookup.
+     */
+    private static KeyFactory keyFactory(String algorithm) throws Exception {
+        String provider = bouncyCastleProviderFor(algorithm);
+        if (provider != null && Security.getProvider(provider) != null) {
+            return KeyFactory.getInstance(algorithm, provider);
+        }
+        return KeyFactory.getInstance(algorithm);
+    }
+
+    /**
+     * The BouncyCastle provider ({@code BC} or {@code BCPQC}) serving an algorithm given by the component's name
+     * ({@code MLDSA}) or by its JCE name ({@code ML-DSA}), or {@code null} for an algorithm the component does not
+     * know.
+     */
+    private static String bouncyCastleProviderFor(String algorithm) {
+        String provider = KeyAlgorithmSupport.determineProvider(algorithm);
+        if (provider != null) {
+            return provider;
+        }
+        for (PQCSignatureAlgorithms candidate : PQCSignatureAlgorithms.values()) {
+            if (candidate.getAlgorithm().equalsIgnoreCase(algorithm)) {
+                return candidate.getBcProvider();
+            }
+        }
+        for (PQCKeyEncapsulationAlgorithms candidate : PQCKeyEncapsulationAlgorithms.values()) {
+            if (candidate.getAlgorithm().equalsIgnoreCase(algorithm)) {
+                return candidate.getBcProvider();
+            }
+        }
+        return null;
     }
 
     /**
@@ -131,7 +174,7 @@ public class KeyFormatConverter {
             pem.append(base64, i, Math.min(i + 64, base64.length())).append("\n");
         }
         pem.append("-----END PUBLIC KEY-----\n");
-        return pem.toString().getBytes();
+        return pem.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -148,28 +191,46 @@ public class KeyFormatConverter {
             pem.append(base64, i, Math.min(i + 64, base64.length())).append("\n");
         }
         pem.append("-----END PRIVATE KEY-----\n");
-        return pem.toString().getBytes();
+        return pem.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * Parse PEM-encoded public key
      */
-    private static byte[] parsePEMPublicKey(byte[] pemData) throws Exception {
-        String pemString = new String(pemData);
-        pemString = pemString.replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replaceAll("\\s", "");
-        return Base64.getDecoder().decode(pemString);
+    private static byte[] parsePEMPublicKey(byte[] pemData) {
+        return parsePEMBlock(pemData, "PUBLIC KEY");
     }
 
     /**
      * Parse PEM-encoded private key
      */
-    private static byte[] parsePEMPrivateKey(byte[] pemData) throws Exception {
-        String pemString = new String(pemData);
-        pemString = pemString.replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                .replaceAll("\\s", "");
-        return Base64.getDecoder().decode(pemString);
+    private static byte[] parsePEMPrivateKey(byte[] pemData) {
+        return parsePEMBlock(pemData, "PRIVATE KEY");
+    }
+
+    /**
+     * Extracts the body of one labelled PEM block.
+     * <p/>
+     * The block is located by its BEGIN and END lines rather than by stripping those lines out of the whole input, so
+     * that a document holding more than one block - as {@link #exportKeyPair} produces for a key pair including the
+     * private key - yields the requested block instead of a Base64 string still carrying the armour of the other one.
+     */
+    private static byte[] parsePEMBlock(byte[] pemData, String label) {
+        String pem = new String(pemData, StandardCharsets.UTF_8);
+        String begin = "-----BEGIN " + label + "-----";
+        String end = "-----END " + label + "-----";
+
+        int from = pem.indexOf(begin);
+        if (from < 0) {
+            throw new IllegalArgumentException("PEM data holds no '" + begin + "' line");
+        }
+        from += begin.length();
+
+        int to = pem.indexOf(end, from);
+        if (to < 0) {
+            throw new IllegalArgumentException("PEM data holds no '" + end + "' line");
+        }
+
+        return Base64.getDecoder().decode(pem.substring(from, to).replaceAll("\\s", ""));
     }
 }

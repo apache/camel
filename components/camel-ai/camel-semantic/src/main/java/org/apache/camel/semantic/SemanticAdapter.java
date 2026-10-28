@@ -22,26 +22,51 @@ import java.util.Map;
 /**
  * Provider-independent semantic evaluation. Implementations must support concurrent calls, bound evaluation time and
  * resource use, honor interruption, and release outstanding work on shutdown. Exceptions must not expose state or
- * credentials. Validation must not perform inference. Provider configuration belongs to the provider component.
+ * credentials. Validation must not perform inference or contact external services. Provider configuration belongs to
+ * the provider component.
  *
- * Adapters created by the language receive the Camel context when CamelContextAware and are managed when Service.
- * Referenced registry beans retain their existing lifecycle owner.
+ * Experts are explicit registry beans and retain their registry or application lifecycle owner. The semantic language
+ * does not instantiate, discover or manage provider services.
  */
 public interface SemanticAdapter {
-    /** Reject unsupported question kinds, criteria, decision policies or input selectors before traffic starts. */
-    void validate(SemanticQuestion question);
+    /**
+     * Configured maximum bytes per image before base64 encoding, or zero when no limit is advertised. Tooling uses this
+     * value before reading local files; image experts must also enforce it before inference. Inspection must not
+     * contact services. This is instance configuration, separate from the static operation contract.
+     */
+    default int getMaxImageBytes() {
+        return 0;
+    }
 
-    /** Synchronous, potentially blocking evaluation. Operational errors must be thrown, never returned as decisions. */
-    SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception;
+    /** Reject unsupported evaluation kinds, criteria, decision policies or input selectors before traffic starts. */
+    void validate(SemanticEvaluation evaluation);
+
+    /** Validate message-dependent requirements before any operation in a batch performs inference. */
+    default void validateInput(SemanticEvaluation evaluation, Object state) {
+    }
 
     /**
-     * Evaluate named questions against the same selected state, returning exactly one result per name. The default
-     * implementation calls the single-question method sequentially; providers may override it to use one request.
-     * Operational errors must be thrown, never returned as partial results. The language applies each decision policy.
+     * Validate requirements shared by all operations against the selected state. The language calls this once per
+     * expert group, after its per-evaluation input checks and before any expert performs inference. Use this hook for
+     * expensive checks independent of the question, such as validating image encoding. It must not contact services.
+     * Providers must also validate requests made through direct evaluate/evaluateBatch calls.
      */
-    default Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state) throws Exception {
+    default void validateState(Object state) {
+    }
+
+    /** Synchronous, potentially blocking evaluation. Operational errors must be thrown, never returned as decisions. */
+    SemanticResult evaluate(SemanticEvaluation evaluation, Object state) throws Exception;
+
+    /**
+     * Evaluate named evaluations against the same selected state, returning exactly one result per name. The default
+     * implementation calls the single-evaluation method sequentially; providers may override it to use one request.
+     * Operational errors must be thrown, never returned as partial results. The expert applies any requested decision
+     * policy exactly once.
+     */
+    default Map<String, SemanticResult> evaluateBatch(Map<String, SemanticEvaluation> evaluations, Object state)
+            throws Exception {
         Map<String, SemanticResult> results = new LinkedHashMap<>();
-        for (var entry : questions.entrySet()) {
+        for (var entry : evaluations.entrySet()) {
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException("Semantic batch evaluation interrupted");
             }

@@ -283,7 +283,8 @@ class ListVaultTest extends ProcessCommandTestSupport {
 
     private static JsonObject configMapVault(String... configMaps) {
         JsonObject vault = vault(null);
-        vault.put("configmap", secretArray(configMaps));
+        // the kubernetes-configmaps dev console lists the config maps under "configmaps"
+        vault.put("configmaps", secretArray(configMaps));
         return vault;
     }
 

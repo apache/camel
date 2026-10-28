@@ -43,6 +43,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
@@ -299,6 +300,24 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                 "oauth2BodyAuthentication",
                 boolean.class,
                 configDefaults.isOauth2BodyAuthentication());
+        // not removed from the parameters, so the endpoint gets the option too
+        OAuth2CachedTokensKeyResolver cachedTokensKeyResolver = null;
+        Object resolver = parameters.get("oauth2CachedTokensKeyResolver");
+        if (resolver instanceof OAuth2CachedTokensKeyResolver r) {
+            cachedTokensKeyResolver = r;
+        } else if (resolver != null) {
+            cachedTokensKeyResolver = EndpointHelper.resolveReferenceParameter(
+                    getCamelContext(), resolver.toString(), OAuth2CachedTokensKeyResolver.class);
+            // bind the same instance on the endpoint rather than resolving the reference again
+            parameters.put("oauth2CachedTokensKeyResolver", cachedTokensKeyResolver);
+        }
+        if (cachedTokensKeyResolver == null) {
+            cachedTokensKeyResolver = getParameter(
+                    parameters,
+                    "oauth2CachedTokensKey",
+                    OAuth2CachedTokensKey.class,
+                    OAuth2CachedTokensKey.HOST_ONLY);
+        }
         if (clientId != null && clientSecret != null && tokenEndpoint != null) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new OAuth2ClientConfigurer(
@@ -311,7 +330,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             cachedTokensDefaultExpirySeconds,
                             cachedTokensExpirationMarginSeconds,
                             useBodyAuthentication,
-                            targetUri));
+                            targetUri,
+                            cachedTokensKeyResolver));
         }
         return configurer;
     }

@@ -480,11 +480,20 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
                 child.put("ref", ref);
             } else if (prop.has("type")) {
                 String type = prop.get("type").asText();
+                List<String> multiEnum = prop.has("pattern")
+                        ? GenerateYamlSchemaMojo.multiEnumValues(prop.get("pattern").asText()) : null;
                 if (prop.has("enum")) {
                     child.put("type", "enum");
                     ArrayNode enumValues = mapper.createArrayNode();
                     prop.get("enum").forEach(e -> enumValues.add(e.asText()));
                     child.set("enum", enumValues);
+                } else if (multiEnum != null) {
+                    // several of the enum values, separated by comma: the schema has a pattern of them
+                    child.put("type", "enum");
+                    ArrayNode enumValues = mapper.createArrayNode();
+                    multiEnum.forEach(enumValues::add);
+                    child.set("enum", enumValues);
+                    child.put("multiEnum", true);
                 } else {
                     child.put("type", type);
                 }
@@ -546,6 +555,10 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
                     ArrayNode enumValues = mapper.createArrayNode();
                     catalogOpt.getEnums().forEach(enumValues::add);
                     child.set("enum", enumValues);
+                    if (catalogOpt.isMultiEnum()) {
+                        // several of the values, separated by comma
+                        child.put("multiEnum", true);
+                    }
                 }
             }
 

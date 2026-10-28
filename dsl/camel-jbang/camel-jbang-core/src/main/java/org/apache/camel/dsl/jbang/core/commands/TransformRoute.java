@@ -19,8 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,6 +30,8 @@ import java.util.List;
 import java.util.Stack;
 
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.IOHelper;
@@ -76,7 +80,7 @@ public class TransformRoute extends CamelCommand {
                         description = "Whether to resolve property placeholders in the dumped output")
     boolean resolvePlaceholders;
 
-    @CommandLine.Option(names = { "--uri-as-parameters" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--uri-as-parameters" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
     boolean uriAsParameters = true;
 
@@ -107,6 +111,9 @@ public class TransformRoute extends CamelCommand {
             }
         }
 
+        if (!"xml".equals(format) && !"yaml".equals(format) && !"java".equals(format)) {
+            throw CliException.usage("--format must be xml, yaml or java, was: " + format);
+        }
         if ("java".equals(format)) {
             return transformToJava();
         }
@@ -150,7 +157,15 @@ public class TransformRoute extends CamelCommand {
         run.files = files;
         run.executionLimitOptions.maxSeconds = 1;
         run.mavenResolver = mavenResolver;
-        Integer exit = run.runTransform(ignoreLoadingError);
+        Integer exit;
+        try {
+            exit = run.runTransform(ignoreLoadingError);
+        } catch (CliException | NoSuchFileException | FileNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            // a route that cannot be read, such as invalid YAML (the message says where): not a bug of the CLI
+            throw new CliException(CliExitCode.FAILURE, "Cannot transform the routes: " + e.getMessage(), e);
+        }
         if (exit != null && exit != 0) {
             return exit;
         }

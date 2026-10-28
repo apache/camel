@@ -89,15 +89,23 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        PGReplicationStream stream = getStream();
-
-        // If the stream is null, this means the slot is active, i.e. used by another connection. We'll try
-        // again on the next poll.
-        if (stream == null) {
-            return 0;
-        }
+        PGReplicationStream stream;
 
         try {
+            // The connection was lost in an earlier poll (or connecting again failed): connect again.
+            if (this.connection == null) {
+                LOG.debug("Connecting to PostgreSQL server again.");
+                this.connect();
+            }
+
+            stream = getStream();
+
+            // If the stream is null, this means the slot is active, i.e. used by another connection. We'll try
+            // again on the next poll.
+            if (stream == null) {
+                return 0;
+            }
+
             // The same payload will be sent again and again until the processing is completed successfully.
             // We should not read another payload before that to guarantee the order of processing.
             if (this.payload == null) {
@@ -115,11 +123,17 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
                 System.arraycopy(source, offset, this.payload, 0, length);
             }
         } catch (SQLException e) {
-            // If the cause of the exception is that connection is lost, we'll try to reconnect so in the next poll a
-            // new connection will be available.
-            if (e.getCause() instanceof SocketException) {
-                LOG.info("Connection to PosgreSQL server has been lost, trying to reconnect.");
-                this.connect();
+            // If the connection is lost, we drop it so that the next poll connects again. A connection is lost when
+            // the server went away (the driver reports the I/O error of the socket, SQL state class 08, also when
+            // the server closed the connection) or shut the session down (SQL state class 57P, e.g. a server that
+            // is restarted), and when the driver closed the connection.
+            if (isConnectionLost(e)) {
+                if (this.disconnect()) {
+                    LOG.info("Connection to PostgreSQL server has been lost, will connect again at the next poll: {}",
+                            e.getMessage());
+                } else {
+                    LOG.debug("Not connected to PostgreSQL server, will connect again at the next poll: {}", e.getMessage());
+                }
             }
             throw e;
         }
@@ -249,17 +263,57 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
         return false;
     }
 
-    private void connect() throws SQLException {
-        if (this.connection != null) {
-            this.connection.close();
+    private boolean isConnectionLost(SQLException e) {
+        String state = e.getSQLState();
+        if (e.getCause() instanceof SocketException
+                || (state != null && (state.startsWith("08") || state.startsWith("57P")))) {
+            return true;
         }
+        try {
+            return this.connection == null || this.connection.isClosed();
+        } catch (SQLException ex) {
+            return true;
+        }
+    }
+
+    /**
+     * Closes the connection, if any, and forgets it and its stream. The payload that was read but not processed
+     * successfully is forgotten too: it was not flushed, so the server sends it again on the next connection (the
+     * stream starts at the slot's confirmed flush position).
+     *
+     * @return true if there was a connection to close
+     */
+    private boolean disconnect() {
+        Connection previous = this.connection;
+        this.connection = null;
+        this.pgConnection = null;
+        this.replicationStream = null;
+        this.payload = null;
+        if (previous == null) {
+            return false;
+        }
+        try {
+            previous.close();
+        } catch (SQLException e) {
+            LOG.debug("Error closing the lost connection to PostgreSQL server. This exception is ignored.", e);
+        }
+        return true;
+    }
+
+    private void connect() throws SQLException {
+        disconnect();
 
         this.connection = this.endpoint.newDbConnection();
-        this.pgConnection = this.connection.unwrap(PGConnection.class);
-        this.replicationStream = null;
+        try {
+            this.pgConnection = this.connection.unwrap(PGConnection.class);
 
-        if (Boolean.TRUE.equals(this.endpoint.getAutoCreateSlot()) && !this.isSlotCreated()) {
-            this.createSlot();
+            if (Boolean.TRUE.equals(this.endpoint.getAutoCreateSlot()) && !this.isSlotCreated()) {
+                this.createSlot();
+            }
+        } catch (SQLException | RuntimeException e) {
+            // leave no half-set-up connection behind, so that the next attempt starts from the beginning
+            disconnect();
+            throw e;
         }
     }
 }

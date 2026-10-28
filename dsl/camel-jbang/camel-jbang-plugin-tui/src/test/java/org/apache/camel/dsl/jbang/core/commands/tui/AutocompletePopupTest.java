@@ -27,6 +27,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AutocompletePopupTest {
 
+    // a family: three emoji joined by ZWJs, eight chars that take two columns
+    private static final String FAMILY = "👨\u200D👩\u200D👧";
+
+    @Test
+    void theAdvancedOptionsComeAfterTheCommonOnes() {
+        var items = List.of(
+                new AutocompletePopup.CompletionItem(
+                        "bridgeErrorHandler", "", "boolean", null, false, null,
+                        "consumer (advanced)", false),
+                new AutocompletePopup.CompletionItem("delay", "", "integer", null, false, null, "consumer", false),
+                new AutocompletePopup.CompletionItem(
+                        "exchangePattern", "", "object", null, false, null,
+                        "consumer (advanced)", false),
+                new AutocompletePopup.CompletionItem("period", "", "integer", null, false, null, "consumer", false));
+        var popup = new AutocompletePopup(items, "", "");
+
+        // the first two are the common options, delay and period, in their order; the advanced ones follow
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(popup.consumeSelectedItem().key()).isEqualTo("period");
+
+        var first = new AutocompletePopup(items, "", "");
+        first.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(first.consumeSelectedItem().key()).isEqualTo("delay");
+    }
+
     @Test
     void escClosesPopup() {
         var popup = new AutocompletePopup(sampleItems(), "", "");
@@ -181,5 +207,26 @@ class AutocompletePopupTest {
                 new AutocompletePopup.CompletionItem("alpha", "First item", "string", null, false, null, null),
                 new AutocompletePopup.CompletionItem("beta", "Second item", "integer", 42, false, null, "common"),
                 new AutocompletePopup.CompletionItem("gamma", "Third item", "boolean", true, true, "use delta", "advanced"));
+    }
+
+    @Test
+    void rightAndLeftGoOverAWholeEmojiAsTheEditorDoes() {
+        var popup = new AutocompletePopup(sampleItems(), "", FAMILY + "a");
+
+        // the family is one step, the a another, and then the text ends
+        assertThat(popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.NONE)))
+                .isEqualTo(AutocompletePopup.Result.CURSOR_RIGHT);
+        assertThat(popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.NONE)))
+                .isEqualTo(AutocompletePopup.Result.CURSOR_RIGHT);
+        assertThat(popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.NONE)))
+                .isEqualTo(AutocompletePopup.Result.CONSUMED);
+
+        // and back the same steps
+        assertThat(popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE)))
+                .isEqualTo(AutocompletePopup.Result.CURSOR_LEFT);
+        assertThat(popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE)))
+                .isEqualTo(AutocompletePopup.Result.CURSOR_LEFT);
+        assertThat(popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE)))
+                .isEqualTo(AutocompletePopup.Result.CONSUMED);
     }
 }

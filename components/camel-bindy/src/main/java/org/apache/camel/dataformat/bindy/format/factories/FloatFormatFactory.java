@@ -53,9 +53,15 @@ public class FloatFormatFactory extends AbstractFormatFactory {
 
         @Override
         public String format(Float object) throws Exception {
-            return !super.hasImpliedDecimalPosition()
-                    ? super.getFormat().format(object)
-                    : super.getFormat().format(object * super.getMultiplier());
+            if (super.hasImpliedDecimalPosition()) {
+                return super.getFormat().format(object * super.getMultiplier());
+            }
+            if (super.getPrecision() < 0 && Float.isFinite(object) && object != Math.rint(object)) {
+                // no precision: the decimal digits of the float (1.1), not of its widening to double (1.100000023841858);
+                // a whole number keeps its exact digits (123456792, not the shorter 1.2345679E8 of Float.toString)
+                return super.getFormat().format(new BigDecimal(object.toString()));
+            }
+            return super.getFormat().format(object);
         }
 
         @Override

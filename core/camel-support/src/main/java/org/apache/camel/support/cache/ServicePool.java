@@ -29,6 +29,7 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -194,9 +195,14 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * Whether the endpoint is (still) in use by the routes, and must therefore not be stopped when its producer is
-     * evicted: an endpoint that is static in the endpoint registry (resolved when the routes were setup), or that a
-     * route is consuming from.
+     * Whether the endpoint is (still) in use, and must therefore not be stopped when its producer is evicted: an
+     * endpoint that is static in the endpoint registry (resolved when the routes were setup), that a route is consuming
+     * from, or that another producer (or polling consumer) is still using, such as the producer cache of a toD in
+     * another route or of a ProducerTemplate, as the pooled services are added to CamelContext.
+     * <p>
+     * This is intentionally broad: any {@link EndpointAware} service on the context that uses the endpoint keeps it
+     * started, not only the producers and polling consumers pooled by a {@code ServicePool}, as stopping an endpoint
+     * that is still in use is worse than keeping one started.
      */
     private static boolean isEndpointInUse(Endpoint endpoint) {
         CamelContext context = endpoint.getCamelContext();
@@ -211,7 +217,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 return true;
             }
         }
-        return false;
+        return context.hasService(s -> s instanceof EndpointAware ea && ea.getEndpoint() == endpoint) != null;
     }
 
     /**
@@ -300,11 +306,12 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 for (Map.Entry<Endpoint, Pool<S>> entry : singlePoolEvicted.entrySet()) {
                     Endpoint e = entry.getKey();
                     Pool<S> p = entry.getValue();
+                    // stop the evicted service first, so it no longer counts as using the endpoint
+                    p.stop();
                     if (!isEndpointInUse(e)) {
                         // stop the endpoint as well (such as a dynamic endpoint from toD) to free its resources
                         doStop(e);
                     }
-                    p.stop();
                     singlePoolEvicted.remove(e);
                 }
             }

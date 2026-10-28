@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -59,6 +61,9 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     public static final String ROUTES_LOADER_KEY_PREFIX = "routes-builder-loader-";
 
     private final Map<String, RoutesBuilderLoader> loaders;
+    // the loaders keep state between pre-parsing and loading the resources (such as beans that are registered again
+    // when the routes are configured), and the model is not updated atomically, so updates run one at a time
+    private final Lock updateLock = new ReentrantLock();
 
     private CamelContext camelContext;
     private boolean ignoreLoadingError;
@@ -292,6 +297,18 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
             return answer;
         }
 
+        // the lock is held while the routes being replaced are stopped: an updateRoutes call made from an exchange of
+        // such a route therefore waits here until the shutdown timeout forces that route to stop (see the upgrade guide)
+        updateLock.lockInterruptibly();
+        try {
+            doUpdateRoutes(resources, answer);
+        } finally {
+            updateLock.unlock();
+        }
+        return answer;
+    }
+
+    private void doUpdateRoutes(Collection<Resource> resources, Set<String> answer) throws Exception {
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
         for (RoutesBuilder builder : builders) {
             // update any existing route configurations first
@@ -301,19 +318,24 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         }
         for (RoutesBuilder builder : builders) {
             // update any existing routes
-            Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
-            // check we do not have duplicate route ids in this group of resources
-            for (String id : ids) {
-                if (answer.contains(id)) {
-                    throw new FailedToStartRouteException(
-                            id,
-                            "duplicate route id detected " + id + ". Please correct ids to be unique among all your routes.");
-                }
-            }
-            answer.addAll(ids);
+            addUpdatedRouteIds(answer, builder.updateRoutesToCamelContext(getCamelContext()));
         }
+        for (RoutesBuilder builder : builders) {
+            // templated routes last, as they may use a route template from another resource (same as when loading)
+            addUpdatedRouteIds(answer, builder.updateTemplatedRoutesToCamelContext(getCamelContext()));
+        }
+    }
 
-        return answer;
+    private static void addUpdatedRouteIds(Set<String> answer, Set<String> ids) throws FailedToStartRouteException {
+        // check we do not have duplicate route ids in this group of resources
+        for (String id : ids) {
+            if (answer.contains(id)) {
+                throw new FailedToStartRouteException(
+                        id,
+                        "duplicate route id detected " + id + ". Please correct ids to be unique among all your routes.");
+            }
+        }
+        answer.addAll(ids);
     }
 
     protected RoutesBuilderLoader resolveRoutesBuilderLoader(Resource resource, boolean optional) throws Exception {

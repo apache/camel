@@ -1721,12 +1721,11 @@ public interface IBMCOSEndpointBuilderFactory {
         public static final IBMCOSHeaderNameBuilder INSTANCE = new IBMCOSHeaderNameBuilder();
 
         /**
-         * The bucket Name which this object will be stored or which will be
-         * used for the current operation.
+         * The name of the bucket the consumed object is contained in.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @return the name of the header {@code IBMCOSBucketName}.
          */
@@ -1787,7 +1786,8 @@ public interface IBMCOSEndpointBuilderFactory {
         }
         /**
          * The Content-Length HTTP header indicating the size of the associated
-         * object in bytes.
+         * object in bytes. The putObject operation uses it only for a stream
+         * body of unknown length, and takes the length from the body otherwise.
          * 
          * The option is a: {@code Long} type.
          * 
@@ -1979,6 +1979,20 @@ public interface IBMCOSEndpointBuilderFactory {
          */
         public String iBMCOSBucketExists() {
             return "CamelIBMCOSBucketExists";
+        }
+        /**
+         * The bucket name to use instead of the bucket of the endpoint, in
+         * which this object will be stored or which will be used for the
+         * current operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMCOSOverrideBucketName}.
+         */
+        public String iBMCOSOverrideBucketName() {
+            return "CamelIBMCOSOverrideBucketName";
         }
     }
     static IBMCOSEndpointBuilder endpointBuilder(String componentName, String path) {

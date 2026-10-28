@@ -19,10 +19,12 @@ package org.apache.camel.component.mcp.server.vertx;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.TypeRef;
 import io.modelcontextprotocol.spec.HttpHeaders;
@@ -35,6 +37,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -242,8 +245,11 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             endWithStatus(connection, ctx, 202);
         } else if (message instanceof McpSchema.JSONRPCRequest request) {
             VertxMcpSessionTransport transport = startSseResponse(ctx, connection, sessionId);
+            McpTransportContext transportContext = toTransportContext(ctx);
             try {
-                managed.session.responseStream(request, transport).block();
+                managed.session.responseStream(request, transport)
+                        .contextWrite(reactorCtx -> reactorCtx.put(McpTransportContext.KEY, transportContext))
+                        .block();
             } catch (Exception e) {
                 LOG.warn("Failed to handle MCP request stream: {}", e.getMessage());
                 transport.close();
@@ -252,6 +258,20 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             respondError(connection, ctx, 500,
                     McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST).message("Unknown message type").build());
         }
+    }
+
+    /**
+     * Builds the MCP transport context carrying the authenticated caller principal (when the HTTP request was
+     * authenticated), so a tool route invoked by this request can authorize on it. The principal is the Vert.x
+     * {@link User} that the platform-http authentication handler set on the routing context; absent it, the context is
+     * empty.
+     */
+    private static McpTransportContext toTransportContext(RoutingContext ctx) {
+        User user = ctx.user();
+        if (user == null) {
+            return McpTransportContext.EMPTY;
+        }
+        return McpTransportContext.create(Map.of(VertxMcpServerEngine.TRANSPORT_PRINCIPAL_KEY, user));
     }
 
     private void handleInitialize(RoutingContext ctx, Context connection, McpSchema.JSONRPCRequest request)

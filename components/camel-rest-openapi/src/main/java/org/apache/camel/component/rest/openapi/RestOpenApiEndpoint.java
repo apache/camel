@@ -62,6 +62,9 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.Metadata;
@@ -92,6 +95,23 @@ import static org.apache.camel.util.StringHelper.before;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
              syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.BYTES, Carrier.NULL, Carrier.MAP, Carrier.FILE },
+                                   dependsOn = "consumerComponentName",
+                                   description = "The request body as the HTTP consumer gives it (platform-http by default)."
+                                                 + " With the json binding mode of the rest configuration, the object of the"
+                                                 + " schema (bindingPackageScan), or a Map or a List"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM },
+                                     dependsOn = "consumerComponentName",
+                                     description = "The response body as the HTTP consumer writes it. With the json binding"
+                                                   + " mode of the rest configuration, any object, which the binding writes as"
+                                                   + " JSON"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "componentName",
+                                  description = "The request body of the operation, which the http component sends: text,"
+                                                + " bytes, a stream or a file. A Map or a List fails: marshal it first"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.NULL }, dependsOn = "componentName",
+                                   description = "The response body, as the http component gives it: a byte array or the"
+                                                 + " stream cache; null for a response without a body"))
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiEndpoint.class);
@@ -177,6 +197,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private String mockIncludePattern;
     @UriParam(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
     private String apiContextPath;
+    @UriParam(label = "consumer,advanced", defaultValue = "platform", enums = "platform,camel",
+              description = "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer"
+                            + " (platform) or Camel via the unmatched request handler (camel).")
+    private String unmatchedRequestHandling = "platform";
     @UriParam(label = "consumer,security", displayName = "OAuth Profile",
               description = "OAuth profile name passed to the HTTP consumer delegate for validating incoming"
                             + " Authorization: Bearer tokens. The selected consumer component must support the"
@@ -349,6 +373,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             // pass oauthProfile to the delegate consumer, which is responsible for enforcing it
             if (isNotEmpty(oauthProfile)) {
                 copy.put("oauthProfile", oauthProfile);
+            }
+            // forwards unmatchedRequestHandling to the platform-http delegate, which uses the option (Vert.x
+            // runtime) to register a catch-all route when Camel should answer unmatched requests
+            if ("camel".equalsIgnoreCase(unmatchedRequestHandling)) {
+                copy.put("unmatchedRequestHandling", unmatchedRequestHandling);
             }
             // avoid duplicate context-path
             if (basePath.equals(config.getContextPath())) {
@@ -535,6 +564,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
+    }
+
+    public String getUnmatchedRequestHandling() {
+        return unmatchedRequestHandling;
+    }
+
+    public void setUnmatchedRequestHandling(String unmatchedRequestHandling) {
+        this.unmatchedRequestHandling = unmatchedRequestHandling;
     }
 
     public String getOauthProfile() {
@@ -981,7 +1018,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     /**
      * Loads the OpenApi definition model from the given path. This delegates directly to the OpenAPI parser. If the
-     * specification can't be read there is no OpenAPI object in the result.
+     * specification can't be read there is no OpenAPI object in the result. The problems the parser reports are logged
+     * as a warning, because the parser ignores the parts it cannot read, such as a path nested inside another path.
      *
      * @param  uri          the specification uri
      * @param  camelContext context to use
@@ -993,6 +1031,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         options.setResolveFully(true);
 
         InputStream is = null;
+        List<String> messages = null;
         try {
             String location = null;
             String content = null;
@@ -1011,8 +1050,16 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             } else if (content != null) {
                 openApi = openApiParser.readContents(content, null, options);
             }
-            if (openApi != null && openApi.getOpenAPI() != null) {
-                return openApi.getOpenAPI();
+            if (openApi != null) {
+                messages = openApi.getMessages();
+                if (openApi.getOpenAPI() != null) {
+                    if (messages != null && !messages.isEmpty()) {
+                        LOG.warn(
+                                "The OpenAPI specification {} has problems, and the parser ignores the parts it cannot read: {}",
+                                uri, String.join("; ", messages));
+                    }
+                    return openApi.getOpenAPI();
+                }
             }
         } catch (Exception e) {
             throw new IllegalArgumentException(
@@ -1021,9 +1068,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             IOHelper.close(is);
         }
 
-        // In theory there should be a message in the parse result, but it has disappeared...
         throw new IllegalArgumentException(
-                "Could not deserialize OpenAPI specification from: " + uri);
+                "Could not deserialize OpenAPI specification from: " + uri
+                                           + (messages != null && !messages.isEmpty()
+                                                   ? " (" + String.join("; ", messages) + ")" : ""));
     }
 
     static String pickBestScheme(final String specificationScheme, final List<String> schemes) {

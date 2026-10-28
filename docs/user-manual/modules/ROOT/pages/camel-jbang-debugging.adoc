@@ -8,8 +8,6 @@ as a waterfall view — useful for understanding message flow and spotting slow 
 
 == Camel route debugging
 
-*Available since Camel 4.2*
-
 Debug Camel routes directly from the terminal:
 
 [source,bash]

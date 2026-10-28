@@ -105,6 +105,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back.")
     private boolean disconnectOnNoReply = true;
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "If enabled and an Exchange failed processing on the consumer side the response written back to the remote peer"
+                            + " won't contain the exception's class, message or stack trace.")
+    private boolean muteException = true;
     @UriParam(label = "consumer,advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back.")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
@@ -596,6 +600,18 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      */
     public void setDisconnectOnNoReply(boolean disconnectOnNoReply) {
         this.disconnectOnNoReply = disconnectOnNoReply;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response written back to the remote peer
+     * won't contain the exception's class, message or stack trace.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public LoggingLevel getNoReplyLogLevel() {
