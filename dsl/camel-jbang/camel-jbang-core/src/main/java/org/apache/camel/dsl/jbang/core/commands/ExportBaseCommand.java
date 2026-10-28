@@ -1048,8 +1048,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
                     Path source;
                     if ("kamelet".equals(k) && !localKameletDirs.isEmpty()) {
-                        // search each local-kamelet directory in order; fall back to the first
-                        // entry if none exists (preserves the original error behaviour)
+                        // search each local-kamelet directory in order; when none has the kamelet
+                        // the first directory is used (safeCopy skips a source that does not exist)
                         String kameletFileName = f + ".kamelet.yaml";
                         source = localKameletDirs.stream()
                                 .map(dir -> Paths.get(dir, kameletFileName))
