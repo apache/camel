@@ -116,6 +116,24 @@ class LogWriterUpdateAfterRollOverPositionTest {
     }
 
     @Test
+    void shorterRecordAtTheEndOfALayerKeepsFileReadable() throws Exception {
+        File file = new File(testDir, "wal.data");
+        try (LogWriter writer = new LogWriter(file, new DefaultLogSupervisor(100_000), 3)) {
+            writer.append(entry("aa"));
+            writer.append(entry("bb"));
+            writer.append(entry("cccccccccccccccc"));
+            // roll-over: "d" and "e" replace "aa" and "bb"
+            writer.append(entry("d"));
+            writer.append(entry("e"));
+            // "f" replaces the longer "cccccccccccccccc", the last record of the file: nothing is written after it
+            writer.append(entry("f"));
+            writer.flush();
+        }
+
+        assertEquals("{d=NEW, e=NEW, f=NEW}", readAll(file).toString());
+    }
+
+    @Test
     void updateOfEntryTwoLayersBehindDoesNotTouchNewerEntry() throws Exception {
         File file = new File(testDir, "wal.data");
         List<EntryInfo.CachedEntryInfo> infos = new ArrayList<>();
