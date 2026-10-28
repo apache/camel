@@ -29,7 +29,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /** The producer's probe, current and sample requests, sent from a producer template. */
 class MTConnectProducerTest extends MTConnectTestSupport {
@@ -54,7 +53,7 @@ class MTConnectProducerTest extends MTConnectTestSupport {
         agent.set("temp", "21.5", Map.of("statistic", "AVERAGE", "duration", "60"));
         agent.condition("sys_cond", "Fault", "E42", null, "HIGH", "Spindle overheat");
         ReceivedMessages consumed = consume("mtconnect:" + agent.url() + "?device=Trial&" + FAST);
-        await().untilAsserted(() -> assertThat(consumed.size()).isEqualTo(11));
+        awaitAgent().untilAsserted(() -> assertThat(consumed.size()).isEqualTo(11));
 
         Exchange reply = send("mtconnect:" + agent.url() + "?device=Trial&operation=current", Map.of());
 

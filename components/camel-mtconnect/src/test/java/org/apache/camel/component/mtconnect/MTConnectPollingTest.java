@@ -44,7 +44,7 @@ class MTConnectPollingTest extends MTConnectTestSupport {
             added.add(agent.set(i % 2 == 0 ? "x_load" : "exec", Integer.toString(i)));
         }
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
                 .extracting(ReceivedMessages.Received::sequence).containsExactlyElementsOf(added));
         assertThat(agent.requests()).filteredOn(request -> request.contains("/sample"))
                 .allSatisfy(request -> assertThat(request).startsWith("/Trial/sample?from=").endsWith("&count=4"));
@@ -55,12 +55,12 @@ class MTConnectPollingTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V2_5);
         ReceivedMessages received = polling(agent, "");
         long before = agent.set("x_load", "1");
-        await().untilAsserted(() -> assertThat(received.matching(m -> Objects.equals(m.sequence(), before))).hasSize(1));
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> Objects.equals(m.sequence(), before))).hasSize(1));
 
         long paused = System.nanoTime();
         agent.pause();
-        await().untilAsserted(() -> assertThat(outage(received)).hasSize(TRIAL_ITEMS));
-        assertThat(Duration.ofNanos(System.nanoTime() - paused).toMillis()).isLessThan(500 + 50 + 1000);
+        awaitAgent().untilAsserted(() -> assertThat(outage(received)).hasSize(TRIAL_ITEMS));
+        assertThat(Duration.ofNanos(System.nanoTime() - paused).toMillis()).isLessThan(500 + 50 + SLACK);
         assertThat(outage(received)).allSatisfy(m -> assertThat(m.headers())
                 .containsEntry(MTConnectConstants.REASON, MTConnectConstants.REASON_UNREACHABLE)
                 .doesNotContainKey(MTConnectConstants.SEQUENCE));
@@ -70,7 +70,7 @@ class MTConnectPollingTest extends MTConnectTestSupport {
         long missed = agent.set("x_load", "2");
         agent.resume();
 
-        await().untilAsserted(() -> {
+        awaitAgent().untilAsserted(() -> {
             Map<String, ReceivedMessages.Received> last = new HashMap<>();
             received.all().forEach(m -> last.put(m.dataItemId(), m));
             assertThat(last.values()).hasSize(TRIAL_ITEMS).noneMatch(m -> m.sequence() == null);
@@ -86,13 +86,13 @@ class MTConnectPollingTest extends MTConnectTestSupport {
     void anOverrunResynchronisesFromCurrent() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = consume("mtconnect:" + agent.url() + "?device=MACHINE-01&" + POLLING);
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::current)).isNotEmpty());
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::current)).isNotEmpty());
         long cursor = agent.nextSequence();
 
         agent.overrun("xl");
         long latest = agent.nextSequence() - 1;
 
-        await().untilAsserted(() -> assertThat(received.of("xl")).last()
+        awaitAgent().untilAsserted(() -> assertThat(received.of("xl")).last()
                 .satisfies(m -> assertThat(m.sequence()).isEqualTo(latest))
                 .satisfies(m -> assertThat(m.header(MTConnectConstants.RESYNC))
                         .isEqualTo(MTConnectConstants.RESYNC_OUT_OF_RANGE)));
@@ -107,12 +107,12 @@ class MTConnectPollingTest extends MTConnectTestSupport {
 
         agent.restart();
 
-        await().untilAsserted(() -> assertThat(received.matching(m -> MTConnectConstants.RESYNC_INSTANCE_CHANGED
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> MTConnectConstants.RESYNC_INSTANCE_CHANGED
                 .equals(m.header(MTConnectConstants.RESYNC)))).hasSize(TRIAL_ITEMS)
                 .allSatisfy(m -> assertThat(m.header(MTConnectConstants.INSTANCE_ID)).isEqualTo(agent.instanceId())));
         assertThat(agent.requests()).filteredOn(request -> request.endsWith("/probe")).hasSize(2);
         long next = agent.set("x_load", "3");
-        await().untilAsserted(() -> assertThat(received.of("x_load")).last()
+        awaitAgent().untilAsserted(() -> assertThat(received.of("x_load")).last()
                 .satisfies(m -> assertThat(m.sequence()).isEqualTo(next)));
     }
 
@@ -120,7 +120,7 @@ class MTConnectPollingTest extends MTConnectTestSupport {
     private ReceivedMessages polling(StubAgent agent, String options) throws Exception {
         ReceivedMessages received = consume("mtconnect:" + agent.url() + "?device=Trial&" + POLLING
                                             + (options.isEmpty() ? "" : "&" + options));
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::current))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::current))
                 .hasSize(TRIAL_ITEMS));
         return received;
     }

@@ -39,14 +39,14 @@ class MTConnectOutageTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V2_5);
         ReceivedMessages received = streaming(agent, "Trial", "");
         setEveryItem(agent);
-        await().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
+        awaitAgent().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
         int before = received.size();
 
         long paused = System.nanoTime();
         agent.pause();
-        await().untilAsserted(() -> assertThat(unreachable(received)).hasSize(TRIAL_ITEMS.size()));
+        awaitAgent().untilAsserted(() -> assertThat(unreachable(received)).hasSize(TRIAL_ITEMS.size()));
         long detected = Duration.ofNanos(System.nanoTime() - paused).toMillis();
-        assertThat(detected).isLessThanOrEqualTo(2 * HEARTBEAT + CONNECT_TIMEOUT + 500);
+        assertThat(detected).isLessThanOrEqualTo(2 * HEARTBEAT + CONNECT_TIMEOUT + SLACK);
         // retries while the agent stays silent report nothing more
         await().during(Duration.ofMillis(2 * (CONNECT_TIMEOUT + RECONNECT_DELAY)))
                 .atMost(Duration.ofSeconds(5))
@@ -54,7 +54,7 @@ class MTConnectOutageTest extends MTConnectTestSupport {
         long missed = agent.set("x_load", "42");
         agent.resume();
 
-        await().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
+        awaitAgent().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
         List<ReceivedMessages.Received> after = received.all().subList(before, received.size());
         assertThat(after.stream().filter(ReceivedMessages.Received::bad))
                 .allMatch(m -> MTConnectConstants.REASON_UNREACHABLE.equals(m.header(MTConnectConstants.REASON)))
@@ -75,15 +75,15 @@ class MTConnectOutageTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V2_5);
         ReceivedMessages received = streaming(agent, "Trial", "");
         setEveryItem(agent);
-        await().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
+        awaitAgent().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
 
         long refused = System.nanoTime();
         agent.refuse();
-        await().untilAsserted(() -> assertThat(unreachable(received)).hasSize(TRIAL_ITEMS.size()));
-        assertThat(Duration.ofNanos(System.nanoTime() - refused).toMillis()).isLessThan(CONNECT_TIMEOUT + 500);
+        awaitAgent().untilAsserted(() -> assertThat(unreachable(received)).hasSize(TRIAL_ITEMS.size()));
+        assertThat(Duration.ofNanos(System.nanoTime() - refused).toMillis()).isLessThan(CONNECT_TIMEOUT + SLACK);
         agent.accept();
 
-        await().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
+        awaitAgent().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
     }
 
     @Test
@@ -91,18 +91,18 @@ class MTConnectOutageTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V2_5);
         ReceivedMessages received = streaming(agent, "Trial", "");
         setEveryItem(agent);
-        await().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
+        awaitAgent().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
 
         agent.answer(StubAgent.Request.SAMPLE, StubAgent.Answer.html(502));
         agent.closeStreams();
-        await().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
                 .hasSize(TRIAL_ITEMS.size())
                 .allSatisfy(m -> assertThat(m.headers())
                         .containsEntry(MTConnectConstants.REASON, MTConnectConstants.REASON_ERROR)
                         .containsEntry(MTConnectConstants.ERROR, "HTTP 502")));
         agent.clearAnswers();
 
-        await().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
+        awaitAgent().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
     }
 
     @Test
@@ -110,12 +110,12 @@ class MTConnectOutageTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V2_5);
         ReceivedMessages received = streaming(agent, "Trial", "");
         setEveryItem(agent);
-        await().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
+        awaitAgent().untilAsserted(() -> assertThat(lastPerItem(received).values()).allMatch(ReceivedMessages.Received::good));
 
         agent.answerSampleWithoutStreaming();
         agent.closeStreams();
         long missed = agent.set("x_load", "42");
-        await().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
                 .hasSize(TRIAL_ITEMS.size())
                 .allSatisfy(m -> assertThat(m.headers())
                         .containsEntry(MTConnectConstants.REASON, MTConnectConstants.REASON_ERROR)
@@ -124,7 +124,7 @@ class MTConnectOutageTest extends MTConnectTestSupport {
         assertThat(received.matching(m -> Objects.equals(m.sequence(), missed))).isEmpty();
         agent.clearAnswers();
 
-        await().untilAsserted(() -> assertThat(received.matching(m -> Objects.equals(m.sequence(), missed)))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> Objects.equals(m.sequence(), missed)))
                 .singleElement().matches(ReceivedMessages.Received::sample));
     }
 
@@ -137,7 +137,7 @@ class MTConnectOutageTest extends MTConnectTestSupport {
         await().during(Duration.ofMillis(3 * RECONNECT_DELAY)).atMost(Duration.ofSeconds(5))
                 .until(() -> received.size() == 0);
         agent.accept();
-        await().untilAsserted(() -> assertThat(received.size()).isEqualTo(TRIAL_ITEMS.size()));
+        awaitAgent().untilAsserted(() -> assertThat(received.size()).isEqualTo(TRIAL_ITEMS.size()));
     }
 
     private static void setEveryItem(StubAgent agent) {

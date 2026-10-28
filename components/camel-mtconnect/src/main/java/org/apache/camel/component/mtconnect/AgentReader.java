@@ -162,6 +162,11 @@ final class AgentReader implements AutoCloseable {
         try {
             AgentHttpClient.Response response = client.send(uri, compressed);
             open.add(response);
+            if (client.cancelled()) {
+                // abort() may have run between the answer and its registration, when it could not close this response
+                release(response);
+                throw new IOException("The request was cancelled");
+            }
             return response;
         } catch (IOException e) {
             throw new AgentFailure(AgentFailure.Kind.UNREACHABLE, describe(e), e);

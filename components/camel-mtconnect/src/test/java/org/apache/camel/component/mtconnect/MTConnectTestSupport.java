@@ -19,9 +19,11 @@ package org.apache.camel.component.mtconnect;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.awaitility.core.ConditionFactory;
 import org.junit.jupiter.api.AfterEach;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,8 +37,20 @@ abstract class MTConnectTestSupport extends CamelTestSupport {
     static final long HEARTBEAT = 250;
     static final long CONNECT_TIMEOUT = 500;
     static final long RECONNECT_DELAY = 200;
+    /**
+     * Slack on the wall-clock bounds for slow CI agents; the bounds still prove detection on the scale of the
+     * heartbeat.
+     */
+    static final long SLACK = 3000;
 
     private final List<StubAgent> agents = new ArrayList<>();
+
+    /**
+     * Awaitility with the explicit bound the project guidelines ask for; nothing in these tests takes near that long.
+     */
+    static ConditionFactory awaitAgent() {
+        return await().atMost(10, TimeUnit.SECONDS);
+    }
 
     StubAgent agent(StubDialect dialect) throws IOException {
         StubAgent agent = StubAgent.start(dialect);
@@ -65,7 +79,8 @@ abstract class MTConnectTestSupport extends CamelTestSupport {
         String query = (device == null ? "" : "device=" + device + "&") + FAST + (options.isEmpty() ? "" : "&" + options);
         ReceivedMessages received = consume("mtconnect:" + agent.url() + "?" + query);
         long items = agent.model().items().stream().filter(item -> StubDeviceModel.matches(item, device)).count();
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::current)).hasSize((int) items));
+        awaitAgent()
+                .untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::current)).hasSize((int) items));
         return received;
     }
 

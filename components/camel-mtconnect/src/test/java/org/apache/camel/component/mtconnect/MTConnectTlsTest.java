@@ -29,7 +29,6 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /** https agents whose certificate comes from a private certificate authority. */
 class MTConnectTlsTest extends MTConnectTestSupport {
@@ -46,7 +45,7 @@ class MTConnectTlsTest extends MTConnectTestSupport {
         ReceivedMessages received = streaming(agent, "Trial", "sslContextParameters=#testCa");
         long next = agent.set("x_load", "1");
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
                 .extracting(ReceivedMessages.Received::sequence).containsExactly(next));
     }
 
@@ -60,7 +59,7 @@ class MTConnectTlsTest extends MTConnectTestSupport {
         agent.certificate("tls/untrusted.p12");
         agent.closeStreams();
 
-        await().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
                 .hasSize(11)
                 .allSatisfy(m -> assertThat(m.headers())
                         .containsEntry(MTConnectConstants.REASON, MTConnectConstants.REASON_UNREACHABLE)

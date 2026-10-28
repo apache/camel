@@ -226,16 +226,20 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: "mtconnect:http://agent:5000"
-    parameters:
-      device: Mill-1
-      heartbeat: 5000
-    steps:
-      - filter:
-          simple: "${header.CamelMTConnectQuality} == 'Good'"
-          steps:
-            - log: "${header.CamelMTConnectDataItemId} = ${body} ${header.CamelMTConnectUnits}"
+- route:
+    from:
+      uri: "mtconnect:http://agent:5000"
+      parameters:
+        device: Mill-1
+        heartbeat: 5000
+      steps:
+        - filter:
+            expression:
+              simple:
+                expression: "${header.CamelMTConnectQuality} == 'Good'"
+            steps:
+              - log:
+                  message: "${header.CamelMTConnectDataItemId} = ${body} ${header.CamelMTConnectUnits}"
 ----
 ====
 

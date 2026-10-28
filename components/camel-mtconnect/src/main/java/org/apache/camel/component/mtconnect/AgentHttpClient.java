@@ -38,6 +38,8 @@ import java.util.concurrent.Executor;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.camel.util.IOHelper;
+
 /**
  * Sends the probe, current, sample and asset requests of the MTConnect HTTP binding to one agent and hands back the
  * response body as a stream, so that a streaming sample response is read part by part while it arrives. Requests ask
@@ -159,6 +161,11 @@ final class AgentHttpClient implements AutoCloseable {
         HttpResponse<InputStream> response;
         try {
             response = future.get();
+        } catch (InterruptedException e) {
+            // nobody will read the answer: end the request, or close the body of an answer that arrived meanwhile
+            future.cancel(true);
+            future.thenAccept(arrived -> IOHelper.close(arrived.body()));
+            throw e;
         } catch (CancellationException e) {
             throw new IOException("The request was cancelled", e);
         } catch (ExecutionException e) {
@@ -180,6 +187,11 @@ final class AgentHttpClient implements AutoCloseable {
     void cancel() {
         cancelled = true;
         inFlight.forEach(future -> future.cancel(true));
+    }
+
+    /** Whether {@link #cancel()} was called. */
+    boolean cancelled() {
+        return cancelled;
     }
 
     /** Shuts the client down and waits for its requests to end, which also ends its selector thread. */

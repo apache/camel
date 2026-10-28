@@ -26,7 +26,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.awaitility.Awaitility.await;
 
 /** What a route author sees in each message: the body and the probe's metadata as headers. */
 class MTConnectMessageShapeTest extends MTConnectTestSupport {
@@ -39,7 +38,7 @@ class MTConnectMessageShapeTest extends MTConnectTestSupport {
         List<StubDeviceModel.Item> items = agent.model().items().stream()
                 .filter(item -> StubDeviceModel.matches(item, device)).toList();
 
-        await().untilAsserted(() -> assertThat(received.size()).isGreaterThanOrEqualTo(items.size()));
+        awaitAgent().untilAsserted(() -> assertThat(received.size()).isGreaterThanOrEqualTo(items.size()));
         for (StubDeviceModel.Item item : items) {
             ReceivedMessages.Received message = received.of(item.id()).get(0);
             assertThat(message.headers()).as(item.id())
@@ -73,7 +72,7 @@ class MTConnectMessageShapeTest extends MTConnectTestSupport {
         agent.set("x_load", "11.5");
         agent.set("exec", "ACTIVE");
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
         ReceivedMessages.Received load = received.of("x_load").get(1);
         assertThat(load.body()).isEqualTo(new BigDecimal("11.5"));
         assertThat(load.good()).isTrue();
@@ -89,7 +88,7 @@ class MTConnectMessageShapeTest extends MTConnectTestSupport {
         ReceivedMessages received = streaming(agent, "Agent", "");
         agent.setEntries("agent_31e6d9c6_asset_count", Map.of("CuttingTool", "15"));
 
-        await().untilAsserted(() -> assertThat(received.of("agent_31e6d9c6_asset_count")).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(received.of("agent_31e6d9c6_asset_count")).hasSize(2));
         ReceivedMessages.Received assets = received.of("agent_31e6d9c6_asset_count").get(1);
         assertThat(assets.body()).isEqualTo(Map.of("CuttingTool", "15"));
         assertThat(assets.headers()).containsEntry(MTConnectConstants.REPRESENTATION, "DATA_SET")
@@ -103,7 +102,7 @@ class MTConnectMessageShapeTest extends MTConnectTestSupport {
         agent.condition("sys_cond", "Fault", "E42", null, "HIGH", "Spindle overheat");
         agent.condition("sys_cond", "Normal", null, null, null, null);
 
-        await().untilAsserted(() -> assertThat(received.of("sys_cond")).hasSize(3));
+        awaitAgent().untilAsserted(() -> assertThat(received.of("sys_cond")).hasSize(3));
         List<ReceivedMessages.Received> conditions = received.of("sys_cond");
         assertThat(conditions.get(0).headers()).containsEntry(MTConnectConstants.LEVEL, "Unavailable")
                 .containsEntry(MTConnectConstants.QUALITY, MTConnectConstants.QUALITY_BAD)
@@ -127,7 +126,7 @@ class MTConnectMessageShapeTest extends MTConnectTestSupport {
                 "compositionId", "motor1", "sampleRate", "100"));
         agent.set("exec", "ACTIVE", Map.of("assetType", "CuttingTool"));
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
         assertThat(received.of("temp").get(1).headers())
                 .containsEntry(MTConnectConstants.STATISTIC, "AVERAGE")
                 .containsEntry(MTConnectConstants.DURATION, new BigDecimal("60.5"))
@@ -145,7 +144,7 @@ class MTConnectMessageShapeTest extends MTConnectTestSupport {
         agent.set("x_load", "11.5");
         agent.set("y_load", "88.25");
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
         assertThat(received.matching(ReceivedMessages.Received::sample))
                 .extracting(ReceivedMessages.Received::dataItemId, m -> m.text(MTConnectConstants.DATA_ITEM_NAME),
                         m -> m.text(MTConnectConstants.COMPONENT_NAME), ReceivedMessages.Received::body)
@@ -161,7 +160,7 @@ class MTConnectMessageShapeTest extends MTConnectTestSupport {
         agent.set("tid2", "2005212");
         agent.set("xl", "12.5");
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
         ReceivedMessages.Received toolGroup = received.of("tid2").get(1);
         assertThat(toolGroup.body()).isEqualTo("2005212");
         assertThat(toolGroup.headers()).containsEntry(MTConnectConstants.TYPE, "x:TOOL_GROUP")

@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /** gzip on the answers that are not streams: asked for, decoded when the agent compresses, absent on streams. */
 class MTConnectCompressionTest extends MTConnectTestSupport {
@@ -35,7 +34,7 @@ class MTConnectCompressionTest extends MTConnectTestSupport {
         ReceivedMessages received = streaming(agent, "Trial", "");
         long next = agent.set("x_load", "1");
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
                 .extracting(ReceivedMessages.Received::sequence).containsExactly(next));
         assertThat(agent.compressedRequests()).containsExactly("/Trial/probe", "/Trial/current");
         assertThat(agent.requests()).anyMatch(request -> request.startsWith("/Trial/sample"));
@@ -80,10 +79,10 @@ class MTConnectCompressionTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V2_5);
         agent.compress();
         ReceivedMessages received = consume("mtconnect:" + agent.url() + "?device=Trial&streaming=false&delay=50");
-        await().untilAsserted(() -> assertThat(received.size()).isEqualTo(11));
+        awaitAgent().untilAsserted(() -> assertThat(received.size()).isEqualTo(11));
         long next = agent.set("x_load", "2");
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
                 .extracting(m -> m.headers().get(MTConnectConstants.SEQUENCE)).containsExactly(next));
         assertThat(agent.compressedRequests()).anyMatch(request -> request.startsWith("/Trial/sample?from="));
     }

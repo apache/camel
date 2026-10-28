@@ -70,19 +70,19 @@ class MTConnectResyncTest extends MTConnectTestSupport {
         agent.overrun(item);
         long latest = agent.nextSequence() - 1;
 
-        await().untilAsserted(() -> assertThat(received.matching(m -> m.header(MTConnectConstants.RESYNC) != null))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> m.header(MTConnectConstants.RESYNC) != null))
                 .isNotEmpty()
                 .allMatch(ReceivedMessages.Received::current)
                 .allMatch(m -> MTConnectConstants.RESYNC_OUT_OF_RANGE.equals(m.header(MTConnectConstants.RESYNC))));
         // the resync current is delivered item by item; the overrun item may come after the first resync message
-        await().untilAsserted(() -> assertThat(received.of(item)).last()
+        awaitAgent().untilAsserted(() -> assertThat(received.of(item)).last()
                 .satisfies(m -> assertThat(m.sequence()).isEqualTo(latest))
                 .satisfies(m -> assertThat(m.current()).isTrue()));
         // the overwritten observations between the cursor and the current value are not invented
         assertThat(received.all()).noneMatch(m -> m.sequence() != null && m.sequence() >= cursor
                 && m.sequence() < latest);
         long next = agent.set(item, "7");
-        await().untilAsserted(() -> assertThat(received.of(item)).last()
+        awaitAgent().untilAsserted(() -> assertThat(received.of(item)).last()
                 .satisfies(m -> assertThat(m.sequence()).isEqualTo(next))
                 .satisfies(m -> assertThat(m.sample()).isTrue()));
     }
@@ -96,16 +96,16 @@ class MTConnectResyncTest extends MTConnectTestSupport {
         long restarted = System.nanoTime();
         agent.restart();
 
-        await().untilAsserted(() -> assertThat(received.matching(m -> MTConnectConstants.RESYNC_INSTANCE_CHANGED
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> MTConnectConstants.RESYNC_INSTANCE_CHANGED
                 .equals(m.header(MTConnectConstants.RESYNC)))).hasSize(11));
-        assertThat(Duration.ofNanos(System.nanoTime() - restarted).toMillis()).isLessThan(RECONNECT_DELAY + 1000);
+        assertThat(Duration.ofNanos(System.nanoTime() - restarted).toMillis()).isLessThan(RECONNECT_DELAY + SLACK);
         assertThat(received.matching(m -> MTConnectConstants.RESYNC_INSTANCE_CHANGED
                 .equals(m.header(MTConnectConstants.RESYNC))))
                 .allMatch(ReceivedMessages.Received::current)
                 .allSatisfy(m -> assertThat(m.header(MTConnectConstants.INSTANCE_ID)).isEqualTo(oldInstance + 1));
         assertThat(agent.requests()).filteredOn(request -> request.endsWith("/probe")).hasSize(2);
         long next = agent.set("x_load", "3");
-        await().untilAsserted(() -> assertThat(received.of("x_load")).last()
+        awaitAgent().untilAsserted(() -> assertThat(received.of("x_load")).last()
                 .satisfies(m -> assertThat(m.sequence()).isEqualTo(next)));
     }
 
@@ -122,13 +122,14 @@ class MTConnectResyncTest extends MTConnectTestSupport {
                 agent.set(item.id(), "1");
             }
         }
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(items.size()));
+        awaitAgent()
+                .untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(items.size()));
 
         for (StubAgent.Request request : StubAgent.Request.values()) {
             agent.answer(request, new StubAgent.Answer(404, "NO_DEVICE"));
         }
         agent.closeStreams();
-        await().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
                 .hasSize(items.size())
                 .allSatisfy(m -> assertThat(m.headers())
                         .containsEntry(MTConnectConstants.REASON, MTConnectConstants.REASON_ERROR)
@@ -141,13 +142,13 @@ class MTConnectResyncTest extends MTConnectTestSupport {
         assertThat(agent.requests()).filteredOn(request -> request.endsWith("/probe")).hasSizeGreaterThan(2);
         agent.clearAnswers();
 
-        await().untilAsserted(() -> {
+        awaitAgent().untilAsserted(() -> {
             Map<String, ReceivedMessages.Received> last = new HashMap<>();
             received.all().forEach(m -> last.put(m.dataItemId(), m));
             assertThat(last.values()).hasSize(items.size()).allMatch(ReceivedMessages.Received::good);
         });
         long next = agent.set("x_load", "4");
-        await().untilAsserted(() -> assertThat(received.of("x_load")).last()
+        awaitAgent().untilAsserted(() -> assertThat(received.of("x_load")).last()
                 .satisfies(m -> assertThat(m.sequence()).isEqualTo(next)));
     }
 }

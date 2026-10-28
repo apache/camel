@@ -33,7 +33,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.awaitility.Awaitility.await;
 
 /** Starting, stopping and identifying endpoints. */
 class MTConnectLifecycleTest extends MTConnectTestSupport {
@@ -66,7 +65,7 @@ class MTConnectLifecycleTest extends MTConnectTestSupport {
                         });
             }
         });
-        await().untilAsserted(() -> assertThat(completed).hasSize(11));
+        awaitAgent().untilAsserted(() -> assertThat(completed).hasSize(11));
         long inFlight = agent.set("x_load", "1");
         agent.set("y_load", "2");
         assertThat(entered.await(10, TimeUnit.SECONDS)).isTrue();
@@ -79,13 +78,13 @@ class MTConnectLifecycleTest extends MTConnectTestSupport {
             }
         });
         StatefulService consumer = (StatefulService) context.getRoute("machine").getConsumer();
-        await().until(consumer::isStopping);
+        awaitAgent().until(consumer::isStopping);
         release.countDown();
         stop.get(30, TimeUnit.SECONDS);
 
         assertThat(completed).last().isEqualTo(inFlight);
         assertThat(threads).isNotEmpty();
-        await().untilAsserted(() -> assertThat(threads).noneMatch(Thread::isAlive));
+        awaitAgent().untilAsserted(() -> assertThat(threads).noneMatch(Thread::isAlive));
         assertThat(Thread.getAllStackTraces().keySet())
                 .noneMatch(thread -> thread.getName().matches("HttpClient-\\d+-SelectorManager"));
     }
@@ -118,13 +117,13 @@ class MTConnectLifecycleTest extends MTConnectTestSupport {
         if (producer) {
             assertThat(template.requestBody("direct:ask", null, List.class)).hasSize(11);
         } else {
-            await().untilAsserted(() -> assertThat(received.size()).isEqualTo(11));
+            awaitAgent().untilAsserted(() -> assertThat(received.size()).isEqualTo(11));
         }
 
         context.getRouteController().stopRoute("machine");
 
         assertThat(threads).isNotEmpty();
-        await().untilAsserted(() -> assertThat(threads).noneMatch(Thread::isAlive));
+        awaitAgent().untilAsserted(() -> assertThat(threads).noneMatch(Thread::isAlive));
         assertThat(Thread.getAllStackTraces().keySet())
                 .noneMatch(thread -> thread.getName().matches("HttpClient-\\d+-SelectorManager"));
     }
@@ -137,7 +136,7 @@ class MTConnectLifecycleTest extends MTConnectTestSupport {
         long timeout = 8000;
         consume("mtconnect:" + agent.url() + "?device=Trial&streaming=" + streaming + "&delay=50&readTimeout=" + timeout,
                 new ReceivedMessages());
-        await().until(() -> !agent.requests().isEmpty());
+        awaitAgent().until(() -> !agent.requests().isEmpty());
 
         long start = System.nanoTime();
         context.getRouteController().stopRoute(context.getRoutes().get(0).getRouteId());
@@ -167,11 +166,11 @@ class MTConnectLifecycleTest extends MTConnectTestSupport {
         ReceivedMessages received = new ReceivedMessages();
         consume("mtconnect:" + first.url() + "?device=Trial&" + FAST, received);
         consume("mtconnect:" + second.url() + "?device=Trial&" + FAST, received);
-        await().untilAsserted(() -> assertThat(received.size()).isEqualTo(22));
+        awaitAgent().untilAsserted(() -> assertThat(received.size()).isEqualTo(22));
         first.set("x_load", "11.5");
         second.set("x_load", "88.25");
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
         assertThat(received.matching(ReceivedMessages.Received::sample))
                 .allSatisfy(m -> assertThat(m.headers()).containsEntry(MTConnectConstants.DEVICE_UUID, "trial-001"))
                 .extracting(m -> m.text(MTConnectConstants.AGENT), m -> m.body().toString())

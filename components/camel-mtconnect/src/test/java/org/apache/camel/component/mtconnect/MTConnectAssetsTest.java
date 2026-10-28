@@ -79,7 +79,7 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
 
         agent.changeAsset(TOOL);
 
-        await().untilAsserted(() -> assertThat(received.of("d1_asset_chg")).last()
+        awaitAgent().untilAsserted(() -> assertThat(received.of("d1_asset_chg")).last()
                 .satisfies(m -> assertThat(m.body()).isEqualTo(TOOL))
                 .satisfies(m -> assertThat(m.headers()).containsEntry(MTConnectConstants.ASSET_TYPE, "CuttingTool")));
         assertThat(assetMessages(received)).isEmpty();
@@ -91,7 +91,7 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true");
 
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
         assertThat(assetMessages(received)).extracting(m -> m.text(MTConnectConstants.ASSET_TYPE))
                 .containsExactlyInAnyOrder("CuttingTool", "CuttingTool", "File", "File", "Fixture");
         assertThat(assetMessages(received)).allSatisfy(m -> assertThat(m.headers())
@@ -114,7 +114,7 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
             throws Exception {
         StubAgent agent = agent(dialect);
         ReceivedMessages received = streaming(agent, device, "assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(count));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(count));
         Document captured = parse(resource(capture));
         Element capturedRoot = captured.getDocumentElement();
 
@@ -136,11 +136,11 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
     void aChangedAssetArrivesAfterItsAssetChangedObservation() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
 
         agent.changeAsset(TOOL);
 
-        await().untilAsserted(() -> assertThat(assetMessages(received, TOOL)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received, TOOL)).hasSize(2));
         ReceivedMessages.Received changed = assetMessages(received, TOOL).get(1);
         ReceivedMessages.Received event = received.of("d1_asset_chg").get(1);
         assertThat(received.all().indexOf(changed)).isGreaterThan(received.all().indexOf(event));
@@ -154,12 +154,12 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
     void aRemovedAssetArrivesWithTheRemovedFlag() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
 
         agent.removeAsset(TOOL);
         agent.dropAsset(PROGRAM);
 
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(7));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(7));
         assertThat(received.of("d1_asset_rem")).extracting(ReceivedMessages.Received::body).contains(TOOL, PROGRAM);
         assertThat(assetMessages(received, TOOL)).last()
                 .satisfies(m -> assertThat(m.headers()).containsEntry(MTConnectConstants.ASSET_REMOVED, true))
@@ -177,18 +177,18 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
     void aFailedAssetReadIsAnOutageAndTheAssetFollowsOnRecovery() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
         int items = received.matching(ReceivedMessages.Received::current).size();
 
         agent.answer(StubAgent.Request.ASSET, StubAgent.Answer.html(502));
         agent.changeAsset(TOOL);
 
-        await().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null)).hasSize(items)
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null)).hasSize(items)
                 .allSatisfy(m -> assertThat(m.headers()).containsEntry(MTConnectConstants.ERROR, "HTTP 502")));
         assertThat(assetMessages(received)).noneMatch(m -> m.bad());
         agent.clearAnswers();
 
-        await().untilAsserted(() -> assertThat(assetMessages(received, TOOL)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received, TOOL)).hasSize(2));
         assertThat(received.of("d1_asset_chg")).filteredOn(ReceivedMessages.Received::sample).hasSize(1);
     }
 
@@ -196,12 +196,12 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
     void theTypeFilterLimitsTheReadsAndTheMessages() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true&assetType=CuttingTool");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(2));
 
         agent.changeAsset(PROGRAM);
         agent.changeAsset(TOOL);
 
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(3));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(3));
         assertThat(assetMessages(received)).extracting(m -> m.text(MTConnectConstants.ASSET_TYPE))
                 .containsOnly("CuttingTool");
         assertThat(received.of("d1_asset_chg")).extracting(ReceivedMessages.Received::body).contains(PROGRAM, TOOL);
@@ -213,13 +213,13 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
     void anAssetVersionIsSentOnce() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
 
         agent.announceAsset(TOOL);
         long marker = agent.set("xl", "1");
 
-        await().untilAsserted(() -> assertThat(agent.requests()).contains("/asset/" + TOOL));
-        await().untilAsserted(() -> assertThat(received.matching(m -> Long.valueOf(marker).equals(m.sequence())))
+        awaitAgent().untilAsserted(() -> assertThat(agent.requests()).contains("/asset/" + TOOL));
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> Long.valueOf(marker).equals(m.sequence())))
                 .isNotEmpty());
         await().during(Duration.ofMillis(300)).atMost(Duration.ofSeconds(5))
                 .until(() -> assetMessages(received, TOOL).size() == 1);
@@ -229,12 +229,12 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
     void anOverrunReadsTheAssetsAgainAndDeliversTheChangeItLost() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
 
         agent.changeAssetSilently(TOOL);
         agent.overrun("xl");
 
-        await().untilAsserted(() -> assertThat(assetMessages(received, TOOL)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received, TOOL)).hasSize(2));
         assertThat(agent.requests()).filteredOn(request -> request.startsWith("/assets")).hasSize(2);
         // the other assets did not change and are not sent again
         assertThat(assetMessages(received)).hasSize(6);
@@ -246,12 +246,12 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
     void anAssetRemovedDuringAnOverrunArrivesAsRemovedAfterRecovery() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
 
         agent.removeAssetSilently(TOOL);
         agent.overrun("xl");
 
-        await().untilAsserted(() -> assertThat(assetMessages(received, TOOL)).hasSize(2).last()
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received, TOOL)).hasSize(2).last()
                 .satisfies(m -> assertThat(m.headers()).containsEntry(MTConnectConstants.ASSET_REMOVED, true))
                 .satisfies(m -> assertThat((String) m.body()).contains("removed=\"true\"")));
         // the removal was never reported as an observation; the full read after the resynchronisation brings it
@@ -266,7 +266,7 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
         ReceivedMessages received = consume("mtconnect:" + agent.url() + "?device=MACHINE-01&" + FAST
                                             + "&assets=true&exceptionHandler=#collectingHandler");
         long items = agent.model().items().stream().filter(item -> StubDeviceModel.matches(item, "MACHINE-01")).count();
-        await().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(m -> m.bad() && m.sequence() == null))
                 .hasSize((int) items));
 
         // retries of the assets request report nothing more and do not deliver the current values again
@@ -279,19 +279,19 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
         assertThat(agent.requests()).filteredOn(request -> request.startsWith("/assets")).hasSizeGreaterThan(2);
         agent.clearAnswers();
 
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
     }
 
     @Test
     void anAgentRestartReadsTheAssetsAgain() throws Exception {
         StubAgent agent = agent(StubDialect.V1_3);
         ReceivedMessages received = streaming(agent, "MACHINE-01", "assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(5));
 
         agent.changeAssetSilently(PROGRAM);
         agent.restart();
 
-        await().untilAsserted(() -> assertThat(assetMessages(received, PROGRAM)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received, PROGRAM)).hasSize(2));
         assertThat(assetMessages(received, PROGRAM).get(1).header(MTConnectConstants.INSTANCE_ID))
                 .isEqualTo(agent.instanceId());
         assertThat(assetMessages(received)).hasSize(6);
@@ -302,13 +302,13 @@ class MTConnectAssetsTest extends MTConnectTestSupport {
     void aPollingConsumerSendsAssetMessagesToo() throws Exception {
         StubAgent agent = agent(StubDialect.V2_5);
         ReceivedMessages received = consume("mtconnect:" + agent.url() + "?streaming=false&delay=50&assets=true");
-        await().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(3));
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received)).hasSize(3));
 
         agent.addAsset("<CuttingTool assetId=\"T9.1\" deviceUuid=\"trial-001\" timestamp=\"2026-10-28T08:00:00Z\""
                        + " serialNumber=\"1\" toolId=\"T9\"><CuttingToolLifeCycle><ToolLife type=\"MINUTES\">5"
                        + "</ToolLife></CuttingToolLifeCycle></CuttingTool>");
 
-        await().untilAsserted(() -> assertThat(assetMessages(received, "T9.1")).singleElement()
+        awaitAgent().untilAsserted(() -> assertThat(assetMessages(received, "T9.1")).singleElement()
                 .satisfies(m -> assertThat((String) m.body()).contains("<ToolLife type=\"MINUTES\">5</ToolLife>")));
         assertThat(received.of("agent_31e6d9c6_asset_chg")).extracting(ReceivedMessages.Received::body).contains("T9.1");
     }

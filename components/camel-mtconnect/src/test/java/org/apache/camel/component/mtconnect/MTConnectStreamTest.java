@@ -47,14 +47,14 @@ class MTConnectStreamTest extends MTConnectTestSupport {
             added.add(agent.set(items[i % items.length], Integer.toString(i)));
         }
         agent.pause();
-        await().until(() -> !received.matching(m -> MTConnectConstants.REASON_UNREACHABLE
+        awaitAgent().until(() -> !received.matching(m -> MTConnectConstants.REASON_UNREACHABLE
                 .equals(m.header(MTConnectConstants.REASON))).isEmpty());
         for (int i = 0; i < 30; i++) {
             added.add(agent.set(items[i % items.length], Integer.toString(100 + i)));
         }
         agent.resume();
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)
                 .stream().map(ReceivedMessages.Received::sequence).toList()).containsExactlyElementsOf(added));
     }
 
@@ -63,11 +63,11 @@ class MTConnectStreamTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V2_5);
         ReceivedMessages received = streaming(agent, "Trial", "");
         long first = agent.set("x_load", "1");
-        await().untilAsserted(() -> assertThat(received.of("x_load")).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(received.of("x_load")).hasSize(2));
         agent.closeStreams();
         long second = agent.set("x_load", "2");
 
-        await().untilAsserted(() -> assertThat(received.of("x_load")).hasSize(3));
+        awaitAgent().untilAsserted(() -> assertThat(received.of("x_load")).hasSize(3));
         assertThat(received.matching(ReceivedMessages.Received::sample))
                 .extracting(ReceivedMessages.Received::sequence).containsExactly(first, second);
         assertThat(agent.requests()).filteredOn(request -> request.contains("/current")).hasSize(1);
@@ -89,7 +89,7 @@ class MTConnectStreamTest extends MTConnectTestSupport {
         assertThat(samples(agent) - before).isGreaterThanOrEqualTo(3);
         agent.clearAnswers();
         long next = agent.set("x_load", "1");
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample))
                 .extracting(ReceivedMessages.Received::sequence).containsExactly(next));
         // a clean end is not an outage
         assertThat(received.matching(m -> m.bad() && m.sequence() == null)).isEmpty();
@@ -106,7 +106,7 @@ class MTConnectStreamTest extends MTConnectTestSupport {
         agent.set("x_load", "5");
         agent.set("agent_avail", "AVAILABLE");
 
-        await().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
+        awaitAgent().untilAsserted(() -> assertThat(received.matching(ReceivedMessages.Received::sample)).hasSize(2));
         assertThat(received.all()).extracting(m -> m.text(MTConnectConstants.DEVICE_UUID)).contains("trial-001",
                 "31e6d9c6-9275-5559-b9e5-d02ba9db3555");
         assertThat(agent.requests()).allSatisfy(request -> assertThat(request).matches("/(probe|current|sample).*"));
@@ -118,7 +118,7 @@ class MTConnectStreamTest extends MTConnectTestSupport {
         String path = "//Axes//DataItem[@type='LOAD']";
         consume("mtconnect:" + agent.url() + "?device=Trial&" + FAST + "&path=RAW(" + path + ")");
 
-        await().untilAsserted(() -> assertThat(agent.requests()).anyMatch(request -> request.contains("/sample")));
+        awaitAgent().untilAsserted(() -> assertThat(agent.requests()).anyMatch(request -> request.contains("/sample")));
         assertThat(agent.requests()).filteredOn(request -> !request.endsWith("/probe"))
                 .allSatisfy(request -> assertThat(queryParameter(request, "path")).isEqualTo(path));
     }
@@ -129,7 +129,7 @@ class MTConnectStreamTest extends MTConnectTestSupport {
         agent.bufferSize(64);
         consume("mtconnect:" + agent.url() + "?device=Trial&" + FAST);
 
-        await().untilAsserted(() -> assertThat(agent.requests()).anyMatch(request -> request.contains("/sample")));
+        awaitAgent().untilAsserted(() -> assertThat(agent.requests()).anyMatch(request -> request.contains("/sample")));
         assertThat(agent.requests()).filteredOn(request -> request.contains("/sample"))
                 .allSatisfy(request -> assertThat(queryParameter(request, "count")).isEqualTo("64"));
     }
@@ -139,7 +139,7 @@ class MTConnectStreamTest extends MTConnectTestSupport {
         StubAgent agent = agent(StubDialect.V2_5);
         consume("mtconnect:" + agent.url() + "?device=Trial&count=10&" + FAST);
 
-        await().untilAsserted(() -> assertThat(agent.requests()).anyMatch(request -> request.contains("/sample")));
+        awaitAgent().untilAsserted(() -> assertThat(agent.requests()).anyMatch(request -> request.contains("/sample")));
         String sample = agent.requests().stream().filter(request -> request.contains("/sample")).findFirst()
                 .orElseThrow();
         assertThat(queryParameter(sample, "count")).isEqualTo("10");
