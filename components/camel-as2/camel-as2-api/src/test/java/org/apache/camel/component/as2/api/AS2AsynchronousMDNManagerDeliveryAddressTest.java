@@ -23,6 +23,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -136,6 +137,27 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
                 false);
         assertTrue(manager.isAllowedAuthority("partner.example", 80, 80),
                 "a bare-host entry must match the default port for the scheme");
+    }
+
+    /**
+     * When credentials are withheld, the warning names the delivery authority as an asyncMdnAllowedHosts entry the
+     * operator can copy. An IPv6 literal is written in square brackets: unbracketed, ::1:8443 is itself an IPv6 address
+     * and the entry would be read as that host on the default port.
+     */
+    @Test
+    void theWarningNamesTheAuthorityAsAnAllowListEntry() {
+        assertEquals("partner.example:4080", AS2AsynchronousMDNManager.formatAuthority("partner.example", 4080));
+        assertEquals("[::1]:8443", AS2AsynchronousMDNManager.formatAuthority("::1", 8443));
+
+        for (String[] authority : new String[][] { { "partner.example", "4080" }, { "::1", "8443" } }) {
+            String host = authority[0];
+            int port = Integer.parseInt(authority[1]);
+            AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
+                    "1.1", "Camel", "sender.example.com", null, null, "user", "password", null,
+                    AS2AsynchronousMDNManager.formatAuthority(host, port), null, false);
+            assertTrue(manager.isAllowedAuthority(host, port, 80),
+                    "the entry the warning names must authorise the authority it was written for: " + host + " " + port);
+        }
     }
 
     /**

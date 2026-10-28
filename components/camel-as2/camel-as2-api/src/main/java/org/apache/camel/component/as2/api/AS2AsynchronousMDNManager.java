@@ -253,9 +253,9 @@ public class AS2AsynchronousMDNManager {
             if (authorityIsAllowed) {
                 AS2HeaderUtils.addAuthorizationHeader(request, userName, password, accessToken);
             } else if (userName != null || accessToken != null) {
-                LOG.warn("Asynchronous MDN credentials not sent to sender-supplied authority {}:{}:"
+                LOG.warn("Asynchronous MDN credentials not sent to sender-supplied authority {}:"
                          + " set asyncMdnAllowedHosts to authorise it",
-                        host, port);
+                        formatAuthority(host, port));
             }
             httpContext.setRequest(request);
             multipartMimeEntity.setMainBody(true);
@@ -304,6 +304,16 @@ public class AS2AsynchronousMDNManager {
             return host.substring(1, host.length() - 1);
         }
         return host;
+    }
+
+    /**
+     * Writes a delivery authority the way an {@code asyncMdnAllowedHosts} entry is written, so a log message names an
+     * entry the operator can copy. The host has been through normalizeHost, so an IPv6 literal (the only host that
+     * contains a colon) is put back in square brackets ({@code [::1]:8443}): unbracketed, {@code ::1:8443} would be
+     * read as another IPv6 address on the default port. Any other host is written as {@code host:port}.
+     */
+    static String formatAuthority(String host, int port) {
+        return host.indexOf(':') >= 0 ? "[" + host + "]:" + port : host + ":" + port;
     }
 
     /**
