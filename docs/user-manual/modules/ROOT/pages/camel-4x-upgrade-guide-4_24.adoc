@@ -2534,6 +2534,9 @@ The `RouteDiagramRenderer(nodeWidth, fontSizeScaled, nodeTextPadding, metrics)` 
 of a card starts after its icon and `nodeTextPadding` is not used. Use `RouteDiagramRenderer(nodeWidth, fontSizeScaled,
 metrics)` instead.
 
+A program that lays out routes with `RouteDiagramLayoutEngine` and draws them with `RouteDiagramRenderer` must call
+`engine.setCardStyle(true)` before `layoutRoute`. Without it, the cards get the height and text of the old boxes.
+
 `camel cmd route-diagram` of a running application whose message history recorded the body types (such as in the dev
 profile) shows them on the arrows, with longer arrows to hold them. Use `--body-types=false` for the diagram without
 them.
