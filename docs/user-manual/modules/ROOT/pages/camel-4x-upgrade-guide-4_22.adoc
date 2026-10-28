@@ -336,6 +336,13 @@ URLs under another base URL, for example behind a proxy, starting a saga now fai
 `allowedCoordinatorUrls` (`camel.lra.allowedCoordinatorUrls`). Before, the saga was started, and only a nested saga
 route that looked the LRA up again failed.
 
+=== camel-oauth - session identifier logging and session rotation on login
+
+`InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
+identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
+and emitting an updated session cookie. Custom `OAuthSessionStore` implementations can override the default
+`rotateSession` method to support session rotation on login.
+
 === camel-jbang - camel plugin add selects the plugin release built for the CLI
 
 `camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`
