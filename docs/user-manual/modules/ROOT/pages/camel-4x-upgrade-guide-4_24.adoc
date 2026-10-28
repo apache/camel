@@ -3817,6 +3817,25 @@ Applications whose custom code (such as beans calling `Customer.retrieve(...)` d
 `camel-stripe` setting `Stripe.apiKey` globally in the JVM at startup must now configure `Stripe.apiKey` directly or
 pass `RequestOptions` explicitly.
 
+=== camel-lucene - inserted documents are indexed, one document per exchange
+
+The `lucene:...:insert` endpoint now indexes the fields it writes, so a `lucene:...:query` finds the inserted messages
+and the files of `srcDir`. Before, the fields were stored but not indexed, and a query never found them.
+
+*Breaking change:* an index directory written by an earlier Camel version cannot be appended to. Lucene does not let a
+field change from not indexed to indexed, so the insert fails with `IllegalArgumentException: cannot change field
+"exchangeId" from index options=NONE to inconsistent index options=DOCS_AND_FREQS_AND_POSITIONS` (or the same for
+another field). Delete the index directory (`indexDir`) and insert the messages again. A query on such an index does not
+fail, but it finds none of its documents, as before.
+
+Each exchange is now indexed as one document, with the body in `contents`, the exchange id in `exchangeId` and each
+header in a field of the header name. Each file of `srcDir` is one document with the `contents` and `path` fields.
+Before, each of these fields was a document of its own. The files of `srcDir` are indexed each time the insert endpoint
+is created, such as when the application starts; the document of a file now replaces the one with the same `path`
+instead of adding a copy. A query on a header, such as `author:carlin`, now gives a hit
+whose data is the body of the exchange, and with `CamelLuceneReturnLuceneDocs` the document of a hit carries all the
+fields of its exchange or file.
+
 === camel-wordpress - requests and responses are no longer logged
 
 The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
