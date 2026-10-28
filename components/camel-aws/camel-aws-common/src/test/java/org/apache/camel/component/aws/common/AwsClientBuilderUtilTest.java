@@ -81,6 +81,19 @@ class AwsClientBuilderUtilTest {
         }
     }
 
+    @Test
+    void sdkAsyncSettingLeavesTheChoiceToTheSdk() {
+        String property = SdkSystemSetting.ASYNC_HTTP_SERVICE_IMPL.property();
+        System.setProperty(property, "org.apache.camel.component.aws.common.MissingHttpService");
+        try {
+            assertThatThrownBy(() -> AwsClientBuilderUtil.buildAsyncClient(CONFIGURATION, StsAsyncClient::builder))
+                    .isInstanceOf(SdkClientException.class)
+                    .hasMessageContaining("MissingHttpService");
+        } finally {
+            System.clearProperty(property);
+        }
+    }
+
     /**
      * Registered in the test resources as an SdkHttpService and an SdkAsyncHttpService, without being either.
      */
