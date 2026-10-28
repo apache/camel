@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.jcache;
 
+import javax.cache.Cache;
+
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JCacheManagerTest extends JCacheComponentTestSupport {
 
@@ -46,5 +51,41 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
                 () -> {
                     objectObjectJCacheManager.getCache();
                 });
+    }
+
+    @Test
+    void aManagerThatCouldNotGetItsCacheDoesNotCloseTheCacheManagerOfTheOthers() throws Exception {
+        JCacheConfiguration conf = new JCacheConfiguration();
+        conf.setCacheName(randomString());
+        JCacheManager<Object, Object> user = new JCacheManager<>(conf);
+        Cache<Object, Object> cache = user.getCache();
+
+        JCacheConfiguration missing = new JCacheConfiguration();
+        missing.setCacheName(randomString());
+        missing.setCreateCacheIfNotExists(false);
+        JCacheManager<Object, Object> failing = new JCacheManager<>(missing);
+        assertThrows(IllegalStateException.class, failing::getCache);
+        // such as when the endpoint stops after its route failed to start
+        failing.close();
+
+        assertFalse(cache.isClosed());
+        cache.put("k", "v");
+        assertEquals("v", cache.get("k"));
+
+        user.close();
+        assertTrue(cache.isClosed());
+    }
+
+    @Test
+    void aClosedManagerDoesNotOpenItsCacheAgain() throws Exception {
+        JCacheConfiguration conf = new JCacheConfiguration();
+        conf.setCacheName(randomString());
+        JCacheManager<Object, Object> manager = new JCacheManager<>(conf);
+        Cache<Object, Object> cache = manager.getCache();
+
+        manager.close();
+        assertTrue(cache.isClosed());
+        // nothing would close a cache opened again by a closed manager
+        assertThrows(IllegalStateException.class, manager::getCache);
     }
 }
