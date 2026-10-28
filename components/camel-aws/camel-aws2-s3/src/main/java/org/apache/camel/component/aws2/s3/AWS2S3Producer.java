@@ -1207,7 +1207,9 @@ public class AWS2S3Producer extends DefaultProducer {
 
         S3Presigner.Builder builder = S3Presigner.builder();
         if (getConfiguration().isUseDefaultCredentialsProvider()) {
-            builder.credentialsProvider(DefaultCredentialsProvider.create());
+            // a new instance for each presigner: closing the presigner closes its credentials provider, and
+            // DefaultCredentialsProvider.create() returns a singleton shared by every client in the JVM
+            builder.credentialsProvider(DefaultCredentialsProvider.builder().build());
         } else if (getConfiguration().isUseProfileCredentialsProvider()) {
             builder.credentialsProvider(
                     ProfileCredentialsProvider.create(getConfiguration().getProfileCredentialsName()));
