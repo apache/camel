@@ -2803,7 +2803,7 @@ contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepte
 
 === camel-jbang-mcp - runtime tools that changed behaviour
 
-Some runtime tools of the Camel MCP server now do what their description says, which changes what a client sees:
+Some runtime tools of the Camel CLI MCP server now do what their description says, which changes what a client sees:
 
 * `camel_runtime_receive` receives a message in one call: it starts a consumer on the endpoint, waits up to
   `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer. It returns one message
