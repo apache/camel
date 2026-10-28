@@ -5,12 +5,14 @@ authors:
 reviewers: []
 approvers: []
 creation-date: 2026-10-02
-last-updated: 2026-10-15
+last-updated: 2026-10-28
 status: provisional
 see-also:
   - "CAMEL-25259"
   - "CAMEL-25257"
   - "CAMEL-25138"
+  - "CAMEL-24977"
+  - "CAMEL-25049"
   - "CAMEL-25254"
   - "CAMEL-25258"
 replaces: []
@@ -278,7 +280,12 @@ camel-semantic is the existing extension this design starts from; it does not op
 
 . *Agree on this design* (CAMEL-25259) on the dev list, with the authors of camel-semantic.
 . *Model and catalog:* the semantic model classes, the catalog kind and `CamelCatalog` API, and generating the YAML
-  schema fragment from the model (dropping the stubs and the plugin dependency in camel-yaml-dsl).
+  schema fragment from the model (dropping the stubs and the plugin dependency in camel-yaml-dsl). The model is tested
+  with the cases met when the Java and XML declarations were added (CAMEL-24977, CAMEL-25049, CAMEL-25138):
+** named choice criteria and ordered score levels, which the model must carry with their rules;
+** a numeric option (a threshold) that holds a property placeholder: the model accepts it, and validation does not
+   check the range of a value it cannot resolve (see <<Security>>);
+** declarations in one file used by routes in another (see <<Open questions>>).
 . *SPI and dependency detection* (CAMEL-25257): the camel-api interface, the factory finder key, and camel-jbang
   dependency detection.
 . *Tools:* the converter carries declarations over, the validator checks them and their references, the MCP catalog
@@ -303,6 +310,9 @@ camel-semantic is the existing extension this design starts from; it does not op
 . *XML namespace:* should every extension have its own namespace (semantic has one), and should the xml-io namespace
   still be accepted?
 . *Java:* a data-only builder in the vetted replay surface, or reading the chain without replaying it?
+. *Declarations shared across files:* questions declared in one file and used (`ref:urgent`) by routes in other files,
+  or in another resource of the project. Which files do the tools read to resolve a reference, and is a reference to a
+  question that is not in the files at hand an error, a warning, or left unchecked?
 . *Versioning:* an extension's schema changes with its feature. Is the catalog entry enough for tools to handle files
   written for an older version?
 . *Which other mini DSLs would follow?* Each one goes through <<Governance>> first. Candidates that came up: the
