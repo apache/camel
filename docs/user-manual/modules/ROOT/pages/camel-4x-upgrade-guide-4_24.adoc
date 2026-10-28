@@ -3875,5 +3875,5 @@ registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_ve
 A JPA consumer whose query selects values that are not entities, such as a column (`select x.address from Customer x`),
 now delivers them with the default `consumeLockEntity=true`. Before, the lock of each value failed and the value was
 skipped, so the route received no message, with only a DEBUG log. Such a value cannot be deleted: with the default
-`consumeDelete=true` a WARN is logged for each one, and the next poll delivers it again. Set `consumeDelete=false` for
-such a query.
+`consumeDelete=true` a WARN is logged once, and each poll delivers the values again. Set `consumeDelete=false` for such
+a query.

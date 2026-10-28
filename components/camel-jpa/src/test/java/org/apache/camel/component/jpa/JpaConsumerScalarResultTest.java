@@ -18,6 +18,9 @@ package org.apache.camel.component.jpa;
 
 import java.util.List;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.metamodel.Metamodel;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
@@ -25,6 +28,14 @@ import org.apache.camel.processor.jpa.AbstractJpaTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * A query that selects values that are not entities (such as a column) delivers them with the default
@@ -54,6 +65,25 @@ public class JpaConsumerScalarResultTest extends AbstractJpaTest {
         // the values were not deleted, so the next poll delivers them again
         assertEquals(2, consumer.poll());
         assertEquals(4, mock.getReceivedCounter());
+    }
+
+    @Test
+    public void testNoLockIsAttemptedForAValueThatIsNotAnEntity() {
+        // a failed lock marks the transaction rollback only on some JPA providers, so it must not be attempted
+        EntityManager em = mock(EntityManager.class);
+        Metamodel metamodel = entityManager.getMetamodel();
+        when(em.getMetamodel()).thenReturn(metamodel);
+        JpaConsumer consumer = (JpaConsumer) context.getRoute("scalar").getConsumer();
+
+        assertTrue(consumer.lockEntity("bar@beer.org", em), "a selected column has nothing to lock");
+        assertTrue(consumer.lockEntity(new Object[] { 1L, "bar@beer.org" }, em),
+                "the Object array of a native query has nothing to lock");
+        verify(em, never()).lock(any(), any());
+        verify(em, never()).lock(any(), any(), anyMap());
+
+        SendEmail entity = new SendEmail("bar@beer.org");
+        assertTrue(consumer.lockEntity(entity, em), "an entity is locked");
+        verify(em).lock(eq(entity), any());
     }
 
     @Override

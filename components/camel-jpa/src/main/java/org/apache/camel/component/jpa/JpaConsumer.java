@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
@@ -65,6 +66,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private Class<?> resultClass;
     private boolean transacted;
     private boolean skipLockedEntity;
+    private final AtomicBoolean notEntityWarned = new AtomicBoolean();
 
     static {
         NOWAIT = new HashMap<>();
@@ -374,6 +376,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         if (!getEndpoint().isConsumeLockEntity()) {
             return true;
         }
+        if (!isEntity(entity, entityManager)) {
+            // a value that is not an entity (a selected column, or the Object array of a native query) has no lock;
+            // a failed lock marks the transaction rollback only on some providers (Hibernate)
+            return true;
+        }
         try {
             LOG.debug("Acquiring exclusive lock on entity: {}", entity);
             if (isSkipLockedEntity()) {
@@ -389,10 +396,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 //transaction marked as rollback can't continue gracefully
                 throw (PersistenceException) e;
             }
-            //TODO: Find if possible an alternative way to handle results of native queries.
-            //Result of native queries are Arrays and cannot be locked by all JPA Providers.
-            // a value that is not an entity, such as a selected column, has no lock: it is processed
-            return entity.getClass().isArray() || !isEntity(entity, entityManager);
+            return false;
         }
     }
 
@@ -505,10 +509,14 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             return (EntityManager em, Object entityBean, Exchange exchange) -> {
                 if (entityBean != null && isEntity(entityBean, em)) {
                     em.remove(entityBean);
-                } else {
+                } else if (notEntityWarned.compareAndSet(false, true)) {
+                    // once per consumer, as each poll delivers the same results again
                     LOG.warn("Cannot auto-delete a query result of type {} that is not an entity (e.g. a selected column,"
                              + " or a native query result without resultClass). Set consumeDelete=false or configure a"
                              + " resultClass.",
+                            entityBean != null ? entityBean.getClass().getName() : "null");
+                } else {
+                    LOG.debug("Cannot auto-delete a query result of type {} that is not an entity",
                             entityBean != null ? entityBean.getClass().getName() : "null");
                 }
             };
