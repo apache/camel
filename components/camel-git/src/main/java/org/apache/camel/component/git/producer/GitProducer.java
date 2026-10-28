@@ -248,7 +248,12 @@ public class GitProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(endpoint.getTagName())) {
                 // create the branch only when it does not exist yet
                 boolean exists = repo.findRef(Constants.R_HEADS + endpoint.getBranchName()) != null;
-                git.checkout().setCreateBranch(!exists).setName(endpoint.getBranchName()).call();
+                if (exists) {
+                    // the full name, so that a tag with the same name is not checked out instead
+                    git.checkout().setName(Constants.R_HEADS + endpoint.getBranchName()).call();
+                } else {
+                    git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).call();
+                }
             } else {
                 git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName())
                         .call();

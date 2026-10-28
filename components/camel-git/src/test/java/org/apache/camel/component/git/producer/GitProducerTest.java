@@ -101,12 +101,20 @@ public class GitProducerTest extends GitTestSupport {
         git.add().addFilepattern(filenameToAdd).call();
         git.commit().setMessage(commitMessage).call();
         template.sendBody("direct:create-branch", "");
+        String branchCommit = git.getRepository().resolve(branchTest).getName();
+        // move master one commit past the branch, and tag it with the name of the branch
+        File fileToAdd1 = new File(getGitDir(), filenameBranchToAdd);
+        fileToAdd1.createNewFile();
+        git.add().addFilepattern(filenameBranchToAdd).call();
+        git.commit().setMessage(commitMessageBranch).call();
+        git.tag().setName(branchTest).call();
         assertEquals("master", git.getRepository().getBranch());
 
-        // Test camel-git checkout of a branch that exists
+        // Test camel-git checkout of a branch that exists: the branch, not the tag of the same name
         template.sendBody("direct:checkout", "");
 
         assertEquals(branchTest, git.getRepository().getBranch());
+        assertEquals(branchCommit, git.getRepository().resolve("HEAD").getName());
         git.close();
     }
 
