@@ -211,7 +211,7 @@ class MinioProducerEncryptionTest extends CamelTestSupport {
     }
 
     @Test
-    void getObjectRangeWithCustomerKey() throws Exception {
+    void getPartialObjectWithCustomerKey() throws Exception {
         ServerSideEncryptionCustomerKey ssec = new ServerSideEncryptionCustomerKey(secretKey);
 
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
@@ -223,7 +223,7 @@ class MinioProducerEncryptionTest extends CamelTestSupport {
 
         MinioProducer producer = createProducer(endpoint);
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.getObjectRange);
+        exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.getPartialObject);
         exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
         exchange.getIn().setHeader(MinioConstants.OFFSET, "10");
         exchange.getIn().setHeader(MinioConstants.LENGTH, "20");
