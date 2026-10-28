@@ -16,10 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
+import org.apache.camel.diagram.RouteDiagramHelper;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -119,6 +126,51 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
         Path txt = dir.resolve("out").resolve("diagram.txt");
         assertThat(Files.readString(txt)).contains("route1", "timer:tick");
         assertThat(printer.getOutput()).contains("Diagram saved to: " + txt.toAbsolutePath());
+    }
+
+    @Test
+    void imageDrawsTheStepsAsCards() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path light = dir.resolve("light.png");
+
+        assertThat(callWithResponse(command("--theme=light", "--output=" + light)::doCall, structure("route1")))
+                .isZero();
+
+        // the route laid out as cards (a title and its detail), not as boxes of one line of code
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
+        engine.setCardStyle(true);
+        RouteInfo route = RouteDiagramHelper.parseRoutes(structure("route1")).get(0);
+        int height = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING).maxY + RouteDiagramLayoutEngine.V_GAP
+                     + RouteDiagramLayoutEngine.PADDING;
+        assertThat(ImageIO.read(light.toFile()).getHeight()).isEqualTo(height);
+    }
+
+    @Test
+    void pngFileIsInTheLightThemeByDefault() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path light = dir.resolve("light.png");
+        Path byDefault = dir.resolve("default.png");
+
+        assertThat(callWithResponse(command("--theme=light", "--output=" + light)::doCall, structure("route1")))
+                .isZero();
+        assertThat(callWithResponse(command("--output=" + byDefault)::doCall, structure("route1"))).isZero();
+
+        // without a theme a .png file gets the image, not the text diagram next to it
+        assertThat(dir.resolve("default.txt")).doesNotExist();
+        BufferedImage lightImage = ImageIO.read(light.toFile());
+        BufferedImage defaultImage = ImageIO.read(byDefault.toFile());
+        assertThat(defaultImage.getHeight()).isEqualTo(lightImage.getHeight());
+        assertThat(defaultImage.getRGB(0, 0)).isEqualTo(lightImage.getRGB(0, 0));
+    }
+
+    @Test
+    void otherFileIsTextByDefault() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path txt = dir.resolve("diagram.txt");
+
+        assertThat(callWithResponse(command("--output=" + txt)::doCall, structure("route1"))).isZero();
+
+        assertThat(Files.readString(txt)).contains("route1", "─");
     }
 
     @Test

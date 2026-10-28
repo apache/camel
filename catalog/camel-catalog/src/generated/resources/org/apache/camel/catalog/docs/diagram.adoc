@@ -71,6 +71,8 @@ List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(jsonObject);
 
 // Layout and render
 RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+// the renderer draws the steps as cards, so lay them out as cards
+engine.setCardStyle(true);
 RouteDiagramRenderer renderer = new RouteDiagramRenderer();
 
 LayoutRoute lr = engine.layoutRoute(routes.get(0), RouteDiagramLayoutEngine.PADDING);
@@ -132,15 +134,23 @@ frame below its steps, and in topology mode the routes reached only on error in 
 
 The following built-in themes are available:
 
-* `dark` - dark background (default)
-* `light` - light background
-* `transparent` - transparent background
+* `dark` - dark background, dark cards (default)
+* `light` - light background, white cards
+* `transparent` - transparent background, white cards
 
 Custom colors can be specified using the format:
 
 [source,properties]
 ----
 bg=#1e1e1e:from=#2e7d32:to=#1565c0:eip=#8957e5:choice=#d29922
+----
+
+A custom spec is on top of the `dark` theme. The colors of the cards are set with `card` (the background of a card),
+`cardBorder`, `cardText` (the kind of step) and `cardDetail` (its detail):
+
+[source,properties]
+----
+bg=#ffffff:card=#fafafa:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e
 ----
 
 Color values can be `#hex` codes or ANSI color names (e.g., `seagreen`, `steelblue`).
@@ -151,6 +161,27 @@ To use dark theme
 ----
 camel cmd route-diagram MyRoute.java --theme=dark
 ----
+
+=== Steps as Cards
+
+An image of a route draws each step as a card: an icon for the kind of step, in a circle of the color of its kind,
+the kind in bold (such as `setBody`), and its detail below (such as `groovy: body.items`, from the code
+`setBody[groovy{body.items}]`). A step without detail, such as `choice`, shows only its kind.
+
+[source,bash]
+----
+camel cmd route-diagram orders.camel.yaml --output=orders.png
+----
+
+`camel cmd route-diagram` saves a `.png` file in the `light` theme when no `--theme` is given (in the terminal it shows
+the `unicode` text diagram), and so does the `camel_render_route_diagram` MCP tool.
+
+image::ROOT:route-diagram-card.png[A route diagram: a file read, a groovy mapping, an http call and a JMS send as white cards]
+
+With `--node-label=both` (the default of `camel cmd route-diagram`) a step with a description shows the description
+and then the detail below its kind.
+
+The icons are from https://lucide.dev[Lucide] (ISC License), the same as the embeddable web components.
 
 == ASCII Art Rendering
 
@@ -410,7 +441,8 @@ RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNod
 String diagram = renderer.renderDiagramAnsi(layoutRoutes, totalHeight, highlightedNodes, style);
 
 // For PNG rendering
-RouteDiagramRenderer pngRenderer = new RouteDiagramRenderer(nodeWidth, fontSize);
+RouteDiagramRenderer pngRenderer = new RouteDiagramRenderer(
+        engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, false);
 BufferedImage image = pngRenderer.renderDiagram(layoutRoutes, totalHeight, colors, highlightedNodes, style);
 ----
 

@@ -197,8 +197,14 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
             boolean errors, List<ErrorPath> paths) {
         RouteDiagramRenderer renderer = new RouteDiagramRenderer(
                 nodeWidth * RouteDiagramLayoutEngine.SCALE, fontSize * RouteDiagramLayoutEngine.SCALE, metrics);
+        if (theme == null) {
+            theme = "transparent";
+        }
+        theme = theme.toLowerCase();
+        RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse(theme);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                 nodeWidth, fontSize, RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
+        engine.setCardStyle(true);
 
         List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
@@ -208,11 +214,6 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
             layoutRoutes.add(lr);
             currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
         }
-        if (theme == null) {
-            theme = "transparent";
-        }
-        theme = theme.toLowerCase();
-        RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse(theme);
         return renderer.renderDiagram(layoutRoutes, currentY, colors, highlightedNodeIds, highlightStyle);
     }
 

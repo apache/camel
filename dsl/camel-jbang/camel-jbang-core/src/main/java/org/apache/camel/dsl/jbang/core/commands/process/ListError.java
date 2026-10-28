@@ -387,6 +387,7 @@ public class ListError extends ProcessWatchCommand {
         // layout
         RouteDiagramLayoutEngine engine
                 = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
+        engine.setCardStyle(!isTextTheme());
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
@@ -405,7 +406,7 @@ public class ListError extends ProcessWatchCommand {
         } else {
             DiagramColors colors = DiagramColors.parse(theme);
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                    engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(), false);
+                    engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, false);
 
             BufferedImage image;
             try {
