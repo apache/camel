@@ -485,10 +485,19 @@ public class YamlValidator {
             }
         }
         Mark list = deeper != null ? deeper : shallower;
+        // the two lines as written: with the columns alone, a local model sent the same indentation again up to 18 times
         String belongs = list == null
-                ? "" : ", but the list that starts at line " + list.line() + " has its items in column " + list.column();
-        return hint("line " + problem.line() + ": this list item starts in column " + problem.column() + belongs
-                    + "; every item of a list must start in the same column");
+                ? ""
+                : ", but the list that starts at line " + list.line() + quotedLine(lines, list.line())
+                  + " has its items in column " + list.column();
+        return hint("line " + problem.line() + quotedLine(lines, problem.line()) + ": this list item starts in column "
+                    + problem.column() + belongs + "; every item of a list must start in the same column");
+    }
+
+    /** The line as written, quoted after its number, or nothing when the line is not in the text. */
+    private static String quotedLine(String[] lines, int line) {
+        return line >= 1 && line <= lines.length && !lines[line - 1].isBlank()
+                ? " (\"" + lines[line - 1].stripTrailing() + "\")" : "";
     }
 
     /**

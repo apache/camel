@@ -210,7 +210,9 @@ final class SimpleChecks {
      * function the condition starts with is opened before the condition and closed after the second value, and a value
      * written as bare text is quoted. <tt>resource:file:${exchangeProperty.CamelTimerCounter} == 1 ? order.json :
      * order-bad-email.json</tt> is <tt>resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' :
-     * 'order-bad-email.json'}</tt>.
+     * 'order-bad-email.json'}</tt>, and so is
+     * <tt>${exchangeProperty.CamelTimerCounter} == 1 ? resource:file:order.json :
+     * resource:file:order-bad-email.json</tt>.
      */
     static String ternaryInsideOneFunction(String text, int question, int colon) {
         // the functions at the top level before the ?, as {start, end} with end the index of the closing brace
@@ -238,9 +240,24 @@ final class SimpleChecks {
         int start = functions.get(index)[0];
         int end = functions.get(index)[1];
         String condition = text.substring(start + 2, end) + text.substring(end + 1, question);
-        return text.substring(0, start) + "${" + condition + " ? " + quoted(text.substring(question + 3, colon).trim())
-               + " : " + quoted(text.substring(colon + 3).trim()) + "}";
+        String prefix = text.substring(0, start);
+        String first = text.substring(question + 3, colon).trim();
+        String second = text.substring(colon + 3).trim();
+        // resource: is read only at the start of the expression: inside the function, 'resource:file:order.json' is the
+        // text the body becomes, so a resource: both values start with goes before the function (the local-model
+        // benchmark: the body was the text resource:file:order.json, and the next step failed to parse it as JSON)
+        Matcher scheme = RESOURCE_SCHEME.matcher(first);
+        if (prefix.isEmpty() && scheme.lookingAt() && second.startsWith(scheme.group())
+                && first.length() > scheme.end() && second.length() > scheme.end()) {
+            prefix = scheme.group();
+            first = first.substring(scheme.end());
+            second = second.substring(scheme.end());
+        }
+        return prefix + "${" + condition + " ? " + quoted(first) + " : " + quoted(second) + "}";
     }
+
+    /** The resource: and its scheme a value starts with, such as <tt>resource:file:</tt>. */
+    private static final Pattern RESOURCE_SCHEME = Pattern.compile("resource:[a-z]+:");
 
     /** The index of the brace that closes the function opened at the index, or -1. */
     private static int closingBrace(String text, int open) {

@@ -1142,8 +1142,9 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 11: this list item starts in column 13")
-                .contains("the list that starts at line 7 has its items in column 15")
+                .startsWith("line 11 (\"            - simple: \"${body} > 2\"\"): this list item starts in column 13")
+                .contains(
+                        "the list that starts at line 7 (\"              - simple: \"${body} > 1\"\") has its items in column 15")
                 .contains("every item of a list must start in the same column")
                 .doesNotContain("block end");
     }
@@ -1163,8 +1164,8 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 7: this list item starts in column 11")
-                .contains("the list that starts at line 5 has its items in column 9");
+                .startsWith("line 7 (\"").contains("\"): this list item starts in column 11")
+                .contains("the list that starts at line 5 (\"").contains("\") has its items in column 9");
     }
 
     /**
@@ -1293,8 +1294,8 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 12: this list item starts in column 13")
-                .contains("the list that starts at line 7 has its items in column 15");
+                .startsWith("line 12 (\"").contains("\"): this list item starts in column 13")
+                .contains("the list that starts at line 7 (\"").contains("\") has its items in column 15");
     }
 
     /**
@@ -1316,8 +1317,8 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 8: this list item starts in column 10")
-                .contains("the list that starts at line 5 has its items in column 9")
+                .startsWith("line 8 (\"").contains("\"): this list item starts in column 10")
+                .contains("the list that starts at line 5 (\"").contains("\") has its items in column 9")
                 .doesNotContain("block sequence start");
     }
 

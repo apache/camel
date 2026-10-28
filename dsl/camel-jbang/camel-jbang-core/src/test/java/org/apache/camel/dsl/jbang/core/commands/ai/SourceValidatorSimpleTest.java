@@ -502,6 +502,19 @@ class SourceValidatorSimpleTest {
     }
 
     @Test
+    void aResourceInBothValuesOfATopLevelTernaryGoesBeforeTheFunction() {
+        // inside the function, 'resource:file:order.json' is only text: the body would be that text, not the file
+        assertThat(rewritten(
+                "${exchangeProperty.CamelTimerCounter} == 1 ? resource:file:order.json : resource:file:order-bad-email.json"))
+                .isEqualTo("resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}");
+        // a value that is not a resource of the same scheme stays as it is
+        assertThat(rewritten("${header.a} == 1 ? resource:file:order.json : resource:classpath:order.json"))
+                .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'resource:classpath:order.json'}");
+        assertThat(rewritten("${header.a} == 1 ? resource:file:order.json : none"))
+                .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'none'}");
+    }
+
+    @Test
     void aResourceLocationWithoutATopLevelTernaryIsAccepted() {
         List<String> msgs = SourceValidator.validateYamlSimple(
                 """
