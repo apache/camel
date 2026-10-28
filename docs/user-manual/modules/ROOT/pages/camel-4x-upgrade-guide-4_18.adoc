@@ -98,6 +98,13 @@ Additionally:
 - When `alwaysReauthenticate=true` (the default), no caller identity stays bound to the processing thread after the
   policy check completes.
 
+=== camel-cometd - the JSONP transport is disabled by default
+
+The CometD JSONP transport (`callback-polling`) is now disabled by default. Only `long-polling` (and `websocket`,
+when the CometD WebSocket transport is on the classpath) is enabled by default. Applications that require JSONP
+clients can configure `allowedTransports` on the endpoint to include `callback-polling`
+(for example, `allowedTransports=websocket,long-polling,callback-polling`).
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-docling - output path handling
@@ -1910,10 +1917,3 @@ now refuses to send a request path, query or header value that contains a contro
 framing, are still allowed. Routes that put a percent-encoded control character (such as `%0D%0A`) into the
 `CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
 likely to be affected.
-
-=== camel-cometd - the JSONP transport is disabled by default
-
-The CometD JSONP transport (`callback-polling`) is now disabled by default. Only `long-polling` (and `websocket`,
-when the CometD WebSocket transport is on the classpath) is enabled by default. Applications that require JSONP
-clients can configure `allowedTransports` on the endpoint to include `callback-polling`
-(for example, `allowedTransports=websocket,long-polling,callback-polling`).
