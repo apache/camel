@@ -109,6 +109,7 @@ if [ "$CHANNEL" = "stable" ]; then
   SDKMAN_DEFAULT="true"
   BREW_LTS_FORMULA=""
   WEBSITE_LATEST="true"
+  WEBSITE_LTS="false"
   # The maven-metadata.xml <release> tag always reflects the newest published release across every
   # line, which is exactly "latest stable" for this formula - no line-prefix filtering needed.
   # %r{} (not /.../ ) per Homebrew's Style/RegexpLiteral cop, which the pattern's escaped "/"
@@ -116,7 +117,8 @@ if [ "$CHANNEL" = "stable" ]; then
   # must stay a clean, unpadded {{{ }}} - butting a literal %r{ or trailing }i) directly against
   # the triple-mustache braces confuses the tag scanner and silently drops the substitution.
   CAMEL_PKG_BREW_LIVECHECK_REGEX='regex(%r{<release>([0-9]+\.[0-9]+\.[0-9]+)</release>}i)'
-  [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="apache-camel@$LTS_LINE"
+  # --lts-line on a stable build is the first release of a new LTS line, so it is also the newest LTS
+  [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="apache-camel@$LTS_LINE" && WEBSITE_LTS="true"
 else
   # Homebrew's own versioned-formula convention names the *file* "apache-camel@X.Y.rb" but the
   # Ruby *class* "ApacheCamelATxy" (dot removed) - e.g. real homebrew-core "python@3.11.rb"
@@ -134,6 +136,8 @@ else
   SDKMAN_DEFAULT="false"
   BREW_LTS_FORMULA=""
   WEBSITE_LATEST="false"
+  # An LTS maintenance release also moves lts.properties (forward only), next to its X.Y.properties.
+  WEBSITE_LTS="true"
   # maven-metadata.xml lists every published version, not just the newest, so the LTS formula's
   # livecheck must filter to this LTS line's own X.Y prefix (escaping the dot so it matches
   # literally, not "any character") or it would report the project's overall latest release
@@ -162,6 +166,7 @@ if [ "$PRINT_PLAN" -eq 1 ]; then
   echo "SDKMAN_DEFAULT=$SDKMAN_DEFAULT"
   echo "WEBSITE_VERSION_MANIFEST=true"
   echo "WEBSITE_LATEST=$WEBSITE_LATEST"
+  echo "WEBSITE_LTS=$WEBSITE_LTS"
   [ -n "$BREW_LTS_FORMULA" ] && echo "BREW_LTS_FORMULA=$BREW_LTS_FORMULA"
   [ -n "$BREW_FORMULA" ] && echo "BREW_FORMULA=$BREW_FORMULA"
   [ -n "$BREW_CLASS" ] && echo "BREW_CLASS=$BREW_CLASS"
@@ -267,7 +272,7 @@ if ! java "$MODULE_DIR/src/jreleaser/java/WebsiteManifestGenerator.java" \
     --version "$PROJECT_VERSION" --tar "$TAR" --zip "$ZIP" \
     --install-sh "$WEBSITE_DIR/install.sh" --install-ps1 "$WEBSITE_DIR/install.ps1" \
     --output "$WEBSITE_DIR/camel-cli" \
-    --latest "$WEBSITE_LATEST"; then
+    --latest "$WEBSITE_LATEST" --lts "$WEBSITE_LTS"; then
   echo "Error: website manifest generation failed." 1>&2
   exit 1
 fi

@@ -62,6 +62,14 @@ xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for Wi
 curl -fsSL https://camel.apache.org/install.sh | sh
 ----
 
+This installs the latest release, which can be newer than the current LTS release.
+To install the newest LTS release instead (`camel self-update` then keeps it on LTS releases):
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version LTS
+----
+
 Or, if you use https://www.jbang.dev/download/[JBang]:
 
 [source,bash]
