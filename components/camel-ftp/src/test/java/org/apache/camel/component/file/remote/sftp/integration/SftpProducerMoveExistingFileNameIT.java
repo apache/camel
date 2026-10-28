@@ -20,6 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -27,6 +28,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.apache.camel.test.junit6.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit6.TestSupport.createCleanDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -45,6 +47,7 @@ class SftpProducerMoveExistingFileNameIT extends SftpServerTestSupport {
     @BeforeEach
     void cleanupDir() {
         createCleanDirectory(ftpFile("move"));
+        deleteDirectory(ftpFile("move-old"));
     }
 
     @ParameterizedTest
@@ -95,6 +98,25 @@ class SftpProducerMoveExistingFileNameIT extends SftpServerTestSupport {
 
         assertEquals("Bye World", read("move/hello.txt"));
         assertEquals("Hello World", read("move/backup/hello.txt"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void moveExistingIntoDirectoryNextToTheDirectoryOfTheFile(boolean stepwise) {
+        send(stepwise, "&moveExisting=../move-old/${file:onlyname}", "Hello World", "hello.txt");
+        send(stepwise, "&moveExisting=../move-old/${file:onlyname}", "Bye World", "hello.txt");
+
+        assertEquals("Bye World", read("move/hello.txt"));
+        assertEquals("Hello World", read("move-old/hello.txt"));
+    }
+
+    @Test
+    void moveExistingWithFileParentIsUnchanged() {
+        send(false, "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World", "hello.txt");
+        send(false, "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World", "hello.txt");
+
+        assertEquals("Bye World", read("move/hello.txt"));
+        assertEquals("Hello World", read("move/renamed-hello.txt"));
     }
 
     @ParameterizedTest

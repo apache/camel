@@ -44,17 +44,60 @@ public final class MoveExistingFileStrategyUtils {
      * @return                 the full destination path
      */
     public static String completePartialRelativePath(String destinationPath, String fileOnlyName, String directoryName) {
+        return complete(destinationPath, fileOnlyName, directoryName, false);
+    }
+
+    /**
+     * As {@link #completePartialRelativePath(String, String, String)}, but a relative destination path is only left as
+     * it is when it starts with the directory as whole path segments: for the directory move, movement.txt.bak and
+     * move-old/whatever.ext are completed (move/movement.txt.bak, move/move-old/whatever.ext), while move/backup/ and
+     * move are not. Used by the remote file components, where the file name in the moveExisting expression is the name
+     * of the file in its directory.
+     *
+     * @param  destinationPath the destination path
+     * @param  fileOnlyName    the file name without the path
+     * @param  directoryName   the path of the file to be moved/renamed
+     * @return                 the full destination path
+     * @since                  4.24
+     */
+    public static String completeRelativePathInDirectory(
+            String destinationPath, String fileOnlyName, String directoryName) {
+        return complete(destinationPath, fileOnlyName, directoryName, true);
+    }
+
+    private static String complete(
+            String destinationPath, String fileOnlyName, String directoryName, boolean wholePathSegments) {
 
         if (destinationPath.length() > 1 && destinationPath.endsWith("/")) {
             destinationPath = destinationPath + fileOnlyName;
         }
 
-        if (ObjectHelper.isNotEmpty(directoryName) && !destinationPath.startsWith(directoryName)
+        if (ObjectHelper.isNotEmpty(directoryName)
+                && !(wholePathSegments
+                        ? isInDirectory(destinationPath, directoryName) : destinationPath.startsWith(directoryName))
                 && !FileUtil.isAbsolute(new File(destinationPath))) {
             destinationPath = directoryName + "/" + destinationPath;
         }
 
         return destinationPath;
+    }
+
+    /**
+     * Whether the path is the directory itself or a path below it. The directory must match whole path segments, so
+     * movement.txt.bak is not in the directory move.
+     */
+    private static boolean isInDirectory(String path, String directoryName) {
+        if (!path.startsWith(directoryName)) {
+            return false;
+        }
+        if (path.length() == directoryName.length() || isSeparator(directoryName.charAt(directoryName.length() - 1))) {
+            return true;
+        }
+        return isSeparator(path.charAt(directoryName.length()));
+    }
+
+    private static boolean isSeparator(char ch) {
+        return ch == '/' || ch == '\\';
     }
 
 }

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import static org.apache.camel.test.junit6.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit6.TestSupport.createCleanDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -44,6 +45,7 @@ class MinaSftpProducerMoveExistingFileNameIT extends SftpServerTestSupport {
     @BeforeEach
     void cleanupDir() {
         createCleanDirectory(ftpFile("move"));
+        deleteDirectory(ftpFile("move-old"));
     }
 
     @Test
@@ -89,6 +91,15 @@ class MinaSftpProducerMoveExistingFileNameIT extends SftpServerTestSupport {
 
         assertEquals("Bye World", read("move/hello.txt"));
         assertEquals("Hello World", read("move/backup/hello.txt"));
+    }
+
+    @Test
+    void moveExistingIntoDirectoryNextToTheDirectoryOfTheFile() {
+        send("&moveExisting=../move-old/${file:onlyname}", "Hello World", "hello.txt");
+        send("&moveExisting=../move-old/${file:onlyname}", "Bye World", "hello.txt");
+
+        assertEquals("Bye World", read("move/hello.txt"));
+        assertEquals("Hello World", read("move-old/hello.txt"));
     }
 
     @Test

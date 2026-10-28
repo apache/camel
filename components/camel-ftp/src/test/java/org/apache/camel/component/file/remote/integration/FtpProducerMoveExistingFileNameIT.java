@@ -20,12 +20,15 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.test.junit6.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit6.TestSupport.assertFileNotExists;
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit6.TestSupport.createCleanDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -42,6 +45,7 @@ class FtpProducerMoveExistingFileNameIT extends FtpServerTestSupport {
     @BeforeEach
     void cleanupDir() {
         createCleanDirectory(service.ftpFile("move"));
+        deleteDirectory(service.ftpFile("move-old"));
     }
 
     @ParameterizedTest
@@ -92,6 +96,47 @@ class FtpProducerMoveExistingFileNameIT extends FtpServerTestSupport {
 
         assertEquals("Bye World", read("move/hello.txt"));
         assertEquals("Hello World", read("move/backup/hello.txt"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void moveExistingWithFileNameThatStartsWithTheDirectoryName(boolean stepwise) {
+        send(stepwise, "&moveExisting=${file:name}.bak", "Hello World", "movement.txt");
+        send(stepwise, "&moveExisting=${file:name}.bak", "Bye World", "movement.txt");
+
+        assertEquals("Bye World", read("move/movement.txt"));
+        assertEquals("Hello World", read("move/movement.txt.bak"));
+        assertFileNotExists(service.ftpFile("movement.txt.bak"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void moveExistingWithTempFileNameAndFileNameThatStartsWithTheDirectoryName(boolean stepwise) {
+        send(stepwise, "&tempFileName=${file:onlyname}.tmp&moveExisting=${file:name}.bak", "Hello World", "movement.txt");
+        send(stepwise, "&tempFileName=${file:onlyname}.tmp&moveExisting=${file:name}.bak", "Bye World", "movement.txt");
+
+        assertEquals("Bye World", read("move/movement.txt"));
+        assertEquals("Hello World", read("move/movement.txt.bak"));
+        assertFileNotExists(service.ftpFile("movement.txt.bak"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void moveExistingIntoDirectoryNextToTheDirectoryOfTheFile(boolean stepwise) {
+        send(stepwise, "&moveExisting=../move-old/${file:onlyname}", "Hello World", "hello.txt");
+        send(stepwise, "&moveExisting=../move-old/${file:onlyname}", "Bye World", "hello.txt");
+
+        assertEquals("Bye World", read("move/hello.txt"));
+        assertEquals("Hello World", read("move-old/hello.txt"));
+    }
+
+    @Test
+    void moveExistingWithFileParentIsUnchanged() {
+        send(false, "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World", "hello.txt");
+        send(false, "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World", "hello.txt");
+
+        assertEquals("Bye World", read("move/hello.txt"));
+        assertEquals("Hello World", read("move/renamed-hello.txt"));
     }
 
     @ParameterizedTest
