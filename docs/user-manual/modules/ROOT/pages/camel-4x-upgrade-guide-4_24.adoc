@@ -1359,6 +1359,14 @@ It is now written with all its decimals, so a record that is unmarshalled and ma
 `Double` that is the result of a calculation is written with all its digits too (`0.1 + 0.2` as `0.30000000000000004`,
 before `0.3`). Set `precision` to get a fixed number of decimals, as before.
 
+=== camel-stax - the text mode of xtokenize gives the text as an XML parser reads it
+
+With mode `t`, `xtokenize` returned the characters between the tags of the element as they are written: entity and
+character references were not decoded (`AT&amp;T` instead of `AT&T`), and the content of a CDATA section was left
+out. The text is now decoded and includes the content of CDATA sections, so a route that decoded the entities itself
+must stop doing so. With a `group` greater than 1, the texts in the `<group>` element are escaped as XML text, so the
+group is still well-formed XML.
+
 === camel-smooks - allowExternalEntities applies to Smooks Source bodies and to a reader declared without a class
 
 The Smooks component and `SmooksProcessor` now parse a message body that is already a Smooks `Source`
@@ -1452,6 +1460,25 @@ file is written from the column names, not from the first map). Every map of the
 `ignoreFirstRecord` only applies to unmarshal. A route that set `ignoreFirstRecord=false` to work around this is not
 affected; a route that added a dummy first map now gets it in the output too.
 
+=== camel-csv - the maps of a list are written in the columns of their keys
+
+When no `header` is set (or `headerDisabled=true`), marshalling a `List<Map<String, Object>>` wrote the values of
+each map in the iteration order of that map, so a row whose map had its keys in another order, or had no entry for
+one of the keys, put its values in the wrong columns. Within one message body, each key now keeps its column: the
+columns are the keys of the first map, followed by the keys of later maps that the first one does not have, in the
+order they first appear (the rows written before such a key appears have fewer fields). A map without one of these
+keys gets a null value in its column (an empty field, or the `nullString` when it is set), where before the following
+values moved one column to the left. Each message body starts again with no columns, as before. Set `header` (with
+`headerDisabled=false`) to get a fixed set and order of columns.
+
+This also changes the output of a body that mixes record types on purpose, such as a header row
+`{type=H, date=d}`, detail rows `{type=D, sku=s, qty=q}` and a trailer row `{type=T, count=n}` (common in flat-file
+exchanges): it was written as `H,d`, `D,s,q` and `T,n`, and is now written as `H,d`, `D,,s,q` and `T,,,,n`. To keep
+the previous output, convert the rows to `List` before marshalling, or set a custom `marshallerFactory`
+(`marshallerFactoryRef` in XML and YAML) whose `CsvMarshaller` returns the values of each map. Every row
+now has all the columns seen so far in the body, so rows that each have keys of their own (sparse or pivoted data)
+give about N²/2 fields for N rows, where the output was linear in the input before.
+
 === camel-github2 - the commit consumer routes the commits beyond the newest 100
 
 The `commit` consumer read only the 100 newest commits of the branch at each poll, so when more than 100 commits were
@@ -1465,6 +1492,20 @@ Each routed commit costs one GitHub API request for its author, plus one for eac
 before, so a poll that catches up on many commits can send about 1000 requests instead of about 100. When the rate
 limit is reached, the GitHub client waits inside the poll until the limit resets (its default rate limit handler),
 and stopping the route waits for that poll.
+
+=== camel-git - CamelGitCommitId is the sha of the commit
+
+*Breaking change:* the `CamelGitCommitId` header set by the commit consumer (`git:...?type=commit`) is now the sha of
+the commit as a `String`, as the header is documented. Before, it was the JGit `RevCommit` object, whose `String` form
+is not the sha, so the header could not be given to the `cherryPick` operation. A route that read the header as a
+`RevCommit` or an `ObjectId` must now read it as a `String` (`ObjectId.fromString` gives the `ObjectId`).
+
+The `commit` and `commitAll` operations now set the `CamelGitCommitId` header to the sha of the new commit. The body is
+unchanged.
+
+The `checkout` operation without a `tagName` now checks out a branch that already exists. Before, it always created the
+branch, and failed with `RefAlreadyExistsException` when the branch existed. With a `tagName`, it still creates the
+branch from the tag.
 
 === camel-milo - the OPC UA client validates the server certificate
 
@@ -1918,6 +1959,26 @@ live, so it never expired, even when the endpoint has a `timeToLive` and, for re
 `requestTimeout` as time to live otherwise. Such a message now gets the time to live of the endpoint, as the option
 documents. Set `disableTimeToLive=true` to send it without time to live.
 
+=== camel-sjms - preserveMessageQos also applies to InOnly sends
+
+With `preserveMessageQos=true`, an InOnly send ignored the `JMSPriority`, `JMSDeliveryMode` and `JMSExpiration`
+headers, and used the QoS of the endpoint (or of the JMS client); only request/reply used them. An InOnly send now
+uses these headers, as camel-jms does. A message whose `JMSExpiration` is in the past expires at once, and a message
+consumed from JMS and sent on keeps the priority, delivery mode and expiration of the consumed message. The replies of
+a consumer endpoint with `preserveMessageQos=true` use the headers of the reply message too; these are still the
+headers of the request unless the route changes or removes them. An exception reply (`transferException=true`) has
+no headers and uses the QoS of the endpoint. `camel-sjms2` behaves the same.
+
+A header that is not set falls back to the endpoint, as the option documents, also with `explicitQosEnabled=false`: to
+the `priority` (a `priority` of 0 is not applied, as with `explicitQosEnabled`) and the `deliveryPersistent` (or
+`deliveryMode`) of the endpoint, and, for a message without `JMSExpiration` (header missing or
+0), to the time to live of the endpoint (`timeToLive`, or the `requestTimeout` for request/reply). This also changes
+request/reply: before, a request without `JMSPriority` was sent with the priority of the new JMS message (the default
+of the JMS client, 0 with ActiveMQ Classic), a request without `JMSDeliveryMode` was persistent whatever the endpoint
+said, and a request without `JMSExpiration` never expired. To send a request without time to live, set
+`disableTimeToLive=true` and no `timeToLive`. Remove `preserveMessageQos=true` to keep using only the QoS of the
+endpoint for InOnly sends.
+
 === camel-pulsar - the producer continues the sequence ids of the broker
 
 The `pulsar` producer no longer passes the default `initialSequenceId=-1` to the Pulsar client, so the client
@@ -2077,6 +2138,30 @@ A connection to a host name or an IP address that the certificate does not list 
 login; an IP address must be listed as a subject alternative name of the certificate. Use a certificate that matches the
 host of the endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour. A custom
 `ftpClient` set on the endpoint is not changed.
+
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-smb - `${file:name}` in moveExisting is the name of the file
+
+With `fileExist=Move`, the `${file:name}` token of `moveExisting` is now the name of the existing file in its directory,
+as the producer of `ftp`, `ftps` and `sftp` already used it with the default `stepwise=true`. So with `stepwise=false`,
+with a `tempFileName`, in `mina-sftp` and in `smb`, a relative `moveExisting` built from `${file:name}`,
+`${file:onlyname}` or literal text now gives the same result as with `stepwise=true`. Before, `${file:name}` was the
+path of the file from the login directory (or the share), and since a relative `moveExisting` is put below the directory
+of the file, `moveExisting=backup/${file:name}` for `hello.txt` in the directory `inbox/orders` moved the existing file
+to `inbox/orders/backup/inbox/orders/hello.txt`; it is now moved to `inbox/orders/backup/hello.txt`. The tokens
+`${file:name.noext}` and `${file:name.noext.single}` read the same name and change the same way: `inbox/orders/hello` is
+now `hello`. A backup kept in the nested directory is no longer found there, for example by the check for an existing
+backup when `eagerDeleteTargetFile=false`, or by a job that reads the backups. `${file:parent}`, `${file:onlyname}` and
+`${file:ext}` are unchanged, and so is a `moveExisting` without `${...}` such as `moveExisting=backup`.
+
+In the same cases, a relative result is now left as it is only when it starts with the directory of the file as whole
+path segments (`inbox/orders/backup/hello.txt`); any other relative result is put below that directory. Before, a result
+that only started with the same characters was left as it was. So for a file in `inbox/orders`,
+`moveExisting=${file:parent}-old/${file:onlyname}` and `moveExisting=inbox/orders-old/${file:onlyname}` now move it to
+`inbox/orders/inbox/orders-old/hello.txt` instead of `inbox/orders-old/hello.txt`; to keep a directory next to the
+directory of the file, use a path relative to it, such as `moveExisting=../orders-old/${file:onlyname}` (camel-smb
+resolves the `..` itself, as SMB servers do not accept it in a path). Such a path can lead out of the directory of the
+endpoint: `jailStartingDirectory` does not apply to `moveExisting`. The `file` component is not changed: there
+`${file:name}` is still the path of the file, and the check is as before.
 
 === camel-aws-secrets-manager - the CloudTrail refresh task reads every event since the last check
 
@@ -3870,16 +3955,12 @@ version, with a warning. When the CLI is newer than all the releases, or the rel
 `--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
 registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
 
-=== camel-git - CamelGitCommitId is the sha of the commit
+=== camel-spring - a CamelEvent only goes to the consumers of the same name
 
-*Breaking change:* the `CamelGitCommitId` header set by the commit consumer (`git:...?type=commit`) is now the sha of
-the commit as a `String`, as the header is documented. Before, it was the JGit `RevCommit` object, whose `String` form
-is not the sha, so the header could not be given to the `cherryPick` operation. A route that read the header as a
-`RevCommit` or an `ObjectId` must now read it as a `String` (`ObjectId.fromString` gives the `ObjectId`).
+A `spring-event` producer publishes a body that is not an `ApplicationEvent` as a `CamelEvent`. Before, every
+`spring-event` consumer received it, whatever its name. Now only the consumers of the endpoint with the same name
+receive it: a message sent to `spring-event:foo` goes to `from("spring-event:foo")`, and no longer to
+`from("spring-event:bar")`.
 
-The `commit` and `commitAll` operations now set the `CamelGitCommitId` header to the sha of the new commit. The body is
-unchanged.
-
-The `checkout` operation without a `tagName` now checks out a branch that already exists. Before, it always created the
-branch, and failed with `RefAlreadyExistsException` when the branch existed. With a `tagName`, it still creates the
-branch from the tag.
+Other application events of the `ApplicationContext`, such as `ContextRefreshedEvent` or an `ApplicationEvent` body
+published by a producer, still go to every consumer.
