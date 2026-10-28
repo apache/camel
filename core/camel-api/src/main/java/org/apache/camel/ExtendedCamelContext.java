@@ -583,7 +583,8 @@ public interface ExtendedCamelContext {
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
 
     /**
-     * Gets the {@link SendHook} that runs around every send of an exchange to the producer of an endpoint.
+     * Gets the {@link SendHook} that runs around the sends to the producer of an endpoint that fire the
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}.
      *
      * @return the hook, or <tt>null</tt> if no hook is installed
      * @since  4.24
@@ -593,9 +594,10 @@ public interface ExtendedCamelContext {
     }
 
     /**
-     * Installs a {@link SendHook} that runs around every send of an exchange to the producer of an endpoint, or removes
-     * it with <tt>null</tt>. There is one hook; a new hook replaces the one installed before. Sends that are already in
-     * the hook complete with the hook that started them.
+     * Installs a {@link SendHook} that runs around the sends to the producer of an endpoint that fire the
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}, or removes it with <tt>null</tt>. There is one
+     * hook; a new hook replaces the one installed before. Sends that are already in the hook complete with the hook
+     * that started them.
      *
      * @param sendHook the hook, or <tt>null</tt> to remove it
      * @since          4.24

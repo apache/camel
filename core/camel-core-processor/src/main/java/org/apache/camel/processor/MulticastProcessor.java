@@ -190,7 +190,7 @@ public class MulticastProcessor extends BaseProcessorSupport
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
     private final int cacheSize;
-    private final Map<Processor, Processor> errorHandlers;
+    private final Map<Object, Processor> errorHandlers;
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
@@ -1189,8 +1189,15 @@ public class MulticastProcessor extends BaseProcessorSupport
             // this is needed to support redelivery on that output alone and not doing redelivery
             // for the entire multicast block again which will start from scratch again
 
+            // with a send hook installed, the output of the error handler of a producer (a recipient of the recipient
+            // list) is the producer with the hook around it, and that error handler is cached apart, so without a hook
+            // the error handler and its output are the same as when there is no send hook at all
+            final boolean hookInstalled = key instanceof AsyncProducer
+                    && camelContext.getCamelContextExtension().getSendHook() != null;
+            final Object cacheKey = hookInstalled ? new SendHookKey(key) : key;
+
             // lookup cached first to reuse and preserve memory
-            answer = errorHandlers != null ? errorHandlers.get(key) : null;
+            answer = errorHandlers != null ? errorHandlers.get(cacheKey) : null;
             if (answer != null) {
                 LOG.trace("Using existing error handler for: {}", key);
                 return answer;
@@ -1198,7 +1205,9 @@ public class MulticastProcessor extends BaseProcessorSupport
 
             LOG.trace("Creating error handler for: {}", key);
             try {
-                processor = wrapInErrorHandler(route, withSendHook(key, errorHandlers != null));
+                // the producer with the hook around it looks up the hook on every send, so it can be cached
+                Processor output = hookInstalled ? SendHelper.newSendHookProducer((AsyncProducer) key) : key;
+                processor = wrapInErrorHandler(route, output);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
@@ -1207,7 +1216,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 ServiceHelper.startService(answer);
 
                 if (errorHandlers != null) {
-                    errorHandlers.putIfAbsent(key, answer);
+                    errorHandlers.putIfAbsent(cacheKey, answer);
                 }
 
             } catch (Exception e) {
@@ -1215,25 +1224,27 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = createUnitOfWorkProcessor(route, withSendHook(processor, false), exchange);
+            answer = createUnitOfWorkProcessor(route, withSendHook(processor), exchange);
         }
 
         return answer;
     }
 
     /**
-     * Puts the send hook around an output that is a producer (the producers of the recipient list), so the hook runs
-     * inside the error handler of the output, as a failure of the producer does, and again on every redelivery.
-     *
-     * @param output the output
-     * @param kept   whether the error handler of the output is cached and used again for later exchanges: then the
-     *               producer looks up the hook on every send, so it also sees a hook installed later
+     * Puts the send hook, if one is installed, around an output that is a producer (a recipient of the recipient list),
+     * when the output is used for this exchange only.
      */
-    private Processor withSendHook(Processor output, boolean kept) {
+    private Processor withSendHook(Processor output) {
         if (output instanceof AsyncProducer producer) {
-            return kept ? SendHelper.newSendHookProducer(producer) : SendHelper.withSendHook(camelContext, producer);
+            return SendHelper.withSendHook(camelContext, producer);
         }
         return output;
+    }
+
+    /**
+     * The key of the cached error handler of a producer whose output has the send hook around it.
+     */
+    private record SendHookKey(Processor producer) {
     }
 
     private Processor wrapInErrorHandler(Route route, Processor processor) throws Exception {

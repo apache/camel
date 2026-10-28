@@ -58,7 +58,7 @@ public final class EventNotifierProducer extends DefaultAsyncProducer {
         try {
             LOG.debug(">>>> {} {}", getEndpoint(), exchange);
             // emit the sending and sent events around the send (and run the send hook if any)
-            return SendHelper.send(exchange, getEndpoint(), true, producer, callback);
+            return SendHelper.send(exchange, getEndpoint(), producer, callback);
         } catch (Exception throwable) {
             exchange.setException(throwable);
             callback.done(true);

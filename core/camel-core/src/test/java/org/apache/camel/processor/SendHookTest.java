@@ -32,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.async.MyAsyncComponent;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
@@ -39,19 +40,21 @@ import org.apache.camel.spi.SendHook;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.SendHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The {@link SendHook} runs around every send to an endpoint, at each of the places that send (CAMEL-26331).
+ * The {@link SendHook} runs around the sends to an endpoint, at each of the places that send and fire the sending event
+ * (CAMEL-26331).
  */
 class SendHookTest extends ContextTestSupport {
 
@@ -256,21 +259,63 @@ class SendHookTest extends ContextTestSupport {
     }
 
     @Test
-    void testDelayDoesNotBlockTheCallerThread() throws Exception {
+    void testDelayWaitsOnTheCallerThread() throws Exception {
         MockEndpoint delayed = getMockEndpoint("mock:delayed");
         delayed.expectedBodiesReceived("Hello");
         getMockEndpoint("mock:afterDelay").expectedBodiesReceived("Hello");
-        List<String> threads = new CopyOnWriteArrayList<>();
-        delayed.whenAnyExchangeReceived(e -> threads.add(Thread.currentThread().getName()));
+        List<Thread> threads = new CopyOnWriteArrayList<>();
+        delayed.whenAnyExchangeReceived(e -> threads.add(Thread.currentThread()));
 
         template.sendBody("direct:delay", "Hello");
 
         assertMockEndpointsSatisfied();
         assertHookAroundSend("mock://delayed");
-        // the producer was called from the scheduled thread pool of the error handler, not from the thread that sent
-        assertEquals(1, threads.size());
-        assertNotEquals(Thread.currentThread().getName(), threads.get(0));
-        assertTrue(threads.get(0).contains("ErrorHandlerRedeliveryTask"), threads.get(0));
+        // the thread that sent waited for the delay, as for a slow endpoint, and then called the producer
+        assertEquals(List.of(Thread.currentThread()), threads);
+    }
+
+    @Test
+    void testRecipientListWithoutHookCallsTheProducerItself() throws Exception {
+        MockEndpoint rl = getMockEndpoint("mock:rl");
+        rl.expectedMessageCount(3);
+        List<String> stack = new CopyOnWriteArrayList<>();
+        rl.whenAnyExchangeReceived(e -> stack.addAll(callersUpToTheErrorHandler()));
+        String hooked = SendHelper.class.getName() + "$SendHookProducer";
+
+        // no hook: the error handler of the recipient calls the producer itself, as when there is no send hook at all
+        context.getCamelContextExtension().setSendHook(null);
+        template.sendBodyAndHeader("direct:recipientList", "Hello", "to", "mock:rl");
+        assertTrue(stack.get(stack.size() - 1).startsWith(RedeliveryErrorHandler.class.getName()), stack::toString);
+        assertFalse(stack.contains(hooked), stack::toString);
+
+        // a hook installed later runs for the same recipient, through another error handler
+        stack.clear();
+        context.getCamelContextExtension().setSendHook(hook);
+        template.sendBodyAndHeader("direct:recipientList", "Hello", "to", "mock:rl");
+        assertTrue(stack.contains(hooked), stack::toString);
+        assertEquals(1, hook.before("mock://rl"));
+
+        // and when it is removed again, the producer is called by itself again
+        stack.clear();
+        context.getCamelContextExtension().setSendHook(null);
+        template.sendBodyAndHeader("direct:recipientList", "Hello", "to", "mock:rl");
+        assertFalse(stack.contains(hooked), stack::toString);
+        assertEquals(1, hook.before("mock://rl"));
+        assertMockEndpointsSatisfied();
+    }
+
+    /**
+     * The classes on the stack from the producer up to the (first) error handler that called it.
+     */
+    private static List<String> callersUpToTheErrorHandler() {
+        List<String> classes = StackWalker.getInstance()
+                .walk(frames -> frames.map(StackWalker.StackFrame::getClassName).toList());
+        for (int i = 0; i < classes.size(); i++) {
+            if (classes.get(i).startsWith(RedeliveryErrorHandler.class.getName())) {
+                return classes.subList(0, i + 1);
+            }
+        }
+        return classes;
     }
 
     @Test

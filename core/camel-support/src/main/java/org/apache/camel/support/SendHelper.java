@@ -18,9 +18,6 @@ package org.apache.camel.support;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -28,9 +25,10 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ShutdownableService;
 import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.SendHook;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeSource;
 
@@ -45,7 +43,7 @@ import org.apache.camel.util.TimeSource;
  * {@link #notifySent(Exchange, Endpoint, StopWatch)}), and calls the producer with the {@link SendHook} of the
  * {@link CamelContext}, if one is installed, around it
  * ({@link #process(Exchange, Endpoint, AsyncProcessor, AsyncCallback)}).
- * {@link #send(Exchange, Endpoint, boolean, AsyncProcessor, AsyncCallback)} does both.
+ * {@link #send(Exchange, Endpoint, AsyncProcessor, AsyncCallback)} does both.
  * <p/>
  * The events and the hook are apart because some places fire the events once per send and call the producer inside an
  * error handler that can call it again: the recipient list and the routing slip. The hook runs where the producer is
@@ -89,23 +87,20 @@ public final class SendHelper {
     }
 
     /**
-     * Sends the exchange to the producer: fires the {@link CamelEvent.ExchangeSendingEvent} (when {@code notify} is
-     * true), calls the producer with the {@link SendHook} around it, and fires the {@link CamelEvent.ExchangeSentEvent}
-     * before the callback is called.
+     * Sends the exchange to the producer: fires the {@link CamelEvent.ExchangeSendingEvent}, calls the producer with
+     * the {@link SendHook} around it, and fires the {@link CamelEvent.ExchangeSentEvent} before the callback is called.
      * <p/>
      * An exception the producer throws, instead of calling the callback, is thrown to the caller, without the sent
      * event, as when the producer is called directly.
      *
      * @param  exchange the exchange
      * @param  endpoint the endpoint of the producer
-     * @param  notify   whether to fire the events
      * @param  producer the producer
      * @param  callback the callback, called exactly once when the send is done
      * @return          whether the send completed synchronously (the same value the callback was called with)
      */
-    public static boolean send(
-            Exchange exchange, Endpoint endpoint, boolean notify, AsyncProcessor producer, AsyncCallback callback) {
-        final StopWatch watch = notify ? notifySending(exchange, endpoint) : null;
+    public static boolean send(Exchange exchange, Endpoint endpoint, AsyncProcessor producer, AsyncCallback callback) {
+        final StopWatch watch = notifySending(exchange, endpoint);
         if (watch == null) {
             return process(exchange, endpoint, producer, callback);
         }
@@ -158,8 +153,8 @@ public final class SendHelper {
     /**
      * Creates a producer that calls the given producer with the {@link SendHook} around it, as
      * {@link #process(Exchange, Endpoint, AsyncProcessor, AsyncCallback)} does. It looks up the hook on every send, so
-     * it can be kept (for example as the output of an error handler) when the hook is installed or removed later. Its
-     * lifecycle is the one of the given producer.
+     * it can be kept (for example as the output of an error handler) when the hook is removed later. It passes start,
+     * stop, shutdown and close on to the given producer.
      *
      * @param  producer the producer
      * @return          a producer with the hook around it
@@ -169,8 +164,9 @@ public final class SendHelper {
     }
 
     /**
-     * One send with a hook. The hook is called before the producer, the producer is called right away, after a delay,
-     * or not at all, and then the hook is called after it and the callback is called, each exactly once.
+     * One send with a hook. The hook is called before the producer, the producer is called right away, after a delay
+     * (that this thread waits for), or not at all, and then the hook is called after it and the callback is called,
+     * each exactly once.
      */
     private static final class HookedSend implements AsyncCallback {
 
@@ -179,8 +175,6 @@ public final class SendHelper {
         private final Endpoint endpoint;
         private final AsyncProcessor producer;
         private final AsyncCallback callback;
-        // set before the delayed call is scheduled, and only read after it ran (the executor orders the two)
-        private boolean delayed;
 
         private HookedSend(SendHook hook, Exchange exchange, Endpoint endpoint, AsyncProcessor producer,
                            AsyncCallback callback) {
@@ -207,24 +201,31 @@ public final class SendHelper {
             final Exception exception = exchange.getException();
             if (exception != null && exception != existing || delay == SendHook.SKIP) {
                 // the hook stopped (or skipped) the send, so the producer is not called
-                afterSend();
-                callback.done(true);
-                return true;
+                return completeWithoutProducer();
+            }
+            if (delay < 0) {
+                // the other negative values are reserved, so a hook that returns one fails the send
+                exchange.setException(new IllegalArgumentException(
+                        "SendHook.beforeSend returned " + delay + ": negative values other than SKIP are reserved"));
+                return completeWithoutProducer();
             }
 
             if (delay > 0) {
-                if (!exchange.isTransacted()) {
-                    return scheduleSend(delay);
-                }
-                // a transacted exchange must stay on its thread, so wait here, as redelivery does for it
+                // wait on this thread, as for a slow endpoint (through TimeSource, so a virtual clock can run it)
                 try {
                     TimeSource.sleep(delay);
                 } catch (InterruptedException e) {
+                    // the send fails and the thread keeps its interrupted status; the exception marks the exchange as
+                    // interrupted, so Camel stops routing it, as when the wait of the redelivery error handler is
+                    // interrupted
                     Thread.currentThread().interrupt();
                     exchange.setException(e);
+                    return completeWithoutProducer();
+                } catch (RuntimeException e) {
+                    // the clock failed: as for a producer that throws
+                    exchange.setException(e);
                     afterSend();
-                    callback.done(true);
-                    return true;
+                    throw e;
                 }
             }
 
@@ -238,43 +239,10 @@ public final class SendHelper {
             }
         }
 
-        private boolean scheduleSend(long delay) {
-            CamelContext context = exchange.getContext();
-            ReactiveExecutor reactiveExecutor = context.getCamelContextExtension().getReactiveExecutor();
-            // the same scheduled thread pool as the asynchronous redelivery of the error handler
-            ScheduledExecutorService scheduler = PluginHelper.getErrorHandlerExecutorService(context);
-            delayed = true;
-            try {
-                // the pool of a stopped camel context drops a task without an exception (its rejection policy is
-                // CallerRuns, which does nothing once the pool is shut down), so check first
-                if (scheduler.isShutdown()) {
-                    throw new RejectedExecutionException("Cannot delay the send as CamelContext is stopping");
-                }
-                scheduler.schedule(() -> reactiveExecutor.schedule(this::sendDelayed), delay, TimeUnit.MILLISECONDS);
-            } catch (RejectedExecutionException e) {
-                // the send is not done
-                delayed = false;
-                exchange.setException(e);
-                afterSend();
-                callback.done(true);
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * The delayed call of the producer, after {@link #send()} returned false. (Not {@link #run()}: an
-         * {@link AsyncCallback} is a {@link Runnable} that calls {@code done(false)}, and the routing engine schedules
-         * callbacks as such.)
-         */
-        private void sendDelayed() {
-            try {
-                producer.process(exchange, this);
-            } catch (RuntimeException e) {
-                // there is no caller to throw to, so this is the end of the send
-                exchange.setException(e);
-                done(false);
-            }
+        private boolean completeWithoutProducer() {
+            afterSend();
+            callback.done(true);
+            return true;
         }
 
         /**
@@ -283,8 +251,7 @@ public final class SendHelper {
         @Override
         public void done(boolean doneSync) {
             afterSend();
-            // a delayed send returned false to the caller, so it completes asynchronously
-            callback.done(!delayed && doneSync);
+            callback.done(doneSync);
         }
 
         private void afterSend() {
@@ -302,9 +269,11 @@ public final class SendHelper {
     }
 
     /**
-     * A producer that calls another producer with the {@link SendHook} around it.
+     * A producer that calls another producer with the {@link SendHook} around it. It passes its lifecycle on to that
+     * producer, so as the output of an error handler it is shut down with the error handler as the producer would be.
+     * (It is not {@link org.apache.camel.SuspendableService}: an error handler does not suspend its output.)
      */
-    private static final class SendHookProducer implements AsyncProducer {
+    private static final class SendHookProducer implements AsyncProducer, ShutdownableService {
 
         private final AsyncProducer producer;
 
@@ -358,6 +327,12 @@ public final class SendHelper {
         @Override
         public void stop() {
             producer.stop();
+        }
+
+        @Override
+        public void shutdown() {
+            // as for the producer itself: stopped, and shut down if it can be
+            ServiceHelper.stopAndShutdownService(producer);
         }
 
         @Override

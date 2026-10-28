@@ -18,28 +18,33 @@ package org.apache.camel.support;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.SendHook;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.TimeSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -50,13 +55,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The callback contract of
  * {@link SendHelper#process(Exchange, Endpoint, org.apache.camel.AsyncProcessor, AsyncCallback)} with a
  * {@link SendHook}: the callback is called exactly once on every path, with the value that process returned.
+ * <p/>
+ * A test installs a virtual clock in {@link TimeSource}, which is JVM-wide, so these tests run isolated from the other
+ * tests.
  */
+@Isolated
 class SendHelperTest extends ContextTestSupport {
 
     private static final String MODE = "hookMode";
     private static final String KIND = "producerKind";
     private static final String AFTER_COUNT = "afterCount";
     private static final String PRODUCER_COUNT = "producerCount";
+    private static final String FIXED_DELAY = "fixedDelay";
 
     private ExecutorService producerThreads;
     private Endpoint endpoint;
@@ -67,6 +77,7 @@ class SendHelperTest extends ContextTestSupport {
         STOP,
         SKIP,
         DELAY,
+        RESERVED,
         BEFORE_THROWS,
         AFTER_THROWS
     }
@@ -122,31 +133,45 @@ class SendHelperTest extends ContextTestSupport {
         assertOneSend(mode, Kind.SYNC, true);
     }
 
-    @Test
-    void testTransactedDelayWaitsOnTheCallerThread() {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void testDelayWaitsOnTheCallerThreadThroughTimeSource(boolean transacted) {
         Exchange exchange = newExchange(Mode.DELAY, Kind.SYNC);
-        exchange.getExchangeExtension().setTransacted(true);
+        exchange.setProperty(FIXED_DELAY, 2500L);
+        exchange.getExchangeExtension().setTransacted(transacted);
         List<Thread> producerThread = new ArrayList<>();
         Completion completion = new Completion();
+        VirtualClock clock = new VirtualClock();
 
-        boolean sync = SendHelper.process(exchange, endpoint, new AsyncProcessorSupport() {
-            @Override
-            public boolean process(Exchange exchange, AsyncCallback callback) {
-                producerThread.add(Thread.currentThread());
-                callback.done(true);
-                return true;
-            }
-        }, completion);
+        TimeSource.Provider previous = TimeSource.install(clock);
+        boolean sync;
+        try {
+            sync = SendHelper.process(exchange, endpoint, new AsyncProcessorSupport() {
+                @Override
+                public boolean process(Exchange exchange, AsyncCallback callback) {
+                    producerThread.add(Thread.currentThread());
+                    callback.done(true);
+                    return true;
+                }
+            }, completion);
+        } finally {
+            TimeSource.install(previous);
+        }
 
+        // this thread waited for the delay through TimeSource (in virtual time here), and then called the producer
+        assertEquals(List.of(Thread.currentThread()), clock.sleepers);
+        assertEquals(List.of(2500L), clock.sleeps);
+        assertEquals(List.of(Thread.currentThread()), producerThread);
         assertTrue(sync);
         assertEquals(1, completion.count.get());
-        assertEquals(List.of(Thread.currentThread()), producerThread);
+        assertTrue(completion.doneSync);
+        assertEquals(1, count(exchange, AFTER_COUNT));
+        assertNull(exchange.getException());
     }
 
     @Test
-    void testTransactedDelayInterrupted() {
+    void testDelayInterrupted() {
         Exchange exchange = newExchange(Mode.DELAY, Kind.SYNC);
-        exchange.getExchangeExtension().setTransacted(true);
         Completion completion = new Completion();
 
         // the thread is interrupted, so the wait for the delay ends right away
@@ -160,13 +185,46 @@ class SendHelperTest extends ContextTestSupport {
             interrupted = Thread.interrupted();
         }
 
+        // the exchange is marked as interrupted, so Camel stops routing it
         assertTrue(interrupted);
         assertTrue(sync);
         assertEquals(1, completion.count.get());
         assertTrue(completion.doneSync);
         assertInstanceOf(InterruptedException.class, exchange.getException());
+        assertTrue(exchange.getExchangeExtension().isInterrupted());
         assertEquals(0, count(exchange, PRODUCER_COUNT));
         assertEquals(1, count(exchange, AFTER_COUNT));
+    }
+
+    @Test
+    void testReservedValueFailsTheSend() {
+        Exchange exchange = newExchange(Mode.RESERVED, Kind.SYNC);
+        Completion completion = new Completion();
+
+        boolean sync = SendHelper.process(exchange, endpoint, new TestProducer(), completion);
+
+        assertTrue(sync);
+        assertEquals(1, completion.count.get());
+        assertTrue(completion.doneSync);
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("SendHook.beforeSend returned -2: negative values other than SKIP are reserved",
+                exchange.getException().getMessage());
+        assertEquals(0, count(exchange, PRODUCER_COUNT));
+        assertEquals(1, count(exchange, AFTER_COUNT));
+    }
+
+    @Test
+    void testSendHookProducerPassesTheLifecycleOn() throws Exception {
+        AsyncProducer producer = endpoint.createAsyncProducer();
+        AsyncProducer hooked = SendHelper.newSendHookProducer(producer);
+
+        ServiceHelper.startService(hooked);
+        assertTrue(ServiceHelper.isStarted(producer));
+
+        // as an error handler does with its output when it is shut down
+        ServiceHelper.stopAndShutdownServices(hooked);
+        assertTrue(ServiceHelper.isStopped(producer));
+        assertTrue(((ServiceSupport) producer).isShutdown());
     }
 
     @Test
@@ -199,22 +257,6 @@ class SendHelperTest extends ContextTestSupport {
         assertEquals(1, count(exchange, PRODUCER_COUNT));
         assertEquals(1, count(exchange, AFTER_COUNT));
         assertSame(failure, exchange.getException());
-    }
-
-    @Test
-    void testDelayRejectedWhenStopping() {
-        PluginHelper.getErrorHandlerExecutorService(context).shutdownNow();
-        Exchange exchange = newExchange(Mode.DELAY, Kind.SYNC);
-        Completion completion = new Completion();
-
-        boolean sync = SendHelper.process(exchange, endpoint, new TestProducer(), completion);
-
-        assertTrue(sync);
-        assertEquals(1, completion.count.get());
-        assertTrue(completion.doneSync);
-        assertInstanceOf(RejectedExecutionException.class, exchange.getException());
-        assertEquals(0, count(exchange, PRODUCER_COUNT));
-        assertEquals(1, count(exchange, AFTER_COUNT));
     }
 
     /**
@@ -275,7 +317,7 @@ class SendHelperTest extends ContextTestSupport {
         context.stop();
         send.assertCompletedOnce();
         if (transacted) {
-            // a transacted exchange is never continued on another thread
+            // a transacted exchange (with a synchronous producer) completes on the thread that sent it
             assertTrue(send.returned == null || send.returned, send::toString);
         }
     }
@@ -331,7 +373,8 @@ class SendHelperTest extends ContextTestSupport {
             assertEquals(1, completion.count.get(), this::toString);
             boolean producerCalled = count(exchange, PRODUCER_COUNT) == 1;
             assertTrue(count(exchange, PRODUCER_COUNT) <= 1, this::toString);
-            boolean stoppedByHook = mode == Mode.STOP || mode == Mode.SKIP || mode == Mode.BEFORE_THROWS;
+            boolean stoppedByHook
+                    = mode == Mode.STOP || mode == Mode.SKIP || mode == Mode.RESERVED || mode == Mode.BEFORE_THROWS;
             assertEquals(!stoppedByHook, producerCalled, this::toString);
             // the after hook runs once for every before hook that returned
             assertEquals(mode == Mode.BEFORE_THROWS ? 0 : 1, count(exchange, AFTER_COUNT), this::toString);
@@ -340,7 +383,6 @@ class SendHelperTest extends ContextTestSupport {
                 // only a producer that throws on the caller thread is thrown to the caller, and the callback was not
                 // called before
                 assertEquals(Kind.THROWS, kind, this::toString);
-                assertFalse(mode == Mode.DELAY && !exchange.isTransacted(), this::toString);
                 assertEquals(0, countWhenReturned, this::toString);
                 assertSame(thrown, exchange.getException(), this::toString);
                 return;
@@ -350,12 +392,10 @@ class SendHelperTest extends ContextTestSupport {
             if (returned) {
                 assertEquals(1, countWhenReturned, this::toString);
             }
-            if (mode == Mode.DELAY && !exchange.isTransacted()) {
-                assertFalse(returned, this::toString);
-            }
 
             switch (mode) {
                 case STOP -> assertEquals("Stopped by the hook", exchange.getException().getMessage());
+                case RESERVED -> assertInstanceOf(IllegalArgumentException.class, exchange.getException(), this::toString);
                 case BEFORE_THROWS -> assertEquals("Before failed", exchange.getException().getMessage());
                 case AFTER_THROWS -> {
                     assertNotNull(exchange.getException(), this::toString);
@@ -437,6 +477,36 @@ class SendHelperTest extends ContextTestSupport {
         }
     }
 
+    /**
+     * A clock that records the sleeps of the test thread, and the threads that sleep, without waiting. Any other thread
+     * waits as usual.
+     */
+    private static final class VirtualClock implements TimeSource.Provider {
+        private final Thread testThread = Thread.currentThread();
+        private final List<Long> sleeps = new CopyOnWriteArrayList<>();
+        private final List<Thread> sleepers = new CopyOnWriteArrayList<>();
+
+        @Override
+        public long currentTimeMillis() {
+            return System.currentTimeMillis();
+        }
+
+        @Override
+        public long nanoTime() {
+            return System.nanoTime();
+        }
+
+        @Override
+        public void sleep(long millis) throws InterruptedException {
+            if (Thread.currentThread() != testThread) {
+                new CountDownLatch(1).await(millis, TimeUnit.MILLISECONDS);
+                return;
+            }
+            sleeps.add(millis);
+            sleepers.add(Thread.currentThread());
+        }
+    }
+
     private static final class ModeHook implements SendHook {
 
         @Override
@@ -452,7 +522,10 @@ class SendHelperTest extends ContextTestSupport {
                 case SKIP:
                     return SKIP;
                 case DELAY:
-                    return 1 + ThreadLocalRandom.current().nextInt(3);
+                    Long fixed = exchange.getProperty(FIXED_DELAY, Long.class);
+                    return fixed != null ? fixed : 1 + ThreadLocalRandom.current().nextInt(3);
+                case RESERVED:
+                    return -2;
                 case BEFORE_THROWS:
                     throw new IllegalStateException("Before failed");
                 default:

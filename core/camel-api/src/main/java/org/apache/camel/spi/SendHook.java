@@ -20,11 +20,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 /**
- * A hook that runs around every call of the producer of an {@link Endpoint}, whatever started the send: a route
- * ({@code to}, {@code toD}, {@code wireTap}, {@code enrich}, {@code recipientList}, {@code routingSlip},
- * {@code dynamicRouter}), a {@link org.apache.camel.ProducerTemplate} or a deferred producer. Before the producer is
- * called, the hook can change the message, stop the send, skip it or delay it. After the producer is done, it can
- * change the reply.
+ * A hook that runs around the sends to the producer of an {@link Endpoint} that fire the
+ * {@link CamelEvent.ExchangeSendingEvent}: the sends of a route ({@code to}, {@code toD}, {@code wireTap},
+ * {@code enrich}, {@code recipientList}, {@code routingSlip}, {@code dynamicRouter}), of a
+ * {@link org.apache.camel.ProducerTemplate} and of a deferred producer. Code that gets a producer itself and calls it
+ * (for example with {@link ProducerCache#acquireProducer(Endpoint)}) fires no such event and does not run the hook.
+ * Before the producer is called, the hook can change the message, stop the send, skip it or delay it. After the
+ * producer is done, it can change the reply.
  * <p/>
  * The hook is installed with {@link org.apache.camel.ExtendedCamelContext#setSendHook(SendHook)}. There is one hook per
  * {@link org.apache.camel.CamelContext}; to use more than one, combine them in one hook. Without a hook, a send costs
@@ -41,16 +43,18 @@ import org.apache.camel.Exchange;
  * {@link org.apache.camel.ProducerTemplate} has no error handler: the exception is returned to the caller.
  * <p/>
  * <b>Threads.</b> The hook is called by many threads at the same time, and must be thread-safe.
- * {@link #beforeSend(Exchange, Endpoint)} runs on the thread that sends. {@link #afterSend(Exchange, Endpoint)} runs on
- * the thread that completes the send, which can be another thread for an asynchronous producer or after a delay.
+ * {@link #beforeSend(Exchange, Endpoint)} runs on the thread that sends, which also waits for a delay.
+ * {@link #afterSend(Exchange, Endpoint)} runs on the thread that completes the send, which can be another thread for an
+ * asynchronous producer.
  * <p/>
  * <b>Contract.</b> {@link #afterSend(Exchange, Endpoint)} is called exactly once for every call of
- * {@link #beforeSend(Exchange, Endpoint)} that returned: after the producer is done, or right away when the hook
- * stopped or skipped the send. It is also called when the producer throws an exception instead of completing; the
- * exception is then set on the exchange. When {@link #beforeSend(Exchange, Endpoint)} throws an exception, the
- * exception is set on the exchange, the producer is not called and {@link #afterSend(Exchange, Endpoint)} is not
- * called. When {@link #afterSend(Exchange, Endpoint)} throws an exception, it is set on the exchange (or added as a
- * suppressed exception when the exchange has failed already). In every case the send completes exactly once.
+ * {@link #beforeSend(Exchange, Endpoint)} that returned: after the producer is done, or right away when the producer is
+ * not called (the hook stopped or skipped the send, returned a reserved value, or the wait for its delay was
+ * interrupted). It is also called when the producer throws an exception instead of completing; the exception is then
+ * set on the exchange. When {@link #beforeSend(Exchange, Endpoint)} throws an exception, the exception is set on the
+ * exchange, the producer is not called and {@link #afterSend(Exchange, Endpoint)} is not called. When
+ * {@link #afterSend(Exchange, Endpoint)} throws an exception, it is set on the exchange (or added as a suppressed
+ * exception when the exchange has failed already). In every case the send completes exactly once.
  *
  * @since 4.24
  */
@@ -76,22 +80,29 @@ public interface SendHook {
      * exception on the exchange: the producer is not called, and the send fails with that exception. (An exchange that
      * already has an exception when it is sent, which is rare, is sent as usual unless the hook sets another one.)
      * <p/>
-     * A positive return value delays the call of the producer by that many milliseconds. The delay does not block the
-     * thread that sends: the producer is called from the scheduled thread pool that the error handler uses for
-     * asynchronous redelivery, and the send completes asynchronously. A transacted exchange must stay on its thread, so
-     * for a transacted exchange the thread that sends waits, as a redelivery of a transacted exchange does.
+     * A positive return value delays the call of the producer by that many milliseconds: the thread that sends waits,
+     * as for a slow endpoint, and then calls the producer on the same thread. That is whatever thread sends, also a
+     * thread of an asynchronous component on which the route goes on after its producer. It waits with
+     * {@link org.apache.camel.util.TimeSource#sleep(long)}, so a test harness that installs a virtual clock there runs
+     * the delay in virtual time. When the wait is interrupted, the producer is not called and the send fails with the
+     * {@link InterruptedException}; the thread keeps its interrupted status. As for any {@link InterruptedException} on
+     * an exchange, Camel marks the exchange as interrupted and stops routing it, instead of handling the failure with
+     * {@code onException}, redelivery or the dead letter channel (as when the wait of the redelivery error handler is
+     * interrupted).
      *
      * @param  exchange the exchange that is sent
      * @param  endpoint the endpoint it is sent to
-     * @return          {@link #PROCEED} to call the producer now, a delay in milliseconds to call it later, or
-     *                  {@link #SKIP} to complete the send without calling it. Other negative values are the same as
-     *                  {@link #PROCEED}. The value is ignored when the hook sets an exception on the exchange.
+     * @return          {@link #PROCEED} to call the producer now, a delay in milliseconds to wait before calling it, or
+     *                  {@link #SKIP} to complete the send without calling it. Other negative values are reserved: the
+     *                  send fails with an {@link IllegalArgumentException}, without calling the producer (and
+     *                  {@link #afterSend(Exchange, Endpoint)} is called). The value is ignored when the hook sets an
+     *                  exception on the exchange.
      */
     long beforeSend(Exchange exchange, Endpoint endpoint);
 
     /**
-     * Called after the producer of the endpoint is done, or right away when {@link #beforeSend(Exchange, Endpoint)}
-     * stopped or skipped the send.
+     * Called after the producer of the endpoint is done, or right away when the producer is not called (see
+     * {@link #beforeSend(Exchange, Endpoint)}).
      * <p/>
      * The hook can change the reply (the message of the exchange), or set or clear the exception of the exchange.
      *
