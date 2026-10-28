@@ -98,4 +98,15 @@ public abstract class OAuth {
     public OAuthSession createSession(Exchange exchange) {
         return getSessionStore().createSession(exchange);
     }
+
+    /**
+     * Rotates the session, delegating to {@link OAuthSessionStore#rotateSession(Exchange, OAuthSession)}.
+     *
+     * @param  exchange the current exchange
+     * @param  session  the existing session to rotate
+     * @return          the rotated session with a new session identifier
+     */
+    public OAuthSession rotateSession(Exchange exchange, OAuthSession session) {
+        return getSessionStore().rotateSession(exchange, session);
+    }
 }
