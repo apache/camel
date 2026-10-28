@@ -76,6 +76,11 @@ class TransactionLog {
     static class EntryContainer {
         LayerInfo layerInfo;
         LogEntry logEntry;
+        /**
+         * The current position of the entry in the file: a roll-over writes the entries of the previous layer again,
+         * after the newer ones
+         */
+        long position = -1;
 
         public EntryContainer(LayerInfo layerInfo, LogEntry logEntry) {
             this.layerInfo = layerInfo;
@@ -103,9 +108,10 @@ class TransactionLog {
      * Adds a new entry to the log
      *
      * @param  logEntry the entry to add
-     * @return          The information about the layer in the buffer where the entry was added
+     * @return          The container of the entry, with the information about the layer in the buffer where the entry
+     *                  was added
      */
-    public LayerInfo add(LogEntry logEntry) {
+    public EntryContainer add(LogEntry logEntry) {
         boolean rollingOver = false;
         if (currentIndex >= maxCapacity) {
             currentLayer++;
@@ -118,7 +124,7 @@ class TransactionLog {
         logEntries[currentIndex] = entryContainer;
         currentIndex++;
 
-        return entryContainer.layerInfo;
+        return entryContainer;
     }
 
     /**
@@ -138,8 +144,10 @@ class TransactionLog {
             }
         }
 
-        if (transactionLogLayer > entryInfoLayer) {
-            if (transactionLogIndex < entryInfoIndex) {
+        // The current layer has replaced the entries before the current index (the index of the next entry to add).
+        // The entries from there on are still those of the previous layer, and those of older layers are all gone.
+        if (transactionLogLayer == entryInfoLayer + 1) {
+            if (transactionLogIndex <= entryInfoIndex) {
                 return true;
             }
         }
@@ -163,9 +171,9 @@ class TransactionLog {
      *
      * @param  layerInfo the layer information for the entry
      * @param  state     the state to update the entry to
-     * @return           the updated entry or null if the record was rolled-over and discarded
+     * @return           the container of the updated entry or null if the record was rolled-over and discarded
      */
-    public LogEntry update(LayerInfo layerInfo, LogEntry.EntryState state) {
+    public EntryContainer update(LayerInfo layerInfo, LogEntry.EntryState state) {
         if (layerInfo == null) {
             if (state != LogEntry.EntryState.PROCESSED) {
                 LOG.warn(
@@ -181,7 +189,7 @@ class TransactionLog {
 
             container.logEntry.setEntryState(state);
 
-            return container.logEntry;
+            return container;
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Discarded a record because it has been rolled-over. Record layer: {}", layerInfo);

@@ -242,6 +242,15 @@ final class WebsiteInstallerFixture implements AutoCloseable {
         publish(urlPath, manifest.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Publishes a release alias next to the per-version manifests, as camel-website does: {@code lts} for
+     * {@code lts.properties} (the newest LTS release) or {@code X.Y} for {@code X.Y.properties} (the newest patch of
+     * that line). {@code version} is whatever the alias resolves to, so a test can also publish one outside its line.
+     */
+    void publishAlias(String alias, String version, Path tar, Path zip) throws Exception {
+        publishManifest("/camel-cli/releases/" + alias + ".properties", version, tar, zip);
+    }
+
     private static String sha256Hex(Path file) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         try (var in = Files.newInputStream(file)) {

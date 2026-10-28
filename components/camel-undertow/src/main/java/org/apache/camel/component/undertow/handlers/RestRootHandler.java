@@ -75,17 +75,20 @@ public class RestRootHandler implements HttpHandler {
      */
     public void addConsumer(UndertowConsumer consumer, HttpHandler handler) {
         handlers.put(consumer, handler);
-        consumers.add(consumer);
-        RestConsumerContextPathMatcher.register(consumer.getEndpoint().getHttpURI().getPath());
+        if (consumers.add(consumer)) {
+            RestConsumerContextPathMatcher.register(consumer.getEndpoint().getHttpURI().getPath());
+        }
     }
 
     /**
-     * Removes the given consumer
+     * Removes the given consumer. Only a consumer that was added unregisters its path: a consumer that failed to start,
+     * or whose route never started, is stopped without having been added.
      */
     public void removeConsumer(UndertowConsumer consumer) {
-        consumers.remove(consumer);
-        handlers.remove(consumer);
-        RestConsumerContextPathMatcher.unRegister(consumer.getEndpoint().getHttpURI().getPath());
+        if (consumers.remove(consumer)) {
+            handlers.remove(consumer);
+            RestConsumerContextPathMatcher.unRegister(consumer.getEndpoint().getHttpURI().getPath());
+        }
     }
 
     /**
