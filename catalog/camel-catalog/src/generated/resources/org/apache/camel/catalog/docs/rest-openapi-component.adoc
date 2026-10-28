@@ -345,8 +345,11 @@ endpoint or the component, restricts this:
 The check runs before the parser resolves anything, on the document tree the parser uses (YAML aliases expanded).
 It resolves every `$ref` the way the parser does: against the document that contains it and, for OpenAPI 3.1,
 against the enclosing `$id`. `file:` and `classpath:` references count as local. The local documents the option
-allows are read and checked in turn, and a document that cannot be read fails the check. A reference the option
-does not allow fails the start, with a message that names the reference and where it is.
+allows are read and checked in turn; for OpenAPI 3.1 that is the part of the document a reference selects (its JSON
+pointer or `$anchor`), as the parser reads it. A document that cannot be read, a fragment that cannot be found, and a
+reference the parser could resolve in another document, because an `$id` there resolves to the same location, fail
+the check. A reference the option does not allow fails the start, with a message that names the reference and where
+it is.
 
 [source,java]
 ----

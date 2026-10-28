@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rest.openapi;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -384,6 +385,407 @@ class RestOpenApiExternalReferencesTest {
                 .hasMessageContaining("references owner.yaml at properties.owner.$ref in " + shared.toUri())
                 .hasMessageContaining("(owner.yaml resolves to " + SERVER.baseUrl() + "/schemas/owner.yaml)");
         SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allLoadsASchemaThatReferencesItselfBelowARelativeId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), contract31(null, relativeIdNode(dir).toUri().toString()));
+
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        assertThat(openApi.getPaths()).containsKey("/pets/{petId}");
+    }
+
+    @Test
+    void localFinishesForASchemaThatReferencesItselfBelowARelativeId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), contract31(null, relativeIdNode(dir).toUri().toString()));
+
+        // the relative $id moves the base one level further on every visit; the check stops where the parser stops, at
+        // the reference it is already resolving
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local");
+
+        assertThat(openApi.getPaths()).containsKey("/pets/{petId}");
+    }
+
+    @Test
+    void allLoadsACycleOfTwoDocumentsWithARelativeId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), contract31(null, twoDocumentCycle(dir).toUri().toString()));
+
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        assertThat(openApi.getPaths()).containsKey("/pets/{petId}");
+    }
+
+    @Test
+    void localFinishesForACycleOfTwoDocumentsWithARelativeId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), contract31(null, twoDocumentCycle(dir).toUri().toString()));
+
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local");
+
+        assertThat(openApi.getPaths()).containsKey("/pets/{petId}");
+    }
+
+    @Test
+    void localChecksTheSecondVisitOfACycleBelowARelativeId(@TempDir Path dir) throws Exception {
+        Path root = secondVisitContract(dir);
+
+        // on the second visit owner.yaml resolves against sub/sub/, where the owner references the server
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references " + SERVER.baseUrl() + "/schema.yaml at properties.name.$ref in file:"
+                                      + dir.resolve("sub/sub/owner.yaml"))
+                .hasMessageContaining("externalReferences=local allows no http(s) reference");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesTheSecondVisitOfACycleBelowARelativeId(@TempDir Path dir) throws Exception {
+        Path root = secondVisitContract(dir);
+
+        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        // the parser walks node.yaml a second time, below the $id it added on the first visit
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schema.yaml")));
+    }
+
+    @Test
+    void localChecksAFragmentAgainstTheInheritedIdOnly(@TempDir Path dir) throws Exception {
+        Path root = fragmentBelowAnHttpId(dir);
+
+        // the parser deserializes only X, so owner.yaml resolves against the $id of Pet, not the $id of other.yaml
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references owner.yaml at properties.owner.$ref in "
+                                      + dir.resolve("other.yaml").toUri() + "#/$defs/X")
+                .hasMessageContaining("(owner.yaml resolves to " + SERVER.baseUrl() + "/schemas/owner.yaml)");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesAFragmentAgainstTheInheritedId(@TempDir Path dir) throws Exception {
+        Path root = fragmentBelowAnHttpId(dir);
+
+        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schemas/owner.yaml")));
+    }
+
+    @Test
+    void localChecksAFragmentWithoutTheIdsAboveIt(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(null, documentBelowAnHttpId(dir).toUri() + "#/$defs/Owner"));
+
+        // name.yaml is the file next to other.yaml: the $id at the root of other.yaml is not above the node the parser
+        // deserializes
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local");
+
+        Schema<?> owner = (Schema<?>) petSchema(openApi).getProperties().get("owner");
+        assertThat(owner.getProperties()).containsKey("name");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void localChecksTheSchemaAnAnchorSelects(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(null, documentBelowAnHttpId(dir).toUri() + "#Owner"));
+
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local");
+
+        Schema<?> owner = (Schema<?>) petSchema(openApi).getProperties().get("owner");
+        assertThat(owner.getProperties()).containsKey("name");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void localFailsWhenAFragmentCannotBeFound(@TempDir Path dir) throws Exception {
+        Path schema = Files.writeString(dir.resolve("schema.yaml"), PET_SCHEMAS);
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(null, schema.toUri() + "#/components/schemas/Missing"));
+
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references " + schema.toUri() + "#/components/schemas/Missing")
+                .hasMessageContaining("#/components/schemas/Missing cannot be found in " + schema.toUri());
+    }
+
+    @Test
+    void localFollowsAReferenceInsideAReferencedDocument(@TempDir Path dir) throws Exception {
+        Path root = referenceInsideAReferencedDocument(dir);
+
+        // the parser resolves #/$defs/Y in hop.yaml, and owner.yaml in Y against the $id of X, where the reference is
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references owner.yaml at properties.owner.$ref in "
+                                      + dir.resolve("hop.yaml").toUri() + "#/$defs/Y")
+                .hasMessageContaining("(owner.yaml resolves to " + SERVER.baseUrl() + "/schemas/owner.yaml)");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesAReferenceInsideAReferencedDocument(@TempDir Path dir) throws Exception {
+        Path root = referenceInsideAReferencedDocument(dir);
+
+        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schemas/owner.yaml")));
+    }
+
+    @Test
+    void localRejectsAReferenceToADocumentThatAnIdElsewhereClaims(@TempDir Path dir) throws Exception {
+        Path root = claimedDocumentContract(dir);
+
+        // the $id of Alias in other.yaml resolves to the location of claimed.yaml, so the parser can take Owner from
+        // other.yaml instead of claimed.yaml
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references " + dir.resolve("claimed.yaml").toUri()
+                                      + "#/$defs/Owner at components.schemas.Pet.properties.owner.$ref")
+                .hasMessageContaining(dir.resolve("claimed.yaml").toUri() + " is also the $id of a schema in "
+                                      + dir.resolve("other.yaml").toUri() + "#/$defs/Alias");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesAReferenceInTheDocumentThatClaimsItsLocation(@TempDir Path dir) throws Exception {
+        Path root = claimedDocumentContract(dir);
+
+        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        // the parser met the $id first, so it took Owner from other.yaml, which references the server
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schema.yaml")));
+    }
+
+    @Test
+    void localChecksADocumentReachedAgainWithIdsThatGiveTheSameBaseThere(@TempDir Path dir) throws Exception {
+        Path root = sameBaseContract(dir);
+
+        // entry.yaml reaches s.yaml without an $id and below ../<dir>/s.yaml, which gives the same base at s.yaml but
+        // another one at other/t.yaml, where owner.yaml is then a document that references the server
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references " + SERVER.baseUrl() + "/schema.yaml at properties.name.$ref in file:"
+                                      + dir.resolve(dir.getFileName().toString()).resolve("sub/owner.yaml"))
+                .hasMessageContaining("externalReferences=local allows no http(s) reference");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesADocumentReachedAgainWithIdsThatGiveTheSameBaseThere(@TempDir Path dir) throws Exception {
+        Path root = sameBaseContract(dir);
+
+        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        // the parser walks the properties of entry.yaml before its allOf, so it reaches s.yaml below the $id first
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schema.yaml")));
+    }
+
+    /**
+     * A schema that references itself below a relative $id.
+     */
+    private static Path relativeIdNode(Path dir) throws IOException {
+        Path node = dir.resolve("node.yaml");
+        return Files.writeString(node, """
+                $id: sub/
+                type: object
+                properties:
+                  next:
+                    $ref: %s
+                """.formatted(node.toUri()));
+    }
+
+    /**
+     * Two schemas that reference each other, the first below a relative $id; returns the first.
+     */
+    private static Path twoDocumentCycle(Path dir) throws IOException {
+        Path first = dir.resolve("first.yaml");
+        Path second = dir.resolve("second.yaml");
+        Files.writeString(first, """
+                $id: sub/
+                type: object
+                properties:
+                  second:
+                    $ref: %s
+                """.formatted(second.toUri()));
+        Files.writeString(second, """
+                type: object
+                properties:
+                  first:
+                    $ref: %s
+                """.formatted(first.toUri()));
+        return first;
+    }
+
+    /**
+     * A contract whose Pet owner is a schema that references itself below a relative $id. The kind property is resolved
+     * before the cycle and changes the schema the parser is visiting, so the parser walks it a second time, one level
+     * further, and stops at the next reference there. The owner.yaml of the first visit is harmless, the one of the
+     * second references the server.
+     */
+    private static Path secondVisitContract(Path dir) throws IOException {
+        Path node = dir.resolve("node.yaml");
+        Path kind = Files.writeString(dir.resolve("kind.yaml"), "type: string\n");
+        Files.writeString(node, """
+                $id: sub/
+                type: object
+                properties:
+                  kind:
+                    $ref: %s
+                  next:
+                    description: The next node
+                    $ref: %s
+                  owner:
+                    $ref: owner.yaml
+                """.formatted(kind.toUri(), node.toUri()));
+        Path sub = Files.createDirectories(dir.resolve("sub/sub"));
+        Files.writeString(dir.resolve("sub/owner.yaml"), OWNER_SCHEMA);
+        Files.writeString(sub.resolve("owner.yaml"), """
+                type: object
+                properties:
+                  name:
+                    $ref: '%s/schema.yaml'
+                """.formatted(SERVER.baseUrl()));
+        return Files.writeString(dir.resolve("root.yaml"), contract31(null, node.toUri().toString()));
+    }
+
+    /**
+     * A contract whose Pet, below an http $id, references the schema X of other.yaml, whose own $id is its location.
+     */
+    private static Path fragmentBelowAnHttpId(Path dir) throws IOException {
+        Path other = dir.resolve("other.yaml");
+        Files.writeString(other, """
+                $id: %s
+                $defs:
+                  X:
+                    type: object
+                    properties:
+                      owner:
+                        $ref: owner.yaml
+                """.formatted(other.toUri()));
+        Files.writeString(dir.resolve("owner.yaml"), OWNER_SCHEMA);
+        return Files.writeString(dir.resolve("root.yaml"),
+                contract31(SERVER.baseUrl() + "/schemas/", other.toUri() + "#/$defs/X"));
+    }
+
+    /**
+     * A document with an http $id at its root and an Owner schema (also the anchor Owner) whose name is the file
+     * name.yaml next to it.
+     */
+    private static Path documentBelowAnHttpId(Path dir) throws IOException {
+        Files.writeString(dir.resolve("name.yaml"), "type: string\n");
+        return Files.writeString(dir.resolve("other.yaml"), """
+                $id: %s/other/
+                $defs:
+                  Owner:
+                    $anchor: Owner
+                    type: object
+                    properties:
+                      name:
+                        $ref: name.yaml
+                """.formatted(SERVER.baseUrl()));
+    }
+
+    /**
+     * A contract whose Pet references the schema X of hop.yaml; X has an http $id and references Y in the same
+     * document, whose owner.yaml the parser resolves against that $id.
+     */
+    private static Path referenceInsideAReferencedDocument(Path dir) throws IOException {
+        Path hop = Files.writeString(dir.resolve("hop.yaml"), """
+                $defs:
+                  X:
+                    $id: %s/schemas/
+                    type: object
+                    properties:
+                      y:
+                        $ref: '#/$defs/Y'
+                  Y:
+                    type: object
+                    properties:
+                      owner:
+                        $ref: owner.yaml
+                """.formatted(SERVER.baseUrl()));
+        Files.writeString(dir.resolve("owner.yaml"), OWNER_SCHEMA);
+        return Files.writeString(dir.resolve("root.yaml"), contract31(null, hop.toUri() + "#/$defs/X"));
+    }
+
+    /**
+     * A contract that references the Alias schema of other.yaml, whose $id is the location of claimed.yaml, and then
+     * Owner in claimed.yaml. other.yaml has an Owner too, which references the server.
+     */
+    private static Path claimedDocumentContract(Path dir) throws IOException {
+        Path claimed = Files.writeString(dir.resolve("claimed.yaml"), """
+                $defs:
+                  Owner:
+                    type: object
+                """);
+        Path other = Files.writeString(dir.resolve("other.yaml"), """
+                $defs:
+                  Alias:
+                    $id: %s
+                    type: object
+                  Owner:
+                    type: object
+                    properties:
+                      name:
+                        $ref: '%s/schema.yaml'
+                """.formatted(claimed.toUri(), SERVER.baseUrl()));
+        return Files.writeString(dir.resolve("root.yaml"), """
+                openapi: 3.1.0
+                info:
+                  title: Pets
+                  version: "1.0"
+                paths: {}
+                components:
+                  schemas:
+                    Alias:
+                      $ref: '%s#/$defs/Alias'
+                    Pet:
+                      type: object
+                      properties:
+                        owner:
+                          $ref: '%s#/$defs/Owner'
+                """.formatted(other.toUri(), claimed.toUri()));
+    }
+
+    /**
+     * A contract whose Pet owner is a/entry.yaml, which reaches s.yaml twice by a relative reference: through its allOf
+     * without an $id, and through a property below the relative $id ../&lt;dir&gt;/s.yaml. That $id gives the base of
+     * s.yaml at s.yaml itself, but not at other/t.yaml, which s.yaml references below the $id sub/, nor at entry.yaml,
+     * so it is not the $id of another document.
+     */
+    private static Path sameBaseContract(Path dir) throws IOException {
+        Path other = Files.createDirectories(dir.resolve("other/sub"));
+        Files.writeString(other.resolve("owner.yaml"), OWNER_SCHEMA);
+        Path t = Files.writeString(dir.resolve("other/t.yaml"), """
+                type: object
+                properties:
+                  owner:
+                    $ref: owner.yaml
+                """);
+        Path far = Files.createDirectories(dir.resolve(dir.getFileName().toString()).resolve("sub"));
+        Files.writeString(far.resolve("owner.yaml"), """
+                type: object
+                properties:
+                  name:
+                    $ref: '%s/schema.yaml'
+                """.formatted(SERVER.baseUrl()));
+        Files.writeString(dir.resolve("s.yaml"), """
+                type: object
+                properties:
+                  t:
+                    $id: sub/
+                    $ref: %s
+                """.formatted(t.toUri()));
+        Path entry = Files.createDirectory(dir.resolve("a")).resolve("entry.yaml");
+        Files.writeString(entry, """
+                type: object
+                allOf:
+                  - $ref: ../s.yaml
+                properties:
+                  pet:
+                    $id: ../%s/s.yaml
+                    $ref: ../s.yaml
+                """.formatted(dir.getFileName()));
+        return Files.writeString(dir.resolve("root.yaml"), contract31(null, entry.toUri().toString()));
     }
 
     @Test
