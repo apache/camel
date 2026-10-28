@@ -71,6 +71,8 @@ List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(jsonObject);
 
 // Layout and render
 RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+// the renderer draws the steps as cards, so lay them out as cards
+engine.setCardStyle(true);
 RouteDiagramRenderer renderer = new RouteDiagramRenderer();
 
 LayoutRoute lr = engine.layoutRoute(routes.get(0), RouteDiagramLayoutEngine.PADDING);
@@ -439,7 +441,8 @@ RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNod
 String diagram = renderer.renderDiagramAnsi(layoutRoutes, totalHeight, highlightedNodes, style);
 
 // For PNG rendering
-RouteDiagramRenderer pngRenderer = new RouteDiagramRenderer(nodeWidth, fontSize);
+RouteDiagramRenderer pngRenderer = new RouteDiagramRenderer(
+        engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, false);
 BufferedImage image = pngRenderer.renderDiagram(layoutRoutes, totalHeight, colors, highlightedNodes, style);
 ----
 
