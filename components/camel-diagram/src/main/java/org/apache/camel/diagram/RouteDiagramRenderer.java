@@ -488,23 +488,43 @@ public class RouteDiagramRenderer {
     }
 
     private void drawScopeBox(Graphics2D g, LayoutNode scopeNode, DiagramColors colors) {
-        TreeNode tn = scopeNode.treeNode;
-        Bounds bounds = new Bounds(
-                scopeNode.x, scopeNode.y,
-                scopeNode.x + nodeWidth, scopeNode.y + scopeNode.height);
-        for (TreeNode child : tn.children) {
-            RouteDiagramLayoutEngine.expandBoundsForBox(child, bounds, nodeWidth);
-        }
-
-        int boxX = bounds.minX - SCOPE_BOX_PAD;
-        int boxY = bounds.minY - SCOPE_BOX_PAD;
-        int boxW = bounds.maxX - bounds.minX + 2 * SCOPE_BOX_PAD;
-        int boxH = bounds.maxY - bounds.minY + 2 * SCOPE_BOX_PAD;
-
+        Bounds box = scopeBox(scopeNode);
         Color c = colors.getArrow();
         g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 140));
         g.setStroke(DASHED_STROKE);
-        g.drawRoundRect(boxX, boxY, boxW, boxH, ARC, ARC);
+        g.drawRoundRect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY, ARC, ARC);
+    }
+
+    /** The dashed box around a step with a scope (such as a split) and its steps. */
+    private Bounds scopeBox(LayoutNode scopeNode) {
+        Bounds bounds = new Bounds(
+                scopeNode.x, scopeNode.y,
+                scopeNode.x + nodeWidth, scopeNode.y + scopeNode.height);
+        for (TreeNode child : scopeNode.treeNode.children) {
+            RouteDiagramLayoutEngine.expandBoundsForBox(child, bounds, nodeWidth);
+        }
+        return new Bounds(
+                bounds.minX - SCOPE_BOX_PAD, bounds.minY - SCOPE_BOX_PAD,
+                bounds.maxX + SCOPE_BOX_PAD, bounds.maxY + SCOPE_BOX_PAD);
+    }
+
+    /**
+     * The widest the label of the body types of a step can be: wider than a step, and inside the dashed box the step is
+     * in, as the overhang is only made room for at the sides of the route.
+     */
+    private int bodyTypesLabelWidth(LayoutNode node) {
+        int maxWidth = RouteDiagramLayoutEngine.bodyTypesLabelWidth(nodeWidth);
+        TreeNode scope = node.treeNode.parent;
+        while (scope != null && !RouteDiagramLayoutEngine.hasScope(scope)) {
+            scope = scope.parent;
+        }
+        if (scope != null && scope.layoutNode != null) {
+            Bounds box = scopeBox(scope.layoutNode);
+            int cx = node.x + nodeWidth / 2;
+            int room = 2 * (Math.min(cx - box.minX, box.maxX - cx) - 4 * SCALE);
+            maxWidth = Math.min(maxWidth, room);
+        }
+        return maxWidth;
     }
 
     private int getTopY(LayoutNode node) {
@@ -625,8 +645,9 @@ public class RouteDiagramRenderer {
 
     /**
      * The body types the step has been reached with, as a label on the arrow into it, below the bend of the arrow and
-     * above the counters of the metrics ({@link RouteDiagramLayoutEngine#setBodyTypes}). A step reached with bodies of
-     * more than one kind has a warning label: the warning icon, the types and their kinds.
+     * above the counters of the metrics ({@link RouteDiagramLayoutEngine#setBodyTypes}), and inside the dashed box the
+     * step is in ({@link #bodyTypesLabelWidth(LayoutNode)}). A step reached with bodies of more than one kind has a
+     * warning label: the warning icon, the types and their kinds.
      */
     private void drawBodyTypes(Graphics2D g, LayoutNode node, DiagramColors colors) {
         if (node.parentNode == null || node.tableRow || node.treeNode == null
@@ -637,18 +658,18 @@ public class RouteDiagramRenderer {
         List<String> kinds = node.treeNode.info.bodyKinds;
         boolean mixed = RouteDiagramBodyTypes.mixed(kinds);
 
-        Font font = new Font("SansSerif", Font.PLAIN, fontSizeNode - SCALE);
+        Font font = RouteDiagramLayoutEngine.bodyTypesFont(fontSizeNode);
         FontMetrics fm = g.getFontMetrics(font);
         int padX = 8 * SCALE;
         int icon = mixed ? fm.getAscent() : 0;
         int iconGap = mixed ? 4 * SCALE : 0;
-        int maxWidth = RouteDiagramLayoutEngine.bodyTypesLabelWidth(nodeWidth);
+        int maxWidth = bodyTypesLabelWidth(node);
         String text = RouteDiagramBodyTypes.fit(types, kinds, fm, maxWidth - 2 * padX - icon - iconGap);
         int w = 2 * padX + icon + iconGap + fm.stringWidth(text);
-        int h = fm.getHeight() + 4 * SCALE;
+        int h = RouteDiagramLayoutEngine.bodyTypesLabelHeight(fm);
         int startY = node.connectFromMerge ? node.mergeY : node.parentNode.y + node.parentNode.height;
         int x = node.x + nodeWidth / 2 - w / 2;
-        int y = startY + V_GAP / 2 + 4 * SCALE;
+        int y = startY + RouteDiagramLayoutEngine.bodyTypesLabelOffset();
 
         g.setColor(mixed ? colors.getWarningBg() : colors.getCardBg());
         g.fillRoundRect(x, y, w, h, h, h);

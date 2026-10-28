@@ -52,8 +52,8 @@ public class RouteDiagramLayoutEngine {
     /** Where the text of a card starts, from its left border: after the icon. */
     public static final int CARD_TEXT_INSET = CARD_PAD + CARD_ICON_SIZE + CARD_PAD;
     /**
-     * How much longer an arrow is when it carries the body types of the step it goes into: room for their label above
-     * the counters of the metrics.
+     * How much longer an arrow is, at least, when it carries the body types of the step it goes into: room for their
+     * label above the counters of the metrics. More with a larger font ({@link #getBodyTypesGap()}).
      */
     public static final int BODY_TYPES_GAP = 30 * SCALE;
     private static final Pattern CARD_EXPRESSION = Pattern.compile("^([A-Za-z][\\w-]*)\\{(.*)\\}$", Pattern.DOTALL);
@@ -74,6 +74,7 @@ public class RouteDiagramLayoutEngine {
     private boolean tableLayout;
     private boolean cardStyle;
     private boolean bodyTypes;
+    private final int bodyTypesGap;
     // the space between the steps of the route being laid out
     private int stepGap = V_GAP;
 
@@ -144,9 +145,43 @@ public class RouteDiagramLayoutEngine {
             this.fontMetrics = g.getFontMetrics();
             g.setFont(cardTitleFont(fontSize * SCALE));
             this.titleMetrics = g.getFontMetrics();
+            this.bodyTypesGap = bodyTypesGap(
+                    fontSize * SCALE, g.getFontMetrics(bodyTypesFont(fontSize * SCALE)), titleMetrics);
         } finally {
             g.dispose();
         }
+    }
+
+    /** The font of the label of the body types on an arrow: a size smaller than the text of the nodes. */
+    public static Font bodyTypesFont(int fontSizeScaled) {
+        return new Font("SansSerif", Font.PLAIN, fontSizeScaled - SCALE);
+    }
+
+    /**
+     * Where the label of the body types starts on an arrow, below its start: below the bend of an arrow to a branch.
+     */
+    public static int bodyTypesLabelOffset() {
+        return V_GAP / 2 + 4 * SCALE;
+    }
+
+    /**
+     * The height of the label of the body types.
+     *
+     * @param labelMetrics the metrics of the {@link #bodyTypesFont}
+     */
+    public static int bodyTypesLabelHeight(FontMetrics labelMetrics) {
+        return labelMetrics.getHeight() + 4 * SCALE;
+    }
+
+    /**
+     * The room for the label of the body types and, below it, the counters of the metrics: they are at the end of the
+     * arrow, in the {@link #cardTitleFont} (the renderer draws the counters in the font of the route label), and both
+     * grow with the font size.
+     */
+    private static int bodyTypesGap(int fontSizeScaled, FontMetrics labelMetrics, FontMetrics counterMetrics) {
+        int labelBottom = bodyTypesLabelOffset() + bodyTypesLabelHeight(labelMetrics);
+        int counters = 2 + fontSizeScaled + counterMetrics.getAscent();
+        return Math.max(BODY_TYPES_GAP, labelBottom + 2 * SCALE + counters - V_GAP);
     }
 
     /** The font of the title of a card: bold, a size larger than the text of the nodes. */
@@ -177,6 +212,11 @@ public class RouteDiagramLayoutEngine {
      */
     public void setBodyTypes(boolean bodyTypes) {
         this.bodyTypes = bodyTypes;
+    }
+
+    /** How much longer an arrow is when it carries the body types of the step it goes into. */
+    public int getBodyTypesGap() {
+        return bodyTypesGap;
     }
 
     public boolean isBodyTypes() {
@@ -524,7 +564,7 @@ public class RouteDiagramLayoutEngine {
 
         stepGap = V_GAP;
         if (bodyTypes && route.nodes.stream().anyMatch(n -> !n.bodyTypes.isEmpty())) {
-            stepGap = V_GAP + BODY_TYPES_GAP;
+            stepGap = V_GAP + bodyTypesGap;
             lr.bodyTypes = true;
         }
 
