@@ -701,8 +701,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     /**
      * The factory of the readers that get the text of a token in the text mode, created once. It is configured before
      * it is published and then only creates readers, from the threads of all the routes that use the text mode. That
-     * relies on createXMLStreamReader being thread-safe, which holds when Woodstox, the provider camel-stax depends
-     * on, is the provider found; StaxConverter itself pools its factories instead.
+     * relies on createXMLStreamReader being thread-safe, which holds when Woodstox, the provider camel-stax depends on,
+     * is the provider found; StaxConverter itself pools its factories instead.
      */
     private static final class TextInputFactory {
         static final XMLInputFactory FACTORY = create();
