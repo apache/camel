@@ -36,7 +36,7 @@
 **** xref:camel-jbang-tui-ai-agents.adoc[Camel TUI and AI Agents]
 **** xref:camel-jbang-tui-settings.adoc[Camel TUI Actions, Settings and Themes]
 **** xref:camel-jbang-tui-recording.adoc[Camel TUI Screenshots and Demo Recordings]
-*** xref:camel-jbang-mcp.adoc[Camel MCP Server]
+*** xref:camel-jbang-mcp.adoc[Camel CLI MCP Server]
 *** xref:camel-jbang-configuration.adoc[Configuration]
 *** xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]
 *** xref:camel-jbang-tips.adoc[Tips and Recipes]
