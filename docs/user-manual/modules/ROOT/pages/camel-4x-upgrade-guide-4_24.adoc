@@ -1501,7 +1501,8 @@ is not the sha, so the header could not be given to the `cherryPick` operation. 
 `RevCommit` or an `ObjectId` must now read it as a `String` (`ObjectId.fromString` gives the `ObjectId`).
 
 The `commit` and `commitAll` operations now set the `CamelGitCommitId` header to the sha of the new commit. The body is
-unchanged.
+unchanged. The header replaces a `CamelGitCommitId` already on the message, such as the one set by the commit consumer,
+or one set for a later `cherryPick`.
 
 The `checkout` operation without a `tagName` now checks out a branch that already exists. Before, it always created the
 branch, and failed with `RefAlreadyExistsException` when the branch existed. With a `tagName`, it still creates the
