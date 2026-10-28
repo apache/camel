@@ -24,12 +24,14 @@ import org.apache.camel.http.common.DefaultHttpRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A servlet component with an httpRegistry shared by two servlets of different names: each consumer is connected to
@@ -94,7 +96,10 @@ class ServletSharedHttpRegistryWildcardPathTest extends CamelTestSupport {
                     from(uri).routeId("second").setBody(constant("second"));
                 }
             });
-            assertThrows(Exception.class, other::start);
+            Exception e = assertThrows(Exception.class, other::start);
+            IllegalStateException cause = ObjectHelper.getException(IllegalStateException.class, e);
+            assertNotNull(cause, "cause: " + e);
+            assertTrue(cause.getMessage().startsWith("Duplicate request path for "), "cause: " + e);
         }
 
         assertNotNull(match(DUPLICATE, "/sharedregistry/duplicate/a"),
@@ -111,7 +116,12 @@ class ServletSharedHttpRegistryWildcardPathTest extends CamelTestSupport {
                 List.of(new WildcardPath(consumerPath)));
     }
 
-    private record WildcardPath(String getConsumerPath) implements RestConsumerContextPathMatcher.ConsumerPath<String> {
+    private record WildcardPath(String path) implements RestConsumerContextPathMatcher.ConsumerPath<String> {
+
+        @Override
+        public String getConsumerPath() {
+            return path;
+        }
 
         @Override
         public String getRestrictMethod() {
@@ -120,7 +130,7 @@ class ServletSharedHttpRegistryWildcardPathTest extends CamelTestSupport {
 
         @Override
         public String getConsumer() {
-            return getConsumerPath;
+            return path;
         }
 
         @Override

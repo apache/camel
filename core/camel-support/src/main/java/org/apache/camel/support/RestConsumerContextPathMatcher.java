@@ -249,6 +249,14 @@ public final class RestConsumerContextPathMatcher {
      * @param consumerPath a consumer path
      */
     public static void register(String consumerPath) {
+        // a path that is already registered keeps its pattern
+        PATH_PATTERN.compute(consumerPath,
+                (path, registered) -> registered != null
+                        ? new RegisteredPattern(registered.pattern(), registered.consumers() + 1)
+                        : new RegisteredPattern(compileConsumerPath(path), 1));
+    }
+
+    private static Pattern compileConsumerPath(String consumerPath) {
         // Remove hyphens and underscores from parameter names
         // as these are not supported in regex named group names
         String regex = prepareConsumerPathRegex(consumerPath);
@@ -264,9 +272,7 @@ public final class RestConsumerContextPathMatcher {
         regex = regex.replace("*", ".*");
 
         // Match the provided path against the regex pattern
-        Pattern pattern = Pattern.compile(regex);
-        PATH_PATTERN.compute(consumerPath,
-                (path, registered) -> new RegisteredPattern(pattern, registered != null ? registered.consumers() + 1 : 1));
+        return Pattern.compile(regex);
     }
 
     /**
