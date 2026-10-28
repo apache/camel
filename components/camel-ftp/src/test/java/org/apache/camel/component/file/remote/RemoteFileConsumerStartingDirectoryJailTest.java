@@ -181,6 +181,34 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
     }
 
     @Test
+    void shouldSkipSymbolicLinkWhoseTargetContainsBackslash() {
+        // a server that takes a backslash as a path separator too, as on Windows
+        StubSftpOperations server = new StubSftpOperations().backslashSeparator()
+                .file("/home/camel/poll/hello.txt")
+                .file("/home/camel/poll/sub/file.txt")
+                .file("/home/outside.txt")
+                .link("/home/camel/poll/report.txt", "..\\..\\outside.txt")
+                .link("/home/camel/poll/inside.txt", "sub\\file.txt");
+        AbstractSftpConsumer consumer = sftpConsumer("sftp://hostname/poll", server);
+
+        // the server follows the first link out of the starting directory, and the second one inside, but which path
+        // a server follows for a backslash depends on the server, so both are skipped as links that cannot be resolved
+        assertFalse(consumer.isWithinStartingDirectory(listed("poll", "report.txt", true), "poll/report.txt"));
+        assertTrue(consumer.isUnresolvableLink("poll/report.txt"));
+        assertFalse(consumer.isWithinStartingDirectory(listed("poll", "inside.txt", true), "poll/inside.txt"));
+        assertTrue(consumer.isUnresolvableLink("poll/inside.txt"));
+
+        // a server that takes a backslash as part of a name
+        StubSftpOperations literalServer = new StubSftpOperations()
+                .file("/home/camel/poll/a\\b.txt")
+                .link("/home/camel/poll/literal.txt", "a\\b.txt");
+        AbstractSftpConsumer literalConsumer = sftpConsumer("sftp://hostname/poll", literalServer);
+
+        assertFalse(literalConsumer.isWithinStartingDirectory(listed("poll", "literal.txt", true), "poll/literal.txt"));
+        assertTrue(literalConsumer.isUnresolvableLink("poll/literal.txt"));
+    }
+
+    @Test
     void isTransportErrorClassification() {
         SftpOperations disconnected = new SftpOperations();
         assertTrue(disconnected.isTransportError(new GenericFileOperationFailedException("disconnected")),
@@ -238,6 +266,15 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
         private final Set<String> files = new HashSet<>();
         private final Map<String, String> links = new HashMap<>();
         private int lookups;
+        private boolean backslashSeparator;
+
+        /**
+         * Takes a backslash as a path separator too when looking up a path, as a server on Windows does.
+         */
+        StubSftpOperations backslashSeparator() {
+            backslashSeparator = true;
+            return this;
+        }
 
         StubSftpOperations file(String path) {
             // the file and the directories it is in
@@ -266,10 +303,11 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
         @Override
         public boolean isSymbolicLink(String path) {
             lookups++;
-            if (links.containsKey(path)) {
+            String name = serverPath(path);
+            if (links.containsKey(name)) {
                 return true;
             }
-            if (files.contains(path)) {
+            if (files.contains(name)) {
                 return false;
             }
             throw new GenericFileOperationFailedException("No such file: " + path);
@@ -277,7 +315,14 @@ class RemoteFileConsumerStartingDirectoryJailTest extends CamelTestSupport {
 
         @Override
         public String readSymbolicLink(String path) {
-            return links.get(path);
+            return links.get(serverPath(path));
+        }
+
+        /**
+         * The path that the server looks up for the path of a request.
+         */
+        private String serverPath(String path) {
+            return backslashSeparator ? FileUtil.compactPath(path.replace('\\', '/'), '/') : path;
         }
     }
 }

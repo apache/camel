@@ -315,9 +315,10 @@ As of Camel 3.18.1, these values can also be set on SFTP endpoints by setting th
 
 With `jailStartingDirectory` enabled (the default), the consumer resolves a listed file that the server reports as a
 symbolic link before it accepts the file. A link whose target is outside the starting directory, or cannot be resolved
-(such as a dangling link), is skipped and logged at WARN the first time. Links that resolve inside the starting
-directory, and a starting directory that is itself a link, work as usual. Set `jailStartingDirectory=false` to follow
-links to other directories.
+(such as a dangling link), is skipped and logged at WARN the first time. A link whose target contains a backslash (`\`)
+is skipped too, as a server may take it as a path separator or as part of a name. Links that resolve inside the
+starting directory, and a starting directory that is itself a link, work as usual. Set `jailStartingDirectory=false` to
+follow links to other directories.
 
 The link is resolved on the server one path segment at a time, with the `lstat` and `readlink` requests, so each listed
 link takes a few more requests per poll; other files take none. Only the files that the listing reports as links are

@@ -318,7 +318,9 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
     /**
      * Resolves a path on the server the way the server does when it opens the path: one segment at a time, replacing
      * each symbolic link with its target, which is relative to the directory of the link unless it is absolute. The
-     * realpath request is not used for this, as some servers (such as Apache MINA SSHD) do not resolve links in it.
+     * realpath request is not used for this, as some servers (such as Apache MINA SSHD) do not resolve links in it. A
+     * link whose target contains a backslash is not resolved, as a server may take a backslash as a path separator (as
+     * on Windows) or as part of a name, so the path that the server follows is not known.
      *
      * @param  operations the operations to look up the segments with
      * @param  directory  the absolute path, without symbolic links, that a relative path is resolved against, or
@@ -362,6 +364,11 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
                 String target = operations.readSymbolicLink(candidate);
                 if (ObjectHelper.isEmpty(target)) {
                     throw new GenericFileOperationFailedException("Symbolic link without a target: " + candidate);
+                }
+                if (target.indexOf('\\') != -1) {
+                    // splitting on both separators would be wrong on a server that takes a backslash as part of a name
+                    throw new GenericFileOperationFailedException(
+                            "Symbolic link with a backslash in its target: " + candidate);
                 }
                 if (target.startsWith("/")) {
                     resolved.clear();
