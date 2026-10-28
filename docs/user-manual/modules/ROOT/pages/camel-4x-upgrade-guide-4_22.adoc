@@ -321,6 +321,21 @@ first consumer's settings. Such a consumer now fails to start with an `IllegalAr
 port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
 reference, or the global SSL context parameters), or move consumers that need other settings to another port.
 
+=== camel-wordpress - requests and responses are no longer logged
+
+The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
+level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
+`camel-wordpress` JAR no longer contains a `log4j.properties` file.
+
+=== camel-lra - starting a saga checks the LRA URL returned by the coordinator
+
+When the LRA saga service starts a new saga, it now checks the URL of the LRA that the coordinator returns, as it
+already did since 4.22.2 for the LRAs it joins: the URL must be under the configured coordinator (`coordinatorUrl`
+followed by `coordinatorContextPath`) or under one of the `allowedCoordinatorUrls`. When the coordinator returns LRA
+URLs under another base URL, for example behind a proxy, starting a saga now fails until that base URL is added to
+`allowedCoordinatorUrls` (`camel.lra.allowedCoordinatorUrls`). Before, the saga was started, and only a nested saga
+route that looked the LRA up again failed.
+
 === camel-jbang - camel plugin add selects the plugin release built for the CLI
 
 `camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`

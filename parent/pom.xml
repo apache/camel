@@ -248,7 +248,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.26.6</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.219</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.221</huaweicloud-sdk-version>
         <ibm-cos-sdk-version>2.15.1</ibm-cos-sdk-version>
         <ibm-secrets-manager-version>2.0.28</ibm-secrets-manager-version>
         <ibm-watson-sdk-version>16.2.0</ibm-watson-sdk-version>
@@ -320,7 +320,7 @@
         <jool-version>0.9.15</jool-version>
         <!-- jooq 3.20 is Java 21+ only so we need to be 3.19.x -->
         <jooq-version>3.21.9</jooq-version>
-        <joor-version>0.9.15</joor-version>
+        <joor-version>0.9.16</joor-version>
         <johnzon-version>2.2.0</johnzon-version>
         <jslt-version>0.1.15</jslt-version>
         <jsmpp-version>3.0.2</jsmpp-version>
@@ -349,7 +349,7 @@
         <jython-version>2.7.4</jython-version>
         <kafka-version>4.3.1</kafka-version>
         <keycloak-client-version>26.0.12</keycloak-client-version>
-        <keycloak-version>26.8.0</keycloak-version>
+        <keycloak-version>26.8.1</keycloak-version>
         <kubernetes-client-version>8.0.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
         <langchain4j-version>1.22.0</langchain4j-version>
@@ -518,7 +518,7 @@
         <spring-security-version>7.1.2</spring-security-version>
         <spring-ws-version>5.0.3</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
-        <squareup-okhttp5-version>5.5.0</squareup-okhttp5-version>
+        <squareup-okhttp5-version>5.5.1</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
         <squareup-wire-version>6.4.7</squareup-wire-version>
         <sshd-version>2.20.0</sshd-version>

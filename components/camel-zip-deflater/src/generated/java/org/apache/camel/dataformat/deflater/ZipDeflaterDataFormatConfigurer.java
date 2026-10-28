@@ -23,6 +23,7 @@ public class ZipDeflaterDataFormatConfigurer extends org.apache.camel.support.co
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("CompressionLevel", int.class);
+        map.put("MaxDecompressedSize", long.class);
         ALL_OPTIONS = map;
     }
 
@@ -32,6 +33,8 @@ public class ZipDeflaterDataFormatConfigurer extends org.apache.camel.support.co
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "compressionlevel":
         case "compressionLevel": target.setCompressionLevel(property(camelContext, int.class, value)); return true;
+        case "maxdecompressedsize":
+        case "maxDecompressedSize": target.setMaxDecompressedSize(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }
@@ -46,6 +49,8 @@ public class ZipDeflaterDataFormatConfigurer extends org.apache.camel.support.co
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "compressionlevel":
         case "compressionLevel": return int.class;
+        case "maxdecompressedsize":
+        case "maxDecompressedSize": return long.class;
         default: return null;
         }
     }
@@ -56,6 +61,8 @@ public class ZipDeflaterDataFormatConfigurer extends org.apache.camel.support.co
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "compressionlevel":
         case "compressionLevel": return target.getCompressionLevel();
+        case "maxdecompressedsize":
+        case "maxDecompressedSize": return target.getMaxDecompressedSize();
         default: return null;
         }
     }
