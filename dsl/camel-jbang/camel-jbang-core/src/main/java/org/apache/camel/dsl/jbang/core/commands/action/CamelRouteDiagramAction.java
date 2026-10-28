@@ -321,8 +321,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             }
         } else {
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(),
-                    pid > 0 && metric);
+                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, pid > 0 && metric);
 
             BufferedImage image;
             try {
