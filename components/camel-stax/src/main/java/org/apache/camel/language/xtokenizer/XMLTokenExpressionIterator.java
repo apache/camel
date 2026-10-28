@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
@@ -173,7 +172,6 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
     static class XMLTokenIterator implements Iterator<Object>, Closeable {
         private static final Logger LOG = LoggerFactory.getLogger(XMLTokenIterator.class);
-        private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']*'|\"[^\"]*\")");
 
         private AttributedQName[] splitpath;
         private int index;
@@ -378,22 +376,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
             } else if (mode == 'i') {
                 final String stag = token.substring(0, startTagEnd(token) + 1);
+                // the prefixes that the start tag declares itself ("" for the default namespace)
                 Set<String> skip = new HashSet<>();
-                Matcher matcher = NAMESPACE_PATTERN.matcher(stag);
-                char quote = 0;
-                while (matcher.find()) {
-                    String prefix = matcher.group(1);
-                    if (prefix.length() > 0) {
-                        prefix = prefix.substring(1);
-                    }
-                    skip.add(prefix);
-                    if (quote == 0) {
-                        quote = matcher.group(2).charAt(0);
-                    }
-                }
-                if (quote == 0) {
-                    quote = '"';
-                }
+                char quote = scanNamespaceDeclarations(stag, skip);
                 boolean empty = stag.endsWith("/>");
                 sb.append(token, 0, stag.length() - (empty ? 2 : 1));
                 for (Entry<String, String> e : getCurrentNamespaceBindings().entrySet()) {
@@ -423,6 +408,68 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             }
 
             return sb.toString();
+        }
+
+        /**
+         * Adds the prefixes of the namespace declarations of the start tag to the set ("" for xmlns), reading the
+         * attribute names and skipping the quoted values, so text in a value is not taken for a declaration.
+         *
+         * @return the quote of the first declaration, or '"' if the start tag declares none
+         */
+        private static char scanNamespaceDeclarations(String stag, Set<String> prefixes) {
+            char quote = 0;
+            int len = stag.length();
+            int i = 1;
+            // the element name
+            while (i < len && !isTagDelimiter(stag.charAt(i))) {
+                i++;
+            }
+            while (i < len) {
+                char c = stag.charAt(i);
+                if (isXmlWhitespace(c)) {
+                    i++;
+                    continue;
+                }
+                if (c == '/' || c == '>') {
+                    break;
+                }
+                int nameStart = i;
+                while (i < len && !isTagDelimiter(stag.charAt(i)) && stag.charAt(i) != '=') {
+                    i++;
+                }
+                String name = stag.substring(nameStart, i);
+                while (i < len && isXmlWhitespace(stag.charAt(i))) {
+                    i++;
+                }
+                if (i >= len || stag.charAt(i) != '=') {
+                    continue;
+                }
+                i++;
+                while (i < len && isXmlWhitespace(stag.charAt(i))) {
+                    i++;
+                }
+                if (i >= len) {
+                    break;
+                }
+                char valueQuote = stag.charAt(i);
+                int valueEnd = stag.indexOf(valueQuote, i + 1);
+                i = valueEnd < 0 ? len : valueEnd + 1;
+                if ("xmlns".equals(name) || name.startsWith("xmlns:")) {
+                    prefixes.add(name.length() > 5 ? name.substring(6) : "");
+                    if (quote == 0) {
+                        quote = valueQuote;
+                    }
+                }
+            }
+            return quote != 0 ? quote : '"';
+        }
+
+        private static boolean isTagDelimiter(char c) {
+            return isXmlWhitespace(c) || c == '/' || c == '>';
+        }
+
+        private static boolean isXmlWhitespace(char c) {
+            return c == ' ' || c == '\t' || c == '\r' || c == '\n';
         }
 
         /**
@@ -653,7 +700,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
     /**
      * The factory of the readers that get the text of a token in the text mode, created once. It is configured before
-     * it is published and then only creates readers.
+     * it is published and then only creates readers, from the threads of all the routes that use the text mode. That
+     * relies on createXMLStreamReader being thread-safe, which holds when Woodstox, the provider camel-stax depends
+     * on, is the provider found; StaxConverter itself pools its factories instead.
      */
     private static final class TextInputFactory {
         static final XMLInputFactory FACTORY = create();

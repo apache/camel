@@ -17,7 +17,9 @@
 package org.apache.camel.language.xtokenizer;
 
 import java.io.StringReader;
+import java.nio.file.Path;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Element;
@@ -29,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -103,6 +106,79 @@ class XMLTokenizeTextAndStartTagTest extends CamelTestSupport {
     }
 
     @Test
+    void injectModeDoesNotDeclareAgainAPrefixThatTheStartTagDeclares() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:inject");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:inject",
+                "<?xml version='1.0'?><orders xmlns='urn:orders' xmlns:o-x='urn:x' xmlns:o.y='urn:y'>"
+                                           + "<order xmlns:o-x='urn:x' xmlns:o.y='urn:y' o-x:id='1' o.y:id='2'>1</order></orders>");
+
+        mock.assertIsSatisfied();
+        String token = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        // a declaration added a second time is a duplicate attribute, which the parser refuses
+        Element order = parse(token);
+        assertEquals("urn:orders", order.getNamespaceURI(), token);
+        assertEquals("1", order.getAttributeNS("urn:x", "id"), token);
+        assertEquals("2", order.getAttributeNS("urn:y", "id"), token);
+    }
+
+    @Test
+    void injectModeDeclaresTheDefaultNamespaceWhenAnAttributeValueContainsXmlns() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:inject");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:inject",
+                "<?xml version='1.0'?><orders xmlns='urn:orders'><order note=\"xmlns='z'\">1</order></orders>");
+
+        mock.assertIsSatisfied();
+        String token = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        Element order = parse(token);
+        assertEquals("urn:orders", order.getNamespaceURI(), token);
+        assertEquals("xmlns='z'", order.getAttribute("note"), token);
+    }
+
+    @Test
+    void injectModeDeclaresTheDefaultNamespaceWhenAnAttributeNameEndsWithXmlns() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:inject");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:inject",
+                "<?xml version='1.0'?><orders xmlns='urn:orders'><order dataxmlns='v'>1</order></orders>");
+
+        mock.assertIsSatisfied();
+        String token = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        Element order = parse(token);
+        assertEquals("urn:orders", order.getNamespaceURI(), token);
+        assertEquals("v", order.getAttribute("dataxmlns"), token);
+    }
+
+    @Test
+    void textModeDecodesCharacterReferencesAndLeavesOutCommentsAndProcessingInstructions() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:text");
+        mock.expectedBodiesReceived("a<b>cd");
+
+        template.sendBody("direct:text",
+                "<?xml version='1.0'?><orders><order>a&#60;b&#x3E;c<!-- note --><?pi data?>d</order></orders>");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void textModeDoesNotResolveAnExternalEntity(@TempDir Path dir) throws Exception {
+        // the file does not exist, so a reader that tried to resolve the entity would fail the exchange; the token
+        // of mode t never carries the doctype, so its own reader cannot see the declaration either
+        Path missing = dir.resolve("missing.txt");
+        MockEndpoint mock = getMockEndpoint("mock:text");
+        mock.expectedBodiesReceived("&e;");
+
+        template.sendBody("direct:text", "<?xml version='1.0'?><!DOCTYPE orders [<!ENTITY e SYSTEM \""
+                                         + missing.toUri() + "\">]><orders><order>&e;</order></orders>");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     void unwrapModeWithGreaterThanInAnAttributeValue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unwrap");
         mock.expectedBodiesReceived("<id>1</id>");
@@ -115,6 +191,7 @@ class XMLTokenizeTextAndStartTagTest extends CamelTestSupport {
 
     private static Element parse(String xml) throws Exception {
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        f.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         f.setNamespaceAware(true);
         return f.newDocumentBuilder().parse(new InputSource(new StringReader(xml))).getDocumentElement();
     }
