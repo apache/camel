@@ -194,7 +194,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "true", label = "consumer",
               description = "Specifies whether to use persistent delivery by default for replies.")
     private boolean replyToDeliveryPersistent = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
+    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message payload: ${exception.message}",
               description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
                             + " then set this text as the message body instead so the message can be processed"
                             + " (the cause of the poison are already stored as exception on the Exchange)."
