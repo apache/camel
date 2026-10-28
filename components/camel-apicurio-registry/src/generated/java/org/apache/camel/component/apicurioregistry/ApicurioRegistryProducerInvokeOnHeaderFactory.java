@@ -38,7 +38,7 @@ public class ApicurioRegistryProducerInvokeOnHeaderFactory implements InvokeOnHe
         case "updateartifact":
         case "updateArtifact": target.updateArtifact(exchange.getMessage()); return null;
         case "validate": target.validate(exchange.getMessage()); return null;
-        default: return null;
+        default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
 
