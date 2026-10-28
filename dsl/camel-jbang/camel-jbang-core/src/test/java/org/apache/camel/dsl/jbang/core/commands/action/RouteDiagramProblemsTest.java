@@ -150,6 +150,35 @@ class RouteDiagramProblemsTest {
     }
 
     @Test
+    void aCheckThatFails() throws Exception {
+        Path file = dir.resolve("orders.camel.yaml");
+        Files.writeString(file, "- route:\n    id: orders\n");
+        Path other = dir.resolve("other.camel.yaml");
+        Files.writeString(other, "- route:\n    id: other\n");
+        RouteInfo route = new RouteInfo();
+        route.routeId = "orders";
+        route.source = "orders.camel.yaml";
+        route.nodes.add(node("route", "route[orders]", 0, 1));
+        route.nodes.add(node("from", "from[file:orders]", 1, 2));
+        RouteInfo otherRoute = new RouteInfo();
+        otherRoute.routeId = "other";
+        otherRoute.source = "other.camel.yaml";
+        otherRoute.nodes.add(node("route", "route[other]", 0, 1));
+
+        RouteDiagramProblems.attach(List.of(route, otherRoute), List.of(file.toString(), other.toString()),
+                (name, content, catalog, directory) -> {
+                    throw name.startsWith("orders") ? new IllegalStateException("parser bug") : new NullPointerException();
+                });
+
+        // the diagram is still drawn, and says why the problems of the file are not there
+        assertThat(route.nodes.get(0).problems).containsExactly("the file could not be checked: parser bug");
+        assertThat(route.nodes.get(1).problems).isEmpty();
+        // the next file is checked too; an exception without a message is named by its class
+        assertThat(otherRoute.nodes.get(0).problems)
+                .containsExactly("the file could not be checked: NullPointerException");
+    }
+
+    @Test
     void aFileWithoutRoutesOfTheDiagramIsNotChecked() throws Exception {
         Path file = dir.resolve("other.camel.yaml");
         Files.writeString(file, "- route:\n    from:\n      uri: nope:\n");

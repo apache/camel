@@ -720,7 +720,8 @@ public class RouteDiagramLayoutEngine {
     /**
      * The problems wrapped to the width, each from a line of its own, at most six lines: a problem that does not fit
      * has the rest of its text on its last line, which the renderer cuts with an ellipsis, and the problems after it
-     * are left out, which an ellipsis says.
+     * are left out, which an ellipsis says. So a line can be wider than the width: the renderer draws each line cut to
+     * the width of the callout, and must keep doing so.
      */
     List<String> problemLines(List<String> problems, int width) {
         List<String> lines = new ArrayList<>();

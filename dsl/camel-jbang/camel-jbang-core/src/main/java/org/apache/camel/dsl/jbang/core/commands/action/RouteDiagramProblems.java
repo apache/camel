@@ -44,6 +44,12 @@ final class RouteDiagramProblems {
     record Problem(int line, String text) {
     }
 
+    /** The checks of a source file: {@link #problems}. */
+    @FunctionalInterface
+    interface Checks {
+        List<Problem> problems(String name, String content, CamelCatalog catalog, Path directory);
+    }
+
     private static final Pattern MESSAGE_LINE = Pattern.compile("^Line (\\d+): (.*)$", Pattern.DOTALL);
     // the step and route a message names first, which the diagram shows already: "setBody: route orders: "
     private static final Pattern STEP_PREFIX = Pattern.compile("^[A-Za-z][\\w-]*: route [^:\\s]+: ");
@@ -54,9 +60,13 @@ final class RouteDiagramProblems {
     /**
      * Puts the problems of the source files on the steps of their routes ({@link NodeInfo#problems}): a problem on the
      * step whose line is the last one before it (the line of the option or expression that is wrong is inside its
-     * step), a problem of the file on the first step: also that the file cannot be read to check it.
+     * step), a problem of the file on the first step: also that the file cannot be read or checked.
      */
     static void attach(List<RouteInfo> routes, List<String> files) {
+        attach(routes, files, RouteDiagramProblems::problems);
+    }
+
+    static void attach(List<RouteInfo> routes, List<String> files, Checks checks) {
         CamelCatalog catalog = null;
         for (String file : files) {
             Path path = Path.of(file);
@@ -83,7 +93,16 @@ final class RouteDiagramProblems {
             if (catalog == null) {
                 catalog = new DefaultCamelCatalog();
             }
-            for (Problem p : problems(name, content, catalog, path.toAbsolutePath().getParent())) {
+            List<Problem> problems;
+            try {
+                problems = checks.problems(name, content, catalog, path.toAbsolutePath().getParent());
+            } catch (RuntimeException e) {
+                // a check that fails (a parser bug on a broken file) must not fail the diagram, which is drawn anyway
+                add(nodes.get(0), "the file could not be checked: "
+                                  + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
+                continue;
+            }
+            for (Problem p : problems) {
                 add(stepAt(nodes, p.line()), p.text());
             }
         }
