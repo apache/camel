@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -44,6 +45,8 @@ import org.apache.camel.spi.WrapAwareProcessor;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.StepHelper;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -268,10 +271,22 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
         // sets the delegate to our wrapped output
         output = target;
+
+        // the step hook is asked where the processor of this step is called: by the error handler of the step when it
+        // can (see postInitChannel), so a failure from the hook is handled by it, or else by this channel
+        stepHookNodeId = targetOutputDef.getId();
     }
 
     @Override
     public void postInitChannel() throws Exception {
+        final String nodeId = stepHookNodeId;
+        final boolean errorHandlerAsks
+                = errorHandler instanceof ErrorHandlerRedeliveryCustomizer erh && erh.useStepHook(nodeId);
+        if (errorHandlerAsks) {
+            // the error handler asks the step hook, also when it redelivers, so this channel does not
+            stepHookNodeId = null;
+        }
+
         // if jmx was enabled for the processor then either add as advice or wrap and change the processor
         // on the error handler. See more details in the class javadoc of InstrumentationProcessor
         if (instrumentationProcessor != null) {
@@ -282,6 +297,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                     // okay we can redeliver then we need to change the output in the error handler
                     // to use us which we then wrap the call so we can capture before/after for redeliveries as well
                     Processor currentOutput = erh.getOutput();
+                    if (errorHandlerAsks) {
+                        // the instrumentation counts each call of the processor, so the step hook is asked inside it
+                        // instead of by the error handler: a failure or delay from the hook counts as for the processor
+                        erh.useStepHook(null);
+                        currentOutput = new StepHookProcessor(nodeId, currentOutput);
+                    }
                     instrumentationProcessor.setProcessor(currentOutput);
                     erh.changeOutput(instrumentationProcessor);
                 }
@@ -290,6 +311,30 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 // optimise to use advice as we cannot redeliver
                 addAdvice(CamelInternalProcessor.wrap(instrumentationProcessor));
             }
+        }
+    }
+
+    /**
+     * Asks the step hook before it calls the processor of the step. Used only when the error handler of the step can
+     * redeliver and JMX instruments each call of the processor, so the hook is asked inside the instrumentation.
+     */
+    private static final class StepHookProcessor extends DelegateAsyncProcessor {
+
+        private final String nodeId;
+
+        StepHookProcessor(String nodeId, Processor processor) {
+            super(processor);
+            this.nodeId = nodeId;
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            return StepHelper.process(exchange, nodeId, processor, callback);
+        }
+
+        @Override
+        public String toString() {
+            return processor != null ? processor.toString() : super.toString();
         }
     }
 

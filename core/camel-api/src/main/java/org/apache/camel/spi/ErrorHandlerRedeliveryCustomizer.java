@@ -47,4 +47,19 @@ public interface ErrorHandlerRedeliveryCustomizer {
      */
     void changeOutput(Processor output);
 
+    /**
+     * Makes the error handler ask the {@link StepHook} of the {@link org.apache.camel.CamelContext}, if one is
+     * installed, each time it calls its output, including each redelivery, as the step with the given node id. The
+     * {@link org.apache.camel.Channel} of the step calls this when it is initialized, so that a failure from the hook
+     * is handled by this error handler; when this returns <tt>false</tt>, the channel asks the hook itself.
+     *
+     * @param  nodeId the id of the step whose processor is the output of this error handler, or <tt>null</tt> to not
+     *                ask the hook
+     * @return        <tt>true</tt> if this error handler asks the hook for the step, <tt>false</tt> if it does not
+     * @since         4.24
+     */
+    default boolean useStepHook(String nodeId) {
+        return false;
+    }
+
 }

@@ -71,6 +71,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.support.StepHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -123,6 +124,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
     private PooledObjectFactory<CamelInternalTask> taskFactory;
+    // the id of the step, when this is the channel of a step that asks the step hook itself, as it has no error handler
+    // that does (set by DefaultChannel)
+    String stepHookNodeId;
 
     public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -386,7 +390,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         if (LOG.isTraceEnabled()) {
             LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
         }
-        boolean sync = processor.process(exchange, async);
+        final String nodeId = stepHookNodeId;
+        boolean sync = nodeId == null
+                ? processor.process(exchange, async) : StepHelper.process(exchange, nodeId, processor, async);
         if (!sync) {
             // Deprecated since 4.19.0
             EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
@@ -430,7 +436,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
             // ----------------------------------------------------------
-            processor.process(exchange);
+            final String nodeId = stepHookNodeId;
+            if (nodeId == null) {
+                processor.process(exchange);
+            } else {
+                StepHelper.process(exchange, nodeId, processor);
+            }
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------

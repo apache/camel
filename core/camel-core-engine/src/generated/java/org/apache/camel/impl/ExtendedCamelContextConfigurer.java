@@ -55,6 +55,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
         case "startupsteprecorder":
         case "startupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
+        case "stephook":
+        case "stepHook": target.setStepHook(property(camelContext, org.apache.camel.spi.StepHook.class, value)); return true;
         default: return false;
         }
     }
@@ -94,6 +96,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "registry": return org.apache.camel.spi.Registry.class;
         case "startupsteprecorder":
         case "startupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
+        case "stephook":
+        case "stepHook": return org.apache.camel.spi.StepHook.class;
         default: return null;
         }
     }
@@ -134,6 +138,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "registry": return target.getRegistry();
         case "startupsteprecorder":
         case "startupStepRecorder": return target.getStartupStepRecorder();
+        case "stephook":
+        case "stepHook": return target.getStepHook();
         default: return null;
         }
     }
