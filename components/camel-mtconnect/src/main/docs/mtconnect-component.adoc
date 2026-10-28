@@ -1,0 +1,295 @@
+= MTConnect Component
+:doctitle: MTConnect
+:shortname: mtconnect
+:artifactid: camel-mtconnect
+:description: Receive the observations of an MTConnect agent through its streaming sample request or by polling it, one message per observation, or send the probe, current, sample and asset requests on demand.
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The MTConnect component reads machine tools and other shop-floor equipment through the agent their
+vendor ships for the https://www.mtconnect.org/[MTConnect] standard (ANSI/MTC1.4-2018, Part 1).
+An MTConnect agent is a read-only HTTP server that answers four requests with XML documents:
+`probe` (the device model), `current` (the latest value of every data item), `sample` (a range of
+observations, or an open stream of them) and `assets` (cutting tools, NC programs and other assets).
+
+The consumer runs that protocol against one agent and delivers every observation as its own message,
+the value as the body and the MTConnect metadata as `CamelMTConnect*` headers. It keeps the
+sequence cursor across outages, resynchronises when the agent's buffer no longer holds the next
+observation, re-reads the device model when the agent restarts, and reports an unreachable agent once
+per data item with quality `Bad`. The producer sends one request per exchange and sets the answer as
+the body. Nothing is installed on the plant side: the vendor's own agent is the source.
+
+The component uses the JDK's HTTP client and has no third-party dependency.
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mtconnect</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+----
+mtconnect:agentUrl[?options]
+----
+
+The `agentUrl` is the agent address: `http` or `https`, host, port and an optional base path, such as
+`http://agent:5000`. The `device` option selects one device by name or uuid; without it the consumer
+receives every device the agent serves.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Consumer
+
+The consumer runs the MTConnect HTTP binding against the agent, by default on one thread per endpoint
+with the streaming sample request:
+
+. *Probe* (`/<device>/probe`) keeps per data item its name, category, type, subtype, units, native
+  units, representation and owning component, the device uuid and name, the agent's instance id and
+  its buffer size. The `count` option is lowered to the buffer size.
+. *Current* (`/<device>/current`) delivers one message per observation with document `Current`; the
+  header's `nextSequence` becomes the cursor.
+. *Stream* (`/<device>/sample?from&count&interval&heartbeat`): the response stays open and each
+  multipart part is a complete streams document. Observations are delivered in sequence order, the
+  part's `nextSequence` becomes the cursor, and a part without observations is a heartbeat.
+
+Documents are parsed by local element name, so the 1.x and 2.x schema namespaces and vendor
+namespaces read the same way. External entities and DTDs are disabled. The stream is
+`multipart/mixed` on 2.x agents and `multipart/x-mixed-replace` on 1.x agents.
+
+[width="100%",cols="40%,60%",options="header"]
+|===
+| Event | What the consumer does
+| A document carries another instance id than the stored one (the agent restarted) | probe again, then current with resync `INSTANCE_CHANGED`, then stream
+| An `MTConnectError` with `OUT_OF_RANGE`, whatever the HTTP status (1.x agents send 200) | current with resync `OUT_OF_RANGE`, then stream from its `nextSequence`
+| Any other `MTConnectError`, such as `NO_DEVICE` | an outage with reason `ERROR` and the agent's error code and text, the exception handler once per outage, then probe again after `reconnectDelay`
+| The agent ends the stream without an error | stream again from the cursor after `reconnectDelay`; nothing is delivered
+| Connection refused or not established within `connectTimeout`, no response headers within `readTimeout`, no part within two heartbeats, a broken transfer | an outage with reason `UNREACHABLE`, then the same step again after `reconnectDelay`
+| An HTTP error status without an MTConnect error document, or a body that is not an MTConnect document | an outage with reason `ERROR` naming the status or the parser message, then the same step again after `reconnectDelay`
+|===
+
+==== Polling instead of streaming
+
+With `streaming=false` the consumer is a scheduled poll consumer around the same protocol, for agents
+behind a proxy or firewall that cuts long-lived responses. Each poll performs the next step: the
+probe, the current, or one `/<device>/sample?from=<cursor>&count` request without `interval`, which
+the agent answers with one document. Cursor, outages, `Bad` messages, the `OUT_OF_RANGE`
+resynchronisation and the re-probe on a new instance id are those of streaming. Silence is detected
+by `readTimeout`; the scheduler's `delay` is also the wait after a failure; `interval`, `heartbeat`
+and `reconnectDelay` apply to streaming only. A poll returns the number of messages it delivered, so
+`greedy=true` polls again at once while a backlog drains. There is no automatic fallback: an agent
+that answers the streaming request with one document instead of a stream is reported as an outage
+with reason `ERROR` and the text `The agent answered the sample request without streaming; read it
+with streaming=false`.
+
+==== Outages
+
+The first failure after a healthy period sends one message per known data item with a null body,
+quality `Bad`, reason `UNREACHABLE` or `ERROR` and the failure text in `CamelMTConnectError`. Retries
+during the same outage send nothing more. Known items are every probe item, or with `path` the items
+the agent has returned since the probe.
+
+On recovery the stream resumes from the cursor, so the observations the agent still buffers arrive
+first, in order. Once the stream has caught up, the consumer reads current once and sends a `Current`
+message for every item that was reported `Bad` and that the catch-up did not touch. Every item turns
+`Good` again and no observation is delivered twice. An agent that reports `UNAVAILABLE` sends an
+observation, not a failure: it arrives with quality `Bad`, reason `UNAVAILABLE` and a null body.
+
+A route that wants good values only filters on the quality header:
+
+[source,java]
+----
+from("mtconnect:http://agent:5000?device=Mill-1")
+    .filter(simple("${header.CamelMTConnectQuality} == 'Good'"))
+    .to("kafka:observations");
+----
+
+Stopping the route does not wait for an agent that sends nothing: the request in flight is cancelled
+and the stream closed, so a stop during an outage returns at once.
+
+==== Message body
+
+[width="100%",cols="30%,70%",options="header"]
+|===
+| Observation | Body
+| Sample | `BigDecimal`; a time series as `List<BigDecimal>`; the text when the value is not a number
+| Event | the text as the agent sent it
+| Data set, table | `Map` of entry key to value (a table entry is a `Map` of cell key to value); a removed entry maps to null
+| Condition | the condition text, or null; the level, native code, native severity and qualifier are headers
+| `UNAVAILABLE`, outage | null
+|===
+
+The metadata of the observation and of its data item from the probe are the `CamelMTConnect*` headers
+listed above. The data set and table `count` and the time series `sampleCount` attributes have no
+header: they equal the size of the body.
+
+==== Assets
+
+With `assets=true` the consumer also sends asset messages; `AssetChanged` and `AssetRemoved` arrive
+as observations either way.
+
+* After each current (the first one, and after every resynchronisation or agent restart) it reads
+  `/assets?device=<device>&type=<assetType>&count=<assetBufferSize>&removed=true` and sends one
+  message per asset, removed assets with `CamelMTConnectAssetRemoved=true`. A removal whose
+  `AssetRemoved` event an overrun or an agent restart lost therefore still reaches the route.
+* For each `AssetChanged` observation it reads `/asset/<id>` after the observations of that document
+  and sends the asset; for each `AssetRemoved` observation it sends the asset with
+  `CamelMTConnectAssetRemoved=true`, or, when the agent answers `ASSET_NOT_FOUND`, a message with a
+  null body, the removed flag and the observation's asset id, type, device and time.
+* An asset is not sent again when its timestamp and removed flag equal those last sent for its id.
+* Asset reads fail like any other request. Asset messages never carry a quality.
+
+The body is the asset element as a standalone XML document (`String`) with the namespace
+declarations of the agent's document root, so vendor extensions survive. Routes read it with
+`xpath`, `xslt` or a data format; there is no typed asset model.
+
+=== Producer
+
+A `to` endpoint sends one request per exchange and sets the answer as the body. The request is the
+`operation` option or the `CamelMTConnectOperation` header; with neither, the exchange fails.
+
+[width="100%",cols="15%,35%,50%",options="header"]
+|===
+| Operation | Request | Body
+| `probe` | `/<device>/probe` | the agent's `MTConnectDevices` document as received, as a `String`
+| `current` | `/<device>/current?at&path` | `List<Map<String, Object>>`, one map per observation
+| `sample` | `/<device>/sample?from&to&count&path`, answered with one document | `List<Map<String, Object>>`
+| `assets` | `/assets?device&type&count&removed`, or `/asset/<id>[;<id>...]` with `CamelMTConnectAssetId` | the agent's `MTConnectAssets` document as received, as a `String`
+|===
+
+An observation map holds the consumer's headers without the `CamelMTConnect` prefix (`DataItemId`,
+`Category`, `Units`, `Sequence`, `Quality`, `Document`, ...) and the value under `value`; one mapping
+fills both. The maps carry the probe's metadata, so the producer reads the probe on first use and
+again when a reply carries another instance id. `count` is lowered to the agent's buffer size,
+because agents reject a larger one. The reply headers are `CamelMTConnectInstanceId` and, for
+`current` and `sample`, `CamelMTConnectFirstSequence`, `CamelMTConnectLastSequence` and
+`CamelMTConnectNextSequence`; a route pages through a range by sending the next `sample` from
+`CamelMTConnectNextSequence`. Start a range at a sequence the route has received, such as that header:
+on a busy agent the `firstSequence` of one reply can already have left the buffer by the next request,
+which the agent answers with `OUT_OF_RANGE`.
+
+[width="100%",cols="50%,50%",options="header"]
+|===
+| Answer | Exchange
+| An `MTConnectError` document, whatever the HTTP status, `OUT_OF_RANGE` included | fails with `MTConnectErrorException`, whose `getErrorCodes()` and `getErrorTexts()` hold the agent's codes and texts
+| An HTTP error status without one, a body that is not an MTConnect document, another document than expected | fails with `CamelExchangeException` naming the status, the parser message or the document the agent answered with
+| Connection refused, no response headers within `readTimeout`, nothing for `readTimeout` while the body arrives | fails with `CamelExchangeException` whose cause is the transport exception
+|===
+
+The producer has no outage state and sends no `Bad` messages; the route's error handling applies.
+
+=== TLS and compression
+
+An `https` agent is read with the SSL context of the endpoint's `sslContextParameters` or, when the
+component's `useGlobalSslContextParameters` is set, with the global SSL context parameters of the
+CamelContext. Without either, the runtime's default trust applies. An untrusted certificate is an
+outage with reason `UNREACHABLE` for the consumer and fails the producer's exchange with the
+handshake exception as the cause.
+
+Requests whose answer is one document send `Accept-Encoding: gzip` and decode a compressed answer.
+The streaming sample request asks for no encoding, because the stream is read part by part.
+
+== Examples
+
+Receive every observation of one device and keep the good values:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mtconnect:http://agent:5000?device=Mill-1&heartbeat=5000")
+    .filter(simple("${header.CamelMTConnectQuality} == 'Good'"))
+    .log("${header.CamelMTConnectDataItemId} = ${body} ${header.CamelMTConnectUnits}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: "mtconnect:http://agent:5000"
+    parameters:
+      device: Mill-1
+      heartbeat: 5000
+    steps:
+      - filter:
+          simple: "${header.CamelMTConnectQuality} == 'Good'"
+          steps:
+            - log: "${header.CamelMTConnectDataItemId} = ${body} ${header.CamelMTConnectUnits}"
+----
+====
+
+Poll an agent behind a proxy that cuts long-lived responses, and receive its cutting tools as well:
+
+[source,java]
+----
+from("mtconnect:http://agent:5000?device=Mill-1&streaming=false&delay=1000&assets=true&assetType=CuttingTool")
+    .choice()
+        .when(header("CamelMTConnectDocument").isEqualTo("Asset"))
+            .to("file:tools?fileName=${header.CamelMTConnectAssetId}.xml")
+        .otherwise()
+            .to("seda:observations");
+----
+
+Read the device model on demand, and the observations of a sequence range:
+
+[source,java]
+----
+from("direct:probe")
+    .to("mtconnect:http://agent:5000?device=Mill-1&operation=probe");
+
+from("direct:range")
+    .setHeader("CamelMTConnectFrom", constant(4017657L))
+    .setHeader("CamelMTConnectCount", constant(500))
+    .to("mtconnect:http://agent:5000?device=Mill-1&operation=sample")
+    .split(body())
+        .log("${body[DataItemId]} at ${body[Sequence]} = ${body[value]}");
+----
+
+Read an `https` agent whose certificate a private authority signed:
+
+[source,java]
+----
+KeyStoreParameters trust = new KeyStoreParameters();
+trust.setResource("file:/etc/mtconnect/truststore.p12");
+trust.setPassword("changeit");
+TrustManagersParameters trustManagers = new TrustManagersParameters();
+trustManagers.setKeyStore(trust);
+SSLContextParameters ssl = new SSLContextParameters();
+ssl.setTrustManagers(trustManagers);
+context.getRegistry().bind("agentTls", ssl);
+
+from("mtconnect:https://agent:5443?device=Mill-1&sslContextParameters=#agentTls")
+    .to("log:observations");
+----
+
+== Notes
+
+* The producer holds the whole answer in memory; `count`, at most the agent's buffer size, bounds
+  the sample and assets answers.
+* The polling consumer reports failures itself, as an outage with `Bad` messages, and the poll
+  returns 0 instead of throwing, so the scheduler's `pollStrategy` never sees a failure.
+* The component requests and reads XML. The JSON documents and the MQTT binding of MTConnect 2.x
+  are not supported.
+
+include::spring-boot:partial$starter.adoc[]
