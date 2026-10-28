@@ -56,6 +56,20 @@ The WordPress client no longer logs every HTTP request and response it exchanges
 level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
 `camel-wordpress` JAR no longer contains a `log4j.properties` file.
 
+=== camel-jbang - camel plugin add selects the plugin release built for the CLI
+
+`camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`
+version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
+the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
+`camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
+moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
+`LATEST` as before.
+
+`--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
+registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
