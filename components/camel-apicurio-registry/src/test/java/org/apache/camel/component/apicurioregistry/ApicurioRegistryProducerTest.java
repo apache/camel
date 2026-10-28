@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.LongStream;
 
@@ -41,13 +43,16 @@ import io.apicurio.registry.rest.client.models.SearchedVersion;
 import io.apicurio.registry.rest.client.models.SortOrder;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
+import io.vertx.core.Vertx;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 
@@ -343,6 +348,43 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
         assertThatThrownBy(() -> template.requestBodyAndHeader("direct:createArtifact", "{}",
                 ApicurioRegistryConstants.HEADER_IF_EXISTS, "CREATE_VERSIONS"))
                 .hasRootCauseMessage("Unsupported value 'CREATE_VERSIONS' for header CamelApicurioRegistryIfExists");
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "{\"type\":\"object\"}|JSON|application/json",
+            "  [1]|JSON|application/json",
+            "<xs:schema/>|XSD|application/xml",
+            "syntax = \"proto3\";|PROTOBUF|application/x-protobuf",
+            "type Query { a: Int }|GRAPHQL|application/graphql",
+            "openapi: 3.0.3|OPENAPI|application/x-yaml",
+            "asyncapi: 2.6.0|ASYNCAPI|application/x-yaml" })
+    void testContentTypeDerivedFromContent(String content, String artifactType, String expected) throws Exception {
+        injectMockClient(
+                "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=updateArtifact");
+        template.requestBodyAndHeader("direct:updateArtifact", content, ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE,
+                artifactType);
+        ArgumentCaptor<CreateVersion> request = ArgumentCaptor.forClass(CreateVersion.class);
+        verify(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact").versions())
+                .post(request.capture());
+        assertThat(request.getValue().getContent().getContentType()).isEqualTo(expected);
+    }
+
+    @Test
+    void testProducerOnVertxEventLoopFailsFast() throws Exception {
+        injectMockClient(
+                "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=getArtifactMetadata");
+        Vertx vertx = Vertx.vertx();
+        try {
+            CompletableFuture<Exchange> result = new CompletableFuture<>();
+            vertx.runOnContext(v -> result.complete(template.request("direct:getArtifactMetadata", exchange -> {
+            })));
+            Exchange exchange = result.get(10, TimeUnit.SECONDS);
+            assertThat(exchange.getException()).isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("cannot run on a Vert.x event loop thread");
+        } finally {
+            vertx.close().toCompletionStage().toCompletableFuture().get(10, TimeUnit.SECONDS);
+        }
     }
 
     @ParameterizedTest

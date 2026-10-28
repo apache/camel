@@ -39,6 +39,7 @@ import io.apicurio.registry.rest.client.models.VersionContent;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import io.apicurio.registry.rest.client.models.VersionSortBy;
+import io.vertx.core.Context;
 import org.apache.camel.Message;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
@@ -59,7 +60,42 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
     }
 
     private RegistryClient getClient() {
+        if (Context.isOnEventLoopThread()) {
+            // the SDK blocks until the response arrives; on an event loop of the Vert.x the client uses, the response
+            // could never be handled and the call would hang
+            throw new IllegalStateException(
+                    "The apicurio-registry producer makes blocking calls and cannot run on a Vert.x event loop thread."
+                                            + " Hand the exchange to a worker thread first, for example with threads()");
+        }
         return endpoint.getRegistryClient();
+    }
+
+    /**
+     * The content type from the header, or one derived from the content: JSON or XML when the content starts like it,
+     * the registry's own types for Protobuf and GraphQL, and YAML otherwise (for example OpenAPI or AsyncAPI documents
+     * written in YAML).
+     */
+    private String resolveContentType(Message message, String content) {
+        String contentType = message.getHeader(ApicurioRegistryConstants.HEADER_CONTENT_TYPE, String.class);
+        if (contentType != null) {
+            return contentType;
+        }
+        String trimmed = content != null ? content.stripLeading() : "";
+        if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+            return "application/json";
+        }
+        if (trimmed.startsWith("<")) {
+            return "application/xml";
+        }
+        String artifactType = message.getHeader(
+                ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, configuration.getArtifactType(), String.class);
+        if ("PROTOBUF".equalsIgnoreCase(artifactType)) {
+            return "application/x-protobuf";
+        }
+        if ("GRAPHQL".equalsIgnoreCase(artifactType)) {
+            return "application/graphql";
+        }
+        return "application/x-yaml";
     }
 
     private String resolveGroupId(Message message) {
@@ -98,8 +134,7 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
         String name = message.getHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_NAME, String.class);
         String description = message.getHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_DESCRIPTION, String.class);
         String content = message.getBody(String.class);
-        String contentType = message.getHeader(
-                ApicurioRegistryConstants.HEADER_CONTENT_TYPE, "application/json", String.class);
+        String contentType = resolveContentType(message, content);
         String ifExistsVal = message.getHeader(
                 ApicurioRegistryConstants.HEADER_IF_EXISTS, configuration.getIfExists(), String.class);
 
@@ -134,8 +169,7 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
         String artifactId = requireArtifactId(message, "updateArtifact");
         String content = message.getBody(String.class);
         String version = message.getHeader(ApicurioRegistryConstants.HEADER_VERSION, String.class);
-        String contentType = message.getHeader(
-                ApicurioRegistryConstants.HEADER_CONTENT_TYPE, "application/json", String.class);
+        String contentType = resolveContentType(message, content);
 
         CreateVersion createVersion = new CreateVersion();
         createVersion.setVersion(version);
@@ -311,8 +345,7 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
         String groupId = requireGroupId(message, operation);
         String artifactId = requireArtifactId(message, operation);
         String content = message.getBody(String.class);
-        String contentType = message.getHeader(
-                ApicurioRegistryConstants.HEADER_CONTENT_TYPE, "application/json", String.class);
+        String contentType = resolveContentType(message, content);
 
         CreateVersion createVersion = new CreateVersion();
         VersionContent vc = new VersionContent();

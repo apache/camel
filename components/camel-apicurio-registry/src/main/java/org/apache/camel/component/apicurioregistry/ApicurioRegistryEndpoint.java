@@ -25,6 +25,7 @@ import io.apicurio.registry.client.common.RegistryClientOptions;
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpClient;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
 import io.vertx.ext.auth.oauth2.OAuth2FlowType;
@@ -68,6 +69,7 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
     private RegistryClient registryClient;
 
     private WebClient ownedWebClient;
+    private HttpClient ownedHttpClient;
     private OAuth2Auth oauth2;
 
     ApicurioRegistryEndpoint(String uri, ApicurioRegistryComponent component,
@@ -127,6 +129,10 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
             ownedWebClient.close();
             ownedWebClient = null;
         }
+        if (ownedHttpClient != null) {
+            ownedHttpClient.close();
+            ownedHttpClient = null;
+        }
         if (oauth2 != null) {
             oauth2.close();
             oauth2 = null;
@@ -134,7 +140,7 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
     }
 
     WebClientOptions createWebClientOptions() throws Exception {
-        WebClientOptions options = new WebClientOptions();
+        WebClientOptions options = new WebClientOptions().setFollowRedirects(false);
         if (configuration.getSslContextParameters() != null) {
             VertxHelper.setupSSLOptions(getCamelContext(), configuration.getSslContextParameters(), options);
         }
@@ -179,7 +185,11 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
     private WebClient createWebClient(Vertx vertx) throws Exception {
         validateAuthentication();
         WebClientOptions options = createWebClientOptions();
-        WebClient webClient = WebClient.create(vertx, options);
+        // The SDK's Vert.x adapter turns redirect following on for every request, so the option above is not enough.
+        // The client adds credentials (Basic header or OAuth2 token) to every request, and following a redirect to
+        // another host would send them there, so the redirect handler of the underlying client never follows one.
+        ownedHttpClient = vertx.httpClientBuilder().with(options).withRedirectHandler(response -> null).build();
+        WebClient webClient = WebClient.wrap(ownedHttpClient, options);
         try {
             String authType = configuration.getAuthType();
             if ("basic".equalsIgnoreCase(authType)) {
@@ -203,6 +213,8 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
             return webClient;
         } catch (Exception e) {
             webClient.close();
+            ownedHttpClient.close();
+            ownedHttpClient = null;
             throw e;
         }
     }

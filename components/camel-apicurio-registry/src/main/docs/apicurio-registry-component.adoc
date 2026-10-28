@@ -73,6 +73,10 @@ the `CamelApicurioRegistryOperation` header:
 
 Artifact content supplied to `createArtifact`, `updateArtifact`, `validate`, and
 `testCompatibility` is converted to a string for the SDK's `VersionContent` model.
+Its content type is taken from the `CamelApicurioRegistryContentType` header. Without the header, it is
+derived from the content: `application/json` when it starts with `{` or `[`, `application/xml` when it
+starts with `<`, `application/x-protobuf` or `application/graphql` for PROTOBUF and GRAPHQL artifacts,
+and `application/x-yaml` otherwise (for example OpenAPI or AsyncAPI documents written in YAML).
 For AVRO and PROTOBUF, supply the schema definition, rather than serialized message data.
 `getArtifactContent` returns a `byte[]`; the component closes the SDK response stream
 before passing the content to the route.
@@ -273,6 +277,13 @@ For HTTPS registries that use a private CA or require client certificates (mTLS)
 through an HTTP proxy. Both settings also apply to the OAuth2 token endpoint.
 
 == Authentication
+
+The component never follows HTTP redirects, so credentials are never sent to another host. Configure
+`registryUrl` with the final address of the registry API.
+
+The producer makes blocking calls. It cannot run on a Vert.x event loop thread, for example in a route
+started by an event-loop consumer of the same Vert.x instance; it fails with an `IllegalStateException`
+there. Hand the exchange to a worker thread first, for example with `threads()`.
 
 The component supports three authentication modes via the `authType` option:
 

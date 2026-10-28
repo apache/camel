@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.sun.net.httpserver.HttpServer;
@@ -29,6 +30,9 @@ import io.apicurio.registry.client.common.RegistryClientOptions;
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientAgent;
+import io.vertx.core.http.HttpClientBuilder;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
 import io.vertx.ext.auth.oauth2.OAuth2Options;
 import io.vertx.ext.web.client.WebClient;
@@ -41,11 +45,13 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.RETURNS_SELF;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -123,7 +129,7 @@ class ApicurioRegistryEndpointTest {
 
     @Test
     void testEndpointsShareComponentVertxAndCloseTheirWebClients() throws Exception {
-        Vertx vertx = mock(Vertx.class);
+        Vertx vertx = mockVertx();
         when(vertx.close()).thenReturn(Future.succeededFuture());
         List<Vertx> clientVertx = new ArrayList<>();
         List<WebClient> clientWebClients = new ArrayList<>();
@@ -133,8 +139,7 @@ class ApicurioRegistryEndpointTest {
              MockedStatic<RegistryClientFactory> clientFactory = mockStatic(RegistryClientFactory.class);
              DefaultCamelContext context = new DefaultCamelContext()) {
             vertxFactory.when(Vertx::vertx).thenReturn(vertx);
-            webClientFactory.when(() -> WebClient.create(any(Vertx.class), any(WebClientOptions.class))).thenAnswer(call -> {
-                assertThat(call.getArgument(0, Vertx.class)).isSameAs(vertx);
+            webClientFactory.when(() -> WebClient.wrap(any(HttpClient.class), any(WebClientOptions.class))).thenAnswer(call -> {
                 WebClient webClient = mock(WebClient.class);
                 created.add(webClient);
                 return webClient;
@@ -177,12 +182,12 @@ class ApicurioRegistryEndpointTest {
 
     @Test
     void testProvidedVertxIsNotClosed() throws Exception {
-        Vertx vertx = mock(Vertx.class);
+        Vertx vertx = mockVertx();
         try (MockedStatic<Vertx> vertxFactory = mockStatic(Vertx.class);
              MockedStatic<WebClient> webClientFactory = mockStatic(WebClient.class);
              MockedStatic<RegistryClientFactory> clientFactory = mockStatic(RegistryClientFactory.class);
              DefaultCamelContext context = new DefaultCamelContext()) {
-            webClientFactory.when(() -> WebClient.create(any(Vertx.class), any(WebClientOptions.class)))
+            webClientFactory.when(() -> WebClient.wrap(any(HttpClient.class), any(WebClientOptions.class)))
                     .thenAnswer(call -> mock(WebClient.class));
             clientFactory.when(() -> RegistryClientFactory.create(any())).thenAnswer(call -> {
                 assertThat(call.getArgument(0, RegistryClientOptions.class).getVertx()).isSameAs(vertx);
@@ -201,9 +206,9 @@ class ApicurioRegistryEndpointTest {
 
     @Test
     void testVertxSetAfterComponentCreatedOneIsNotClosed() throws Exception {
-        Vertx managed = mock(Vertx.class);
+        Vertx managed = mockVertx();
         when(managed.close()).thenReturn(Future.succeededFuture());
-        Vertx provided = mock(Vertx.class);
+        Vertx provided = mockVertx();
         try (MockedStatic<Vertx> vertxFactory = mockStatic(Vertx.class);
              DefaultCamelContext context = new DefaultCamelContext()) {
             vertxFactory.when(Vertx::vertx).thenReturn(managed);
@@ -273,7 +278,8 @@ class ApicurioRegistryEndpointTest {
         try (MockedStatic<WebClient> webClientFactory = mockStatic(WebClient.class);
              MockedStatic<OAuth2Auth> oauth2Factory = mockStatic(OAuth2Auth.class);
              DefaultCamelContext context = new DefaultCamelContext()) {
-            webClientFactory.when(() -> WebClient.create(any(Vertx.class), any(WebClientOptions.class))).thenReturn(webClient);
+            webClientFactory.when(() -> WebClient.wrap(any(HttpClient.class), any(WebClientOptions.class)))
+                    .thenReturn(webClient);
             oauth2Factory.when(() -> OAuth2Auth.create(any(Vertx.class), any(OAuth2Options.class)))
                     .thenThrow(new IllegalStateException("bad oauth2 configuration"));
             context.start();
@@ -283,6 +289,70 @@ class ApicurioRegistryEndpointTest {
                     .hasRootCauseMessage("bad oauth2 configuration");
             verify(webClient).close();
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "basic&username=user&password=pass", "oidc&clientId=c&clientSecret=s" })
+    void testCredentialsAreNotSentToRedirectTarget(String auth) throws Exception {
+        List<String> otherHostRequests = new CopyOnWriteArrayList<>();
+        HttpServer otherHost = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        otherHost.createContext("/", request -> {
+            otherHostRequests.add(String.valueOf(request.getRequestHeaders().getFirst("Authorization")));
+            request.sendResponseHeaders(200, -1);
+            request.close();
+        });
+        HttpServer registry = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        registry.createContext("/token", request -> {
+            byte[] response = "{\"access_token\":\"t\",\"token_type\":\"Bearer\",\"expires_in\":300}"
+                    .getBytes(StandardCharsets.UTF_8);
+            request.getResponseHeaders().set("Content-Type", "application/json");
+            request.sendResponseHeaders(200, response.length);
+            try (var body = request.getResponseBody()) {
+                body.write(response);
+            }
+        });
+        registry.createContext("/apis", request -> {
+            request.getResponseHeaders().set("Location",
+                    "http://localhost:" + otherHost.getAddress().getPort() + request.getRequestURI());
+            request.sendResponseHeaders(302, -1);
+            request.close();
+        });
+        otherHost.start();
+        registry.start();
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            String baseUrl = "http://localhost:" + registry.getAddress().getPort();
+            ApicurioRegistryEndpoint endpoint = context.getEndpoint(
+                    "apicurio-registry:g/a?registryUrl=" + baseUrl + "/apis/registry/v3&tokenEndpoint=" + baseUrl
+                                                                    + "/token&authType=" + auth,
+                    ApicurioRegistryEndpoint.class);
+            endpoint.start();
+            try {
+                AtomicInteger redirects = new AtomicInteger();
+                try {
+                    endpoint.getRegistryClient().groups().byGroupId("g").artifacts().byArtifactId("a").get();
+                } catch (Exception e) {
+                    // the unfollowed redirect may surface as an error; either way it must not reach the other host
+                    redirects.incrementAndGet();
+                }
+                assertThat(otherHostRequests).isEmpty();
+            } finally {
+                endpoint.stop();
+            }
+        } finally {
+            registry.stop(0);
+            otherHost.stop(0);
+        }
+    }
+
+    /**
+     * A mocked Vert.x whose HTTP client builder returns a mocked client, for tests that also mock WebClient.wrap.
+     */
+    private static Vertx mockVertx() {
+        Vertx vertx = mock(Vertx.class);
+        HttpClientBuilder builder = mock(HttpClientBuilder.class, RETURNS_SELF);
+        when(builder.build()).thenAnswer(call -> mock(HttpClientAgent.class));
+        when(vertx.httpClientBuilder()).thenReturn(builder);
+        return vertx;
     }
 
     @Test
