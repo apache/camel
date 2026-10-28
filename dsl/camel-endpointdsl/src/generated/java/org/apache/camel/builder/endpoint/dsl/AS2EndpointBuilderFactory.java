@@ -666,7 +666,7 @@ public interface AS2EndpointBuilderFactory {
          * to. The delivery address is chosen by the sender of the AS2 message,
          * so this is the list of destinations the operator vouches for. Each
          * entry is a host with an optional port in host:port form (IPv6
-         * literals use bracket notation, for example ::1 or ::1:8443); a
+         * literals use bracket notation, for example [::1] or [::1]:8443); a
          * bare-host entry (for example partner.example) matches only the
          * default port for the scheme (80 or 443), so a non-default port is
          * listed explicitly (for example partner.example:8443). When set, an
@@ -1936,7 +1936,7 @@ public interface AS2EndpointBuilderFactory {
          * to. The delivery address is chosen by the sender of the AS2 message,
          * so this is the list of destinations the operator vouches for. Each
          * entry is a host with an optional port in host:port form (IPv6
-         * literals use bracket notation, for example ::1 or ::1:8443); a
+         * literals use bracket notation, for example [::1] or [::1]:8443); a
          * bare-host entry (for example partner.example) matches only the
          * default port for the scheme (80 or 443), so a non-default port is
          * listed explicitly (for example partner.example:8443). When set, an
@@ -3072,7 +3072,7 @@ public interface AS2EndpointBuilderFactory {
          * to. The delivery address is chosen by the sender of the AS2 message,
          * so this is the list of destinations the operator vouches for. Each
          * entry is a host with an optional port in host:port form (IPv6
-         * literals use bracket notation, for example ::1 or ::1:8443); a
+         * literals use bracket notation, for example [::1] or [::1]:8443); a
          * bare-host entry (for example partner.example) matches only the
          * default port for the scheme (80 or 443), so a non-default port is
          * listed explicitly (for example partner.example:8443). When set, an
