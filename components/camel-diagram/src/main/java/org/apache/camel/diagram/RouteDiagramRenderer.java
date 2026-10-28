@@ -114,9 +114,11 @@ public class RouteDiagramRenderer {
     }
 
     /**
-     * @param nodeTextPadding not used: the text of a card starts after its icon
-     *                        ({@link RouteDiagramLayoutEngine#CARD_TEXT_INSET})
+     * @param      nodeTextPadding not used: the text of a card starts after its icon
+     *                             ({@link RouteDiagramLayoutEngine#CARD_TEXT_INSET})
+     * @deprecated                 use {@link #RouteDiagramRenderer(int, int, boolean)}
      */
+    @Deprecated(since = "4.24.0")
     public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
         this(nodeWidth, fontSizeScaled, metrics);
     }

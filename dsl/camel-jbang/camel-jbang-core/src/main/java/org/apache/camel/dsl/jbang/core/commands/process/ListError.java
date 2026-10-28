@@ -406,7 +406,7 @@ public class ListError extends ProcessWatchCommand {
         } else {
             DiagramColors colors = DiagramColors.parse(theme);
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                    engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(), false);
+                    engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, false);
 
             BufferedImage image;
             try {
