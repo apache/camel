@@ -43,4 +43,11 @@ class SelfUpdateCommandTest {
                            + " re-run the installer with that version: " + installerCommand("4.22.1"))
                 .doesNotContain("pinned-version");
     }
+
+    @Test
+    void refusalOfANonExactVersionDoesNotSuggestItAsAnExactPin() {
+        assertThat(SelfUpdateCommand.selectorPinRefusal(Pin.parse("LTS"), "4.22"))
+                .isEqualTo("this install is pinned to LTS - to pin an exact version instead, re-run the installer"
+                           + " with --version X.Y.Z");
+    }
 }

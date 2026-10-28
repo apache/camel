@@ -198,12 +198,16 @@ public class SelfUpdateCommand extends CamelCommand {
 
     // Package-visible for testing. Quotes the installer command form the install docs use for the running platform.
     static String selectorPinRefusal(Pin pin, String requestedVersion) {
+        String prefix = "this install is pinned to " + pin.describe() + " - to pin an exact version instead, re-run the"
+                        + " installer with";
+        if (!requestedVersion.matches("[0-9]+\\.[0-9]+\\.[0-9]+")) {
+            return prefix + " --version X.Y.Z";
+        }
         String installer = FileUtil.isWindows()
                 ? "irm https://camel.apache.org/install.ps1 -OutFile install.ps1; .\\install.ps1 -Version "
                   + requestedVersion
                 : "curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version " + requestedVersion;
-        return "this install is pinned to " + pin.describe() + " - to pin an exact version instead, re-run the"
-               + " installer with that version: " + installer;
+        return prefix + " that version: " + installer;
     }
 
     private static String refusalMessage(InstallDetector.InstallMethod method) {

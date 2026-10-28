@@ -498,6 +498,7 @@ class PackagePlanTest {
         assertTrue(r.stdout.contains("PACKAGERS=brew,sdkman,winget,scoop,chocolatey"), r.stdout);
         assertTrue(r.stdout.contains("BREW_LTS_FORMULA=apache-camel@" + LTS_LINE_FUTURE), r.stdout);
         assertTrue(r.stdout.contains("SDKMAN_DEFAULT=true"), r.stdout);
+        assertTrue(r.stdout.contains("WEBSITE_LTS=true"), "first release of a new LTS line moves lts: " + r.stdout);
     }
 
     @Test

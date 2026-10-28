@@ -117,7 +117,8 @@ if [ "$CHANNEL" = "stable" ]; then
   # must stay a clean, unpadded {{{ }}} - butting a literal %r{ or trailing }i) directly against
   # the triple-mustache braces confuses the tag scanner and silently drops the substitution.
   CAMEL_PKG_BREW_LIVECHECK_REGEX='regex(%r{<release>([0-9]+\.[0-9]+\.[0-9]+)</release>}i)'
-  [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="apache-camel@$LTS_LINE"
+  # --lts-line on a stable build is the first release of a new LTS line, so it is also the newest LTS
+  [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="apache-camel@$LTS_LINE" && WEBSITE_LTS="true"
 else
   # Homebrew's own versioned-formula convention names the *file* "apache-camel@X.Y.rb" but the
   # Ruby *class* "ApacheCamelATxy" (dot removed) - e.g. real homebrew-core "python@3.11.rb"
