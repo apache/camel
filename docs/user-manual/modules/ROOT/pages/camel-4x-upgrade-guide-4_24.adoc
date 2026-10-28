@@ -1155,9 +1155,10 @@ every time.
 
 A JPA consumer whose query selects values that are not entities, such as a column (`select x.address from Customer x`),
 now delivers them with the default `consumeLockEntity=true`. Before, the lock of each value failed and the value was
-skipped, so the route received no message, with only a DEBUG log. Such a value cannot be deleted: with the default
-`consumeDelete=true` a WARN is logged once, and each poll delivers the values again. Set `consumeDelete=false` for such
-a query.
+skipped, so the route received no message, with only a DEBUG log. Such a value cannot be deleted or marked with
+`@Consumed`, so each poll delivers the same values again, whatever `consumeDelete` is: a route that received nothing
+now gets the whole result on each poll. Make the query exclude the rows already handled, or select the entity instead.
+With the default `consumeDelete=true` a WARN is logged once; set `consumeDelete=false` to avoid it.
 
 === camel-a2a - caller profile and task owner
 
