@@ -323,12 +323,12 @@ reference, or the global SSL context parameters), or move consumers that need ot
 
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
-The camel-aws components now set the HTTP client of the AWS SDK clients they create: the Apache 5 client
-(`software.amazon.awssdk:apache5-client`) for synchronous clients, and the Netty client
+The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
+client (`software.amazon.awssdk:apache5-client`) for synchronous clients, and the Netty client
 (`software.amazon.awssdk:netty-nio-client`) for asynchronous clients. These are the clients the AWS SDK selects itself
-with the Camel dependencies. Before, unless a proxy or `trustAllCertificates` was configured, the AWS SDK looked the HTTP
-client up on the classpath. That lookup fails with `java.util.ServiceConfigurationError` (`... not a subtype`) when the
-classpath registers an HTTP client from another copy of the AWS SDK, as on a Kafka Connect worker.
+with the Camel dependencies. Before, unless a proxy or `trustAllCertificates` was configured, the AWS SDK looked the
+HTTP client up on the classpath. That lookup fails with `java.util.ServiceConfigurationError` (`... not a subtype`) when
+the classpath registers an HTTP client from another copy of the AWS SDK, as on a Kafka Connect worker.
 
 If you replaced these dependencies to use another HTTP client implementation, name it with the AWS SDK system property
 `software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
