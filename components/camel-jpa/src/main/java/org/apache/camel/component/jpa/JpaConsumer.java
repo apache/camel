@@ -32,6 +32,7 @@ import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.PessimisticLockException;
 import jakarta.persistence.Query;
+import jakarta.persistence.metamodel.EntityType;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -390,8 +391,21 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             }
             //TODO: Find if possible an alternative way to handle results of native queries.
             //Result of native queries are Arrays and cannot be locked by all JPA Providers.
-            return entity.getClass().isArray();
+            // a value that is not an entity, such as a selected column, has no lock: it is processed
+            return entity.getClass().isArray() || !isEntity(entity, entityManager);
         }
+    }
+
+    /**
+     * Whether the query result is an entity, and not a value such as a selected column or an Object array.
+     */
+    protected boolean isEntity(Object result, EntityManager entityManager) {
+        for (EntityType<?> type : entityManager.getMetamodel().getEntities()) {
+            if (type.getJavaType() != null && type.getJavaType().isInstance(result)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected QueryFactory createQueryFactory() {
@@ -489,11 +503,12 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
         if (getEndpoint().isConsumeDelete()) {
             return (EntityManager em, Object entityBean, Exchange exchange) -> {
-                if (entityBean != null && !entityBean.getClass().isArray()) {
+                if (entityBean != null && isEntity(entityBean, em)) {
                     em.remove(entityBean);
                 } else {
-                    LOG.warn("Cannot auto-delete entity of type {} (e.g. native query result without resultClass)."
-                             + " Set consumeDelete=false or configure a resultClass.",
+                    LOG.warn("Cannot auto-delete a query result of type {} that is not an entity (e.g. a selected column,"
+                             + " or a native query result without resultClass). Set consumeDelete=false or configure a"
+                             + " resultClass.",
                             entityBean != null ? entityBean.getClass().getName() : "null");
                 }
             };

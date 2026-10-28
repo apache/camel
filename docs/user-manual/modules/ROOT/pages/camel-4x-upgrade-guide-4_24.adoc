@@ -3839,3 +3839,11 @@ fields of its exchange or file.
 The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
 level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
 `camel-wordpress` JAR no longer contains a `log4j.properties` file.
+
+=== camel-jpa - a consumer query that selects values delivers them
+
+A JPA consumer whose query selects values that are not entities, such as a column (`select x.address from Customer x`),
+now delivers them with the default `consumeLockEntity=true`. Before, the lock of each value failed and the value was
+skipped, so the route received no message, with only a DEBUG log. Such a value cannot be deleted: with the default
+`consumeDelete=true` a WARN is logged for each one, and the next poll delivers it again. Set `consumeDelete=false` for
+such a query.

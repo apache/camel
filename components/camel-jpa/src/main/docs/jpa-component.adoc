@@ -59,9 +59,11 @@ entity bean (that is a POJO with an
 https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/entity[@Entity]
 annotation on it) or a collection or array of entity beans.
 
-If the body is a List of entities, make sure to use
-*entityType=java.util.List* as a configuration passed to the
-producer endpoint.
+If the body is a List of entities, use `java.util.List` as the entity
+class name of the endpoint (`jpa:java.util.List`). With the class of the
+entity (`jpa:com.example.Customer`), the producer converts the body to
+that class, and a List or an array of entities fails with an
+`InvalidPayloadRuntimeException`.
 
 If the body does not contain one of the previous listed types, put a
 Message Translator in front of the
