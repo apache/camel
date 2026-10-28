@@ -3950,3 +3950,13 @@ receive it: a message sent to `spring-event:foo` goes to `from("spring-event:foo
 
 Other application events of the `ApplicationContext`, such as `ContextRefreshedEvent` or an `ApplicationEvent` body
 published by a producer, still go to every consumer.
+
+=== camel-paho-mqtt5 - the producer sends a copy of the properties header
+
+The producer used to hand the `MqttProperties` object of the `CamelPahoMqtt5MsgProperties` header to the client as it
+was. The client writes the outgoing topic alias into that object, and the parts of a split, multicast, recipient list,
+loop or wire tap of a received message share it, so once the broker's Topic Alias Maximum was used up, later messages
+were delivered on the wrong topic. The producer now publishes a new `MqttProperties` with the payload format indicator,
+message expiry interval, content type, response topic, correlation data and user properties of the header object, which
+a publish no longer modifies. A topic alias or subscription identifiers set in the header object are not sent: the
+client assigns topic aliases for its connection, and subscription identifiers are sent by the server only.
