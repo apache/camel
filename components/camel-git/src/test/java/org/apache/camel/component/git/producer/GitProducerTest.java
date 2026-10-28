@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitTestSupport;
@@ -89,6 +90,23 @@ public class GitProducerTest extends GitTestSupport {
             }
         }
         assertTrue(branchCreated);
+        git.close();
+    }
+
+    @Test
+    public void checkoutExistingBranchTest() throws Exception {
+        Git git = getGitTestRepository();
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+        git.commit().setMessage(commitMessage).call();
+        template.sendBody("direct:create-branch", "");
+        assertEquals("master", git.getRepository().getBranch());
+
+        // Test camel-git checkout of a branch that exists
+        template.sendBody("direct:checkout", "");
+
+        assertEquals(branchTest, git.getRepository().getBranch());
         git.close();
     }
 
@@ -339,6 +357,37 @@ public class GitProducerTest extends GitTestSupport {
         template.send("direct:commit-all",
                 exchange -> exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll));
         validateGitLogs(git, commitMessageAll);
+        git.close();
+    }
+
+    @Test
+    public void commitSetsCommitIdTest() throws Exception {
+        Git git = getGitTestRepository();
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+
+        Exchange exchange = template.request("direct:commit",
+                e -> e.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessage));
+
+        assertEquals(git.log().call().iterator().next().getName(),
+                exchange.getMessage().getHeader(GitConstants.GIT_COMMIT_ID));
+        git.close();
+    }
+
+    @Test
+    public void commitAllOperationSetsCommitIdTest() throws Exception {
+        Git git = getGitTestRepository();
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+
+        Exchange exchange = template.request("direct:commit-all-operation",
+                e -> e.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll));
+
+        validateGitLogs(git, commitMessageAll);
+        assertEquals(git.log().call().iterator().next().getName(),
+                exchange.getMessage().getHeader(GitConstants.GIT_COMMIT_ID));
         git.close();
     }
 
@@ -951,6 +1000,7 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:commit-not-allow-empty").to("git://" + dir + "?operation=commit&allowEmpty=false");
                 from("direct:commit-branch").to("git://" + dir + "?operation=commit&branchName=" + branchTest);
                 from("direct:commit-all").to("git://" + dir + "?operation=commit");
+                from("direct:commit-all-operation").to("git://" + dir + "?operation=commitAll");
                 from("direct:commit-all-branch").to("git://" + dir + "?operation=commit&branchName=" + branchTest);
                 from("direct:add-status-commit").to("git://" + dir + "?operation=add")
                         .to("git://" + dir + "?operation=status")

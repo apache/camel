@@ -3839,3 +3839,17 @@ fields of its exchange or file.
 The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
 level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
 `camel-wordpress` JAR no longer contains a `log4j.properties` file.
+
+=== camel-git - CamelGitCommitId is the sha of the commit
+
+*Breaking change:* the `CamelGitCommitId` header set by the commit consumer (`git:...?type=commit`) is now the sha of
+the commit as a `String`, as the header is documented. Before, it was the JGit `RevCommit` object, whose `String` form
+is not the sha, so the header could not be given to the `cherryPick` operation. A route that read the header as a
+`RevCommit` or an `ObjectId` must now read it as a `String` (`ObjectId.fromString` gives the `ObjectId`).
+
+The `commit` and `commitAll` operations now set the `CamelGitCommitId` header to the sha of the new commit. The body is
+unchanged.
+
+The `checkout` operation without a `tagName` now checks out a branch that already exists. Before, it always created the
+branch, and failed with `RefAlreadyExistsException` when the branch existed. With a `tagName`, it still creates the
+branch from the tag.
