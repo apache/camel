@@ -126,10 +126,11 @@ class RouteDiagramCardStyleTest {
         LayoutNode route = lr.nodes.get(0);
         assertThat(route.wrappedLines).containsExactly("route", "orders");
 
+        // the plain box keeps the whole label (how it wraps depends on the fonts of the platform)
         RouteDiagramLayoutEngine plain = new RouteDiagramLayoutEngine();
         LayoutRoute plainRoute = plain.layoutRoute(orders(), RouteDiagramLayoutEngine.PADDING);
-        assertThat(plainRoute.nodes.get(2).wrappedLines).containsExactly("setBody[groovy{body.items}]");
-        assertThat(setBody.height).isGreaterThan(plainRoute.nodes.get(2).height);
+        assertThat(String.join("", plainRoute.nodes.get(2).wrappedLines)).isEqualTo("setBody[groovy{body.items}]");
+        assertThat(setBody.height).isGreaterThan(plain.getBaseNodeHeight());
     }
 
     @Test
