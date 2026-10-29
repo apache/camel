@@ -197,7 +197,7 @@ simple("${header.username} ?: 'Guest'");
 ----
 
 From Camel 4.24 the elvis operator can also be written inside the braces, where it means the same:
-`${a ?: b}` is `${a} ?: b`.
+`$\{a ?: b}` is `$\{a} ?: b`.
 
 [source,java]
 ----
