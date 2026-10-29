@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -47,6 +48,10 @@ public class ToolContext {
     private volatile CamelCatalog catalog;
     private volatile String camelVersion;
     private volatile Path defaultDirectory;
+    // guarded by this: the root is asked for once per context
+    private Supplier<Path> rootDirectory;
+    private Path rootLookedUp;
+    private boolean rootKnown;
     private volatile Function<String, String> propertyLineValidator;
     private volatile boolean autoSelectSingleProcess = true;
     private volatile Predicate<ToolConfirms.Call> confirmer;
@@ -122,7 +127,7 @@ public class ToolContext {
 
     /**
      * The project directory the file tools use when a call names none: the TUI sets it to the source directory of the
-     * selected integration, an MCP server without a selection leaves it null and requires the argument.
+     * selected integration, {@code camel ask} to the project directory; an MCP server leaves it null.
      */
     public Path defaultDirectory() {
         return defaultDirectory;
@@ -130,6 +135,26 @@ public class ToolContext {
 
     public void setDefaultDirectory(Path defaultDirectory) {
         this.defaultDirectory = defaultDirectory;
+    }
+
+    /**
+     * The project directory the client declares, such as the only {@code file:} root of an MCP client: the file tools
+     * read and write there when a call names no directory and there is no default directory, and a write creates a
+     * directory the call names inside it. Asking the client is a round trip, so the root is looked up when a call first
+     * needs it, and once per context; null when there is none.
+     */
+    public synchronized Path rootDirectory() {
+        if (rootDirectory != null && !rootKnown) {
+            rootLookedUp = rootDirectory.get();
+            rootKnown = true;
+        }
+        return rootLookedUp;
+    }
+
+    public synchronized void setRootDirectory(Supplier<Path> rootDirectory) {
+        this.rootDirectory = rootDirectory;
+        this.rootLookedUp = null;
+        this.rootKnown = false;
     }
 
     /**
@@ -152,20 +177,28 @@ public class ToolContext {
     }
 
     /**
-     * Resolves the directory of a file tool call: the {@code directory} argument, else the default directory.
+     * Resolves the directory of a file tool call: the {@code directory} argument, else the default directory, else the
+     * root directory.
      *
-     * @throws ToolExecutionException when neither is given or the directory does not exist
+     * @throws ToolExecutionException when none is given or the directory does not exist
      */
     public Path resolveDirectory(String directory) {
-        Path dir = directory != null && !directory.isBlank() ? Path.of(directory) : defaultDirectory;
+        Path dir = directory != null && !directory.isBlank() ? Path.of(directory) : projectDirectory();
         if (dir == null) {
-            throw new ToolExecutionException("directory is required: the project directory with the source files");
+            throw new ToolExecutionException(
+                    "directory is required: pass directory, the absolute project directory with the source files");
         }
         dir = dir.toAbsolutePath().normalize();
         if (!Files.isDirectory(dir)) {
             throw new ToolExecutionException("No such directory: " + dir);
         }
         return dir;
+    }
+
+    /** The directory a call that names none works in: the default directory, else the root directory; may be null. */
+    Path projectDirectory() {
+        Path dir = defaultDirectory;
+        return dir != null ? dir : rootDirectory();
     }
 
     /**

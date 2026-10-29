@@ -16,15 +16,23 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.McpConnection;
 import io.quarkiverse.mcp.server.MetaField;
+import io.quarkiverse.mcp.server.Root;
+import io.quarkiverse.mcp.server.Roots;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
@@ -57,6 +65,11 @@ public class AuthoringTools {
     private static final String NAME_DESC = "Integration name or pid (default: the only one running)";
     private static final String VERSION_DESC = "Camel version to answer for (default: the CLI's own)";
     private static final String DIRECTORY_DESC = "Project directory with the source files (absolute path)";
+    /**
+     * How long a file tool waits for the client's roots, at most: the server's own timeout
+     * ({@code quarkus.mcp.server.roots.default-timeout}) is shorter, this is the cap should it be configured off.
+     */
+    static final Duration ROOTS_WAIT = Duration.ofSeconds(3);
 
     @Inject
     RepeatedCallSessions repeatedCalls;
@@ -148,7 +161,7 @@ public class AuthoringTools {
                         + "its builder() accepts, the ways to create a class with no constructor). Use on content "
                         + "before writing it, or on an existing file (no content) to explain a reload error.")
     public JsonObject camel_validate_source(
-            McpConnection connection,
+            McpConnection connection, Roots roots,
             @ToolArg(description = DIRECTORY_DESC + "; needed when no content is given", required = false) String directory,
             @ToolArg(description = "File name; picks the checks by extension, read when no content",
                      required = true) String file,
@@ -157,7 +170,7 @@ public class AuthoringTools {
         // the same content without a directory gets the same answer: the third identical call gets a short note
         // (CAMEL-25371)
         return callDeterministic(connection, "camel_validate_source", args("directory", directory, "file", file,
-                "content", content, "camelVersion", camelVersion));
+                "content", content, "camelVersion", camelVersion), clientRoot(roots));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -166,11 +179,12 @@ public class AuthoringTools {
                         + "running integration, which file and line each route comes from; with file (a path "
                         + "relative to the directory, as listed) its content.")
     public JsonObject camel_get_files(
+            Roots roots,
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml,"
                                    + " to read; omitted lists the files",
                      required = false) String file) {
-        return call("camel_get_files", args("directory", directory, "file", file));
+        return call("camel_get_files", args("directory", directory, "file", file), null, clientRoot(roots));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
@@ -179,6 +193,7 @@ public class AuthoringTools {
                         + "An integration running in dev mode reloads the change, otherwise restart it with "
                         + "camel_control.")
     public JsonObject camel_write_file(
+            Roots roots,
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory (subdirectories are created)",
                      required = true) String file,
@@ -186,7 +201,7 @@ public class AuthoringTools {
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         refuseRedacted(content);
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
-                "camelVersion", camelVersion));
+                "camelVersion", camelVersion), null, clientRoot(roots));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
@@ -195,6 +210,7 @@ public class AuthoringTools {
                         + "camel_write_file for a new one. A change to several places of the file is given at once in "
                         + "edits, so the file is written and reloaded once, not half done.")
     public JsonObject camel_edit_file(
+            Roots roots,
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory", required = true) String file,
             @ToolArg(description = "The lines to replace as they stand in the file; other indentation is fine when "
@@ -213,7 +229,59 @@ public class AuthoringTools {
             }
         }
         return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
-                "edits", editsJson(edits), "camelVersion", camelVersion));
+                "edits", editsJson(edits), "camelVersion", camelVersion), null, clientRoot(roots));
+    }
+
+    /**
+     * The project directory of a file tool call that names none (CAMEL-26398): the client's only {@code file:} root,
+     * asked for only when a call needs it, and only of a client that declares roots. The file stays inside it, as
+     * inside a directory the call names.
+     */
+    static Consumer<ToolContext> clientRoot(Roots roots) {
+        return ctx -> {
+            if (roots != null && roots.isSupported() && roots.isServerInitiatedRequestSupported()) {
+                ctx.setRootDirectory(() -> singleRoot(listRoots(roots)));
+            }
+        };
+    }
+
+    /** The client's roots; none when it does not answer in time or answers with an error. */
+    static List<Root> listRoots(Roots roots) {
+        try {
+            List<Root> list = roots.list().await().atMost(ROOTS_WAIT);
+            return list != null ? list : List.of();
+        } catch (RuntimeException e) {
+            LOG.debugf("The client did not list its roots (%s): file tools take no default directory", e.getMessage());
+            return List.of();
+        }
+    }
+
+    /** The directory of the only {@code file:} root, or null when there is none or more than one. */
+    static Path singleRoot(List<Root> roots) {
+        Path only = null;
+        for (Root root : roots) {
+            Path dir = root != null ? fileRoot(root.uri()) : null;
+            if (dir == null) {
+                continue;
+            }
+            if (only != null) {
+                return null;
+            }
+            only = dir;
+        }
+        return only;
+    }
+
+    private static Path fileRoot(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        try {
+            URI parsed = new URI(uri);
+            return "file".equalsIgnoreCase(parsed.getScheme()) ? Path.of(parsed).toAbsolutePath().normalize() : null;
+        } catch (URISyntaxException | IllegalArgumentException | FileSystemNotFoundException e) {
+            return null;
+        }
     }
 
     /**
@@ -387,11 +455,17 @@ public class AuthoringTools {
      * against the repeat budget; a call that throws does not (CAMEL-25640).
      */
     JsonObject callDeterministic(McpConnection connection, String tool, Map<String, String> args) {
+        return callDeterministic(connection, tool, args, null);
+    }
+
+    /** As {@link #callDeterministic(McpConnection, String, Map)}, with what the tool's context gets beside the args. */
+    JsonObject callDeterministic(
+            McpConnection connection, String tool, Map<String, String> args, Consumer<ToolContext> configure) {
         JsonObject repeat = repeatedCalls != null ? repeatedCalls.repeatOf(connection, tool, args) : null;
         if (repeat != null) {
             return repeat;
         }
-        JsonObject result = call(tool, args, catalogService);
+        JsonObject result = call(tool, args, catalogService, configure);
         if (repeatedCalls != null) {
             repeatedCalls.recordSuccessfulAnswer(connection, tool, args);
         }
@@ -409,8 +483,20 @@ public class AuthoringTools {
      * new one per call (CAMEL-25640).
      */
     static JsonObject call(String tool, Map<String, String> args, CatalogService catalogService) {
+        return call(tool, args, catalogService, null);
+    }
+
+    /**
+     * As {@link #call(String, Map, CatalogService)}; {@code configure}, when given, sets up the context of the call,
+     * such as where the file tools look for a file the call names without a directory.
+     */
+    static JsonObject call(
+            String tool, Map<String, String> args, CatalogService catalogService, Consumer<ToolContext> configure) {
         try {
             ToolContext ctx = new ToolContext();
+            if (configure != null) {
+                configure.accept(ctx);
+            }
             if (catalogService != null) {
                 String camelVersion = args != null ? args.get("camelVersion") : null;
                 try {

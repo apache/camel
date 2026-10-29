@@ -294,6 +294,24 @@ under the same `camel_` names by this server and by `camel tui --mcp` (see xref:
 so an agent gets the same Camel through either door. The tools are self-contained: the file tools take the
 project `directory` as an argument, the runtime tools take the integration `name` (or use the only one running).
 
+The file tools (`camel_validate_source`, `camel_get_files`, `camel_edit_file` and `camel_write_file`) work in the
+project `directory` the call passes. A call without `directory` works in the client's root when the client
+declares exactly one `file:` root (the MCP roots: asked for only by such a call and only of a client that declares
+them, waiting at most 2 seconds); otherwise it is refused, and the answer says to pass `directory`, the absolute
+project directory.
+
+The `file` is a path relative to that directory, or an absolute path inside it, which is taken relative to it. The
+file always stays inside the directory, with symbolic links resolved: a path with `..` that leaves it, an absolute
+path outside it, or a link in the project that leads out of it is refused. An absolute `file` never stands for the
+directory, so a call cannot read or write another file of the disk through it.
+
+`camel_write_file` creates the subdirectories of `file`, and a missing `directory` only when it is inside the
+client's root. Without a root, the answer names the existing directory to pass, with the subdirectory in `file`:
+`{"directory":"/workspace","file":"camel/application.properties"}`. A file that is not found is named when the
+directory has a file of that name in a subdirectory, as in
+`camel/order-intake.yaml exists: pass file camel/order-intake.yaml`, and a `file` of several lines, the source
+passed as the file name, is answered with the argument the source goes in.
+
 [cols="1,3",options="header"]
 |===
 | Tool | Description
@@ -393,7 +411,8 @@ project `directory` as an argument, the runtime tools take the integration `name
   first; invalid content is not written and the errors are returned. A YAML shape that a model often gets wrong but
   that has only one reading, such as `steps:` at the column of its EIP or an option at the column of the EIP it
   belongs to, is repaired instead: the file is written with the repairs, and `repaired` in the answer lists them.
-  Only a plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
+  The file stays inside the directory, and the subdirectories of the file are created (see above). Nobody is
+  asked before the write: the MCP client (Claude Code,
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
   With the security layer on, content longer than `camel.mcp.security.max-argument-length` is rejected, never cut,
