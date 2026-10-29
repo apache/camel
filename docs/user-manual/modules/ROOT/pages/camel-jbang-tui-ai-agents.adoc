@@ -203,7 +203,9 @@ project, where the routes sit under `src/main/resources/camel` rather than next 
 listing understands that layout: it names the route and configuration files first, lists every file
 with its path relative to the project (build output skipped), and maps each running route to its file
 and line, so the agent reads the right file in one call instead of guessing names. File paths given to
-`camel_get_files` and `camel_write_file` are relative to that directory and may name a subdirectory.
+`camel_get_files` and `camel_write_file` are relative to that directory and may name a subdirectory; an
+absolute path inside that directory is taken too, and a path that leaves it, also through a symbolic link, is
+refused.
 
 Every write is confirmed in the TUI first: a dialog names the file, the directory and the size of the
 change (`+3 -1` lines); press *d* to see the change as a unified diff, with removed lines on red and

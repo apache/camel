@@ -459,6 +459,15 @@ that a route sends to and no route consumes, so they report the same endpoints o
 
 So `camel validate` can report an endpoint it did not report before.
 
+=== camel-jbang - the AI file tools stay inside the project directory, also through a symbolic link
+
+The file tools of `camel mcp`, `camel ask` and the TUI AI agents (`camel_validate_source`, `camel_get_files`,
+`camel_edit_file`, `camel_write_file`) now resolve symbolic links before they check that a file is inside the project
+directory. A file reached through a link in the project that leads out of it, or through a link to nothing, is
+refused for reading and for writing, where it used to be read or written. Name the files of such a folder through
+its real directory instead. An absolute `file` inside the project directory is now accepted, as the same file named
+relative to it.
+
 === camel-ftp, camel-mina-sftp, camel-jsch, camel-smb, camel-azure-files - checksumFileAlgorithm writes a checksum again
 
 Since 4.18 the producers of the remote file components (ftp, ftps, sftp, mina-sftp, scp, smb, azure-files) accepted
