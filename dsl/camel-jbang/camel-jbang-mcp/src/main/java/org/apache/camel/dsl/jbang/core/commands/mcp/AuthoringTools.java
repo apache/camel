@@ -28,6 +28,7 @@ import io.quarkiverse.mcp.server.MetaField;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
@@ -67,6 +68,7 @@ public class AuthoringTools {
     @Inject
     CatalogService catalogService;
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Camel catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the "
                         + "Java API (description, options, Maven coordinates), with the URI rules of a component. For "
@@ -105,6 +107,7 @@ public class AuthoringTools {
                 "optionsFilter", optionsFilter, "limit", limit, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Finds Camel components, data formats, languages, EIPs and Kamelets by a protocol, product, alias or "
                         + "other term that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
@@ -121,6 +124,7 @@ public class AuthoringTools {
                 "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans), "
                         + "a component (kafka, file), a data format (csv) or a language (jq) from the docs, with where "
@@ -141,6 +145,7 @@ public class AuthoringTools {
                 args("name", name, "kind", kind, "limit", limit, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Validates Camel YAML/Java/XML DSL or .properties source without writing: schema (misspelled options "
                         + "such as logLevel instead of loggingLevel), endpoint URIs, simple expressions, camel.* "
@@ -160,6 +165,7 @@ public class AuthoringTools {
                 "content", content, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "The source files of a project directory, subdirectories included: without file the list, "
                         + "with the route and configuration files named first (routeFiles, configFiles) and, for a "
@@ -173,6 +179,7 @@ public class AuthoringTools {
         return call("camel_get_files", args("directory", directory, "file", file));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Writes the complete content of a file in the project directory. YAML and .properties "
                         + "content is validated first; invalid content is not written and the errors are returned. "
@@ -189,6 +196,7 @@ public class AuthoringTools {
                 "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Changes a file by replacing a snippet: the exact text to find (it must occur once) and "
                         + "what to put there. Validated and reloaded as a write is. Use it to change an existing file, "
@@ -259,6 +267,7 @@ public class AuthoringTools {
         return list.toJson();
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = true),
           description = "Starts an integration with camel run in a separate process, in dev mode by default (files reload when written). Returns the pid and log file; camel_get_log, camel_get_errors and camel_control follow it.")
     public JsonObject camel_run(
@@ -271,6 +280,7 @@ public class AuthoringTools {
         return call("camel_run", args("directory", directory, "files", files, "name", name, "dev", dev));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Controls a running integration: stop (graceful), kill, restart (picks up edited files "
                         + "without dev mode), stop-routes, start-routes, reset-stats (clears statistics, routes "
@@ -282,6 +292,7 @@ public class AuthoringTools {
         return call("camel_control", args("action", action, "name", name));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Recent log records of a running integration, newest first, with optional filtering; stack "
                         + "traces only with details. An integration that is not running gets the log of its previous "
@@ -298,6 +309,7 @@ public class AuthoringTools {
                 "details", details, "previous", previous));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "The failed exchanges of a running integration: routeId, exchangeId, exception with stack "
                         + "trace, body and headers. For an integration that is not running, it says how its previous "
@@ -307,6 +319,7 @@ public class AuthoringTools {
         return call("camel_get_errors", args("name", name));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Evaluates an expression: in the running integration when there is one, else locally, in any "
                         + "language (jsonpath, jq, xpath, groovy: its component is downloaded when needed). Returns "
@@ -321,6 +334,7 @@ public class AuthoringTools {
                 "name", name));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = true),
           description = "Which Maven dependency provides a class, and how to declare it: the known dependencies "
                         + "camel run downloads by itself (nothing to declare there), a Camel component's artifact per "
@@ -340,6 +354,7 @@ public class AuthoringTools {
                 mavenCentral, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "A high-level overview of a project's integrations from its route sources (no running "
                         + "integration needed): routes, entry points, how routes connect (call, hand-off, event), "
@@ -353,6 +368,7 @@ public class AuthoringTools {
         return call("camel_project_overview", args("directory", directory, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Saves what you wrote about a project into its camel-summary.md, marked as "
                         + "AI-assisted, beside the facts derived from the sources, so people and tools can tell them "
