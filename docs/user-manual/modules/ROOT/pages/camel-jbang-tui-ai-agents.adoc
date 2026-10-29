@@ -234,7 +234,8 @@ together with the catalog's functions and operators (their count and names by gr
 the matching ones with parameters and examples), and `docPage` serves the operators, functions, OGNL and
 advanced documentation pages. `camel_eval_expression` evaluates an expression inside the running integration,
 like `camel cmd eval`, or locally when no integration is selected, and returns the value or the parser error,
-so the agent can try an expression before it answers or writes it. Component lookups get the same treatment for endpoint URIs: every endpoint option
+so the agent can try an expression before it answers or writes it; it takes the headers, variables, `resultType`
+and predicate mode the expression has in the route. Component lookups get the same treatment for endpoint URIs: every endpoint option
 says whether it is part of the URI path or a query parameter, and the result spells out the URI rules for
 that component (its path options, the `?option=value&option=value` form, the YAML `uri` plus `parameters`
 form, placeholders, `RAW()`, and that component options belong in `application.properties`). With

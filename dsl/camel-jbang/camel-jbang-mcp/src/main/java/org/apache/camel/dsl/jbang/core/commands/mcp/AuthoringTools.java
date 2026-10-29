@@ -44,6 +44,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.jboss.logging.Logger;
 
 /**
@@ -397,9 +398,35 @@ public class AuthoringTools {
             @ToolArg(description = "e.g. ${random(1,10)} or ${body} ?: 'none'", required = true) String expression,
             @ToolArg(description = "simple (default), jsonpath, xpath, jq", required = false) String language,
             @ToolArg(description = "Message body", required = false) String body,
-            @ToolArg(description = NAME_DESC, required = false) String name) {
+            @ToolArg(description = NAME_DESC, required = false) String name,
+            // Object, so the schema takes any JSON: a client sends a JSON object, or the text of key=value lines
+            @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EVAL_HEADERS_DESC,
+                     required = false) Object headers,
+            @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EVAL_VARIABLES_DESC,
+                     required = false) Object variables,
+            @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EVAL_PREDICATE_DESC,
+                     required = false) Boolean predicate,
+            @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EVAL_RESULT_TYPE_DESC,
+                     required = false) String resultType) {
         return call("camel_eval_expression", args("expression", expression, "language", language, "body", body,
-                "name", name));
+                "name", name, "headers", jsonText(headers), "variables", jsonText(variables), "predicate", predicate,
+                "resultType", resultType));
+    }
+
+    /**
+     * An argument that is a JSON object or text, as the text the shared tool reads. The server hands a JSON object over
+     * as a Map of Maps, Lists, strings, numbers and booleans, which is the JSON of the object for Jsoner.
+     */
+    static String jsonText(Object value) {
+        if (value == null || value instanceof String) {
+            return (String) value;
+        }
+        try {
+            return Jsoner.serialize(value);
+        } catch (IllegalArgumentException e) {
+            // not a value Jsoner knows: its own text, which the shared tool reads or refuses with the reason
+            return value.toString();
+        }
     }
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)

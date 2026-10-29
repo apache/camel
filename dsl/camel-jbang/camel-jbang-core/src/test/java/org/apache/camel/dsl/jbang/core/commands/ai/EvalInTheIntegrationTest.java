@@ -18,6 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.console.DevConsole;
@@ -32,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The expression tools evaluate in the selected integration: it gets the expression and the body as they are, as the
@@ -137,6 +142,98 @@ class EvalInTheIntegrationTest {
         assertThat(json.getString("result")).isEqualTo("\"a/b\"");
     }
 
+    /** CAMEL-26400: the headers, variables, predicate and resultType of the call go to the eval action. */
+    @Test
+    void theHeadersVariablesPredicateAndResultTypeGoToTheAction() {
+        JsonObject result = ExpressionEvaluator.evaluate(ctx(), new ExpressionEvaluator.Request(
+                "simple",
+                "${header.foo}-${variable.bar}", null, Map.of("foo", "x"), Map.of("bar", "y"), null, null));
+
+        assertThat(result.getString("status")).isEqualTo("ok");
+        assertThat(result.getString("result")).isEqualTo("x-y");
+        JsonObject action = integration.lastAction();
+        Collection<JsonObject> headers = action.getCollection("headers");
+        assertThat(headers).containsExactly(keyValue("foo", "x"));
+        Collection<JsonObject> variables = action.getCollection("variables");
+        assertThat(variables).containsExactly(keyValue("bar", "y"));
+        assertThat(action.getString("predicate")).isEqualTo("false");
+        assertThat(action.get("resultType")).isNull();
+
+        JsonObject typed = ExpressionEvaluator.evaluate(ctx(), new ExpressionEvaluator.Request(
+                "simple", "${body}",
+                "0042", null, null, null, "java.lang.Integer"));
+        assertThat(integration.lastAction().getString("resultType")).isEqualTo("java.lang.Integer");
+        assertThat(typed.getString("result")).isEqualTo("42");
+        assertThat(typed.get("note")).isNull();
+
+        // any language can be a predicate: the action says so, and the console answers true or false
+        JsonObject predicate = ExpressionEvaluator.evaluate(ctx(), new ExpressionEvaluator.Request(
+                "constant",
+                "true", null, null, null, true, null));
+        assertThat(integration.lastAction().getString("predicate")).isEqualTo("true");
+        assertThat(predicate.getString("result")).isEqualTo("true");
+    }
+
+    /** A JSON list or object keeps its type, so a groovy headers.rows[0].total works in the integration too. */
+    @Test
+    void aJsonValueKeepsItsType() {
+        Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", "{\"rows\": [{\"total\": 3}]}");
+        ExpressionEvaluator.evaluate(ctx(), new ExpressionEvaluator.Request(
+                "simple", "${header.rows}", null, headers,
+                null, null, null));
+
+        JsonObject header = (JsonObject) List.copyOf(integration.lastAction().getCollection("headers")).get(0);
+        assertThat(header.get("value")).isInstanceOf(List.class);
+    }
+
+    /**
+     * An integration before Camel 4.24 reads every value of a header as text, and has no resultType: the list goes as
+     * JSON text, and the answer says that resultType is not used there.
+     */
+    @Test
+    void anIntegrationBefore424GetsTextAndANoteOnTheResultType() throws Exception {
+        Files.writeString(CommandLineHelper.getCamelDir().resolve(PID + "-status.json"),
+                "{\"context\": {\"name\": \"orders\", \"version\": \"4.23.0\"}}");
+        Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", "{\"rows\": [{\"total\": 3}]}");
+
+        JsonObject result = ExpressionEvaluator.evaluate(ctx(), new ExpressionEvaluator.Request(
+                "simple", "${body}",
+                "1", headers, null, null, "java.lang.Integer"));
+
+        assertThat(result.getString("note")).contains("the integration runs Camel 4.23.0, which ignores resultType");
+        JsonObject header = (JsonObject) List.copyOf(integration.lastAction().getCollection("headers")).get(0);
+        assertThat(header.get("value")).isEqualTo("[{\"total\":3}]");
+    }
+
+    /**
+     * The XPath of a route that fails in the integration gets the same hint as a local evaluation, with the error the
+     * tool answers (a failed eval action is a tool error).
+     */
+    @Test
+    void anXPathErrorOfTheIntegrationGetsTheHint() throws Exception {
+        try (FakeIntegration failing = new FakeIntegration(
+                PID + 1, root -> Map.of("status", "failed", "exception",
+                        Map.of("message", "Invalid xpath: boolean(/x). Reason: javax.xml.xpath.XPathExpressionException:"
+                                          + " com.sun.org.apache.xpath.internal.XPathException: Can not convert #BOOLEAN to a"
+                                          + " NodeList!")))) {
+            ToolContext ctx = new ToolContext();
+            ctx.selectProcess(PID + 1);
+
+            assertThatThrownBy(() -> ExpressionEvaluator.evaluate(ctx, "xpath", "boolean(/x)", "<x/>"))
+                    .isInstanceOf(ToolExecutionException.class)
+                    .hasMessageStartingWith("Invalid xpath: boolean(/x).")
+                    .hasMessageContaining("NodeList!; this XPath returns a boolean, not nodes: pass predicate=true");
+            assertThat(failing.actions()).hasSize(1);
+        }
+    }
+
+    private static JsonObject keyValue(String key, Object value) {
+        JsonObject jo = new JsonObject();
+        jo.put("key", key);
+        jo.put("value", value);
+        return jo;
+    }
+
     private static ToolContext ctx() {
         ToolContext ctx = new ToolContext();
         ctx.selectProcess(PID);
@@ -146,11 +243,25 @@ class EvalInTheIntegrationTest {
     // the eval action of the CLI connector: the values of the action as they are, to the eval-language console
     private Object eval(JsonObject root) {
         Object predicate = root.get("predicate");
-        return console.call(DevConsole.MediaType.JSON, Map.of(
-                "language", root.getStringOrDefault("language", "simple"),
-                "predicate", predicate != null && Boolean.parseBoolean(predicate.toString()),
-                "template", root.getStringOrDefault("template", ""),
-                "body", root.getStringOrDefault("body", ""),
-                "headers", Map.of(), "variables", Map.of()));
+        Map<String, Object> options = new HashMap<>();
+        options.put("language", root.getStringOrDefault("language", "simple"));
+        options.put("predicate", predicate != null && Boolean.parseBoolean(predicate.toString()));
+        options.put("template", root.getStringOrDefault("template", ""));
+        options.put("body", root.getStringOrDefault("body", ""));
+        options.put("headers", values(root, "headers"));
+        options.put("variables", values(root, "variables"));
+        if (root.getString("resultType") != null) {
+            options.put("resultType", root.getString("resultType"));
+        }
+        return console.call(DevConsole.MediaType.JSON, options);
+    }
+
+    private static Map<String, Object> values(JsonObject root, String name) {
+        Map<String, Object> values = new LinkedHashMap<>();
+        Collection<JsonObject> list = root.getCollection(name);
+        if (list != null) {
+            list.forEach(jo -> values.put(jo.getString("key"), jo.get("value")));
+        }
+        return values;
     }
 }

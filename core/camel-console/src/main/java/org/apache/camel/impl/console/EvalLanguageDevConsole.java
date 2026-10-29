@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.DefaultExchange;
@@ -58,6 +59,12 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Optional exchange variables", javaType = "java.lang.String")
     public static final String VARIABLES = "variables";
 
+    @Metadata(label = "query",
+              description = "Optional type of the result, as a class name such as java.lang.String, passed to the language"
+                            + " as its resultType option, as in a route (not used for a predicate)",
+              javaType = "java.lang.String")
+    public static final String RESULT_TYPE = "resultType";
+
     public EvalLanguageDevConsole() {
         super("camel", "eval-language", "Evaluate Language", "Evaluate Language and display result");
     }
@@ -90,7 +97,7 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
                 Predicate pre = getCamelContext().resolveLanguage(language).createPredicate(template);
                 out = pre.matches(dummy) ? "true" : "false";
             } else {
-                Expression exp = getCamelContext().resolveLanguage(language).createExpression(template);
+                Expression exp = createExpression(language, template, options);
                 out = exp.evaluate(dummy, String.class);
             }
             sb.append(String.format("%nEvaluating (%s): %s", language, template));
@@ -98,6 +105,23 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
             sb.append(out);
         }
         return sb.toString();
+    }
+
+    /**
+     * The expression, with the resultType option of the language when one is given, as a route passes it: an XPath
+     * function such as string() or count() then gives its value, where the default result of xpath is nodes.
+     */
+    private Expression createExpression(String language, String template, Map<String, Object> options) {
+        Language lan = getCamelContext().resolveLanguage(language);
+        String resultType = optionString(options, RESULT_TYPE);
+        if (resultType == null || resultType.isBlank()) {
+            return lan.createExpression(template);
+        }
+        Class<?> type = getCamelContext().getClassResolver().resolveClass(resultType.strip());
+        if (type == null) {
+            throw new IllegalArgumentException("resultType " + resultType + " is not a class on the classpath");
+        }
+        return lan.createExpression(template, new Object[] { type });
     }
 
     /**
@@ -144,7 +168,7 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
                     Predicate pre = getCamelContext().resolveLanguage(language).createPredicate(template);
                     out = pre.matches(dummy) ? "true" : "false";
                 } else {
-                    Expression exp = getCamelContext().resolveLanguage(language).createExpression(template);
+                    Expression exp = createExpression(language, template, options);
                     out = exp.evaluate(dummy, String.class);
                 }
             } catch (Exception e) {

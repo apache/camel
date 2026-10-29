@@ -78,6 +78,12 @@ public final class AuthoringTools {
               + " half done, e.g. a to: direct:x and the route from direct:x:"
               + " [{\"find\": \"...\", \"replace\": \"...\"}, {\"find\": \"...\", \"replace\": \"...\"}]";
     static final String DIRECTORY_DESC = "Project directory with the source files (default: the selected integration's)";
+    // the arguments of camel_eval_expression for the message it is evaluated against, and how (CAMEL-26400)
+    public static final String EVAL_HEADERS_DESC = "Message headers: a JSON object, or key=value lines";
+    public static final String EVAL_VARIABLES_DESC = "Exchange variables: a JSON object, or key=value lines";
+    public static final String EVAL_PREDICATE_DESC = "Evaluate as a predicate (default: guessed for simple, else false)";
+    public static final String EVAL_RESULT_TYPE_DESC
+            = "Result class as resultType in a route, e.g. java.lang.String for an XPath string() or local-name()";
 
     /** Files listed and read by the file tools; more than that and a directory is not an integration's sources. */
     static final String FILE_PATH_DESC = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml";
@@ -397,16 +403,27 @@ public final class AuthoringTools {
                 .param("language", "string", "simple (default), jsonpath, xpath, jq", false)
                 .param("body", "string", "Message body", false)
                 .param("name", "string", NAME_DESC, false)
+                .param("headers", "string", EVAL_HEADERS_DESC, false)
+                .param("variables", "string", EVAL_VARIABLES_DESC, false)
+                .param("predicate", "boolean", EVAL_PREDICATE_DESC, false)
+                .param("resultType", "string", EVAL_RESULT_TYPE_DESC, false)
                 .core(true)
                 .executor((ctx, args) -> {
+                    String expression = required(args, "expression");
+                    Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", args.get("headers"));
+                    Map<String, Object> variables = ExpressionEvaluator.parseValues("variables", args.get("variables"));
+                    String predicate = args.get("predicate");
                     String name = args.get("name");
                     if (name != null && !name.isBlank()) {
                         ctx.selectProcess(name);
                     } else {
                         ctx.selectSingleProcessIfNone();
                     }
-                    return ExpressionEvaluator.evaluate(ctx, args.get("language"), required(args, "expression"),
-                            args.get("body")).toJson();
+                    return ExpressionEvaluator.evaluate(ctx, new ExpressionEvaluator.Request(
+                            args.get("language"),
+                            expression, args.get("body"), headers, variables,
+                            predicate == null || predicate.isBlank() ? null : Boolean.valueOf(predicate.strip()),
+                            args.get("resultType"))).toJson();
                 }));
 
         registry.accept(tool("camel_dependency_for_class",
