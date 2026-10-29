@@ -61,10 +61,13 @@ public final class RuntimeHelper {
     /**
      * Discovers all running Camel processes by scanning {@code ~/.camel/} for {@code {pid}-status.json} files and
      * verifying each PID is still alive.
+     * <p>
+     * This process is never one of them: it runs the tools (camel ask, the TUI, the MCP server), and a status file of
+     * its own comes from a CamelContext it ran for itself, not from an integration (CAMEL-26396).
      */
     public static List<ProcessInfo> discoverProcesses() {
         List<ProcessInfo> result = new ArrayList<>();
-        for (ProcessFinder.CamelProcess p : ProcessFinder.findAll()) {
+        for (ProcessFinder.CamelProcess p : others(ProcessFinder.findAll())) {
             result.add(new ProcessInfo(p.pid(), p.name(), p.contextName()));
         }
         return result;
@@ -73,18 +76,35 @@ public final class RuntimeHelper {
     /**
      * Finds a single Camel process matching the given name or PID. Returns {@code null} if no match is found or if
      * multiple processes match. When {@code nameOrPid} is {@code null} and exactly one process is running, returns that
-     * process.
+     * process. This process never matches, also not by its pid (see {@link #discoverProcesses()}).
      *
      * @param nameOrPid a process name (with optional wildcard), a numeric PID string, or {@code null} for auto-detect
      */
     public static ProcessInfo findProcess(String nameOrPid) {
-        List<ProcessFinder.CamelProcess> found = nameOrPid != null && !nameOrPid.isBlank()
-                ? ProcessFinder.find(nameOrPid) : ProcessFinder.findAll();
+        List<ProcessFinder.CamelProcess> found = others(nameOrPid != null && !nameOrPid.isBlank()
+                ? ProcessFinder.find(nameOrPid) : ProcessFinder.findAll());
         if (found.size() == 1) {
             ProcessFinder.CamelProcess p = found.get(0);
             return new ProcessInfo(p.pid(), p.name(), p.contextName());
         }
         return null;
+    }
+
+    /**
+     * Whether the name or pid is the pid of this process, which {@link #findProcess(String)} never finds.
+     *
+     * @since 4.24
+     */
+    public static boolean isThisProcess(String nameOrPid) {
+        if (nameOrPid == null || !nameOrPid.matches("\\d{1,18}")) {
+            return false;
+        }
+        return Long.parseLong(nameOrPid) == ProcessHandle.current().pid();
+    }
+
+    private static List<ProcessFinder.CamelProcess> others(List<ProcessFinder.CamelProcess> processes) {
+        long self = ProcessHandle.current().pid();
+        return processes.stream().filter(p -> p.pid() != self).toList();
     }
 
     /**

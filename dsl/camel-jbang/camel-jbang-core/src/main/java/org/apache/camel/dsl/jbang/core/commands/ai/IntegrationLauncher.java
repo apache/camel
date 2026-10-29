@@ -570,6 +570,10 @@ public final class IntegrationLauncher {
     public static String control(ToolContext ctx, String action) {
         ctx.requireProcess();
         long pid = ctx.pid();
+        if (pid == ProcessHandle.current().pid()) {
+            // the tools run in this process: it cannot kill itself (the JDK refuses), nor answer an action it waits for
+            throw ToolContext.thisProcess(pid);
+        }
         return switch (action) {
             case "stop" -> ctx.stopApplication();
             case "kill" -> {

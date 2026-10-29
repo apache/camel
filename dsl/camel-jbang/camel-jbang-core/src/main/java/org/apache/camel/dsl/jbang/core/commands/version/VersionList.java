@@ -60,10 +60,12 @@ import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
+import org.apache.camel.dsl.jbang.core.common.ScratchContextHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.dsl.jbang.core.model.VersionListDTO;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.tooling.maven.RepositoryResolver;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.util.StringHelper;
@@ -400,6 +402,9 @@ public class VersionList extends CamelCommand {
                     mavenResolver.fresh());
         }
         KameletMain main = new KameletMain(CAMEL_INSTANCE_TYPE);
+        // only to download: without the CLI connector, which would list this process (such as the MCP server, whose
+        // camel_version_list runs this) as a running integration
+        main.bind(CliConnectorFactory.FACTORY, ScratchContextHelper.disabledCliConnectorFactory());
         try {
             main.setFresh(mavenResolver.fresh());
             main.setDownload(mavenResolver.download());

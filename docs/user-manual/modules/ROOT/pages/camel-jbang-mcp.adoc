@@ -812,7 +812,8 @@ help validate and scaffold that workflow, following the rules of the `rest-opena
 NOTE: Runtime tools require a running Camel application started via `camel run`. They communicate with the
 application through the file-based IPC protocol in `~/.camel/`. All tools accept an optional `nameOrPid`
 parameter; when omitted, the server auto-discovers the running Camel process (this works when exactly one
-process is running).
+process is running). The MCP server itself is never one of them: it is not listed, not selected when no name is
+given, and a call that names its pid is refused.
 
 ==== Process Discovery
 

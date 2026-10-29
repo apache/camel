@@ -222,12 +222,13 @@ public class ToolContext {
      * Selects the process a tool call names ({@code name} is an integration name or pid), or keeps the current
      * selection when the call names none.
      *
-     * @throws ToolExecutionException when the name matches no running process
+     * @throws ToolExecutionException when the name matches no running process, or is the pid of this process
      */
     public void selectProcess(String nameOrPid) {
         if (nameOrPid == null || nameOrPid.isBlank()) {
             return;
         }
+        refuseThisProcess(nameOrPid);
         RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(nameOrPid);
         if (p == null) {
             throw new ToolExecutionException(
@@ -235,6 +236,27 @@ public class ToolContext {
                                              + "'; list_processes shows what runs");
         }
         selectProcess(p.pid());
+    }
+
+    /**
+     * Refuses the pid of this process, which runs the tools: a status file of its own comes from a CamelContext it ran
+     * for itself, never from an integration, and it would wait for itself to answer an action (CAMEL-26396).
+     *
+     * @throws ToolExecutionException when the name or pid is the pid of this process
+     */
+    static void refuseThisProcess(String nameOrPid) {
+        if (RuntimeHelper.isThisProcess(nameOrPid)) {
+            throw thisProcess(ProcessHandle.current().pid());
+        }
+    }
+
+    /**
+     * The error for a tool call on the pid of this process (see {@link #refuseThisProcess(String)}).
+     */
+    static ToolExecutionException thisProcess(long pid) {
+        return new ToolExecutionException(
+                "pid " + pid + " is the process that runs these tools (the MCP server, camel ask or the TUI), not a"
+                                          + " Camel integration; list_processes shows the integrations");
     }
 
     public String readStatus(String section) {
