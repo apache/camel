@@ -494,6 +494,8 @@ final class OpenApiExternalReferences {
             }
             String origin = where(ref, path, name);
             lookups.add(new Lookup(uri, document, document != null ? document : LOCAL_URI, origin));
+            // always add the target, also for an in-spec #-reference (document is null, so LOCAL_URI stands for the
+            // specification root); a document != null guard here used to drop those references unchecked
             // the parser takes only the part the reference selects, under the $ids of the schemas enclosing the reference
             targets.add(new Target(document != null ? document : LOCAL_URI, fragment, ref, origin, ids, holder));
         }
