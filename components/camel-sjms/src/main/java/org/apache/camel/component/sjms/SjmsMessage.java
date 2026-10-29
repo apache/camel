@@ -129,6 +129,7 @@ public class SjmsMessage extends DefaultMessage {
         }
 
         // copy attachments, as MessageSupport.copyFrom does (which this method does not call)
+        @SuppressWarnings("unchecked")
         Map<String, Object> attachments = (Map<String, Object>) that.getPayloadForTrait(MessageTrait.ATTACHMENTS);
         if (attachments != null) {
             setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
